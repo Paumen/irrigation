@@ -2,9 +2,6 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - claude/create-github-pages-PpgTb
-      - main
   workflow_dispatch:
 
 permissions:
