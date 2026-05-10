@@ -20,7 +20,12 @@
     { "id": "R8.1", "parent": "R8", "baseline": 1.1, "label": "Zone hoses 25mm / fitting damage" },
     { "id": "R8.2", "parent": "R8", "baseline": 0.9, "label": "Zone hoses 25mm air / debris clog" },
     { "id": "R9.1", "parent": "R9", "baseline": 1.1, "label": "Sprinkler debris / nozzle" },
-    { "id": "R9.2", "parent": "R9", "baseline": 1.0, "label": "Sprinkler closed or misconfigured (manual shutoff, rotor arc/radius)" }
+    {
+      "id": "R9.2",
+      "parent": "R9",
+      "baseline": 1.0,
+      "label": "Sprinkler closed or misconfigured (manual shutoff, rotor arc/radius)"
+    }
   ],
   "questions": [
     {
@@ -268,7 +273,14 @@
       "options": [
         {
           "label": "Sudden, every time since",
-          "effects": { "R2.2": 0.2, "R3.1": 0.2, "R5.1": 0.2, "R6.3": 0.2, "R7.1": 0.2, "R9.2": 0.3 }
+          "effects": {
+            "R2.2": 0.2,
+            "R3.1": 0.2,
+            "R5.1": 0.2,
+            "R6.3": 0.2,
+            "R7.1": 0.2,
+            "R9.2": 0.3
+          }
         },
         {
           "label": "Sudden, intermittent since",
@@ -327,23 +339,31 @@
       "group": "Events",
       "text": "Recent service or work — for each, how did the issue relate to it?",
       "columns": [
-        { "id": "no",      "label": "Didn't happen / N/A",      "mult": 0.0 },
-        { "id": "right",   "label": "Started right after",      "mult": 1.0 },
-        { "id": "days",    "label": "Started days/weeks after", "mult": 0.6 },
-        { "id": "worse",   "label": "Worsened (same speed)",    "mult": 0.0 },
-        { "id": "faster",  "label": "Worsened (faster)",        "mult": 0.4 },
-        { "id": "briefly", "label": "Briefly fixed, returned",  "mult": 0.2 },
-        { "id": "unknown", "label": "Don't know",               "mult": 0.0 }
+        { "id": "no", "label": "Didn't happen / N/A", "mult": 0.0 },
+        { "id": "right", "label": "Started right after", "mult": 1.0 },
+        { "id": "days", "label": "Started days/weeks after", "mult": 0.6 },
+        { "id": "worse", "label": "Worsened (same speed)", "mult": 0.0 },
+        { "id": "faster", "label": "Worsened (faster)", "mult": 0.4 },
+        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 },
+        { "id": "unknown", "label": "Don't know", "mult": 0.0 }
       ],
       "rows": [
-        { "id": "pump",   "label": "Pump service / replacement",        "effects": { "R4": 1 } },
-        { "id": "relay",  "label": "Pump-start-relay service",          "effects": { "R3": 1 } },
-        { "id": "ctrl",   "label": "Controller service / replacement",  "effects": { "R1.1": 1, "R2.2": 1 } },
-        { "id": "app",    "label": "App / wifi / settings change",      "effects": { "R1": 1 } },
-        { "id": "valves", "label": "Valve service / replacement",       "effects": { "R7": 1 } },
-        { "id": "spr",    "label": "Sprinkler service / replacement",   "effects": { "R9.1": 0.6, "R9.2": 1.0 } },
-        { "id": "zhose",  "label": "Zone hose / fittings work",         "effects": { "R8": 1, "R5": 1 } },
-        { "id": "wiring", "label": "System wiring work",                "effects": { "R6": 1 } }
+        { "id": "pump", "label": "Pump service / replacement", "effects": { "R4": 1 } },
+        { "id": "relay", "label": "Pump-start-relay service", "effects": { "R3": 1 } },
+        {
+          "id": "ctrl",
+          "label": "Controller service / replacement",
+          "effects": { "R1.1": 1, "R2.2": 1 }
+        },
+        { "id": "app", "label": "App / wifi / settings change", "effects": { "R1": 1 } },
+        { "id": "valves", "label": "Valve service / replacement", "effects": { "R7": 1 } },
+        {
+          "id": "spr",
+          "label": "Sprinkler service / replacement",
+          "effects": { "R9.1": 0.6, "R9.2": 1.0 }
+        },
+        { "id": "zhose", "label": "Zone hose / fittings work", "effects": { "R8": 1, "R5": 1 } },
+        { "id": "wiring", "label": "System wiring work", "effects": { "R6": 1 } }
       ]
     },
     {
@@ -353,21 +373,34 @@
       "group": "Events",
       "text": "External events — for each, how did the issue relate to it?",
       "columns": [
-        { "id": "no",      "label": "Didn't happen / N/A",      "mult": 0.0 },
-        { "id": "right",   "label": "Started right after",      "mult": 1.0 },
-        { "id": "days",    "label": "Started days/weeks after", "mult": 0.6 },
-        { "id": "worse",   "label": "Worsened (same speed)",    "mult": 0.0 },
-        { "id": "faster",  "label": "Worsened (faster)",        "mult": 0.4 },
-        { "id": "briefly", "label": "Briefly fixed, returned",  "mult": 0.2 },
-        { "id": "unknown", "label": "Don't know",               "mult": 0.0 }
+        { "id": "no", "label": "Didn't happen / N/A", "mult": 0.0 },
+        { "id": "right", "label": "Started right after", "mult": 1.0 },
+        { "id": "days", "label": "Started days/weeks after", "mult": 0.6 },
+        { "id": "worse", "label": "Worsened (same speed)", "mult": 0.0 },
+        { "id": "faster", "label": "Worsened (faster)", "mult": 0.4 },
+        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 },
+        { "id": "unknown", "label": "Don't know", "mult": 0.0 }
       ],
       "rows": [
-        { "id": "storm",  "label": "Storm / lightning",                "effects": { "R2.2": 1, "R6": 1, "R1.2": 1 } },
-        { "id": "freeze", "label": "Freeze",                           "effects": { "R5.1": 1, "R7.3": 1, "R8.1": 1 }, "drainable": true },
-        { "id": "heat",   "label": "Heatwave / drought",               "effects": { "R4.1": 1 } },
-        { "id": "outage", "label": "Power outage",                     "effects": { "R1.2": 1, "R2.3": 1 } },
-        { "id": "pests",  "label": "Pests / rodents",                  "effects": { "R5.1": 1, "R8.1": 1, "R6": 1 } },
-        { "id": "dig",    "label": "Digging / landscaping / vehicle",  "effects": { "R5.1": 1, "R6.1": 1, "R6.2": 1, "R8.1": 1 } }
+        {
+          "id": "storm",
+          "label": "Storm / lightning",
+          "effects": { "R2.2": 1, "R6": 1, "R1.2": 1 }
+        },
+        {
+          "id": "freeze",
+          "label": "Freeze",
+          "effects": { "R5.1": 1, "R7.3": 1, "R8.1": 1 },
+          "drainable": true
+        },
+        { "id": "heat", "label": "Heatwave / drought", "effects": { "R4.1": 1 } },
+        { "id": "outage", "label": "Power outage", "effects": { "R1.2": 1, "R2.3": 1 } },
+        { "id": "pests", "label": "Pests / rodents", "effects": { "R5.1": 1, "R8.1": 1, "R6": 1 } },
+        {
+          "id": "dig",
+          "label": "Digging / landscaping / vehicle",
+          "effects": { "R5.1": 1, "R6.1": 1, "R6.2": 1, "R8.1": 1 }
+        }
       ]
     },
 

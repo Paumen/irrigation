@@ -44,15 +44,96 @@ const FOOTER_TOP = 46;
 // Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP across the top.
 // Row 2: VALVES central below. Row 3: four SPRINKLER zones evenly spread.
 const NODES = [
-  { key: 'sw',     x: 36,  y: 20,  w: BOX_W, h: BOX_H, label: 'SOFTWARE',   icon: 'sw',     pips: ['R1.1', 'R1.2', 'R1.3'] },
-  { key: 'ctrl',   x: 202, y: 20,  w: BOX_W, h: BOX_H, label: 'CONTROLLER', icon: 'ctrl',   pips: ['R2.2', 'R2.3'] },
-  { key: 'relay',  x: 368, y: 20,  w: BOX_W, h: BOX_H, label: 'RELAY',      icon: 'relay',  pips: ['R3.1'] },
-  { key: 'pump',   x: 534, y: 20,  w: BOX_W, h: BOX_H, label: 'PUMP',       icon: 'pump',   pips: ['R4.1', 'R4.2'] },
-  { key: 'valves', x: 285, y: 170, w: BOX_W, h: BOX_H, label: 'VALVES',     icon: 'valves', pips: ['R7.1', 'R7.2', 'R7.3', 'R7.4'] },
-  { key: 'sp1',    x: 20,  y: 340, w: BOX_W, h: BOX_H, label: 'SPRINKLER',  icon: 'sprk',   pips: ['R9.1'] },
-  { key: 'sp2',    x: 200, y: 340, w: BOX_W, h: BOX_H, label: 'SPRINKLER',  icon: 'sprk',   pips: ['R9.2'] },
-  { key: 'sp3',    x: 380, y: 340, w: BOX_W, h: BOX_H, label: 'SPRINKLER',  icon: 'sprk',   pips: ['R9.1'] },
-  { key: 'sp4',    x: 560, y: 340, w: BOX_W, h: BOX_H, label: 'SPRINKLER',  icon: 'sprk',   pips: ['R9.2'] },
+  {
+    key: 'sw',
+    x: 36,
+    y: 20,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SOFTWARE',
+    icon: 'sw',
+    pips: ['R1.1', 'R1.2', 'R1.3'],
+  },
+  {
+    key: 'ctrl',
+    x: 202,
+    y: 20,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'CONTROLLER',
+    icon: 'ctrl',
+    pips: ['R2.2', 'R2.3'],
+  },
+  {
+    key: 'relay',
+    x: 368,
+    y: 20,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'RELAY',
+    icon: 'relay',
+    pips: ['R3.1'],
+  },
+  {
+    key: 'pump',
+    x: 534,
+    y: 20,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'PUMP',
+    icon: 'pump',
+    pips: ['R4.1', 'R4.2'],
+  },
+  {
+    key: 'valves',
+    x: 285,
+    y: 170,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'VALVES',
+    icon: 'valves',
+    pips: ['R7.1', 'R7.2', 'R7.3', 'R7.4'],
+  },
+  {
+    key: 'sp1',
+    x: 20,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.1'],
+  },
+  {
+    key: 'sp2',
+    x: 200,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.2'],
+  },
+  {
+    key: 'sp3',
+    x: 380,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.1'],
+  },
+  {
+    key: 'sp4',
+    x: 560,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.2'],
+  },
 ];
 
 // Connector pips ride on line segments. An rcId can appear more than once —
@@ -95,7 +176,13 @@ function NodeIcon({ kind, cx, cy }) {
   const s = '#1a2238';
   if (kind === 'sw')
     return (
-      <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <g
+        transform={`translate(${cx},${cy})`}
+        fill="none"
+        stroke={s}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      >
         <rect x="-13" y="-9" width="26" height="18" rx="2" />
         <line x1="-13" y1="-4" x2="13" y2="-4" />
         <circle cx="-10" cy="-6.5" r="0.9" fill={s} stroke="none" />
@@ -108,7 +195,13 @@ function NodeIcon({ kind, cx, cy }) {
     );
   if (kind === 'ctrl')
     return (
-      <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <g
+        transform={`translate(${cx},${cy})`}
+        fill="none"
+        stroke={s}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      >
         <rect x="-13" y="-9" width="26" height="18" rx="2" />
         <circle cx="-5" cy="0" r="4.5" />
         <line x1="-5" y1="0" x2="-2.5" y2="-2.5" />
@@ -120,7 +213,13 @@ function NodeIcon({ kind, cx, cy }) {
     );
   if (kind === 'relay')
     return (
-      <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <g
+        transform={`translate(${cx},${cy})`}
+        fill="none"
+        stroke={s}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      >
         <rect x="-13" y="-9" width="26" height="18" rx="2" />
         <line x1="-9" y1="4" x2="-3" y2="4" />
         <line x1="-3" y1="4" x2="6" y2="-3" />
@@ -132,7 +231,13 @@ function NodeIcon({ kind, cx, cy }) {
     );
   if (kind === 'pump')
     return (
-      <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <g
+        transform={`translate(${cx},${cy})`}
+        fill="none"
+        stroke={s}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      >
         <circle r="10" />
         <path d="M -7 1 q 3.5 -6 7 0 t 7 0" />
         <path d="M -7 5 q 3.5 -6 7 0 t 7 0" />
@@ -140,7 +245,13 @@ function NodeIcon({ kind, cx, cy }) {
     );
   if (kind === 'valves')
     return (
-      <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <g
+        transform={`translate(${cx},${cy})`}
+        fill="none"
+        stroke={s}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      >
         <line x1="-15" y1="3" x2="15" y2="3" strokeWidth="2" />
         <path d="M -10 -2 L -6 3 L -10 8 Z" />
         <path d="M -2 -2 L -6 3 L -2 8 Z" />
@@ -154,7 +265,13 @@ function NodeIcon({ kind, cx, cy }) {
     );
   if (kind === 'sprk')
     return (
-      <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <g
+        transform={`translate(${cx},${cy})`}
+        fill="none"
+        stroke={s}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      >
         <path d="M -12 5 Q 0 -11 12 5" />
         <circle cx="-9" cy="3.5" r="0.9" fill={s} stroke="none" />
         <circle cx="-5" cy="-1.5" r="0.9" fill={s} stroke="none" />
@@ -176,7 +293,15 @@ function NodeBox({ box, iconKind, label, severityT, severityPct, activeRC, onPic
   const cw = pips.length ? box.w / pips.length : 0;
   return (
     <g>
-      <rect x={box.x} y={box.y} width={box.w} height={box.h} fill="#f7f2e6" stroke="#1a2238" strokeWidth="1.5" />
+      <rect
+        x={box.x}
+        y={box.y}
+        width={box.w}
+        height={box.h}
+        fill="#f7f2e6"
+        stroke="#1a2238"
+        strokeWidth="1.5"
+      />
 
       {pips.map((rcId, i) => (
         <rect
@@ -203,7 +328,15 @@ function NodeBox({ box, iconKind, label, severityT, severityPct, activeRC, onPic
           {pips.slice(1).map((_, i) => {
             const x = box.x + (i + 1) * cw;
             return (
-              <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} stroke="#1a2238" strokeWidth="1" />
+              <line
+                key={`d-${i}`}
+                x1={x}
+                y1={fy}
+                x2={x}
+                y2={fy + fh}
+                stroke="#1a2238"
+                strokeWidth="1"
+              />
             );
           })}
         </>
@@ -229,7 +362,13 @@ function NodeBox({ box, iconKind, label, severityT, severityPct, activeRC, onPic
             }}
           >
             <rect x={box.x + i * cw} y={fy} width={cw} height={fh} fill="transparent" />
-            <text x={ccx} y={fy + fh / 2 + 3.5} textAnchor="middle" className="pip" fill={pctText(p, t)}>
+            <text
+              x={ccx}
+              y={fy + fh / 2 + 3.5}
+              textAnchor="middle"
+              className="pip"
+              fill={pctText(p, t)}
+            >
               {rcId.replace('R', '')}
             </text>
           </g>
@@ -294,15 +433,43 @@ function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC })
 
 function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
   return (
-    <svg viewBox="0 0 700 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      viewBox="0 0 700 420"
+      preserveAspectRatio="xMidYMid meet"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <defs>
-        <marker id="arr-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <marker
+          id="arr-water"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto-start-reverse"
+        >
           <path d="M0,0 L10,5 L0,10 z" fill="#1a4a7a" />
         </marker>
-        <marker id="arr-ctrl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <marker
+          id="arr-ctrl"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto-start-reverse"
+        >
           <path d="M0,0 L10,5 L0,10 z" fill="#b14a26" />
         </marker>
-        <marker id="arr-mains" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <marker
+          id="arr-mains"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto-start-reverse"
+        >
           <path d="M0,0 L10,5 L0,10 z" fill="#5a6a85" />
         </marker>
       </defs>
@@ -319,21 +486,46 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
         <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
       </g>
-      <text x="184" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">24 V</text>
-      <text x="350" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">24 V</text>
-      <text x="252" y="108" textAnchor="end" className="ln-lbl" fill="#b14a26">24 V</text>
+      <text x="184" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">
+        24 V
+      </text>
+      <text x="350" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">
+        24 V
+      </text>
+      <text x="252" y="108" textAnchor="end" className="ln-lbl" fill="#b14a26">
+        24 V
+      </text>
 
       {/* ── 230 V mains (slate solid + ⚡) RELAY → PUMP ── */}
-      <line x1="498" y1="36" x2="534" y2="36" stroke="#5a6a85" strokeWidth="2.5" markerEnd="url(#arr-mains)" />
-      <text x="516" y="30" textAnchor="middle" className="ln-lbl" fill="#5a6a85">⚡ 230 V</text>
+      <line
+        x1="498"
+        y1="36"
+        x2="534"
+        y2="36"
+        stroke="#5a6a85"
+        strokeWidth="2.5"
+        markerEnd="url(#arr-mains)"
+      />
+      <text x="516" y="30" textAnchor="middle" className="ln-lbl" fill="#5a6a85">
+        ⚡ 230 V
+      </text>
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
-      <path d="M 599 92 V 145 H 350 V 170" stroke="#1a4a7a" strokeWidth="4" fill="none" strokeLinecap="round" markerEnd="url(#arr-water)" />
-      <text x="475" y="138" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">H₂O</text>
+      <path
+        d="M 599 92 V 145 H 350 V 170"
+        stroke="#1a4a7a"
+        strokeWidth="4"
+        fill="none"
+        strokeLinecap="round"
+        markerEnd="url(#arr-water)"
+      />
+      <text x="475" y="138" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">
+        H₂O
+      </text>
 
       {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
       <g stroke="#1a4a7a" strokeWidth="2.5" fill="none" strokeLinecap="round">
-        <path d="M 315 242 V 290 H 85 V 340"  markerEnd="url(#arr-water)" />
+        <path d="M 315 242 V 290 H 85 V 340" markerEnd="url(#arr-water)" />
         <path d="M 335 242 V 305 H 265 V 340" markerEnd="url(#arr-water)" />
         <path d="M 375 242 V 305 H 445 V 340" markerEnd="url(#arr-water)" />
         <path d="M 395 242 V 290 H 625 V 340" markerEnd="url(#arr-water)" />
@@ -379,7 +571,12 @@ function StageBar({ stages, activeStage, onPick }) {
         const active = activeStage === s;
         const pct = sp.total ? (sp.answered / sp.total) * 100 : 0;
         return (
-          <button key={s} type="button" onClick={() => onPick(s)} className={active ? 'active' : ''}>
+          <button
+            key={s}
+            type="button"
+            onClick={() => onPick(s)}
+            className={active ? 'active' : ''}
+          >
             <span className="label">
               <span className="nm">{labels[s]}</span>
               <span className="ct mono">
@@ -401,50 +598,55 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
   const drained = answer?.drained || {};
   return (
     <div className="matrix-scroll">
-    <div
-      className="matrix"
-      style={{ gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${cols.length}, minmax(54px, 1fr))` }}
-    >
-      <div className="matrix-cell matrix-head matrix-corner" />
-      {cols.map((c) => (
-        <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
-          <span>{c.label}</span>
-        </div>
-      ))}
-      {question.rows.map((row) => {
-        const sel = rowAns[row.id] || 'no';
-        const isOff = sel === 'no' || sel === 'unknown';
-        return (
-          <React.Fragment key={row.id}>
-            <div className="matrix-cell matrix-row-label">{row.label}</div>
-            {cols.map((c) => {
-              const checked = sel === c.id;
-              return (
-                <div key={c.id} className="matrix-cell matrix-radio-cell">
-                  <button
-                    type="button"
-                    className={`matrix-radio ${checked ? 'checked' : ''}`}
-                    aria-label={`${row.label}: ${c.label}`}
-                    aria-pressed={checked}
-                    onClick={() => onSetCell(row.id, c.id)}
+      <div
+        className="matrix"
+        style={{
+          gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${cols.length}, minmax(54px, 1fr))`,
+        }}
+      >
+        <div className="matrix-cell matrix-head matrix-corner" />
+        {cols.map((c) => (
+          <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
+            <span>{c.label}</span>
+          </div>
+        ))}
+        {question.rows.map((row) => {
+          const sel = rowAns[row.id] || 'no';
+          const isOff = sel === 'no' || sel === 'unknown';
+          return (
+            <React.Fragment key={row.id}>
+              <div className="matrix-cell matrix-row-label">{row.label}</div>
+              {cols.map((c) => {
+                const checked = sel === c.id;
+                return (
+                  <div key={c.id} className="matrix-cell matrix-radio-cell">
+                    <button
+                      type="button"
+                      className={`matrix-radio ${checked ? 'checked' : ''}`}
+                      aria-label={`${row.label}: ${c.label}`}
+                      aria-pressed={checked}
+                      onClick={() => onSetCell(row.id, c.id)}
+                    />
+                  </div>
+                );
+              })}
+              {row.drainable && !isOff && (
+                <label
+                  className="matrix-drained"
+                  style={{ gridColumn: `1 / span ${cols.length + 1}` }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={!!drained[row.id]}
+                    onChange={(e) => onToggleDrained(row.id, e.target.checked)}
                   />
-                </div>
-              );
-            })}
-            {row.drainable && !isOff && (
-              <label className="matrix-drained" style={{ gridColumn: `1 / span ${cols.length + 1}` }}>
-                <input
-                  type="checkbox"
-                  checked={!!drained[row.id]}
-                  onChange={(e) => onToggleDrained(row.id, e.target.checked)}
-                />
-                System was drained for winter (halves effect)
-              </label>
-            )}
-          </React.Fragment>
-        );
-      })}
-    </div>
+                  System was drained for winter (halves effect)
+                </label>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -595,7 +797,9 @@ function ResetModal({ onCancel, onConfirm }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h3 id="reset-title">Start over?</h3>
-        <p>This clears every answer and returns you to the first question. You can&rsquo;t undo this.</p>
+        <p>
+          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
+        </p>
         <div className="row">
           <button ref={cancelRef} type="button" className="btn" onClick={onCancel}>
             Keep my answers
@@ -638,7 +842,7 @@ function App() {
     });
     QUESTIONS.forEach((q) => {
       const ans = answers[q.id];
-      if (ans == null) return;
+      if (ans === undefined || ans === null) return;
       if (q.type === 'matrix') {
         const rowAns = ans.rows || {};
         const drained = ans.drained || {};
@@ -693,7 +897,7 @@ function App() {
 
   const isAnswered = (qid) => {
     const a = answers[qid];
-    if (a == null) return false;
+    if (a === undefined || a === null) return false;
     const q = QUESTIONS.find((qq) => qq.id === qid);
     if (q?.type === 'matrix') {
       return a.rows && Object.values(a.rows).some((v) => v && v !== 'no');

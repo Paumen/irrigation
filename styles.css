@@ -89,8 +89,15 @@ body {
   padding: var(--sp-xl) var(--sp-xl) calc(var(--sp-xl) * 4);
   font-family: var(--font-sans);
   background-image:
-    linear-gradient(var(--c-gradient-neutral-1) var(--line-width-s), transparent var(--line-width-s)),
-    linear-gradient(90deg, var(--c-gradient-neutral-1) var(--line-width-s), transparent var(--line-width-s));
+    linear-gradient(
+      var(--c-gradient-neutral-1) var(--line-width-s),
+      transparent var(--line-width-s)
+    ),
+    linear-gradient(
+      90deg,
+      var(--c-gradient-neutral-1) var(--line-width-s),
+      transparent var(--line-width-s)
+    );
   background-position: calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1);
   background-size: 24px 24px;
   -webkit-font-smoothing: antialiased;
@@ -133,7 +140,8 @@ section.sec {
   padding: var(--sp-xl);
   background:
     repeating-linear-gradient(0deg, transparent 0 23px, var(--c-gradient-neutral-1) 23px 24px),
-    repeating-linear-gradient(90deg, transparent 0 23px, var(--c-gradient-neutral-1) 23px 24px), var(--bg-neutral-2);
+    repeating-linear-gradient(90deg, transparent 0 23px, var(--c-gradient-neutral-1) 23px 24px),
+    var(--bg-neutral-2);
   border: var(--line-width-s) solid var(--c-gradient-neutral-3);
 }
 
@@ -238,8 +246,8 @@ section.sec {
   padding: var(--sp-l) var(--sp-l);
   overflow: hidden;
   font-family: var(--font-mono);
-  text-align: left;
   color: var(--c-neutral-5);
+  text-align: left;
   background: transparent;
   border-right: var(--line-width-s) solid var(--c-gradient-neutral-3);
   border-bottom: 2px solid transparent;
@@ -530,9 +538,9 @@ section.sec {
 
 /* ─── MATRIX QUESTION ────────────────────────────── */
 .matrix-scroll {
-  overflow-x: auto;
-  margin: calc(var(--sp-l) * -1) 0 0;
   padding: var(--sp-l) 0;
+  margin: calc(var(--sp-l) * -1) 0 0;
+  overflow-x: auto;
 }
 
 .matrix {
@@ -573,9 +581,9 @@ section.sec {
 .matrix-head span {
   display: block;
   width: 100%;
+  hyphens: auto;
   text-align: center;
   word-break: break-word;
-  hyphens: auto;
 }
 
 .matrix-corner {
@@ -598,7 +606,9 @@ section.sec {
   background: var(--bg-neutral-1);
   border: var(--line-width-s) solid var(--c-neutral-4);
   border-radius: 50%;
-  transition: background var(--time), border-color var(--time);
+  transition:
+    background var(--time),
+    border-color var(--time);
 }
 
 .matrix-radio:hover {
@@ -607,8 +617,7 @@ section.sec {
 
 .matrix-radio.checked {
   background:
-    radial-gradient(circle, var(--c-accent-1) 0 4.5px, transparent 5px),
-    var(--bg-neutral-1);
+    radial-gradient(circle, var(--c-accent-1) 0 4.5px, transparent 5px), var(--bg-neutral-1);
   border-color: var(--c-neutral-5);
 }
 
@@ -637,7 +646,7 @@ section.sec {
   z-index: 50;
   display: grid;
   place-items: center;
-  background: rgba(26, 34, 56, 0.55);
+  background: rgb(26 34 56 / 55%);
 }
 
 .modal {
