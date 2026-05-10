@@ -1,6 +1,6 @@
 import DATA from './data.json';
 
-const { useState, useMemo, useEffect } = React;
+const { useState, useMemo, useEffect, useRef } = React;
 
 // ============ ROOT CAUSES ============
 const RC = Object.fromEntries(DATA.causes.map((c) => [c.id, c]));
@@ -23,19 +23,26 @@ const eff = (m) => {
 };
 
 // ============ QUESTIONS ============
-const QUESTIONS = DATA.questions.map((q) => ({
-  ...q,
-  options: q.options.map((o) => ({ ...o, effects: eff(o.effects || {}) })),
-}));
+const QUESTIONS = DATA.questions.map((q) => {
+  if (q.type === 'matrix') {
+    return {
+      ...q,
+      rows: q.rows.map((r) => ({ ...r, effects: eff(r.effects || {}) })),
+    };
+  }
+  return {
+    ...q,
+    options: q.options.map((o) => ({ ...o, effects: eff(o.effects || {}) })),
+  };
+});
 
 // ============ DIAGRAM (engineering blueprint style) ============
 const BOX_W = 130,
   BOX_H = 72;
-// Footer strip inside every node: indicator cells share the box outline.
-const FOOTER_TOP = 46; // y-offset within box where footer divider sits
-// Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP  (evenly spread across full viewport)
-// Row 2: VALVES directly below PUMP (water flows straight down)
-// Row 3: three SPRINKLER zones spread below
+const FOOTER_TOP = 46;
+
+// Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP across the top.
+// Row 2: VALVES central below. Row 3: four SPRINKLER zones evenly spread.
 const NODES = [
   {
     key: 'sw',
@@ -79,7 +86,7 @@ const NODES = [
   },
   {
     key: 'valves',
-    x: 534,
+    x: 285,
     y: 170,
     w: BOX_W,
     h: BOX_H,
@@ -87,10 +94,9 @@ const NODES = [
     icon: 'valves',
     pips: ['R7.1', 'R7.2', 'R7.3', 'R7.4'],
   },
-  { key: 'sp1', x: 20, y: 340, w: BOX_W, h: BOX_H, label: 'SPRINKLER', icon: 'sprk', pips: [] },
   {
-    key: 'sp2',
-    x: 285,
+    key: 'sp1',
+    x: 20,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -98,34 +104,73 @@ const NODES = [
     icon: 'sprk',
     pips: ['R9.1'],
   },
-  { key: 'sp3', x: 550, y: 340, w: BOX_W, h: BOX_H, label: 'SPRINKLER', icon: 'sprk', pips: [] },
+  {
+    key: 'sp2',
+    x: 200,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.2'],
+  },
+  {
+    key: 'sp3',
+    x: 380,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.1'],
+  },
+  {
+    key: 'sp4',
+    x: 560,
+    y: 340,
+    w: BOX_W,
+    h: BOX_H,
+    label: 'SPRINKLER',
+    icon: 'sprk',
+    pips: ['R9.2'],
+  },
 ];
-// Connector pip positions — only those that ride on the line segments
-// (node-attached pips are now footer cells inside their box)
-const CONN_R = {
-  // Main water vertical x=599, y 92→170
-  'R5.1': { x: 599, y: 115 },
-  'R5.2': { x: 599, y: 145 },
-  // Control wire horizontal y=130, x 267→520
-  'R6.1': { x: 330, y: 130 },
-  'R6.2': { x: 400, y: 130 },
-  'R6.3': { x: 470, y: 130 },
-  // Lateral hoses
-  'R8.1': { x: 300, y: 290 },
-  'R8.2': { x: 633, y: 265 },
-};
 
-// severity color → rust gradient stops, mapped from irrits.html scale
+// Connector pips ride on line segments. An rcId can appear more than once —
+// each entry is a separate clickable jump to the same cause.
+const CONN_PIPS = [
+  // Water main horizontal from pump down/across to valves (y=145)
+  { rcId: 'R5.1', x: 525, y: 145 },
+  { rcId: 'R5.2', x: 430, y: 145 },
+  // 24 V control wire vertical from controller down to valves entry (x=267)
+  { rcId: 'R6.1', x: 267, y: 120 },
+  { rcId: 'R6.2', x: 267, y: 150 },
+  { rcId: 'R6.3', x: 267, y: 180 },
+  // Lateral hoses (one pip per lateral, alternating R8.1 / R8.2)
+  { rcId: 'R8.1', x: 200, y: 290 },
+  { rcId: 'R8.2', x: 305, y: 305 },
+  { rcId: 'R8.1', x: 405, y: 305 },
+  { rcId: 'R8.2', x: 600, y: 290 },
+];
+
+// ============ SEVERITY COLOURS ============
+// Four-band gradient: dark green → light green → light rust → dark rust.
+// Ranked rows additionally clamp to dark green when the displayed percent < 4.
 const sevColor = (t) => {
-  // 0 → calm green, .5 → paper, 1 → rust deep
   const tt = Math.max(0, Math.min(1, t));
-  if (tt < 0.18) return '#cfd6b8'; // dim
-  if (tt < 0.36) return '#dcd3ba'; // paper-3
-  if (tt < 0.55) return '#ecc8b1'; // rust-soft
-  if (tt < 0.78) return '#c47554'; // rust-mid
-  return '#7a2f15'; // rust-deep
+  if (tt < 0.25) return '#3f6b2f';
+  if (tt < 0.5) return '#9bbf6e';
+  if (tt < 0.75) return '#d99a78';
+  return '#7a2f15';
 };
-const sevText = (t) => (t >= 0.55 ? '#efe8d8' : '#1a2238');
+const sevText = (t) => {
+  const tt = Math.max(0, Math.min(1, t));
+  if (tt < 0.25) return '#efe8d8';
+  if (tt >= 0.75) return '#efe8d8';
+  return '#1a2238';
+};
+const pctColor = (pct, t) => (pct < 4 ? '#3f6b2f' : sevColor(t));
+const pctText = (pct, t) => (pct < 4 ? '#efe8d8' : sevText(t));
 
 function NodeIcon({ kind, cx, cy }) {
   const s = '#1a2238';
@@ -240,7 +285,7 @@ function NodeIcon({ kind, cx, cy }) {
   return null;
 }
 
-function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
+function NodeBox({ box, iconKind, label, severityT, severityPct, activeRC, onPickRC }) {
   const cx = box.x + box.w / 2;
   const pips = box.pips || [];
   const fy = box.y + FOOTER_TOP;
@@ -248,7 +293,6 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
   const cw = pips.length ? box.w / pips.length : 0;
   return (
     <g>
-      {/* outer node frame, paper-filled */}
       <rect
         x={box.x}
         y={box.y}
@@ -259,20 +303,18 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
         strokeWidth="1.5"
       />
 
-      {/* per-pip footer fills (overlay paper inside the outline) */}
       {pips.map((rcId, i) => (
         <rect
-          key={`f-${rcId}`}
+          key={`f-${rcId}-${i}`}
           x={box.x + i * cw}
           y={fy}
           width={cw}
           height={fh}
-          fill={sevColor(severityT[rcId] || 0)}
+          fill={pctColor(severityPct[rcId] || 0, severityT[rcId] || 0)}
           stroke="none"
         />
       ))}
 
-      {/* icon + label */}
       {iconKind && <NodeIcon kind={iconKind} cx={cx} cy={box.y + 16} />}
       {label && (
         <text x={cx} y={box.y + 38} textAnchor="middle" className="lbl">
@@ -280,7 +322,6 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
         </text>
       )}
 
-      {/* footer top divider + inter-cell dividers (part of the box outline) */}
       {pips.length > 0 && (
         <>
           <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} stroke="#1a2238" strokeWidth="1.5" />
@@ -301,12 +342,13 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
         </>
       )}
 
-      {/* pip ids + interaction targets */}
       {pips.map((rcId, i) => {
         const ccx = box.x + i * cw + cw / 2;
+        const t = severityT[rcId] || 0;
+        const p = severityPct[rcId] || 0;
         return (
           <g
-            key={`l-${rcId}`}
+            key={`l-${rcId}-${i}`}
             role="button"
             tabIndex="0"
             aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
@@ -325,7 +367,7 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
               y={fy + fh / 2 + 3.5}
               textAnchor="middle"
               className="pip"
-              fill={sevText(severityT[rcId] || 0)}
+              fill={pctText(p, t)}
             >
               {rcId.replace('R', '')}
             </text>
@@ -333,12 +375,11 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
         );
       })}
 
-      {/* active cell highlight (inset, stays inside the silhouette) */}
       {pips.map((rcId, i) => {
         if (activeRC !== rcId) return null;
         return (
           <rect
-            key={`a-${rcId}`}
+            key={`a-${rcId}-${i}`}
             x={box.x + i * cw + 1.5}
             y={fy + 1.5}
             width={cw - 3}
@@ -354,8 +395,9 @@ function NodeBox({ box, iconKind, label, severityT, activeRC, onPickRC }) {
   );
 }
 
-function ConnectorPip({ rcId, pos, severityT, activeRC, onPickRC }) {
+function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC }) {
   const t = severityT[rcId] || 0;
+  const p = severityPct[rcId] || 0;
   const isActive = activeRC === rcId;
   const sz = isActive ? 18 : 16;
   return (
@@ -378,18 +420,18 @@ function ConnectorPip({ rcId, pos, severityT, activeRC, onPickRC }) {
         width={sz}
         height={sz}
         rx="1.5"
-        fill={sevColor(t)}
+        fill={pctColor(p, t)}
         stroke="#1a2238"
         strokeWidth={isActive ? 1.8 : 1.2}
       />
-      <text x={pos.x} y={pos.y + 3} textAnchor="middle" className="pip" fill={sevText(t)}>
+      <text x={pos.x} y={pos.y + 3} textAnchor="middle" className="pip" fill={pctText(p, t)}>
         {rcId.replace('R', '')}
       </text>
     </g>
   );
 }
 
-function SystemDiagram({ severityT, activeRC, onPickRC }) {
+function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
   return (
     <svg
       viewBox="0 0 700 420"
@@ -398,7 +440,7 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
     >
       <defs>
         <marker
-          id="arr"
+          id="arr-water"
           viewBox="0 0 10 10"
           refX="9"
           refY="5"
@@ -406,10 +448,10 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" fill="#1a2238" />
+          <path d="M0,0 L10,5 L0,10 z" fill="#1a4a7a" />
         </marker>
         <marker
-          id="arrR"
+          id="arr-ctrl"
           viewBox="0 0 10 10"
           refX="9"
           refY="5"
@@ -420,7 +462,7 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
           <path d="M0,0 L10,5 L0,10 z" fill="#b14a26" />
         </marker>
         <marker
-          id="arrS"
+          id="arr-mains"
           viewBox="0 0 10 10"
           refX="9"
           refY="5"
@@ -434,50 +476,59 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
       <style>{`
         .lbl{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:12px;fill:#1a2238;letter-spacing:.05em}
         .pip{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:9px;pointer-events:none}
+        .ln-lbl{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:8.5px;pointer-events:none;letter-spacing:.06em}
       `}</style>
 
-      {/* ── control wires (rust dashed) ── */}
+      {/* ── 24 V control wires (rust dashed) ── */}
       <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3" strokeLinecap="round">
-        {/* SW → CTRL (icon-level horizontal) */}
-        <line x1="166" y1="36" x2="202" y2="36" markerEnd="url(#arrR)" />
-        {/* CTRL → RELAY */}
-        <line x1="332" y1="36" x2="368" y2="36" markerEnd="url(#arrR)" />
-        {/* CTRL → VALVES: down from CTRL bottom, right across (R6 pips), down, into VALVES left edge */}
-        <path d="M 267 92 V 130 H 520 V 206 H 534" markerEnd="url(#arrR)" />
+        <line x1="166" y1="36" x2="202" y2="36" markerEnd="url(#arr-ctrl)" />
+        <line x1="332" y1="36" x2="368" y2="36" markerEnd="url(#arr-ctrl)" />
+        {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
+        <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
       </g>
+      <text x="184" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">
+        24 V
+      </text>
+      <text x="350" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">
+        24 V
+      </text>
+      <text x="252" y="108" textAnchor="end" className="ln-lbl" fill="#b14a26">
+        24 V
+      </text>
 
-      {/* ── 230 V power (dot-dash slate): RELAY → PUMP ── */}
+      {/* ── 230 V mains (slate solid + ⚡) RELAY → PUMP ── */}
       <line
         x1="498"
         y1="36"
         x2="534"
         y2="36"
         stroke="#5a6a85"
-        strokeWidth="2"
-        strokeDasharray="4 2 1 2"
-        markerEnd="url(#arrS)"
+        strokeWidth="2.5"
+        markerEnd="url(#arr-mains)"
       />
+      <text x="516" y="30" textAnchor="middle" className="ln-lbl" fill="#5a6a85">
+        ⚡ 230 V
+      </text>
 
-      {/* ── main water line: PUMP → VALVES (straight down center) ── */}
-      <line
-        x1="599"
-        y1="92"
-        x2="599"
-        y2="170"
-        stroke="#1a2238"
+      {/* ── Main water line: PUMP down then across to VALVES top ── */}
+      <path
+        d="M 599 92 V 145 H 350 V 170"
+        stroke="#1a4a7a"
         strokeWidth="4"
         fill="none"
-        markerEnd="url(#arr)"
+        strokeLinecap="round"
+        markerEnd="url(#arr-water)"
       />
+      <text x="475" y="138" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">
+        H₂O
+      </text>
 
-      {/* ── lateral hoses VALVES → sprinklers ── */}
-      <g stroke="#1a2238" strokeWidth="2.2" fill="none" strokeLinecap="round">
-        {/* to SPRK1 (center 85) */}
-        <path d="M 565 242 V 290 H 85 V 340" markerEnd="url(#arr)" />
-        {/* to SPRK2 (center 350) */}
-        <path d="M 599 242 V 310 H 350 V 340" markerEnd="url(#arr)" />
-        {/* to SPRK3 (center 615) */}
-        <path d="M 633 242 V 290 H 615 V 340" markerEnd="url(#arr)" />
+      {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
+      <g stroke="#1a4a7a" strokeWidth="2.5" fill="none" strokeLinecap="round">
+        <path d="M 315 242 V 290 H 85 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 335 242 V 305 H 265 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 375 242 V 305 H 445 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 395 242 V 290 H 625 V 340" markerEnd="url(#arr-water)" />
       </g>
 
       {/* ── nodes ── */}
@@ -488,18 +539,20 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
           iconKind={b.icon}
           label={b.label}
           severityT={severityT}
+          severityPct={severityPct}
           activeRC={activeRC}
           onPickRC={onPickRC}
         />
       ))}
 
       {/* ── connector pips ── */}
-      {Object.entries(CONN_R).map(([rcId, pos]) => (
+      {CONN_PIPS.map((p, i) => (
         <ConnectorPip
-          key={rcId}
-          rcId={rcId}
-          pos={pos}
+          key={`cp-${i}`}
+          rcId={p.rcId}
+          pos={{ x: p.x, y: p.y }}
           severityT={severityT}
+          severityPct={severityPct}
           activeRC={activeRC}
           onPickRC={onPickRC}
         />
@@ -538,12 +591,72 @@ function StageBar({ stages, activeStage, onPick }) {
   );
 }
 
+// ============ MATRIX QUESTION ============
+function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
+  const cols = question.columns;
+  const rowAns = answer?.rows || {};
+  const drained = answer?.drained || {};
+  return (
+    <div className="matrix-scroll">
+      <div
+        className="matrix"
+        style={{
+          gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${cols.length}, minmax(54px, 1fr))`,
+        }}
+      >
+        <div className="matrix-cell matrix-head matrix-corner" />
+        {cols.map((c) => (
+          <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
+            <span>{c.label}</span>
+          </div>
+        ))}
+        {question.rows.map((row) => {
+          const sel = rowAns[row.id] || 'no';
+          const isOff = sel === 'no' || sel === 'unknown';
+          return (
+            <React.Fragment key={row.id}>
+              <div className="matrix-cell matrix-row-label">{row.label}</div>
+              {cols.map((c) => {
+                const checked = sel === c.id;
+                return (
+                  <div key={c.id} className="matrix-cell matrix-radio-cell">
+                    <button
+                      type="button"
+                      className={`matrix-radio ${checked ? 'checked' : ''}`}
+                      aria-label={`${row.label}: ${c.label}`}
+                      aria-pressed={checked}
+                      onClick={() => onSetCell(row.id, c.id)}
+                    />
+                  </div>
+                );
+              })}
+              {row.drainable && !isOff && (
+                <label
+                  className="matrix-drained"
+                  style={{ gridColumn: `1 / span ${cols.length + 1}` }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={!!drained[row.id]}
+                    onChange={(e) => onToggleDrained(row.id, e.target.checked)}
+                  />
+                  System was drained for winter (halves effect)
+                </label>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ============ QUESTION PANEL ============
 function QuestionPanel({
   question,
   answer,
   onAnswer,
-  freezeDrained,
+  onSetCell,
   onToggleDrained,
   onNext,
   onPrev,
@@ -552,7 +665,7 @@ function QuestionPanel({
   onReset,
 }) {
   if (!question) return null;
-  const isFreeze = question.id === 'E_freeze';
+  const isMatrix = question.type === 'matrix';
   return (
     <div>
       <div className="qhead">
@@ -571,32 +684,31 @@ function QuestionPanel({
           </button>
         </div>
       </div>
-      {isFreeze && (
-        <label className="qfreeze">
-          <input
-            type="checkbox"
-            checked={freezeDrained}
-            onChange={(e) => onToggleDrained(e.target.checked)}
-          />
-          System was drained for winter (halve effect)
-        </label>
+      {isMatrix ? (
+        <MatrixQuestion
+          question={question}
+          answer={answer}
+          onSetCell={onSetCell}
+          onToggleDrained={onToggleDrained}
+        />
+      ) : (
+        <div className="opts">
+          {question.options.map((opt, i) => {
+            const selected = answer === i;
+            return (
+              <button
+                key={i}
+                type="button"
+                className={`opt ${selected ? 'selected' : ''}`}
+                onClick={() => onAnswer(i)}
+              >
+                <span className="dot">{selected ? '●' : '○'}</span>
+                <span>{opt.label}</span>
+              </button>
+            );
+          })}
+        </div>
       )}
-      <div className="opts">
-        {question.options.map((opt, i) => {
-          const selected = answer === i;
-          return (
-            <button
-              key={i}
-              type="button"
-              className={`opt ${selected ? 'selected' : ''}`}
-              onClick={() => onAnswer(i)}
-            >
-              <span className="dot">{selected ? '●' : '○'}</span>
-              <span>{opt.label}</span>
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }
@@ -604,13 +716,14 @@ function QuestionPanel({
 // ============ RANK PANEL ============
 function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
   const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? ranked : ranked.slice(0, 8);
+  const visible = showAll ? ranked : ranked.slice(0, 5);
   return (
     <div>
       <div className="rank">
-        {visible.map((r, i) => {
+        {visible.map((r) => {
           const meta = RC[r.id];
           const active = activeRC === r.id;
+          const colour = pctColor(r.pct, severityT[r.id]);
           return (
             <button
               key={r.id}
@@ -622,20 +735,17 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
               <div style={{ minWidth: 0 }}>
                 <div className="label">{meta.label}</div>
                 <div className="bar">
-                  <div style={{ width: r.pct + '%', background: sevColor(severityT[r.id]) }} />
+                  <div style={{ width: r.pct + '%', background: colour }} />
                 </div>
               </div>
-              <span
-                className="pct mono"
-                style={{ color: sevColor(Math.min(1, severityT[r.id] + 0.1)) }}
-              >
+              <span className="pct mono" style={{ color: colour }}>
                 {r.pct.toFixed(1)}%
               </span>
             </button>
           );
         })}
       </div>
-      {ranked.length > 8 && (
+      {ranked.length > 5 && (
         <button type="button" className="rank-more" onClick={() => setShowAll((s) => !s)}>
           {showAll ? '▲ collapse' : `▼ show all ${ranked.length}`}
         </button>
@@ -666,6 +776,43 @@ function RecommendationPanel({ recs, onSelect, max }) {
   );
 }
 
+// ============ RESET MODAL ============
+function ResetModal({ onCancel, onConfirm }) {
+  const cancelRef = useRef(null);
+  useEffect(() => {
+    cancelRef.current && cancelRef.current.focus();
+    const onKey = (e) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onCancel]);
+  return (
+    <div className="modal-backdrop" onClick={onCancel}>
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reset-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 id="reset-title">Start over?</h3>
+        <p>
+          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
+        </p>
+        <div className="row">
+          <button ref={cancelRef} type="button" className="btn" onClick={onCancel}>
+            Keep my answers
+          </button>
+          <button type="button" className="btn btn-primary" onClick={onConfirm}>
+            Reset everything
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ============ HOOK ============
 function useIsMobile(breakpoint = 760) {
   const [m, setM] = useState(() =>
@@ -685,7 +832,7 @@ function App() {
   const [activeQuestionId, setActiveQuestionId] = useState(QUESTIONS[0].id);
   const [activeStage, setActiveStage] = useState(1);
   const [activeRC, setActiveRC] = useState(null);
-  const [freezeDrained, setFreezeDrained] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const isMobile = useIsMobile(760);
 
   const scores = useMemo(() => {
@@ -693,17 +840,32 @@ function App() {
     ALL_IDS.forEach((id) => {
       s[id] = RC[id].baseline;
     });
-    Object.entries(answers).forEach(([qid, optIdx]) => {
-      const q = QUESTIONS.find((qq) => qq.id === qid);
-      if (!q || optIdx == null) return;
-      const opt = q.options[optIdx];
-      const halve = qid === 'E_freeze' && freezeDrained ? 0.5 : 1;
-      Object.entries(opt.effects).forEach(([rc, delta]) => {
-        s[rc] = (s[rc] || 0) + delta * halve;
-      });
+    QUESTIONS.forEach((q) => {
+      const ans = answers[q.id];
+      if (ans === undefined || ans === null) return;
+      if (q.type === 'matrix') {
+        const rowAns = ans.rows || {};
+        const drained = ans.drained || {};
+        const colMul = Object.fromEntries(q.columns.map((c) => [c.id, c.mult]));
+        q.rows.forEach((row) => {
+          const colId = rowAns[row.id] || 'no';
+          const m = colMul[colId] || 0;
+          if (m === 0) return;
+          const halve = row.drainable && drained[row.id] ? 0.5 : 1;
+          Object.entries(row.effects).forEach(([rc, delta]) => {
+            s[rc] = (s[rc] || 0) + delta * m * halve;
+          });
+        });
+      } else {
+        const opt = q.options[ans];
+        if (!opt) return;
+        Object.entries(opt.effects).forEach(([rc, delta]) => {
+          s[rc] = (s[rc] || 0) + delta;
+        });
+      }
     });
     return s;
-  }, [answers, freezeDrained]);
+  }, [answers]);
 
   const ranked = useMemo(() => {
     const total = ALL_IDS.reduce((sum, id) => sum + Math.max(0, scores[id]), 0);
@@ -723,16 +885,44 @@ function App() {
     return t;
   }, [scores]);
 
+  const severityPct = useMemo(() => {
+    const m = {};
+    ranked.forEach((r) => {
+      m[r.id] = r.pct;
+    });
+    return m;
+  }, [ranked]);
+
   const top5 = useMemo(() => ranked.slice(0, 5).map((r) => r.id), [ranked]);
 
+  const isAnswered = (qid) => {
+    const a = answers[qid];
+    if (a === undefined || a === null) return false;
+    const q = QUESTIONS.find((qq) => qq.id === qid);
+    if (q?.type === 'matrix') {
+      return a.rows && Object.keys(a.rows).length > 0;
+    }
+    return true;
+  };
+
   const recommendations = useMemo(() => {
-    const unanswered = QUESTIONS.filter((q) => answers[q.id] == null);
+    const unanswered = QUESTIONS.filter((q) => !isAnswered(q.id));
     const scored = unanswered.map((q) => {
       let D = 0;
-      top5.forEach((rcId) => {
-        const deltas = q.options.map((o) => o.effects[rcId] || 0);
-        D += Math.max(...deltas) - Math.min(...deltas);
-      });
+      if (q.type === 'matrix') {
+        const mults = q.columns.map((c) => c.mult);
+        const spread = Math.max(...mults) - Math.min(...mults);
+        q.rows.forEach((row) => {
+          top5.forEach((rcId) => {
+            D += Math.abs(row.effects[rcId] || 0) * spread;
+          });
+        });
+      } else {
+        top5.forEach((rcId) => {
+          const deltas = q.options.map((o) => o.effects[rcId] || 0);
+          D += Math.max(...deltas) - Math.min(...deltas);
+        });
+      }
       return { q, D };
     });
     return scored
@@ -750,7 +940,7 @@ function App() {
     };
     QUESTIONS.forEach((q) => {
       sp[q.stage].total++;
-      if (answers[q.id] != null) sp[q.stage].answered++;
+      if (isAnswered(q.id)) sp[q.stage].answered++;
     });
     return sp;
   }, [answers]);
@@ -760,7 +950,31 @@ function App() {
   const isFirst = activeIdx <= 0;
   const isLast = activeIdx >= QUESTIONS.length - 1;
 
-  const setAnswer = (qid, optIdx) => setAnswers((p) => ({ ...p, [qid]: optIdx }));
+  const setSingleAnswer = (qid, optIdx) => setAnswers((p) => ({ ...p, [qid]: optIdx }));
+
+  const setMatrixCell = (qid, rowId, colId) =>
+    setAnswers((p) => {
+      const prev = p[qid] || { rows: {}, drained: {} };
+      return {
+        ...p,
+        [qid]: {
+          rows: { ...prev.rows, [rowId]: colId },
+          drained: prev.drained || {},
+        },
+      };
+    });
+
+  const setMatrixDrained = (qid, rowId, val) =>
+    setAnswers((p) => {
+      const prev = p[qid] || { rows: {}, drained: {} };
+      return {
+        ...p,
+        [qid]: {
+          rows: prev.rows || {},
+          drained: { ...(prev.drained || {}), [rowId]: val },
+        },
+      };
+    });
 
   const pickQuestion = (qid) => {
     setActiveQuestionId(qid);
@@ -776,7 +990,7 @@ function App() {
 
   const handleAnswer = (i) => {
     const currentId = activeQuestionId;
-    setAnswer(currentId, i);
+    setSingleAnswer(currentId, i);
     setTimeout(() => {
       const idx = QUESTIONS.findIndex((q) => q.id === currentId);
       if (idx >= 0 && idx < QUESTIONS.length - 1) {
@@ -785,61 +999,67 @@ function App() {
     }, 180);
   };
 
-  const reset = () => {
-    if (window.confirm('Clear all answers?')) {
-      setAnswers({});
-      setFreezeDrained(false);
-      setActiveRC(null);
-      setActiveQuestionId(QUESTIONS[0].id);
-      setActiveStage(1);
-    }
+  const handleSetCell = (rowId, colId) => setMatrixCell(activeQuestionId, rowId, colId);
+  const handleToggleDrained = (rowId, val) => setMatrixDrained(activeQuestionId, rowId, val);
+
+  const doReset = () => {
+    setAnswers({});
+    setActiveRC(null);
+    setActiveQuestionId(QUESTIONS[0].id);
+    setActiveStage(1);
+    setResetOpen(false);
+  };
+
+  const onPickStage = (s) => {
+    setActiveStage(s);
+    const first = QUESTIONS.find((q) => q.stage === s);
+    if (first) setActiveQuestionId(first.id);
   };
 
   return (
     <>
-      {/* DIAGRAM SECTION (no title, no subtitle) */}
-      <section className="sec">
+      <section className="sec sec-diagram">
         <div className="schem-wrap">
-          <SystemDiagram severityT={severityT} activeRC={activeRC} onPickRC={setActiveRC} />
+          <SystemDiagram
+            severityT={severityT}
+            severityPct={severityPct}
+            activeRC={activeRC}
+            onPickRC={setActiveRC}
+          />
           <div className="schem-legend">
             <span>
-              <span className="swatch dashed" /> control signal
+              <span className="swatch water" /> water
             </span>
             <span>
-              <span className="swatch dotted" /> 230 V power
+              <span className="swatch mains" /> 230 V mains
             </span>
             <span>
-              <span className="swatch water" /> water flow
+              <span className="swatch ctrl" /> 24 V control
             </span>
           </div>
         </div>
       </section>
 
-      {/* WORKBENCH */}
       <section className="sec">
         <div className="work">
-          {/* LEFT COLUMN: question panel + stage bar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: 0 }}>
-            <main className="panel">
-              <div className="bd">
-                <QuestionPanel
-                  question={activeQuestion}
-                  answer={answers[activeQuestionId]}
-                  onAnswer={handleAnswer}
-                  onReset={reset}
-                  freezeDrained={freezeDrained}
-                  onToggleDrained={setFreezeDrained}
-                  onNext={() => moveBy(1)}
-                  onPrev={() => moveBy(-1)}
-                  isFirst={isFirst}
-                  isLast={isLast}
-                />
-              </div>
-            </main>
-            <StageBar stages={stageProgress} activeStage={activeStage} onPick={setActiveStage} />
-          </div>
+          <main className="panel panel-question">
+            <div className="bd">
+              <QuestionPanel
+                question={activeQuestion}
+                answer={answers[activeQuestionId]}
+                onAnswer={handleAnswer}
+                onSetCell={handleSetCell}
+                onToggleDrained={handleToggleDrained}
+                onReset={() => setResetOpen(true)}
+                onNext={() => moveBy(1)}
+                onPrev={() => moveBy(-1)}
+                isFirst={isFirst}
+                isLast={isLast}
+              />
+            </div>
+            <StageBar stages={stageProgress} activeStage={activeStage} onPick={onPickStage} />
+          </main>
 
-          {/* RIGHT COLUMN: ranking + recs */}
           <aside style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: 0 }}>
             <div className="panel">
               <div className="hd">
@@ -870,6 +1090,8 @@ function App() {
           </aside>
         </div>
       </section>
+
+      {resetOpen && <ResetModal onCancel={() => setResetOpen(false)} onConfirm={doReset} />}
     </>
   );
 }

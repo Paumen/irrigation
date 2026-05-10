@@ -18,8 +18,14 @@
     { "id": "R7.3", "parent": "R7", "baseline": 0.7, "label": "Valve body / seal failure" },
     { "id": "R7.4", "parent": "R7", "baseline": 0.8, "label": "Valve misconfiguration" },
     { "id": "R8.1", "parent": "R8", "baseline": 1.1, "label": "Zone hoses 25mm / fitting damage" },
-    { "id": "R8.2", "parent": "R8", "baseline": 0.9, "label": "Zone hades 25mm Air / debris clog" },
-    { "id": "R9.1", "parent": "R9", "baseline": 1.1, "label": "Sprinkler debris / nozzle" }
+    { "id": "R8.2", "parent": "R8", "baseline": 0.9, "label": "Zone hoses 25mm air / debris clog" },
+    { "id": "R9.1", "parent": "R9", "baseline": 1.1, "label": "Sprinkler debris / nozzle" },
+    {
+      "id": "R9.2",
+      "parent": "R9",
+      "baseline": 1.0,
+      "label": "Sprinkler closed or misconfigured (manual shutoff, rotor arc/radius)"
+    }
   ],
   "questions": [
     {
@@ -76,10 +82,10 @@
       "group": "Component ages",
       "text": "Age of rotors / sprinklers",
       "options": [
-        { "label": "0–4 yrs", "effects": { "R9": -0.2 } },
+        { "label": "0–4 yrs", "effects": { "R9.1": -0.2, "R9.2": -0.12 } },
         { "label": "4–8 yrs", "effects": {} },
-        { "label": "8–12 yrs", "effects": { "R9": 0.2 } },
-        { "label": "12+ yrs", "effects": { "R9": 0.4 } }
+        { "label": "8–12 yrs", "effects": { "R9.1": 0.2, "R9.2": 0.12 } },
+        { "label": "12+ yrs", "effects": { "R9.1": 0.4, "R9.2": 0.24 } }
       ]
     },
 
@@ -135,7 +141,8 @@
             "R7.2": 0.2,
             "R7.4": 0.2,
             "R8.2": 0.2,
-            "R9.1": 0.2
+            "R9.1": 0.2,
+            "R9.2": 0.2
           }
         },
         { "label": "Strong, then weak", "effects": { "R4.1": 0.6, "R4.2": 0.6 } },
@@ -236,7 +243,7 @@
       "group": "Symptoms",
       "text": "What do you hear when valve activates?",
       "options": [
-        { "label": "Clear click", "effects": { "R7.2": 0.4, "R8": 0.4, "R9": 0.4 } },
+        { "label": "Clear click", "effects": { "R7.2": 0.4, "R8": 0.4, "R9.1": 0.4, "R9.2": 0.6 } },
         { "label": "Buzz / hum, no click", "effects": { "R7.1": 1, "R6": 1 } },
         {
           "label": "Weak click",
@@ -266,7 +273,14 @@
       "options": [
         {
           "label": "Sudden, every time since",
-          "effects": { "R2.2": 0.2, "R3.1": 0.2, "R5.1": 0.2, "R6.3": 0.2, "R7.1": 0.2 }
+          "effects": {
+            "R2.2": 0.2,
+            "R3.1": 0.2,
+            "R5.1": 0.2,
+            "R6.3": 0.2,
+            "R7.1": 0.2,
+            "R9.2": 0.3
+          }
         },
         {
           "label": "Sudden, intermittent since",
@@ -274,7 +288,7 @@
         },
         {
           "label": "Gradual, now every time",
-          "effects": { "R4": 0.4, "R7.2": 0.4, "R7.3": 0.4, "R9.1": 0.4, "R5.2": 0.4 }
+          "effects": { "R4": 0.4, "R7.2": 0.4, "R7.3": 0.4, "R9.1": 0.4, "R9.2": 0.12, "R5.2": 0.4 }
         },
         { "label": "Gradual, still intermittent", "effects": { "R4": 0.2, "R7": 0.2, "R6": 0.2 } },
         { "label": "Intermittent from start", "effects": { "R1.1": 0.2, "R6": 0.2 } },
@@ -319,231 +333,74 @@
     },
 
     {
-      "id": "E_pump",
+      "id": "E_service",
       "stage": 3,
+      "type": "matrix",
       "group": "Events",
-      "text": "Recent pump service / replacement",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R4": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R4": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R4": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R4": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_relay",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent pump-start-relay service",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R3": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R3": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R3": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R3": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_ctrl",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent controller service / replacement",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R1.1": 1, "R2.2": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R1.1": 0.6, "R2.2": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R1.1": 0.4, "R2.2": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R1.1": 0.2, "R2.2": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_app",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent app / wifi / settings change",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R1": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R1": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R1": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R1": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_valves",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent valve service / replacement",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R7": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R7": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R7": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R7": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_spr",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent sprinkler service / replacement",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R9": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R9": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R9": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R9": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_zhose",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent zone hose / fittings work",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R8": 1, "R5": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R8": 0.6, "R5": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R8": 0.4, "R5": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R8": 0.2, "R5": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_wiring",
-      "stage": 3,
-      "group": "Events",
-      "text": "Recent system wiring work",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R6": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R6": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R6": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R6": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_storm",
-      "stage": 3,
-      "group": "Events",
-      "text": "Storm / lightning",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R2.2": 1, "R6": 1, "R1.2": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R2.2": 0.6, "R6": 0.6, "R1.2": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R2.2": 0.4, "R6": 0.4, "R1.2": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R2.2": 0.2, "R6": 0.2, "R1.2": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_freeze",
-      "stage": 3,
-      "group": "Events",
-      "text": "Freeze (toggle drained → halve effect)",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R5.1": 1, "R7.3": 1, "R8.1": 1 } },
+      "text": "Recent service or work — for each, how did the issue relate to it?",
+      "columns": [
+        { "id": "no", "label": "Didn't happen / N/A", "mult": 0.0 },
+        { "id": "right", "label": "Started right after", "mult": 1.0 },
+        { "id": "days", "label": "Started days/weeks after", "mult": 0.6 },
+        { "id": "worse", "label": "Worsened (same speed)", "mult": 0.0 },
+        { "id": "faster", "label": "Worsened (faster)", "mult": 0.4 },
+        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 },
+        { "id": "unknown", "label": "Don't know", "mult": 0.0 }
+      ],
+      "rows": [
+        { "id": "pump", "label": "Pump service / replacement", "effects": { "R4": 1 } },
+        { "id": "relay", "label": "Pump-start-relay service", "effects": { "R3": 1 } },
         {
-          "label": "Started days/weeks after",
-          "effects": { "R5.1": 0.6, "R7.3": 0.6, "R8.1": 0.6 }
+          "id": "ctrl",
+          "label": "Controller service / replacement",
+          "effects": { "R1.1": 1, "R2.2": 1 }
         },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R5.1": 0.4, "R7.3": 0.4, "R8.1": 0.4 } },
+        { "id": "app", "label": "App / wifi / settings change", "effects": { "R1": 1 } },
+        { "id": "valves", "label": "Valve service / replacement", "effects": { "R7": 1 } },
         {
-          "label": "Briefly fixed, returned",
-          "effects": { "R5.1": 0.2, "R7.3": 0.2, "R8.1": 0.2 }
+          "id": "spr",
+          "label": "Sprinkler service / replacement",
+          "effects": { "R9.1": 0.6, "R9.2": 1.0 }
         },
-        { "label": "Don't know", "effects": {} }
+        { "id": "zhose", "label": "Zone hose / fittings work", "effects": { "R8": 1, "R5": 1 } },
+        { "id": "wiring", "label": "System wiring work", "effects": { "R6": 1 } }
       ]
     },
     {
-      "id": "E_heat",
+      "id": "E_external",
       "stage": 3,
+      "type": "matrix",
       "group": "Events",
-      "text": "Heatwave / drought",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R4.1": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R4.1": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R4.1": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R4.1": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_outage",
-      "stage": 3,
-      "group": "Events",
-      "text": "Power outage",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R1.2": 1, "R2.3": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R1.2": 0.6, "R2.3": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R1.2": 0.4, "R2.3": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R1.2": 0.2, "R2.3": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_pests",
-      "stage": 3,
-      "group": "Events",
-      "text": "Pests / rodents",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
-        { "label": "Started right after", "effects": { "R5.1": 1, "R8.1": 1, "R6": 1 } },
-        { "label": "Started days/weeks after", "effects": { "R5.1": 0.6, "R8.1": 0.6, "R6": 0.6 } },
-        { "label": "Worsened (same speed)", "effects": {} },
-        { "label": "Worsened (faster)", "effects": { "R5.1": 0.4, "R8.1": 0.4, "R6": 0.4 } },
-        { "label": "Briefly fixed, returned", "effects": { "R5.1": 0.2, "R8.1": 0.2, "R6": 0.2 } },
-        { "label": "Don't know", "effects": {} }
-      ]
-    },
-    {
-      "id": "E_dig",
-      "stage": 3,
-      "group": "Events",
-      "text": "Digging / landscaping / vehicle",
-      "options": [
-        { "label": "Didn't happen / N/A", "effects": {} },
+      "text": "External events — for each, how did the issue relate to it?",
+      "columns": [
+        { "id": "no", "label": "Didn't happen / N/A", "mult": 0.0 },
+        { "id": "right", "label": "Started right after", "mult": 1.0 },
+        { "id": "days", "label": "Started days/weeks after", "mult": 0.6 },
+        { "id": "worse", "label": "Worsened (same speed)", "mult": 0.0 },
+        { "id": "faster", "label": "Worsened (faster)", "mult": 0.4 },
+        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 },
+        { "id": "unknown", "label": "Don't know", "mult": 0.0 }
+      ],
+      "rows": [
         {
-          "label": "Started right after",
+          "id": "storm",
+          "label": "Storm / lightning",
+          "effects": { "R2.2": 1, "R6": 1, "R1.2": 1 }
+        },
+        {
+          "id": "freeze",
+          "label": "Freeze",
+          "effects": { "R5.1": 1, "R7.3": 1, "R8.1": 1 },
+          "drainable": true
+        },
+        { "id": "heat", "label": "Heatwave / drought", "effects": { "R4.1": 1 } },
+        { "id": "outage", "label": "Power outage", "effects": { "R1.2": 1, "R2.3": 1 } },
+        { "id": "pests", "label": "Pests / rodents", "effects": { "R5.1": 1, "R8.1": 1, "R6": 1 } },
+        {
+          "id": "dig",
+          "label": "Digging / landscaping / vehicle",
           "effects": { "R5.1": 1, "R6.1": 1, "R6.2": 1, "R8.1": 1 }
-        },
-        {
-          "label": "Started days/weeks after",
-          "effects": { "R5.1": 0.6, "R6.1": 0.6, "R6.2": 0.6, "R8.1": 0.6 }
-        },
-        { "label": "Worsened (same speed)", "effects": {} },
-        {
-          "label": "Worsened (faster)",
-          "effects": { "R5.1": 0.4, "R6.1": 0.4, "R6.2": 0.4, "R8.1": 0.4 }
-        },
-        {
-          "label": "Briefly fixed, returned",
-          "effects": { "R5.1": 0.2, "R6.1": 0.2, "R6.2": 0.2, "R8.1": 0.2 }
-        },
-        { "label": "Don't know", "effects": {} }
+        }
       ]
     },
 
