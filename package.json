@@ -2,7 +2,7 @@
   "name": "irrigation",
   "private": true,
   "scripts": {
-    "build": "esbuild irrigation.jsx --minify --outfile=irrigation.js"
+    "build": "esbuild irrigation.jsx --bundle --minify --outfile=irrigation.js"
   },
   "devDependencies": {
     "esbuild": "^0.24.0"
