@@ -25,6 +25,9 @@
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
+  --text-4xs: 8.5px;
+  --text-3xs: 9px;
+  --text-2xs: 12px;
   --text-xs: 14px;
   --text-sm: 14px;
   --text-md: 14px;
@@ -163,7 +166,7 @@ section.sec {
 .schem-wrap svg .lbl {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-l);
-  font-size: 12px;
+  font-size: var(--text-2xs);
   fill: var(--c-neutral-5);
   letter-spacing: 0.05em;
 }
@@ -171,14 +174,14 @@ section.sec {
 .schem-wrap svg .pip {
   font-family: var(--font-mono);
   font-weight: var(--font-weight-m);
-  font-size: 9px;
+  font-size: var(--text-3xs);
   pointer-events: none;
 }
 
 .schem-wrap svg .ln-lbl {
   font-family: var(--font-mono);
   font-weight: var(--font-weight-m);
-  font-size: 8.5px;
+  font-size: var(--text-4xs);
   letter-spacing: 0.06em;
   pointer-events: none;
 }
@@ -788,7 +791,7 @@ section.sec {
   }
 
   .matrix-head {
-    font-size: 8.5px;
+    font-size: var(--text-4xs);
   }
 
   .matrix-radio {
