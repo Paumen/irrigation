@@ -5,11 +5,17 @@ const { useState, useMemo, useEffect } = React;
 // ============ ROOT CAUSES ============
 const RC = Object.fromEntries(DATA.causes.map(c => [c.id, c]));
 const ALL_IDS = Object.keys(RC);
+// targetId → [leaf ids]; built once so eff() is a plain lookup for both leaf and group targets.
+const TARGETS = {};
+ALL_IDS.forEach(id => {
+  TARGETS[id] = [id];
+  const p = RC[id].parent;
+  if (p) (TARGETS[p] ||= []).push(id);
+});
 const eff = (m) => {
   const r = {};
   Object.entries(m).forEach(([t,d]) => {
-    const targets = RC[t] ? [t] : ALL_IDS.filter(id => RC[id].parent === t);
-    targets.forEach(rc => { r[rc] = (r[rc]||0) + d; });
+    (TARGETS[t] || []).forEach(rc => { r[rc] = (r[rc]||0) + d; });
   });
   return r;
 };
