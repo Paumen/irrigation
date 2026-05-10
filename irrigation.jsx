@@ -255,11 +255,12 @@ function Icon({ name, cx, cy, size, fill = '#1a2238' }) {
 // Lays a row of icons centred on (cx, cy). Sizes shrink as count grows so the
 // 4-valve row stays inside the box. NODE_ICON_LAYOUT is keyed by icon count;
 // >4 falls back to the 4-icon row.
+const ICON_SIZE = 18;
 const NODE_ICON_LAYOUT = {
-  1: { size: 26, gap: 0 },
-  2: { size: 24, gap: 30 },
-  3: { size: 20, gap: 26 },
-  4: { size: 18, gap: 24 },
+  1: { size: ICON_SIZE, gap: 0 },
+  2: { size: ICON_SIZE, gap: 30 },
+  3: { size: ICON_SIZE, gap: 26 },
+  4: { size: ICON_SIZE, gap: 24 },
 };
 function NodeIcons({ icons, cx, cy }) {
   if (!icons?.length) return null;
@@ -277,7 +278,7 @@ function NodeIcons({ icons, cx, cy }) {
 // Inline icon + text token (e.g. ⚡ 230 V). (x, y) is the text baseline; the
 // icon sits flush-left of x with a fixed gap so call-sites only think about
 // where the text goes, not the icon's pixel offset.
-function LineLabel({ icon, text, x, y, fill, size = 11, gap = 2 }) {
+function LineLabel({ icon, text, x, y, fill, size = ICON_SIZE, gap = 2 }) {
   return (
     <g>
       <Icon name={icon} cx={x - size / 2 - gap} cy={y - 3} size={size} fill={fill} />
@@ -487,7 +488,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         strokeLinecap="round"
       />
       {/* Wi-Fi glyph centred on the link */}
-      <Icon name="ms:wifi" cx={184} cy={26} size={14} fill="var(--c-fg-mute)" />
+      <Icon name="ms:wifi" cx={184} cy={26} size={ICON_SIZE} fill="var(--c-fg-mute)" />
 
       {/* ── 24 V control wires (rust dashed) ── */}
       <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3" strokeLinecap="round">
@@ -495,22 +496,8 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
         <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
       </g>
-      <LineLabel
-        icon="mdi:lightning-bolt-outline"
-        text="24 V"
-        x={346}
-        y={30}
-        size={10}
-        fill="#b14a26"
-      />
-      <LineLabel
-        icon="mdi:lightning-bolt-outline"
-        text="24 V"
-        x={250}
-        y={108}
-        size={10}
-        fill="#b14a26"
-      />
+      <LineLabel icon="mdi:lightning-bolt-outline" text="24 V" x={346} y={30} fill="#b14a26" />
+      <LineLabel icon="mdi:lightning-bolt-outline" text="24 V" x={250} y={108} fill="#b14a26" />
 
       {/* ── 230 V mains (slate solid + bolt) RELAY → PUMP ── */}
       <line

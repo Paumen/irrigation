@@ -130,23 +130,14 @@ body {
   height: auto;
 }
 
-.lbl {
-  font-family: var(--font-sans);
-  font-size: var(--text-l);
-  font-weight: var(--font-weight-bold);
-  fill: var(--c-fg-strong);
-}
-
-.pip {
-  font-family: var(--font-mono);
-  font-size: var(--text-l);
-  pointer-events: none;
-}
-
+.lbl,
+.pip,
 .ln-lbl {
   font-family: var(--font-mono);
   font-size: var(--text-l);
+  font-weight: 400;
   pointer-events: none;
+  fill: var(--c-fg-strong);
 }
 
 .schem-legend {
