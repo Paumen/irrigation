@@ -36,13 +36,11 @@
   --font-weight-l: 800;
 
   /* ─── Spacing ────────────────────────────────────── */
-  --sp-px: 1px;
-  --sp-2px: 2px;
-  --sp-3px: 3px;
-  --sp-1: 6px;
-  --sp-2: 8px;
-  --sp-3: 10px;
-  --sp-4: 12px;
+  --sp-xs: 1px;
+  --sp-s: 2px;
+  --sp-m: 4px;
+  --sp-l: 8px;
+  --sp-xl: 12px;
 
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
@@ -77,7 +75,7 @@ body {
 }
 
 body {
-  padding: var(--sp-4) var(--sp-4) calc(var(--sp-4) * 4);
+  padding: var(--sp-xl) var(--sp-xl) calc(var(--sp-xl) * 4);
   font-family: var(--font-sans);
   background-image:
     linear-gradient(var(--c-gradient-neutral-1) var(--line-width-s), transparent var(--line-width-s)),
@@ -98,7 +96,7 @@ body {
   display: inline-flex;
   place-items: center;
   height: 26px;
-  padding: 0 var(--sp-3);
+  padding: 0 var(--sp-xl);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--c-neutral-5);
@@ -115,7 +113,7 @@ body {
 /* ─── SECTION ────────────────────────────────────── */
 section.sec {
   position: relative;
-  padding: var(--sp-2) var(--sp-4);
+  padding: var(--sp-l) var(--sp-xl);
   border-bottom: var(--line-width-s) dashed var(--c-gradient-neutral-3);
 }
 
@@ -126,7 +124,7 @@ section.sec:last-child {
 /* ─── SCHEMATIC ──────────────────────────────────── */
 .schem-wrap {
   position: relative;
-  padding: var(--sp-4);
+  padding: var(--sp-xl);
   background:
     repeating-linear-gradient(0deg, transparent 0 23px, var(--c-gradient-neutral-1) 23px 24px),
     repeating-linear-gradient(90deg, transparent 0 23px, var(--c-gradient-neutral-1) 23px 24px), var(--bg-neutral-2);
@@ -142,9 +140,9 @@ section.sec:last-child {
 .schem-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2) var(--sp-4);
+  gap: var(--sp-l) var(--sp-xl);
   place-items: center;
-  margin: var(--sp-3) 0 0;
+  margin: var(--sp-xl) 0 0;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--c-neutral-4);
@@ -154,7 +152,7 @@ section.sec:last-child {
   display: inline-block;
   width: 28px;
   height: 4px;
-  margin: 0 var(--sp-1) 0 0;
+  margin: 0 var(--sp-l) 0 0;
   vertical-align: middle;
 }
 
@@ -183,7 +181,7 @@ section.sec:last-child {
 .work {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--sp-1);
+  gap: var(--sp-l);
 }
 
 @media (width >= 1080px) {
@@ -201,10 +199,10 @@ section.sec:last-child {
 
 .panel > .hd {
   display: flex;
-  gap: var(--sp-2);
+  gap: var(--sp-l);
   place-content: space-between;
   place-items: center;
-  padding: var(--sp-1) var(--sp-3);
+  padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-l);
@@ -224,7 +222,7 @@ section.sec:last-child {
 }
 
 .panel > .bd {
-  padding: var(--sp-3) var(--sp-4);
+  padding: var(--sp-xl);
 }
 
 /* ─── STAGE TABS ─────────────────────────────────── */
@@ -237,7 +235,7 @@ section.sec:last-child {
 
 .stages button {
   position: relative;
-  padding: var(--sp-px) var(--sp-2);
+  padding: var(--sp-xs) var(--sp-l);
   overflow: hidden;
   font-family: var(--font-mono);
   text-align: left;
@@ -252,7 +250,7 @@ section.sec:last-child {
   position: relative;
   z-index: var(--z-base);
   display: flex;
-  gap: var(--sp-1);
+  gap: var(--sp-l);
   place-content: space-between;
   place-items: center;
 }
@@ -302,15 +300,15 @@ section.sec:last-child {
 /* ─── QUESTION PANEL ─────────────────────────────── */
 .qhead {
   display: flex;
-  gap: var(--sp-2);
+  gap: var(--sp-l);
   place-content: space-between;
   place-items: center;
-  margin: 0 0 var(--sp-3);
+  margin: 0 0 var(--sp-xl);
 }
 
 .qnav {
   display: flex;
-  gap: var(--sp-1);
+  gap: var(--sp-l);
 }
 
 .qnav button {
@@ -332,7 +330,7 @@ section.sec:last-child {
 }
 
 .qtitle {
-  margin: var(--sp-1) 0 var(--sp-4);
+  margin: var(--sp-l) 0 var(--sp-xl);
   font-family: var(--font-sans);
   font-size: var(--text-lg);
   font-weight: var(--font-weight-m);
@@ -343,10 +341,10 @@ section.sec:last-child {
 
 .qfreeze {
   display: inline-flex;
-  gap: var(--sp-1);
+  gap: var(--sp-l);
   place-items: center;
-  padding: var(--sp-1) var(--sp-2);
-  margin: 0 0 var(--sp-3);
+  padding: var(--sp-l);
+  margin: 0 0 var(--sp-xl);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--c-neutral-4);
@@ -363,15 +361,15 @@ section.sec:last-child {
 .opts {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
+  gap: var(--sp-l);
 }
 
 .opt {
   display: grid;
   grid-template-columns: 22px 1fr;
-  gap: var(--sp-2);
+  gap: var(--sp-l);
   place-items: center stretch;
-  padding: var(--sp-2) var(--sp-4);
+  padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
   font-size: var(--text-md);
   line-height: var(--line-height);
@@ -407,11 +405,11 @@ section.sec:last-child {
 .recs {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
+  gap: var(--sp-l);
 }
 
 .rec {
-  padding: var(--sp-2) var(--sp-3);
+  padding: var(--sp-l) var(--sp-xl);
   text-align: left;
   background: var(--bg-neutral-1);
   border: var(--line-width-s) solid var(--c-gradient-neutral-3);
@@ -424,7 +422,7 @@ section.sec:last-child {
 
 .rec .top {
   display: flex;
-  gap: var(--sp-2);
+  gap: var(--sp-l);
   place-items: baseline;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -446,14 +444,14 @@ section.sec:last-child {
 }
 
 .rec .qq {
-  margin: var(--sp-3px) 0 0;
+  margin: var(--sp-m) 0 0;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: var(--line-height);
 }
 
 .rec.empty {
-  padding: var(--sp-2) var(--sp-3);
+  padding: var(--sp-l) var(--sp-xl);
   font-size: var(--text-sm);
   font-style: italic;
   color: var(--c-neutral-4);
@@ -465,15 +463,15 @@ section.sec:last-child {
 .rank {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2px);
+  gap: var(--sp-s);
 }
 
 .rank-row {
   display: grid;
   grid-template-columns: 50px 1fr 50px;
-  gap: var(--sp-3);
+  gap: var(--sp-xl);
   place-items: center stretch;
-  padding: var(--sp-1) var(--sp-2);
+  padding: var(--sp-l);
   text-align: left;
   border-bottom: var(--line-width-s) dotted var(--c-gradient-neutral-2);
 }
@@ -520,7 +518,7 @@ section.sec:last-child {
 }
 
 .rank-more {
-  padding: var(--sp-1);
+  padding: var(--sp-l);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--c-neutral-4);
@@ -536,11 +534,11 @@ section.sec:last-child {
 /* ─── RESPONSIVE ─────────────────────────────────── */
 @media (width <= 760px) {
   body {
-    padding: var(--sp-3) var(--sp-1) calc(var(--sp-4) * 3);
+    padding: var(--sp-xl) var(--sp-l) calc(var(--sp-xl) * 3);
   }
 
   .schem-wrap {
-    padding: var(--sp-2);
+    padding: var(--sp-l);
   }
 
   .schem-wrap svg {
@@ -550,11 +548,11 @@ section.sec:last-child {
   }
 
   .schem-legend {
-    gap: var(--sp-1) var(--sp-4);
+    gap: var(--sp-l) var(--sp-xl);
   }
 
   section.sec {
-    padding: var(--sp-4);
+    padding: var(--sp-xl);
   }
 
   .qtitle {
@@ -564,6 +562,6 @@ section.sec:last-child {
 
 @media (width <= 420px) {
   .stages button {
-    padding: var(--sp-1);
+    padding: var(--sp-l);
   }
 }
