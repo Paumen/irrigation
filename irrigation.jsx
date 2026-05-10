@@ -316,7 +316,7 @@ function QuestionPanel({ question, answer, onAnswer, freezeDrained, onToggleDrai
     <div>
       <div className="qhead">
         <div className="qtitle" style={{flex:1, margin:0}}>{question.text}</div>
-        <button className="btn danger" type="button" onClick={onReset}>Reset</button>
+        <button className="btn" type="button" onClick={onReset}>Reset</button>
         <div className="qnav">
           <button type="button" onClick={onPrev} disabled={isFirst} title="Previous">‹</button>
           <button type="button" onClick={onNext} disabled={isLast}  title="Next">›</button>
