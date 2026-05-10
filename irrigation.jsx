@@ -759,7 +759,8 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
         {visible.map((r) => {
           const meta = RC[r.id];
           const active = activeRC === r.id;
-          const colour = pctColor(r.pct, severityT[r.id]);
+          const pct = Math.round(r.pct);
+          const colour = pctColor(pct, severityT[r.id]);
           return (
             <button
               key={r.id}
@@ -775,7 +776,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
                 </div>
               </div>
               <span className="pct mono" style={{ color: colour }}>
-                {Math.round(r.pct)}%
+                {pct}%
               </span>
             </button>
           );
