@@ -45,8 +45,7 @@ const FOOTER_TOP = 46;
 // Row 2: VALVES central below. Row 3: four SPRINKLER zones evenly spread.
 // Per-zone sprinkler icons reflect hardware mix from the spec:
 //   Z1 i20+MP+MP, Z2 i20+i20, Z3 i20+i20, Z4 MP+MP+MP.
-// mdi:sprinkler renders as a Hunter-style fixed rotor; ms:sprinkler is the
-// MP-rotator multi-stream pattern.
+// One icon per head: mdi:sprinkler = Hunter I-20 rotor, ms:sprinkler = MP rotator.
 const NODES = [
   {
     key: 'sw',
@@ -105,7 +104,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
-    icons: ['ms:sprinkler'],
+    icons: ['mdi:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
     pips: ['R9.1', 'R9.2'],
   },
   {
@@ -115,7 +114,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
-    icons: ['mdi:sprinkler'],
+    icons: ['mdi:sprinkler', 'mdi:sprinkler'],
     pips: ['R9.1', 'R9.2'],
   },
   {
@@ -125,7 +124,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
-    icons: ['mdi:sprinkler'],
+    icons: ['mdi:sprinkler', 'mdi:sprinkler'],
     pips: ['R9.1', 'R9.2'],
   },
   {
@@ -135,7 +134,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
-    icons: ['ms:sprinkler'],
+    icons: ['ms:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
     pips: ['R9.1', 'R9.2'],
   },
 ];
