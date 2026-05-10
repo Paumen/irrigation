@@ -558,7 +558,7 @@ function StageBar({ stages, activeStage, onPick }) {
                 {sp.answered}/{sp.total}
               </span>
             </span>
-            <span className="fill" style={{ '--sp-w': pct + '%' }} />
+            <span className="fill" style={{ width: pct + '%' }} />
           </button>
         );
       })}
@@ -702,13 +702,12 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
             type="button"
             className={`rank-row ${cls} ${active ? 'active' : ''}`}
             onClick={() => onPickRC(r.id)}
-            style={{ '--sp-w': r.pct + '%' }}
           >
             <span className="id">{r.id}</span>
             <div className="rank-row-body">
               <div className="label">{meta.label}</div>
               <div className="bar">
-                <div />
+                <div style={{ width: r.pct + '%' }} />
               </div>
             </div>
             <span className="pct">{pct}%</span>

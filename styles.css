@@ -464,7 +464,6 @@ section {
   inset-block: 0;
   inset-inline-start: 0;
   z-index: 0;
-  width: var(--sp-w, 0);
   height: auto;
   background: var(--c-gradient-accent-1);
   transition: width var(--time);
@@ -672,7 +671,6 @@ section {
 }
 
 .rank-row .bar > div {
-  width: var(--sp-w, 0);
   height: 100%;
   background: var(--c-sev-bg);
 }
