@@ -471,7 +471,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" fill="#4a5878" />
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--c-fg-mute)" />
         </marker>
       </defs>
 
@@ -481,13 +481,13 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         y1="36"
         x2="202"
         y2="36"
-        stroke="#4a5878"
+        stroke="var(--c-fg-mute)"
         strokeWidth="1.2"
         strokeDasharray="2 3"
         strokeLinecap="round"
       />
       {/* Wi-Fi glyph centred on the link */}
-      <Icon name="ms:wifi" cx={184} cy={26} size={14} fill="#4a5878" />
+      <Icon name="ms:wifi" cx={184} cy={26} size={14} fill="var(--c-fg-mute)" />
 
       {/* ── 24 V control wires (rust dashed) ── */}
       <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3" strokeLinecap="round">
@@ -518,11 +518,11 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         y1="36"
         x2="534"
         y2="36"
-        stroke="#4a5878"
+        stroke="var(--c-fg-mute)"
         strokeWidth="2.5"
         markerEnd="url(#arr-mains)"
       />
-      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} fill="#4a5878" />
+      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} fill="var(--c-fg-mute)" />
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
       <path
@@ -752,7 +752,13 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
               <b className="mono">{r.id}</b>
               <aside>
                 <strong>{meta.label}</strong>
-                <hr style={{ '--sp-bar': r.pct + '%', '--c-bar': colour }} />
+                <div
+                  role="progressbar"
+                  aria-valuenow={Math.round(r.pct)}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  style={{ '--sp-bar': r.pct + '%', '--c-bar': colour }}
+                />
               </aside>
               <small className="mono" style={{ color: colour }}>
                 {pct}%

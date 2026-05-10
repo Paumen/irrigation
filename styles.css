@@ -374,7 +374,7 @@ body {
   min-width: 0;
 }
 
-.rank-row hr {
+.rank-row [role='progressbar'] {
   position: relative;
   height: var(--px4);
   margin: var(--px2) 0 0;
@@ -383,7 +383,7 @@ body {
   border: var(--px1) solid var(--c-tint);
 }
 
-.rank-row hr::before {
+[role='progressbar']::before {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
