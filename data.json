@@ -53,18 +53,18 @@
       {"label":"12+ yrs","effects":{"R9":0.4}}
     ]},
 
-    {"id":"Q1","stage":2,"group":"Symptoms","text":"Q1. Scope of failure?","options":[
+    {"id":"Q1","stage":2,"group":"Symptoms","text":"Scope of failure?","options":[
       {"label":"All zones fail","effects":{"R1":0.2,"R2":0.2,"R3":0.2,"R4":0.2,"R5":0.2}},
       {"label":"Multiple zones (not all)","effects":{"R5":0.2,"R6.2":0.2,"R4":0.2}},
       {"label":"Single zone","effects":{"R6.1":0.2,"R6.3":0.2,"R7":0.2,"R8":0.2}},
       {"label":"One sprinkler in working zone","effects":{"R9":2}}
     ]},
-    {"id":"Q2","stage":2,"group":"Symptoms","text":"Q2. Same interface, same issue?","options":[
+    {"id":"Q2","stage":2,"group":"Symptoms","text":"Same interface, same issue?","options":[
       {"label":"Manual works, app has issues","effects":{"R1.1":2,"R1.3":2}},
       {"label":"Yes — nothing starts at all","effects":{"R2":0.2,"R3":0.2,"R6.3":0.2}},
       {"label":"Yes — both start something","effects":{"R4":0.2,"R5":0.2,"R7":0.2,"R8":0.2,"R9":0.2}}
     ]},
-    {"id":"Q3","stage":2,"group":"Symptoms","text":"Q3. How does water leave rotors?","options":[
+    {"id":"Q3","stage":2,"group":"Symptoms","text":"How does water leave rotors?","options":[
       {"label":"No water","effects":{"R1":0.6,"R2":0.6,"R3.1":0.6,"R4.2":0.6,"R6":0.6,"R7.1":0.6}},
       {"label":"Weak","effects":{"R4.1":0.2,"R4.2":0.2,"R5.2":0.2,"R6":0.2,"R7.2":0.2,"R7.4":0.2,"R8.2":0.2,"R9.1":0.2}},
       {"label":"Strong, then weak","effects":{"R4.1":0.6,"R4.2":0.6}},
@@ -75,38 +75,38 @@
       {"label":"Geyser-like pressure","effects":{"R5.1":0.4,"R8.1":0.4,"R9.1":0.4}},
       {"label":"Normal","effects":{"R1":0.6,"R4":-0.4,"R5":-0.4,"R6":-0.4,"R7":-0.4,"R8":-0.4,"R9":-0.4}}
     ]},
-    {"id":"Q4","stage":2,"group":"Symptoms","text":"Q4. Do you hear the pump start?","options":[
+    {"id":"Q4","stage":2,"group":"Symptoms","text":"Do you hear the pump start?","options":[
       {"label":"Pump runs","effects":{"R4":0.2,"R5":0.2,"R6":0.2,"R7":0.2,"R8":0.2,"R9":0.2}},
       {"label":"Pump silent / hums","effects":{"R3.1":1,"R4.2":1,"R1":1,"R2":1}}
     ]},
-    {"id":"Q5","stage":2,"group":"Symptoms","text":"Q5. If pump runs, does manual hose work?","options":[
+    {"id":"Q5","stage":2,"group":"Symptoms","text":"If pump runs, does manual hose work?","options":[
       {"label":"Strong, steady","effects":{"R5":0.4,"R6":0.4,"R7":0.4,"R8":0.4,"R9":0.4}},
       {"label":"Weak / sputtering / air-laden","effects":{"R4.1":0.2}},
       {"label":"None at all","effects":{"R4.1":0.6,"R4.2":0.6}}
     ]},
-    {"id":"Q6","stage":2,"group":"Symptoms","text":"Q6. Pump behavior on start?","options":[
+    {"id":"Q6","stage":2,"group":"Symptoms","text":"Pump behavior on start?","options":[
       {"label":"Starts smoothly, builds pressure","effects":{"R4.2":-0.5}},
       {"label":"Starts but won't build pressure","effects":{"R4.1":0.6,"R5.1":0.6,"R4.2":0.6}},
       {"label":"Hums / trips / won't start","effects":{"R4.2":1,"R3.1":1}},
       {"label":"Short-cycles on/off","effects":{"R5.1":0.4,"R4.1":0.4,"R4.2":0.4}}
     ]},
-    {"id":"Q7","stage":2,"group":"Symptoms","text":"Q7. Do you see water / wet ground?","options":[
+    {"id":"Q7","stage":2,"group":"Symptoms","text":"Do you see water / wet ground?","options":[
       {"label":"Along the main line route","effects":{"R5.1":2}},
       {"label":"Around a valve box","effects":{"R7.3":2,"R7.4":2}},
       {"label":"Along zone lines","effects":{"R8.1":2}},
       {"label":"Nothing visible","effects":{"R5.1":-0.6,"R7.3":-0.6,"R7.4":-0.6,"R8.1":-0.6}}
     ]},
-    {"id":"Q8","stage":2,"group":"Symptoms","text":"Q8. What do you hear when valve activates?","options":[
+    {"id":"Q8","stage":2,"group":"Symptoms","text":"What do you hear when valve activates?","options":[
       {"label":"Clear click","effects":{"R7.2":0.4,"R8":0.4,"R9":0.4}},
       {"label":"Buzz / hum, no click","effects":{"R7.1":1,"R6":1}},
       {"label":"Weak click","effects":{"R6.1":0.2,"R6.2":0.2,"R6.3":0.2,"R7.1":0.2}},
       {"label":"Silent","effects":{"R6.1":1,"R6.2":1,"R6.3":1,"R7.1":1}}
     ]},
-    {"id":"Q9","stage":2,"group":"Symptoms","text":"Q9. Manually open valve at solenoid does zone run correctly?","options":[
+    {"id":"Q9","stage":2,"group":"Symptoms","text":"Manually open valve at solenoid does zone run correctly?","options":[
       {"label":"Yes, zone runs","effects":{"R6":0.6,"R7.1":0.6}},
       {"label":"No flow even manually","effects":{"R7.2":0.6,"R7.3":0.6,"R8":0.6,"R5":0.6}}
     ]},
-    {"id":"Q11","stage":2,"group":"Symptoms","text":"Q11. How did the problem progress?","options":[
+    {"id":"Q11","stage":2,"group":"Symptoms","text":"How did the problem progress?","options":[
       {"label":"Sudden, every time since","effects":{"R2.2":0.2,"R3.1":0.2,"R5.1":0.2,"R6.3":0.2,"R7.1":0.2}},
       {"label":"Sudden, intermittent since","effects":{"R1.3":0.2,"R6.1":0.2,"R6.2":0.2,"R7.1":0.2}},
       {"label":"Gradual, now every time","effects":{"R4":0.4,"R7.2":0.4,"R7.3":0.4,"R9.1":0.4,"R5.2":0.4}},
@@ -114,18 +114,18 @@
       {"label":"Intermittent from start","effects":{"R1.1":0.2,"R6":0.2}},
       {"label":"Sometimes, no pattern","effects":{"R1.3":0.2,"R6.1":0.2,"R6.2":0.2,"R4.2":0.2}}
     ]},
-    {"id":"Q12","stage":2,"group":"Symptoms","text":"Q12. Zone behavior over the run cycle?","options":[
+    {"id":"Q12","stage":2,"group":"Symptoms","text":"Zone behavior over the run cycle?","options":[
       {"label":"Strong at start, fades","effects":{"R5.2":0.4,"R8.2":0.4,"R4.1":0.4}},
       {"label":"Weak start to finish","effects":{"R4":0.2,"R7.2":0.2,"R8.1":0.2}},
       {"label":"Fine until late, then drops","effects":{"R4.2":0.4,"R7.1":0.4}},
       {"label":"Surges / hammers","effects":{"R5.2":0.4}},
       {"label":"Same level throughout","effects":{}}
     ]},
-    {"id":"Q13a","stage":2,"group":"Symptoms","text":"Q13a. Did restarting the controller help?","options":[
+    {"id":"Q13a","stage":2,"group":"Symptoms","text":"Did restarting the controller help?","options":[
       {"label":"Briefly fixed","effects":{"R1.2":0.6,"R1.3":0.6,"R2.3":0.6}},
       {"label":"No effect","effects":{"R1":-0.2,"R2":-0.2}}
     ]},
-    {"id":"Q13b","stage":2,"group":"Symptoms","text":"Q13b. Did restarting the pump help?","options":[
+    {"id":"Q13b","stage":2,"group":"Symptoms","text":"Did restarting the pump help?","options":[
       {"label":"Briefly fixed","effects":{"R4.2":0.4,"R3.1":0.4}},
       {"label":"No effect","effects":{"R4.2":-0.2}}
     ]},
@@ -257,49 +257,50 @@
       {"label":"Don't know","effects":{}}
     ]},
 
-    {"id":"D1","stage":4,"group":"Hard tests","text":"D1. Flow meter reads 1.0–3.0?","options":[
+    {"id":"D1","stage":4,"group":"Hard tests","text":"Flow meter reads 1.0–3.0?","options":[
       {"label":"Yes (in range)","effects":{"R4":-0.4,"R5":-0.4}},
       {"label":"No (out of range)","effects":{"R4":0.2,"R5":0.2}}
     ]},
-    {"id":"D2","stage":4,"group":"Hard tests","text":"D2. Multimeter at zone terminal during call (~24 VAC zone-to-common)?","options":[
+    {"id":"D2","stage":4,"group":"Hard tests","text":"Multimeter at zone terminal during call (~24 VAC zone-to-common)?","options":[
       {"label":"~24 VAC present","effects":{"R7":0.4,"R2.2":-0.4,"R6":-0.4}},
       {"label":"0 V","effects":{"R2.2":0.6,"R6.3":0.6,"R1.1":0.6}},
       {"label":"Low / fluctuating","effects":{"R6.1":0.6,"R6.2":0.6}}
     ]},
-    {"id":"D3","stage":4,"group":"Hard tests","text":"D3. Mains voltage at controller outlet?","options":[
+    {"id":"D3","stage":4,"group":"Hard tests","text":"Mains voltage at controller outlet?","options":[
       {"label":"Normal (~230 VAC)","effects":{"R2.2":-0.4}},
       {"label":"Low or absent","effects":{"R2.2":1.6}},
       {"label":"Present but controller dead","effects":{"R2.2":1.6}}
     ]},
-    {"id":"D4","stage":4,"group":"Hard tests","text":"D4. Solenoid coil resistance (typical 20–60 Ω)?","options":[
+    {"id":"D4","stage":4,"group":"Hard tests","text":"Solenoid coil resistance (typical 20–60 Ω)?","options":[
       {"label":"In range","effects":{"R7.1":-0.4,"R7.2":0.2,"R7.3":0.2,"R7.4":0.2}},
       {"label":"Open / infinite","effects":{"R7.1":1.6}},
       {"label":"Near zero / very low","effects":{"R7.1":1.6}},
       {"label":"Fine at coil, bad at controller","effects":{"R6.1":1.6}}
     ]},
-    {"id":"D5","stage":4,"group":"Hard tests","text":"D5. Common-wire continuity controller→valves?","options":[
+    {"id":"D5","stage":4,"group":"Hard tests","text":"Common-wire continuity controller→valves?","options":[
       {"label":"Continuous, low resistance","effects":{"R6.2":-0.4}},
       {"label":"Open or high resistance","effects":{"R6.2":1.6}},
       {"label":"Intermittent when wiggled","effects":{"R6.2":0.6}}
     ]},
-    {"id":"D6","stage":4,"group":"Hard tests","text":"D6. 24 VAC at controller pump/master terminal during call?","options":[
+    {"id":"D6","stage":4,"group":"Hard tests","text":"24 VAC at controller pump/master terminal during call?","options":[
       {"label":"~24 VAC, relay does not pull in","effects":{"R3.1":0.6}},
       {"label":"0 V","effects":{"R2.2":0.6,"R1.1":0.6}},
       {"label":"Voltage present, relay clicks, no 230V","effects":{"R3.1":0.6}}
     ]},
-    {"id":"D7","stage":4,"group":"Hard tests","text":"D7. Controller board visual check?","options":[
+    {"id":"D7","stage":4,"group":"Hard tests","text":"Controller board visual check?","options":[
       {"label":"Looks fine","effects":{"R2.2":-0.2}},
       {"label":"Not fine (corrosion, burn marks)","effects":{"R2.2":1}}
     ]},
-    {"id":"D8","stage":4,"group":"Hard tests","text":"D8. Dig & inspect hoses for damage?","options":[
+    {"id":"D8","stage":4,"group":"Hard tests","text":"Dig & inspect hoses for damage?","options":[
       {"label":"Damage found","effects":{"R5.1":1,"R8.1":1}},
       {"label":"No damage","effects":{"R5.1":-0.4,"R8.1":-0.4}}
     ]},
-    {"id":"D9","stage":4,"group":"Hard tests","text":"D9. Open each valve and inspect internals?","options":[
+    {"id":"D9","stage":4,"group":"Hard tests","text":"Open each valve and inspect internals?","options":[
       {"label":"Intact, no debris","effects":{"R7.2":-0.4,"R7.3":-0.4}},
       {"label":"Damaged or debris","effects":{"R7.2":1,"R7.3":0.6}}
     ]},
-    {"id":"D10","stage":4,"group":"Hard tests","text":"D10. Swap suspect valve with known-good — does problem stay with the zone?","options":[
+    {"id":"D10","stage":4,"group":"Hard tests","text":"D
+      Swap suspect valve with known-good — does problem stay with the zone?","options":[
       {"label":"Yes (stays with zone)","effects":{"R7":-0.6,"R6":0.6,"R8":0.6}},
       {"label":"No (follows the valve)","effects":{"R7":1.6}}
     ]}
