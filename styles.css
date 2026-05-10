@@ -37,8 +37,11 @@
   --rust-fill:        rgba(var(--rust-rgb), .32);
   --rust-fill-active: rgba(var(--rust-rgb), .45);
 }
+
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+
+
 body{
   font-family: var(--font-sans);
   background-image:
@@ -50,10 +53,11 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 .mono{font-family: var(--font-mono); font-feature-settings:"tnum"; font-variant-numeric: tabular-nums;}
+
 .frame{
   max-width: 1180px;
   margin: 0 auto;
-  border: 1.5px solid var(--ink);
+  border: 1.0px solid var(--ink);
   background: var(--paper);
   position: relative;
 }
@@ -73,13 +77,11 @@ body{
   border: 1px solid var(--ink);
   padding: var(--space-1) var(--space-4);
   cursor: pointer;
-  line-height: 1;
 }
-.btn:hover{ background: var(--paper-2); }
-.btn.danger{ color: var(--rust-2); border-color: var(--rust-2); }
-.btn.danger:hover{ background: var(--rust-tint); }
 
-section.sec{ padding: var(--space-2) var(--space-4); border-bottom: 1px dashed var(--hairline); position: relative; z-index: 1;}
+.btn:hover{ background: var(--paper-2); }
+
+section.sec{ padding: var(--space-2) var(--space-4); border-bottom: 1px dashed var(--hairline); position: relative;}
 section.sec:last-child{border-bottom:none;}
 
 /* ─── SCHEMATIC ─────────────────────────────────── */
@@ -118,7 +120,7 @@ section.sec:last-child{border-bottom:none;}
   width: 18px; height: 18px; border-radius: 50%;
   background: var(--paper); border: 1px solid var(--ink);
   font-family: var(--font-mono); font-weight: 700; font-size: var(--text-xs);
-  color: var(--ink); margin-right: var(--space-1);
+  color: var(--ink);
 }
 
 /* ─── 3-COLUMN WORKBENCH ──────────────────────────── */
@@ -165,7 +167,6 @@ section.sec:last-child{border-bottom:none;}
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--ink);
   background: var(--paper);
-  margin-bottom: var(--space-1);
 }
 .stages button{
   appearance:none; background:transparent;
@@ -184,7 +185,7 @@ section.sec:last-child{border-bottom:none;}
   gap: var(--space-1);
   position: relative; z-index: 1;
 }
-.stages button .label .nm{ font-family: var(--font-sans); text-transform: uppercase; font-weight:800; letter-spacing: var(--ls-wide); font-size: var(--text-xs); }
+.stages button .label .nm{text-transform: uppercase; font-weight:800; letter-spacing: var(--ls-wide); font-size: var(--text-xs); }
 .stages button .label .ct{ font-size: var(--text-xs); color: var(--ink-2); letter-spacing: var(--ls-tight);}
 .stages button .fill{
   position:absolute; left:0; top:0; bottom:0; height:auto;
@@ -341,7 +342,7 @@ section.sec:last-child{border-bottom:none;}
 .rank-row .label{ font-size: var(--text-sm); line-height: 1.3; color: var(--ink); font-family: var(--font-sans);}
 .rank-row .pct{ font-family: var(--font-mono); font-size: var(--text-xs); text-align:right; font-weight: 600;}
 .rank-row .bar{
-  height: 4px; margin-top: 3px; background: var(--paper-2);
+  height: 4px; background: var(--paper-2);
   border: .5px solid var(--hairline);
   overflow: hidden;
 }
@@ -355,7 +356,6 @@ section.sec:last-child{border-bottom:none;}
 }
 .rank-more:hover{ color: var(--rust); }
 
-/* ─── MOBILE: clamp diagram to ~1/3 viewport ──────── */
 @media (max-width: 760px){
   body{ padding: var(--space-3) var(--space-1) calc(var(--space-4) * 3);}
   .schem-wrap{ padding: var(--space-2);}
