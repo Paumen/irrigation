@@ -5,8 +5,7 @@ const ROOT_CAUSES_DATA = [
   ['R1.1','R1',0.8,'Misconfiguration'],
   ['R1.2','R1',0.9,'App failure (bug, corruption)'],
   ['R1.3','R1',0.8,'Connectivity (wifi)'],
-  ['R2.1','R2',0.9,'Mains supply / GFCI tripped'],
-  ['R2.2','R2',0.9,'Controller hardware failure'],
+  ['R2.2','R2',0.9,'Mains supply / GFCI / controller hardware failure'],
   ['R2.3','R2',0.8,'Controller fw / config corruption'],
   ['R3.1','R3',1.2,'Relay / 24V or 230V wiring fault'],
   ['R4.1','R4',1.3,'Pump suction-side fault'],
@@ -20,9 +19,8 @@ const ROOT_CAUSES_DATA = [
   ['R7.2','R7',1.4,'Diaphragm failure'],
   ['R7.3','R7',0.7,'Valve body / seal failure'],
   ['R7.4','R7',0.8,'Valve manual misconfiguration'],
-  ['R8.1','R8',1.1,'Lateral hose damage'],
+  ['R8.1','R8',1.1,'Lateral hose / fitting damage'],
   ['R8.2','R8',0.9,'Air in hose / debris clog'],
-  ['R8.3','R8',0.9,'Fitting damage'],
   ['R9.1','R9',1.1,'Sprinkler issue (debris, nozzle, pop-up)'],
 ];
 const RC = {};
@@ -78,8 +76,8 @@ QUESTIONS.push(
     {label:'Weak, then strong',               effects: eff({'R5.2':0.4,'R8.2':0.4,'R4.1':0.4})},
     {label:'Pressure fluctuates',             effects: eff({'R4.1':0.2,'R4.2':0.2,'R5.2':0.2})},
     {label:'Erratic, no pattern',             effects: eff({'R1.1':0.4,'R1.2':0.4,'R1.3':0.4,'R2.3':0.4,'R6.1':0.4,'R6.2':0.4,'R6.3':0.4,'R7.1':0.4})},
-    {label:'Leaks when system is off',        effects: eff({'R7.2':0.4,'R7.3':0.4,'R7.4':0.4,'R5.1':0.4,'R8.1':0.4,'R8.3':0.4})},
-    {label:'Geyser-like pressure',            effects: eff({'R5.1':0.4,'R8.1':0.4,'R8.3':0.4,'R9.1':0.4})},
+    {label:'Leaks when system is off',        effects: eff({'R7.2':0.4,'R7.3':0.4,'R7.4':0.4,'R5.1':0.4,'R8.1':0.4})},
+    {label:'Geyser-like pressure',            effects: eff({'R5.1':0.4,'R8.1':0.4,'R9.1':0.4})},
     {label:'Normal',                          effects: {...eff({R4:-0.4,R5:-0.4,R6:-0.4,R7:-0.4,R8:-0.4,R9:-0.4}),...eff({R1:0.6})}},
   ]},
   {id:'Q4',stage:2,group:'Symptoms',text:'Q4. When a zone is called, do you hear the pump start?',options:[
@@ -100,8 +98,8 @@ QUESTIONS.push(
   {id:'Q7',stage:2,group:'Symptoms',text:'Q7. Do you see water / wet ground?',options:[
     {label:'Along the main line route',       effects: eff({'R5.1':2})},
     {label:'Around a valve box',              effects: eff({'R7.3':2,'R7.4':2})},
-    {label:'Along zone lines',                effects: eff({'R8.1':2,'R8.3':2})},
-    {label:'Nothing visible',                 effects: eff({'R5.1':-0.6,'R7.3':-0.6,'R7.4':-0.6,'R8.1':-0.6,'R8.3':-0.6})},
+    {label:'Along zone lines',                effects: eff({'R8.1':2})},
+    {label:'Nothing visible',                 effects: eff({'R5.1':-0.6,'R7.3':-0.6,'R7.4':-0.6,'R8.1':-0.6})},
   ]},
   {id:'Q8',stage:2,group:'Symptoms',text:'Q8. At affected valve — what do you hear when zone activates?',options:[
     {label:'Clear click',                     effects: eff({'R7.2':0.4,R8:0.4,R9:0.4})},
@@ -114,7 +112,7 @@ QUESTIONS.push(
     {label:'No flow even manually',           effects: eff({'R7.2':0.6,'R7.3':0.6,R8:0.6,R5:0.6})},
   ]},
   {id:'Q11',stage:2,group:'Symptoms',text:'Q11. How did the problem appear, and how often now?',options:[
-    {label:'Sudden, every time since',        effects: eff({'R2.1':0.2,'R2.2':0.2,'R3.1':0.2,'R5.1':0.2,'R6.3':0.2,'R7.1':0.2})},
+    {label:'Sudden, every time since',        effects: eff({'R2.2':0.2,'R3.1':0.2,'R5.1':0.2,'R6.3':0.2,'R7.1':0.2})},
     {label:'Sudden, intermittent since',      effects: eff({'R1.3':0.2,'R6.1':0.2,'R6.2':0.2,'R7.1':0.2})},
     {label:'Gradual, now every time',         effects: eff({R4:0.4,'R7.2':0.4,'R7.3':0.4,'R9.1':0.4,'R5.2':0.4})},
     {label:'Gradual, still intermittent',     effects: eff({R4:0.2,R7:0.2,R6:0.2})},
@@ -181,8 +179,8 @@ QUESTIONS.push(
     {label:'Low / fluctuating',        effects: eff({'R6.1':0.6,'R6.2':0.6})},
   ]},
   {id:'D3',stage:4,group:'Hard tests',text:'D3. Mains voltage at controller outlet?',options:[
-    {label:'Normal (~230 VAC)',                effects: eff({'R2.1':-0.4})},
-    {label:'Low or absent',                    effects: eff({'R2.1':1.6})},
+    {label:'Normal (~230 VAC)',                effects: eff({'R2.2':-0.4})},
+    {label:'Low or absent',                    effects: eff({'R2.2':1.6})},
     {label:'Present but controller dead',      effects: eff({'R2.2':1.6})},
   ]},
   {id:'D4',stage:4,group:'Hard tests',text:'D4. Solenoid coil resistance (typical 20–60 Ω)?',options:[
@@ -206,8 +204,8 @@ QUESTIONS.push(
     {label:'Not fine (corrosion, burn marks)', effects: eff({'R2.2':1})},
   ]},
   {id:'D8',stage:4,group:'Hard tests',text:'D8. Dig & inspect hoses for damage?',options:[
-    {label:'Damage found',                     effects: eff({'R5.1':1,'R8.1':1,'R8.3':1})},
-    {label:'No damage',                        effects: eff({'R5.1':-0.4,'R8.1':-0.4,'R8.3':-0.4})},
+    {label:'Damage found',                     effects: eff({'R5.1':1,'R8.1':1})},
+    {label:'No damage',                        effects: eff({'R5.1':-0.4,'R8.1':-0.4})},
   ]},
   {id:'D9',stage:4,group:'Hard tests',text:'D9. Open each valve and inspect internals?',options:[
     {label:'Intact, no debris',                effects: eff({'R7.2':-0.4,'R7.3':-0.4})},
@@ -241,7 +239,7 @@ const R_POS = {
   // SOFTWARE bottom border (y=74), center x=75
   'R1.1':{x:  47, y: 74}, 'R1.2':{x:  75, y: 74}, 'R1.3':{x: 103, y: 74},
   // CONTROLLER bottom border (y=74), center x=225, control wire exits at center
-  'R2.1':{x: 185, y: 74}, 'R2.2':{x: 208, y: 74}, 'R2.3':{x: 258, y: 74},
+  'R2.2':{x: 205, y: 74}, 'R2.3':{x: 245, y: 74},
   // RELAY bottom border (y=74)
   'R3.1':{x: 375, y: 74},
   // PUMP bottom border (y=74), water exits at center x=525
@@ -254,7 +252,7 @@ const R_POS = {
   'R7.1':{x: 477, y: 229}, 'R7.2':{x: 501, y: 229},
   'R7.3':{x: 549, y: 229}, 'R7.4':{x: 573, y: 229},
   // Lateral hoses — on horizontal segments where they exist
-  'R8.1':{x: 368, y: 295}, 'R8.2':{x: 525, y: 268}, 'R8.3':{x: 594, y: 295},
+  'R8.1':{x: 368, y: 295}, 'R8.2':{x: 525, y: 268},
   // SPRK2 bottom border (y=394)
   'R9.1':{x: 435, y: 394},
 };
