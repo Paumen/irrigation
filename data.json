@@ -299,8 +299,7 @@
       {"label":"Intact, no debris","effects":{"R7.2":-0.4,"R7.3":-0.4}},
       {"label":"Damaged or debris","effects":{"R7.2":1,"R7.3":0.6}}
     ]},
-    {"id":"D10","stage":4,"group":"Hard tests","text":"D
-      Swap suspect valve with known-good — does problem stay with the zone?","options":[
+    {"id":"D10","stage":4,"group":"Hard tests","text":"Swap suspect valve with known-good — does problem stay with the zone?","options":[
       {"label":"Yes (stays with zone)","effects":{"R7":-0.6,"R6":0.6,"R8":0.6}},
       {"label":"No (follows the valve)","effects":{"R7":1.6}}
     ]}
