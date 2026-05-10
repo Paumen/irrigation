@@ -136,6 +136,7 @@ section.sec {
 
 .sec-diagram {
   padding: var(--sp-l) var(--sp-xl) var(--sp-l);
+  margin: 0 0 var(--sp-xl);
 }
 
 /* ─── SCHEMATIC ──────────────────────────────────── */
@@ -647,6 +648,12 @@ section.sec {
   width: 14px;
   height: 14px;
   accent-color: var(--c-accent-1);
+}
+
+.matrix-actions {
+  display: flex;
+  place-content: flex-end;
+  margin: var(--sp-xl) 0 0;
 }
 
 /* ─── RESET MODAL ────────────────────────────────── */

@@ -705,12 +705,24 @@ function QuestionPanel({
         </div>
       </div>
       {isMatrix ? (
-        <MatrixQuestion
-          question={question}
-          answer={answer}
-          onSetCell={onSetCell}
-          onToggleDrained={onToggleDrained}
-        />
+        <>
+          <MatrixQuestion
+            question={question}
+            answer={answer}
+            onSetCell={onSetCell}
+            onToggleDrained={onToggleDrained}
+          />
+          <div className="matrix-actions">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={onNext}
+              disabled={isLast}
+            >
+              Next ›
+            </button>
+          </div>
+        </>
       ) : (
         <div className="opts">
           {question.options.map((opt, i) => {
@@ -759,7 +771,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
                 </div>
               </div>
               <span className="pct mono" style={{ color: colour }}>
-                {r.pct.toFixed(1)}%
+                {Math.round(r.pct)}%
               </span>
             </button>
           );
