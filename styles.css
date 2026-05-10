@@ -131,7 +131,11 @@ body {
 /* ─── SECTION ────────────────────────────────────── */
 section.sec {
   position: relative;
-  padding: var(--sp-l) var(--sp-xl);
+  padding: 0 var(--sp-xl);
+}
+
+.sec-diagram {
+  padding: var(--sp-l) var(--sp-xl) var(--sp-l);
 }
 
 /* ─── SCHEMATIC ──────────────────────────────────── */
@@ -183,6 +187,11 @@ section.sec {
 .schem-legend .swatch.ctrl {
   height: 2px;
   background: repeating-linear-gradient(90deg, var(--c-ctrl) 0 5px, transparent 5px 8px);
+}
+
+.schem-legend .swatch.wifi {
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--c-neutral-3) 0 2px, transparent 2px 5px);
 }
 
 /* ─── WORKBENCH ──────────────────────────────────── */
@@ -709,7 +718,11 @@ section.sec {
   }
 
   section.sec {
-    padding: var(--sp-xl);
+    padding: 0 var(--sp-l);
+  }
+
+  .sec-diagram {
+    padding: var(--sp-l);
   }
 
   .qtitle {
