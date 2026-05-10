@@ -471,7 +471,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" fill="#5a6a85" />
+          <path d="M0,0 L10,5 L0,10 z" fill="#4a5878" />
         </marker>
       </defs>
 
@@ -518,11 +518,11 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         y1="36"
         x2="534"
         y2="36"
-        stroke="#5a6a85"
+        stroke="#4a5878"
         strokeWidth="2.5"
         markerEnd="url(#arr-mains)"
       />
-      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} fill="#5a6a85" />
+      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} fill="#4a5878" />
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
       <path
@@ -587,15 +587,15 @@ function StageBar({ stages, activeStage, onPick }) {
             key={s}
             type="button"
             onClick={() => onPick(s)}
-            className={active ? 'active' : ''}
+            className={`stage-btn${active ? ' on' : ''}`}
+            style={{ '--sp-fill': pct + '%' }}
           >
-            <span className="label">
-              <span className="nm">{labels[s]}</span>
-              <span className="ct mono">
+            <span>
+              <b>{labels[s]}</b>
+              <small className="mono">
                 {sp.answered}/{sp.total}
-              </span>
+              </small>
             </span>
-            <span className="fill" style={{ width: pct + '%' }} />
           </button>
         );
       })}
@@ -616,7 +616,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
           gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${cols.length}, minmax(54px, 1fr))`,
         }}
       >
-        <div className="matrix-cell matrix-head matrix-corner" />
+        <div className="matrix-cell matrix-head" />
         {cols.map((c) => (
           <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
             <span>{c.label}</span>
@@ -634,7 +634,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
                   <div key={c.id} className="matrix-cell matrix-radio-cell">
                     <button
                       type="button"
-                      className={`matrix-radio ${checked ? 'checked' : ''}`}
+                      className={`matrix-radio${checked ? ' on' : ''}`}
                       aria-label={`${row.label}: ${c.label}`}
                       aria-pressed={checked}
                       onClick={() => onSetCell(row.id, c.id)}
@@ -681,9 +681,7 @@ function QuestionPanel({
   return (
     <div>
       <div className="qhead">
-        <div className="qtitle">
-          {question.text}
-        </div>
+        <div className="qtitle">{question.text}</div>
         <button className="btn" type="button" onClick={onReset}>
           Reset
         </button>
@@ -705,7 +703,7 @@ function QuestionPanel({
             onToggleDrained={onToggleDrained}
           />
           <div className="matrix-actions">
-            <button type="button" className="btn btn-primary" onClick={onNext} disabled={isLast}>
+            <button type="button" className="btn primary" onClick={onNext} disabled={isLast}>
               Next ›
             </button>
           </div>
@@ -718,10 +716,10 @@ function QuestionPanel({
               <button
                 key={i}
                 type="button"
-                className={`opt ${selected ? 'selected' : ''}`}
+                className={`opt${selected ? ' on' : ''}`}
                 onClick={() => onAnswer(i)}
               >
-                <span className="dot">{selected ? '●' : '○'}</span>
+                <b>{selected ? '●' : '○'}</b>
                 <span>{opt.label}</span>
               </button>
             );
@@ -748,19 +746,17 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
             <button
               key={r.id}
               type="button"
-              className={`rank-row ${active ? 'active' : ''}`}
+              className={`rank-row${active ? ' on' : ''}`}
               onClick={() => onPickRC(r.id)}
             >
-              <span className="id mono">{r.id}</span>
-              <div className="rank-row-body">
-                <div className="label">{meta.label}</div>
-                <div className="bar">
-                  <div style={{ width: r.pct + '%', background: colour }} />
-                </div>
-              </div>
-              <span className="pct mono" style={{ color: colour }}>
+              <b className="mono">{r.id}</b>
+              <aside>
+                <strong>{meta.label}</strong>
+                <hr style={{ '--sp-bar': r.pct + '%', '--c-bar': colour }} />
+              </aside>
+              <small className="mono" style={{ color: colour }}>
                 {pct}%
-              </span>
+              </small>
             </button>
           );
         })}
@@ -784,12 +780,12 @@ function RecommendationPanel({ recs, onSelect, max }) {
       )}
       {visible.map(({ q, D }) => (
         <button key={q.id} type="button" className="rec" onClick={() => onSelect(q.id)}>
-          <div className="top">
-            <span className="id">{q.id}</span>
-            <span className="stg">S{q.stage}</span>
-            <span className="d">D = {D.toFixed(2)}</span>
-          </div>
-          <div className="qq">{q.text}</div>
+          <header>
+            <b>{q.id}</b>
+            <i>S{q.stage}</i>
+            <small>D = {D.toFixed(2)}</small>
+          </header>
+          <p>{q.text}</p>
         </button>
       ))}
     </div>
@@ -824,7 +820,7 @@ function ResetModal({ onCancel, onConfirm }) {
           <button ref={cancelRef} type="button" className="btn" onClick={onCancel}>
             Keep my answers
           </button>
-          <button type="button" className="btn btn-primary" onClick={onConfirm}>
+          <button type="button" className="btn primary" onClick={onConfirm}>
             Reset everything
           </button>
         </div>
@@ -1060,16 +1056,32 @@ function App() {
           />
           <div className="schem-legend">
             <span>
-              <span className="swatch water" /> water
+              <span className="swatch" style={{ background: 'var(--c-water)' }} /> water
             </span>
             <span>
-              <span className="swatch mains" /> 230 V mains
+              <span className="swatch" style={{ background: 'var(--c-fg-mute)' }} /> 230 V mains
             </span>
             <span>
-              <span className="swatch ctrl" /> 24 V control
+              <span
+                className="swatch"
+                style={{
+                  background:
+                    'repeating-linear-gradient(90deg, var(--c-accent) 0 50%, transparent 50% 100%)',
+                  backgroundSize: '0.8em 100%',
+                }}
+              />{' '}
+              24 V control
             </span>
             <span>
-              <span className="swatch wifi" /> Wi-Fi
+              <span
+                className="swatch"
+                style={{
+                  background:
+                    'repeating-linear-gradient(90deg, var(--c-fg-mute) 0 40%, transparent 40% 100%)',
+                  backgroundSize: '0.5em 100%',
+                }}
+              />{' '}
+              Wi-Fi
             </span>
           </div>
         </div>
@@ -1077,7 +1089,7 @@ function App() {
 
       <section className="sec">
         <div className="work">
-          <main className="panel panel-question">
+          <main className="panel">
             <div className="bd">
               <QuestionPanel
                 question={activeQuestion}
