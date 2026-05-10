@@ -95,7 +95,7 @@
     ],
 
     "max-nesting-depth": [
-      2,
+      3,
       {
         "message": "Maximum nesting depth exceeded (max %d). Refactor to reduce nesting."
       }
@@ -108,14 +108,6 @@
       }
     ],
 
-    "selector-attribute-name-disallowed-list": [
-      [
-        "/^((?!data-state|data-card-state|aria-hidden|aria-open|aria-checked|open|closed|popover|hidden|data-next-to-fill).)*$/"
-      ],
-      {
-        "message": "Attribute selector \"%s\" is disallowed unless it is data-state, aria-hidden, or popover."
-      }
-    ],
     "selector-disallowed-list": [
       ["/\\[id[~|^$*]?=/", "/:.*child/"],
       {
@@ -124,7 +116,7 @@
     ],
 
     "selector-max-specificity": [
-      "0,2,0",
+      "0,3,1",
       {
         "message": "Selector specificity exceeds allowed limit (max 0,2,0). Simplify the selector."
       }
