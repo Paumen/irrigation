@@ -78,23 +78,6 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── FRAME ──────────────────────────────────────── */
-.frame {
-  position: relative;
-  max-width: 1180px;
-  margin: 0 auto;
-  background: var(--paper);
-  border: var(--bw) solid var(--ink);
-}
-.frame::before {
-  content: "";
-  position: absolute;
-  inset: var(--space-1);
-  z-index: 0;
-  border: .5px solid var(--hairline-soft);
-  pointer-events: none;
-}
-
 /* ─── BUTTON ─────────────────────────────────────── */
 .btn {
   padding: var(--space-1) var(--space-4);
@@ -159,30 +142,6 @@ section.sec:last-child { border-bottom: none; }
   background: repeating-linear-gradient(90deg, var(--ink-3) 0 3px, transparent 3px 5px, var(--ink-3) 5px 6px, transparent 6px 8px);
 }
 .schem-legend .swatch.water { height: 4px; background: var(--ink); }
-.schem-legend .swatch.zone  { height: 2px; background: var(--rust); }
-.schem-legend .grad {
-  display: inline-block;
-  width: 96px;
-  height: 8px;
-  margin: 0 var(--space-1);
-  background: linear-gradient(90deg, var(--good), var(--paper-3), var(--rust-soft), var(--rust), var(--rust-2));
-  border: .5px solid var(--ink);
-  vertical-align: middle;
-}
-.schem-legend .pip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: var(--fw-bold);
-  color: var(--ink);
-  background: var(--paper);
-  border: var(--bw) solid var(--ink);
-  border-radius: 50%;
-}
 
 /* ─── WORKBENCH ──────────────────────────────────── */
 .work {
@@ -293,48 +252,6 @@ section.sec:last-child { border-bottom: none; }
   opacity: .85;
 }
 .stages button.active .fill { background: var(--rust-fill-active); }
-
-/* ─── QUESTION LIST ──────────────────────────────── */
-.qlist {
-  max-height: 460px;
-  overflow-y: auto;
-}
-.qlist .qrow {
-  display: grid;
-  grid-template-columns: 50px 1fr;
-  gap: var(--space-1);
-  width: 100%;
-  padding: var(--space-1) var(--space-3);
-  font-family: var(--font-sans);
-  text-align: left;
-  color: var(--ink);
-  background: transparent;
-  border: 0;
-  border-bottom: var(--bw) dotted var(--hairline-soft);
-  border-left: var(--bw-accent) solid transparent;
-  cursor: pointer;
-  appearance: none;
-}
-.qlist .qrow:hover { background: var(--paper-2); }
-.qlist .qrow.active {
-  background: var(--paper-2);
-  border-left-color: var(--rust);
-}
-.qlist .qrow .qid {
-  padding-top: 2px;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--ls-tight);
-  color: var(--ink-2);
-}
-.qlist .qrow.answered .qid {
-  font-weight: var(--fw-bold);
-  color: var(--good);
-}
-.qlist .qrow .qtxt {
-  font-size: var(--text-sm);
-  line-height: var(--lh);
-}
 
 /* ─── QUESTION PANEL ─────────────────────────────── */
 .qhead {
@@ -506,12 +423,6 @@ section.sec:last-child { border-bottom: none; }
 .rank-row:hover,
 .rank-row.active { background: var(--paper-2); }
 .rank-row.active { outline: var(--bw) solid var(--ink); }
-.rank-row .n {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-align: right;
-  color: var(--ink-2);
-}
 .rank-row .id {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -563,7 +474,6 @@ section.sec:last-child { border-bottom: none; }
   }
   .schem-legend { gap: var(--space-1) var(--space-4); }
   section.sec { padding: var(--space-4); }
-  .qlist { max-height: 220px; }
   .qtitle { font-size: var(--text-md); }
 }
 @media (max-width: 420px) {

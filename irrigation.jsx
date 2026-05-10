@@ -1,14 +1,22 @@
 import DATA from "./data.json";
 
-const { useState, useMemo, useEffect, useRef } = React;
+const { useState, useMemo, useEffect } = React;
 
 // ============ ROOT CAUSES ============
 const RC = Object.fromEntries(DATA.causes.map(c => [c.id, c]));
 const ALL_IDS = Object.keys(RC);
-const expand = (t) => RC[t] ? [t] : ALL_IDS.filter(id => RC[id].parent === t);
+// targetId → [leaf ids]; built once so eff() is a plain lookup for both leaf and group targets.
+const TARGETS = {};
+ALL_IDS.forEach(id => {
+  TARGETS[id] = [id];
+  const p = RC[id].parent;
+  if (p) (TARGETS[p] ||= []).push(id);
+});
 const eff = (m) => {
   const r = {};
-  Object.entries(m).forEach(([t,d]) => expand(t).forEach(rc => { r[rc] = (r[rc]||0) + d; }));
+  Object.entries(m).forEach(([t,d]) => {
+    (TARGETS[t] || []).forEach(rc => { r[rc] = (r[rc]||0) + d; });
+  });
   return r;
 };
 
@@ -25,17 +33,15 @@ const FOOTER_TOP = 46;        // y-offset within box where footer divider sits
 // Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP  (evenly spread across full viewport)
 // Row 2: VALVES directly below PUMP (water flows straight down)
 // Row 3: three SPRINKLER zones spread below
-const BOXES = [
+const NODES = [
   {key:'sw',     x:  36, y: 20, w: BOX_W, h: BOX_H, label:'SOFTWARE',   icon:'sw',     pips:['R1.1','R1.2','R1.3']},
   {key:'ctrl',   x: 202, y: 20, w: BOX_W, h: BOX_H, label:'CONTROLLER', icon:'ctrl',   pips:['R2.2','R2.3']},
   {key:'relay',  x: 368, y: 20, w: BOX_W, h: BOX_H, label:'RELAY',      icon:'relay',  pips:['R3.1']},
   {key:'pump',   x: 534, y: 20, w: BOX_W, h: BOX_H, label:'PUMP',       icon:'pump',   pips:['R4.1','R4.2']},
   {key:'valves', x: 534, y:170, w: BOX_W, h: BOX_H, label:'VALVES',     icon:'valves', pips:['R7.1','R7.2','R7.3','R7.4']},
-];
-const SPRK = [
-  {x:  20, y: 340, w: BOX_W, h: BOX_H, pips: []},
-  {x: 285, y: 340, w: BOX_W, h: BOX_H, pips: ['R9.1']},
-  {x: 550, y: 340, w: BOX_W, h: BOX_H, pips: []},
+  {key:'sp1',    x:  20, y:340, w: BOX_W, h: BOX_H, label:'SPRINKLER',  icon:'sprk',   pips: []},
+  {key:'sp2',    x: 285, y:340, w: BOX_W, h: BOX_H, label:'SPRINKLER',  icon:'sprk',   pips:['R9.1']},
+  {key:'sp3',    x: 550, y:340, w: BOX_W, h: BOX_H, label:'SPRINKLER',  icon:'sprk',   pips: []},
 ];
 // Connector pip positions — only those that ride on the line segments
 // (node-attached pips are now footer cells inside their box)
@@ -265,12 +271,8 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
       </g>
 
       {/* ── nodes ── */}
-      {BOXES.map(b => (
+      {NODES.map(b => (
         <NodeBox key={b.key} box={b} iconKind={b.icon} label={b.label}
-                 severityT={severityT} activeRC={activeRC} onPickRC={onPickRC}/>
-      ))}
-      {SPRK.map((s,i) => (
-        <NodeBox key={`sp${i}`} box={s} iconKind="sprk" label="SPRINKLER"
                  severityT={severityT} activeRC={activeRC} onPickRC={onPickRC}/>
       ))}
 
@@ -306,28 +308,8 @@ function StageBar({ stages, activeStage, onPick }) {
   );
 }
 
-// ============ QUESTION LIST ============
-function QuestionList({ questions, answers, activeId, onPick }) {
-  return (
-    <div className="qlist">
-      {questions.map(q => {
-        const answered = answers[q.id] != null;
-        const active = q.id === activeId;
-        return (
-          <button key={q.id} type="button"
-            className={`qrow ${answered ? 'answered':''} ${active?'active':''}`}
-            onClick={() => onPick(q.id)}>
-            <span className="qid">{answered ? '●' : '○'} {q.id}</span>
-            <span className="qtxt">{q.text}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 // ============ QUESTION PANEL ============
-function QuestionPanel({ question, answer, onAnswer, onClear, freezeDrained, onToggleDrained, onNext, onPrev, isFirst, isLast, onReset }) {
+function QuestionPanel({ question, answer, onAnswer, freezeDrained, onToggleDrained, onNext, onPrev, isFirst, isLast, onReset }) {
   if (!question) return null;
   const isFreeze = question.id === 'E_freeze';
   return (
@@ -397,7 +379,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
 }
 
 // ============ RECOMMENDATIONS ============
-function RecommendationPanel({ recs, top5n, onSelect, max }) {
+function RecommendationPanel({ recs, onSelect, max }) {
   const visible = recs.slice(0, max);
   return (
     <div className="recs">
@@ -437,7 +419,6 @@ function App() {
   const [activeRC, setActiveRC] = useState(null);
   const [freezeDrained, setFreezeDrained] = useState(false);
   const isMobile = useIsMobile(760);
-  const questionPanelRef = useRef(null);
 
   const scores = useMemo(() => {
     const s = {};
@@ -493,13 +474,11 @@ function App() {
   }, [answers]);
 
   const activeQuestion = QUESTIONS.find(q => q.id === activeQuestionId);
-  const stageQuestions = QUESTIONS.filter(q => q.stage === activeStage);
   const activeIdx = QUESTIONS.findIndex(q => q.id === activeQuestionId);
   const isFirst = activeIdx <= 0;
   const isLast  = activeIdx >= QUESTIONS.length - 1;
 
   const setAnswer = (qid, optIdx) => setAnswers(p => ({ ...p, [qid]: optIdx }));
-  const clearAnswer = (qid) => setAnswers(p => { const n = { ...p }; delete n[qid]; return n; });
 
   const pickQuestion = (qid) => {
     setActiveQuestionId(qid);
@@ -550,13 +529,12 @@ function App() {
         <div className="work">
           {/* LEFT COLUMN: question panel + stage bar */}
           <div style={{display:'flex', flexDirection:'column', gap:'6px', minWidth:0}}>
-            <main className="panel" ref={questionPanelRef}>
+            <main className="panel">
               <div className="bd">
                 <QuestionPanel
                   question={activeQuestion}
                   answer={answers[activeQuestionId]}
                   onAnswer={handleAnswer}
-                  onClear={() => clearAnswer(activeQuestionId)}
                   onReset={reset}
                   freezeDrained={freezeDrained}
                   onToggleDrained={setFreezeDrained}
@@ -585,7 +563,7 @@ function App() {
                 <span>Recommended Next</span>
               </div>
               <div className="bd">
-                <RecommendationPanel recs={recommendations} top5n={top5.length} onSelect={pickQuestion} max={isMobile?3:4}/>
+                <RecommendationPanel recs={recommendations} onSelect={pickQuestion} max={isMobile?3:4}/>
               </div>
             </div>
           </aside>
