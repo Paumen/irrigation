@@ -218,43 +218,43 @@ QUESTIONS.push(
 );
 
 // ============ DIAGRAM (engineering blueprint style) ============
-const BOX_W = 120, BOX_H = 54;
-// Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP  (left to right)
+const BOX_W = 130, BOX_H = 60;
+// Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP  (evenly spread across full viewport)
 // Row 2: VALVES directly below PUMP (water flows straight down)
 // Row 3: three SPRINKLER zones spread below
 const BOXES = [
-  {key:'sw',     x:  15, y:20, w: BOX_W, h: BOX_H, label:'SOFTWARE'},
-  {key:'ctrl',   x: 165, y:20, w: BOX_W, h: BOX_H, label:'CONTROLLER'},
-  {key:'relay',  x: 315, y:20, w: BOX_W, h: BOX_H, label:'RELAY'},
-  {key:'pump',   x: 465, y:20, w: BOX_W, h: BOX_H, label:'PUMP'},
-  {key:'valves', x: 465, y:175, w: BOX_W, h: BOX_H, label:'VALVES'},
+  {key:'sw',     x:  36, y: 20, w: BOX_W, h: BOX_H, label:'SOFTWARE',   icon:'sw'},
+  {key:'ctrl',   x: 202, y: 20, w: BOX_W, h: BOX_H, label:'CONTROLLER', icon:'ctrl'},
+  {key:'relay',  x: 368, y: 20, w: BOX_W, h: BOX_H, label:'RELAY',      icon:'relay'},
+  {key:'pump',   x: 534, y: 20, w: BOX_W, h: BOX_H, label:'PUMP',       icon:'pump'},
+  {key:'valves', x: 534, y:170, w: BOX_W, h: BOX_H, label:'VALVES',     icon:'valves'},
 ];
 const SPRK = [
-  {x: 185, y: 340, w: BOX_W, h: BOX_H},
-  {x: 375, y: 340, w: BOX_W, h: BOX_H},
-  {x: 565, y: 340, w: BOX_W, h: BOX_H},
+  {x:  20, y: 340, w: BOX_W, h: BOX_H},
+  {x: 285, y: 340, w: BOX_W, h: BOX_H},
+  {x: 550, y: 340, w: BOX_W, h: BOX_H},
 ];
-// R-pip positions — on bottom borders of boxes and on line segments
+// R-pip positions — on box borders (integrated) and along connector segments
 const R_POS = {
-  // SOFTWARE bottom border (y=74), center x=75
-  'R1.1':{x:  47, y: 74}, 'R1.2':{x:  75, y: 74}, 'R1.3':{x: 103, y: 74},
-  // CONTROLLER bottom border (y=74), center x=225, control wire exits at center
-  'R2.2':{x: 205, y: 74}, 'R2.3':{x: 245, y: 74},
-  // RELAY bottom border (y=74)
-  'R3.1':{x: 375, y: 74},
-  // PUMP bottom border (y=74), water exits at center x=525
-  'R4.1':{x: 497, y: 74}, 'R4.2':{x: 553, y: 74},
-  // Main water vertical segment x=525, y 74→175
-  'R5.1':{x: 525, y: 108}, 'R5.2':{x: 525, y: 148},
-  // Control wire horizontal segment y=140, x 225→445
-  'R6.1':{x: 285, y: 140}, 'R6.2':{x: 332, y: 140}, 'R6.3':{x: 380, y: 140},
-  // VALVES bottom border (y=229), laterals exit at x=490,525,562
-  'R7.1':{x: 477, y: 229}, 'R7.2':{x: 501, y: 229},
-  'R7.3':{x: 549, y: 229}, 'R7.4':{x: 573, y: 229},
-  // Lateral hoses — on horizontal segments where they exist
-  'R8.1':{x: 368, y: 295}, 'R8.2':{x: 525, y: 268},
-  // SPRK2 bottom border (y=394)
-  'R9.1':{x: 435, y: 394},
+  // SOFTWARE bottom border (y=80), center x=101
+  'R1.1':{x:  72, y: 80}, 'R1.2':{x: 101, y: 80}, 'R1.3':{x: 130, y: 80},
+  // CONTROLLER bottom border (y=80), center x=267
+  'R2.2':{x: 244, y: 80}, 'R2.3':{x: 290, y: 80},
+  // RELAY bottom border (y=80), center x=433
+  'R3.1':{x: 433, y: 80},
+  // PUMP bottom border (y=80), center x=599
+  'R4.1':{x: 575, y: 80}, 'R4.2':{x: 623, y: 80},
+  // Main water vertical x=599, y 80→170
+  'R5.1':{x: 599, y: 108}, 'R5.2':{x: 599, y: 145},
+  // Control wire horizontal y=140, x 267→520
+  'R6.1':{x: 330, y: 140}, 'R6.2':{x: 400, y: 140}, 'R6.3':{x: 470, y: 140},
+  // VALVES bottom border y=230
+  'R7.1':{x: 560, y: 230}, 'R7.2':{x: 586, y: 230},
+  'R7.3':{x: 612, y: 230}, 'R7.4':{x: 638, y: 230},
+  // Lateral hoses
+  'R8.1':{x: 300, y: 290}, 'R8.2':{x: 638, y: 265},
+  // SPRK2 bottom border (y=400)
+  'R9.1':{x: 370, y: 400},
 };
 
 // severity color → rust gradient stops, mapped from irrits.html scale
@@ -269,6 +269,77 @@ const sevColor = (t) => {
 };
 const sevText = (t) => (t >= 0.55 ? '#efe8d8' : '#1a2238');
 
+function NodeIcon({ kind, cx, cy }) {
+  const s = "#1a2238";
+  if (kind === 'sw') return (
+    <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <rect x="-13" y="-9" width="26" height="18" rx="2"/>
+      <line x1="-13" y1="-4" x2="13" y2="-4"/>
+      <circle cx="-10" cy="-6.5" r="0.9" fill={s} stroke="none"/>
+      <circle cx="-7" cy="-6.5" r="0.9" fill={s} stroke="none"/>
+      <circle cx="-4" cy="-6.5" r="0.9" fill={s} stroke="none"/>
+      <line x1="-8" y1="0" x2="9" y2="0"/>
+      <line x1="-8" y1="3.5" x2="6" y2="3.5"/>
+      <line x1="-8" y1="7" x2="3" y2="7"/>
+    </g>
+  );
+  if (kind === 'ctrl') return (
+    <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <rect x="-13" y="-9" width="26" height="18" rx="2"/>
+      <circle cx="-5" cy="0" r="4.5"/>
+      <line x1="-5" y1="0" x2="-2.5" y2="-2.5"/>
+      <circle cx="-5" cy="-5.5" r="0.6" fill={s} stroke="none"/>
+      <circle cx="-5" cy="5.5" r="0.6" fill={s} stroke="none"/>
+      <rect x="3" y="-6" width="9" height="3.5"/>
+      <rect x="3" y="2" width="9" height="3.5" fill={s}/>
+    </g>
+  );
+  if (kind === 'relay') return (
+    <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <rect x="-13" y="-9" width="26" height="18" rx="2"/>
+      <line x1="-9" y1="4" x2="-3" y2="4"/>
+      <line x1="-3" y1="4" x2="6" y2="-3"/>
+      <line x1="6" y1="4" x2="9" y2="4"/>
+      <circle cx="-3" cy="4" r="1.3" fill={s}/>
+      <circle cx="6" cy="4" r="1.3" fill={s}/>
+      <line x1="-7" y1="-5" x2="7" y2="-5" strokeDasharray="1.6 1.4"/>
+    </g>
+  );
+  if (kind === 'pump') return (
+    <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <circle r="10"/>
+      <path d="M -7 1 q 3.5 -6 7 0 t 7 0"/>
+      <path d="M -7 5 q 3.5 -6 7 0 t 7 0"/>
+    </g>
+  );
+  if (kind === 'valves') return (
+    <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <line x1="-15" y1="3" x2="15" y2="3" strokeWidth="2"/>
+      <path d="M -10 -2 L -6 3 L -10 8 Z"/>
+      <path d="M -2 -2 L -6 3 L -2 8 Z"/>
+      <line x1="-6" y1="-2" x2="-6" y2="-7"/>
+      <line x1="-9" y1="-7" x2="-3" y2="-7"/>
+      <path d="M 2 -2 L 6 3 L 2 8 Z"/>
+      <path d="M 10 -2 L 6 3 L 10 8 Z"/>
+      <line x1="6" y1="-2" x2="6" y2="-7"/>
+      <line x1="3" y1="-7" x2="9" y2="-7"/>
+    </g>
+  );
+  if (kind === 'sprk') return (
+    <g transform={`translate(${cx},${cy})`} fill="none" stroke={s} strokeWidth="1.2" strokeLinecap="round">
+      <path d="M -12 5 Q 0 -11 12 5"/>
+      <circle cx="-9" cy="3.5" r="0.9" fill={s} stroke="none"/>
+      <circle cx="-5" cy="-1.5" r="0.9" fill={s} stroke="none"/>
+      <circle cx="0" cy="-4" r="0.9" fill={s} stroke="none"/>
+      <circle cx="5" cy="-1.5" r="0.9" fill={s} stroke="none"/>
+      <circle cx="9" cy="3.5" r="0.9" fill={s} stroke="none"/>
+      <line x1="0" y1="5" x2="0" y2="9"/>
+      <line x1="-3" y1="9" x2="3" y2="9"/>
+    </g>
+  );
+  return null;
+}
+
 function SystemDiagram({ severityT, activeRC, onPickRC }) {
   return (
     <svg viewBox="0 0 700 415" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
@@ -282,61 +353,69 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
       </defs>
       <style>{`
         .lbl{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:12px;fill:#1a2238;letter-spacing:.05em}
-        .pip{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:7px;pointer-events:none}
+        .pip{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:8px;pointer-events:none}
       `}</style>
 
       {/* ── control wires (rust dashed) ── */}
-      <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3">
+      <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3" strokeLinecap="round">
         {/* SW → CTRL */}
-        <line x1="135" y1="47" x2="165" y2="47" markerEnd="url(#arrR)"/>
+        <line x1="166" y1="50" x2="202" y2="50" markerEnd="url(#arrR)"/>
         {/* CTRL → RELAY */}
-        <line x1="285" y1="47" x2="315" y2="47" markerEnd="url(#arrR)"/>
-        {/* CTRL → VALVES: down, right across R6 pips at y=140, down, right into VALVES left */}
-        <path d="M 225 74 V 140 H 445 V 202 H 465" markerEnd="url(#arrR)"/>
+        <line x1="332" y1="50" x2="368" y2="50" markerEnd="url(#arrR)"/>
+        {/* CTRL → VALVES: down from CTRL bottom, right across (R6 pips), down, into VALVES left edge */}
+        <path d="M 267 80 V 140 H 520 V 200 H 534" markerEnd="url(#arrR)"/>
       </g>
 
-      {/* ── 230 V power (dot-dash slate) ── */}
-      <line x1="435" y1="47" x2="465" y2="47" stroke="#5a6a85" strokeWidth="2" strokeDasharray="4 2 1 2" markerEnd="url(#arr)"/>
+      {/* ── 230 V power (dot-dash slate): RELAY → PUMP ── */}
+      <line x1="498" y1="50" x2="534" y2="50" stroke="#5a6a85" strokeWidth="2" strokeDasharray="4 2 1 2" markerEnd="url(#arr)"/>
 
-      {/* ── main water line: straight down PUMP → VALVES ── */}
-      <line x1="525" y1="74" x2="525" y2="175" stroke="#1a2238" strokeWidth="4" fill="none" markerEnd="url(#arr)"/>
+      {/* ── main water line: PUMP → VALVES (straight down center) ── */}
+      <line x1="599" y1="80" x2="599" y2="170" stroke="#1a2238" strokeWidth="4" fill="none" markerEnd="url(#arr)"/>
 
       {/* ── lateral hoses VALVES → sprinklers ── */}
-      <g stroke="#1a2238" strokeWidth="2.2" fill="none">
-        {/* to SPRK1 (center 245): left from VALVES bottom-left */}
-        <path d="M 490 229 V 295 H 245 V 340" markerEnd="url(#arr)"/>
-        {/* to SPRK2 (center 435): straight-ish down then slight left */}
-        <path d="M 525 229 V 310 H 435 V 340" markerEnd="url(#arr)"/>
-        {/* to SPRK3 (center 625): right from VALVES bottom-right */}
-        <path d="M 562 229 V 295 H 625 V 340" markerEnd="url(#arr)"/>
+      <g stroke="#1a2238" strokeWidth="2.2" fill="none" strokeLinecap="round">
+        {/* to SPRK1 (center 85) */}
+        <path d="M 560 230 V 290 H 85 V 340" markerEnd="url(#arr)"/>
+        {/* to SPRK2 (center 350) */}
+        <path d="M 599 230 V 310 H 350 V 340" markerEnd="url(#arr)"/>
+        {/* to SPRK3 (center 615) */}
+        <path d="M 638 230 V 290 H 615 V 340" markerEnd="url(#arr)"/>
       </g>
 
-      {/* ── boxes ── */}
-      {BOXES.map(b => (
-        <g key={b.key}>
-          <rect x={b.x} y={b.y} width={b.w} height={b.h} fill="#f7f2e6" stroke="#1a2238" strokeWidth="1.5"/>
-          <text x={b.x + b.w/2} y={b.y + b.h/2 + 4} textAnchor="middle" className="lbl">{b.label}</text>
-        </g>
-      ))}
-      {SPRK.map((s,i) => (
-        <g key={`sp${i}`}>
-          <rect x={s.x} y={s.y} width={s.w} height={s.h} fill="#f7f2e6" stroke="#1a2238" strokeWidth="1.5"/>
-          <text x={s.x + s.w/2} y={s.y + s.h/2 + 4} textAnchor="middle" className="lbl">SPRINKLER</text>
-        </g>
-      ))}
+      {/* ── nodes (box + icon + label) ── */}
+      {BOXES.map(b => {
+        const cx = b.x + b.w/2;
+        return (
+          <g key={b.key}>
+            <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="3" fill="#f7f2e6" stroke="#1a2238" strokeWidth="1.5"/>
+            <NodeIcon kind={b.icon} cx={cx} cy={b.y + 22}/>
+            <text x={cx} y={b.y + 50} textAnchor="middle" className="lbl">{b.label}</text>
+          </g>
+        );
+      })}
+      {SPRK.map((s,i) => {
+        const cx = s.x + s.w/2;
+        return (
+          <g key={`sp${i}`}>
+            <rect x={s.x} y={s.y} width={s.w} height={s.h} rx="3" fill="#f7f2e6" stroke="#1a2238" strokeWidth="1.5"/>
+            <NodeIcon kind="sprk" cx={cx} cy={s.y + 22}/>
+            <text x={cx} y={s.y + 50} textAnchor="middle" className="lbl">SPRINKLER</text>
+          </g>
+        );
+      })}
 
-      {/* ── R-squares with labels ── */}
+      {/* ── R-squares (integrated badges on borders / connectors) ── */}
       {ALL_IDS.map(rcId => {
         const pos = R_POS[rcId]; if (!pos) return null;
         const t = severityT[rcId] || 0;
         const fill = sevColor(t);
         const txtFill = sevText(t);
         const isActive = activeRC === rcId;
-        const sz = isActive ? 16 : 14;
+        const sz = isActive ? 18 : 16;
         return (
           <g key={rcId} style={{cursor:'pointer'}} onClick={() => onPickRC && onPickRC(rcId)}>
-            <rect x={pos.x - sz/2} y={pos.y - sz/2} width={sz} height={sz}
-                  fill={fill} stroke="#1a2238" strokeWidth={isActive ? 1.8 : 0.8}/>
+            <rect x={pos.x - sz/2} y={pos.y - sz/2} width={sz} height={sz} rx="1.5"
+                  fill={fill} stroke="#1a2238" strokeWidth={isActive ? 1.8 : 1.2}/>
             <text x={pos.x} y={pos.y + 3} textAnchor="middle" className="pip" fill={txtFill}>
               {rcId.replace('R','')}
             </text>
