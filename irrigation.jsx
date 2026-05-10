@@ -140,17 +140,21 @@ const NODES = [
 // each entry is a separate clickable jump to the same cause.
 const CONN_PIPS = [
   // Water main horizontal from pump down/across to valves (y=145)
-  { rcId: 'R5.1', x: 525, y: 145 },
-  { rcId: 'R5.2', x: 430, y: 145 },
-  // 24 V control wire vertical from controller down to valves entry (x=267)
-  { rcId: 'R6.1', x: 267, y: 120 },
-  { rcId: 'R6.2', x: 267, y: 150 },
-  { rcId: 'R6.3', x: 267, y: 180 },
-  // Lateral hoses (one pip per lateral, alternating R8.1 / R8.2)
-  { rcId: 'R8.1', x: 200, y: 290 },
-  { rcId: 'R8.2', x: 305, y: 305 },
-  { rcId: 'R8.1', x: 405, y: 305 },
-  { rcId: 'R8.2', x: 600, y: 290 },
+  { rcId: 'R5.1', x: 487, y: 145 },
+  { rcId: 'R5.2', x: 461, y: 145 },
+  // 24 V control wire — three pips clustered horizontally on the wire
+  { rcId: 'R6.1', x: 241, y: 145 },
+  { rcId: 'R6.2', x: 267, y: 145 },
+  { rcId: 'R6.3', x: 293, y: 145 },
+  // Lateral hoses — each lateral carries both R8.1 and R8.2 adjacent
+  { rcId: 'R8.1', x: 180, y: 290 },
+  { rcId: 'R8.2', x: 206, y: 290 },
+  { rcId: 'R8.1', x: 286, y: 305 },
+  { rcId: 'R8.2', x: 312, y: 305 },
+  { rcId: 'R8.1', x: 393, y: 305 },
+  { rcId: 'R8.2', x: 419, y: 305 },
+  { rcId: 'R8.1', x: 500, y: 290 },
+  { rcId: 'R8.2', x: 526, y: 290 },
 ];
 
 // ============ SEVERITY COLOURS ============
@@ -399,7 +403,7 @@ function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC })
   const t = severityT[rcId] || 0;
   const p = severityPct[rcId] || 0;
   const isActive = activeRC === rcId;
-  const sz = isActive ? 18 : 16;
+  const sz = 26;
   return (
     <g
       role="button"
@@ -539,7 +543,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         strokeLinecap="round"
         markerEnd="url(#arr-water)"
       />
-      <text x="475" y="138" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">
+      <text x="370" y="142" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">
         H₂O
       </text>
 
@@ -632,7 +636,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
         ))}
         {question.rows.map((row) => {
           const sel = rowAns[row.id] || 'no';
-          const isOff = sel === 'no' || sel === 'unknown';
+          const isOff = sel === 'no';
           return (
             <React.Fragment key={row.id}>
               <div className="matrix-cell matrix-row-label">{row.label}</div>
@@ -705,12 +709,24 @@ function QuestionPanel({
         </div>
       </div>
       {isMatrix ? (
-        <MatrixQuestion
-          question={question}
-          answer={answer}
-          onSetCell={onSetCell}
-          onToggleDrained={onToggleDrained}
-        />
+        <>
+          <MatrixQuestion
+            question={question}
+            answer={answer}
+            onSetCell={onSetCell}
+            onToggleDrained={onToggleDrained}
+          />
+          <div className="matrix-actions">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={onNext}
+              disabled={isLast}
+            >
+              Next ›
+            </button>
+          </div>
+        </>
       ) : (
         <div className="opts">
           {question.options.map((opt, i) => {
@@ -743,7 +759,8 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
         {visible.map((r) => {
           const meta = RC[r.id];
           const active = activeRC === r.id;
-          const colour = pctColor(r.pct, severityT[r.id]);
+          const pct = Math.round(r.pct);
+          const colour = pctColor(pct, severityT[r.id]);
           return (
             <button
               key={r.id}
@@ -759,7 +776,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
                 </div>
               </div>
               <span className="pct mono" style={{ color: colour }}>
-                {r.pct.toFixed(1)}%
+                {pct}%
               </span>
             </button>
           );
@@ -920,7 +937,7 @@ function App() {
     if (a === undefined || a === null) return false;
     const q = QUESTIONS.find((qq) => qq.id === qid);
     if (q?.type === 'matrix') {
-      return a.rows && Object.keys(a.rows).length > 0;
+      return (a.rows && Object.keys(a.rows).length > 0) || a.acked === true;
     }
     return true;
   };
@@ -978,6 +995,7 @@ function App() {
       return {
         ...p,
         [qid]: {
+          ...prev,
           rows: { ...prev.rows, [rowId]: colId },
           drained: prev.drained || {},
         },
@@ -990,10 +1008,17 @@ function App() {
       return {
         ...p,
         [qid]: {
+          ...prev,
           rows: prev.rows || {},
           drained: { ...(prev.drained || {}), [rowId]: val },
         },
       };
+    });
+
+  const ackMatrix = (qid) =>
+    setAnswers((p) => {
+      const prev = p[qid] || { rows: {}, drained: {} };
+      return { ...p, [qid]: { ...prev, acked: true } };
     });
 
   const pickQuestion = (qid) => {
@@ -1004,6 +1029,10 @@ function App() {
 
   const moveBy = (delta) => {
     const idx = QUESTIONS.findIndex((q) => q.id === activeQuestionId);
+    if (delta > 0) {
+      const cur = QUESTIONS[idx];
+      if (cur?.type === 'matrix') ackMatrix(cur.id);
+    }
     const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + delta))];
     pickQuestion(next.id);
   };

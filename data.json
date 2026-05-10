@@ -339,13 +339,12 @@
       "group": "Events",
       "text": "Recent service or work — for each, how did the issue relate to it?",
       "columns": [
-        { "id": "no", "label": "Didn't happen / N/A", "mult": 0.0 },
+        { "id": "no", "label": "N/A", "mult": 0.0 },
         { "id": "right", "label": "Started right after", "mult": 1.0 },
-        { "id": "days", "label": "Started days/weeks after", "mult": 0.6 },
-        { "id": "worse", "label": "Worsened (same speed)", "mult": 0.0 },
+        { "id": "days", "label": "Started week(s) after", "mult": 0.6 },
+        { "id": "worse", "label": "Worsened (same)", "mult": 0.0 },
         { "id": "faster", "label": "Worsened (faster)", "mult": 0.4 },
-        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 },
-        { "id": "unknown", "label": "Don't know", "mult": 0.0 }
+        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 }
       ],
       "rows": [
         { "id": "pump", "label": "Pump service / replacement", "effects": { "R4": 1 } },
@@ -373,13 +372,12 @@
       "group": "Events",
       "text": "External events — for each, how did the issue relate to it?",
       "columns": [
-        { "id": "no", "label": "Didn't happen / N/A", "mult": 0.0 },
+        { "id": "no", "label": "N/A", "mult": 0.0 },
         { "id": "right", "label": "Started right after", "mult": 1.0 },
-        { "id": "days", "label": "Started days/weeks after", "mult": 0.6 },
-        { "id": "worse", "label": "Worsened (same speed)", "mult": 0.0 },
+        { "id": "days", "label": "Started week(s) after", "mult": 0.6 },
+        { "id": "worse", "label": "Worsened (same)", "mult": 0.0 },
         { "id": "faster", "label": "Worsened (faster)", "mult": 0.4 },
-        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 },
-        { "id": "unknown", "label": "Don't know", "mult": 0.0 }
+        { "id": "briefly", "label": "Briefly fixed, returned", "mult": 0.2 }
       ],
       "rows": [
         {
