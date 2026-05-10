@@ -900,7 +900,7 @@ function App() {
     if (a === undefined || a === null) return false;
     const q = QUESTIONS.find((qq) => qq.id === qid);
     if (q?.type === 'matrix') {
-      return a.rows && Object.values(a.rows).some((v) => v && v !== 'no');
+      return a.rows && Object.keys(a.rows).length > 0;
     }
     return true;
   };
