@@ -739,7 +739,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
                 </div>
               </div>
               <span className="pct mono" style={{ color: colour }}>
-                {r.pct.toFixed(1)}
+                {r.pct.toFixed(1)}%
               </span>
             </button>
           );
