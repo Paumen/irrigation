@@ -253,19 +253,38 @@ function Icon({ name, cx, cy, size, fill = '#1a2238' }) {
 }
 
 // Lays a row of icons centred on (cx, cy). Sizes shrink as count grows so the
-// 4-valve row stays inside the box.
+// 4-valve row stays inside the box. NODE_ICON_LAYOUT is keyed by icon count;
+// >4 falls back to the 4-icon row.
+const NODE_ICON_LAYOUT = {
+  1: { size: 26, gap: 0 },
+  2: { size: 24, gap: 30 },
+  3: { size: 20, gap: 26 },
+  4: { size: 18, gap: 24 },
+};
 function NodeIcons({ icons, cx, cy }) {
   if (!icons?.length) return null;
-  const n = icons.length;
-  const size = n === 1 ? 26 : n === 2 ? 24 : n === 3 ? 20 : 18;
-  const gap = n === 1 ? 0 : n === 2 ? 30 : n === 3 ? 26 : 24;
-  const start = -((n - 1) / 2) * gap;
+  const { size, gap } = NODE_ICON_LAYOUT[icons.length] || NODE_ICON_LAYOUT[4];
+  const start = -((icons.length - 1) / 2) * gap;
   return (
     <>
       {icons.map((name, i) => (
         <Icon key={`${name}-${i}`} name={name} cx={cx + start + i * gap} cy={cy} size={size} />
       ))}
     </>
+  );
+}
+
+// Inline icon + text token (e.g. ⚡ 230 V). (x, y) is the text baseline; the
+// icon sits flush-left of x with a fixed gap so call-sites only think about
+// where the text goes, not the icon's pixel offset.
+function LineLabel({ icon, text, x, y, fill, size = 11, gap = 2 }) {
+  return (
+    <g>
+      <Icon name={icon} cx={x - size / 2 - gap} cy={y - 3} size={size} fill={fill} />
+      <text x={x} y={y} textAnchor="start" className="ln-lbl" fill={fill}>
+        {text}
+      </text>
+    </g>
   );
 }
 
@@ -483,14 +502,22 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
         <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
       </g>
-      <Icon name="mdi:lightning-bolt-outline" cx={340} cy={27} size={10} fill="#b14a26" />
-      <text x="346" y="30" textAnchor="start" className="ln-lbl" fill="#b14a26">
-        24 V
-      </text>
-      <Icon name="mdi:lightning-bolt-outline" cx={244} cy={105} size={10} fill="#b14a26" />
-      <text x="250" y="108" textAnchor="start" className="ln-lbl" fill="#b14a26">
-        24 V
-      </text>
+      <LineLabel
+        icon="mdi:lightning-bolt-outline"
+        text="24 V"
+        x={346}
+        y={30}
+        size={10}
+        fill="#b14a26"
+      />
+      <LineLabel
+        icon="mdi:lightning-bolt-outline"
+        text="24 V"
+        x={250}
+        y={108}
+        size={10}
+        fill="#b14a26"
+      />
 
       {/* ── 230 V mains (slate solid + bolt) RELAY → PUMP ── */}
       <line
@@ -502,10 +529,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         strokeWidth="2.5"
         markerEnd="url(#arr-mains)"
       />
-      <Icon name="ms:bolt" cx={502} cy={27} size={11} fill="#5a6a85" />
-      <text x="510" y="30" textAnchor="start" className="ln-lbl" fill="#5a6a85">
-        230 V
-      </text>
+      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} fill="#5a6a85" />
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
       <path
@@ -516,10 +540,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         strokeLinecap="round"
         markerEnd="url(#arr-water)"
       />
-      <Icon name="mdi:water-outline" cx={362} cy={139} size={11} fill="#1a4a7a" />
-      <text x="370" y="142" textAnchor="start" className="ln-lbl" fill="#1a4a7a">
-        H₂O
-      </text>
+      <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} fill="#1a4a7a" />
 
       {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
       <g stroke="#1a4a7a" strokeWidth="2.5" fill="none" strokeLinecap="round">
@@ -691,12 +712,7 @@ function QuestionPanel({
             onToggleDrained={onToggleDrained}
           />
           <div className="matrix-actions">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onNext}
-              disabled={isLast}
-            >
+            <button type="button" className="btn btn-primary" onClick={onNext} disabled={isLast}>
               Next ›
             </button>
           </div>
