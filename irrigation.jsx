@@ -102,7 +102,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icon: 'sprk',
-    pips: ['R9.1'],
+    pips: ['R9.1', 'R9.2'],
   },
   {
     key: 'sp2',
@@ -112,7 +112,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icon: 'sprk',
-    pips: ['R9.2'],
+    pips: ['R9.1', 'R9.2'],
   },
   {
     key: 'sp3',
@@ -122,7 +122,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icon: 'sprk',
-    pips: ['R9.1'],
+    pips: ['R9.1', 'R9.2'],
   },
   {
     key: 'sp4',
@@ -132,7 +132,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icon: 'sprk',
-    pips: ['R9.2'],
+    pips: ['R9.1', 'R9.2'],
   },
 ];
 
@@ -525,10 +525,10 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
 
       {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
       <g stroke="#1a4a7a" strokeWidth="2.5" fill="none" strokeLinecap="round">
-        <path d="M 315 242 V 290 H 85 V 340" markerEnd="url(#arr-water)" />
-        <path d="M 335 242 V 305 H 265 V 340" markerEnd="url(#arr-water)" />
-        <path d="M 375 242 V 305 H 445 V 340" markerEnd="url(#arr-water)" />
-        <path d="M 395 242 V 290 H 625 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 300 242 V 290 H 85 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 333 242 V 305 H 265 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 367 242 V 305 H 445 V 340" markerEnd="url(#arr-water)" />
+        <path d="M 400 242 V 290 H 625 V 340" markerEnd="url(#arr-water)" />
       </g>
 
       {/* ── nodes ── */}
