@@ -36,6 +36,9 @@
   --font-weight-l: 800;
 
   /* ─── Spacing ────────────────────────────────────── */
+  --sp-px: 1px;
+  --sp-2px: 2px;
+  --sp-3px: 3px;
   --sp-1: 6px;
   --sp-2: 8px;
   --sp-3: 10px;
@@ -44,6 +47,9 @@
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
   --line-width-l: 3px;
+
+  /* ─── Layers ─────────────────────────────────────── */
+  --z-base: 1;
 
   /* ─── Motion ─────────────────────────────────────── */
   --time: 0.12s;
@@ -90,7 +96,7 @@ body {
 /* ─── BUTTON ─────────────────────────────────────── */
 .btn {
   display: inline-flex;
-  align-items: center;
+  place-items: center;
   height: 26px;
   padding: 0 var(--sp-3);
   font-family: var(--font-mono);
@@ -137,8 +143,8 @@ section.sec:last-child {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2) var(--sp-4);
-  align-items: center;
-  margin-top: var(--sp-3);
+  place-items: center;
+  margin: var(--sp-3) 0 0;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--c-neutral-4);
@@ -148,7 +154,7 @@ section.sec:last-child {
   display: inline-block;
   width: 28px;
   height: 4px;
-  margin-right: var(--sp-1);
+  margin: 0 var(--sp-1) 0 0;
   vertical-align: middle;
 }
 
@@ -196,8 +202,8 @@ section.sec:last-child {
 .panel > .hd {
   display: flex;
   gap: var(--sp-2);
-  align-items: center;
-  justify-content: space-between;
+  place-content: space-between;
+  place-items: center;
   padding: var(--sp-1) var(--sp-3);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -231,7 +237,7 @@ section.sec:last-child {
 
 .stages button {
   position: relative;
-  padding: 1px var(--sp-2);
+  padding: var(--sp-px) var(--sp-2);
   overflow: hidden;
   font-family: var(--font-mono);
   text-align: left;
@@ -244,11 +250,11 @@ section.sec:last-child {
 
 .stages button .label {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
   display: flex;
   gap: var(--sp-1);
-  align-items: center;
-  justify-content: space-between;
+  place-content: space-between;
+  place-items: center;
 }
 
 .stages button .label .nm {
@@ -266,9 +272,8 @@ section.sec:last-child {
 
 .stages button .fill {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
+  inset-block: 0;
+  inset-inline-start: 0;
   z-index: 0;
   height: auto;
   background: var(--bg-accent-1);
@@ -277,7 +282,7 @@ section.sec:last-child {
 
 .stages button > *:not(.fill) {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 .stages button.active {
@@ -298,9 +303,9 @@ section.sec:last-child {
 .qhead {
   display: flex;
   gap: var(--sp-2);
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--sp-3);
+  place-content: space-between;
+  place-items: center;
+  margin: 0 0 var(--sp-3);
 }
 
 .qnav {
@@ -310,8 +315,8 @@ section.sec:last-child {
 
 .qnav button {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  place-content: center;
+  place-items: center;
   width: 28px;
   height: 26px;
   font-family: var(--font-mono);
@@ -339,9 +344,9 @@ section.sec:last-child {
 .qfreeze {
   display: inline-flex;
   gap: var(--sp-1);
-  align-items: center;
+  place-items: center;
   padding: var(--sp-1) var(--sp-2);
-  margin-bottom: var(--sp-3);
+  margin: 0 0 var(--sp-3);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--c-neutral-4);
@@ -365,7 +370,7 @@ section.sec:last-child {
   display: grid;
   grid-template-columns: 22px 1fr;
   gap: var(--sp-2);
-  align-items: center;
+  place-items: center stretch;
   padding: var(--sp-2) var(--sp-4);
   font-family: var(--font-sans);
   font-size: var(--text-md);
@@ -420,7 +425,7 @@ section.sec:last-child {
 .rec .top {
   display: flex;
   gap: var(--sp-2);
-  align-items: baseline;
+  place-items: baseline;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: var(--text-ls-tight);
@@ -436,12 +441,12 @@ section.sec:last-child {
 }
 
 .rec .top .d {
-  margin-left: auto;
+  margin-inline-start: auto;
   color: var(--c-neutral-3);
 }
 
 .rec .qq {
-  margin-top: 3px;
+  margin: var(--sp-3px) 0 0;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: var(--line-height);
@@ -460,14 +465,14 @@ section.sec:last-child {
 .rank {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--sp-2px);
 }
 
 .rank-row {
   display: grid;
   grid-template-columns: 50px 1fr 50px;
   gap: var(--sp-3);
-  align-items: center;
+  place-items: center stretch;
   padding: var(--sp-1) var(--sp-2);
   text-align: left;
   border-bottom: var(--line-width-s) dotted var(--c-gradient-neutral-2);
@@ -540,7 +545,7 @@ section.sec:last-child {
 
   .schem-wrap svg {
     width: 100%;
-    max-height: 33vh;
+    max-height: 33dvh;
     object-fit: contain;
   }
 
