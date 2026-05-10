@@ -242,7 +242,7 @@ function Icon({ name, cx, cy, size }) {
   const ty = cy - (minY + vh / 2) * scale;
   return (
     <g transform={`translate(${tx} ${ty}) scale(${scale})`}>
-      <path d={def.d} />
+      <path d={def.d} fill="currentColor" />
     </g>
   );
 }
@@ -467,6 +467,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         text="24 V"
         x={346}
         y={30}
+        size={10}
         className="lbl-ctrl"
       />
       <LineLabel
@@ -474,6 +475,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         text="24 V"
         x={250}
         y={108}
+        size={10}
         className="lbl-ctrl"
       />
 
