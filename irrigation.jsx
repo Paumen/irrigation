@@ -356,7 +356,6 @@ function NodeBox({ box, iconKind, label, severityT, severityPct, activeRC, onPic
             role="button"
             tabIndex="0"
             aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
-            style={{ cursor: 'pointer' }}
             onClick={() => onPickRC && onPickRC(rcId)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -409,7 +408,6 @@ function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC })
       role="button"
       tabIndex="0"
       aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
-      style={{ cursor: 'pointer' }}
       onClick={() => onPickRC && onPickRC(rcId)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -477,11 +475,6 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           <path d="M0,0 L10,5 L0,10 z" fill="#5a6a85" />
         </marker>
       </defs>
-      <style>{`
-        .lbl{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:12px;fill:#1a2238;letter-spacing:.05em}
-        .pip{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:9px;pointer-events:none}
-        .ln-lbl{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:8.5px;pointer-events:none;letter-spacing:.06em}
-      `}</style>
 
       {/* ── Wi-Fi link SOFTWARE ↔ CONTROLLER (slate dotted, no arrow — bidirectional) ── */}
       <line
@@ -693,7 +686,7 @@ function QuestionPanel({
   return (
     <div>
       <div className="qhead">
-        <div className="qtitle" style={{ flex: 1, margin: 0 }}>
+        <div className="qtitle">
           {question.text}
         </div>
         <button className="btn" type="button" onClick={onReset}>
@@ -769,7 +762,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
               onClick={() => onPickRC(r.id)}
             >
               <span className="id mono">{r.id}</span>
-              <div style={{ minWidth: 0 }}>
+              <div className="rank-row-body">
                 <div className="label">{meta.label}</div>
                 <div className="bar">
                   <div style={{ width: r.pct + '%', background: colour }} />
@@ -1112,7 +1105,7 @@ function App() {
             <StageBar stages={stageProgress} activeStage={activeStage} onPick={onPickStage} />
           </main>
 
-          <aside style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: 0 }}>
+          <aside>
             <div className="panel">
               <div className="hd">
                 <span>Root-cause</span>

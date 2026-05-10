@@ -77,6 +77,10 @@ button {
   border: 0;
 }
 
+[role='button'] {
+  cursor: pointer;
+}
+
 html,
 body {
   padding: 0;
@@ -156,6 +160,29 @@ section.sec {
   height: auto;
 }
 
+.schem-wrap svg .lbl {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-l);
+  font-size: 12px;
+  fill: var(--c-neutral-5);
+  letter-spacing: 0.05em;
+}
+
+.schem-wrap svg .pip {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-m);
+  font-size: 9px;
+  pointer-events: none;
+}
+
+.schem-wrap svg .ln-lbl {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-m);
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+
 .schem-legend {
   display: flex;
   flex-wrap: wrap;
@@ -206,6 +233,13 @@ section.sec {
   .work {
     grid-template-columns: minmax(0, 1fr) 360px;
   }
+}
+
+.work > aside {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
 }
 
 /* ─── PANEL ──────────────────────────────────────── */
@@ -352,6 +386,11 @@ section.sec {
   line-height: var(--line-height);
   color: var(--c-neutral-5);
   letter-spacing: var(--text-ls-tight);
+}
+
+.qhead .qtitle {
+  flex: 1;
+  margin: 0;
 }
 
 .qfreeze {
@@ -519,6 +558,10 @@ section.sec {
   font-size: var(--text-xs);
   font-weight: 600;
   text-align: right;
+}
+
+.rank-row-body {
+  min-width: 0;
 }
 
 .rank-row .bar {
