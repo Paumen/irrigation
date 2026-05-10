@@ -350,6 +350,9 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
         <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="#b14a26"/>
         </marker>
+        <marker id="arrS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#5a6a85"/>
+        </marker>
       </defs>
       <style>{`
         .lbl{font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:12px;fill:#1a2238;letter-spacing:.05em}
@@ -367,7 +370,7 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
       </g>
 
       {/* ── 230 V power (dot-dash slate): RELAY → PUMP ── */}
-      <line x1="498" y1="50" x2="534" y2="50" stroke="#5a6a85" strokeWidth="2" strokeDasharray="4 2 1 2" markerEnd="url(#arr)"/>
+      <line x1="498" y1="50" x2="534" y2="50" stroke="#5a6a85" strokeWidth="2" strokeDasharray="4 2 1 2" markerEnd="url(#arrS)"/>
 
       {/* ── main water line: PUMP → VALVES (straight down center) ── */}
       <line x1="599" y1="80" x2="599" y2="170" stroke="#1a2238" strokeWidth="4" fill="none" markerEnd="url(#arr)"/>
@@ -413,7 +416,11 @@ function SystemDiagram({ severityT, activeRC, onPickRC }) {
         const isActive = activeRC === rcId;
         const sz = isActive ? 18 : 16;
         return (
-          <g key={rcId} style={{cursor:'pointer'}} onClick={() => onPickRC && onPickRC(rcId)}>
+          <g key={rcId} role="button" tabIndex="0"
+             aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
+             style={{cursor:'pointer'}}
+             onClick={() => onPickRC && onPickRC(rcId)}
+             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPickRC && onPickRC(rcId); } }}>
             <rect x={pos.x - sz/2} y={pos.y - sz/2} width={sz} height={sz} rx="1.5"
                   fill={fill} stroke="#1a2238" strokeWidth={isActive ? 1.8 : 1.2}/>
             <text x={pos.x} y={pos.y + 3} textAnchor="middle" className="pip" fill={txtFill}>
