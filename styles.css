@@ -161,7 +161,7 @@ section.sec {
 .schem-wrap svg .lbl {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-l);
-  font-size: var(--text-xs);
+  font-size: var(--text-m);
   fill: var(--c-neutral-5);
   letter-spacing: 0.05em;
 }
@@ -169,14 +169,14 @@ section.sec {
 .schem-wrap svg .pip {
   font-family: var(--font-mono);
   font-weight: var(--font-weight-m);
-  font-size: var(--text-xs);
+  font-size: var(--text-m);
   pointer-events: none;
 }
 
 .schem-wrap svg .ln-lbl {
   font-family: var(--font-mono);
   font-weight: var(--font-weight-m);
-  font-size: var(--text-xs);
+  font-size: var(--text-m);
   letter-spacing: 0.06em;
   pointer-events: none;
 }
@@ -188,35 +188,35 @@ section.sec {
   place-items: center;
   margin: var(--sp-xl) 0 0;
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: var(--text-m);
   color: var(--c-neutral-4);
 }
 
 .schem-legend .swatch {
   display: inline-block;
   width: 28px;
-  height: 4px;
+  height: 6px;
   margin: 0 var(--sp-l) 0 0;
   vertical-align: middle;
 }
 
 .schem-legend .swatch.water {
-  height: 4px;
+  height: 6px;
   background: var(--c-water);
 }
 
 .schem-legend .swatch.mains {
-  height: 2.5px;
+  height: 6px;
   background: var(--c-mains);
 }
 
 .schem-legend .swatch.ctrl {
-  height: 2px;
+  height: 6px;
   background: repeating-linear-gradient(90deg, var(--c-ctrl) 0 5px, transparent 5px 8px);
 }
 
 .schem-legend .swatch.wifi {
-  height: 2px;
+  height: 6px;
   background: repeating-linear-gradient(90deg, var(--c-neutral-3) 0 2px, transparent 2px 5px);
 }
 
