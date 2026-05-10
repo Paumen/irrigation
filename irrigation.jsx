@@ -479,16 +479,36 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         .ln-lbl{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:8.5px;pointer-events:none;letter-spacing:.06em}
       `}</style>
 
+      {/* ── Wi-Fi link SOFTWARE ↔ CONTROLLER (slate dotted, no arrow — bidirectional) ── */}
+      <line
+        x1="166"
+        y1="36"
+        x2="202"
+        y2="36"
+        stroke="#4a5878"
+        strokeWidth="1.2"
+        strokeDasharray="2 3"
+        strokeLinecap="round"
+      />
+      {/* Wi-Fi arc glyph centred on the link */}
+      <g
+        transform="translate(184, 24)"
+        stroke="#4a5878"
+        strokeWidth="1"
+        fill="none"
+        strokeLinecap="round"
+      >
+        <path d="M -5 0 A 5 5 0 0 1 5 0" />
+        <path d="M -3 1.5 A 3 3 0 0 1 3 1.5" />
+        <circle cx="0" cy="3" r="0.9" fill="#4a5878" stroke="none" />
+      </g>
+
       {/* ── 24 V control wires (rust dashed) ── */}
       <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3" strokeLinecap="round">
-        <line x1="166" y1="36" x2="202" y2="36" markerEnd="url(#arr-ctrl)" />
         <line x1="332" y1="36" x2="368" y2="36" markerEnd="url(#arr-ctrl)" />
         {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
         <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
       </g>
-      <text x="184" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">
-        24 V
-      </text>
       <text x="350" y="30" textAnchor="middle" className="ln-lbl" fill="#b14a26">
         24 V
       </text>
@@ -1036,6 +1056,9 @@ function App() {
             <span>
               <span className="swatch ctrl" /> 24 V control
             </span>
+            <span>
+              <span className="swatch wifi" /> Wi-Fi
+            </span>
           </div>
         </div>
       </section>
@@ -1064,7 +1087,6 @@ function App() {
             <div className="panel">
               <div className="hd">
                 <span>Root-cause</span>
-                <span className="meta">% · score</span>
               </div>
               <div className="bd">
                 <RankingPanel
