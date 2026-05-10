@@ -142,15 +142,19 @@ const CONN_PIPS = [
   // Water main horizontal from pump down/across to valves (y=145)
   { rcId: 'R5.1', x: 487, y: 145 },
   { rcId: 'R5.2', x: 461, y: 145 },
-  // 24 V control wire vertical from controller down to valves entry (x=267)
-  { rcId: 'R6.1', x: 267, y: 105 },
-  { rcId: 'R6.2', x: 267, y: 131 },
-  { rcId: 'R6.3', x: 267, y: 157 },
-  // Lateral hoses (one pip per lateral, alternating R8.1 / R8.2)
-  { rcId: 'R8.1', x: 200, y: 290 },
-  { rcId: 'R8.2', x: 305, y: 305 },
-  { rcId: 'R8.1', x: 405, y: 305 },
-  { rcId: 'R8.2', x: 600, y: 290 },
+  // 24 V control wire — three pips clustered horizontally on the wire
+  { rcId: 'R6.1', x: 241, y: 145 },
+  { rcId: 'R6.2', x: 267, y: 145 },
+  { rcId: 'R6.3', x: 293, y: 145 },
+  // Lateral hoses — each lateral carries both R8.1 and R8.2 adjacent
+  { rcId: 'R8.1', x: 180, y: 290 },
+  { rcId: 'R8.2', x: 206, y: 290 },
+  { rcId: 'R8.1', x: 286, y: 305 },
+  { rcId: 'R8.2', x: 312, y: 305 },
+  { rcId: 'R8.1', x: 393, y: 305 },
+  { rcId: 'R8.2', x: 419, y: 305 },
+  { rcId: 'R8.1', x: 500, y: 290 },
+  { rcId: 'R8.2', x: 526, y: 290 },
 ];
 
 // ============ SEVERITY COLOURS ============
@@ -932,7 +936,7 @@ function App() {
     if (a === undefined || a === null) return false;
     const q = QUESTIONS.find((qq) => qq.id === qid);
     if (q?.type === 'matrix') {
-      return a.rows && Object.keys(a.rows).length > 0;
+      return (a.rows && Object.keys(a.rows).length > 0) || a.acked === true;
     }
     return true;
   };
@@ -990,6 +994,7 @@ function App() {
       return {
         ...p,
         [qid]: {
+          ...prev,
           rows: { ...prev.rows, [rowId]: colId },
           drained: prev.drained || {},
         },
@@ -1002,10 +1007,17 @@ function App() {
       return {
         ...p,
         [qid]: {
+          ...prev,
           rows: prev.rows || {},
           drained: { ...(prev.drained || {}), [rowId]: val },
         },
       };
+    });
+
+  const ackMatrix = (qid) =>
+    setAnswers((p) => {
+      const prev = p[qid] || { rows: {}, drained: {} };
+      return { ...p, [qid]: { ...prev, acked: true } };
     });
 
   const pickQuestion = (qid) => {
@@ -1016,6 +1028,10 @@ function App() {
 
   const moveBy = (delta) => {
     const idx = QUESTIONS.findIndex((q) => q.id === activeQuestionId);
+    if (delta > 0) {
+      const cur = QUESTIONS[idx];
+      if (cur?.type === 'matrix') ackMatrix(cur.id);
+    }
     const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + delta))];
     pickQuestion(next.id);
   };
