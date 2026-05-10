@@ -50,7 +50,7 @@
   --z-base: 1;
 
   /* ─── Motion ─────────────────────────────────────── */
-  --time: 0.12s;
+  --time: 0.2s;
 
   /* ─── Severity gradient (4 bands) ────────────────── */
   --c-sev-1: #3f6b2f; /* dark green   — negligible */
