@@ -131,7 +131,7 @@ body {
 }
 
 /* ─── SECTION ────────────────────────────────────── */
-section.sec {
+section {
   position: relative;
   padding: 0 var(--sp-xl);
 }
@@ -349,12 +349,7 @@ section.sec {
   margin: 0 0 var(--sp-xl);
 }
 
-.qnav {
-  display: flex;
-  gap: var(--sp-l);
-}
-
-.qnav button {
+.qhead button:not(.btn) {
   display: inline-flex;
   place-content: center;
   place-items: center;
@@ -367,7 +362,7 @@ section.sec {
   border: var(--line-width-s) solid var(--c-neutral-5);
 }
 
-.qnav button:disabled {
+.qhead button:not(.btn):disabled {
   cursor: not-allowed;
   opacity: 0.35;
 }
@@ -382,10 +377,8 @@ section.sec {
   letter-spacing: var(--text-ls-tight);
 }
 
-.opts {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-l);
+.opt + .opt {
+  margin-top: var(--sp-l);
 }
 
 .opt {
@@ -482,12 +475,6 @@ section.sec {
 }
 
 /* ─── RANKING ────────────────────────────────────── */
-.rank {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
 .rank-row {
   display: grid;
   grid-template-columns: 42px 1fr 44px;
@@ -719,7 +706,7 @@ section.sec {
     gap: var(--sp-l) var(--sp-xl);
   }
 
-  section.sec {
+  section {
     padding: 0 var(--sp-l);
   }
 
