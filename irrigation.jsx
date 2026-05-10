@@ -140,12 +140,12 @@ const NODES = [
 // each entry is a separate clickable jump to the same cause.
 const CONN_PIPS = [
   // Water main horizontal from pump down/across to valves (y=145)
-  { rcId: 'R5.1', x: 525, y: 145 },
-  { rcId: 'R5.2', x: 430, y: 145 },
+  { rcId: 'R5.1', x: 487, y: 145 },
+  { rcId: 'R5.2', x: 461, y: 145 },
   // 24 V control wire vertical from controller down to valves entry (x=267)
-  { rcId: 'R6.1', x: 267, y: 120 },
-  { rcId: 'R6.2', x: 267, y: 150 },
-  { rcId: 'R6.3', x: 267, y: 180 },
+  { rcId: 'R6.1', x: 267, y: 105 },
+  { rcId: 'R6.2', x: 267, y: 131 },
+  { rcId: 'R6.3', x: 267, y: 157 },
   // Lateral hoses (one pip per lateral, alternating R8.1 / R8.2)
   { rcId: 'R8.1', x: 200, y: 290 },
   { rcId: 'R8.2', x: 305, y: 305 },
@@ -399,7 +399,7 @@ function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC })
   const t = severityT[rcId] || 0;
   const p = severityPct[rcId] || 0;
   const isActive = activeRC === rcId;
-  const sz = isActive ? 18 : 16;
+  const sz = 26;
   return (
     <g
       role="button"
@@ -539,7 +539,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         strokeLinecap="round"
         markerEnd="url(#arr-water)"
       />
-      <text x="475" y="138" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">
+      <text x="370" y="142" textAnchor="middle" className="ln-lbl" fill="#1a4a7a">
         H₂O
       </text>
 
@@ -632,7 +632,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
         ))}
         {question.rows.map((row) => {
           const sel = rowAns[row.id] || 'no';
-          const isOff = sel === 'no' || sel === 'unknown';
+          const isOff = sel === 'no';
           return (
             <React.Fragment key={row.id}>
               <div className="matrix-cell matrix-row-label">{row.label}</div>

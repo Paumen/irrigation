@@ -477,15 +477,15 @@ section.sec {
 .rank {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-s);
+  gap: 0;
 }
 
 .rank-row {
   display: grid;
-  grid-template-columns: 50px 1fr 50px;
-  gap: var(--sp-xl);
+  grid-template-columns: 42px 1fr 44px;
+  gap: var(--sp-l);
   place-items: center stretch;
-  padding: var(--sp-l);
+  padding: var(--sp-s) var(--sp-l);
   text-align: left;
   border-bottom: var(--line-width-s) dotted var(--c-gradient-neutral-2);
 }
@@ -521,7 +521,8 @@ section.sec {
 }
 
 .rank-row .bar {
-  height: 4px;
+  height: 3px;
+  margin: var(--sp-xs) 0 0;
   overflow: hidden;
   background: var(--bg-neutral-2);
   border: 0.5px solid var(--c-gradient-neutral-3);
@@ -532,7 +533,7 @@ section.sec {
 }
 
 .rank-more {
-  padding: var(--sp-l);
+  padding: var(--sp-s) var(--sp-l);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--c-neutral-4);
