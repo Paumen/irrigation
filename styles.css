@@ -60,6 +60,10 @@ body {
   padding: var(--px8);
   font-family: var(--font-sans);
   font-size: var(--text-s);
+  background:
+    linear-gradient(var(--c-tint) var(--px1), transparent var(--px1)) 0 0 / 1.5rem 1.5rem,
+    linear-gradient(90deg, var(--c-tint) var(--px1), transparent var(--px1)) 0 0 / 1.5rem 1.5rem,
+    var(--c-bg);
   container-type: inline-size;
   container-name: page;
   -webkit-font-smoothing: antialiased;
@@ -113,7 +117,10 @@ body {
 .schem-wrap {
   position: relative;
   padding: var(--px8);
-  background: var(--c-bg-mute);
+  background:
+    linear-gradient(var(--c-tint) var(--px1), transparent var(--px1)) 0 0 / 1.5rem 1.5rem,
+    linear-gradient(90deg, var(--c-tint) var(--px1), transparent var(--px1)) 0 0 / 1.5rem 1.5rem,
+    var(--c-bg-mute);
   border: var(--px1) solid var(--c-tint);
 }
 
