@@ -101,6 +101,7 @@ body {
   background: var(--bg-neutral-1);
   border: var(--line-width-s) solid var(--c-neutral-5);
 }
+
 .btn:hover {
   background: var(--bg-neutral-2);
 }
@@ -111,6 +112,7 @@ section.sec {
   padding: var(--sp-2) var(--sp-4);
   border-bottom: var(--line-width-s) dashed var(--c-gradient-neutral-3);
 }
+
 section.sec:last-child {
   border-bottom: none;
 }
@@ -165,6 +167,7 @@ section.sec:last-child {
     transparent 6px 8px
   );
 }
+
 .schem-legend .swatch.water {
   height: 4px;
   background: var(--bg-neutral-5);
@@ -213,6 +216,7 @@ section.sec:last-child {
   letter-spacing: var(--text-ls-wide);
   opacity: 0.85;
 }
+
 .panel > .bd {
   padding: var(--sp-3) var(--sp-4);
 }
@@ -233,6 +237,7 @@ section.sec:last-child {
   text-align: left;
   border-right: var(--line-width-s) solid var(--c-neutral-5);
 }
+
 .stages button:last-child {
   border-right: none;
 }
@@ -269,6 +274,7 @@ section.sec:last-child {
   background: var(--bg-accent-1);
   transition: width var(--time);
 }
+
 .stages button > *:not(.fill) {
   position: relative;
   z-index: 1;
@@ -283,6 +289,7 @@ section.sec:last-child {
   color: var(--c-neutral-1);
   opacity: 0.85;
 }
+
 .stages button.active .fill {
   background: var(--bg-accent-2);
 }
@@ -368,6 +375,7 @@ section.sec:last-child {
   border: var(--line-width-s) solid var(--c-gradient-neutral-3);
   transition: background var(--time);
 }
+
 .opt:hover {
   background: var(--bg-neutral-2);
 }
@@ -404,6 +412,7 @@ section.sec:last-child {
   border: var(--line-width-s) solid var(--c-gradient-neutral-3);
   border-left: var(--line-width-l) solid var(--c-accent-1);
 }
+
 .rec:hover {
   background: var(--bg-neutral-2);
 }
@@ -416,13 +425,16 @@ section.sec:last-child {
   font-size: var(--text-xs);
   letter-spacing: var(--text-ls-tight);
 }
+
 .rec .top .id {
   font-weight: var(--font-weight-m);
   color: var(--c-accent-2);
 }
+
 .rec .top .stg {
   color: var(--c-neutral-4);
 }
+
 .rec .top .d {
   margin-left: auto;
   color: var(--c-neutral-3);
@@ -465,6 +477,7 @@ section.sec:last-child {
 .rank-row.active {
   background: var(--bg-neutral-2);
 }
+
 .rank-row.active {
   outline: var(--line-width-s) solid var(--c-neutral-5);
 }
@@ -496,6 +509,7 @@ section.sec:last-child {
   background: var(--bg-neutral-2);
   border: 0.5px solid var(--c-gradient-neutral-3);
 }
+
 .rank-row .bar > div {
   height: 100%;
 }
@@ -509,6 +523,7 @@ section.sec:last-child {
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
 }
+
 .rank-more:hover {
   color: var(--c-accent-1);
 }
@@ -518,6 +533,7 @@ section.sec:last-child {
   body {
     padding: var(--sp-3) var(--sp-1) calc(var(--sp-4) * 3);
   }
+
   .schem-wrap {
     padding: var(--sp-2);
   }
@@ -527,12 +543,15 @@ section.sec:last-child {
     max-height: 33vh;
     object-fit: contain;
   }
+
   .schem-legend {
     gap: var(--sp-1) var(--sp-4);
   }
+
   section.sec {
     padding: var(--sp-4);
   }
+
   .qtitle {
     font-size: var(--text-md);
   }
