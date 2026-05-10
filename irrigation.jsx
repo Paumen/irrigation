@@ -591,7 +591,7 @@ function StageBar({ stages, activeStage, onPick }) {
           >
             <span className="label">
               <span className="nm">{labels[s]}</span>
-              <span className="ct mono">
+              <span className="ct">
                 {sp.answered}/{sp.total}
               </span>
             </span>
@@ -616,7 +616,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
           gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${cols.length}, minmax(54px, 1fr))`,
         }}
       >
-        <div className="matrix-cell matrix-head matrix-corner" />
+        <div className="matrix-cell matrix-head" />
         {cols.map((c) => (
           <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
             <span>{c.label}</span>
@@ -631,7 +631,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
               {cols.map((c) => {
                 const checked = sel === c.id;
                 return (
-                  <div key={c.id} className="matrix-cell matrix-radio-cell">
+                  <div key={c.id} className="matrix-cell">
                     <button
                       type="button"
                       className={`matrix-radio ${checked ? 'checked' : ''}`}
@@ -687,14 +687,12 @@ function QuestionPanel({
         <button className="btn" type="button" onClick={onReset}>
           Reset
         </button>
-        <div className="qnav">
-          <button type="button" onClick={onPrev} disabled={isFirst} title="Previous">
-            ‹
-          </button>
-          <button type="button" onClick={onNext} disabled={isLast} title="Next">
-            ›
-          </button>
-        </div>
+        <button type="button" onClick={onPrev} disabled={isFirst} title="Previous">
+          ‹
+        </button>
+        <button type="button" onClick={onNext} disabled={isLast} title="Next">
+          ›
+        </button>
       </div>
       {isMatrix ? (
         <>
@@ -711,7 +709,7 @@ function QuestionPanel({
           </div>
         </>
       ) : (
-        <div className="opts">
+        <>
           {question.options.map((opt, i) => {
             const selected = answer === i;
             return (
@@ -726,7 +724,7 @@ function QuestionPanel({
               </button>
             );
           })}
-        </div>
+        </>
       )}
     </div>
   );
@@ -738,33 +736,31 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
   const visible = showAll ? ranked : ranked.slice(0, 5);
   return (
     <div>
-      <div className="rank">
-        {visible.map((r) => {
-          const meta = RC[r.id];
-          const active = activeRC === r.id;
-          const pct = Math.round(r.pct);
-          const colour = pctColor(pct, severityT[r.id]);
-          return (
-            <button
-              key={r.id}
-              type="button"
-              className={`rank-row ${active ? 'active' : ''}`}
-              onClick={() => onPickRC(r.id)}
-            >
-              <span className="id mono">{r.id}</span>
-              <div className="rank-row-body">
-                <div className="label">{meta.label}</div>
-                <div className="bar">
-                  <div style={{ width: r.pct + '%', background: colour }} />
-                </div>
+      {visible.map((r) => {
+        const meta = RC[r.id];
+        const active = activeRC === r.id;
+        const pct = Math.round(r.pct);
+        const colour = pctColor(pct, severityT[r.id]);
+        return (
+          <button
+            key={r.id}
+            type="button"
+            className={`rank-row ${active ? 'active' : ''}`}
+            onClick={() => onPickRC(r.id)}
+          >
+            <span className="id">{r.id}</span>
+            <div className="rank-row-body">
+              <div className="label">{meta.label}</div>
+              <div className="bar">
+                <div style={{ width: r.pct + '%', background: colour }} />
               </div>
-              <span className="pct mono" style={{ color: colour }}>
-                {pct}%
-              </span>
-            </button>
-          );
-        })}
-      </div>
+            </div>
+            <span className="pct" style={{ color: colour }}>
+              {pct}%
+            </span>
+          </button>
+        );
+      })}
       {ranked.length > 5 && (
         <button type="button" className="rank-more" onClick={() => setShowAll((s) => !s)}>
           {showAll ? '▲ collapse' : `▼ show all ${ranked.length}`}
@@ -1050,7 +1046,7 @@ function App() {
 
   return (
     <>
-      <section className="sec sec-diagram">
+      <section className="sec-diagram">
         <div className="schem-wrap">
           <SystemDiagram
             severityT={severityT}
@@ -1075,7 +1071,7 @@ function App() {
         </div>
       </section>
 
-      <section className="sec">
+      <section>
         <div className="work">
           <main className="panel panel-question">
             <div className="bd">
