@@ -271,11 +271,11 @@ function NodeIcons({ icons, cx, cy }) {
 
 // Inline icon + text token (e.g. ⚡ 230 V). (x, y) is the text baseline; the
 // icon sits flush-left of x with a fixed gap so call-sites only think about
-// where the text goes, not the icon's pixel offset. Color is set by `className`
-// (e.g. .lbl-ctrl) — children inherit via currentColor.
-function LineLabel({ icon, text, x, y, className, size = 11, gap = 2 }) {
+// where the text goes, not the icon's pixel offset. `flow` (water/mains/ctrl/wifi)
+// drives colour via [data-flow] — children inherit through currentColor.
+function LineLabel({ icon, text, x, y, flow, size = 11, gap = 2 }) {
   return (
-    <g className={className}>
+    <g data-flow={flow}>
       <Icon name={icon} cx={x - size / 2 - gap} cy={y - 3} size={size} />
       <text x={x} y={y} textAnchor="start" className="ln-lbl">
         {text}
@@ -421,7 +421,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" className="arr-water" />
+          <path d="M0,0 L10,5 L0,10 z" className="arr" data-flow="water" />
         </marker>
         <marker
           id="arr-ctrl"
@@ -432,7 +432,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" className="arr-ctrl" />
+          <path d="M0,0 L10,5 L0,10 z" className="arr" data-flow="ctrl" />
         </marker>
         <marker
           id="arr-mains"
@@ -443,22 +443,22 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" className="arr-mains" />
+          <path d="M0,0 L10,5 L0,10 z" className="arr" data-flow="mains" />
         </marker>
       </defs>
 
       {/* ── Wi-Fi link SOFTWARE ↔ CONTROLLER (slate dotted, no arrow — bidirectional) ── */}
-      <line x1="166" y1="36" x2="202" y2="36" className="line-wifi" />
-      {/* Wi-Fi glyph centred on the link */}
-      <g className="lbl-wifi">
+      <g data-flow="wifi">
+        <line x1="166" y1="36" x2="202" y2="36" className="line" />
+        {/* Wi-Fi glyph centred on the link */}
         <Icon name="ms:wifi" cx={184} cy={26} size={14} />
       </g>
 
       {/* ── 24 V control wires (rust dashed) ── */}
-      <g className="line-ctrl">
-        <line x1="332" y1="36" x2="368" y2="36" markerEnd="url(#arr-ctrl)" />
+      <g data-flow="ctrl">
+        <line x1="332" y1="36" x2="368" y2="36" className="line" markerEnd="url(#arr-ctrl)" />
         {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
-        <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
+        <path d="M 267 92 V 200 H 285" className="line" markerEnd="url(#arr-ctrl)" />
       </g>
       <LineLabel
         icon="mdi:lightning-bolt-outline"
@@ -466,7 +466,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         x={346}
         y={30}
         size={10}
-        className="lbl-ctrl"
+        flow="ctrl"
       />
       <LineLabel
         icon="mdi:lightning-bolt-outline"
@@ -474,23 +474,27 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         x={250}
         y={108}
         size={10}
-        className="lbl-ctrl"
+        flow="ctrl"
       />
 
       {/* ── 230 V mains (slate solid + bolt) RELAY → PUMP ── */}
-      <line x1="498" y1="36" x2="534" y2="36" className="line-mains" markerEnd="url(#arr-mains)" />
-      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} className="lbl-mains" />
+      <g data-flow="mains">
+        <line x1="498" y1="36" x2="534" y2="36" className="line" markerEnd="url(#arr-mains)" />
+      </g>
+      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} flow="mains" />
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
-      <path d="M 599 92 V 145 H 350 V 170" className="line-water" markerEnd="url(#arr-water)" />
-      <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} className="lbl-water" />
+      <g data-flow="water">
+        <path d="M 599 92 V 145 H 350 V 170" className="line" markerEnd="url(#arr-water)" />
+      </g>
+      <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} flow="water" />
 
       {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
-      <g className="line-lateral">
-        <path d="M 300 242 V 290 H 85 V 340" markerEnd="url(#arr-water)" />
-        <path d="M 333 242 V 305 H 265 V 340" markerEnd="url(#arr-water)" />
-        <path d="M 367 242 V 305 H 445 V 340" markerEnd="url(#arr-water)" />
-        <path d="M 400 242 V 290 H 625 V 340" markerEnd="url(#arr-water)" />
+      <g data-flow="lateral">
+        <path d="M 300 242 V 290 H 85 V 340" className="line" markerEnd="url(#arr-water)" />
+        <path d="M 333 242 V 305 H 265 V 340" className="line" markerEnd="url(#arr-water)" />
+        <path d="M 367 242 V 305 H 445 V 340" className="line" markerEnd="url(#arr-water)" />
+        <path d="M 400 242 V 290 H 625 V 340" className="line" markerEnd="url(#arr-water)" />
       </g>
 
       {/* ── nodes ── */}
@@ -627,10 +631,22 @@ function QuestionPanel({
         <button className="btn" type="button" onClick={onReset}>
           Reset
         </button>
-        <button type="button" onClick={onPrev} disabled={isFirst} title="Previous">
+        <button
+          type="button"
+          className="btn btn-icon"
+          onClick={onPrev}
+          disabled={isFirst}
+          title="Previous"
+        >
           ‹
         </button>
-        <button type="button" onClick={onNext} disabled={isLast} title="Next">
+        <button
+          type="button"
+          className="btn btn-icon"
+          onClick={onNext}
+          disabled={isLast}
+          title="Next"
+        >
           ›
         </button>
       </div>
@@ -994,16 +1010,16 @@ function App() {
           />
           <div className="schem-legend">
             <span>
-              <span className="swatch water" /> water
+              <span className="swatch" data-flow="water" /> water
             </span>
             <span>
-              <span className="swatch mains" /> 230 V mains
+              <span className="swatch" data-flow="mains" /> 230 V mains
             </span>
             <span>
-              <span className="swatch ctrl" /> 24 V control
+              <span className="swatch" data-flow="ctrl" /> 24 V control
             </span>
             <span>
-              <span className="swatch wifi" /> Wi-Fi
+              <span className="swatch" data-flow="wifi" /> Wi-Fi
             </span>
           </div>
         </div>
