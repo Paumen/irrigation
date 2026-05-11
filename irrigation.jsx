@@ -576,7 +576,7 @@ function RankingPanel({ ranked, activeRC, onPickRC }) {
       {top.map(renderRow)}
       {rest.length > 0 && (
         <details>
-          <summary className="rank-more">show all {ranked.length}</summary>
+          <summary className="rank-more">all {ranked.length} ranked</summary>
           {rest.map(renderRow)}
         </details>
       )}
