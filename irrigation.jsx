@@ -317,9 +317,7 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
           <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} className="node-divider" />
           {pips.slice(1).map((_, i) => {
             const x = box.x + (i + 1) * cw;
-            return (
-              <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-col" />
-            );
+            return <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-col" />;
           })}
         </>
       )}
@@ -480,22 +478,11 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
       />
 
       {/* ── 230 V mains (slate solid + bolt) RELAY → PUMP ── */}
-      <line
-        x1="498"
-        y1="36"
-        x2="534"
-        y2="36"
-        className="line-mains"
-        markerEnd="url(#arr-mains)"
-      />
+      <line x1="498" y1="36" x2="534" y2="36" className="line-mains" markerEnd="url(#arr-mains)" />
       <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} className="lbl-mains" />
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
-      <path
-        d="M 599 92 V 145 H 350 V 170"
-        className="line-water"
-        markerEnd="url(#arr-water)"
-      />
+      <path d="M 599 92 V 145 H 350 V 170" className="line-water" markerEnd="url(#arr-water)" />
       <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} className="lbl-water" />
 
       {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
@@ -636,9 +623,7 @@ function QuestionPanel({
   return (
     <div>
       <div className="qhead">
-        <div className="qtitle">
-          {question.text}
-        </div>
+        <div className="qtitle">{question.text}</div>
         <button className="btn" type="button" onClick={onReset}>
           Reset
         </button>
@@ -1026,7 +1011,7 @@ function App() {
 
       <section>
         <div className="work">
-          <main className="panel panel-question">
+          <main className="panel">
             <div className="bd">
               <QuestionPanel
                 question={activeQuestion}
