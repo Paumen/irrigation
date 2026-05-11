@@ -504,13 +504,15 @@ summary {
 
 .option,
 .recommendation,
+.recommendation-empty,
 .rank-row {
   text-align: left;
   transition: background var(--time);
 }
 
 .option,
-.recommendation {
+.recommendation,
+.recommendation-empty {
   padding: var(--sp-l) var(--sp-xl);
   background: var(--c-1);
   border: var(--line-interactive);
@@ -543,48 +545,38 @@ summary {
   grid-template-columns: auto auto 1fr;
   gap: var(--sp-m) var(--sp-l);
   width: 100%;
+  font-size: var(--text-sm);
   border-left: var(--line-width-l) solid var(--c-6);
+}
+
+.recommendation > code,
+.recommendation > .stage,
+.recommendation > .discriminator {
+  letter-spacing: var(--text-ls-tight);
 }
 
 .recommendation > code {
   grid-area: code;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-m);
   color: var(--c-6);
-  letter-spacing: var(--text-ls-tight);
 }
 
 .recommendation > .stage {
   grid-area: stage;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--c-5);
-  letter-spacing: var(--text-ls-tight);
 }
 
 .recommendation > .discriminator {
   grid-area: discriminator;
   justify-self: end;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--c-5);
-  letter-spacing: var(--text-ls-tight);
 }
 
 .recommendation > .recommendation-text {
   grid-area: text;
-  font-size: var(--text-sm);
 }
 
 .recommendation-empty {
-  padding: var(--sp-l) var(--sp-xl);
   margin: 0;
   font-style: italic;
-  color: var(--c-5);
   text-align: center;
-  background: var(--c-1);
-  border: var(--line-interactive);
   border-left: var(--line-width-l) solid var(--c-15);
 }
 
@@ -598,6 +590,7 @@ summary {
   place-items: center stretch;
   width: 100%;
   padding: var(--sp-s) var(--sp-l);
+  font-size: var(--text-sm);
   border-bottom: var(--line-passive);
 }
 
@@ -607,16 +600,11 @@ summary {
 
 .rank-row > code {
   grid-area: code;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-m);
 }
 
 .rank-row > .root-cause-label {
-  display: block;
   grid-area: label;
   place-self: end stretch;
-  font-size: var(--text-sm);
 }
 
 .rank-row > .bar {
@@ -627,9 +615,6 @@ summary {
 .rank-row > .percent {
   grid-area: percent;
   place-self: center end;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-m);
   font-variant-numeric: tabular-nums;
   color: var(--c-sev-bg);
 }
@@ -685,11 +670,14 @@ summary {
 
   .rank-card {
     grid-area: rank;
-    place-self: start stretch;
   }
 
   .rec-card {
     grid-area: rec;
+  }
+
+  .rank-card,
+  .rec-card {
     place-self: start stretch;
   }
 }
