@@ -202,7 +202,6 @@ function app() {
     answers: {},
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
-    resetOpen: false,
 
     iconTransform,
     nodeIconCx,
@@ -369,7 +368,6 @@ function app() {
       this.answers = {};
       this.activeRC = null;
       this.activeQuestionId = QUESTIONS[0].id;
-      this.resetOpen = false;
     },
 
     stagePct(s) {

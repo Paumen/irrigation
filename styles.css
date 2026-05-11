@@ -464,29 +464,6 @@ details > summary {
   cursor: pointer;
 }
 
-.option > input[type='radio'] {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  appearance: none;
-  cursor: pointer;
-  background: var(--c-1);
-  border: var(--line-interactive);
-  border-radius: 50%;
-  transition:
-    background var(--time),
-    border-color var(--time);
-}
-
-.option > input[type='radio']:hover {
-  border-color: var(--c-6);
-}
-
-.option > input[type='radio']:checked {
-  background: radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
-  border: var(--line-active);
-}
-
 .option:has(input:checked) {
   border: var(--line-active);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
@@ -678,8 +655,7 @@ details > summary:hover {
   font-weight: var(--font-weight-m);
 }
 
-.matrix-scroll input[type='radio'] {
-  display: inline-block;
+input[type='radio'] {
   width: 16px;
   height: 16px;
   margin: 0;
@@ -693,18 +669,18 @@ details > summary:hover {
     border-color var(--time);
 }
 
-.matrix-scroll input[type='radio']:hover {
+input[type='radio']:hover {
   border-color: var(--c-6);
 }
 
-.matrix-scroll input[type='radio']:checked {
+input[type='radio']:checked {
   background: radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
   border: var(--line-active);
 }
 
 /* ─── ACTIONS ────────────────────────────────────── */
 .panel > form > footer,
-.modal form > footer {
+.modal > footer {
   display: flex;
   gap: var(--sp-l);
   place-content: flex-end;
@@ -717,15 +693,11 @@ details > summary:hover {
 /* ─── RESET MODAL ────────────────────────────────── */
 .modal {
   max-width: min(360px, 90cqi);
-  padding: 0;
+  padding: var(--sp-xl);
   color: inherit;
   background: var(--c-1);
   border: var(--line-width-m) solid var(--c-5);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
-}
-
-.modal > form {
-  padding: var(--sp-xl);
 }
 
 .modal::backdrop {
