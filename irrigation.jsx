@@ -76,7 +76,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'PUMP',
-    icons: ['mdi:water-pump'],
+    icons: ['mdi:water-pump', 'mdi:water-well'],
     pips: ['R4.1', 'R4.2'],
   },
   {
@@ -96,7 +96,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
-    icons: ['mdi:sprinkler', 'mdi:sprinkler'],
+    icons: ['mdi:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
     pips: ['R9.1', 'R9.2'],
   },
   {
@@ -126,7 +126,7 @@ const NODES = [
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
-    icons: ['mdi:sprinkler', 'mdi:sprinkler'],
+    icons: ['ms:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
     pips: ['R9.1', 'R9.2'],
   },
 ];
