@@ -740,10 +740,6 @@ section {
     font-size: var(--text-md);
   }
 
-  .opts {
-    grid-template-columns: 1fr;
-  }
-
   .matrix-cell {
     padding: var(--sp-s);
   }
