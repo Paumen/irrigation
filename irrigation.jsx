@@ -1,4 +1,5 @@
 import DATA from './data.json';
+import ICONS from './icons.js';
 
 const { useState, useMemo, useEffect, useRef } = React;
 
@@ -146,69 +147,11 @@ const CONN_PIPS = [
   { rcId: 'R8.2', x: 526, y: 290 },
 ];
 
-const sevBand = (t) => {
-  const tt = Math.max(0, Math.min(1, t));
-  if (tt < 0.25) return 0;
-  if (tt < 0.5) return 1;
-  if (tt < 0.75) return 2;
-  return 3;
-};
-const pctBand = (pct, t) => (pct < 4 ? 0 : sevBand(t));
-const sevCls = (pct, t) => `sev-${pctBand(pct, t)}`;
-
-const ICONS = {
-  'mdi:electric-switch': {
-    vb: [0, 0, 24, 24],
-    d: 'M1,11H3.17C3.58,9.83 4.69,9 6,9C6.65,9 7.25,9.21 7.74,9.56L14.44,4.87L15.58,6.5L8.89,11.2C8.96,11.45 9,11.72 9,12A3,3 0 0,1 6,15C4.69,15 3.58,14.17 3.17,13H1V11M23,11V13H20.83C20.42,14.17 19.31,15 18,15A3,3 0 0,1 15,12A3,3 0 0,1 18,9C19.31,9 20.42,9.83 20.83,11H23M6,11A1,1 0 0,0 5,12A1,1 0 0,0 6,13A1,1 0 0,0 7,12A1,1 0 0,0 6,11M18,11A1,1 0 0,0 17,12A1,1 0 0,0 18,13A1,1 0 0,0 19,12A1,1 0 0,0 18,11Z',
-  },
-  'mdi:water-pump': {
-    vb: [0, 0, 24, 24],
-    d: 'M19,14.5C19,14.5 21,16.67 21,18A2,2 0 0,1 19,20A2,2 0 0,1 17,18C17,16.67 19,14.5 19,14.5M5,18V9A2,2 0 0,1 3,7A2,2 0 0,1 5,5V4A2,2 0 0,1 7,2H9A2,2 0 0,1 11,4V5H19A2,2 0 0,1 21,7V9L21,11A1,1 0 0,1 22,12A1,1 0 0,1 21,13H17A1,1 0 0,1 16,12A1,1 0 0,1 17,11V9H11V18H12A2,2 0 0,1 14,20V22H2V20A2,2 0 0,1 4,18H5Z',
-  },
-  'mdi:water-well': {
-    vb: [0, 0, 24, 24],
-    d: 'M22 16H2V18H4V22H20V18H22V16M10.44 15C10.19 15 10 14.81 9.95 14.56L9.57 11.56C9.57 11.54 9.57 11.5 9.57 11.5C9.57 11.22 9.79 11 10.07 11H13.93C13.95 11 13.97 11 14 11C14.27 11.04 14.46 11.29 14.43 11.56L14.05 14.56C14 14.81 13.81 15 13.56 15H10.44M19 2L21.56 6.68C21.6 6.78 21.61 6.89 21.61 7C21.61 7.56 21.16 8 20.61 8H19V15H17V8H13V10H11V8H7V15H5V8H3.62C3.46 8 3.31 7.96 3.16 7.89C2.67 7.64 2.47 7.04 2.72 6.55L5 2H19Z',
-  },
-  'mdi:sprinkler': {
-    vb: [0, 0, 24, 24],
-    d: 'M11 7H13V9H11V7M5 22H9V10H5V22M14 11H16V9H14V11M17 10H19V8H17V10M17 5V7H19V5H17M14 8H16V6H14V8M17 13H19V11H17V13M5 7H5.33L6 9H8L8.67 7H9V6H5V7Z',
-  },
-  'mdi:cellphone': {
-    vb: [0, 0, 24, 24],
-    d: 'M17,19H7V5H17M17,1H7C5.89,1 5,1.89 5,3V21A2,2 0 0,0 7,23H17A2,2 0 0,0 19,21V3C19,1.89 18.1,1 17,1Z',
-  },
-  'mdi:view-gallery-outline': {
-    vb: [0, 0, 24, 24],
-    d: 'M1 3V21H23V3H1M21 5V14H3V5H21M11 16V19H8V16H11M3 16H6V19H3V16M13 19V16H16V19H13M18 19V16H21V19H18Z',
-  },
-  'mdi:pipe': {
-    vb: [0, 0, 24, 24],
-    d: 'M22,14H20V16H14V13H16V11H14V6A2,2 0 0,0 12,4H4V2H2V10H4V8H10V11H8V13H10V18A2,2 0 0,0 12,20H20V22H22',
-  },
-  'mdi:lightning-bolt-outline': {
-    vb: [0, 0, 24, 24],
-    d: 'M11 9.47V11H14.76L13 14.53V13H9.24L11 9.47M13 1L6 15H11V23L18 9H13V1Z',
-  },
-  'mdi:water-outline': {
-    vb: [0, 0, 24, 24],
-    d: 'M12,3.77L11.25,4.61C11.25,4.61 9.97,6.06 8.68,7.94C7.39,9.82 6,12.07 6,14.23A6,6 0 0,0 12,20.23A6,6 0 0,0 18,14.23C18,12.07 16.61,9.82 15.32,7.94C14.03,6.06 12.75,4.61 12.75,4.61L12,3.77M12,6.9C12.44,7.42 12.84,7.85 13.68,9.07C14.89,10.83 16,13.07 16,14.23C16,16.45 14.22,18.23 12,18.23C9.78,18.23 8,16.45 8,14.23C8,13.07 9.11,10.83 10.32,9.07C11.16,7.85 11.56,7.42 12,6.9Z',
-  },
-  'ms:valve': {
-    vb: [0, -960, 960, 960],
-    d: 'M450-780H320q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32 8.62-8.5 21.37-8.5h320q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5H510v130q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-130ZM160-159v-232q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.7 8.5 8.69 8.5 21.54v.76h150v-140h-1q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32 8.62-8.5 21.37-8.5h222q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.7 21.32-8.69 8.5-21.54 8.5H590v140h150v-1q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v232q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.7-8.5-8.69-8.5-21.54v-.76H220v.78q0 13.22-8.68 21.72-8.67 8.5-21.5 8.5-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Zm60-61h520v-110H530v-200H430v200H220v110Zm260 0Z',
-  },
-  'ms:sprinkler': {
-    vb: [0, -960, 960, 960],
-    d: 'M451-490q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12Zm0-160q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12Zm0-160q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12Zm119 399q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12Zm113-114q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12Zm113-112q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12ZM332-411q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12ZM219-525q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12ZM106-637q-12-12-12-29t12-29q12-12 29-12t29 12q12 12 12 29t-12 29q-12 12-29 12t-29-12Zm344 387H320q-13 0-21.5-8.5T290-280q0-13 8.5-21.5T320-310h320q13 0 21.5 8.5T670-280q0 13-8.5 21.5T640-250H510v140q0 13-8.5 21.5T480-80q-13 0-21.5-8.5T450-110v-140Z',
-  },
-  'ms:bolt': {
-    vb: [0, -960, 960, 960],
-    d: 'm393-165 279-335H492l36-286-253 366h154l-36 255Zm-33-195H217q-18 0-26.5-16t2.5-31l338-488q8-11 20-15t24 1q12 5 19 16t5 24l-39 309h176q19 0 27 17t-4 32L388-66q-8 10-20.5 13T344-55q-11-5-17.5-16T322-95l38-265Zm113-115Z',
-  },
-  'ms:wifi': {
-    vb: [0, -960, 960, 960],
-    d: 'M417-154q-27-27-27-63t27-63q27-27 63-27t63 27q27 27 27 63t-27 63q-27 27-63 27t-63-27Zm209-378.5Q694-505 757-451q14 12 15 30.5T759-388q-14 14-32 13t-33-13q-53-44-106.5-63T480-470q-54 0-107.5 19T266-388q-15 12-33 13t-32-13q-14-14-13-32.5t15-30.5q63-54 131-81.5T480-560q78 0 146 27.5Zm95.5-219Q835-703 926-622q14 13 15.5 31.5T929-558q-14 14-33.5 13.5T861-558q-83-70-178-111t-203-41q-108 0-203 41T99-558q-15 13-34 13.5T32-558q-14-14-13-32.5T34-622q91-81 204.5-129.5T480-800q128 0 241.5 48.5Z',
-  },
+const severityClass = (pct) => {
+  if (pct < 4) return 'sev-0';
+  if (pct < 8) return 'sev-1';
+  if (pct < 15) return 'sev-2';
+  return 'sev-3';
 };
 
 function Icon({ name, cx, cy, size }) {
@@ -255,7 +198,46 @@ function LineLabel({ icon, text, x, y, flow, size = 11, gap = 2 }) {
   );
 }
 
-function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC }) {
+function Pip({ rcId, x, y, w, h, variant, sevClass, isActive, onPick }) {
+  const onActivate = () => onPick && onPick(rcId);
+  const bgCls = variant === 'connector' ? 'conn-pip' : 'pip-fill';
+  return (
+    <g
+      role="button"
+      tabIndex="0"
+      aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
+      onClick={onActivate}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onActivate();
+        }
+      }}
+    >
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx={variant === 'connector' ? 1.5 : undefined}
+        className={`${bgCls} ${sevClass}${isActive ? ' active' : ''}`}
+      />
+      <text
+        x={x + w / 2}
+        y={y + h / 2 + 3.5}
+        textAnchor="middle"
+        className={`pip pip-text ${sevClass}`}
+      >
+        {rcId.replace('R', '')}
+      </text>
+      {variant === 'node' && isActive && (
+        <rect x={x + 1.5} y={y + 1.5} width={w - 3} height={h - 3} className="node-active" />
+      )}
+    </g>
+  );
+}
+
+function NodeBox({ box, icons, label, severityPct, activeRC, onPickRC }) {
   const cx = box.x + box.w / 2;
   const pips = box.pips || [];
   const fy = box.y + FOOTER_TOP;
@@ -264,25 +246,26 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
   return (
     <g>
       <rect x={box.x} y={box.y} width={box.w} height={box.h} className="node-box" />
-
-      {pips.map((rcId, i) => (
-        <rect
-          key={`f-${rcId}-${i}`}
-          x={box.x + i * cw}
-          y={fy}
-          width={cw}
-          height={fh}
-          className={`pip-fill ${sevCls(severityPct[rcId] || 0, severityT[rcId] || 0)}`}
-        />
-      ))}
-
       <NodeIcons icons={icons} cx={cx} cy={box.y + 16} />
       {label && (
         <text x={cx} y={box.y + 38} textAnchor="middle" className="lbl">
           {label}
         </text>
       )}
-
+      {pips.map((rcId, i) => (
+        <Pip
+          key={`p-${rcId}-${i}`}
+          rcId={rcId}
+          x={box.x + i * cw}
+          y={fy}
+          w={cw}
+          h={fh}
+          variant="node"
+          sevClass={severityClass(severityPct[rcId] || 0)}
+          isActive={activeRC === rcId}
+          onPick={onPickRC}
+        />
+      ))}
       {pips.length > 0 && (
         <>
           <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} className="node-divider" />
@@ -292,90 +275,11 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
           })}
         </>
       )}
-
-      {pips.map((rcId, i) => {
-        const ccx = box.x + i * cw + cw / 2;
-        const t = severityT[rcId] || 0;
-        const p = severityPct[rcId] || 0;
-        return (
-          <g
-            key={`l-${rcId}-${i}`}
-            role="button"
-            tabIndex="0"
-            aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
-            onClick={() => onPickRC && onPickRC(rcId)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onPickRC && onPickRC(rcId);
-              }
-            }}
-          >
-            <rect x={box.x + i * cw} y={fy} width={cw} height={fh} className="pip-hit" />
-            <text
-              x={ccx}
-              y={fy + fh / 2 + 3.5}
-              textAnchor="middle"
-              className={`pip pip-text ${sevCls(p, t)}`}
-            >
-              {rcId.replace('R', '')}
-            </text>
-          </g>
-        );
-      })}
-
-      {pips.map((rcId, i) => {
-        if (activeRC !== rcId) return null;
-        return (
-          <rect
-            key={`a-${rcId}-${i}`}
-            x={box.x + i * cw + 1.5}
-            y={fy + 1.5}
-            width={cw - 3}
-            height={fh - 3}
-            className="node-active"
-          />
-        );
-      })}
     </g>
   );
 }
 
-function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC }) {
-  const t = severityT[rcId] || 0;
-  const p = severityPct[rcId] || 0;
-  const isActive = activeRC === rcId;
-  const sz = 26;
-  const cls = sevCls(p, t);
-  return (
-    <g
-      role="button"
-      tabIndex="0"
-      aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
-      onClick={() => onPickRC && onPickRC(rcId)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onPickRC && onPickRC(rcId);
-        }
-      }}
-    >
-      <rect
-        x={pos.x - sz / 2}
-        y={pos.y - sz / 2}
-        width={sz}
-        height={sz}
-        rx="1.5"
-        className={`conn-pip ${cls} ${isActive ? 'active' : ''}`}
-      />
-      <text x={pos.x} y={pos.y + 3} textAnchor="middle" className={`pip pip-text ${cls}`}>
-        {rcId.replace('R', '')}
-      </text>
-    </g>
-  );
-}
-
-function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
+function SystemDiagram({ severityPct, activeRC, onPickRC }) {
   return (
     <svg
       viewBox="0 0 700 420"
@@ -467,7 +371,6 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           box={b}
           icons={b.icons}
           label={b.label}
-          severityT={severityT}
           severityPct={severityPct}
           activeRC={activeRC}
           onPickRC={onPickRC}
@@ -475,14 +378,17 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
       ))}
 
       {CONN_PIPS.map((p, i) => (
-        <ConnectorPip
+        <Pip
           key={`cp-${i}`}
           rcId={p.rcId}
-          pos={{ x: p.x, y: p.y }}
-          severityT={severityT}
-          severityPct={severityPct}
-          activeRC={activeRC}
-          onPickRC={onPickRC}
+          x={p.x - 13}
+          y={p.y - 13}
+          w={26}
+          h={26}
+          variant="connector"
+          sevClass={severityClass(severityPct[p.rcId] || 0)}
+          isActive={activeRC === p.rcId}
+          onPick={onPickRC}
         />
       ))}
     </svg>
@@ -645,7 +551,7 @@ function QuestionPanel({
   );
 }
 
-function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
+function RankingPanel({ ranked, activeRC, onPickRC }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? ranked : ranked.slice(0, 5);
   return (
@@ -654,7 +560,7 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
         const meta = RC[r.id];
         const active = activeRC === r.id;
         const pct = Math.round(r.pct);
-        const cls = sevCls(pct, severityT[r.id]);
+        const cls = severityClass(pct);
         return (
           <button
             key={r.id}
@@ -682,14 +588,13 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
   );
 }
 
-function RecommendationPanel({ recs, onSelect, max }) {
-  const visible = recs.slice(0, max);
+function RecommendationPanel({ recs, onSelect }) {
   return (
     <div className="recs">
-      {visible.length === 0 && (
+      {recs.length === 0 && (
         <div className="rec empty">No questions left to differentiate top suspects.</div>
       )}
-      {visible.map(({ q, D }) => (
+      {recs.map(({ q, D }) => (
         <button key={q.id} type="button" className="rec" onClick={() => onSelect(q.id)}>
           <div className="top">
             <span className="id">{q.id}</span>
@@ -739,25 +644,11 @@ function ResetModal({ onCancel, onConfirm }) {
   );
 }
 
-function useIsMobile(breakpoint = 760) {
-  const [m, setM] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
-  );
-  useEffect(() => {
-    const onR = () => setM(window.innerWidth < breakpoint);
-    window.addEventListener('resize', onR);
-    return () => window.removeEventListener('resize', onR);
-  }, [breakpoint]);
-  return m;
-}
-
 function App() {
   const [answers, setAnswers] = useState({});
   const [activeQuestionId, setActiveQuestionId] = useState(QUESTIONS[0].id);
-  const [activeStage, setActiveStage] = useState(1);
   const [activeRC, setActiveRC] = useState(null);
   const [resetOpen, setResetOpen] = useState(false);
-  const isMobile = useIsMobile(760);
 
   const scores = useMemo(() => {
     const s = {};
@@ -800,15 +691,6 @@ function App() {
     })).sort((a, b) => b.score - a.score);
   }, [scores]);
 
-  const severityT = useMemo(() => {
-    const max = Math.max(...ALL_IDS.map((id) => scores[id]), 0.1);
-    const t = {};
-    ALL_IDS.forEach((id) => {
-      t[id] = Math.max(0, scores[id]) / max;
-    });
-    return t;
-  }, [scores]);
-
   const severityPct = useMemo(() => {
     const m = {};
     ranked.forEach((r) => {
@@ -824,7 +706,7 @@ function App() {
     if (a === undefined || a === null) return false;
     const q = QUESTIONS.find((qq) => qq.id === qid);
     if (q?.type === 'matrix') {
-      return (a.rows && Object.keys(a.rows).length > 0) || a.acked === true;
+      return !!(a.rows && Object.keys(a.rows).length > 0);
     }
     return true;
   };
@@ -871,6 +753,7 @@ function App() {
 
   const activeQuestion = QUESTIONS.find((q) => q.id === activeQuestionId);
   const activeIdx = QUESTIONS.findIndex((q) => q.id === activeQuestionId);
+  const activeStage = activeQuestion?.stage ?? 1;
   const isFirst = activeIdx <= 0;
   const isLast = activeIdx >= QUESTIONS.length - 1;
 
@@ -902,26 +785,10 @@ function App() {
       };
     });
 
-  const ackMatrix = (qid) =>
-    setAnswers((p) => {
-      const prev = p[qid] || { rows: {}, drained: {} };
-      return { ...p, [qid]: { ...prev, acked: true } };
-    });
-
-  const pickQuestion = (qid) => {
-    setActiveQuestionId(qid);
-    const q = QUESTIONS.find((qq) => qq.id === qid);
-    if (q) setActiveStage(q.stage);
-  };
-
   const moveBy = (delta) => {
     const idx = QUESTIONS.findIndex((q) => q.id === activeQuestionId);
-    if (delta > 0) {
-      const cur = QUESTIONS[idx];
-      if (cur?.type === 'matrix') ackMatrix(cur.id);
-    }
     const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + delta))];
-    pickQuestion(next.id);
+    setActiveQuestionId(next.id);
   };
 
   const handleAnswer = (i) => {
@@ -930,7 +797,7 @@ function App() {
     setTimeout(() => {
       const idx = QUESTIONS.findIndex((q) => q.id === currentId);
       if (idx >= 0 && idx < QUESTIONS.length - 1) {
-        pickQuestion(QUESTIONS[idx + 1].id);
+        setActiveQuestionId(QUESTIONS[idx + 1].id);
       }
     }, 180);
   };
@@ -942,12 +809,10 @@ function App() {
     setAnswers({});
     setActiveRC(null);
     setActiveQuestionId(QUESTIONS[0].id);
-    setActiveStage(1);
     setResetOpen(false);
   };
 
   const onPickStage = (s) => {
-    setActiveStage(s);
     const first = QUESTIONS.find((q) => q.stage === s);
     if (first) setActiveQuestionId(first.id);
   };
@@ -956,12 +821,7 @@ function App() {
     <>
       <section className="sec-diagram">
         <div className="schem-wrap">
-          <SystemDiagram
-            severityT={severityT}
-            severityPct={severityPct}
-            activeRC={activeRC}
-            onPickRC={setActiveRC}
-          />
+          <SystemDiagram severityPct={severityPct} activeRC={activeRC} onPickRC={setActiveRC} />
           <div className="schem-legend">
             <span>
               <span className="swatch" data-flow="water" /> water
@@ -1005,12 +865,7 @@ function App() {
                 <span>Root-cause</span>
               </div>
               <div className="bd">
-                <RankingPanel
-                  ranked={ranked}
-                  severityT={severityT}
-                  activeRC={activeRC}
-                  onPickRC={setActiveRC}
-                />
+                <RankingPanel ranked={ranked} activeRC={activeRC} onPickRC={setActiveRC} />
               </div>
             </div>
             <div className="panel">
@@ -1018,11 +873,7 @@ function App() {
                 <span>Recommended Next</span>
               </div>
               <div className="bd">
-                <RecommendationPanel
-                  recs={recommendations}
-                  onSelect={pickQuestion}
-                  max={isMobile ? 3 : 4}
-                />
+                <RecommendationPanel recs={recommendations} onSelect={setActiveQuestionId} />
               </div>
             </div>
           </aside>
