@@ -354,7 +354,7 @@ window.DATA = {
           label: 'Controller ',
           effects: { R11: 1, R22: 1 },
         },
-        { id: 'app', label: 'App / wifi / settings change', effects: { R1: 1 } },
+        { id: 'app', label: 'App / wifi / settings', effects: { R1: 1 } },
         { id: 'valves', label: 'Valve ', effects: { R7: 1 } },
         {
           id: 'spr',
