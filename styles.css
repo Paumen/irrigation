@@ -21,9 +21,9 @@
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
-  --text-sm: clamp(11px, 10px + 0.25vw, 13px);
-  --text-md: clamp(13px, 12px + 0.25vw, 15px);
-  --text-lg: clamp(15px, 13.5px + 0.4vw, 18px);
+  --text-sm: clamp(0.6875rem, 0.625rem + 0.25cqi, 0.8125rem);
+  --text-md: clamp(0.8125rem, 0.75rem + 0.25cqi, 0.9375rem);
+  --text-lg: clamp(0.9375rem, 0.84375rem + 0.4cqi, 1.125rem);
   --text-ls-tight: 0.04em;
   --text-ls-wide: 0.1em;
   --font-weight-m: 600;
