@@ -40,9 +40,9 @@
   --line-width-s: 1px;
   --line-width-m: 2px;
   --line-width-l: 3px;
-  --line-soft: var(--line-width-s) solid var(--c-15);
-  --line-hard: var(--line-width-s) solid var(--c-5);
-  --line-dotted: var(--line-width-s) dotted var(--c-15);
+  --line-passive: var(--line-width-s) solid var(--c-15);
+  --line-interactive: var(--line-width-s) solid var(--c-5);
+  --line-active: var(--line-width-m) solid var(--c-6);
 
   /* ─── Controls / motion ──────────────────────────── */
   --time: 0.4s;
@@ -139,7 +139,7 @@ section {
 .panel {
   position: relative;
   background: var(--c-1);
-  border: var(--line-soft);
+  border: var(--line-passive);
 }
 
 .panel > .hd {
@@ -163,7 +163,7 @@ section {
   height: var(--sp-xxl);
   padding: 0 var(--sp-xl);
   background: var(--c-1);
-  border: var(--line-hard);
+  border: var(--line-interactive);
 }
 
 .btn.btn-icon {
@@ -203,7 +203,7 @@ section {
       var(--c-13) calc(var(--sp-xxl) - var(--line-width-s)) var(--sp-xxl)
     ),
     var(--c-2);
-  border: var(--line-soft);
+  border: var(--line-passive);
 }
 
 .schem-wrap svg {
@@ -385,7 +385,7 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   background: var(--c-1);
-  border-top: var(--line-hard);
+  border-top: var(--line-passive);
 }
 
 .stages button {
@@ -394,12 +394,12 @@ section {
   overflow: hidden;
   font-family: var(--font-mono);
   text-align: left;
-  border-right: var(--line-soft);
+  border-right: var(--line-passive);
   border-bottom: var(--line-width-m) solid transparent;
 }
 
 .stages button.active {
-  border-bottom-color: var(--c-6);
+  border-bottom: var(--line-active);
 }
 
 .stages .label {
@@ -457,7 +457,7 @@ section {
 .rec {
   padding: var(--sp-l) var(--sp-xl);
   background: var(--c-1);
-  border: var(--line-soft);
+  border: var(--line-interactive);
 }
 
 .opts {
@@ -480,9 +480,8 @@ section {
 }
 
 .opt.selected {
-  border-color: var(--c-5);
-  border-width: var(--line-width-m) ;
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
+  border: var(--line-active);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-6);
   transform: translate(-1px, -1px);
 }
 
@@ -544,11 +543,11 @@ section {
   gap: var(--sp-l);
   place-items: center stretch;
   padding: var(--sp-s) var(--sp-l);
-  border-bottom: var(--line-dotted);
+  border-bottom: var(--line-passive);
 }
 
 .rank-row.active {
-  outline: var(--line-hard);
+  outline: var(--line-active);
 }
 
 .rank-row .id,
@@ -573,7 +572,7 @@ section {
   margin: var(--line-width-s) 0 0;
   overflow: hidden;
   background: var(--c-2);
-  border: var(--line-soft);
+  border: var(--line-passive);
 }
 
 .rank-row .bar > div {
@@ -601,8 +600,8 @@ section {
   display: grid;
   grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols, 1), minmax(48px, 1fr));
   min-width: min-content;
-  border-top: var(--line-soft);
-  border-left: var(--line-soft);
+  border-top: var(--line-passive);
+  border-left: var(--line-passive);
 }
 
 .matrix-cell {
@@ -610,8 +609,8 @@ section {
   place-items: center;
   padding: var(--sp-l);
   font-size: var(--text-sm);
-  border-right: var(--line-soft);
-  border-bottom: var(--line-dotted);
+  border-right: var(--line-passive);
+  border-bottom: var(--line-passive);
 }
 
 .matrix-cell:has(.matrix-radio) {
@@ -623,7 +622,7 @@ section {
   color: var(--c-4);
   text-align: center;
   background: var(--c-2);
-  border-bottom: var(--line-soft);
+  border-bottom: var(--line-passive);
 }
 
 .matrix-head span {
@@ -642,7 +641,7 @@ section {
   width: 16px;
   height: 16px;
   background: var(--c-1);
-  border: var(--line-width-s) solid var(--c-4);
+  border: var(--line-interactive);
   border-radius: 50%;
   transition:
     background var(--time),
@@ -656,7 +655,7 @@ section {
 .matrix-radio.checked {
   background:
     radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
-  border-color: var(--c-5);
+  border: var(--line-active);
 }
 
 .matrix-drained {
@@ -669,7 +668,7 @@ section {
   font-size: var(--text-sm);
   color: var(--c-4);
   background: var(--c-2);
-  border-bottom: var(--line-soft);
+  border-bottom: var(--line-passive);
 }
 
 .matrix-drained input {
