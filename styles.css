@@ -31,10 +31,10 @@
 
   /* ─── Spacing ────────────────────────────────────── */
   --sp-s: 2px;
-  --sp-m: 4px;
-  --sp-l: 8px;
-  --sp-xl: 12px;
-  --sp-xxl: 24px;
+  --sp-m: clamp(3px, 2px + 0.25cqi, 5px);
+  --sp-l: clamp(6px, 5px + 0.375cqi, 10px);
+  --sp-xl: clamp(8px, 5px + 0.875cqi, 14px);
+  --sp-xxl: clamp(18px, 12px + 1.5cqi, 28px);
 
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
@@ -210,6 +210,8 @@ section {
   display: block;
   width: 100%;
   height: auto;
+  max-height: clamp(220px, 40dvh, 480px);
+  object-fit: contain;
 }
 
 .pip,
@@ -690,7 +692,7 @@ section {
 }
 
 .modal {
-  max-width: 360px;
+  max-width: min(360px, 90cqi);
   padding: var(--sp-xl);
   background: var(--c-1);
   border: var(--line-width-m) solid var(--c-5);
@@ -732,35 +734,11 @@ section {
 }
 
 @container page (width <= 760px) {
-  body {
-    padding: var(--sp-xl) var(--sp-l) var(--sp-xxl) ;
-  }
-
-  section {
-    padding: 0 var(--sp-l);
-  }
-
-  .sec-diagram,
-  .schem-wrap {
-    padding: var(--sp-l);
-  }
-
-  .schem-wrap svg {
-    max-height: 32dvh;
-    object-fit: contain;
-  }
-
   .qtitle {
     font-size: var(--text-md);
-  }
-
-  .matrix-cell,
-  .matrix-head {
-    font-size: var(--text-sm);
   }
 
   .matrix-cell {
     padding: var(--sp-s);
   }
-
 }
