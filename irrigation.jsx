@@ -147,11 +147,11 @@ const CONN_PIPS = [
   { rcId: 'R8.2', x: 526, y: 290 },
 ];
 
-const severityClass = (pct) => {
-  if (pct < 4) return 'sev-0';
-  if (pct < 8) return 'sev-1';
-  if (pct < 15) return 'sev-2';
-  return 'sev-3';
+const severityLevel = (pct) => {
+  if (pct < 4) return 0;
+  if (pct < 8) return 1;
+  if (pct < 15) return 2;
+  return 3;
 };
 
 function Icon({ name, cx, cy, size }) {
@@ -198,14 +198,15 @@ function LineLabel({ icon, text, x, y, flow, size = 11, gap = 2 }) {
   );
 }
 
-function Pip({ rcId, x, y, w, h, variant, sevClass, isActive, onPick }) {
+function Pip({ rcId, x, y, w, h, variant, sev, isActive, onPick }) {
   const onActivate = () => onPick && onPick(rcId);
-  const bgCls = variant === 'connector' ? 'conn-pip' : 'pip-fill';
+  const bgCls = variant === 'connector' ? 'pip-fill connector' : 'pip-fill';
   return (
     <g
       role="button"
       tabIndex="0"
       aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
+      data-sev={sev}
       onClick={onActivate}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -220,14 +221,9 @@ function Pip({ rcId, x, y, w, h, variant, sevClass, isActive, onPick }) {
         width={w}
         height={h}
         rx={variant === 'connector' ? 1.5 : undefined}
-        className={`${bgCls} ${sevClass}${isActive ? ' active' : ''}`}
+        className={`${bgCls}${isActive ? ' active' : ''}`}
       />
-      <text
-        x={x + w / 2}
-        y={y + h / 2 + 3.5}
-        textAnchor="middle"
-        className={`pip pip-text ${sevClass}`}
-      >
+      <text x={x + w / 2} y={y + h / 2 + 3.5} textAnchor="middle" className="pip">
         {rcId.replace('R', '')}
       </text>
       {variant === 'node' && isActive && (
@@ -261,7 +257,7 @@ function NodeBox({ box, icons, label, severityPct, activeRC, onPickRC }) {
           w={cw}
           h={fh}
           variant="node"
-          sevClass={severityClass(severityPct[rcId] || 0)}
+          sev={severityLevel(severityPct[rcId] || 0)}
           isActive={activeRC === rcId}
           onPick={onPickRC}
         />
@@ -271,7 +267,7 @@ function NodeBox({ box, icons, label, severityPct, activeRC, onPickRC }) {
           <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} className="node-divider" />
           {pips.slice(1).map((_, i) => {
             const x = box.x + (i + 1) * cw;
-            return <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-col" />;
+            return <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-divider" />;
           })}
         </>
       )}
@@ -386,7 +382,7 @@ function SystemDiagram({ severityPct, activeRC, onPickRC }) {
           w={26}
           h={26}
           variant="connector"
-          sevClass={severityClass(severityPct[p.rcId] || 0)}
+          sev={severityLevel(severityPct[p.rcId] || 0)}
           isActive={activeRC === p.rcId}
           onPick={onPickRC}
         />
@@ -449,7 +445,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
                   <div key={c.id} className="matrix-cell">
                     <button
                       type="button"
-                      className={`matrix-radio ${checked ? 'checked' : ''}`}
+                      className="matrix-radio"
                       aria-label={`${row.label}: ${c.label}`}
                       aria-pressed={checked}
                       onClick={() => onSetCell(row.id, c.id)}
@@ -523,7 +519,7 @@ function QuestionPanel({
             onSetCell={onSetCell}
             onToggleDrained={onToggleDrained}
           />
-          <div className="matrix-actions">
+          <div className="actions">
             <button type="button" className="btn btn-primary" onClick={onNext} disabled={isLast}>
               Next ›
             </button>
@@ -537,10 +533,10 @@ function QuestionPanel({
               <button
                 key={`${question.id}-${i}`}
                 type="button"
-                className={`opt ${selected ? 'selected' : ''}`}
+                className="opt"
+                aria-pressed={selected}
                 onClick={() => onAnswer(i)}
               >
-                <span className="dot">{selected ? '●' : '○'}</span>
                 <span>{opt.label}</span>
               </button>
             );
@@ -560,12 +556,12 @@ function RankingPanel({ ranked, activeRC, onPickRC }) {
         const meta = RC[r.id];
         const active = activeRC === r.id;
         const pct = Math.round(r.pct);
-        const cls = severityClass(pct);
         return (
           <button
             key={r.id}
             type="button"
-            className={`rank-row ${cls} ${active ? 'active' : ''}`}
+            className={`rank-row ${active ? 'active' : ''}`}
+            data-sev={severityLevel(pct)}
             onClick={() => onPickRC(r.id)}
           >
             <span className="id">{r.id}</span>
@@ -631,7 +627,7 @@ function ResetModal({ onCancel, onConfirm }) {
         <p>
           This clears every answer and returns you to the first question. You can&rsquo;t undo this.
         </p>
-        <div className="row">
+        <div className="actions">
           <button ref={cancelRef} type="button" className="btn" onClick={onCancel}>
             Keep my answers
           </button>
