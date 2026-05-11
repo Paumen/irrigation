@@ -31,7 +31,6 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="water" />
               </marker>
               <marker
                 id="arr-ctrl"
@@ -42,7 +41,6 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="ctrl" />
               </marker>
               <marker
                 id="arr-mains"
@@ -53,7 +51,6 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="mains" />
               </marker>
             </defs>
 
@@ -131,7 +128,7 @@
       </section>
 
       <section class="workspace">
-        <section class="panel">
+        <section>
           <form @submit.prevent>
             <header>
               <h2 x-text="activeQuestion.text"></h2>
@@ -243,7 +240,7 @@
         </section>
 
         <aside>
-          <section class="panel" aria-labelledby="rank-heading">
+          <section aria-labelledby="rank-heading">
             <header><h2 id="rank-heading">Root-cause</h2></header>
             <div class="panel-body">
               <ol>
@@ -294,7 +291,7 @@
             </div>
           </section>
 
-          <section class="panel" aria-labelledby="rec-heading">
+          <section aria-labelledby="rec-heading">
             <header><h2 id="rec-heading">Recommended Next</h2></header>
             <div class="panel-body">
               <template x-if="recommendations.length === 0">
