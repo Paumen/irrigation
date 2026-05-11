@@ -139,7 +139,7 @@ section {
 .panel {
   position: relative;
   background: var(--c-1);
-  border: var(--line-hard);
+  border: var(--line-soft);
 }
 
 .panel > .hd {
