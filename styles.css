@@ -42,7 +42,7 @@
   --line-width-l: 3px;
   --line-passive: var(--line-width-s) solid var(--c-15);
   --line-interactive: var(--line-width-s) solid var(--c-5);
-  --line-active: var(--line-width-m) solid var(--c-6);
+  --line-active: var(--line-width-m) solid var(--c-5);
 
   /* ─── Controls / motion ──────────────────────────── */
   --time: 0.4s;
@@ -481,7 +481,7 @@ section {
 
 .opt.selected {
   border: var(--line-active);
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-6);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
 }
 
