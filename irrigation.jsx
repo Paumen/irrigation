@@ -394,7 +394,7 @@ function SystemDiagram({ severityPct, activeRC, onPickRC }) {
 function StageBar({ stages, activeStage, onPick }) {
   const labels = ['', 'Ages', 'Symptoms', 'Events', 'Tests'];
   return (
-    <div className="stages">
+    <nav className="stages" aria-label="Stages">
       {[1, 2, 3, 4].map((s) => {
         const sp = stages[s];
         const active = activeStage === s;
@@ -404,7 +404,7 @@ function StageBar({ stages, activeStage, onPick }) {
             key={s}
             type="button"
             onClick={() => onPick(s)}
-            className={active ? 'active' : ''}
+            aria-current={active ? 'page' : undefined}
           >
             <span className="label">
               <span className="nm">{labels[s]}</span>
@@ -416,7 +416,7 @@ function StageBar({ stages, activeStage, onPick }) {
           </button>
         );
       })}
-    </div>
+    </nav>
   );
 }
 
@@ -439,20 +439,18 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
           return (
             <React.Fragment key={row.id}>
               <div className="matrix-cell matrix-row-label">{row.label}</div>
-              {cols.map((c) => {
-                const checked = sel === c.id;
-                return (
-                  <div key={c.id} className="matrix-cell">
-                    <button
-                      type="button"
-                      className="matrix-radio"
-                      aria-label={`${row.label}: ${c.label}`}
-                      aria-pressed={checked}
-                      onClick={() => onSetCell(row.id, c.id)}
-                    />
-                  </div>
-                );
-              })}
+              {cols.map((c) => (
+                <div key={c.id} className="matrix-cell">
+                  <input
+                    type="radio"
+                    className="matrix-radio"
+                    name={`${question.id}-${row.id}`}
+                    aria-label={`${row.label}: ${c.label}`}
+                    checked={sel === c.id}
+                    onChange={() => onSetCell(row.id, c.id)}
+                  />
+                </div>
+              ))}
               {row.drainable && !isOff && (
                 <label className="matrix-drained">
                   <input
@@ -548,37 +546,39 @@ function QuestionPanel({
 }
 
 function RankingPanel({ ranked, activeRC, onPickRC }) {
-  const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? ranked : ranked.slice(0, 5);
+  const renderRow = (r) => {
+    const meta = RC[r.id];
+    const active = activeRC === r.id;
+    const pct = Math.round(r.pct);
+    return (
+      <button
+        key={r.id}
+        type="button"
+        className={`rank-row ${active ? 'active' : ''}`}
+        data-sev={severityLevel(pct)}
+        onClick={() => onPickRC(r.id)}
+      >
+        <span className="id">{r.id}</span>
+        <div className="rank-row-body">
+          <div className="label">{meta.label}</div>
+          <div className="bar">
+            <div style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
+          </div>
+        </div>
+        <span className="pct">{pct}%</span>
+      </button>
+    );
+  };
+  const top = ranked.slice(0, 5);
+  const rest = ranked.slice(5);
   return (
     <div>
-      {visible.map((r) => {
-        const meta = RC[r.id];
-        const active = activeRC === r.id;
-        const pct = Math.round(r.pct);
-        return (
-          <button
-            key={r.id}
-            type="button"
-            className={`rank-row ${active ? 'active' : ''}`}
-            data-sev={severityLevel(pct)}
-            onClick={() => onPickRC(r.id)}
-          >
-            <span className="id">{r.id}</span>
-            <div className="rank-row-body">
-              <div className="label">{meta.label}</div>
-              <div className="bar">
-                <div style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
-              </div>
-            </div>
-            <span className="pct">{pct}%</span>
-          </button>
-        );
-      })}
-      {ranked.length > 5 && (
-        <button type="button" className="rank-more" onClick={() => setShowAll((s) => !s)}>
-          {showAll ? '▲ collapse' : `▼ show all ${ranked.length}`}
-        </button>
+      {top.map(renderRow)}
+      {rest.length > 0 && (
+        <details>
+          <summary className="rank-more">show all {ranked.length}</summary>
+          {rest.map(renderRow)}
+        </details>
       )}
     </div>
   );
@@ -605,38 +605,37 @@ function RecommendationPanel({ recs, onSelect }) {
 }
 
 function ResetModal({ onCancel, onConfirm }) {
-  const cancelRef = useRef(null);
+  const ref = useRef(null);
   useEffect(() => {
-    cancelRef.current && cancelRef.current.focus();
-    const onKey = (e) => {
-      if (e.key === 'Escape') onCancel();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onCancel]);
+    ref.current?.showModal();
+  }, []);
   return (
-    <div className="modal-backdrop" onClick={onCancel}>
-      <div
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="reset-title"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 id="reset-title">Start over?</h3>
-        <p>
-          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
-        </p>
-        <div className="actions">
-          <button ref={cancelRef} type="button" className="btn" onClick={onCancel}>
-            Keep my answers
-          </button>
-          <button type="button" className="btn btn-primary" onClick={onConfirm}>
-            Reset everything
-          </button>
-        </div>
+    <dialog
+      ref={ref}
+      className="modal"
+      aria-labelledby="reset-title"
+      onClose={onCancel}
+      onClick={(e) => {
+        if (e.target !== ref.current) return;
+        const r = ref.current.getBoundingClientRect();
+        const outside =
+          e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+        if (outside) onCancel();
+      }}
+    >
+      <h3 id="reset-title">Start over?</h3>
+      <p>
+        This clears every answer and returns you to the first question. You can&rsquo;t undo this.
+      </p>
+      <div className="actions">
+        <button type="button" className="btn" autoFocus onClick={onCancel}>
+          Keep my answers
+        </button>
+        <button type="button" className="btn btn-primary" onClick={onConfirm}>
+          Reset everything
+        </button>
       </div>
-    </div>
+    </dialog>
   );
 }
 

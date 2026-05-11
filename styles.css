@@ -385,7 +385,7 @@ section {
   border-bottom: var(--line-width-m) solid transparent;
 }
 
-.stages button.active {
+.stages button[aria-current] {
   border-bottom: var(--line-active);
 }
 
@@ -412,7 +412,7 @@ section {
   transition: width var(--time);
 }
 
-.stages button.active .fill {
+.stages button[aria-current] .fill {
   background: var(--c-18);
 }
 
@@ -574,6 +574,20 @@ section {
   padding: var(--sp-s) var(--sp-l);
   color: var(--c-4);
   text-align: left;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rank-more::-webkit-details-marker {
+  display: none;
+}
+
+.rank-more::before {
+  content: '▼ ';
+}
+
+details[open] > .rank-more::before {
+  content: '▲ ';
 }
 
 .rank-more:hover {
@@ -627,12 +641,15 @@ section {
 }
 
 .matrix-radio {
+  appearance: none;
   display: inline-block;
   width: 16px;
   height: 16px;
+  margin: 0;
   background: var(--c-1);
   border: var(--line-interactive);
   border-radius: 50%;
+  cursor: pointer;
   transition:
     background var(--time),
     border-color var(--time);
@@ -642,7 +659,7 @@ section {
   border-color: var(--c-6);
 }
 
-.matrix-radio[aria-pressed='true'] {
+.matrix-radio:checked {
   background:
     radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
   border: var(--line-active);
@@ -678,20 +695,17 @@ section {
 }
 
 /* ─── RESET MODAL ────────────────────────────────── */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: var(--c-16);
-}
-
 .modal {
   max-width: min(360px, 90cqi);
   padding: var(--sp-xl);
+  color: inherit;
   background: var(--c-1);
   border: var(--line-width-m) solid var(--c-5);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
+}
+
+.modal::backdrop {
+  background: var(--c-16);
 }
 
 .modal h3 {
