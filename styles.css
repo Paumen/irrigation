@@ -121,7 +121,6 @@ section {
 .btn,
 .panel > header,
 .stages button,
-.matrix-scroll thead th,
 details > summary {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
