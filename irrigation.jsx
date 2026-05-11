@@ -224,7 +224,7 @@ function Pip({ rcId, x, y, w, h, variant, sev, isActive, onPick }) {
         className={`${bgCls}${isActive ? ' active' : ''}`}
       />
       <text x={x + w / 2} y={y + h / 2 + 3.5} textAnchor="middle" className="pip">
-        {rcId.replace(/^R(\d)/, '$1.')}
+        {rcId}
       </text>
       {variant === 'node' && isActive && (
         <rect x={x + 1.5} y={y + 1.5} width={w - 3} height={h - 3} className="node-active" />
