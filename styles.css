@@ -457,40 +457,40 @@ details > summary {
 }
 
 .option {
-  position: relative;
   display: grid;
-  grid-template-columns: 24px 1fr;
+  grid-template-columns: 16px 1fr;
   gap: var(--sp-l);
   place-items: center stretch;
   cursor: pointer;
 }
 
-.option::before {
-  font-family: var(--font-mono);
-  color: var(--c-4);
-  text-align: center;
-  content: '○';
+.option > input[type='radio'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  appearance: none;
+  cursor: pointer;
+  background: var(--c-1);
+  border: var(--line-interactive);
+  border-radius: 50%;
+  transition:
+    background var(--time),
+    border-color var(--time);
 }
 
-.option > input[type='radio'] {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: 0;
-  pointer-events: none;
-  opacity: 0;
+.option > input[type='radio']:hover {
+  border-color: var(--c-6);
+}
+
+.option > input[type='radio']:checked {
+  background: radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
+  border: var(--line-active);
 }
 
 .option:has(input:checked) {
   border: var(--line-active);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
-}
-
-.option:has(input:checked)::before {
-  font-weight: var(--font-weight-m);
-  color: var(--c-6);
-  content: '●';
 }
 
 .option:has(:focus-visible) {

@@ -365,14 +365,10 @@ function app() {
       if (first) this.activeQuestionId = first.id;
     },
 
-    handleResetClose() {
-      const confirmed = this.$refs.reset?.returnValue === 'confirm';
-      if (this.$refs.reset) this.$refs.reset.returnValue = '';
-      if (confirmed) {
-        this.answers = {};
-        this.activeRC = null;
-        this.activeQuestionId = QUESTIONS[0].id;
-      }
+    doReset() {
+      this.answers = {};
+      this.activeRC = null;
+      this.activeQuestionId = QUESTIONS[0].id;
       this.resetOpen = false;
     },
 

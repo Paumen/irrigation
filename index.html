@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -329,7 +329,7 @@
         class="modal"
         x-ref="reset"
         aria-labelledby="reset-title"
-        @close="handleResetClose()"
+        @close="resetOpen = false"
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
         x-effect="resetOpen ? (!$refs.reset.open && $refs.reset.showModal()) : ($refs.reset.open && $refs.reset.close())"
       >
@@ -340,16 +340,18 @@
             this.
           </p>
           <footer>
-            <button type="submit" class="btn" autofocus value="cancel">Keep my answers</button>
-            <button type="submit" class="btn btn-primary" value="confirm">Reset everything</button>
+            <button type="submit" class="btn" autofocus>Keep my answers</button>
+            <button type="submit" class="btn btn-primary" @click="doReset()">
+              Reset everything
+            </button>
           </footer>
         </form>
       </dialog>
     </main>
 
-    <script src="data.js"></script>
-    <script src="icons.js"></script>
-    <script src="app.js"></script>
+    <script src="data.js?v=2"></script>
+    <script src="icons.js?v=2"></script>
+    <script src="app.js?v=2"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
