@@ -572,7 +572,7 @@ function RankingPanel({ ranked, activeRC, onPickRC }) {
             <div className="rank-row-body">
               <div className="label">{meta.label}</div>
               <div className="bar">
-                <div style={{ width: r.pct + '%' }} />
+                <div style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
               </div>
             </div>
             <span className="pct">{pct}%</span>

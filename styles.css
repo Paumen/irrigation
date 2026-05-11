@@ -542,6 +542,7 @@ section {
   grid-template-columns: 48px 1fr 48px;
   gap: var(--sp-l);
   place-items: center stretch;
+  width: 100%;
   padding: var(--sp-s) var(--sp-l);
   border-bottom: var(--line-passive);
 }
