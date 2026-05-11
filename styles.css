@@ -42,7 +42,7 @@
   --line-width-l: 3px;
   --line-passive: var(--line-width-s) solid var(--c-15);
   --line-interactive: var(--line-width-s) solid var(--c-5);
-  --line-active: var(--line-width-m) solid var(--c-6);
+  --line-active: var(--line-width-m) solid var(--c-5);
 
   /* ─── Controls / motion ──────────────────────────── */
   --time: 0.4s;
@@ -236,32 +236,21 @@ section {
 
 .node-box {
   fill: var(--c-1);
-  stroke: var(--c-5);
-  stroke-width: var(--line-width-s) ;
-}
-
-.node-divider,
-.node-col,
-.node-active {
-  stroke: var(--c-5);
+  stroke: var(--c-15);
+  stroke-width: var(--line-width-s);
 }
 
 .node-divider,
 .node-col {
   pointer-events: none;
-}
-
-.node-divider {
-  stroke-width: var(--line-width-s);
-}
-
-.node-col {
+  stroke: var(--c-15);
   stroke-width: var(--line-width-s);
 }
 
 .node-active {
   pointer-events: none;
   fill: none;
+  stroke: var(--c-5);
   stroke-width: var(--line-width-m);
 }
 
@@ -481,7 +470,7 @@ section {
 
 .opt.selected {
   border: var(--line-active);
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-6);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
 }
 
