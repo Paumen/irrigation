@@ -2,20 +2,24 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['irrigation.js', 'node_modules/**'],
+    ignores: ['node_modules/**'],
   },
   {
-    files: ['*.{js,jsx}'],
+    files: ['eslint.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-      },
+      globals: { ...globals.node },
+    },
+  },
+  {
+    files: ['app.js', 'data.js', 'icons.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
       globals: {
         ...globals.browser,
-        React: 'readonly',
-        ReactDOM: 'readonly',
+        Alpine: 'readonly',
       },
     },
     rules: {
