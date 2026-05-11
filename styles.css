@@ -1,7 +1,7 @@
 :root {
   /* ─── Color ──────────────────────────────────────── */
   --c-1: oklch(96.4% 0.007 87);
-  --c-2: #EAE8E0;
+  --c-2: #eae8e0;
   --c-5: oklch(25.6% 0.043 268);
   --c-6: oklch(53.9% 0.144 39);
   --c-8: oklch(40.2% 0.096 252);
@@ -65,28 +65,25 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-xl);
+}
+
 section {
   position: relative;
   background: var(--c-1);
   border: var(--line-passive);
 }
 
-main > section:first-of-type {
+.schematic-card {
   padding: var(--sp-l) var(--sp-xl);
-  margin: 0 0 var(--sp-xl);
 }
 
-main > section:last-of-type {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-l);
-}
-
-main > section:last-of-type > aside {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-l);
-  min-width: 0;
+.rank-card,
+.rec-card {
+  padding: var(--sp-xl);
 }
 
 header {
@@ -105,12 +102,23 @@ header h2 {
   letter-spacing: inherit;
 }
 
-form,
-aside section > div {
+.section-title {
+  padding: var(--sp-l) var(--sp-xl);
+  margin: 0 0 var(--sp-xl);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-m);
+  color: var(--c-1);
+  text-transform: uppercase;
+  letter-spacing: var(--text-ls-wide);
+  background: var(--c-5);
+}
+
+form {
   padding: var(--sp-xl);
 }
 
-main > section:first-of-type figure {
+.schematic-card figure {
   position: relative;
   padding: var(--sp-xl);
   margin: 0;
@@ -129,7 +137,7 @@ main > section:first-of-type figure {
   border: var(--line-passive);
 }
 
-main > section:first-of-type figure svg {
+.schematic-card figure svg {
   display: block;
   width: 100%;
   height: auto;
@@ -137,21 +145,15 @@ main > section:first-of-type figure svg {
   object-fit: contain;
 }
 
-main > section:first-of-type figcaption {
-  margin: var(--sp-xl) 0 0;
-}
-
-main > section:first-of-type figcaption ul {
+.schematic-card figcaption {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-l) var(--sp-xl);
   place-items: center;
-  padding: 0;
-  margin: 0;
+  margin: var(--sp-xl) 0 0;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--c-5);
-  list-style: none;
 }
 
 nav {
@@ -199,22 +201,19 @@ form > header h2 {
   letter-spacing: var(--text-ls-tight);
 }
 
-form > ul,
-ol {
-  gap: var(--sp-l);
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-form > ul {
+.option-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-l);
 }
 
 ol {
   display: flex;
   flex-direction: column;
+  gap: var(--sp-l);
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 li {
@@ -240,7 +239,6 @@ table {
   border-left: var(--line-passive);
 }
 
-thead,
 tbody,
 tr {
   display: contents;
@@ -336,13 +334,11 @@ p {
   color: var(--c-5);
 }
 
-
 /* ─── COMPONENTS ─────────────────────────────────── */
 
 [x-cloak] {
   display: none;
 }
-
 
 /* ─── Buttons ─────────────────────────── */
 
@@ -540,37 +536,44 @@ summary {
 }
 
 .recommendation {
-  display: block;
+  display: grid;
+  grid-template-areas:
+    'code stage discriminator'
+    'text text text';
+  grid-template-columns: auto auto 1fr;
+  gap: var(--sp-m) var(--sp-l);
   width: 100%;
   border-left: var(--line-width-l) solid var(--c-6);
 }
 
-.recommendation > span:first-of-type {
-  display: flex;
-  gap: var(--sp-l);
-  place-items: baseline;
+.recommendation > code {
+  grid-area: code;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
+  font-weight: var(--font-weight-m);
+  color: var(--c-6);
   letter-spacing: var(--text-ls-tight);
 }
 
-.recommendation code {
-  font-weight: var(--font-weight-m);
-  color: var(--c-6);
-}
-
-.recommendation .stage,
-.recommendation .discriminator {
+.recommendation > .stage {
+  grid-area: stage;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   color: var(--c-5);
+  letter-spacing: var(--text-ls-tight);
 }
 
-.recommendation .discriminator {
-  margin-inline-start: auto;
+.recommendation > .discriminator {
+  grid-area: discriminator;
+  justify-self: end;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--c-5);
+  letter-spacing: var(--text-ls-tight);
 }
 
-.recommendation > span:last-of-type {
-  display: block;
-  margin: var(--sp-m) 0 0;
+.recommendation > .recommendation-text {
+  grid-area: text;
   font-size: var(--text-sm);
 }
 
@@ -587,8 +590,11 @@ summary {
 
 .rank-row {
   display: grid;
+  grid-template-areas:
+    'code label percent'
+    'code bar percent';
   grid-template-columns: 48px 1fr 48px;
-  gap: var(--sp-l);
+  gap: 0 var(--sp-l);
   place-items: center stretch;
   width: 100%;
   padding: var(--sp-s) var(--sp-l);
@@ -599,26 +605,33 @@ summary {
   outline: var(--line-active);
 }
 
-.rank-row code,
-.rank-row .percent {
+.rank-row > code {
+  grid-area: code;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-m);
 }
 
-.rank-row > span:not(.percent) {
+.rank-row > .root-cause-label {
   display: block;
-}
-
-.rank-row .root-cause-label {
-  display: block;
+  grid-area: label;
+  place-self: end stretch;
   font-size: var(--text-sm);
 }
 
-.rank-row .percent {
+.rank-row > .bar {
+  grid-area: bar;
+  place-self: start stretch;
+}
+
+.rank-row > .percent {
+  grid-area: percent;
+  place-self: center end;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-m);
   font-variant-numeric: tabular-nums;
   color: var(--c-sev-bg);
-  text-align: right;
 }
 
 .bar {
@@ -651,12 +664,33 @@ summary {
   background: var(--c-2);
 }
 
-
 /* ─── RESPONSIVE ─────────────────────────────────── */
 
 @container page (width >= 1080px) {
-  main > section:last-of-type {
+  main {
+    grid-template-areas:
+      'schematic schematic'
+      'form rank'
+      'form rec';
     grid-template-columns: minmax(0, 1fr) 360px;
+  }
+
+  .schematic-card {
+    grid-area: schematic;
+  }
+
+  .form-card {
+    grid-area: form;
+  }
+
+  .rank-card {
+    grid-area: rank;
+    place-self: start stretch;
+  }
+
+  .rec-card {
+    grid-area: rec;
+    place-self: start stretch;
   }
 }
 
@@ -670,4 +704,3 @@ summary {
     padding: var(--sp-s);
   }
 }
- 
