@@ -20,6 +20,7 @@ const QUESTIONS = window.DATA.questions.map((q) => {
   if (q.type === 'matrix') {
     return {
       ...q,
+      colMul: Object.fromEntries(q.columns.map((c) => [c.id, c.mult])),
       rows: q.rows.map((r) => ({ ...r, effects: eff(r.effects || {}) })),
     };
   }
@@ -222,7 +223,7 @@ function app() {
         if (q.type === 'matrix') {
           const rowAns = ans.rows || {};
           const drained = ans.drained || {};
-          const colMul = Object.fromEntries(q.columns.map((c) => [c.id, c.mult]));
+          const colMul = q.colMul;
           q.rows.forEach((row) => {
             const colId = rowAns[row.id] || 'no';
             const m = colMul[colId] || 0;
@@ -380,6 +381,7 @@ function app() {
       const cur = this.activeQuestionId;
       this.answers = { ...this.answers, [cur]: i };
       setTimeout(() => {
+        if (this.activeQuestionId !== cur) return;
         const idx = QUESTIONS.findIndex((q) => q.id === cur);
         if (idx >= 0 && idx < QUESTIONS.length - 1) {
           this.activeQuestionId = QUESTIONS[idx + 1].id;
