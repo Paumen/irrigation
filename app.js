@@ -222,15 +222,13 @@ function app() {
         if (ans === undefined || ans === null) return;
         if (q.type === 'matrix') {
           const rowAns = ans.rows || {};
-          const drained = ans.drained || {};
           const colMul = q.colMul;
           q.rows.forEach((row) => {
             const colId = rowAns[row.id] || 'no';
             const m = colMul[colId] || 0;
             if (m === 0) return;
-            const halve = row.drainable && drained[row.id] ? 0.5 : 1;
             Object.entries(row.effects).forEach(([rc, delta]) => {
-              s[rc] = (s[rc] || 0) + delta * m * halve;
+              s[rc] = (s[rc] || 0) + delta * m;
             });
           });
         } else {
@@ -347,32 +345,15 @@ function app() {
     rowAns(rowId) {
       return this.activeAnswer?.rows?.[rowId] || 'no';
     },
-    rowDrained(rowId) {
-      return !!this.activeAnswer?.drained?.[rowId];
-    },
 
     setMatrixCell(rowId, colId) {
       const qid = this.activeQuestionId;
-      const prev = this.answers[qid] || { rows: {}, drained: {} };
+      const prev = this.answers[qid] || { rows: {} };
       this.answers = {
         ...this.answers,
         [qid]: {
           ...prev,
           rows: { ...prev.rows, [rowId]: colId },
-          drained: prev.drained || {},
-        },
-      };
-    },
-
-    setMatrixDrained(rowId, val) {
-      const qid = this.activeQuestionId;
-      const prev = this.answers[qid] || { rows: {}, drained: {} };
-      this.answers = {
-        ...this.answers,
-        [qid]: {
-          ...prev,
-          rows: prev.rows || {},
-          drained: { ...(prev.drained || {}), [rowId]: val },
         },
       };
     },

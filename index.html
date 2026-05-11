@@ -184,18 +184,6 @@
                             </td>
                           </template>
                         </tr>
-                        <tr x-show="row.drainable && rowAns(row.id) !== 'no'">
-                          <td class="matrix-drained-toggle" :colspan="activeQuestion.columns.length + 1">
-                            <label>
-                              <input
-                                type="checkbox"
-                                :checked="rowDrained(row.id)"
-                                @change="setMatrixDrained(row.id, $event.target.checked)"
-                              />
-                              System was drained for winter (halves effect)
-                            </label>
-                          </td>
-                        </tr>
                       </tbody>
                     </template>
                   </table>

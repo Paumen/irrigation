@@ -689,30 +689,6 @@ details > summary:hover {
   border: var(--line-active);
 }
 
-.matrix-drained-toggle {
-  grid-column: 1 / -1;
-  display: block;
-  padding: 0;
-  background: var(--c-2);
-  border-right: 0;
-}
-
-.matrix-drained-toggle label {
-  display: flex;
-  gap: var(--sp-l);
-  place-items: center;
-  padding: var(--sp-l) var(--sp-xl);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--c-4);
-}
-
-.matrix-drained-toggle input[type='checkbox'] {
-  width: 14px;
-  height: 14px;
-  accent-color: var(--c-6);
-}
-
 /* ─── ACTIONS ────────────────────────────────────── */
 .panel > form > footer,
 .modal > footer {
