@@ -47,7 +47,7 @@ const NODES = [
     h: BOX_H,
     label: 'SOFTWARE',
     icons: ['mdi:cellphone'],
-    pips: ['R1.1', 'R1.2', 'R1.3'],
+    pips: ['R11', 'R12', 'R13'],
   },
   {
     key: 'ctrl',
@@ -57,7 +57,7 @@ const NODES = [
     h: BOX_H,
     label: 'CONTROLLER',
     icons: ['mdi:view-gallery-outline'],
-    pips: ['R2.2', 'R2.3'],
+    pips: ['R22', 'R23'],
   },
   {
     key: 'relay',
@@ -67,7 +67,7 @@ const NODES = [
     h: BOX_H,
     label: 'RELAY',
     icons: ['mdi:electric-switch'],
-    pips: ['R3.1'],
+    pips: ['R31'],
   },
   {
     key: 'pump',
@@ -77,7 +77,7 @@ const NODES = [
     h: BOX_H,
     label: 'PUMP',
     icons: ['mdi:water-pump', 'mdi:water-well'],
-    pips: ['R4.1', 'R4.2'],
+    pips: ['R41', 'R42'],
   },
   {
     key: 'valves',
@@ -87,7 +87,7 @@ const NODES = [
     h: BOX_H,
     label: 'VALVES',
     icons: ['ms:valve', 'ms:valve', 'ms:valve', 'ms:valve'],
-    pips: ['R7.1', 'R7.2', 'R7.3', 'R7.4'],
+    pips: ['R71', 'R72', 'R73', 'R74'],
   },
   {
     key: 'sp1',
@@ -97,7 +97,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
   {
     key: 'sp2',
@@ -107,7 +107,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler', 'mdi:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
   {
     key: 'sp3',
@@ -117,7 +117,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler', 'mdi:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
   {
     key: 'sp4',
@@ -127,24 +127,24 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['ms:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R5.1', x: 487, y: 145 },
-  { rcId: 'R5.2', x: 461, y: 145 },
-  { rcId: 'R6.1', x: 241, y: 145 },
-  { rcId: 'R6.2', x: 267, y: 145 },
-  { rcId: 'R6.3', x: 293, y: 145 },
-  { rcId: 'R8.1', x: 180, y: 290 },
-  { rcId: 'R8.2', x: 206, y: 290 },
-  { rcId: 'R8.1', x: 286, y: 305 },
-  { rcId: 'R8.2', x: 312, y: 305 },
-  { rcId: 'R8.1', x: 393, y: 305 },
-  { rcId: 'R8.2', x: 419, y: 305 },
-  { rcId: 'R8.1', x: 500, y: 290 },
-  { rcId: 'R8.2', x: 526, y: 290 },
+  { rcId: 'R51', x: 487, y: 145 },
+  { rcId: 'R52', x: 461, y: 145 },
+  { rcId: 'R61', x: 241, y: 145 },
+  { rcId: 'R62', x: 267, y: 145 },
+  { rcId: 'R63', x: 293, y: 145 },
+  { rcId: 'R81', x: 180, y: 290 },
+  { rcId: 'R82', x: 206, y: 290 },
+  { rcId: 'R81', x: 286, y: 305 },
+  { rcId: 'R82', x: 312, y: 305 },
+  { rcId: 'R81', x: 393, y: 305 },
+  { rcId: 'R82', x: 419, y: 305 },
+  { rcId: 'R81', x: 500, y: 290 },
+  { rcId: 'R82', x: 526, y: 290 },
 ];
 
 const severityLevel = (pct) => {
@@ -224,7 +224,7 @@ function Pip({ rcId, x, y, w, h, variant, sev, isActive, onPick }) {
         className={`${bgCls}${isActive ? ' active' : ''}`}
       />
       <text x={x + w / 2} y={y + h / 2 + 3.5} textAnchor="middle" className="pip">
-        {rcId.replace('R', '')}
+        {rcId.replace(/^R(\d)/, '$1.')}
       </text>
       {variant === 'node' && isActive && (
         <rect x={x + 1.5} y={y + 1.5} width={w - 3} height={h - 3} className="node-active" />
