@@ -349,7 +349,7 @@ function app() {
         if (idx >= 0 && idx < QUESTIONS.length - 1) {
           this.activeQuestionId = QUESTIONS[idx + 1].id;
         }
-      }, 180);
+      }, 360);
     },
 
     moveBy(d) {
