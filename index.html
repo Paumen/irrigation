@@ -13,17 +13,345 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main id="root"></main>
+    <main x-data="app" x-cloak>
+      <section class="sec-diagram">
+        <figure>
+          <svg
+            viewBox="0 0 700 420"
+            preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <marker
+                id="arr-water"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              >
+                <path d="M0,0 L10,5 L0,10 z" class="arr" data-flow="water" />
+              </marker>
+              <marker
+                id="arr-ctrl"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              >
+                <path d="M0,0 L10,5 L0,10 z" class="arr" data-flow="ctrl" />
+              </marker>
+              <marker
+                id="arr-mains"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              >
+                <path d="M0,0 L10,5 L0,10 z" class="arr" data-flow="mains" />
+              </marker>
+            </defs>
 
-    <script
-      src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"
-      crossorigin="anonymous"
-    ></script>
+            <!-- Static flow lines & labels -->
+            <g data-flow="wifi">
+              <line x1="166" y1="36" x2="202" y2="36" class="line" />
+              <g transform="translate(177 33) scale(0.014583333333333334)">
+                <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
+              </g>
+            </g>
 
-    <script src="irrigation.js"></script>
+            <g data-flow="ctrl">
+              <line x1="332" y1="36" x2="368" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <path d="M 267 92 V 200 H 285" class="line" marker-end="url(#arr-ctrl)" />
+            </g>
+            <g data-flow="ctrl">
+              <g transform="translate(334 22) scale(0.4166666666666667)">
+                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
+              </g>
+              <text x="346" y="30" text-anchor="start" class="ln-lbl">24 V</text>
+            </g>
+            <g data-flow="ctrl">
+              <g transform="translate(238 100) scale(0.4166666666666667)">
+                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
+              </g>
+              <text x="250" y="108" text-anchor="start" class="ln-lbl">24 V</text>
+            </g>
+
+            <g data-flow="mains">
+              <line x1="498" y1="36" x2="534" y2="36" class="line" marker-end="url(#arr-mains)" />
+            </g>
+            <g data-flow="mains">
+              <g transform="translate(497 32.5) scale(0.011458333333333334)">
+                <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
+              </g>
+              <text x="510" y="30" text-anchor="start" class="ln-lbl">230 V</text>
+            </g>
+
+            <g data-flow="water">
+              <path d="M 599 92 V 145 H 350 V 170" class="line" marker-end="url(#arr-water)" />
+            </g>
+            <g data-flow="water">
+              <g transform="translate(357 133.5) scale(0.4583333333333333)">
+                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
+              </g>
+              <text x="370" y="142" text-anchor="start" class="ln-lbl">H₂O</text>
+            </g>
+
+            <g data-flow="lateral">
+              <path d="M 300 242 V 290 H 85 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 333 242 V 305 H 265 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 367 242 V 305 H 445 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 400 242 V 290 H 625 V 340" class="line" marker-end="url(#arr-water)" />
+            </g>
+
+            <!-- Dynamic nodes & connector pips (rendered via x-html; Alpine's
+                 <template x-for> doesn't work reliably inside SVG context) -->
+            <g
+              @click="pipFromEvent($event)"
+              @keydown.enter.prevent="pipFromEvent($event)"
+              @keydown.space.prevent="pipFromEvent($event)"
+              x-html="renderDiagram()"
+            ></g>
+          </svg>
+
+          <figcaption>
+            <ul>
+              <li><span class="swatch" data-flow="water" aria-hidden="true"></span> water</li>
+              <li><span class="swatch" data-flow="mains" aria-hidden="true"></span> 230 V mains</li>
+              <li><span class="swatch" data-flow="ctrl" aria-hidden="true"></span> 24 V control</li>
+              <li><span class="swatch" data-flow="wifi" aria-hidden="true"></span> Wi-Fi</li>
+            </ul>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="work">
+        <section class="panel">
+          <form @submit.prevent>
+            <header>
+              <h2 x-text="activeQuestion.text"></h2>
+              <button class="btn" type="button" @click="resetOpen = true">Reset</button>
+              <button
+                type="button"
+                class="btn btn-icon"
+                @click="moveBy(-1)"
+                :disabled="isFirst"
+                title="Previous"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                class="btn btn-icon"
+                @click="moveBy(1)"
+                :disabled="isLast"
+                title="Next"
+              >
+                ›
+              </button>
+            </header>
+
+            <template x-if="activeQuestion.type === 'matrix'">
+              <div>
+                <div class="matrix-scroll">
+                  <table :style="`--sp-cols: ${activeQuestion.columns.length}`">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <template x-for="c in activeQuestion.columns" :key="c.id">
+                          <th scope="col" :title="c.label" x-text="c.label"></th>
+                        </template>
+                      </tr>
+                    </thead>
+                    <template x-for="row in activeQuestion.rows" :key="row.id">
+                      <tbody>
+                        <tr>
+                          <th scope="row" x-text="row.label"></th>
+                          <template x-for="c in activeQuestion.columns" :key="c.id">
+                            <td>
+                              <input
+                                type="radio"
+                                :name="`${activeQuestion.id}-${row.id}`"
+                                :aria-label="`${row.label}: ${c.label}`"
+                                :checked="rowAns(row.id) === c.id"
+                                @change="setMatrixCell(row.id, c.id)"
+                              />
+                            </td>
+                          </template>
+                        </tr>
+                        <tr x-show="row.drainable && rowAns(row.id) !== 'no'">
+                          <td class="matrix-drained" :colspan="activeQuestion.columns.length + 1">
+                            <label>
+                              <input
+                                type="checkbox"
+                                :checked="rowDrained(row.id)"
+                                @change="setMatrixDrained(row.id, $event.target.checked)"
+                              />
+                              System was drained for winter (halves effect)
+                            </label>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </table>
+                </div>
+                <footer>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="moveBy(1)"
+                    :disabled="isLast"
+                  >
+                    Next ›
+                  </button>
+                </footer>
+              </div>
+            </template>
+
+            <template x-if="activeQuestion.type !== 'matrix'">
+              <ul>
+                <template x-for="(opt, i) in activeQuestion.options" :key="i">
+                  <li>
+                    <button
+                      type="button"
+                      class="opt"
+                      :aria-pressed="activeAnswer === i"
+                      @click="handleAnswer(i)"
+                      x-text="opt.label"
+                    ></button>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </form>
+
+          <nav class="stages" aria-label="Stages">
+            <template x-for="s in STAGES" :key="s">
+              <button
+                type="button"
+                @click="pickStage(s)"
+                :aria-current="activeStage === s ? 'page' : null"
+                :style="`--pct: ${stagePct(s)}%`"
+              >
+                <span x-text="STAGE_LABELS[s]"></span>
+                <small
+                  ><span x-text="stageProgress[s].answered"></span>/<span
+                    x-text="stageProgress[s].total"
+                  ></span
+                ></small>
+              </button>
+            </template>
+          </nav>
+        </section>
+
+        <aside>
+          <section class="panel" aria-labelledby="rank-heading">
+            <header><h2 id="rank-heading">Root-cause</h2></header>
+            <div class="bd">
+              <ol>
+                <template x-for="r in rankedTop" :key="r.id">
+                  <li>
+                    <button
+                      type="button"
+                      class="rank-row"
+                      :class="activeRC === r.id ? 'active' : ''"
+                      :data-sev="severityLevel(rankPct(r))"
+                      @click="activeRC = r.id"
+                    >
+                      <code x-text="r.id"></code>
+                      <span>
+                        <span class="label" x-text="RC[r.id].label"></span>
+                        <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
+                      </span>
+                      <span class="pct" x-text="`${rankPct(r)}%`"></span>
+                    </button>
+                  </li>
+                </template>
+              </ol>
+              <template x-if="rankedRest.length > 0">
+                <details>
+                  <summary x-text="`all ${ranked.length} ranked`"></summary>
+                  <ol start="6">
+                    <template x-for="r in rankedRest" :key="r.id">
+                      <li>
+                        <button
+                          type="button"
+                          class="rank-row"
+                          :class="activeRC === r.id ? 'active' : ''"
+                          :data-sev="severityLevel(rankPct(r))"
+                          @click="activeRC = r.id"
+                        >
+                          <code x-text="r.id"></code>
+                          <span>
+                            <span class="label" x-text="RC[r.id].label"></span>
+                            <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
+                          </span>
+                          <span class="pct" x-text="`${rankPct(r)}%`"></span>
+                        </button>
+                      </li>
+                    </template>
+                  </ol>
+                </details>
+              </template>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="rec-heading">
+            <header><h2 id="rec-heading">Recommended Next</h2></header>
+            <div class="bd">
+              <template x-if="recommendations.length === 0">
+                <p class="rec-empty">No questions left to differentiate top suspects.</p>
+              </template>
+              <template x-if="recommendations.length > 0">
+                <ol>
+                  <template x-for="rec in recommendations" :key="rec.q.id">
+                    <li>
+                      <button type="button" class="rec" @click="activeQuestionId = rec.q.id">
+                        <span>
+                          <code x-text="rec.q.id"></code>
+                          <span class="stg" x-text="`S${rec.q.stage}`"></span>
+                          <span class="d" x-text="`D = ${rec.D.toFixed(2)}`"></span>
+                        </span>
+                        <span x-text="rec.q.text"></span>
+                      </button>
+                    </li>
+                  </template>
+                </ol>
+              </template>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <dialog
+        class="modal"
+        x-ref="reset"
+        aria-labelledby="reset-title"
+        @close="resetOpen = false"
+        @click="modalClick($event, $refs.reset)"
+        x-effect="resetOpen ? (!$refs.reset.open && $refs.reset.showModal()) : ($refs.reset.open && $refs.reset.close())"
+      >
+        <h3 id="reset-title">Start over?</h3>
+        <p>
+          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
+        </p>
+        <footer>
+          <button type="button" class="btn" autofocus @click="resetOpen = false">
+            Keep my answers
+          </button>
+          <button type="button" class="btn btn-primary" @click="doReset()">Reset everything</button>
+        </footer>
+      </dialog>
+    </main>
+
+    <script src="data.js"></script>
+    <script src="icons.js"></script>
+    <script src="app.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   </body>
 </html>

@@ -1,14 +1,14 @@
 :root {
   /* ─── Color ──────────────────────────────────────── */
-  --c-1:  #f7f2e6;
-  --c-2:  #f1ead8;
-  --c-3:  #4a5878;
-  --c-4:  #2c3852;
-  --c-5:  #1a2238;
-  --c-6:  #b14a26;
-  --c-7:  #7a2f15;
-  --c-8:  #1a4a7a;
-  --c-9:  #5a6a85;
+  --c-1: #f7f2e6;
+  --c-2: #f1ead8;
+  --c-3: #4a5878;
+  --c-4: #2c3852;
+  --c-5: #1a2238;
+  --c-6: #b14a26;
+  --c-7: #7a2f15;
+  --c-8: #1a4a7a;
+  --c-9: #5a6a85;
   --c-10: #3f6b2f;
   --c-11: #9bbf6e;
   --c-12: #d99a78;
@@ -52,6 +52,10 @@
   box-sizing: border-box;
 }
 
+[x-cloak] {
+  display: none;
+}
+
 html,
 body {
   margin: 0;
@@ -68,16 +72,9 @@ body {
   font-size: var(--text-md);
   color: var(--c-5);
   background:
-    linear-gradient(
-        var(--c-13) var(--line-width-s),
-        transparent var(--line-width-s)
-      )
+    linear-gradient(var(--c-13) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
-    linear-gradient(
-        90deg,
-        var(--c-13) var(--line-width-s),
-        transparent var(--line-width-s)
-      )
+    linear-gradient(90deg, var(--c-13) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
     var(--c-1);
   -webkit-font-smoothing: antialiased;
@@ -689,8 +686,7 @@ details > summary:hover {
 }
 
 .matrix-scroll input[type='radio']:checked {
-  background:
-    radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
+  background: radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
   border: var(--line-active);
 }
 
