@@ -530,7 +530,7 @@ function QuestionPanel({
           </div>
         </>
       ) : (
-        <>
+        <div className="opts">
           {question.options.map((opt, i) => {
             const selected = answer === i;
             return (
@@ -545,7 +545,7 @@ function QuestionPanel({
               </button>
             );
           })}
-        </>
+        </div>
       )}
     </div>
   );

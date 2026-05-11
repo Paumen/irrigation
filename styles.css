@@ -460,15 +460,17 @@ section {
   border: var(--line-soft);
 }
 
+.opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-l);
+}
+
 .opt {
   display: grid;
   grid-template-columns: 24px 1fr;
   gap: var(--sp-l);
   place-items: center stretch;
-}
-
-.opt + .opt {
-  margin: var(--sp-l) 0 0;
 }
 
 .opt .dot {
@@ -736,6 +738,10 @@ section {
 @container page (width <= 760px) {
   .qtitle {
     font-size: var(--text-md);
+  }
+
+  .opts {
+    grid-template-columns: 1fr;
   }
 
   .matrix-cell {
