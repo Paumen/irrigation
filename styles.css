@@ -1,7 +1,7 @@
 :root {
   /* ─── Color ──────────────────────────────────────── */
   --c-1: oklch(96.4% 0.007 87);
-  --c-2: #EAE8E0;
+  --c-2: #eae8e0;
   --c-5: oklch(25.6% 0.043 268);
   --c-6: oklch(53.9% 0.144 39);
   --c-8: oklch(40.2% 0.096 252);
@@ -65,28 +65,25 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-xl);
+}
+
 section {
   position: relative;
   background: var(--c-1);
   border: var(--line-passive);
 }
 
-main > section:first-of-type {
+.schematic-card {
   padding: var(--sp-l) var(--sp-xl);
-  margin: 0 0 var(--sp-xl);
 }
 
-main > section:last-of-type {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-l);
-}
-
-main > section:last-of-type > aside {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-l);
-  min-width: 0;
+.rank-card,
+.rec-card {
+  padding: var(--sp-xl);
 }
 
 header {
@@ -105,12 +102,23 @@ header h2 {
   letter-spacing: inherit;
 }
 
-form,
-aside section > div {
+.section-title {
+  padding: var(--sp-l) var(--sp-xl);
+  margin: 0 0 var(--sp-xl);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-m);
+  color: var(--c-1);
+  text-transform: uppercase;
+  letter-spacing: var(--text-ls-wide);
+  background: var(--c-5);
+}
+
+form {
   padding: var(--sp-xl);
 }
 
-main > section:first-of-type figure {
+.schematic-card figure {
   position: relative;
   padding: var(--sp-xl);
   margin: 0;
@@ -129,7 +137,7 @@ main > section:first-of-type figure {
   border: var(--line-passive);
 }
 
-main > section:first-of-type figure svg {
+.schematic-card figure svg {
   display: block;
   width: 100%;
   height: auto;
@@ -137,21 +145,15 @@ main > section:first-of-type figure svg {
   object-fit: contain;
 }
 
-main > section:first-of-type figcaption {
-  margin: var(--sp-xl) 0 0;
-}
-
-main > section:first-of-type figcaption ul {
+.schematic-card figcaption {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-l) var(--sp-xl);
   place-items: center;
-  padding: 0;
-  margin: 0;
+  margin: var(--sp-xl) 0 0;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--c-5);
-  list-style: none;
 }
 
 nav {
@@ -199,22 +201,19 @@ form > header h2 {
   letter-spacing: var(--text-ls-tight);
 }
 
-form > ul,
-ol {
-  gap: var(--sp-l);
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-form > ul {
+.option-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-l);
 }
 
 ol {
   display: flex;
   flex-direction: column;
+  gap: var(--sp-l);
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 li {
@@ -240,7 +239,6 @@ table {
   border-left: var(--line-passive);
 }
 
-thead,
 tbody,
 tr {
   display: contents;
@@ -336,13 +334,11 @@ p {
   color: var(--c-5);
 }
 
-
 /* ─── COMPONENTS ─────────────────────────────────── */
 
 [x-cloak] {
   display: none;
 }
-
 
 /* ─── Buttons ─────────────────────────── */
 
@@ -508,13 +504,15 @@ summary {
 
 .option,
 .recommendation,
+.recommendation-empty,
 .rank-row {
   text-align: left;
   transition: background var(--time);
 }
 
 .option,
-.recommendation {
+.recommendation,
+.recommendation-empty {
   padding: var(--sp-l) var(--sp-xl);
   background: var(--c-1);
   border: var(--line-interactive);
@@ -540,58 +538,59 @@ summary {
 }
 
 .recommendation {
-  display: block;
+  display: grid;
+  grid-template-areas:
+    'code stage discriminator'
+    'text text text';
+  grid-template-columns: auto auto 1fr;
+  gap: var(--sp-m) var(--sp-l);
   width: 100%;
+  font-size: var(--text-sm);
   border-left: var(--line-width-l) solid var(--c-6);
 }
 
-.recommendation > span:first-of-type {
-  display: flex;
-  gap: var(--sp-l);
-  place-items: baseline;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
+.recommendation > code,
+.recommendation > .stage,
+.recommendation > .discriminator {
   letter-spacing: var(--text-ls-tight);
 }
 
-.recommendation code {
-  font-weight: var(--font-weight-m);
+.recommendation > code {
+  grid-area: code;
   color: var(--c-6);
 }
 
-.recommendation .stage,
-.recommendation .discriminator {
-  color: var(--c-5);
+.recommendation > .stage {
+  grid-area: stage;
 }
 
-.recommendation .discriminator {
-  margin-inline-start: auto;
+.recommendation > .discriminator {
+  grid-area: discriminator;
+  justify-self: end;
 }
 
-.recommendation > span:last-of-type {
-  display: block;
-  margin: var(--sp-m) 0 0;
-  font-size: var(--text-sm);
+.recommendation > .recommendation-text {
+  grid-area: text;
 }
 
 .recommendation-empty {
-  padding: var(--sp-l) var(--sp-xl);
   margin: 0;
   font-style: italic;
-  color: var(--c-5);
   text-align: center;
-  background: var(--c-1);
-  border: var(--line-interactive);
   border-left: var(--line-width-l) solid var(--c-15);
 }
 
 .rank-row {
   display: grid;
+  grid-template-areas:
+    'code label percent'
+    'code bar percent';
   grid-template-columns: 48px 1fr 48px;
-  gap: var(--sp-l);
+  gap: 0 var(--sp-l);
   place-items: center stretch;
   width: 100%;
   padding: var(--sp-s) var(--sp-l);
+  font-size: var(--text-sm);
   border-bottom: var(--line-passive);
 }
 
@@ -599,26 +598,25 @@ summary {
   outline: var(--line-active);
 }
 
-.rank-row code,
-.rank-row .percent {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-m);
+.rank-row > code {
+  grid-area: code;
 }
 
-.rank-row > span:not(.percent) {
-  display: block;
+.rank-row > .root-cause-label {
+  grid-area: label;
+  place-self: end stretch;
 }
 
-.rank-row .root-cause-label {
-  display: block;
-  font-size: var(--text-sm);
+.rank-row > .bar {
+  grid-area: bar;
+  place-self: start stretch;
 }
 
-.rank-row .percent {
+.rank-row > .percent {
+  grid-area: percent;
+  place-self: center end;
   font-variant-numeric: tabular-nums;
   color: var(--c-sev-bg);
-  text-align: right;
 }
 
 .bar {
@@ -651,12 +649,36 @@ summary {
   background: var(--c-2);
 }
 
-
 /* ─── RESPONSIVE ─────────────────────────────────── */
 
 @container page (width >= 1080px) {
-  main > section:last-of-type {
+  main {
+    grid-template-areas:
+      'schematic schematic'
+      'form rank'
+      'form rec';
     grid-template-columns: minmax(0, 1fr) 360px;
+  }
+
+  .schematic-card {
+    grid-area: schematic;
+  }
+
+  .form-card {
+    grid-area: form;
+  }
+
+  .rank-card {
+    grid-area: rank;
+  }
+
+  .rec-card {
+    grid-area: rec;
+  }
+
+  .rank-card,
+  .rec-card {
+    place-self: start stretch;
   }
 }
 
@@ -670,4 +692,3 @@ summary {
     padding: var(--sp-s);
   }
 }
- 
