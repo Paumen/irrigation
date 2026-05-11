@@ -440,14 +440,14 @@ function app() {
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
 
-        s += `<text x="${cx}" y="${b.y + 38}" text-anchor="middle" class="lbl">${escapeAttr(b.label)}</text>`;
+        s += `<text x="${cx}" y="${b.y + 38}" text-anchor="middle" class="node-label">${escapeAttr(b.label)}</text>`;
 
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
           const px = b.x + i * cw;
           const sv = this.sev(rcId);
           const isActive = this.activeRC === rcId;
-          const cls = isActive ? 'pip-fill active' : 'pip-fill';
+          const cls = isActive ? 'pip-background active' : 'pip-background';
           s += `<g role="button" tabindex="0" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
           s += `<rect x="${px}" y="${fy}" width="${cw}" height="${fh}" class="${cls}"/>`;
           s += `<text x="${px + cw / 2}" y="${fy + fh / 2 + 3.5}" text-anchor="middle" class="pip">${rcId}</text>`;
@@ -471,7 +471,7 @@ function app() {
         const p = CONN_PIPS[i];
         const sv = this.sev(p.rcId);
         const isActive = this.activeRC === p.rcId;
-        const cls = isActive ? 'pip-fill connector active' : 'pip-fill connector';
+        const cls = isActive ? 'pip-background pip-background--connector active' : 'pip-background pip-background--connector';
         s += `<g role="button" tabindex="0" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
         s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
         s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId}</text>`;

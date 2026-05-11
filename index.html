@@ -14,7 +14,7 @@
   </head>
   <body>
     <main x-data="app" x-cloak>
-      <section class="sec-diagram">
+      <section class="diagram">
         <figure>
           <svg
             viewBox="0 0 700 420"
@@ -31,7 +31,7 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arr" data-flow="water" />
+                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="water" />
               </marker>
               <marker
                 id="arr-ctrl"
@@ -42,7 +42,7 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arr" data-flow="ctrl" />
+                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="ctrl" />
               </marker>
               <marker
                 id="arr-mains"
@@ -53,7 +53,7 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arr" data-flow="mains" />
+                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="mains" />
               </marker>
             </defs>
 
@@ -73,13 +73,13 @@
               <g transform="translate(334 22) scale(0.4166666666666667)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="346" y="30" text-anchor="start" class="ln-lbl">24 V</text>
+              <text x="346" y="30" text-anchor="start" class="flow-label">24 V</text>
             </g>
             <g data-flow="ctrl">
               <g transform="translate(238 100) scale(0.4166666666666667)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="250" y="108" text-anchor="start" class="ln-lbl">24 V</text>
+              <text x="250" y="108" text-anchor="start" class="flow-label">24 V</text>
             </g>
 
             <g data-flow="mains">
@@ -89,7 +89,7 @@
               <g transform="translate(497 32.5) scale(0.011458333333333334)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="510" y="30" text-anchor="start" class="ln-lbl">230 V</text>
+              <text x="510" y="30" text-anchor="start" class="flow-label">230 V</text>
             </g>
 
             <g data-flow="water">
@@ -99,7 +99,7 @@
               <g transform="translate(357 133.5) scale(0.4583333333333333)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="370" y="142" text-anchor="start" class="ln-lbl">H₂O</text>
+              <text x="370" y="142" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral">
@@ -130,7 +130,7 @@
         </figure>
       </section>
 
-      <section class="work">
+      <section class="workspace">
         <section class="panel">
           <form @submit.prevent>
             <header>
@@ -185,7 +185,7 @@
                           </template>
                         </tr>
                         <tr x-show="row.drainable && rowAns(row.id) !== 'no'">
-                          <td class="matrix-drained" :colspan="activeQuestion.columns.length + 1">
+                          <td class="matrix-drained-toggle" :colspan="activeQuestion.columns.length + 1">
                             <label>
                               <input
                                 type="checkbox"
@@ -219,7 +219,7 @@
                   <li>
                     <button
                       type="button"
-                      class="opt"
+                      class="option"
                       :aria-pressed="activeAnswer === i"
                       @click="handleAnswer(i)"
                       x-text="opt.label"
@@ -252,7 +252,7 @@
         <aside>
           <section class="panel" aria-labelledby="rank-heading">
             <header><h2 id="rank-heading">Root-cause</h2></header>
-            <div class="bd">
+            <div class="panel-body">
               <ol>
                 <template x-for="r in rankedTop" :key="r.id">
                   <li>
@@ -265,10 +265,10 @@
                     >
                       <code x-text="r.id"></code>
                       <span>
-                        <span class="label" x-text="RC[r.id].label"></span>
+                        <span class="root-cause-label" x-text="RC[r.id].label"></span>
                         <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
                       </span>
-                      <span class="pct" x-text="`${rankPct(r)}%`"></span>
+                      <span class="percent" x-text="`${rankPct(r)}%`"></span>
                     </button>
                   </li>
                 </template>
@@ -288,10 +288,10 @@
                         >
                           <code x-text="r.id"></code>
                           <span>
-                            <span class="label" x-text="RC[r.id].label"></span>
+                            <span class="root-cause-label" x-text="RC[r.id].label"></span>
                             <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
                           </span>
-                          <span class="pct" x-text="`${rankPct(r)}%`"></span>
+                          <span class="percent" x-text="`${rankPct(r)}%`"></span>
                         </button>
                       </li>
                     </template>
@@ -303,19 +303,19 @@
 
           <section class="panel" aria-labelledby="rec-heading">
             <header><h2 id="rec-heading">Recommended Next</h2></header>
-            <div class="bd">
+            <div class="panel-body">
               <template x-if="recommendations.length === 0">
-                <p class="rec-empty">No questions left to differentiate top suspects.</p>
+                <p class="recommendation-empty">No questions left to differentiate top suspects.</p>
               </template>
               <template x-if="recommendations.length > 0">
                 <ol>
                   <template x-for="rec in recommendations" :key="rec.q.id">
                     <li>
-                      <button type="button" class="rec" @click="activeQuestionId = rec.q.id">
+                      <button type="button" class="recommendation" @click="activeQuestionId = rec.q.id">
                         <span>
                           <code x-text="rec.q.id"></code>
-                          <span class="stg" x-text="`S${rec.q.stage}`"></span>
-                          <span class="d" x-text="`D = ${rec.D.toFixed(2)}`"></span>
+                          <span class="stage" x-text="`S${rec.q.stage}`"></span>
+                          <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                         </span>
                         <span x-text="rec.q.text"></span>
                       </button>
