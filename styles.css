@@ -21,9 +21,9 @@
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
-  --text-sm: 12px;
-  --text-md: 14px;
-  --text-lg: 16px;
+  --text-sm: clamp(0.6875rem, 0.625rem + 0.25cqi, 0.8125rem);
+  --text-md: clamp(0.8125rem, 0.75rem + 0.25cqi, 0.9375rem);
+  --text-lg: clamp(0.9375rem, 0.84375rem + 0.4cqi, 1.125rem);
   --text-ls-tight: 0.04em;
   --text-ls-wide: 0.1em;
   --font-weight-m: 600;
@@ -31,18 +31,18 @@
 
   /* ─── Spacing ────────────────────────────────────── */
   --sp-s: 2px;
-  --sp-m: 4px;
-  --sp-l: 8px;
-  --sp-xl: 12px;
-  --sp-xxl: 24px;
+  --sp-m: clamp(3px, 2px + 0.25cqi, 5px);
+  --sp-l: clamp(6px, 5px + 0.375cqi, 10px);
+  --sp-xl: clamp(8px, 5px + 0.875cqi, 14px);
+  --sp-xxl: clamp(18px, 12px + 1.5cqi, 28px);
 
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
   --line-width-m: 2px;
   --line-width-l: 3px;
-  --line-soft: var(--line-width-s) solid var(--c-15);
-  --line-hard: var(--line-width-s) solid var(--c-5);
-  --line-dotted: var(--line-width-s) dotted var(--c-15);
+  --line-passive: var(--line-width-s) solid var(--c-15);
+  --line-interactive: var(--line-width-s) solid var(--c-5);
+  --line-active: var(--line-width-m) solid var(--c-6);
 
   /* ─── Controls / motion ──────────────────────────── */
   --time: 0.4s;
@@ -55,6 +55,11 @@
 html,
 body {
   margin: 0;
+}
+
+html {
+  container-type: inline-size;
+  container-name: page;
 }
 
 body {
@@ -134,7 +139,7 @@ section {
 .panel {
   position: relative;
   background: var(--c-1);
-  border: var(--line-hard);
+  border: var(--line-passive);
 }
 
 .panel > .hd {
@@ -158,7 +163,7 @@ section {
   height: var(--sp-xxl);
   padding: 0 var(--sp-xl);
   background: var(--c-1);
-  border: var(--line-hard);
+  border: var(--line-interactive);
 }
 
 .btn.btn-icon {
@@ -198,13 +203,15 @@ section {
       var(--c-13) calc(var(--sp-xxl) - var(--line-width-s)) var(--sp-xxl)
     ),
     var(--c-2);
-  border: var(--line-soft);
+  border: var(--line-passive);
 }
 
 .schem-wrap svg {
   display: block;
   width: 100%;
   height: auto;
+  max-height: clamp(220px, 40dvh, 480px);
+  object-fit: contain;
 }
 
 .pip,
@@ -378,7 +385,7 @@ section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   background: var(--c-1);
-  border-top: var(--line-hard);
+  border-top: var(--line-passive);
 }
 
 .stages button {
@@ -387,12 +394,12 @@ section {
   overflow: hidden;
   font-family: var(--font-mono);
   text-align: left;
-  border-right: var(--line-soft);
+  border-right: var(--line-passive);
   border-bottom: var(--line-width-m) solid transparent;
 }
 
 .stages button.active {
-  border-bottom-color: var(--c-6);
+  border-bottom: var(--line-active);
 }
 
 .stages .label {
@@ -450,7 +457,13 @@ section {
 .rec {
   padding: var(--sp-l) var(--sp-xl);
   background: var(--c-1);
-  border: var(--line-soft);
+  border: var(--line-interactive);
+}
+
+.opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-l);
 }
 
 .opt {
@@ -460,10 +473,6 @@ section {
   place-items: center stretch;
 }
 
-.opt + .opt {
-  margin: var(--sp-l) 0 0;
-}
-
 .opt .dot {
   font-family: var(--font-mono);
   color: var(--c-4);
@@ -471,9 +480,8 @@ section {
 }
 
 .opt.selected {
-  border-color: var(--c-5);
-  border-width: var(--line-width-m) ;
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
+  border: var(--line-active);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-6);
   transform: translate(-1px, -1px);
 }
 
@@ -534,12 +542,13 @@ section {
   grid-template-columns: 48px 1fr 48px;
   gap: var(--sp-l);
   place-items: center stretch;
+  width: 100%;
   padding: var(--sp-s) var(--sp-l);
-  border-bottom: var(--line-dotted);
+  border-bottom: var(--line-passive);
 }
 
 .rank-row.active {
-  outline: var(--line-hard);
+  outline: var(--line-active);
 }
 
 .rank-row .id,
@@ -564,7 +573,7 @@ section {
   margin: var(--line-width-s) 0 0;
   overflow: hidden;
   background: var(--c-2);
-  border: var(--line-soft);
+  border: var(--line-passive);
 }
 
 .rank-row .bar > div {
@@ -592,8 +601,8 @@ section {
   display: grid;
   grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols, 1), minmax(48px, 1fr));
   min-width: min-content;
-  border-top: var(--line-soft);
-  border-left: var(--line-soft);
+  border-top: var(--line-passive);
+  border-left: var(--line-passive);
 }
 
 .matrix-cell {
@@ -601,8 +610,8 @@ section {
   place-items: center;
   padding: var(--sp-l);
   font-size: var(--text-sm);
-  border-right: var(--line-soft);
-  border-bottom: var(--line-dotted);
+  border-right: var(--line-passive);
+  border-bottom: var(--line-passive);
 }
 
 .matrix-cell:has(.matrix-radio) {
@@ -614,7 +623,7 @@ section {
   color: var(--c-4);
   text-align: center;
   background: var(--c-2);
-  border-bottom: var(--line-soft);
+  border-bottom: var(--line-passive);
 }
 
 .matrix-head span {
@@ -633,7 +642,7 @@ section {
   width: 16px;
   height: 16px;
   background: var(--c-1);
-  border: var(--line-width-s) solid var(--c-4);
+  border: var(--line-interactive);
   border-radius: 50%;
   transition:
     background var(--time),
@@ -647,7 +656,7 @@ section {
 .matrix-radio.checked {
   background:
     radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
-  border-color: var(--c-5);
+  border: var(--line-active);
 }
 
 .matrix-drained {
@@ -660,7 +669,7 @@ section {
   font-size: var(--text-sm);
   color: var(--c-4);
   background: var(--c-2);
-  border-bottom: var(--line-soft);
+  border-bottom: var(--line-passive);
 }
 
 .matrix-drained input {
@@ -685,7 +694,7 @@ section {
 }
 
 .modal {
-  max-width: 360px;
+  max-width: min(360px, 90cqi);
   padding: var(--sp-xl);
   background: var(--c-1);
   border: var(--line-width-m) solid var(--c-5);
@@ -720,42 +729,18 @@ section {
 }
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
-@media (width >= 1080px) {
+@container page (width >= 1080px) {
   .work {
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 }
 
-@media (width <= 760px) {
-  body {
-    padding: var(--sp-xl) var(--sp-l) var(--sp-xxl) ;
-  }
-
-  section {
-    padding: 0 var(--sp-l);
-  }
-
-  .sec-diagram,
-  .schem-wrap {
-    padding: var(--sp-l);
-  }
-
-  .schem-wrap svg {
-    max-height: 32dvh;
-    object-fit: contain;
-  }
-
+@container page (width <= 760px) {
   .qtitle {
     font-size: var(--text-md);
-  }
-
-  .matrix-cell,
-  .matrix-head {
-    font-size: var(--text-sm);
   }
 
   .matrix-cell {
     padding: var(--sp-s);
   }
-
 }
