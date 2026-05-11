@@ -32,7 +32,7 @@ const QUESTIONS = window.DATA.questions.map((q) => {
 
 const BOX_W = 130;
 const BOX_H = 72;
-const FOOTER_TOP = 46;
+const PIP_SIZE = 26;
 
 const NODES = [
   {
@@ -87,7 +87,7 @@ const NODES = [
   },
   {
     key: 'sp1',
-    x: 20,
+    x: 36,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -97,7 +97,7 @@ const NODES = [
   },
   {
     key: 'sp2',
-    x: 200,
+    x: 202,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -107,7 +107,7 @@ const NODES = [
   },
   {
     key: 'sp3',
-    x: 380,
+    x: 368,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -117,7 +117,7 @@ const NODES = [
   },
   {
     key: 'sp4',
-    x: 560,
+    x: 534,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -128,19 +128,19 @@ const NODES = [
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R51', x: 487, y: 145 },
-  { rcId: 'R52', x: 461, y: 145 },
+  { rcId: 'R51', x: 461, y: 145 },
+  { rcId: 'R52', x: 487, y: 145 },
   { rcId: 'R61', x: 241, y: 145 },
   { rcId: 'R62', x: 267, y: 145 },
   { rcId: 'R63', x: 293, y: 145 },
-  { rcId: 'R81', x: 180, y: 290 },
-  { rcId: 'R82', x: 206, y: 290 },
-  { rcId: 'R81', x: 286, y: 305 },
-  { rcId: 'R82', x: 312, y: 305 },
-  { rcId: 'R81', x: 393, y: 305 },
-  { rcId: 'R82', x: 419, y: 305 },
-  { rcId: 'R81', x: 500, y: 290 },
-  { rcId: 'R82', x: 526, y: 290 },
+  { rcId: 'R81', x: 193, y: 290 },
+  { rcId: 'R82', x: 219, y: 290 },
+  { rcId: 'R81', x: 289, y: 305 },
+  { rcId: 'R82', x: 315, y: 305 },
+  { rcId: 'R81', x: 385, y: 305 },
+  { rcId: 'R82', x: 411, y: 305 },
+  { rcId: 'R81', x: 481, y: 290 },
+  { rcId: 'R82', x: 507, y: 290 },
 ];
 
 const NODE_ICON_LAYOUT = {
@@ -195,7 +195,6 @@ function app() {
     CONN_PIPS,
     RC,
     ICONS: window.ICONS,
-    FOOTER_TOP,
     STAGES: [1, 2, 3, 4],
     STAGE_LABELS,
 
@@ -388,9 +387,9 @@ function app() {
       for (const b of NODES) {
         const cx = b.x + b.w / 2;
         const pipsCount = b.pips.length;
-        const cw = pipsCount ? b.w / pipsCount : 0;
-        const fy = b.y + FOOTER_TOP;
-        const fh = b.h - FOOTER_TOP;
+        const groupW = pipsCount * PIP_SIZE;
+        const groupX = b.x + (b.w - groupW) / 2;
+        const fy = b.y + b.h - PIP_SIZE;
 
         s += `<g>`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
@@ -407,23 +406,23 @@ function app() {
 
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
-          const px = b.x + i * cw;
+          const px = groupX + i * PIP_SIZE;
           const sv = this.sev(rcId);
           const isActive = this.activeRC === rcId;
           const cls = isActive ? 'pip-background active' : 'pip-background';
           s += `<g role="button" tabindex="0" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
-          s += `<rect x="${px}" y="${fy}" width="${cw}" height="${fh}" class="${cls}"/>`;
-          s += `<text x="${px + cw / 2}" y="${fy + fh / 2 + 3.5}" text-anchor="middle" class="pip">${rcId}</text>`;
+          s += `<rect x="${px}" y="${fy}" width="${PIP_SIZE}" height="${PIP_SIZE}" class="${cls}"/>`;
+          s += `<text x="${px + PIP_SIZE / 2}" y="${fy + PIP_SIZE / 2 + 3.5}" text-anchor="middle" class="pip">${rcId}</text>`;
           if (isActive) {
-            s += `<rect x="${px + 1.5}" y="${fy + 1.5}" width="${cw - 3}" height="${fh - 3}" class="node-active"/>`;
+            s += `<rect x="${px + 1.5}" y="${fy + 1.5}" width="${PIP_SIZE - 3}" height="${PIP_SIZE - 3}" class="node-active"/>`;
           }
           s += `</g>`;
         }
 
         if (pipsCount > 0) {
-          s += `<line x1="${b.x}" y1="${fy}" x2="${b.x + b.w}" y2="${fy}" class="node-divider"/>`;
+          s += `<line x1="${groupX}" y1="${fy}" x2="${groupX + groupW}" y2="${fy}" class="node-divider"/>`;
           for (let i = 1; i < pipsCount; i++) {
-            const x = b.x + i * cw;
+            const x = groupX + i * PIP_SIZE;
             s += `<line x1="${x}" y1="${fy}" x2="${x}" y2="${b.y + b.h}" class="node-divider"/>`;
           }
         }
