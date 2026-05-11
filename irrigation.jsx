@@ -47,7 +47,7 @@ const NODES = [
     h: BOX_H,
     label: 'SOFTWARE',
     icons: ['mdi:cellphone'],
-    pips: ['R1.1', 'R1.2', 'R1.3'],
+    pips: ['R11', 'R12', 'R13'],
   },
   {
     key: 'ctrl',
@@ -57,7 +57,7 @@ const NODES = [
     h: BOX_H,
     label: 'CONTROLLER',
     icons: ['mdi:view-gallery-outline'],
-    pips: ['R2.2', 'R2.3'],
+    pips: ['R22', 'R23'],
   },
   {
     key: 'relay',
@@ -67,7 +67,7 @@ const NODES = [
     h: BOX_H,
     label: 'RELAY',
     icons: ['mdi:electric-switch'],
-    pips: ['R3.1'],
+    pips: ['R31'],
   },
   {
     key: 'pump',
@@ -77,7 +77,7 @@ const NODES = [
     h: BOX_H,
     label: 'PUMP',
     icons: ['mdi:water-pump', 'mdi:water-well'],
-    pips: ['R4.1', 'R4.2'],
+    pips: ['R41', 'R42'],
   },
   {
     key: 'valves',
@@ -87,7 +87,7 @@ const NODES = [
     h: BOX_H,
     label: 'VALVES',
     icons: ['ms:valve', 'ms:valve', 'ms:valve', 'ms:valve'],
-    pips: ['R7.1', 'R7.2', 'R7.3', 'R7.4'],
+    pips: ['R71', 'R72', 'R73', 'R74'],
   },
   {
     key: 'sp1',
@@ -97,7 +97,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
   {
     key: 'sp2',
@@ -107,7 +107,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler', 'mdi:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
   {
     key: 'sp3',
@@ -117,7 +117,7 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler', 'mdi:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
   {
     key: 'sp4',
@@ -127,31 +127,31 @@ const NODES = [
     h: BOX_H,
     label: 'SPRINKLER',
     icons: ['ms:sprinkler', 'ms:sprinkler', 'ms:sprinkler'],
-    pips: ['R9.1', 'R9.2'],
+    pips: ['R91', 'R92'],
   },
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R5.1', x: 487, y: 145 },
-  { rcId: 'R5.2', x: 461, y: 145 },
-  { rcId: 'R6.1', x: 241, y: 145 },
-  { rcId: 'R6.2', x: 267, y: 145 },
-  { rcId: 'R6.3', x: 293, y: 145 },
-  { rcId: 'R8.1', x: 180, y: 290 },
-  { rcId: 'R8.2', x: 206, y: 290 },
-  { rcId: 'R8.1', x: 286, y: 305 },
-  { rcId: 'R8.2', x: 312, y: 305 },
-  { rcId: 'R8.1', x: 393, y: 305 },
-  { rcId: 'R8.2', x: 419, y: 305 },
-  { rcId: 'R8.1', x: 500, y: 290 },
-  { rcId: 'R8.2', x: 526, y: 290 },
+  { rcId: 'R51', x: 487, y: 145 },
+  { rcId: 'R52', x: 461, y: 145 },
+  { rcId: 'R61', x: 241, y: 145 },
+  { rcId: 'R62', x: 267, y: 145 },
+  { rcId: 'R63', x: 293, y: 145 },
+  { rcId: 'R81', x: 180, y: 290 },
+  { rcId: 'R82', x: 206, y: 290 },
+  { rcId: 'R81', x: 286, y: 305 },
+  { rcId: 'R82', x: 312, y: 305 },
+  { rcId: 'R81', x: 393, y: 305 },
+  { rcId: 'R82', x: 419, y: 305 },
+  { rcId: 'R81', x: 500, y: 290 },
+  { rcId: 'R82', x: 526, y: 290 },
 ];
 
-const severityClass = (pct) => {
-  if (pct < 4) return 'sev-0';
-  if (pct < 8) return 'sev-1';
-  if (pct < 15) return 'sev-2';
-  return 'sev-3';
+const severityLevel = (pct) => {
+  if (pct < 4) return 0;
+  if (pct < 8) return 1;
+  if (pct < 15) return 2;
+  return 3;
 };
 
 function Icon({ name, cx, cy, size }) {
@@ -198,14 +198,15 @@ function LineLabel({ icon, text, x, y, flow, size = 11, gap = 2 }) {
   );
 }
 
-function Pip({ rcId, x, y, w, h, variant, sevClass, isActive, onPick }) {
+function Pip({ rcId, x, y, w, h, variant, sev, isActive, onPick }) {
   const onActivate = () => onPick && onPick(rcId);
-  const bgCls = variant === 'connector' ? 'conn-pip' : 'pip-fill';
+  const bgCls = variant === 'connector' ? 'pip-fill connector' : 'pip-fill';
   return (
     <g
       role="button"
       tabIndex="0"
       aria-label={`Root cause ${rcId}: ${RC[rcId].label}`}
+      data-sev={sev}
       onClick={onActivate}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -220,15 +221,10 @@ function Pip({ rcId, x, y, w, h, variant, sevClass, isActive, onPick }) {
         width={w}
         height={h}
         rx={variant === 'connector' ? 1.5 : undefined}
-        className={`${bgCls} ${sevClass}${isActive ? ' active' : ''}`}
+        className={`${bgCls}${isActive ? ' active' : ''}`}
       />
-      <text
-        x={x + w / 2}
-        y={y + h / 2 + 3.5}
-        textAnchor="middle"
-        className={`pip pip-text ${sevClass}`}
-      >
-        {rcId.replace('R', '')}
+      <text x={x + w / 2} y={y + h / 2 + 3.5} textAnchor="middle" className="pip">
+        {rcId}
       </text>
       {variant === 'node' && isActive && (
         <rect x={x + 1.5} y={y + 1.5} width={w - 3} height={h - 3} className="node-active" />
@@ -261,7 +257,7 @@ function NodeBox({ box, icons, label, severityPct, activeRC, onPickRC }) {
           w={cw}
           h={fh}
           variant="node"
-          sevClass={severityClass(severityPct[rcId] || 0)}
+          sev={severityLevel(severityPct[rcId] || 0)}
           isActive={activeRC === rcId}
           onPick={onPickRC}
         />
@@ -271,7 +267,7 @@ function NodeBox({ box, icons, label, severityPct, activeRC, onPickRC }) {
           <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} className="node-divider" />
           {pips.slice(1).map((_, i) => {
             const x = box.x + (i + 1) * cw;
-            return <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-col" />;
+            return <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-divider" />;
           })}
         </>
       )}
@@ -386,7 +382,7 @@ function SystemDiagram({ severityPct, activeRC, onPickRC }) {
           w={26}
           h={26}
           variant="connector"
-          sevClass={severityClass(severityPct[p.rcId] || 0)}
+          sev={severityLevel(severityPct[p.rcId] || 0)}
           isActive={activeRC === p.rcId}
           onPick={onPickRC}
         />
@@ -398,7 +394,7 @@ function SystemDiagram({ severityPct, activeRC, onPickRC }) {
 function StageBar({ stages, activeStage, onPick }) {
   const labels = ['', 'Ages', 'Symptoms', 'Events', 'Tests'];
   return (
-    <div className="stages">
+    <nav className="stages" aria-label="Stages">
       {[1, 2, 3, 4].map((s) => {
         const sp = stages[s];
         const active = activeStage === s;
@@ -408,7 +404,7 @@ function StageBar({ stages, activeStage, onPick }) {
             key={s}
             type="button"
             onClick={() => onPick(s)}
-            className={active ? 'active' : ''}
+            aria-current={active ? 'page' : undefined}
           >
             <span className="label">
               <span className="nm">{labels[s]}</span>
@@ -420,7 +416,7 @@ function StageBar({ stages, activeStage, onPick }) {
           </button>
         );
       })}
-    </div>
+    </nav>
   );
 }
 
@@ -443,20 +439,18 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
           return (
             <React.Fragment key={row.id}>
               <div className="matrix-cell matrix-row-label">{row.label}</div>
-              {cols.map((c) => {
-                const checked = sel === c.id;
-                return (
-                  <div key={c.id} className="matrix-cell">
-                    <button
-                      type="button"
-                      className={`matrix-radio ${checked ? 'checked' : ''}`}
-                      aria-label={`${row.label}: ${c.label}`}
-                      aria-pressed={checked}
-                      onClick={() => onSetCell(row.id, c.id)}
-                    />
-                  </div>
-                );
-              })}
+              {cols.map((c) => (
+                <div key={c.id} className="matrix-cell">
+                  <input
+                    type="radio"
+                    className="matrix-radio"
+                    name={`${question.id}-${row.id}`}
+                    aria-label={`${row.label}: ${c.label}`}
+                    checked={sel === c.id}
+                    onChange={() => onSetCell(row.id, c.id)}
+                  />
+                </div>
+              ))}
               {row.drainable && !isOff && (
                 <label className="matrix-drained">
                   <input
@@ -523,7 +517,7 @@ function QuestionPanel({
             onSetCell={onSetCell}
             onToggleDrained={onToggleDrained}
           />
-          <div className="matrix-actions">
+          <div className="actions">
             <button type="button" className="btn btn-primary" onClick={onNext} disabled={isLast}>
               Next ›
             </button>
@@ -537,10 +531,10 @@ function QuestionPanel({
               <button
                 key={`${question.id}-${i}`}
                 type="button"
-                className={`opt ${selected ? 'selected' : ''}`}
+                className="opt"
+                aria-pressed={selected}
                 onClick={() => onAnswer(i)}
               >
-                <span className="dot">{selected ? '●' : '○'}</span>
                 <span>{opt.label}</span>
               </button>
             );
@@ -552,37 +546,39 @@ function QuestionPanel({
 }
 
 function RankingPanel({ ranked, activeRC, onPickRC }) {
-  const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? ranked : ranked.slice(0, 5);
+  const renderRow = (r) => {
+    const meta = RC[r.id];
+    const active = activeRC === r.id;
+    const pct = Math.round(r.pct);
+    return (
+      <button
+        key={r.id}
+        type="button"
+        className={`rank-row ${active ? 'active' : ''}`}
+        data-sev={severityLevel(pct)}
+        onClick={() => onPickRC(r.id)}
+      >
+        <span className="id">{r.id}</span>
+        <div className="rank-row-body">
+          <div className="label">{meta.label}</div>
+          <div className="bar">
+            <div style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
+          </div>
+        </div>
+        <span className="pct">{pct}%</span>
+      </button>
+    );
+  };
+  const top = ranked.slice(0, 5);
+  const rest = ranked.slice(5);
   return (
     <div>
-      {visible.map((r) => {
-        const meta = RC[r.id];
-        const active = activeRC === r.id;
-        const pct = Math.round(r.pct);
-        const cls = severityClass(pct);
-        return (
-          <button
-            key={r.id}
-            type="button"
-            className={`rank-row ${cls} ${active ? 'active' : ''}`}
-            onClick={() => onPickRC(r.id)}
-          >
-            <span className="id">{r.id}</span>
-            <div className="rank-row-body">
-              <div className="label">{meta.label}</div>
-              <div className="bar">
-                <div style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
-              </div>
-            </div>
-            <span className="pct">{pct}%</span>
-          </button>
-        );
-      })}
-      {ranked.length > 5 && (
-        <button type="button" className="rank-more" onClick={() => setShowAll((s) => !s)}>
-          {showAll ? '▲ collapse' : `▼ show all ${ranked.length}`}
-        </button>
+      {top.map(renderRow)}
+      {rest.length > 0 && (
+        <details>
+          <summary className="rank-more">all {ranked.length} ranked</summary>
+          {rest.map(renderRow)}
+        </details>
       )}
     </div>
   );
@@ -609,38 +605,37 @@ function RecommendationPanel({ recs, onSelect }) {
 }
 
 function ResetModal({ onCancel, onConfirm }) {
-  const cancelRef = useRef(null);
+  const ref = useRef(null);
   useEffect(() => {
-    cancelRef.current && cancelRef.current.focus();
-    const onKey = (e) => {
-      if (e.key === 'Escape') onCancel();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onCancel]);
+    ref.current?.showModal();
+  }, []);
   return (
-    <div className="modal-backdrop" onClick={onCancel}>
-      <div
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="reset-title"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 id="reset-title">Start over?</h3>
-        <p>
-          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
-        </p>
-        <div className="row">
-          <button ref={cancelRef} type="button" className="btn" onClick={onCancel}>
-            Keep my answers
-          </button>
-          <button type="button" className="btn btn-primary" onClick={onConfirm}>
-            Reset everything
-          </button>
-        </div>
+    <dialog
+      ref={ref}
+      className="modal"
+      aria-labelledby="reset-title"
+      onClose={onCancel}
+      onClick={(e) => {
+        if (e.target !== ref.current) return;
+        const r = ref.current.getBoundingClientRect();
+        const outside =
+          e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+        if (outside) onCancel();
+      }}
+    >
+      <h3 id="reset-title">Start over?</h3>
+      <p>
+        This clears every answer and returns you to the first question. You can&rsquo;t undo this.
+      </p>
+      <div className="actions">
+        <button type="button" className="btn" autoFocus onClick={onCancel}>
+          Keep my answers
+        </button>
+        <button type="button" className="btn btn-primary" onClick={onConfirm}>
+          Reset everything
+        </button>
       </div>
-    </div>
+    </dialog>
   );
 }
 

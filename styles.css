@@ -240,8 +240,7 @@ section {
   stroke-width: var(--line-width-s);
 }
 
-.node-divider,
-.node-col {
+.node-divider {
   pointer-events: none;
   stroke: var(--c-15);
   stroke-width: var(--line-width-s);
@@ -259,18 +258,17 @@ section {
   stroke: none;
 }
 
-.pip-text {
-  fill: var(--c-sev-fg);
-}
-
-.conn-pip {
-  fill: var(--c-sev-bg);
+.pip-fill.connector {
   stroke: var(--c-5);
   stroke-width: var(--line-width-s);
 }
 
-.conn-pip.active {
+.pip-fill.connector.active {
   stroke-width: var(--line-width-m);
+}
+
+.pip {
+  fill: var(--c-sev-fg);
 }
 
 /* ─── FLOW TYPES (water / mains / ctrl / wifi) ───── */
@@ -321,22 +319,22 @@ section {
   fill: currentcolor;
 }
 
-.sev-0 {
+[data-sev='0'] {
   --c-sev-bg: var(--c-10);
   --c-sev-fg: var(--c-2);
 }
 
-.sev-1 {
+[data-sev='1'] {
   --c-sev-bg: var(--c-11);
   --c-sev-fg: var(--c-5);
 }
 
-.sev-2 {
+[data-sev='2'] {
   --c-sev-bg: var(--c-12);
   --c-sev-fg: var(--c-5);
 }
 
-.sev-3 {
+[data-sev='3'] {
   --c-sev-bg: var(--c-7);
   --c-sev-fg: var(--c-2);
 }
@@ -387,7 +385,7 @@ section {
   border-bottom: var(--line-width-m) solid transparent;
 }
 
-.stages button.active {
+.stages button[aria-current] {
   border-bottom: var(--line-active);
 }
 
@@ -414,7 +412,7 @@ section {
   transition: width var(--time);
 }
 
-.stages button.active .fill {
+.stages button[aria-current] .fill {
   background: var(--c-18);
 }
 
@@ -462,19 +460,21 @@ section {
   place-items: center stretch;
 }
 
-.opt .dot {
+.opt::before {
+  content: '○';
   font-family: var(--font-mono);
   color: var(--c-4);
   text-align: center;
 }
 
-.opt.selected {
+.opt[aria-pressed='true'] {
   border: var(--line-active);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
 }
 
-.opt.selected .dot {
+.opt[aria-pressed='true']::before {
+  content: '●';
   font-weight: var(--font-weight-m);
   color: var(--c-6);
 }
@@ -574,6 +574,20 @@ section {
   padding: var(--sp-s) var(--sp-l);
   color: var(--c-4);
   text-align: left;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rank-more::-webkit-details-marker {
+  display: none;
+}
+
+.rank-more::before {
+  content: '▼ ';
+}
+
+details[open] > .rank-more::before {
+  content: '▲ ';
 }
 
 .rank-more:hover {
@@ -627,12 +641,15 @@ section {
 }
 
 .matrix-radio {
+  appearance: none;
   display: inline-block;
   width: 16px;
   height: 16px;
+  margin: 0;
   background: var(--c-1);
   border: var(--line-interactive);
   border-radius: 50%;
+  cursor: pointer;
   transition:
     background var(--time),
     border-color var(--time);
@@ -642,7 +659,7 @@ section {
   border-color: var(--c-6);
 }
 
-.matrix-radio.checked {
+.matrix-radio:checked {
   background:
     radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
   border: var(--line-active);
@@ -667,27 +684,28 @@ section {
   accent-color: var(--c-6);
 }
 
-.matrix-actions {
+.actions {
   display: flex;
+  gap: var(--sp-l);
   place-content: flex-end;
+}
+
+.matrix-scroll + .actions {
   margin: var(--sp-xl) 0 0;
 }
 
 /* ─── RESET MODAL ────────────────────────────────── */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: var(--c-16);
-}
-
 .modal {
   max-width: min(360px, 90cqi);
   padding: var(--sp-xl);
+  color: inherit;
   background: var(--c-1);
   border: var(--line-width-m) solid var(--c-5);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
+}
+
+.modal::backdrop {
+  background: var(--c-16);
 }
 
 .modal h3 {
@@ -701,12 +719,6 @@ section {
   margin: 0 0 var(--sp-xl);
   font-size: var(--text-sm);
   color: var(--c-4);
-}
-
-.modal .row {
-  display: flex;
-  gap: var(--sp-l);
-  place-content: flex-end;
 }
 
 .btn:hover,
