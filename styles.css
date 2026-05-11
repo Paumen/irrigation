@@ -1,48 +1,32 @@
 :root {
-  /* ─── Color palette ──────────────────────────────── */
-  --c-neutral-1: #f7f2e6;
-  --c-neutral-2: #f1ead8;
-  --c-neutral-3: #4a5878;
-  --c-neutral-4: #2c3852;
-  --c-neutral-5: #1a2238;
-  --c-accent-1: #b14a26;
-  --c-accent-2: #7a2f15;
-
-  /* RGB triplets feed the gradient tokens below */
-  --c-neutral-rgb: 26, 34, 56;
-  --c-accent-rgb: 177, 74, 38;
-  --c-gradient-neutral-1: rgba(var(--c-neutral-rgb), 0.07);
-  --c-gradient-neutral-2: rgba(var(--c-neutral-rgb), 0.18);
-  --c-gradient-neutral-3: rgba(var(--c-neutral-rgb), 0.3);
-  --c-gradient-accent-1: rgba(var(--c-accent-rgb), 0.32);
-  --c-gradient-accent-2: rgba(var(--c-accent-rgb), 0.45);
-  --c-overlay: rgba(var(--c-neutral-rgb), 0.55);
-
-  /* ─── Line-type accents (water / 230 V / 24 V) ───── */
-  --c-water: #1a4a7a;
-  --c-mains: #5a6a85;
-  --c-ctrl: var(--c-accent-1);
-
-  /* ─── Severity bands ─────────────────────────────── */
-  --c-sev-0-bg: #3f6b2f;
-  --c-sev-0-fg: #efe8d8;
-  --c-sev-1-bg: #9bbf6e;
-  --c-sev-1-fg: #1a2238;
-  --c-sev-2-bg: #d99a78;
-  --c-sev-2-fg: #1a2238;
-  --c-sev-3-bg: #7a2f15;
-  --c-sev-3-fg: #efe8d8;
+  /* ─── Color ──────────────────────────────────────── */
+  --c-1:  #f7f2e6;
+  --c-2:  #f1ead8;
+  --c-3:  #4a5878;
+  --c-4:  #2c3852;
+  --c-5:  #1a2238;
+  --c-6:  #b14a26;
+  --c-7:  #7a2f15;
+  --c-8:  #1a4a7a;
+  --c-9:  #5a6a85;
+  --c-10: #3f6b2f;
+  --c-11: #9bbf6e;
+  --c-12: #d99a78;
+  --c-13: #1a223812;
+  --c-14: #1a22382e;
+  --c-15: #1a22384d;
+  --c-16: #1a22388c;
+  --c-17: #b14a2652;
+  --c-18: #b14a2673;
 
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
-  --text-xs: 10px;
   --text-sm: 12px;
   --text-md: 14px;
   --text-lg: 16px;
   --text-ls-tight: 0.04em;
   --text-ls-wide: 0.1em;
-  --font-weight-s: 500;
   --font-weight-m: 600;
   --font-weight-l: 800;
 
@@ -51,18 +35,17 @@
   --sp-m: 4px;
   --sp-l: 8px;
   --sp-xl: 12px;
-  --grid-u: 24px;
+  --sp-xxl: 24px;
 
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
   --line-width-m: 2px;
   --line-width-l: 3px;
-  --line-soft: var(--line-width-s) solid var(--c-gradient-neutral-3);
-  --line-hard: var(--line-width-s) solid var(--c-neutral-5);
-  --line-dotted: var(--line-width-s) dotted var(--c-gradient-neutral-2);
+  --line-soft: var(--line-width-s) solid var(--c-15);
+  --line-hard: var(--line-width-s) solid var(--c-5);
+  --line-dotted: var(--line-width-s) dotted var(--c-15);
 
   /* ─── Controls / motion ──────────────────────────── */
-  --ctrl-h: 26px;
   --z-base: 1;
   --time: 0.4s;
 }
@@ -76,26 +59,24 @@ body {
   margin: 0;
 }
 
-/* Body owns the global text defaults — sans, 14 px, ink. Everything inherits
-   until a rule overrides explicitly. */
 body {
-  padding: var(--sp-xl) var(--sp-xl) calc(var(--sp-xl) * 4);
+  padding: var(--sp-xl) var(--sp-xl) var(--sp-xxl);
   font-family: var(--font-sans);
   font-size: var(--text-md);
-  color: var(--c-neutral-5);
+  color: var(--c-5);
   background:
     linear-gradient(
-        var(--c-gradient-neutral-1) var(--line-width-s),
+        var(--c-13) var(--line-width-s),
         transparent var(--line-width-s)
       )
-      calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--grid-u) var(--grid-u),
+      calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
     linear-gradient(
         90deg,
-        var(--c-gradient-neutral-1) var(--line-width-s),
+        var(--c-13) var(--line-width-s),
         transparent var(--line-width-s)
       )
-      calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--grid-u) var(--grid-u),
-    var(--c-neutral-1);
+      calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
+    var(--c-1);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -138,9 +119,6 @@ section {
 
 /* ─── EYEBROW TYPOGRAPHY ─────────────────────────── */
 
-/* Shared mono micro-label used on buttons, panel headers, stage names,
-   matrix column heads, and the "show all" toggle. Individual rules below
-   add their own layout/colour/padding on top. */
 .eyebrow,
 .btn,
 .panel > .hd,
@@ -148,7 +126,7 @@ section {
 .matrix-head,
 .rank-more {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: var(--font-weight-m);
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
@@ -157,7 +135,7 @@ section {
 /* ─── PANEL ──────────────────────────────────────── */
 .panel {
   position: relative;
-  background: var(--c-neutral-1);
+  background: var(--c-1);
   border: var(--line-hard);
 }
 
@@ -167,8 +145,8 @@ section {
   place-content: space-between;
   place-items: center;
   padding: var(--sp-l) var(--sp-xl);
-  color: var(--c-neutral-1);
-  background: var(--c-neutral-5);
+  color: var(--c-1);
+  background: var(--c-5);
 }
 
 .panel > .bd {
@@ -179,9 +157,9 @@ section {
 .btn {
   display: inline-flex;
   place-items: center;
-  height: var(--ctrl-h);
+  height: var(--sp-xxl);
   padding: 0 var(--sp-xl);
-  background: var(--c-neutral-1);
+  background: var(--c-1);
   border: var(--line-hard);
 }
 
@@ -197,13 +175,13 @@ section {
 }
 
 .btn.btn-primary {
-  color: var(--c-neutral-1);
-  background: var(--c-accent-1);
-  border-color: var(--c-accent-2);
+  color: var(--c-1);
+  background: var(--c-6);
+  border-color: var(--c-7);
 }
 
 .btn.btn-primary:hover {
-  background: var(--c-accent-2);
+  background: var(--c-7);
 }
 
 /* ─── SCHEMATIC ──────────────────────────────────── */
@@ -213,15 +191,15 @@ section {
   background:
     repeating-linear-gradient(
       0deg,
-      transparent 0 calc(var(--grid-u) - var(--line-width-s)),
-      var(--c-gradient-neutral-1) calc(var(--grid-u) - var(--line-width-s)) var(--grid-u)
+      transparent 0 calc(var(--sp-xxl) - var(--line-width-s)),
+      var(--c-13) calc(var(--sp-xxl) - var(--line-width-s)) var(--sp-xxl)
     ),
     repeating-linear-gradient(
       90deg,
-      transparent 0 calc(var(--grid-u) - var(--line-width-s)),
-      var(--c-gradient-neutral-1) calc(var(--grid-u) - var(--line-width-s)) var(--grid-u)
+      transparent 0 calc(var(--sp-xxl) - var(--line-width-s)),
+      var(--c-13) calc(var(--sp-xxl) - var(--line-width-s)) var(--sp-xxl)
     ),
-    var(--c-neutral-2);
+    var(--c-2);
   border: var(--line-soft);
 }
 
@@ -231,11 +209,10 @@ section {
   height: auto;
 }
 
-/* SVG text: most labels are mono/xs/weight-m; only `.lbl` is sans/sm/heavy. */
 .pip,
 .ln-lbl {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: var(--font-weight-m);
   pointer-events: none;
 }
@@ -249,20 +226,19 @@ section {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-l);
   letter-spacing: var(--text-ls-tight);
-  fill: var(--c-neutral-5);
+  fill: var(--c-5);
 }
 
-/* SVG diagram shapes. */
 .node-box {
-  fill: var(--c-neutral-1);
-  stroke: var(--c-neutral-5);
-  stroke-width: 1.5;
+  fill: var(--c-1);
+  stroke: var(--c-5);
+  stroke-width: var(--line-width-s) ;
 }
 
 .node-divider,
 .node-col,
 .node-active {
-  stroke: var(--c-neutral-5);
+  stroke: var(--c-5);
 }
 
 .node-divider,
@@ -271,7 +247,7 @@ section {
 }
 
 .node-divider {
-  stroke-width: 1.5;
+  stroke-width: var(--line-width-s);
 }
 
 .node-col {
@@ -295,46 +271,43 @@ section {
 
 .conn-pip {
   fill: var(--c-sev-bg);
-  stroke: var(--c-neutral-5);
-  stroke-width: 1.2;
+  stroke: var(--c-5);
+  stroke-width: var(--line-width-s);
 }
 
 .conn-pip.active {
-  stroke-width: 1.8;
+  stroke-width: var(--line-width-m);
 }
 
 /* ─── FLOW TYPES (water / mains / ctrl / wifi) ───── */
 
-/* One data-flow attribute carries colour + stroke shape; `.line`, `.arr`,
-   text labels, and `.swatch` all read it via currentcolor + custom props.
-   Add a new flow by defining a single [data-flow="…"] block. */
 [data-flow='water'] {
-  --c-flow: var(--c-water);
-  --line-flow-width: 4;
+  --c-flow: var(--c-8);
+  --line-flow-width: var(--line-width-l);
   --line-flow-dash: none;
 }
 
 [data-flow='lateral'] {
-  --c-flow: var(--c-water);
-  --line-flow-width: 2.5;
+  --c-flow: var(--c-8);
+  --line-flow-width: var(--line-width-m);
   --line-flow-dash: none;
 }
 
 [data-flow='mains'] {
-  --c-flow: var(--c-mains);
-  --line-flow-width: 2.5;
+  --c-flow: var(--c-9);
+  --line-flow-width: var(--line-width-m);
   --line-flow-dash: none;
 }
 
 [data-flow='ctrl'] {
-  --c-flow: var(--c-ctrl);
-  --line-flow-width: 1.5;
+  --c-flow: var(--c-6);
+  --line-flow-width: var(--line-width-s);
   --line-flow-dash: 6 3;
 }
 
 [data-flow='wifi'] {
-  --c-flow: var(--c-neutral-3);
-  --line-flow-width: 1.2;
+  --c-flow: var(--c-3);
+  --line-flow-width: var(--line-width-s);
   --line-flow-dash: 2 3;
 }
 
@@ -354,25 +327,24 @@ section {
   fill: currentcolor;
 }
 
-/* Severity bands expose --c-sev-bg/fg for SVG pips and ranking rows alike. */
 .sev-0 {
-  --c-sev-bg: var(--c-sev-0-bg);
-  --c-sev-fg: var(--c-sev-0-fg);
+  --c-sev-bg: var(--c-10);
+  --c-sev-fg: var(--c-2);
 }
 
 .sev-1 {
-  --c-sev-bg: var(--c-sev-1-bg);
-  --c-sev-fg: var(--c-sev-1-fg);
+  --c-sev-bg: var(--c-11);
+  --c-sev-fg: var(--c-5);
 }
 
 .sev-2 {
-  --c-sev-bg: var(--c-sev-2-bg);
-  --c-sev-fg: var(--c-sev-2-fg);
+  --c-sev-bg: var(--c-12);
+  --c-sev-fg: var(--c-5);
 }
 
 .sev-3 {
-  --c-sev-bg: var(--c-sev-3-bg);
-  --c-sev-fg: var(--c-sev-3-fg);
+  --c-sev-bg: var(--c-7);
+  --c-sev-fg: var(--c-2);
 }
 
 .schem-legend {
@@ -382,8 +354,8 @@ section {
   place-items: center;
   margin: var(--sp-xl) 0 0;
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--c-neutral-4);
+  font-size: var(--text-sm);
+  color: var(--c-4);
 }
 
 .swatch {
@@ -407,7 +379,7 @@ section {
 .stages {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  background: var(--c-neutral-1);
+  background: var(--c-1);
   border-top: var(--line-hard);
 }
 
@@ -421,12 +393,8 @@ section {
   border-bottom: var(--line-width-m) solid transparent;
 }
 
-.stages button:last-of-type {
-  border-right: 0;
-}
-
 .stages button.active {
-  border-bottom-color: var(--c-accent-1);
+  border-bottom-color: var(--c-6);
 }
 
 .stages .label {
@@ -439,9 +407,9 @@ section {
 }
 
 .stages .ct {
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--c-neutral-4);
+  color: var(--c-4);
   letter-spacing: var(--text-ls-tight);
 }
 
@@ -449,12 +417,12 @@ section {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
-  background: var(--c-gradient-accent-1);
+  background: var(--c-17);
   transition: width var(--time);
 }
 
 .stages button.active .fill {
-  background: var(--c-gradient-accent-2);
+  background: var(--c-18);
 }
 
 /* ─── QUESTION ───────────────────────────────────── */
@@ -474,8 +442,6 @@ section {
   letter-spacing: var(--text-ls-tight);
 }
 
-/* Padded interactive rows share a neutral-1 surface + soft border; the
-   ranking row drops the full border for a dotted underline so it tiles. */
 .opt,
 .rec,
 .rank-row {
@@ -486,7 +452,7 @@ section {
 .opt,
 .rec {
   padding: var(--sp-l) var(--sp-xl);
-  background: var(--c-neutral-1);
+  background: var(--c-1);
   border: var(--line-soft);
 }
 
@@ -503,20 +469,20 @@ section {
 
 .opt .dot {
   font-family: var(--font-mono);
-  color: var(--c-neutral-4);
+  color: var(--c-4);
   text-align: center;
 }
 
 .opt.selected {
-  border-color: var(--c-neutral-5);
+  border-color: var(--c-5);
   border-width: 1.5px;
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-neutral-5);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
 }
 
 .opt.selected .dot {
   font-weight: var(--font-weight-m);
-  color: var(--c-accent-1);
+  color: var(--c-6);
 }
 
 /* ─── RECOMMENDATIONS ────────────────────────────── */
@@ -527,7 +493,7 @@ section {
 }
 
 .rec {
-  border-left: var(--line-width-l) solid var(--c-accent-1);
+  border-left: var(--line-width-l) solid var(--c-6);
 }
 
 .rec .top {
@@ -535,22 +501,22 @@ section {
   gap: var(--sp-l);
   place-items: baseline;
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   letter-spacing: var(--text-ls-tight);
 }
 
 .rec .id {
   font-weight: var(--font-weight-m);
-  color: var(--c-accent-2);
+  color: var(--c-7);
 }
 
 .rec .stg {
-  color: var(--c-neutral-4);
+  color: var(--c-4);
 }
 
 .rec .d {
   margin-inline-start: auto;
-  color: var(--c-neutral-3);
+  color: var(--c-3);
 }
 
 .rec .qq {
@@ -560,9 +526,9 @@ section {
 
 .rec.empty {
   font-style: italic;
-  color: var(--c-neutral-4);
+  color: var(--c-4);
   text-align: center;
-  border-left-color: var(--c-gradient-neutral-3);
+  border-left-color: var(--c-15);
 }
 
 /* ─── RANKING ────────────────────────────────────── */
@@ -582,7 +548,7 @@ section {
 .rank-row .id,
 .rank-row .pct {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: var(--font-weight-m);
 }
 
@@ -604,7 +570,7 @@ section {
   height: var(--line-width-l);
   margin: var(--line-width-s) 0 0;
   overflow: hidden;
-  background: var(--c-neutral-2);
+  background: var(--c-2);
   border: var(--line-soft);
 }
 
@@ -615,12 +581,12 @@ section {
 
 .rank-more {
   padding: var(--sp-s) var(--sp-l);
-  color: var(--c-neutral-4);
+  color: var(--c-4);
   text-align: left;
 }
 
 .rank-more:hover {
-  color: var(--c-accent-1);
+  color: var(--c-6);
 }
 
 /* ─── MATRIX ─────────────────────────────────────── */
@@ -630,7 +596,6 @@ section {
   overflow-x: auto;
 }
 
-/* Container owns top + left edges; cells own right + bottom. */
 .matrix {
   display: grid;
   grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols, 1), minmax(54px, 1fr));
@@ -654,9 +619,9 @@ section {
 
 .matrix-head {
   padding: var(--sp-m) var(--sp-s);
-  color: var(--c-neutral-4);
+  color: var(--c-4);
   text-align: center;
-  background: var(--c-neutral-2);
+  background: var(--c-2);
   border-bottom: var(--line-soft);
 }
 
@@ -675,8 +640,8 @@ section {
   display: inline-block;
   width: 18px;
   height: 18px;
-  background: var(--c-neutral-1);
-  border: var(--line-width-s) solid var(--c-neutral-4);
+  background: var(--c-1);
+  border: var(--line-width-s) solid var(--c-4);
   border-radius: 50%;
   transition:
     background var(--time),
@@ -684,13 +649,13 @@ section {
 }
 
 .matrix-radio:hover {
-  border-color: var(--c-accent-1);
+  border-color: var(--c-6);
 }
 
 .matrix-radio.checked {
   background:
-    radial-gradient(circle, var(--c-accent-1) 0 4.5px, transparent 5px), var(--c-neutral-1);
-  border-color: var(--c-neutral-5);
+    radial-gradient(circle, var(--c-6) 0 4.5px, transparent 5px), var(--c-1);
+  border-color: var(--c-5);
 }
 
 .matrix-drained {
@@ -700,16 +665,16 @@ section {
   place-items: center;
   padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--c-neutral-4);
-  background: var(--c-neutral-2);
+  font-size: var(--text-sm);
+  color: var(--c-4);
+  background: var(--c-2);
   border-bottom: var(--line-soft);
 }
 
 .matrix-drained input {
   width: 14px;
   height: 14px;
-  accent-color: var(--c-accent-1);
+  accent-color: var(--c-6);
 }
 
 .matrix-actions {
@@ -725,15 +690,15 @@ section {
   z-index: 50;
   display: grid;
   place-items: center;
-  background: var(--c-overlay);
+  background: var(--c-16);
 }
 
 .modal {
   max-width: 360px;
   padding: var(--sp-xl);
-  background: var(--c-neutral-1);
-  border: 1.5px solid var(--c-neutral-5);
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-neutral-5);
+  background: var(--c-1);
+  border: 1.5px solid var(--c-5);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
 }
 
 .modal h3 {
@@ -746,7 +711,7 @@ section {
 .modal p {
   margin: 0 0 var(--sp-xl);
   font-size: var(--text-sm);
-  color: var(--c-neutral-4);
+  color: var(--c-4);
 }
 
 .modal .row {
@@ -755,14 +720,12 @@ section {
   place-content: flex-end;
 }
 
-/* Shared hover wash — placed last so the base backgrounds it overrides
-   appear earlier in source order. */
 .btn:hover,
 .opt:hover,
 .rec:hover,
 .rank-row:hover,
 .rank-row.active {
-  background: var(--c-neutral-2);
+  background: var(--c-2);
 }
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
@@ -797,7 +760,7 @@ section {
 
   .matrix-cell,
   .matrix-head {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
   }
 
   .matrix-cell {
