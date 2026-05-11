@@ -21,9 +21,9 @@
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
-  --text-sm: 12px;
-  --text-md: 14px;
-  --text-lg: 16px;
+  --text-sm: clamp(11px, 10px + 0.25vw, 13px);
+  --text-md: clamp(13px, 12px + 0.25vw, 15px);
+  --text-lg: clamp(15px, 13.5px + 0.4vw, 18px);
   --text-ls-tight: 0.04em;
   --text-ls-wide: 0.1em;
   --font-weight-m: 600;
@@ -55,6 +55,11 @@
 html,
 body {
   margin: 0;
+}
+
+html {
+  container-type: inline-size;
+  container-name: page;
 }
 
 body {
@@ -720,13 +725,13 @@ section {
 }
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
-@media (width >= 1080px) {
+@container page (width >= 1080px) {
   .work {
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 }
 
-@media (width <= 760px) {
+@container page (width <= 760px) {
   body {
     padding: var(--sp-xl) var(--sp-l) var(--sp-xxl) ;
   }
