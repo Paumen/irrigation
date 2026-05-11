@@ -265,6 +265,11 @@ section {
   stroke: var(--c-neutral-5);
 }
 
+.node-divider,
+.node-col {
+  pointer-events: none;
+}
+
 .node-divider {
   stroke-width: 1.5;
 }
@@ -277,10 +282,6 @@ section {
   pointer-events: none;
   fill: none;
   stroke-width: var(--line-width-m);
-}
-
-.pip-hit {
-  fill: transparent;
 }
 
 .pip-fill {
