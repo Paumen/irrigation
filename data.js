@@ -385,12 +385,7 @@ window.DATA = {
           label: 'Storm / lightning',
           effects: { R22: 1, R6: 1, R12: 1 },
         },
-        {
-          id: 'freeze',
-          label: 'Freeze',
-          effects: { R51: 1, R73: 1, R81: 1 },
-          drainable: true,
-        },
+        { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
         { id: 'heat', label: 'Heatwave / drought', effects: { R41: 1 } },
         { id: 'outage', label: 'Power outage', effects: { R12: 1, R23: 1 } },
         { id: 'pests', label: 'Pests / rodents', effects: { R51: 1, R81: 1, R6: 1 } },

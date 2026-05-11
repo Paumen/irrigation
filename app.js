@@ -208,10 +208,6 @@ function app() {
     nodeIconCx,
     severityLevel,
 
-    nodeIconSize(n) {
-      return nodeIconLayout(n).size;
-    },
-
     get scores() {
       const s = {};
       ALL_IDS.forEach((id) => {
@@ -221,16 +217,13 @@ function app() {
         const ans = this.answers[q.id];
         if (ans === undefined || ans === null) return;
         if (q.type === 'matrix') {
-          const rowAns = ans.rows || {};
-          const drained = ans.drained || {};
           const colMul = q.colMul;
           q.rows.forEach((row) => {
-            const colId = rowAns[row.id] || 'no';
+            const colId = ans[row.id] || 'no';
             const m = colMul[colId] || 0;
             if (m === 0) return;
-            const halve = row.drainable && drained[row.id] ? 0.5 : 1;
             Object.entries(row.effects).forEach(([rc, delta]) => {
-              s[rc] = (s[rc] || 0) + delta * m * halve;
+              s[rc] = (s[rc] || 0) + delta * m;
             });
           });
         } else {
@@ -262,12 +255,8 @@ function app() {
       return m;
     },
 
-    get top5() {
-      return this.ranked.slice(0, 5).map((r) => r.id);
-    },
-
     get recommendations() {
-      const t5 = this.top5;
+      const t5 = this.ranked.slice(0, 5).map((r) => r.id);
       const unanswered = QUESTIONS.filter((q) => !this.isAnswered(q.id));
       const scored = unanswered.map((q) => {
         let D = 0;
@@ -325,9 +314,6 @@ function app() {
     get activeAnswer() {
       return this.answers[this.activeQuestionId];
     },
-    get rankedTop() {
-      return this.ranked.slice(0, 5);
-    },
     get rankedRest() {
       return this.ranked.slice(5);
     },
@@ -340,40 +326,19 @@ function app() {
       const a = this.answers[qid];
       if (a === undefined || a === null) return false;
       const q = QUESTIONS.find((qq) => qq.id === qid);
-      if (q?.type === 'matrix') return !!(a.rows && Object.keys(a.rows).length > 0);
+      if (q?.type === 'matrix') return Object.keys(a).length > 0;
       return true;
     },
 
     rowAns(rowId) {
-      return this.activeAnswer?.rows?.[rowId] || 'no';
-    },
-    rowDrained(rowId) {
-      return !!this.activeAnswer?.drained?.[rowId];
+      return this.activeAnswer?.[rowId] || 'no';
     },
 
     setMatrixCell(rowId, colId) {
       const qid = this.activeQuestionId;
-      const prev = this.answers[qid] || { rows: {}, drained: {} };
       this.answers = {
         ...this.answers,
-        [qid]: {
-          ...prev,
-          rows: { ...prev.rows, [rowId]: colId },
-          drained: prev.drained || {},
-        },
-      };
-    },
-
-    setMatrixDrained(rowId, val) {
-      const qid = this.activeQuestionId;
-      const prev = this.answers[qid] || { rows: {}, drained: {} };
-      this.answers = {
-        ...this.answers,
-        [qid]: {
-          ...prev,
-          rows: prev.rows || {},
-          drained: { ...(prev.drained || {}), [rowId]: val },
-        },
+        [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
       };
     },
 
@@ -440,14 +405,14 @@ function app() {
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
 
-        s += `<text x="${cx}" y="${b.y + 38}" text-anchor="middle" class="lbl">${escapeAttr(b.label)}</text>`;
+        s += `<text x="${cx}" y="${b.y + 38}" text-anchor="middle" class="node-label">${escapeAttr(b.label)}</text>`;
 
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
           const px = b.x + i * cw;
           const sv = this.sev(rcId);
           const isActive = this.activeRC === rcId;
-          const cls = isActive ? 'pip-fill active' : 'pip-fill';
+          const cls = isActive ? 'pip-background active' : 'pip-background';
           s += `<g role="button" tabindex="0" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
           s += `<rect x="${px}" y="${fy}" width="${cw}" height="${fh}" class="${cls}"/>`;
           s += `<text x="${px + cw / 2}" y="${fy + fh / 2 + 3.5}" text-anchor="middle" class="pip">${rcId}</text>`;
@@ -471,7 +436,7 @@ function app() {
         const p = CONN_PIPS[i];
         const sv = this.sev(p.rcId);
         const isActive = this.activeRC === p.rcId;
-        const cls = isActive ? 'pip-fill connector active' : 'pip-fill connector';
+        const cls = isActive ? 'pip-background pip-background--connector active' : 'pip-background pip-background--connector';
         s += `<g role="button" tabindex="0" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
         s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
         s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId}</text>`;

@@ -99,18 +99,18 @@ section {
   padding: 0 var(--sp-xl);
 }
 
-.sec-diagram {
+.diagram {
   padding: var(--sp-l) var(--sp-xl);
   margin: 0 0 var(--sp-xl);
 }
 
-.work {
+.workspace {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-l);
 }
 
-.work > aside {
+.workspace > aside {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
@@ -153,7 +153,7 @@ details > summary {
 }
 
 .panel > form,
-.panel > .bd {
+.panel > .panel-body {
   padding: var(--sp-xl);
 }
 
@@ -189,7 +189,7 @@ details > summary {
 }
 
 /* ─── SCHEMATIC ──────────────────────────────────── */
-.sec-diagram figure {
+.diagram figure {
   position: relative;
   margin: 0;
   padding: var(--sp-xl);
@@ -208,7 +208,7 @@ details > summary {
   border: var(--line-passive);
 }
 
-.sec-diagram figure svg {
+.diagram figure svg {
   display: block;
   width: 100%;
   height: auto;
@@ -217,19 +217,19 @@ details > summary {
 }
 
 .pip,
-.ln-lbl {
+.flow-label {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-m);
   pointer-events: none;
 }
 
-.ln-lbl {
+.flow-label {
   letter-spacing: var(--text-ls-tight);
   fill: currentcolor;
 }
 
-.lbl {
+.node-label {
   font-size: var(--text-sm);
   font-weight: var(--font-weight-l);
   letter-spacing: var(--text-ls-tight);
@@ -255,17 +255,17 @@ details > summary {
   stroke-width: var(--line-width-m);
 }
 
-.pip-fill {
+.pip-background {
   fill: var(--c-sev-bg);
   stroke: none;
 }
 
-.pip-fill.connector {
+.pip-background.pip-background--connector {
   stroke: var(--c-5);
   stroke-width: var(--line-width-s);
 }
 
-.pip-fill.connector.active {
+.pip-background.pip-background--connector.active {
   stroke-width: var(--line-width-m);
 }
 
@@ -316,7 +316,7 @@ details > summary {
   stroke-width: var(--line-flow-width);
 }
 
-.arr {
+.arrow {
   fill: currentcolor;
 }
 
@@ -340,11 +340,11 @@ details > summary {
   --c-sev-fg: var(--c-2);
 }
 
-.sec-diagram figcaption {
+.diagram figcaption {
   margin: var(--sp-xl) 0 0;
 }
 
-.sec-diagram figcaption ul {
+.diagram figcaption ul {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-l) var(--sp-xl);
@@ -429,15 +429,15 @@ details > summary {
   letter-spacing: var(--text-ls-tight);
 }
 
-.opt,
-.rec,
+.option,
+.recommendation,
 .rank-row {
   text-align: left;
   transition: background var(--time);
 }
 
-.opt,
-.rec {
+.option,
+.recommendation {
   padding: var(--sp-l) var(--sp-xl);
   background: var(--c-1);
   border: var(--line-interactive);
@@ -456,34 +456,34 @@ details > summary {
   display: contents;
 }
 
-.opt {
+.option {
   display: grid;
   grid-template-columns: 24px 1fr;
   gap: var(--sp-l);
   place-items: center stretch;
 }
 
-.opt::before {
+.option::before {
   content: '○';
   font-family: var(--font-mono);
   color: var(--c-4);
   text-align: center;
 }
 
-.opt[aria-pressed='true'] {
+.option[aria-pressed='true'] {
   border: var(--line-active);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
 }
 
-.opt[aria-pressed='true']::before {
+.option[aria-pressed='true']::before {
   content: '●';
   font-weight: var(--font-weight-m);
   color: var(--c-6);
 }
 
 /* ─── RECOMMENDATIONS / RANKING LIST ─────────────── */
-.bd ol {
+.panel-body ol {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
@@ -492,17 +492,17 @@ details > summary {
   list-style: none;
 }
 
-.bd ol > li {
+.panel-body ol > li {
   display: contents;
 }
 
-.rec {
+.recommendation {
   display: block;
   width: 100%;
   border-left: var(--line-width-l) solid var(--c-6);
 }
 
-.rec > span:first-of-type {
+.recommendation > span:first-of-type {
   display: flex;
   gap: var(--sp-l);
   place-items: baseline;
@@ -511,27 +511,27 @@ details > summary {
   letter-spacing: var(--text-ls-tight);
 }
 
-.rec code {
+.recommendation code {
   font-weight: var(--font-weight-m);
   color: var(--c-7);
 }
 
-.rec .stg {
+.recommendation .stage {
   color: var(--c-4);
 }
 
-.rec .d {
+.recommendation .discriminator {
   margin-inline-start: auto;
   color: var(--c-3);
 }
 
-.rec > span:last-of-type {
+.recommendation > span:last-of-type {
   display: block;
   margin: var(--sp-m) 0 0;
   font-size: var(--text-sm);
 }
 
-.rec-empty {
+.recommendation-empty {
   margin: 0;
   padding: var(--sp-l) var(--sp-xl);
   font-style: italic;
@@ -558,22 +558,22 @@ details > summary {
 }
 
 .rank-row code,
-.rank-row .pct {
+.rank-row .percent {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-m);
 }
 
-.rank-row > span:not(.pct) {
+.rank-row > span:not(.percent) {
   display: block;
 }
 
-.rank-row .label {
+.rank-row .root-cause-label {
   display: block;
   font-size: var(--text-sm);
 }
 
-.rank-row .pct {
+.rank-row .percent {
   font-variant-numeric: tabular-nums;
   color: var(--c-sev-bg);
   text-align: right;
@@ -598,20 +598,7 @@ details > summary {
   padding: var(--sp-s) var(--sp-l);
   color: var(--c-4);
   text-align: left;
-  list-style: none;
   cursor: pointer;
-}
-
-details > summary::-webkit-details-marker {
-  display: none;
-}
-
-details > summary::before {
-  content: '▼ ';
-}
-
-details[open] > summary::before {
-  content: '▲ ';
 }
 
 details > summary:hover {
@@ -689,30 +676,6 @@ details > summary:hover {
   border: var(--line-active);
 }
 
-.matrix-drained {
-  grid-column: 1 / -1;
-  display: block;
-  padding: 0;
-  background: var(--c-2);
-  border-right: 0;
-}
-
-.matrix-drained label {
-  display: flex;
-  gap: var(--sp-l);
-  place-items: center;
-  padding: var(--sp-l) var(--sp-xl);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--c-4);
-}
-
-.matrix-drained input[type='checkbox'] {
-  width: 14px;
-  height: 14px;
-  accent-color: var(--c-6);
-}
-
 /* ─── ACTIONS ────────────────────────────────────── */
 .panel > form > footer,
 .modal > footer {
@@ -753,8 +716,8 @@ details > summary:hover {
 }
 
 .btn:hover,
-.opt:hover,
-.rec:hover,
+.option:hover,
+.recommendation:hover,
 .rank-row:hover,
 .rank-row.active {
   background: var(--c-2);
@@ -762,7 +725,7 @@ details > summary:hover {
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
 @container page (width >= 1080px) {
-  .work {
+  .workspace {
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 }
