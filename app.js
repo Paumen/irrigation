@@ -365,10 +365,14 @@ function app() {
       if (first) this.activeQuestionId = first.id;
     },
 
-    doReset() {
-      this.answers = {};
-      this.activeRC = null;
-      this.activeQuestionId = QUESTIONS[0].id;
+    handleResetClose() {
+      const confirmed = this.$refs.reset?.returnValue === 'confirm';
+      if (this.$refs.reset) this.$refs.reset.returnValue = '';
+      if (confirmed) {
+        this.answers = {};
+        this.activeRC = null;
+        this.activeQuestionId = QUESTIONS[0].id;
+      }
       this.resetOpen = false;
     },
 
@@ -436,7 +440,9 @@ function app() {
         const p = CONN_PIPS[i];
         const sv = this.sev(p.rcId);
         const isActive = this.activeRC === p.rcId;
-        const cls = isActive ? 'pip-background pip-background--connector active' : 'pip-background pip-background--connector';
+        const cls = isActive
+          ? 'pip-background pip-background--connector active'
+          : 'pip-background pip-background--connector';
         s += `<g role="button" tabindex="0" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
         s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
         s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId}</text>`;
@@ -448,14 +454,6 @@ function app() {
     pipFromEvent(e) {
       const el = e.target.closest && e.target.closest('[data-rc]');
       if (el) this.activeRC = el.dataset.rc;
-    },
-
-    modalClick(e, ref) {
-      if (e.target !== ref) return;
-      const r = ref.getBoundingClientRect();
-      const outside =
-        e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
-      if (outside) this.resetOpen = false;
     },
   };
 }

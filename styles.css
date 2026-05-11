@@ -191,8 +191,8 @@ details > summary {
 /* ─── SCHEMATIC ──────────────────────────────────── */
 .diagram figure {
   position: relative;
-  margin: 0;
   padding: var(--sp-xl);
+  margin: 0;
   background:
     repeating-linear-gradient(
       0deg,
@@ -349,8 +349,8 @@ details > summary {
   flex-wrap: wrap;
   gap: var(--sp-l) var(--sp-xl);
   place-items: center;
-  margin: 0;
   padding: 0;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--c-4);
@@ -406,8 +406,8 @@ details > summary {
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   color: var(--c-4);
-  letter-spacing: var(--text-ls-tight);
   text-transform: none;
+  letter-spacing: var(--text-ls-tight);
 }
 
 /* ─── QUESTION FORM ──────────────────────────────── */
@@ -447,8 +447,8 @@ details > summary {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sp-l);
-  margin: 0;
   padding: 0;
+  margin: 0;
   list-style: none;
 }
 
@@ -457,29 +457,45 @@ details > summary {
 }
 
 .option {
+  position: relative;
   display: grid;
   grid-template-columns: 24px 1fr;
   gap: var(--sp-l);
   place-items: center stretch;
+  cursor: pointer;
 }
 
 .option::before {
-  content: '○';
   font-family: var(--font-mono);
   color: var(--c-4);
   text-align: center;
+  content: '○';
 }
 
-.option[aria-pressed='true'] {
+.option > input[type='radio'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.option:has(input:checked) {
   border: var(--line-active);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
   transform: translate(-1px, -1px);
 }
 
-.option[aria-pressed='true']::before {
-  content: '●';
+.option:has(input:checked)::before {
   font-weight: var(--font-weight-m);
   color: var(--c-6);
+  content: '●';
+}
+
+.option:has(:focus-visible) {
+  outline: var(--line-active);
+  outline-offset: 2px;
 }
 
 /* ─── RECOMMENDATIONS / RANKING LIST ─────────────── */
@@ -487,8 +503,8 @@ details > summary {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
-  margin: 0;
   padding: 0;
+  margin: 0;
   list-style: none;
 }
 
@@ -532,8 +548,8 @@ details > summary {
 }
 
 .recommendation-empty {
-  margin: 0;
   padding: var(--sp-l) var(--sp-xl);
+  margin: 0;
   font-style: italic;
   color: var(--c-4);
   text-align: center;
@@ -636,14 +652,24 @@ details > summary:hover {
 }
 
 .matrix-scroll td:has(input[type='radio']) {
+  padding: 0;
+}
+
+.matrix-scroll td > label {
+  display: flex;
   place-content: center;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--sp-l);
+  cursor: pointer;
 }
 
 .matrix-scroll thead th {
   padding: var(--sp-m) var(--sp-s);
+  hyphens: auto;
   color: var(--c-4);
   text-align: center;
-  hyphens: auto;
   word-break: break-word;
   background: var(--c-2);
 }
@@ -653,15 +679,15 @@ details > summary:hover {
 }
 
 .matrix-scroll input[type='radio'] {
-  appearance: none;
   display: inline-block;
   width: 16px;
   height: 16px;
   margin: 0;
+  appearance: none;
+  cursor: pointer;
   background: var(--c-1);
   border: var(--line-interactive);
   border-radius: 50%;
-  cursor: pointer;
   transition:
     background var(--time),
     border-color var(--time);
@@ -678,7 +704,7 @@ details > summary:hover {
 
 /* ─── ACTIONS ────────────────────────────────────── */
 .panel > form > footer,
-.modal > footer {
+.modal form > footer {
   display: flex;
   gap: var(--sp-l);
   place-content: flex-end;
@@ -691,11 +717,15 @@ details > summary:hover {
 /* ─── RESET MODAL ────────────────────────────────── */
 .modal {
   max-width: min(360px, 90cqi);
-  padding: var(--sp-xl);
+  padding: 0;
   color: inherit;
   background: var(--c-1);
   border: var(--line-width-m) solid var(--c-5);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
+}
+
+.modal > form {
+  padding: var(--sp-xl);
 }
 
 .modal::backdrop {
