@@ -405,14 +405,12 @@ function StageBar({ stages, activeStage, onPick }) {
             type="button"
             onClick={() => onPick(s)}
             aria-current={active ? 'page' : undefined}
+            style={{ '--pct': pct + '%' }}
           >
-            <span className="label">
-              <span className="nm">{labels[s]}</span>
-              <span className="ct">
-                {sp.answered}/{sp.total}
-              </span>
-            </span>
-            <span className="fill" style={{ width: pct + '%' }} />
+            {labels[s]}
+            <small>
+              {sp.answered}/{sp.total}
+            </small>
           </button>
         );
       })}
@@ -426,45 +424,56 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
   const drained = answer?.drained || {};
   return (
     <div className="matrix-scroll">
-      <div className="matrix" style={{ '--sp-cols': cols.length }}>
-        <div className="matrix-cell matrix-head" />
-        {cols.map((c) => (
-          <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
-            <span>{c.label}</span>
-          </div>
-        ))}
-        {question.rows.map((row) => {
-          const sel = rowAns[row.id] || 'no';
-          const isOff = sel === 'no';
-          return (
-            <React.Fragment key={row.id}>
-              <div className="matrix-cell matrix-row-label">{row.label}</div>
-              {cols.map((c) => (
-                <div key={c.id} className="matrix-cell">
-                  <input
-                    type="radio"
-                    className="matrix-radio"
-                    name={`${question.id}-${row.id}`}
-                    aria-label={`${row.label}: ${c.label}`}
-                    checked={sel === c.id}
-                    onChange={() => onSetCell(row.id, c.id)}
-                  />
-                </div>
-              ))}
-              {row.drainable && !isOff && (
-                <label className="matrix-drained">
-                  <input
-                    type="checkbox"
-                    checked={!!drained[row.id]}
-                    onChange={(e) => onToggleDrained(row.id, e.target.checked)}
-                  />
-                  System was drained for winter (halves effect)
-                </label>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </div>
+      <table style={{ '--sp-cols': cols.length }}>
+        <thead>
+          <tr>
+            <th />
+            {cols.map((c) => (
+              <th key={c.id} scope="col" title={c.label}>
+                {c.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {question.rows.map((row) => {
+            const sel = rowAns[row.id] || 'no';
+            const isOff = sel === 'no';
+            return (
+              <React.Fragment key={row.id}>
+                <tr>
+                  <th scope="row">{row.label}</th>
+                  {cols.map((c) => (
+                    <td key={c.id}>
+                      <input
+                        type="radio"
+                        name={`${question.id}-${row.id}`}
+                        aria-label={`${row.label}: ${c.label}`}
+                        checked={sel === c.id}
+                        onChange={() => onSetCell(row.id, c.id)}
+                      />
+                    </td>
+                  ))}
+                </tr>
+                {row.drainable && !isOff && (
+                  <tr>
+                    <td className="matrix-drained" colSpan={cols.length + 1}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={!!drained[row.id]}
+                          onChange={(e) => onToggleDrained(row.id, e.target.checked)}
+                        />
+                        System was drained for winter (halves effect)
+                      </label>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -484,9 +493,9 @@ function QuestionPanel({
   if (!question) return null;
   const isMatrix = question.type === 'matrix';
   return (
-    <div>
-      <div className="qhead">
-        <div className="qtitle">{question.text}</div>
+    <form onSubmit={(e) => e.preventDefault()}>
+      <header>
+        <h2>{question.text}</h2>
         <button className="btn" type="button" onClick={onReset}>
           Reset
         </button>
@@ -508,7 +517,7 @@ function QuestionPanel({
         >
           ›
         </button>
-      </div>
+      </header>
       {isMatrix ? (
         <>
           <MatrixQuestion
@@ -517,31 +526,32 @@ function QuestionPanel({
             onSetCell={onSetCell}
             onToggleDrained={onToggleDrained}
           />
-          <div className="actions">
+          <footer>
             <button type="button" className="btn btn-primary" onClick={onNext} disabled={isLast}>
               Next ›
             </button>
-          </div>
+          </footer>
         </>
       ) : (
-        <div className="opts">
+        <ul>
           {question.options.map((opt, i) => {
             const selected = answer === i;
             return (
-              <button
-                key={`${question.id}-${i}`}
-                type="button"
-                className="opt"
-                aria-pressed={selected}
-                onClick={() => onAnswer(i)}
-              >
-                <span>{opt.label}</span>
-              </button>
+              <li key={`${question.id}-${i}`}>
+                <button
+                  type="button"
+                  className="opt"
+                  aria-pressed={selected}
+                  onClick={() => onAnswer(i)}
+                >
+                  {opt.label}
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
-    </div>
+    </form>
   );
 }
 
@@ -551,56 +561,59 @@ function RankingPanel({ ranked, activeRC, onPickRC }) {
     const active = activeRC === r.id;
     const pct = Math.round(r.pct);
     return (
-      <button
-        key={r.id}
-        type="button"
-        className={`rank-row ${active ? 'active' : ''}`}
-        data-sev={severityLevel(pct)}
-        onClick={() => onPickRC(r.id)}
-      >
-        <span className="id">{r.id}</span>
-        <div className="rank-row-body">
-          <div className="label">{meta.label}</div>
-          <div className="bar">
-            <div style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
-          </div>
-        </div>
-        <span className="pct">{pct}%</span>
-      </button>
+      <li key={r.id}>
+        <button
+          type="button"
+          className={`rank-row ${active ? 'active' : ''}`}
+          data-sev={severityLevel(pct)}
+          onClick={() => onPickRC(r.id)}
+        >
+          <code>{r.id}</code>
+          <span>
+            <span className="label">{meta.label}</span>
+            <span className="bar">
+              <span style={{ width: Math.min(r.pct * 5, 100) + '%' }} />
+            </span>
+          </span>
+          <span className="pct">{pct}%</span>
+        </button>
+      </li>
     );
   };
   const top = ranked.slice(0, 5);
   const rest = ranked.slice(5);
   return (
-    <div>
-      {top.map(renderRow)}
+    <>
+      <ol>{top.map(renderRow)}</ol>
       {rest.length > 0 && (
         <details>
-          <summary className="rank-more">all {ranked.length} ranked</summary>
-          {rest.map(renderRow)}
+          <summary>all {ranked.length} ranked</summary>
+          <ol start={6}>{rest.map(renderRow)}</ol>
         </details>
       )}
-    </div>
+    </>
   );
 }
 
 function RecommendationPanel({ recs, onSelect }) {
+  if (recs.length === 0) {
+    return <p className="rec-empty">No questions left to differentiate top suspects.</p>;
+  }
   return (
-    <div className="recs">
-      {recs.length === 0 && (
-        <div className="rec empty">No questions left to differentiate top suspects.</div>
-      )}
+    <ol>
       {recs.map(({ q, D }) => (
-        <button key={q.id} type="button" className="rec" onClick={() => onSelect(q.id)}>
-          <div className="top">
-            <span className="id">{q.id}</span>
-            <span className="stg">S{q.stage}</span>
-            <span className="d">D = {D.toFixed(2)}</span>
-          </div>
-          <div className="qq">{q.text}</div>
-        </button>
+        <li key={q.id}>
+          <button type="button" className="rec" onClick={() => onSelect(q.id)}>
+            <span>
+              <code>{q.id}</code>
+              <span className="stg">S{q.stage}</span>
+              <span className="d">D = {D.toFixed(2)}</span>
+            </span>
+            <span>{q.text}</span>
+          </button>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }
 
@@ -627,14 +640,14 @@ function ResetModal({ onCancel, onConfirm }) {
       <p>
         This clears every answer and returns you to the first question. You can&rsquo;t undo this.
       </p>
-      <div className="actions">
+      <footer>
         <button type="button" className="btn" autoFocus onClick={onCancel}>
           Keep my answers
         </button>
         <button type="button" className="btn btn-primary" onClick={onConfirm}>
           Reset everything
         </button>
-      </div>
+      </footer>
     </dialog>
   );
 }
@@ -815,64 +828,62 @@ function App() {
   return (
     <>
       <section className="sec-diagram">
-        <div className="schem-wrap">
+        <figure>
           <SystemDiagram severityPct={severityPct} activeRC={activeRC} onPickRC={setActiveRC} />
-          <div className="schem-legend">
-            <span>
-              <span className="swatch" data-flow="water" /> water
-            </span>
-            <span>
-              <span className="swatch" data-flow="mains" /> 230 V mains
-            </span>
-            <span>
-              <span className="swatch" data-flow="ctrl" /> 24 V control
-            </span>
-            <span>
-              <span className="swatch" data-flow="wifi" /> Wi-Fi
-            </span>
-          </div>
-        </div>
+          <figcaption>
+            <ul>
+              <li>
+                <span className="swatch" data-flow="water" aria-hidden="true" /> water
+              </li>
+              <li>
+                <span className="swatch" data-flow="mains" aria-hidden="true" /> 230 V mains
+              </li>
+              <li>
+                <span className="swatch" data-flow="ctrl" aria-hidden="true" /> 24 V control
+              </li>
+              <li>
+                <span className="swatch" data-flow="wifi" aria-hidden="true" /> Wi-Fi
+              </li>
+            </ul>
+          </figcaption>
+        </figure>
       </section>
 
-      <section>
-        <div className="work">
-          <main className="panel">
-            <div className="bd">
-              <QuestionPanel
-                question={activeQuestion}
-                answer={answers[activeQuestionId]}
-                onAnswer={handleAnswer}
-                onSetCell={handleSetCell}
-                onToggleDrained={handleToggleDrained}
-                onReset={() => setResetOpen(true)}
-                onNext={() => moveBy(1)}
-                onPrev={() => moveBy(-1)}
-                isFirst={isFirst}
-                isLast={isLast}
-              />
-            </div>
-            <StageBar stages={stageProgress} activeStage={activeStage} onPick={onPickStage} />
-          </main>
+      <section className="work">
+        <section className="panel">
+          <QuestionPanel
+            question={activeQuestion}
+            answer={answers[activeQuestionId]}
+            onAnswer={handleAnswer}
+            onSetCell={handleSetCell}
+            onToggleDrained={handleToggleDrained}
+            onReset={() => setResetOpen(true)}
+            onNext={() => moveBy(1)}
+            onPrev={() => moveBy(-1)}
+            isFirst={isFirst}
+            isLast={isLast}
+          />
+          <StageBar stages={stageProgress} activeStage={activeStage} onPick={onPickStage} />
+        </section>
 
-          <aside>
-            <div className="panel">
-              <div className="hd">
-                <span>Root-cause</span>
-              </div>
-              <div className="bd">
-                <RankingPanel ranked={ranked} activeRC={activeRC} onPickRC={setActiveRC} />
-              </div>
+        <aside>
+          <section className="panel" aria-labelledby="rank-heading">
+            <header>
+              <h2 id="rank-heading">Root-cause</h2>
+            </header>
+            <div className="bd">
+              <RankingPanel ranked={ranked} activeRC={activeRC} onPickRC={setActiveRC} />
             </div>
-            <div className="panel">
-              <div className="hd">
-                <span>Recommended Next</span>
-              </div>
-              <div className="bd">
-                <RecommendationPanel recs={recommendations} onSelect={setActiveQuestionId} />
-              </div>
+          </section>
+          <section className="panel" aria-labelledby="rec-heading">
+            <header>
+              <h2 id="rec-heading">Recommended Next</h2>
+            </header>
+            <div className="bd">
+              <RecommendationPanel recs={recommendations} onSelect={setActiveQuestionId} />
             </div>
-          </aside>
-        </div>
+          </section>
+        </aside>
       </section>
 
       {resetOpen && <ResetModal onCancel={() => setResetOpen(false)} onConfirm={doReset} />}
