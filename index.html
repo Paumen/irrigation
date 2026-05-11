@@ -14,7 +14,7 @@
   </head>
   <body>
     <main x-data="app" x-cloak>
-      <section class="diagram">
+      <section>
         <figure>
           <svg
             viewBox="0 0 700 420"
@@ -127,7 +127,7 @@
         </figure>
       </section>
 
-      <section class="workspace">
+      <section>
         <section>
           <form @submit.prevent>
             <header>
@@ -220,7 +220,7 @@
             </template>
           </form>
 
-          <nav class="stages" aria-label="Stages">
+          <nav aria-label="Stages">
             <template x-for="s in STAGES" :key="s">
               <button
                 type="button"
@@ -242,7 +242,7 @@
         <aside>
           <section aria-labelledby="rank-heading">
             <header><h2 id="rank-heading">Root-cause</h2></header>
-            <div class="panel-body">
+            <div>
               <ol>
                 <template x-for="r in ranked.slice(0, 5)" :key="r.id">
                   <li>
@@ -293,7 +293,7 @@
 
           <section aria-labelledby="rec-heading">
             <header><h2 id="rec-heading">Recommended Next</h2></header>
-            <div class="panel-body">
+            <div>
               <template x-if="recommendations.length === 0">
                 <p class="recommendation-empty">No questions left to differentiate top suspects.</p>
               </template>
@@ -323,7 +323,6 @@
       </section>
 
       <dialog
-        class="modal"
         x-ref="reset"
         aria-labelledby="reset-title"
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
