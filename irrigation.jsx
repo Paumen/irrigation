@@ -2,10 +2,8 @@ import DATA from './data.json';
 
 const { useState, useMemo, useEffect, useRef } = React;
 
-// ============ ROOT CAUSES ============
 const RC = Object.fromEntries(DATA.causes.map((c) => [c.id, c]));
 const ALL_IDS = Object.keys(RC);
-// targetId → [leaf ids]; built once so eff() is a plain lookup for both leaf and group targets.
 const TARGETS = {};
 ALL_IDS.forEach((id) => {
   TARGETS[id] = [id];
@@ -22,7 +20,6 @@ const eff = (m) => {
   return r;
 };
 
-// ============ QUESTIONS ============
 const QUESTIONS = DATA.questions.map((q) => {
   if (q.type === 'matrix') {
     return {
@@ -36,16 +33,10 @@ const QUESTIONS = DATA.questions.map((q) => {
   };
 });
 
-// ============ DIAGRAM (engineering blueprint style) ============
 const BOX_W = 130,
   BOX_H = 72;
 const FOOTER_TOP = 46;
 
-// Row 1: SOFTWARE → CONTROLLER → RELAY → PUMP across the top.
-// Row 2: VALVES central below. Row 3: four SPRINKLER zones evenly spread.
-// Per-zone sprinkler icons reflect hardware mix from the spec:
-//   Z1 i20+MP+MP, Z2 i20+i20, Z3 i20+i20, Z4 MP+MP+MP.
-// One icon per head: mdi:sprinkler = Hunter I-20 rotor, ms:sprinkler = MP rotator.
 const NODES = [
   {
     key: 'sw',
@@ -139,17 +130,12 @@ const NODES = [
   },
 ];
 
-// Connector pips ride on line segments. An rcId can appear more than once —
-// each entry is a separate clickable jump to the same cause.
 const CONN_PIPS = [
-  // Water main horizontal from pump down/across to valves (y=145)
   { rcId: 'R5.1', x: 487, y: 145 },
   { rcId: 'R5.2', x: 461, y: 145 },
-  // 24 V control wire — three pips clustered horizontally on the wire
   { rcId: 'R6.1', x: 241, y: 145 },
   { rcId: 'R6.2', x: 267, y: 145 },
   { rcId: 'R6.3', x: 293, y: 145 },
-  // Lateral hoses — each lateral carries both R8.1 and R8.2 adjacent
   { rcId: 'R8.1', x: 180, y: 290 },
   { rcId: 'R8.2', x: 206, y: 290 },
   { rcId: 'R8.1', x: 286, y: 305 },
@@ -160,10 +146,6 @@ const CONN_PIPS = [
   { rcId: 'R8.2', x: 526, y: 290 },
 ];
 
-// ============ SEVERITY BAND ============
-// Four-band gradient: dark green → light green → light rust → dark rust.
-// Ranked rows additionally clamp to band 0 when the displayed percent < 4.
-// Actual colours live in CSS under .sev-0 … .sev-3.
 const sevBand = (t) => {
   const tt = Math.max(0, Math.min(1, t));
   if (tt < 0.25) return 0;
@@ -174,10 +156,6 @@ const sevBand = (t) => {
 const pctBand = (pct, t) => (pct < 4 ? 0 : sevBand(t));
 const sevCls = (pct, t) => `sev-${pctBand(pct, t)}`;
 
-// ============ ICONS (Material Design Icons + Material Symbols) ============
-// Each entry: vb = [minX, minY, width, height] viewBox; d = SVG path data.
-// MDI icons live on a 24×24 grid (filled glyphs). Material Symbols are 960×960
-// drawn in negative-y space (viewBox "0 -960 960 960").
 const ICONS = {
   'mdi:electric-switch': {
     vb: [0, 0, 24, 24],
@@ -247,9 +225,6 @@ function Icon({ name, cx, cy, size }) {
   );
 }
 
-// Lays a row of icons centred on (cx, cy). Sizes shrink as count grows so the
-// 4-valve row stays inside the box. NODE_ICON_LAYOUT is keyed by icon count;
-// >4 falls back to the 4-icon row.
 const NODE_ICON_LAYOUT = {
   1: { size: 26, gap: 0 },
   2: { size: 24, gap: 30 },
@@ -269,10 +244,6 @@ function NodeIcons({ icons, cx, cy }) {
   );
 }
 
-// Inline icon + text token (e.g. ⚡ 230 V). (x, y) is the text baseline; the
-// icon sits flush-left of x with a fixed gap so call-sites only think about
-// where the text goes, not the icon's pixel offset. `flow` (water/mains/ctrl/wifi)
-// drives colour via [data-flow] — children inherit through currentColor.
 function LineLabel({ icon, text, x, y, flow, size = 11, gap = 2 }) {
   return (
     <g data-flow={flow}>
@@ -447,17 +418,13 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         </marker>
       </defs>
 
-      {/* ── Wi-Fi link SOFTWARE ↔ CONTROLLER (slate dotted, no arrow — bidirectional) ── */}
       <g data-flow="wifi">
         <line x1="166" y1="36" x2="202" y2="36" className="line" />
-        {/* Wi-Fi glyph centred on the link */}
         <Icon name="ms:wifi" cx={184} cy={26} size={14} />
       </g>
 
-      {/* ── 24 V control wires (rust dashed) ── */}
       <g data-flow="ctrl">
         <line x1="332" y1="36" x2="368" y2="36" className="line" markerEnd="url(#arr-ctrl)" />
-        {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
         <path d="M 267 92 V 200 H 285" className="line" markerEnd="url(#arr-ctrl)" />
       </g>
       <LineLabel
@@ -477,19 +444,16 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         flow="ctrl"
       />
 
-      {/* ── 230 V mains (slate solid + bolt) RELAY → PUMP ── */}
       <g data-flow="mains">
         <line x1="498" y1="36" x2="534" y2="36" className="line" markerEnd="url(#arr-mains)" />
       </g>
       <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} flow="mains" />
 
-      {/* ── Main water line: PUMP down then across to VALVES top ── */}
       <g data-flow="water">
         <path d="M 599 92 V 145 H 350 V 170" className="line" markerEnd="url(#arr-water)" />
       </g>
       <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} flow="water" />
 
-      {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
       <g data-flow="lateral">
         <path d="M 300 242 V 290 H 85 V 340" className="line" markerEnd="url(#arr-water)" />
         <path d="M 333 242 V 305 H 265 V 340" className="line" markerEnd="url(#arr-water)" />
@@ -497,7 +461,6 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         <path d="M 400 242 V 290 H 625 V 340" className="line" markerEnd="url(#arr-water)" />
       </g>
 
-      {/* ── nodes ── */}
       {NODES.map((b) => (
         <NodeBox
           key={b.key}
@@ -511,7 +474,6 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         />
       ))}
 
-      {/* ── connector pips ── */}
       {CONN_PIPS.map((p, i) => (
         <ConnectorPip
           key={`cp-${i}`}
@@ -527,7 +489,6 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
   );
 }
 
-// ============ STAGE TABS ============
 function StageBar({ stages, activeStage, onPick }) {
   const labels = ['', 'Ages', 'Symptoms', 'Events', 'Tests'];
   return (
@@ -557,7 +518,6 @@ function StageBar({ stages, activeStage, onPick }) {
   );
 }
 
-// ============ MATRIX QUESTION ============
 function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
   const cols = question.columns;
   const rowAns = answer?.rows || {};
@@ -609,7 +569,6 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
   );
 }
 
-// ============ QUESTION PANEL ============
 function QuestionPanel({
   question,
   answer,
@@ -686,7 +645,6 @@ function QuestionPanel({
   );
 }
 
-// ============ RANK PANEL ============
 function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? ranked : ranked.slice(0, 5);
@@ -724,7 +682,6 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
   );
 }
 
-// ============ RECOMMENDATIONS ============
 function RecommendationPanel({ recs, onSelect, max }) {
   const visible = recs.slice(0, max);
   return (
@@ -746,7 +703,6 @@ function RecommendationPanel({ recs, onSelect, max }) {
   );
 }
 
-// ============ RESET MODAL ============
 function ResetModal({ onCancel, onConfirm }) {
   const cancelRef = useRef(null);
   useEffect(() => {
@@ -783,7 +739,6 @@ function ResetModal({ onCancel, onConfirm }) {
   );
 }
 
-// ============ HOOK ============
 function useIsMobile(breakpoint = 760) {
   const [m, setM] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
@@ -796,7 +751,6 @@ function useIsMobile(breakpoint = 760) {
   return m;
 }
 
-// ============ APP ============
 function App() {
   const [answers, setAnswers] = useState({});
   const [activeQuestionId, setActiveQuestionId] = useState(QUESTIONS[0].id);
