@@ -73,18 +73,18 @@ section {
   position: relative;
 }
 
-.diagram {
+main > section:first-of-type {
   padding: var(--sp-l) var(--sp-xl);
   margin: 0 0 var(--sp-xl);
 }
 
-.workspace {
+main > section:last-of-type {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-l);
 }
 
-.workspace > aside {
+main > section:last-of-type > aside {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
@@ -113,9 +113,9 @@ header h2 {
 }
 
 form,
-section > .panel-body {
+aside section > div {
   padding: var(--sp-xl);
-} 
+}
 
 
 /* ─── Buttons ─────────────────────────── */
@@ -124,7 +124,7 @@ section > .panel-body {
 button,
 .btn,
 header,
-.stages button,
+nav button,
 summary {
   font-family: var(--font-mono);
   font-size: var(--text-md);
@@ -168,7 +168,7 @@ border: var(--line-interactive);
   border-color: var(--c-6);
 }
 
-.stages button {
+nav button {
   position: relative;
   display: flex;
   gap: var(--sp-l);
@@ -183,7 +183,7 @@ border: var(--line-interactive);
   transition: background var(--time);
 }
 
-.stages button[aria-current] {
+nav button[aria-current] {
   background: linear-gradient(to right, var(--c-2) var(--pct, 0%), transparent var(--pct, 0%));
   border-bottom: var(--line-active);
 }
@@ -194,7 +194,7 @@ border: var(--line-interactive);
 }
 
 /* ─── SCHEMATIC ──────────────────────────────────── */
-.diagram figure {
+main > section:first-of-type figure {
   position: relative;
   padding: var(--sp-xl);
   margin: 0;
@@ -213,7 +213,7 @@ border: var(--line-interactive);
   border: var(--line-passive);
 }
 
-.diagram figure svg {
+main > section:first-of-type figure svg {
   display: block;
   width: 100%;
   height: auto;
@@ -313,11 +313,11 @@ border: var(--line-interactive);
   stroke-width: var(--line-flow-width);
 }
 
-.diagram figcaption {
+main > section:first-of-type figcaption {
   margin: var(--sp-xl) 0 0;
 }
 
-.diagram figcaption ul {
+main > section:first-of-type figcaption ul {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-l) var(--sp-xl);
@@ -348,7 +348,7 @@ border: var(--line-interactive);
 }
 
 /* ─── STAGE TABS ─────────────────────────────────── */
-.stages {
+nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   background: var(--c-1);
@@ -627,7 +627,7 @@ footer {
 }
 
 /* ─── RESET MODAL ────────────────────────────────── */
-.modal {
+dialog {
   max-width: min(360px, 90cqi);
   padding: var(--sp-xl);
   color: inherit;
@@ -636,7 +636,7 @@ footer {
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-5);
 }
 
-.modal::backdrop {
+dialog::backdrop {
   background: var(--c-16);
 }
 
@@ -663,7 +663,7 @@ p {
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
 @container page (width >= 1080px) {
-  .workspace {
+  main > section:last-of-type {
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 }

@@ -14,7 +14,7 @@
   </head>
   <body>
     <main x-data="app" x-cloak>
-      <section class="diagram">
+      <section>
         <figure>
           <svg
             viewBox="0 0 700 420"
@@ -31,7 +31,6 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="water" />
               </marker>
               <marker
                 id="arr-ctrl"
@@ -42,7 +41,6 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="ctrl" />
               </marker>
               <marker
                 id="arr-mains"
@@ -53,7 +51,6 @@
                 markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M0,0 L10,5 L0,10 z" class="arrow" data-flow="mains" />
               </marker>
             </defs>
 
@@ -130,8 +127,8 @@
         </figure>
       </section>
 
-      <section class="workspace">
-        <section class="panel">
+      <section>
+        <section>
           <form @submit.prevent>
             <header>
               <h2 x-text="activeQuestion.text"></h2>
@@ -223,7 +220,7 @@
             </template>
           </form>
 
-          <nav class="stages" aria-label="Stages">
+          <nav aria-label="Stages">
             <template x-for="s in STAGES" :key="s">
               <button
                 type="button"
@@ -243,9 +240,9 @@
         </section>
 
         <aside>
-          <section class="panel" aria-labelledby="rank-heading">
+          <section aria-labelledby="rank-heading">
             <header><h2 id="rank-heading">Root-cause</h2></header>
-            <div class="panel-body">
+            <div>
               <ol>
                 <template x-for="r in ranked.slice(0, 5)" :key="r.id">
                   <li>
@@ -294,9 +291,9 @@
             </div>
           </section>
 
-          <section class="panel" aria-labelledby="rec-heading">
+          <section aria-labelledby="rec-heading">
             <header><h2 id="rec-heading">Recommended Next</h2></header>
-            <div class="panel-body">
+            <div>
               <template x-if="recommendations.length === 0">
                 <p class="recommendation-empty">No questions left to differentiate top suspects.</p>
               </template>
@@ -326,7 +323,6 @@
       </section>
 
       <dialog
-        class="modal"
         x-ref="reset"
         aria-labelledby="reset-title"
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
