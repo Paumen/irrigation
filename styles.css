@@ -67,22 +67,10 @@ body {
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
     linear-gradient(90deg, var(--c-13) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
-    var(--c-1);
+    var(--c-2);
   -webkit-font-smoothing: antialiased;
 }
 
-button {
-  font: inherit;
-  color: inherit;
-  appearance: none;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-}
-
-[role='button'] {
-  cursor: pointer;
-}
 
 /* ─── LAYOUT ─────────────────────────────────────── */
 section {
@@ -108,17 +96,36 @@ section {
   min-width: 0;
 }
 
-/* ─── EYEBROW TYPOGRAPHY ─────────────────────────── */
+/* ─── Buttons ─────────────────────────── */
+
+
+button,
 .btn,
 .panel > header,
 .stages button,
 details > summary {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-md);
   font-weight: var(--font-weight-m);
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
+  cursor: pointer;
+  color: inherit;
+  background: var(--c-2);
+  border: 0;
+  appearance: none;
+  display: inline-flex;
+place-items: center;
+height: var(--sp-xxl);
+padding: 0 var(--sp-xl);
+background: var(--c-1);
+border: var(--line-interactive);
 }
+
+[role='button'] {
+  cursor: pointer;
+}
+
 
 /* ─── PANEL ──────────────────────────────────────── */
 .panel {
@@ -149,14 +156,6 @@ details > summary {
 }
 
 /* ─── BUTTON ─────────────────────────────────────── */
-.btn {
-  display: inline-flex;
-  place-items: center;
-  height: var(--sp-xxl);
-  padding: 0 var(--sp-xl);
-  background: var(--c-1);
-  border: var(--line-interactive);
-}
 
 .btn.btn-icon {
   place-content: center;
@@ -265,38 +264,30 @@ details > summary {
 }
 
 /* ─── FLOW TYPES (water / mains / ctrl / wifi) ───── */
+
+[data-flow] {
+ color: var(--c-flow);
+ --line-flow-width: var(--line-width-m);
+ --line-flow-dash: none;
+ --c-flow: var(--c-5);
+}
+
 [data-flow='water'] {
   --c-flow: var(--c-8);
   --line-flow-width: var(--line-width-l);
-  --line-flow-dash: none;
 }
 
 [data-flow='lateral'] {
   --c-flow: var(--c-8);
-  --line-flow-width: var(--line-width-m);
-  --line-flow-dash: none;
-}
-
-[data-flow='mains'] {
-  --c-flow: var(--c-5);
-  --line-flow-width: var(--line-width-m);
-  --line-flow-dash: none;
 }
 
 [data-flow='ctrl'] {
   --c-flow: var(--c-6);
-  --line-flow-width: var(--line-width-m);
   --line-flow-dash: 6 3;
 }
 
 [data-flow='wifi'] {
-  --c-flow: var(--c-5);
-  --line-flow-width: var(--line-width-m);
   --line-flow-dash: 2 3;
-}
-
-[data-flow] {
-  color: var(--c-flow);
 }
 
 .line {
@@ -350,8 +341,8 @@ details > summary {
 
 .swatch {
   display: inline-block;
-  width: 28px;
-  height: 6px;
+  width: 24px;
+  height: 8px;
   margin: 0 var(--sp-l) 0 0;
   vertical-align: middle;
   background: var(--c-flow);
@@ -371,6 +362,11 @@ details > summary {
   grid-template-columns: repeat(4, 1fr);
   background: var(--c-1);
   border-top: var(--line-passive);
+  font-size: var(--text-sm);
+font-variant-numeric: tabular-nums;
+color: var(--c-5);
+text-transform: none;
+letter-spacing: var(--text-ls-tight);
 }
 
 .stages button {
@@ -382,23 +378,15 @@ details > summary {
   padding: var(--sp-l);
   overflow: hidden;
   text-align: left;
-  background: linear-gradient(to right, var(--c-6) var(--pct, 0%), transparent var(--pct, 0%));
+  background: linear-gradient(to right, var(--c-2) var(--pct, 0%), transparent var(--pct, 0%));
   border-right: var(--line-passive);
   border-bottom: var(--line-width-m) solid transparent;
   transition: background var(--time);
 }
 
 .stages button[aria-current] {
-  background: linear-gradient(to right, var(--c-6) var(--pct, 0%), transparent var(--pct, 0%));
+  background: linear-gradient(to right, var(--c-2) var(--pct, 0%), transparent var(--pct, 0%));
   border-bottom: var(--line-active);
-}
-
-.stages small {
-  font-size: var(--text-sm);
-  font-variant-numeric: tabular-nums;
-  color: var(--c-5);
-  text-transform: none;
-  letter-spacing: var(--text-ls-tight);
 }
 
 /* ─── QUESTION FORM ──────────────────────────────── */
@@ -732,4 +720,4 @@ input[type='radio']:checked {
   .matrix-scroll td {
     padding: var(--sp-s);
   }
-}
+  } 
