@@ -242,7 +242,7 @@
             <header><h2 id="rank-heading">Root-cause</h2></header>
             <div class="panel-body">
               <ol>
-                <template x-for="r in rankedTop" :key="r.id">
+                <template x-for="r in ranked.slice(0, 5)" :key="r.id">
                   <li>
                     <button
                       type="button"

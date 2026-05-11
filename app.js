@@ -208,10 +208,6 @@ function app() {
     nodeIconCx,
     severityLevel,
 
-    nodeIconSize(n) {
-      return nodeIconLayout(n).size;
-    },
-
     get scores() {
       const s = {};
       ALL_IDS.forEach((id) => {
@@ -221,10 +217,9 @@ function app() {
         const ans = this.answers[q.id];
         if (ans === undefined || ans === null) return;
         if (q.type === 'matrix') {
-          const rowAns = ans.rows || {};
           const colMul = q.colMul;
           q.rows.forEach((row) => {
-            const colId = rowAns[row.id] || 'no';
+            const colId = ans[row.id] || 'no';
             const m = colMul[colId] || 0;
             if (m === 0) return;
             Object.entries(row.effects).forEach(([rc, delta]) => {
@@ -260,12 +255,8 @@ function app() {
       return m;
     },
 
-    get top5() {
-      return this.ranked.slice(0, 5).map((r) => r.id);
-    },
-
     get recommendations() {
-      const t5 = this.top5;
+      const t5 = this.ranked.slice(0, 5).map((r) => r.id);
       const unanswered = QUESTIONS.filter((q) => !this.isAnswered(q.id));
       const scored = unanswered.map((q) => {
         let D = 0;
@@ -323,9 +314,6 @@ function app() {
     get activeAnswer() {
       return this.answers[this.activeQuestionId];
     },
-    get rankedTop() {
-      return this.ranked.slice(0, 5);
-    },
     get rankedRest() {
       return this.ranked.slice(5);
     },
@@ -338,23 +326,19 @@ function app() {
       const a = this.answers[qid];
       if (a === undefined || a === null) return false;
       const q = QUESTIONS.find((qq) => qq.id === qid);
-      if (q?.type === 'matrix') return !!(a.rows && Object.keys(a.rows).length > 0);
+      if (q?.type === 'matrix') return Object.keys(a).length > 0;
       return true;
     },
 
     rowAns(rowId) {
-      return this.activeAnswer?.rows?.[rowId] || 'no';
+      return this.activeAnswer?.[rowId] || 'no';
     },
 
     setMatrixCell(rowId, colId) {
       const qid = this.activeQuestionId;
-      const prev = this.answers[qid] || { rows: {} };
       this.answers = {
         ...this.answers,
-        [qid]: {
-          ...prev,
-          rows: { ...prev.rows, [rowId]: colId },
-        },
+        [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
       };
     },
 
