@@ -535,7 +535,7 @@ function QuestionPanel({
             const selected = answer === i;
             return (
               <button
-                key={i}
+                key={`${question.id}-${i}`}
                 type="button"
                 className={`opt ${selected ? 'selected' : ''}`}
                 onClick={() => onAnswer(i)}
