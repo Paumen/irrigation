@@ -236,32 +236,21 @@ section {
 
 .node-box {
   fill: var(--c-1);
-  stroke: var(--c-5);
-  stroke-width: var(--line-width-s) ;
-}
-
-.node-divider,
-.node-col,
-.node-active {
-  stroke: var(--c-5);
+  stroke: var(--c-15);
+  stroke-width: var(--line-width-s);
 }
 
 .node-divider,
 .node-col {
   pointer-events: none;
-}
-
-.node-divider {
-  stroke-width: var(--line-width-s);
-}
-
-.node-col {
+  stroke: var(--c-15);
   stroke-width: var(--line-width-s);
 }
 
 .node-active {
   pointer-events: none;
   fill: none;
+  stroke: var(--c-5);
   stroke-width: var(--line-width-m);
 }
 
