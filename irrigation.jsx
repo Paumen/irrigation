@@ -160,24 +160,19 @@ const CONN_PIPS = [
   { rcId: 'R8.2', x: 526, y: 290 },
 ];
 
-// ============ SEVERITY COLOURS ============
+// ============ SEVERITY BAND ============
 // Four-band gradient: dark green → light green → light rust → dark rust.
-// Ranked rows additionally clamp to dark green when the displayed percent < 4.
-const sevColor = (t) => {
+// Ranked rows additionally clamp to band 0 when the displayed percent < 4.
+// Actual colours live in CSS under .sev-0 … .sev-3.
+const sevBand = (t) => {
   const tt = Math.max(0, Math.min(1, t));
-  if (tt < 0.25) return '#3f6b2f';
-  if (tt < 0.5) return '#9bbf6e';
-  if (tt < 0.75) return '#d99a78';
-  return '#7a2f15';
+  if (tt < 0.25) return 0;
+  if (tt < 0.5) return 1;
+  if (tt < 0.75) return 2;
+  return 3;
 };
-const sevText = (t) => {
-  const tt = Math.max(0, Math.min(1, t));
-  if (tt < 0.25) return '#efe8d8';
-  if (tt >= 0.75) return '#efe8d8';
-  return '#1a2238';
-};
-const pctColor = (pct, t) => (pct < 4 ? '#3f6b2f' : sevColor(t));
-const pctText = (pct, t) => (pct < 4 ? '#efe8d8' : sevText(t));
+const pctBand = (pct, t) => (pct < 4 ? 0 : sevBand(t));
+const sevCls = (pct, t) => `sev-${pctBand(pct, t)}`;
 
 // ============ ICONS (Material Design Icons + Material Symbols) ============
 // Each entry: vb = [minX, minY, width, height] viewBox; d = SVG path data.
@@ -238,7 +233,7 @@ const ICONS = {
   },
 };
 
-function Icon({ name, cx, cy, size, fill = '#1a2238' }) {
+function Icon({ name, cx, cy, size }) {
   const def = ICONS[name];
   if (!def) return null;
   const [minX, minY, vw, vh] = def.vb;
@@ -247,7 +242,7 @@ function Icon({ name, cx, cy, size, fill = '#1a2238' }) {
   const ty = cy - (minY + vh / 2) * scale;
   return (
     <g transform={`translate(${tx} ${ty}) scale(${scale})`}>
-      <path d={def.d} fill={fill} />
+      <path d={def.d} fill="currentColor" />
     </g>
   );
 }
@@ -276,12 +271,13 @@ function NodeIcons({ icons, cx, cy }) {
 
 // Inline icon + text token (e.g. ⚡ 230 V). (x, y) is the text baseline; the
 // icon sits flush-left of x with a fixed gap so call-sites only think about
-// where the text goes, not the icon's pixel offset.
-function LineLabel({ icon, text, x, y, fill, size = 11, gap = 2 }) {
+// where the text goes, not the icon's pixel offset. Color is set by `className`
+// (e.g. .lbl-ctrl) — children inherit via currentColor.
+function LineLabel({ icon, text, x, y, className, size = 11, gap = 2 }) {
   return (
-    <g>
-      <Icon name={icon} cx={x - size / 2 - gap} cy={y - 3} size={size} fill={fill} />
-      <text x={x} y={y} textAnchor="start" className="ln-lbl" fill={fill}>
+    <g className={className}>
+      <Icon name={icon} cx={x - size / 2 - gap} cy={y - 3} size={size} />
+      <text x={x} y={y} textAnchor="start" className="ln-lbl">
         {text}
       </text>
     </g>
@@ -296,15 +292,7 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
   const cw = pips.length ? box.w / pips.length : 0;
   return (
     <g>
-      <rect
-        x={box.x}
-        y={box.y}
-        width={box.w}
-        height={box.h}
-        fill="#f7f2e6"
-        stroke="#1a2238"
-        strokeWidth="1.5"
-      />
+      <rect x={box.x} y={box.y} width={box.w} height={box.h} className="node-box" />
 
       {pips.map((rcId, i) => (
         <rect
@@ -313,8 +301,7 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
           y={fy}
           width={cw}
           height={fh}
-          fill={pctColor(severityPct[rcId] || 0, severityT[rcId] || 0)}
-          stroke="none"
+          className={`pip-fill ${sevCls(severityPct[rcId] || 0, severityT[rcId] || 0)}`}
         />
       ))}
 
@@ -327,19 +314,11 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
 
       {pips.length > 0 && (
         <>
-          <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} stroke="#1a2238" strokeWidth="1.5" />
+          <line x1={box.x} y1={fy} x2={box.x + box.w} y2={fy} className="node-divider" />
           {pips.slice(1).map((_, i) => {
             const x = box.x + (i + 1) * cw;
             return (
-              <line
-                key={`d-${i}`}
-                x1={x}
-                y1={fy}
-                x2={x}
-                y2={fy + fh}
-                stroke="#1a2238"
-                strokeWidth="1"
-              />
+              <line key={`d-${i}`} x1={x} y1={fy} x2={x} y2={fy + fh} className="node-col" />
             );
           })}
         </>
@@ -363,13 +342,12 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
               }
             }}
           >
-            <rect x={box.x + i * cw} y={fy} width={cw} height={fh} fill="transparent" />
+            <rect x={box.x + i * cw} y={fy} width={cw} height={fh} className="pip-hit" />
             <text
               x={ccx}
               y={fy + fh / 2 + 3.5}
               textAnchor="middle"
-              className="pip"
-              fill={pctText(p, t)}
+              className={`pip pip-text ${sevCls(p, t)}`}
             >
               {rcId.replace('R', '')}
             </text>
@@ -386,10 +364,7 @@ function NodeBox({ box, icons, label, severityT, severityPct, activeRC, onPickRC
             y={fy + 1.5}
             width={cw - 3}
             height={fh - 3}
-            fill="none"
-            stroke="#1a2238"
-            strokeWidth="2"
-            pointerEvents="none"
+            className="node-active"
           />
         );
       })}
@@ -402,6 +377,7 @@ function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC })
   const p = severityPct[rcId] || 0;
   const isActive = activeRC === rcId;
   const sz = 26;
+  const cls = sevCls(p, t);
   return (
     <g
       role="button"
@@ -421,11 +397,9 @@ function ConnectorPip({ rcId, pos, severityT, severityPct, activeRC, onPickRC })
         width={sz}
         height={sz}
         rx="1.5"
-        fill={pctColor(p, t)}
-        stroke="#1a2238"
-        strokeWidth={isActive ? 1.8 : 1.2}
+        className={`conn-pip ${cls} ${isActive ? 'active' : ''}`}
       />
-      <text x={pos.x} y={pos.y + 3} textAnchor="middle" className="pip" fill={pctText(p, t)}>
+      <text x={pos.x} y={pos.y + 3} textAnchor="middle" className={`pip pip-text ${cls}`}>
         {rcId.replace('R', '')}
       </text>
     </g>
@@ -449,7 +423,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" fill="#1a4a7a" />
+          <path d="M0,0 L10,5 L0,10 z" className="arr-water" />
         </marker>
         <marker
           id="arr-ctrl"
@@ -460,7 +434,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" fill="#b14a26" />
+          <path d="M0,0 L10,5 L0,10 z" className="arr-ctrl" />
         </marker>
         <marker
           id="arr-mains"
@@ -471,26 +445,19 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
           markerHeight="5"
           orient="auto-start-reverse"
         >
-          <path d="M0,0 L10,5 L0,10 z" fill="#5a6a85" />
+          <path d="M0,0 L10,5 L0,10 z" className="arr-mains" />
         </marker>
       </defs>
 
       {/* ── Wi-Fi link SOFTWARE ↔ CONTROLLER (slate dotted, no arrow — bidirectional) ── */}
-      <line
-        x1="166"
-        y1="36"
-        x2="202"
-        y2="36"
-        stroke="#4a5878"
-        strokeWidth="1.2"
-        strokeDasharray="2 3"
-        strokeLinecap="round"
-      />
+      <line x1="166" y1="36" x2="202" y2="36" className="line-wifi" />
       {/* Wi-Fi glyph centred on the link */}
-      <Icon name="ms:wifi" cx={184} cy={26} size={14} fill="#4a5878" />
+      <g className="lbl-wifi">
+        <Icon name="ms:wifi" cx={184} cy={26} size={14} />
+      </g>
 
       {/* ── 24 V control wires (rust dashed) ── */}
-      <g fill="none" stroke="#b14a26" strokeWidth="1.5" strokeDasharray="6 3" strokeLinecap="round">
+      <g className="line-ctrl">
         <line x1="332" y1="36" x2="368" y2="36" markerEnd="url(#arr-ctrl)" />
         {/* CTRL → VALVES: drop down from controller bottom, then over to valves left side */}
         <path d="M 267 92 V 200 H 285" markerEnd="url(#arr-ctrl)" />
@@ -501,7 +468,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         x={346}
         y={30}
         size={10}
-        fill="#b14a26"
+        className="lbl-ctrl"
       />
       <LineLabel
         icon="mdi:lightning-bolt-outline"
@@ -509,7 +476,7 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         x={250}
         y={108}
         size={10}
-        fill="#b14a26"
+        className="lbl-ctrl"
       />
 
       {/* ── 230 V mains (slate solid + bolt) RELAY → PUMP ── */}
@@ -518,25 +485,21 @@ function SystemDiagram({ severityT, severityPct, activeRC, onPickRC }) {
         y1="36"
         x2="534"
         y2="36"
-        stroke="#5a6a85"
-        strokeWidth="2.5"
+        className="line-mains"
         markerEnd="url(#arr-mains)"
       />
-      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} fill="#5a6a85" />
+      <LineLabel icon="ms:bolt" text="230 V" x={510} y={30} className="lbl-mains" />
 
       {/* ── Main water line: PUMP down then across to VALVES top ── */}
       <path
         d="M 599 92 V 145 H 350 V 170"
-        stroke="#1a4a7a"
-        strokeWidth="4"
-        fill="none"
-        strokeLinecap="round"
+        className="line-water"
         markerEnd="url(#arr-water)"
       />
-      <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} fill="#1a4a7a" />
+      <LineLabel icon="mdi:water-outline" text="H₂O" x={370} y={142} className="lbl-water" />
 
       {/* ── Lateral hoses VALVES → 4 sprinklers ── */}
-      <g stroke="#1a4a7a" strokeWidth="2.5" fill="none" strokeLinecap="round">
+      <g className="line-lateral">
         <path d="M 300 242 V 290 H 85 V 340" markerEnd="url(#arr-water)" />
         <path d="M 333 242 V 305 H 265 V 340" markerEnd="url(#arr-water)" />
         <path d="M 367 242 V 305 H 445 V 340" markerEnd="url(#arr-water)" />
@@ -610,12 +573,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
   const drained = answer?.drained || {};
   return (
     <div className="matrix-scroll">
-      <div
-        className="matrix"
-        style={{
-          gridTemplateColumns: `minmax(140px, 1.4fr) repeat(${cols.length}, minmax(54px, 1fr))`,
-        }}
-      >
+      <div className="matrix" style={{ '--sp-cols': cols.length }}>
         <div className="matrix-cell matrix-head" />
         {cols.map((c) => (
           <div key={c.id} className="matrix-cell matrix-head" title={c.label}>
@@ -643,10 +601,7 @@ function MatrixQuestion({ question, answer, onSetCell, onToggleDrained }) {
                 );
               })}
               {row.drainable && !isOff && (
-                <label
-                  className="matrix-drained"
-                  style={{ gridColumn: `1 / span ${cols.length + 1}` }}
-                >
+                <label className="matrix-drained">
                   <input
                     type="checkbox"
                     checked={!!drained[row.id]}
@@ -740,24 +695,22 @@ function RankingPanel({ ranked, severityT, activeRC, onPickRC }) {
         const meta = RC[r.id];
         const active = activeRC === r.id;
         const pct = Math.round(r.pct);
-        const colour = pctColor(pct, severityT[r.id]);
+        const cls = sevCls(pct, severityT[r.id]);
         return (
           <button
             key={r.id}
             type="button"
-            className={`rank-row ${active ? 'active' : ''}`}
+            className={`rank-row ${cls} ${active ? 'active' : ''}`}
             onClick={() => onPickRC(r.id)}
           >
             <span className="id">{r.id}</span>
             <div className="rank-row-body">
               <div className="label">{meta.label}</div>
               <div className="bar">
-                <div style={{ width: r.pct + '%', background: colour }} />
+                <div style={{ width: r.pct + '%' }} />
               </div>
             </div>
-            <span className="pct" style={{ color: colour }}>
-              {pct}%
-            </span>
+            <span className="pct">{pct}%</span>
           </button>
         );
       })}
