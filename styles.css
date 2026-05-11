@@ -1,22 +1,13 @@
 :root {
   /* ─── Color ──────────────────────────────────────── */
-  --c-1: #f7f2e6;
-  --c-2: #f1ead8;
-  --c-3: #4a5878;
-  --c-4: #2c3852;
-  --c-5: #1a2238;
-  --c-6: #b14a26;
-  --c-7: #7a2f15;
-  --c-8: #1a4a7a;
-  --c-9: #5a6a85;
-  --c-10: #3f6b2f;
-  --c-11: #9bbf6e;
-  --c-12: #d99a78;
-  --c-13: #1a223812;
-  --c-15: #1a22384d;
-  --c-16: #1a22388c;
-  --c-17: #b14a2652;
-  --c-18: #b14a2673;
+  --c-1: oklch(96.4% 0.007 87);
+  --c-2: oklch(95.3% 0.02 88);
+  --c-5: oklch(25.6% 0.043 268);
+  --c-6: oklch(53.9% 0.144 39);
+  --c-8: oklch(40.2% 0.096 252);
+  --c-13: oklch(25.6% 0.043 268 / 7%);
+  --c-15: oklch(25.6% 0.043 268 / 30%);
+  --c-16: oklch(25.6% 0.043 268 / 55%);
 
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -181,11 +172,11 @@ details > summary {
 .btn.btn-primary {
   color: var(--c-1);
   background: var(--c-6);
-  border-color: var(--c-7);
+  border-color: var(--c-6);
 }
 
 .btn.btn-primary:hover {
-  background: var(--c-7);
+  background: var(--c-6);
 }
 
 /* ─── SCHEMATIC ──────────────────────────────────── */
@@ -287,7 +278,7 @@ details > summary {
 }
 
 [data-flow='mains'] {
-  --c-flow: var(--c-9);
+  --c-flow: var(--c-5);
   --line-flow-width: var(--line-width-m);
   --line-flow-dash: none;
 }
@@ -299,7 +290,7 @@ details > summary {
 }
 
 [data-flow='wifi'] {
-  --c-flow: var(--c-3);
+  --c-flow: var(--c-5);
   --line-flow-width: var(--line-width-m);
   --line-flow-dash: 2 3;
 }
@@ -321,22 +312,22 @@ details > summary {
 }
 
 [data-sev='0'] {
-  --c-sev-bg: var(--c-10);
+  --c-sev-bg: var(--c-2);
   --c-sev-fg: var(--c-2);
 }
 
 [data-sev='1'] {
-  --c-sev-bg: var(--c-11);
+  --c-sev-bg: var(--c-2);
   --c-sev-fg: var(--c-5);
 }
 
 [data-sev='2'] {
-  --c-sev-bg: var(--c-12);
+  --c-sev-bg: var(--c-6);
   --c-sev-fg: var(--c-5);
 }
 
 [data-sev='3'] {
-  --c-sev-bg: var(--c-7);
+  --c-sev-bg: var(--c-6);
   --c-sev-fg: var(--c-2);
 }
 
@@ -353,7 +344,7 @@ details > summary {
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--c-4);
+  color: var(--c-5);
   list-style: none;
 }
 
@@ -391,21 +382,21 @@ details > summary {
   padding: var(--sp-l);
   overflow: hidden;
   text-align: left;
-  background: linear-gradient(to right, var(--c-17) var(--pct, 0%), transparent var(--pct, 0%));
+  background: linear-gradient(to right, var(--c-6) var(--pct, 0%), transparent var(--pct, 0%));
   border-right: var(--line-passive);
   border-bottom: var(--line-width-m) solid transparent;
   transition: background var(--time);
 }
 
 .stages button[aria-current] {
-  background: linear-gradient(to right, var(--c-18) var(--pct, 0%), transparent var(--pct, 0%));
+  background: linear-gradient(to right, var(--c-6) var(--pct, 0%), transparent var(--pct, 0%));
   border-bottom: var(--line-active);
 }
 
 .stages small {
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--c-4);
+  color: var(--c-5);
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
 }
@@ -506,16 +497,16 @@ details > summary {
 
 .recommendation code {
   font-weight: var(--font-weight-m);
-  color: var(--c-7);
+  color: var(--c-6);
 }
 
 .recommendation .stage {
-  color: var(--c-4);
+  color: var(--c-5);
 }
 
 .recommendation .discriminator {
   margin-inline-start: auto;
-  color: var(--c-3);
+  color: var(--c-5);
 }
 
 .recommendation > span:last-of-type {
@@ -528,7 +519,7 @@ details > summary {
   padding: var(--sp-l) var(--sp-xl);
   margin: 0;
   font-style: italic;
-  color: var(--c-4);
+  color: var(--c-5);
   text-align: center;
   background: var(--c-1);
   border: var(--line-interactive);
@@ -589,7 +580,7 @@ details > summary {
 
 details > summary {
   padding: var(--sp-s) var(--sp-l);
-  color: var(--c-4);
+  color: var(--c-5);
   text-align: left;
   cursor: pointer;
 }
@@ -645,7 +636,7 @@ details > summary:hover {
 .matrix-scroll thead th {
   padding: var(--sp-m) var(--sp-s);
   hyphens: auto;
-  color: var(--c-4);
+  color: var(--c-5);
   text-align: center;
   word-break: break-word;
   background: var(--c-2);
@@ -714,7 +705,7 @@ input[type='radio']:checked {
 .modal p {
   margin: 0 0 var(--sp-xl);
   font-size: var(--text-sm);
-  color: var(--c-4);
+  color: var(--c-5);
 }
 
 .btn:hover,
