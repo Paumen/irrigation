@@ -845,30 +845,22 @@ nav button > .bar {
 
 /* ─── View transitions ───────────────────────────── */
 
-.schematic-card {
-  view-transition-name: schematic-card;
-}
-
 .form-card {
   view-transition-name: form-card;
 }
 
-.rank-card {
-  view-transition-name: rank-card;
-}
-
-.rec-card {
-  view-transition-name: rec-card;
+.rank-row {
+  view-transition-name: var(--vt-rc, none);
 }
 
 ::view-transition-group(*) {
-  animation-duration: 0.22s;
+  animation-duration: 0.16s;
   animation-timing-function: cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
 ::view-transition-old(*),
 ::view-transition-new(*) {
-  animation-duration: 0.22s;
+  animation-duration: 0.12s;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="stylesheet" href="styles.css?v=16" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -247,7 +247,7 @@
                 type="button"
                 class="rank-row"
                 :class="activeRC === r.id ? 'active' : ''"
-                :style="`view-transition-name: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
+                :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                 @click="activeRC = r.id"
               >
                 <code x-text="r.id"></code>
@@ -268,7 +268,7 @@
                     type="button"
                     class="rank-row"
                     :class="activeRC === r.id ? 'active' : ''"
-                    :style="`view-transition-name: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
+                    :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                     @click="activeRC = r.id"
                   >
                     <code x-text="r.id"></code>

@@ -167,10 +167,7 @@ function withTransition(fn) {
     fn();
     return;
   }
-  document.startViewTransition(async () => {
-    fn();
-    await new Promise((r) => requestAnimationFrame(r));
-  });
+  document.startViewTransition(fn);
 }
 
 function iconTransform(name, cx, cy, size) {
