@@ -1,3 +1,15 @@
+@property --sev-t {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --sev-t-fg {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
 :root {
   /* ─── Color ──────────────────────────────────────── */
   --c-1: oklch(96.4% 0.007 87);
@@ -572,24 +584,21 @@ summary:hover,
 }
 
 
-[data-sev='0'] {
-  --c-sev-bg: var(--c-sand);
-  --c-sev-fg: var(--c-rust-3);
-}
-
-[data-sev='1'] {
-  --c-sev-bg: var(--c-rust-1);
-  --c-sev-fg: var(--c-rust-3);
-}
-
-[data-sev='2'] {
-  --c-sev-bg: var(--c-rust-2);
-  --c-sev-fg: var(--c-1);
-}
-
-[data-sev='3'] {
-  --c-sev-bg: var(--c-rust-3);
-  --c-sev-fg: var(--c-1);
+.pip-group,
+.rank-row {
+  --c-sev-bg: color-mix(
+    in oklch,
+    var(--c-sand),
+    var(--c-rust-3) calc(var(--sev-t, 0) * 100%)
+  );
+  --c-sev-fg: color-mix(
+    in oklch,
+    var(--c-rust-3),
+    var(--c-1) calc(var(--sev-t-fg, 0) * 100%)
+  );
+  transition:
+    --sev-t var(--time),
+    --sev-t-fg var(--time);
 }
 
 .pip-background {
@@ -808,6 +817,62 @@ nav button > .bar {
 .matrix-scroll {
   padding: var(--sp-l) 0;
   overflow-x: auto;
+}
+
+/* ─── Schematic highlight ────────────────────────── */
+
+.node-group .node-box,
+[data-flow] .line {
+  transition:
+    fill var(--time),
+    stroke var(--time),
+    color var(--time);
+}
+
+.node-group.highlight {
+  color: var(--c-1);
+}
+
+.node-group.highlight .node-box {
+  fill: var(--c-5);
+  stroke: var(--c-5);
+}
+
+.node-group.highlight .node-divider {
+  stroke: oklch(100% 0 0 / 25%);
+}
+
+[data-flow].flow-highlight .line,
+.line.flow-highlight {
+  stroke: var(--c-5);
+}
+
+/* ─── View transitions ───────────────────────────── */
+
+.form-card {
+  view-transition-name: form-card;
+}
+
+.rank-row {
+  view-transition-name: var(--vt-rc, none);
+}
+
+::view-transition-group(*) {
+  animation-duration: 0.16s;
+  animation-timing-function: cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.001s;
+  }
 }
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
