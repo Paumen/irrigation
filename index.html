@@ -52,59 +52,59 @@
             </defs>
 
             <g data-flow="wifi">
-              <line x1="142" y1="36" x2="194" y2="36" class="line" />
-              <g transform="translate(160.5 33) scale(0.015625)">
+              <line x1="142" y1="36" x2="285" y2="36" class="line" />
+              <g transform="translate(206 33) scale(0.015625)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
               </g>
             </g>
 
             <g data-flow="ctrl">
-              <line x1="324" y1="36" x2="376" y2="36" class="line" marker-end="url(#arr-ctrl)" />
-              <path d="M 259 92 V 200 H 285" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="415" y1="36" x2="558" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="350" y1="92" x2="350" y2="300" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(330 18) scale(0.625)">
+              <g transform="translate(465 18) scale(0.625)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="348" y="32" text-anchor="start" class="flow-label">24V</text>
+              <text x="483" y="32" text-anchor="start" class="flow-label">24V</text>
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(226 96) scale(0.625)">
+              <g transform="translate(303 100) scale(0.625)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="244" y="110" text-anchor="start" class="flow-label">24V</text>
+              <text x="321" y="114" text-anchor="start" class="flow-label">24V</text>
             </g>
 
             <line
               data-flow="mains"
-              x1="506"
-              y1="36"
-              x2="558"
-              y2="36"
+              x1="623"
+              y1="92"
+              x2="623"
+              y2="300"
               class="line"
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
-              <g transform="translate(509 33) scale(0.015625)">
+              <g transform="translate(576 101) scale(0.015625)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="525" y="32" text-anchor="start" class="flow-label">230V</text>
+              <text x="592" y="114" text-anchor="start" class="flow-label">230V</text>
             </g>
 
             <g data-flow="water">
-              <path d="M 623 92 V 145 H 350 V 170" class="line" marker-end="url(#arr-water)" />
-              <path d="M 623 92 V 145 H 350 V 170" class="hose-highlight" />
+              <line x1="558" y1="336" x2="415" y2="336" class="line" marker-end="url(#arr-water)" />
+              <line x1="558" y1="336" x2="415" y2="336" class="hose-highlight" />
             </g>
             <g data-flow="water">
-              <g transform="translate(357 130) scale(0.625)">
+              <g transform="translate(420 322) scale(0.625)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="375" y="144" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="438" y="336" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral">
-              <path d="M 389 242 V 290 H 623 V 340" class="line" marker-end="url(#arr-water)" />
-              <path d="M 389 242 V 290 H 623 V 340" class="hose-highlight" />
+              <line x1="285" y1="336" x2="142" y2="336" class="line" marker-end="url(#arr-water)" />
+              <line x1="285" y1="336" x2="142" y2="336" class="hose-highlight" />
             </g>
 
             <g
@@ -316,7 +316,7 @@
 
     <script src="data.js?v=11"></script>
     <script src="icons.js?v=11"></script>
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
