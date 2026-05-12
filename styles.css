@@ -44,6 +44,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -82,9 +83,14 @@ section {
   padding: var(--sp-l) var(--sp-xl);
 }
 
-.rank-card,
-.rec-card {
-  padding: var(--sp-xl);
+.rank-card > ol,
+.rec-card > ol,
+.rank-card > details {
+  padding: 0 var(--sp-xl) var(--sp-xl);
+}
+
+.rec-card > .recommendation-empty {
+  margin: 0 var(--sp-xl) var(--sp-xl);
 }
 
 header {
@@ -111,6 +117,10 @@ header h2 {
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
   background: var(--c-5);
+}
+
+.section-title + form {
+  padding-top: 0;
 }
 
 form {
@@ -232,12 +242,14 @@ li {
 }
 
 summary {
-  padding: var(--sp-s) var(--sp-l);
+  display: list-item;
+  padding: var(--sp-s) var(--sp-l) var(--sp-s) var(--sp-xl);
   min-height: 0;
   font-size: var(--text-sm);
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
   text-align: left;
+  list-style-position: inside;
   border: none;
 }
 
@@ -490,6 +502,26 @@ summary:hover,
   stroke-width: var(--line-width-l);
 }
 
+[data-sev='0'] {
+  --c-sev-bg: var(--c-2);
+  --c-sev-fg: var(--c-15);
+}
+
+[data-sev='1'] {
+  --c-sev-bg: var(--c-15);
+  --c-sev-fg: var(--c-1);
+}
+
+[data-sev='2'] {
+  --c-sev-bg: var(--c-16);
+  --c-sev-fg: var(--c-1);
+}
+
+[data-sev='3'] {
+  --c-sev-bg: var(--c-5);
+  --c-sev-fg: var(--c-1);
+}
+
 .pip-background {
   fill: var(--c-sev-bg);
   stroke: none;
@@ -565,7 +597,11 @@ summary:hover,
   place-content: stretch;
   min-height: 0;
   padding: var(--sp-l) var(--sp-xl);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   text-align: left;
+  text-transform: none;
+  letter-spacing: var(--text-ls-tight);
 }
 
 .option:has(:focus-visible) {
@@ -575,9 +611,9 @@ summary:hover,
 
 .recommendation {
   grid-template-areas:
-    'code stage discriminator'
-    'text text text';
-  grid-template-columns: auto auto 1fr;
+    'stage discriminator'
+    'text text';
+  grid-template-columns: auto 1fr;
   gap: var(--sp-m) var(--sp-l);
   place-items: stretch;
   place-content: stretch;
@@ -585,18 +621,12 @@ summary:hover,
   padding: var(--sp-l) var(--sp-xl);
   font-size: var(--text-sm);
   text-align: left;
-  border-left: var(--line-width-l) solid var(--c-danger);
+  border-left: var(--line-width-l) solid var(--c-5);
 }
 
-.recommendation > code,
 .recommendation > .stage,
 .recommendation > .discriminator {
   letter-spacing: var(--text-ls-tight);
-}
-
-.recommendation > code {
-  grid-area: code;
-  color: var(--c-danger);
 }
 
 .recommendation > .stage {
@@ -610,6 +640,7 @@ summary:hover,
 
 .recommendation > .recommendation-text {
   grid-area: text;
+  font-family: var(--font-sans);
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
 }

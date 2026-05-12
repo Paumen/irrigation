@@ -277,7 +277,7 @@ function app() {
       return scored
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
-        .slice(0, 4);
+        .slice(0, 3);
     },
 
     get stageProgress() {
@@ -349,7 +349,7 @@ function app() {
         if (idx >= 0 && idx < QUESTIONS.length - 1) {
           this.activeQuestionId = QUESTIONS[idx + 1].id;
         }
-      }, 360);
+      }, 720);
     },
 
     moveBy(d) {
