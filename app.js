@@ -277,7 +277,7 @@ function app() {
       return scored
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
-        .slice(0, 4);
+        .slice(0, 3);
     },
 
     get stageProgress() {

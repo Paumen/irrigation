@@ -285,8 +285,7 @@
             <template x-for="rec in recommendations" :key="rec.q.id">
               <li>
                 <button type="button" class="recommendation" @click="activeQuestionId = rec.q.id">
-                  <code x-text="rec.q.id"></code>
-                  <span class="stage" x-text="`S${rec.q.stage}`"></span>
+                  <span class="stage" x-text="STAGE_LABELS[rec.q.stage]"></span>
                   <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                   <span class="recommendation-text" x-text="rec.q.text"></span>
                 </button>

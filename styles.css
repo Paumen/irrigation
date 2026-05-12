@@ -608,9 +608,9 @@ summary:hover,
 
 .recommendation {
   grid-template-areas:
-    'code stage discriminator'
-    'text text text';
-  grid-template-columns: auto auto 1fr;
+    'stage discriminator'
+    'text text';
+  grid-template-columns: auto 1fr;
   gap: var(--sp-m) var(--sp-l);
   place-items: stretch;
   place-content: stretch;
@@ -621,15 +621,9 @@ summary:hover,
   border-left: var(--line-width-l) solid var(--c-5);
 }
 
-.recommendation > code,
 .recommendation > .stage,
 .recommendation > .discriminator {
   letter-spacing: var(--text-ls-tight);
-}
-
-.recommendation > code {
-  grid-area: code;
-  color: var(--c-danger);
 }
 
 .recommendation > .stage {
