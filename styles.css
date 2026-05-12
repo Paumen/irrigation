@@ -637,6 +637,7 @@ summary:hover,
 
 .recommendation > .recommendation-text {
   grid-area: text;
+  font-family: var(--font-sans);
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
 }
