@@ -30,14 +30,14 @@ const QUESTIONS = window.DATA.questions.map((q) => {
   };
 });
 
-const BOX_W = 130;
+const BOX_W = 110;
 const BOX_H = 72;
 const PIP_SIZE = 26;
 
 const NODES = [
   {
     key: 'sw',
-    x: 12,
+    x: 22,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -47,7 +47,7 @@ const NODES = [
   },
   {
     key: 'ctrl',
-    x: 194,
+    x: 204,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -57,7 +57,7 @@ const NODES = [
   },
   {
     key: 'relay',
-    x: 376,
+    x: 386,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -67,7 +67,7 @@ const NODES = [
   },
   {
     key: 'pump',
-    x: 558,
+    x: 568,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -77,7 +77,7 @@ const NODES = [
   },
   {
     key: 'valves',
-    x: 285,
+    x: 295,
     y: 170,
     w: BOX_W,
     h: BOX_H,
@@ -87,7 +87,7 @@ const NODES = [
   },
   {
     key: 'sp1',
-    x: 12,
+    x: 22,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -97,7 +97,7 @@ const NODES = [
   },
   {
     key: 'sp2',
-    x: 194,
+    x: 204,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -107,7 +107,7 @@ const NODES = [
   },
   {
     key: 'sp3',
-    x: 376,
+    x: 386,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -117,7 +117,7 @@ const NODES = [
   },
   {
     key: 'sp4',
-    x: 558,
+    x: 568,
     y: 340,
     w: BOX_W,
     h: BOX_H,

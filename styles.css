@@ -824,23 +824,27 @@ nav button > .bar {
 .node-group .node-box,
 [data-flow] .line {
   transition:
+    fill var(--time),
     stroke var(--time),
-    stroke-width var(--time),
-    filter var(--time);
-}
-
-.node-group.highlight .node-box {
-  stroke: var(--c-rust-3);
-  stroke-width: var(--line-width-m);
+    color var(--time);
 }
 
 .node-group.highlight {
-  filter: drop-shadow(0 0 6px oklch(58% 0.115 50 / 35%));
+  color: var(--c-1);
+}
+
+.node-group.highlight .node-box {
+  fill: var(--c-5);
+  stroke: var(--c-5);
+}
+
+.node-group.highlight .node-divider {
+  stroke: oklch(100% 0 0 / 25%);
 }
 
 [data-flow].flow-highlight .line,
 .line.flow-highlight {
-  filter: drop-shadow(0 0 4px var(--c-rust-2));
+  stroke: var(--c-5);
 }
 
 /* ─── View transitions ───────────────────────────── */

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=16" />
+    <link rel="stylesheet" href="styles.css?v=17" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -52,15 +52,15 @@
             </defs>
 
             <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
-              <line x1="142" y1="36" x2="194" y2="36" class="line" />
+              <line x1="132" y1="36" x2="204" y2="36" class="line" />
               <g transform="translate(160.5 33) scale(0.015625)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
               </g>
             </g>
 
             <g data-flow="ctrl">
-              <line x1="324" y1="36" x2="376" y2="36" class="line" marker-end="url(#arr-ctrl)" />
-              <path d="M 259 92 V 200 H 285" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="314" y1="36" x2="386" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <path d="M 259 92 V 200 H 295" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
               <g transform="translate(330 18) scale(0.625)">
@@ -77,9 +77,9 @@
 
             <line
               data-flow="mains"
-              x1="506"
+              x1="496"
               y1="36"
-              x2="558"
+              x2="568"
               y2="36"
               class="line"
               :class="isHighlighted('mains') ? 'flow-highlight' : ''"
@@ -323,7 +323,7 @@
 
     <script src="data.js?v=12"></script>
     <script src="icons.js?v=11"></script>
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=13"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
