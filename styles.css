@@ -123,6 +123,39 @@ header h2 {
   background: var(--c-5);
 }
 
+.section-title--bar {
+  display: flex;
+  gap: var(--sp-l);
+  align-items: center;
+}
+
+.section-title--bar h2 {
+  flex: 1;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.section-title--bar button {
+  width: auto;
+  min-height: 0;
+  padding: var(--sp-s) var(--sp-l);
+  font-size: var(--text-sm);
+  border-color: currentColor;
+  color: inherit;
+  background: transparent;
+}
+
+.section-title--bar button[data-shape='square'] {
+  padding: 0;
+  width: calc(var(--sp-xxl) - 4px);
+  aspect-ratio: 1 / 1;
+}
+
+.section-title--bar button:hover:not(:disabled) {
+  background: oklch(100% 0 0 / 12%);
+}
+
 .section-title + form {
   padding-top: 0;
 }
@@ -484,16 +517,6 @@ summary:hover,
   pointer-events: none;
 }
 
-.node-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-l);
-  letter-spacing: var(--text-ls-wide);
-  fill: var(--c-5);
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
 .node-box {
   fill: var(--c-1);
   stroke: var(--c-15);
@@ -515,6 +538,8 @@ summary:hover,
 
 .pip-group {
   cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .pip-group:hover {
@@ -526,6 +551,10 @@ summary:hover,
   stroke-width: var(--line-width-m);
 }
 
+.pip-group.pip-pop {
+  animation: pip-pop 0.32s cubic-bezier(0.34, 1.6, 0.64, 1);
+}
+
 .pip-group:focus {
   outline: none;
 }
@@ -535,23 +564,12 @@ summary:hover,
   stroke-width: var(--line-width-m);
 }
 
-.node-press-bg {
-  fill: oklch(96% 0.005 80 / 92%);
-  stroke: var(--c-5);
-  stroke-width: var(--line-width-s);
-  pointer-events: none;
-  animation: node-press-in 0.18s ease-out;
+@keyframes pip-pop {
+  0% { transform: scale(0.88); }
+  55% { transform: scale(1.14); }
+  100% { transform: scale(1); }
 }
 
-.node-press {
-  pointer-events: none;
-  animation: node-press-in 0.18s ease-out;
-}
-
-@keyframes node-press-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
 
 [data-sev='0'] {
   --c-sev-bg: var(--c-sand);

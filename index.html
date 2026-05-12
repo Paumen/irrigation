@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=11" />
+    <link rel="stylesheet" href="styles.css?v=12" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -117,10 +117,6 @@
               @click="pipFromEvent($event)"
               @keydown.enter.prevent="pipFromEvent($event)"
               @keydown.space.prevent="pipFromEvent($event)"
-              @pointerdown="nodePressStart($event)"
-              @touchstart="nodePressStart($event.touches[0])"
-              @touchend="nodePressEnd()"
-              @touchcancel="nodePressEnd()"
               x-html="renderDiagram()"
             ></g>
           </svg>
@@ -139,33 +135,35 @@
       </section>
 
       <section class="form-card" aria-labelledby="form-heading">
-        <h2 id="form-heading" class="section-title">Diagnostic</h2>
+        <header class="section-title section-title--bar">
+          <h2 id="form-heading">Diagnostic</h2>
+          <button type="button" data-tone="mute" @click="$refs.reset.showModal()">Reset</button>
+          <button
+            type="button"
+            data-tone="mute"
+            data-shape="square"
+            @click="moveBy(-1)"
+            :disabled="isFirst"
+            aria-label="Previous question"
+            title="Previous"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            data-tone="mute"
+            data-shape="square"
+            @click="moveBy(1)"
+            :disabled="isLast"
+            aria-label="Next question"
+            title="Next"
+          >
+            ›
+          </button>
+        </header>
         <form @submit.prevent>
           <header>
             <h2 x-text="activeQuestion.text"></h2>
-            <button type="button" data-tone="mute" @click="$refs.reset.showModal()">Reset</button>
-            <button
-              type="button"
-              data-tone="mute"
-              data-shape="square"
-              @click="moveBy(-1)"
-              :disabled="isFirst"
-              aria-label="Previous question"
-              title="Previous"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              data-tone="mute"
-              data-shape="square"
-              @click="moveBy(1)"
-              :disabled="isLast"
-              aria-label="Next question"
-              title="Next"
-            >
-              ›
-            </button>
           </header>
 
           <template x-if="activeQuestion.type === 'matrix'">
@@ -322,9 +320,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=8"></script>
-    <script src="icons.js?v=8"></script>
-    <script src="app.js?v=8"></script>
+    <script src="data.js?v=9"></script>
+    <script src="icons.js?v=9"></script>
+    <script src="app.js?v=9"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

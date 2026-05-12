@@ -201,8 +201,7 @@ function app() {
     answers: {},
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
-    pressedNode: null,
-    _pressTimer: null,
+    recentRC: null,
 
     iconTransform,
     nodeIconCx,
@@ -404,19 +403,14 @@ function app() {
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
 
-        if (this.pressedNode === b.key) {
-          const labelY = b.y + b.h / 2 - 5;
-          const labelW = Math.max(b.label.length * 7 + 12, 70);
-          s += `<rect x="${cx - labelW / 2}" y="${labelY - 12}" width="${labelW}" height="18" rx="2" class="node-press-bg"/>`;
-          s += `<text x="${cx}" y="${labelY}" text-anchor="middle" class="node-label node-press">${escapeAttr(b.label)}</text>`;
-        }
-
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
           const px = groupX + i * PIP_SIZE;
           const sv = this.sev(rcId);
           const isActive = this.activeRC === rcId;
-          const gCls = isActive ? 'pip-group active' : 'pip-group';
+          const justActive = this.recentRC === rcId;
+          const gCls =
+            (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
           const cls = isActive ? 'pip-background active' : 'pip-background';
           s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
           s += `<rect x="${px}" y="${fy}" width="${PIP_SIZE}" height="${PIP_SIZE}" class="${cls}"/>`;
@@ -455,59 +449,14 @@ function app() {
 
     pipFromEvent(e) {
       const el = e.target.closest && e.target.closest('[data-rc]');
-      if (el) this.activeRC = el.dataset.rc;
-    },
-
-    nodePressStart(e) {
-      const point = e.touches ? e.touches[0] : e;
-      const target = (e.touches ? e.touches[0].target : e.target) || e.target;
-      const el = target && target.closest && target.closest('[data-node]');
       if (!el) return;
-      const key = el.getAttribute && el.getAttribute('data-node');
-      if (!key) return;
-      this.nodePressEnd();
-      const startX = point.clientX || 0;
-      const startY = point.clientY || 0;
-      const MOVE_LIMIT_SQ = 900;
-      this._pressTimer = setTimeout(() => {
-        this.pressedNode = key;
-        this._pressTimer = null;
-      }, 280);
-      const release = () => {
-        window.removeEventListener('pointerup', release, true);
-        window.removeEventListener('pointercancel', release, true);
-        window.removeEventListener('touchend', release, true);
-        window.removeEventListener('touchcancel', release, true);
-        window.removeEventListener('pointermove', onMove, true);
-        window.removeEventListener('touchmove', onTouchMove, true);
-        this.nodePressEnd();
-      };
-      const onMove = (ev) => {
-        const dx = (ev.clientX || 0) - startX;
-        const dy = (ev.clientY || 0) - startY;
-        if (dx * dx + dy * dy > MOVE_LIMIT_SQ) release();
-      };
-      const onTouchMove = (ev) => {
-        const t = ev.touches && ev.touches[0];
-        if (!t) return;
-        const dx = t.clientX - startX;
-        const dy = t.clientY - startY;
-        if (dx * dx + dy * dy > MOVE_LIMIT_SQ) release();
-      };
-      window.addEventListener('pointerup', release, true);
-      window.addEventListener('pointercancel', release, true);
-      window.addEventListener('touchend', release, true);
-      window.addEventListener('touchcancel', release, true);
-      window.addEventListener('pointermove', onMove, true);
-      window.addEventListener('touchmove', onTouchMove, true);
-    },
-
-    nodePressEnd() {
-      if (this._pressTimer) {
-        clearTimeout(this._pressTimer);
-        this._pressTimer = null;
-      }
-      if (this.pressedNode !== null) this.pressedNode = null;
+      const rcId = el.getAttribute('data-rc');
+      if (!rcId) return;
+      this.activeRC = rcId;
+      this.recentRC = rcId;
+      setTimeout(() => {
+        if (this.recentRC === rcId) this.recentRC = null;
+      }, 360);
     },
   };
 }
