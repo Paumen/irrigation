@@ -399,7 +399,7 @@ function app() {
         for (let i = 0; i < b.icons.length; i++) {
           const name = b.icons[i];
           const iconCx = nodeIconCx(b, i, b.icons.length);
-          const tr = iconTransform(name, iconCx, b.y + 23, layout.size);
+          const tr = iconTransform(name, iconCx, b.y + (BOX_H - PIP_SIZE) / 2, layout.size);
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
 

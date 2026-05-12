@@ -796,7 +796,7 @@ summary:hover,
 }
 
 nav button > .bar {
-  height: var(--line-width-l);
+  height: 3px;
 }
 
 .bar > span {
