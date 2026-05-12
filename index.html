@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=9" />
+    <link rel="stylesheet" href="styles.css?v=10" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -216,7 +216,8 @@
 
           <template x-if="activeQuestion.type === 'matrix'">
             <footer>
-              <button type="button" @click="moveBy(1)" :disabled="isLast">Skip ›</button>
+              <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">Skip</button>
+              <button type="button" @click="moveBy(1)" :disabled="isLast">Next ›</button>
             </footer>
           </template>
         </form>
@@ -321,9 +322,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=6"></script>
-    <script src="icons.js?v=6"></script>
-    <script src="app.js?v=6"></script>
+    <script src="data.js?v=7"></script>
+    <script src="icons.js?v=7"></script>
+    <script src="app.js?v=7"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

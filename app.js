@@ -420,7 +420,7 @@ function app() {
           const cls = isActive ? 'pip-background active' : 'pip-background';
           s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
           s += `<rect x="${px}" y="${fy}" width="${PIP_SIZE}" height="${PIP_SIZE}" class="${cls}"/>`;
-          s += `<text x="${px + PIP_SIZE / 2}" y="${fy + PIP_SIZE / 2 + 3.5}" text-anchor="middle" class="pip">${rcId}</text>`;
+          s += `<text x="${px + PIP_SIZE / 2}" y="${fy + PIP_SIZE / 2 + 3.5}" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
           if (isActive) {
             s += `<rect x="${px + 1.5}" y="${fy + 1.5}" width="${PIP_SIZE - 3}" height="${PIP_SIZE - 3}" class="node-active"/>`;
           }
@@ -447,7 +447,7 @@ function app() {
           : 'pip-background pip-background--connector';
         s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
         s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
-        s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId}</text>`;
+        s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId.replace(/^R/, '')}</text>`;
         s += `</g>`;
       }
       return s;
