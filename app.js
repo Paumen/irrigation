@@ -382,7 +382,7 @@ function app() {
             this.activeQuestionId = QUESTIONS[idx + 1].id;
           });
         }
-      }, 720);
+      }, 360);
     },
 
     moveBy(d) {
