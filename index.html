@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -63,16 +63,16 @@
               <path d="M 267 92 V 200 H 285" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(334 22) scale(0.4166666666666667)">
+              <g transform="translate(330 18) scale(0.625)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="346" y="30" text-anchor="start" class="flow-label">24 V</text>
+              <text x="348" y="32" text-anchor="start" class="flow-label">24 V</text>
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(238 100) scale(0.4166666666666667)">
+              <g transform="translate(234 96) scale(0.625)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="250" y="108" text-anchor="start" class="flow-label">24 V</text>
+              <text x="252" y="110" text-anchor="start" class="flow-label">24 V</text>
             </g>
 
             <line
@@ -85,23 +85,21 @@
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
-              <g transform="translate(497 32.5) scale(0.011458333333333334)">
+              <g transform="translate(493 27) scale(0.018)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="510" y="30" text-anchor="start" class="flow-label">230 V</text>
+              <text x="512" y="32" text-anchor="start" class="flow-label">230 V</text>
             </g>
 
-            <path
-              data-flow="water"
-              d="M 599 92 V 145 H 350 V 170"
-              class="line"
-              marker-end="url(#arr-water)"
-            />
             <g data-flow="water">
-              <g transform="translate(357 133.5) scale(0.4583333333333333)">
+              <path d="M 599 92 V 145 H 350 V 170" class="line" marker-end="url(#arr-water)" />
+              <path d="M 599 92 V 145 H 350 V 170" class="hose-highlight" />
+            </g>
+            <g data-flow="water">
+              <g transform="translate(353 128) scale(0.6875)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="370" y="142" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="372" y="144" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral">
@@ -109,6 +107,10 @@
               <path d="M 337 242 V 305 H 267 V 340" class="line" marker-end="url(#arr-water)" />
               <path d="M 363 242 V 305 H 433 V 340" class="line" marker-end="url(#arr-water)" />
               <path d="M 389 242 V 290 H 599 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 311 242 V 290 H 101 V 340" class="hose-highlight" />
+              <path d="M 337 242 V 305 H 267 V 340" class="hose-highlight" />
+              <path d="M 363 242 V 305 H 433 V 340" class="hose-highlight" />
+              <path d="M 389 242 V 290 H 599 V 340" class="hose-highlight" />
             </g>
 
             <g
@@ -313,9 +315,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=3"></script>
-    <script src="icons.js?v=3"></script>
-    <script src="app.js?v=3"></script>
+    <script src="data.js?v=4"></script>
+    <script src="icons.js?v=4"></script>
+    <script src="app.js?v=4"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

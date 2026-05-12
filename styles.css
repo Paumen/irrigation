@@ -8,7 +8,11 @@
   --c-13: oklch(25.6% 0.043 268 / 10%);
   --c-15: oklch(25.6% 0.043 268 / 30%);
   --c-16: oklch(25.6% 0.043 268 / 60%);
-  --c-sand: var(--c-5);
+  --c-sand: oklch(89% 0.028 80);
+  --c-rust-1: oklch(72% 0.085 62);
+  --c-rust-2: oklch(54% 0.13 48);
+  --c-rust-3: oklch(36% 0.11 38);
+  --c-hose: oklch(32% 0.05 220);
 
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -160,8 +164,9 @@ form {
   gap: var(--sp-l) var(--sp-xl);
   place-items: center;
   margin: var(--sp-xl) 0 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  font-size: calc(var(--text-sm) * 0.85);
+  letter-spacing: var(--text-ls-tight);
   color: var(--c-5);
 }
 
@@ -466,21 +471,14 @@ summary:hover,
 .pip,
 .flow-label {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-m);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-l);
   pointer-events: none;
 }
 
 .flow-label {
   letter-spacing: var(--text-ls-tight);
   fill: currentcolor;
-}
-
-.node-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-weight-l);
-  letter-spacing: var(--text-ls-tight);
-  fill: var(--c-5);
 }
 
 .node-box {
@@ -503,22 +501,22 @@ summary:hover,
 }
 
 [data-sev='0'] {
-  --c-sev-bg: var(--c-2);
-  --c-sev-fg: var(--c-15);
+  --c-sev-bg: var(--c-sand);
+  --c-sev-fg: var(--c-rust-3);
 }
 
 [data-sev='1'] {
-  --c-sev-bg: var(--c-15);
-  --c-sev-fg: var(--c-1);
+  --c-sev-bg: var(--c-rust-1);
+  --c-sev-fg: var(--c-rust-3);
 }
 
 [data-sev='2'] {
-  --c-sev-bg: var(--c-16);
+  --c-sev-bg: var(--c-rust-2);
   --c-sev-fg: var(--c-1);
 }
 
 [data-sev='3'] {
-  --c-sev-bg: var(--c-5);
+  --c-sev-bg: var(--c-rust-3);
   --c-sev-fg: var(--c-1);
 }
 
@@ -548,16 +546,17 @@ summary:hover,
 }
 
 [data-flow='water'] {
-  --c-flow: var(--c-8);
-  --line-flow-width: var(--line-width-l);
+  --c-flow: var(--c-hose);
+  --line-flow-width: 7px;
 }
 
 [data-flow='lateral'] {
-  --c-flow: var(--c-8);
+  --c-flow: var(--c-hose);
+  --line-flow-width: 6px;
 }
 
 [data-flow='ctrl'] {
-  --c-flow: var(--c-danger);
+  --c-flow: var(--c-rust-3);
   --line-flow-dash: 6 3;
 }
 
@@ -570,7 +569,22 @@ summary:hover,
   stroke: currentcolor;
   stroke-dasharray: var(--line-flow-dash);
   stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-width: var(--line-flow-width);
+}
+
+[data-flow='water'] .line,
+[data-flow='lateral'] .line {
+  paint-order: stroke;
+}
+
+.hose-highlight {
+  fill: none;
+  stroke: oklch(70% 0.04 220 / 55%);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 
 .swatch {

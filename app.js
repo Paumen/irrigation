@@ -398,11 +398,9 @@ function app() {
         for (let i = 0; i < b.icons.length; i++) {
           const name = b.icons[i];
           const iconCx = nodeIconCx(b, i, b.icons.length);
-          const tr = iconTransform(name, iconCx, b.y + 16, layout.size);
+          const tr = iconTransform(name, iconCx, b.y + 23, layout.size);
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
-
-        s += `<text x="${cx}" y="${b.y + 38}" text-anchor="middle" class="node-label">${escapeAttr(b.label)}</text>`;
 
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
