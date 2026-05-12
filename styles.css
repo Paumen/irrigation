@@ -82,9 +82,14 @@ section {
   padding: var(--sp-l) var(--sp-xl);
 }
 
-.rank-card,
-.rec-card {
-  padding: var(--sp-xl);
+.rank-card > ol,
+.rec-card > ol,
+.rank-card > details {
+  padding: 0 var(--sp-xl) var(--sp-xl);
+}
+
+.rec-card > .recommendation-empty {
+  margin: 0 var(--sp-xl) var(--sp-xl);
 }
 
 header {
@@ -111,6 +116,10 @@ header h2 {
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
   background: var(--c-5);
+}
+
+.section-title + form {
+  padding-top: 0;
 }
 
 form {
@@ -490,6 +499,26 @@ summary:hover,
   stroke-width: var(--line-width-l);
 }
 
+[data-sev='0'] {
+  --c-sev-bg: var(--c-2);
+  --c-sev-fg: var(--c-15);
+}
+
+[data-sev='1'] {
+  --c-sev-bg: var(--c-15);
+  --c-sev-fg: var(--c-1);
+}
+
+[data-sev='2'] {
+  --c-sev-bg: var(--c-16);
+  --c-sev-fg: var(--c-1);
+}
+
+[data-sev='3'] {
+  --c-sev-bg: var(--c-5);
+  --c-sev-fg: var(--c-1);
+}
+
 .pip-background {
   fill: var(--c-sev-bg);
   stroke: none;
@@ -565,7 +594,11 @@ summary:hover,
   place-content: stretch;
   min-height: 0;
   padding: var(--sp-l) var(--sp-xl);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   text-align: left;
+  text-transform: none;
+  letter-spacing: var(--text-ls-tight);
 }
 
 .option:has(:focus-visible) {
@@ -585,7 +618,7 @@ summary:hover,
   padding: var(--sp-l) var(--sp-xl);
   font-size: var(--text-sm);
   text-align: left;
-  border-left: var(--line-width-l) solid var(--c-danger);
+  border-left: var(--line-width-l) solid var(--c-5);
 }
 
 .recommendation > code,
