@@ -515,15 +515,23 @@ summary:hover,
 
 .pip-group {
   cursor: pointer;
-  transition: transform var(--time);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.2s ease-out;
 }
 
 .pip-group:hover {
-  transform: translate(-0.5px, -0.5px);
+  transform: translate(-1px, -1px);
 }
 
 .pip-group.active {
-  transform: translate(-1.5px, -1.5px);
+  transform: translate(-2px, -2px);
+  animation: pip-pop 0.35s cubic-bezier(0.34, 1.6, 0.64, 1);
+}
+
+.pip-group.active .pip-background {
+  stroke: var(--c-5);
+  stroke-width: var(--line-width-m);
 }
 
 .pip-group:focus {
@@ -535,8 +543,28 @@ summary:hover,
   stroke-width: var(--line-width-m);
 }
 
+@keyframes pip-pop {
+  0% { transform: translate(0, 0) scale(0.92); }
+  55% { transform: translate(-3px, -3px) scale(1.12); }
+  100% { transform: translate(-2px, -2px) scale(1); }
+}
+
+.node-press-bg {
+  fill: oklch(96% 0.005 80 / 92%);
+  stroke: var(--c-5);
+  stroke-width: var(--line-width-s);
+  pointer-events: none;
+  animation: node-press-in 0.18s ease-out;
+}
+
 .node-press {
-  transition: opacity var(--time);
+  pointer-events: none;
+  animation: node-press-in 0.18s ease-out;
+}
+
+@keyframes node-press-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 [data-sev='0'] {

@@ -405,7 +405,10 @@ function app() {
         }
 
         if (this.pressedNode === b.key) {
-          s += `<text x="${cx}" y="${b.y + b.h / 2 - 5}" text-anchor="middle" class="node-label node-press">${escapeAttr(b.label)}</text>`;
+          const labelY = b.y + b.h / 2 - 5;
+          const labelW = Math.max(b.label.length * 7 + 12, 70);
+          s += `<rect x="${cx - labelW / 2}" y="${labelY - 12}" width="${labelW}" height="18" rx="2" class="node-press-bg"/>`;
+          s += `<text x="${cx}" y="${labelY}" text-anchor="middle" class="node-label node-press">${escapeAttr(b.label)}</text>`;
         }
 
         for (let i = 0; i < pipsCount; i++) {
@@ -456,13 +459,46 @@ function app() {
     },
 
     nodePressStart(e) {
-      const el = e.target.closest && e.target.closest('[data-node]');
+      const point = e.touches ? e.touches[0] : e;
+      const target = (e.touches ? e.touches[0].target : e.target) || e.target;
+      const el = target && target.closest && target.closest('[data-node]');
       if (!el) return;
-      const key = el.dataset.node;
-      if (this._pressTimer) clearTimeout(this._pressTimer);
+      const key = el.getAttribute && el.getAttribute('data-node');
+      if (!key) return;
+      this.nodePressEnd();
+      const startX = point.clientX || 0;
+      const startY = point.clientY || 0;
       this._pressTimer = setTimeout(() => {
         this.pressedNode = key;
-      }, 400);
+        this._pressTimer = null;
+      }, 350);
+      const release = () => {
+        window.removeEventListener('pointerup', release, true);
+        window.removeEventListener('pointercancel', release, true);
+        window.removeEventListener('touchend', release, true);
+        window.removeEventListener('touchcancel', release, true);
+        window.removeEventListener('pointermove', onMove, true);
+        window.removeEventListener('touchmove', onTouchMove, true);
+        this.nodePressEnd();
+      };
+      const onMove = (ev) => {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        if (dx * dx + dy * dy > 100) release();
+      };
+      const onTouchMove = (ev) => {
+        const t = ev.touches && ev.touches[0];
+        if (!t) return;
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        if (dx * dx + dy * dy > 100) release();
+      };
+      window.addEventListener('pointerup', release, true);
+      window.addEventListener('pointercancel', release, true);
+      window.addEventListener('touchend', release, true);
+      window.addEventListener('touchcancel', release, true);
+      window.addEventListener('pointermove', onMove, true);
+      window.addEventListener('touchmove', onTouchMove, true);
     },
 
     nodePressEnd() {
@@ -470,7 +506,7 @@ function app() {
         clearTimeout(this._pressTimer);
         this._pressTimer = null;
       }
-      this.pressedNode = null;
+      if (this.pressedNode !== null) this.pressedNode = null;
     },
   };
 }

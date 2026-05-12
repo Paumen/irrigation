@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -118,9 +118,9 @@
               @keydown.enter.prevent="pipFromEvent($event)"
               @keydown.space.prevent="pipFromEvent($event)"
               @pointerdown="nodePressStart($event)"
-              @pointerup="nodePressEnd()"
-              @pointerleave="nodePressEnd()"
-              @pointercancel="nodePressEnd()"
+              @touchstart="nodePressStart($event.touches[0])"
+              @touchend="nodePressEnd()"
+              @touchcancel="nodePressEnd()"
               x-html="renderDiagram()"
             ></g>
           </svg>
@@ -321,9 +321,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=5"></script>
-    <script src="icons.js?v=5"></script>
-    <script src="app.js?v=5"></script>
+    <script src="data.js?v=6"></script>
+    <script src="icons.js?v=6"></script>
+    <script src="app.js?v=6"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
