@@ -249,6 +249,7 @@ table {
   border-left: var(--line-passive);
 }
 
+tbody,
 tr {
   display: contents;
 }
@@ -302,11 +303,11 @@ input[type='radio'] {
 }
 
 input[type='radio']:hover {
-  border-color: var(--c-danger);
+  border-color: var(--c-5);
 }
 
 input[type='radio']:checked {
-  background: radial-gradient(circle, var(--c-danger) 0 4.5px, transparent 5px), var(--c-1);
+  background: radial-gradient(circle, var(--c-5) 0 4.5px, transparent 5px), var(--c-1);
   border: var(--line-active);
 }
 
@@ -352,7 +353,6 @@ p {
 /* ─── Buttons ─────────────────────────── */
 
 button,
-[role='button'],
 summary,
 .option {
   display: grid;
@@ -377,6 +377,10 @@ summary,
     box-shadow var(--time),
     transform var(--time),
     opacity var(--time);
+}
+
+[role='button'] {
+  cursor: pointer;
 }
 
 header > button,
@@ -410,7 +414,7 @@ footer > button {
 }
 
 button[aria-current],
-[role='button'][aria-current],
+summary[aria-current],
 .option:has(input[type='radio']:checked) {
   border-width: var(--line-width-m);
   font-weight: var(--font-weight-l);
@@ -418,6 +422,14 @@ button[aria-current],
 
 button[aria-pressed='true'],
 button.active {
+  border-width: var(--line-width-l);
+  font-weight: var(--font-weight-l);
+  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 currentColor;
+  transform: translate(-1px, -1px);
+}
+
+button:active:not(:disabled),
+summary:active {
   border-width: var(--line-width-l);
   font-weight: var(--font-weight-l);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 currentColor;
