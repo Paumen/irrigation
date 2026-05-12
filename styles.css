@@ -241,12 +241,14 @@ li {
 }
 
 summary {
-  padding: var(--sp-s) var(--sp-l);
+  display: list-item;
+  padding: var(--sp-s) var(--sp-l) var(--sp-s) var(--sp-xl);
   min-height: 0;
   font-size: var(--text-sm);
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
   text-align: left;
+  list-style-position: inside;
   border: none;
 }
 
