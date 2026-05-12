@@ -373,16 +373,11 @@ function app() {
       const cur = this.activeQuestionId;
       withTransition(() => {
         this.answers = { ...this.answers, [cur]: i };
-      });
-      setTimeout(() => {
-        if (this.activeQuestionId !== cur) return;
         const idx = QUESTIONS.findIndex((q) => q.id === cur);
         if (idx >= 0 && idx < QUESTIONS.length - 1) {
-          withTransition(() => {
-            this.activeQuestionId = QUESTIONS[idx + 1].id;
-          });
+          this.activeQuestionId = QUESTIONS[idx + 1].id;
         }
-      }, 360);
+      });
     },
 
     moveBy(d) {
