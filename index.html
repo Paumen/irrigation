@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=7" />
+    <link rel="stylesheet" href="styles.css?v=8" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -52,15 +52,15 @@
             </defs>
 
             <g data-flow="wifi">
-              <line x1="166" y1="36" x2="202" y2="36" class="line" />
-              <g transform="translate(177 33) scale(0.014583333333333334)">
+              <line x1="142" y1="36" x2="194" y2="36" class="line" />
+              <g transform="translate(160.5 33) scale(0.015625)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
               </g>
             </g>
 
             <g data-flow="ctrl">
-              <line x1="332" y1="36" x2="368" y2="36" class="line" marker-end="url(#arr-ctrl)" />
-              <path d="M 267 92 V 200 H 285" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="324" y1="36" x2="376" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <path d="M 259 92 V 200 H 285" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
               <g transform="translate(330 18) scale(0.625)">
@@ -69,54 +69,58 @@
               <text x="348" y="32" text-anchor="start" class="flow-label">24 V</text>
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(234 96) scale(0.625)">
+              <g transform="translate(226 96) scale(0.625)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="252" y="110" text-anchor="start" class="flow-label">24 V</text>
+              <text x="244" y="110" text-anchor="start" class="flow-label">24 V</text>
             </g>
 
             <line
               data-flow="mains"
-              x1="498"
+              x1="506"
               y1="36"
-              x2="534"
+              x2="558"
               y2="36"
               class="line"
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
-              <g transform="translate(493 27) scale(0.018)">
+              <g transform="translate(509 33) scale(0.015625)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="512" y="32" text-anchor="start" class="flow-label">230 V</text>
+              <text x="525" y="32" text-anchor="start" class="flow-label">230 V</text>
             </g>
 
             <g data-flow="water">
-              <path d="M 599 92 V 145 H 350 V 170" class="line" marker-end="url(#arr-water)" />
-              <path d="M 599 92 V 145 H 350 V 170" class="hose-highlight" />
+              <path d="M 623 92 V 145 H 350 V 170" class="line" marker-end="url(#arr-water)" />
+              <path d="M 623 92 V 145 H 350 V 170" class="hose-highlight" />
             </g>
             <g data-flow="water">
-              <g transform="translate(353 128) scale(0.6875)">
+              <g transform="translate(357 130) scale(0.625)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="372" y="144" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="375" y="144" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral">
-              <path d="M 311 242 V 290 H 101 V 340" class="line" marker-end="url(#arr-water)" />
-              <path d="M 337 242 V 305 H 267 V 340" class="line" marker-end="url(#arr-water)" />
-              <path d="M 363 242 V 305 H 433 V 340" class="line" marker-end="url(#arr-water)" />
-              <path d="M 389 242 V 290 H 599 V 340" class="line" marker-end="url(#arr-water)" />
-              <path d="M 311 242 V 290 H 101 V 340" class="hose-highlight" />
-              <path d="M 337 242 V 305 H 267 V 340" class="hose-highlight" />
-              <path d="M 363 242 V 305 H 433 V 340" class="hose-highlight" />
-              <path d="M 389 242 V 290 H 599 V 340" class="hose-highlight" />
+              <path d="M 311 242 V 290 H 77 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 337 242 V 305 H 259 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 363 242 V 305 H 441 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 389 242 V 290 H 623 V 340" class="line" marker-end="url(#arr-water)" />
+              <path d="M 311 242 V 290 H 77 V 340" class="hose-highlight" />
+              <path d="M 337 242 V 305 H 259 V 340" class="hose-highlight" />
+              <path d="M 363 242 V 305 H 441 V 340" class="hose-highlight" />
+              <path d="M 389 242 V 290 H 623 V 340" class="hose-highlight" />
             </g>
 
             <g
               @click="pipFromEvent($event)"
               @keydown.enter.prevent="pipFromEvent($event)"
               @keydown.space.prevent="pipFromEvent($event)"
+              @pointerdown="nodePressStart($event)"
+              @pointerup="nodePressEnd()"
+              @pointerleave="nodePressEnd()"
+              @pointercancel="nodePressEnd()"
               x-html="renderDiagram()"
             ></g>
           </svg>
@@ -210,9 +214,11 @@
             </div>
           </template>
 
-          <footer>
-            <button type="button" @click="moveBy(1)" :disabled="isLast">Next ›</button>
-          </footer>
+          <template x-if="activeQuestion.type === 'matrix'">
+            <footer>
+              <button type="button" @click="moveBy(1)" :disabled="isLast">Skip ›</button>
+            </footer>
+          </template>
         </form>
 
         <nav aria-label="Stages">
@@ -315,9 +321,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=4"></script>
-    <script src="icons.js?v=4"></script>
-    <script src="app.js?v=4"></script>
+    <script src="data.js?v=5"></script>
+    <script src="icons.js?v=5"></script>
+    <script src="app.js?v=5"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

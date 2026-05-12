@@ -37,7 +37,7 @@ const PIP_SIZE = 26;
 const NODES = [
   {
     key: 'sw',
-    x: 36,
+    x: 12,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -47,7 +47,7 @@ const NODES = [
   },
   {
     key: 'ctrl',
-    x: 202,
+    x: 194,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -57,7 +57,7 @@ const NODES = [
   },
   {
     key: 'relay',
-    x: 368,
+    x: 376,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -67,7 +67,7 @@ const NODES = [
   },
   {
     key: 'pump',
-    x: 534,
+    x: 558,
     y: 20,
     w: BOX_W,
     h: BOX_H,
@@ -87,7 +87,7 @@ const NODES = [
   },
   {
     key: 'sp1',
-    x: 36,
+    x: 12,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -97,7 +97,7 @@ const NODES = [
   },
   {
     key: 'sp2',
-    x: 202,
+    x: 194,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -107,7 +107,7 @@ const NODES = [
   },
   {
     key: 'sp3',
-    x: 368,
+    x: 376,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -117,7 +117,7 @@ const NODES = [
   },
   {
     key: 'sp4',
-    x: 534,
+    x: 558,
     y: 340,
     w: BOX_W,
     h: BOX_H,
@@ -128,19 +128,19 @@ const NODES = [
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R51', x: 461, y: 145 },
-  { rcId: 'R52', x: 487, y: 145 },
-  { rcId: 'R61', x: 241, y: 145 },
-  { rcId: 'R62', x: 267, y: 145 },
-  { rcId: 'R63', x: 293, y: 145 },
-  { rcId: 'R81', x: 193, y: 290 },
-  { rcId: 'R82', x: 219, y: 290 },
-  { rcId: 'R81', x: 289, y: 305 },
-  { rcId: 'R82', x: 315, y: 305 },
-  { rcId: 'R81', x: 385, y: 305 },
-  { rcId: 'R82', x: 411, y: 305 },
-  { rcId: 'R81', x: 481, y: 290 },
-  { rcId: 'R82', x: 507, y: 290 },
+  { rcId: 'R51', x: 473, y: 145 },
+  { rcId: 'R52', x: 500, y: 145 },
+  { rcId: 'R61', x: 233, y: 145 },
+  { rcId: 'R62', x: 259, y: 145 },
+  { rcId: 'R63', x: 285, y: 145 },
+  { rcId: 'R81', x: 181, y: 290 },
+  { rcId: 'R82', x: 207, y: 290 },
+  { rcId: 'R81', x: 285, y: 305 },
+  { rcId: 'R82', x: 311, y: 305 },
+  { rcId: 'R81', x: 389, y: 305 },
+  { rcId: 'R82', x: 415, y: 305 },
+  { rcId: 'R81', x: 493, y: 290 },
+  { rcId: 'R82', x: 519, y: 290 },
 ];
 
 const NODE_ICON_LAYOUT = {
@@ -201,6 +201,8 @@ function app() {
     answers: {},
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
+    pressedNode: null,
+    _pressTimer: null,
 
     iconTransform,
     nodeIconCx,
@@ -391,7 +393,7 @@ function app() {
         const groupX = b.x + (b.w - groupW) / 2;
         const fy = b.y + b.h - PIP_SIZE;
 
-        s += `<g>`;
+        s += `<g data-node="${b.key}">`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
         const layout = nodeIconLayout(b.icons.length);
@@ -402,13 +404,18 @@ function app() {
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
 
+        if (this.pressedNode === b.key) {
+          s += `<text x="${cx}" y="${b.y + b.h / 2 - 5}" text-anchor="middle" class="node-label node-press">${escapeAttr(b.label)}</text>`;
+        }
+
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
           const px = groupX + i * PIP_SIZE;
           const sv = this.sev(rcId);
           const isActive = this.activeRC === rcId;
+          const gCls = isActive ? 'pip-group active' : 'pip-group';
           const cls = isActive ? 'pip-background active' : 'pip-background';
-          s += `<g role="button" tabindex="0" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
+          s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
           s += `<rect x="${px}" y="${fy}" width="${PIP_SIZE}" height="${PIP_SIZE}" class="${cls}"/>`;
           s += `<text x="${px + PIP_SIZE / 2}" y="${fy + PIP_SIZE / 2 + 3.5}" text-anchor="middle" class="pip">${rcId}</text>`;
           if (isActive) {
@@ -431,10 +438,11 @@ function app() {
         const p = CONN_PIPS[i];
         const sv = this.sev(p.rcId);
         const isActive = this.activeRC === p.rcId;
+        const gCls = isActive ? 'pip-group active' : 'pip-group';
         const cls = isActive
           ? 'pip-background pip-background--connector active'
           : 'pip-background pip-background--connector';
-        s += `<g role="button" tabindex="0" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
+        s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
         s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
         s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId}</text>`;
         s += `</g>`;
@@ -445,6 +453,24 @@ function app() {
     pipFromEvent(e) {
       const el = e.target.closest && e.target.closest('[data-rc]');
       if (el) this.activeRC = el.dataset.rc;
+    },
+
+    nodePressStart(e) {
+      const el = e.target.closest && e.target.closest('[data-node]');
+      if (!el) return;
+      const key = el.dataset.node;
+      if (this._pressTimer) clearTimeout(this._pressTimer);
+      this._pressTimer = setTimeout(() => {
+        this.pressedNode = key;
+      }, 400);
+    },
+
+    nodePressEnd() {
+      if (this._pressTimer) {
+        clearTimeout(this._pressTimer);
+        this._pressTimer = null;
+      }
+      this.pressedNode = null;
     },
   };
 }

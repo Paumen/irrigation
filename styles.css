@@ -8,10 +8,10 @@
   --c-13: oklch(25.6% 0.043 268 / 10%);
   --c-15: oklch(25.6% 0.043 268 / 30%);
   --c-16: oklch(25.6% 0.043 268 / 60%);
-  --c-sand: oklch(89% 0.028 80);
-  --c-rust-1: oklch(72% 0.085 62);
-  --c-rust-2: oklch(54% 0.13 48);
-  --c-rust-3: oklch(36% 0.11 38);
+  --c-sand: oklch(93% 0.014 80);
+  --c-rust-1: oklch(82% 0.045 72);
+  --c-rust-2: oklch(58% 0.115 50);
+  --c-rust-3: oklch(38% 0.105 40);
   --c-hose: oklch(32% 0.05 220);
 
   /* ─── Typography ─────────────────────────────────── */
@@ -468,17 +468,30 @@ summary:hover,
 
 /* ─── stuff  ──────────────────────────────────── */
 
-.pip,
-.flow-label {
+.pip {
   font-family: var(--font-mono);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-l);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-m);
   pointer-events: none;
 }
 
 .flow-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-l);
   letter-spacing: var(--text-ls-tight);
   fill: currentcolor;
+  pointer-events: none;
+}
+
+.node-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-l);
+  letter-spacing: var(--text-ls-wide);
+  fill: var(--c-5);
+  text-transform: uppercase;
+  pointer-events: none;
 }
 
 .node-box {
@@ -498,6 +511,32 @@ summary:hover,
   fill: none;
   stroke: var(--c-5);
   stroke-width: var(--line-width-l);
+}
+
+.pip-group {
+  cursor: pointer;
+  transition: transform var(--time);
+}
+
+.pip-group:hover {
+  transform: translate(-0.5px, -0.5px);
+}
+
+.pip-group.active {
+  transform: translate(-1.5px, -1.5px);
+}
+
+.pip-group:focus {
+  outline: none;
+}
+
+.pip-group:focus-visible .pip-background {
+  stroke: var(--c-5);
+  stroke-width: var(--line-width-m);
+}
+
+.node-press {
+  transition: opacity var(--time);
 }
 
 [data-sev='0'] {
@@ -540,7 +579,7 @@ summary:hover,
 
 [data-flow] {
   color: var(--c-flow);
-  --line-flow-width: var(--line-width-m);
+  --line-flow-width: var(--line-width-l);
   --line-flow-dash: none;
   --c-flow: var(--c-5);
 }
@@ -557,10 +596,16 @@ summary:hover,
 
 [data-flow='ctrl'] {
   --c-flow: var(--c-rust-3);
+  --line-flow-width: 3px;
   --line-flow-dash: 6 3;
 }
 
+[data-flow='mains'] {
+  --line-flow-width: 3px;
+}
+
 [data-flow='wifi'] {
+  --line-flow-width: 2.5px;
   --line-flow-dash: 2 3;
 }
 
@@ -710,11 +755,15 @@ summary:hover,
 
 .bar {
   display: block;
-  height: var(--line-width-l);
+  height: 6px;
   margin: var(--line-width-s) 0 0;
   overflow: hidden;
   background: var(--c-2);
   border: var(--line-passive);
+}
+
+nav button > .bar {
+  height: var(--line-width-l);
 }
 
 .bar > span {
