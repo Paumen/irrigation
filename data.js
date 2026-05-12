@@ -33,6 +33,7 @@ window.DATA = {
       stage: 1,
       group: 'Component ages',
       text: 'Age of pump',
+      highlight: ['pump'],
       options: [
         { label: '0–4 yrs', effects: { R4: -0.2 } },
         { label: '4–8 yrs', effects: {} },
@@ -45,6 +46,7 @@ window.DATA = {
       stage: 1,
       group: 'Component ages',
       text: 'Age of valves (no replacements)',
+      highlight: ['valves'],
       options: [
         { label: '0–4 yrs', effects: { R71: -0.2, R72: -0.2, R73: -0.2 } },
         { label: '4–8 yrs', effects: { R71: 0.2, R72: 0.2, R73: 0.2 } },
@@ -57,6 +59,7 @@ window.DATA = {
       stage: 1,
       group: 'Component ages',
       text: 'Age of pump start relay',
+      highlight: ['relay'],
       options: [
         { label: '0–4 yrs', effects: { R3: -0.2 } },
         { label: '4–8 yrs', effects: {} },
@@ -69,6 +72,7 @@ window.DATA = {
       stage: 1,
       group: 'Component ages',
       text: 'Age of controller',
+      highlight: ['ctrl', 'sw', 'wifi'],
       options: [
         { label: '0–4 yrs', effects: { R12: -0.2, R22: -0.2, R23: -0.2 } },
         { label: '4–8 yrs', effects: {} },
@@ -81,6 +85,7 @@ window.DATA = {
       stage: 1,
       group: 'Component ages',
       text: 'Age of rotors / sprinklers',
+      highlight: ['sp1', 'sp2', 'sp3', 'sp4'],
       options: [
         { label: '0–4 yrs', effects: { R91: -0.2, R92: -0.12 } },
         { label: '4–8 yrs', effects: {} },
@@ -94,6 +99,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Scope of failure?',
+      highlight: ['sp1', 'sp2', 'sp3', 'sp4', 'valves'],
       options: [
         {
           label: 'All zones fail',
@@ -109,6 +115,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Same interface, same issue?',
+      highlight: ['sw', 'ctrl', 'wifi'],
       options: [
         { label: 'Manual works, app has issues', effects: { R11: 2, R13: 2 } },
         {
@@ -126,6 +133,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'How does water leave rotors?',
+      highlight: ['sp1', 'sp2', 'sp3', 'sp4', 'lateral'],
       options: [
         {
           label: 'No water',
@@ -185,6 +193,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Do you hear the pump start?',
+      highlight: ['pump'],
       options: [
         {
           label: 'Pump runs',
@@ -198,6 +207,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'If pump runs, does manual hose work?',
+      highlight: ['pump', 'water'],
       options: [
         {
           label: 'Strong, steady',
@@ -212,6 +222,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Pump behavior on start?',
+      highlight: ['pump'],
       options: [
         { label: 'Smooth, builds pressure', effects: { R42: -0.5 } },
         {
@@ -227,6 +238,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Do you see water / wet ground?',
+      highlight: ['water', 'lateral', 'valves'],
       options: [
         { label: 'Along the main line route', effects: { R51: 2 } },
         { label: 'Around a valve box', effects: { R73: 2, R74: 2 } },
@@ -242,6 +254,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'What do you hear when valve activates?',
+      highlight: ['valves', 'ctrl'],
       options: [
         { label: 'Clear click', effects: { R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 } },
         { label: 'Buzz / hum, no click', effects: { R71: 1, R6: 1 } },
@@ -257,6 +270,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Manual solenoid bleed — zone runs?',
+      highlight: ['valves'],
       options: [
         { label: 'Yes, zone runs', effects: { R6: 0.6, R71: 0.6 } },
         {
@@ -303,6 +317,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Zone behavior over the run cycle?',
+      highlight: ['valves', 'sp1', 'sp2', 'sp3', 'sp4', 'lateral'],
       options: [
         { label: 'Strong at start, fades', effects: { R52: 0.4, R82: 0.4, R41: 0.4 } },
         { label: 'Weak start to finish', effects: { R4: 0.2, R72: 0.2, R81: 0.2 } },
@@ -316,6 +331,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Did restarting the controller help?',
+      highlight: ['ctrl', 'sw'],
       options: [
         { label: 'Briefly fixed', effects: { R12: 0.6, R13: 0.6, R23: 0.6 } },
         { label: 'No effect', effects: { R1: -0.2, R2: -0.2 } },
@@ -326,6 +342,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Did restarting the pump help?',
+      highlight: ['pump', 'relay'],
       options: [
         { label: 'Briefly fixed', effects: { R42: 0.4, R31: 0.4 } },
         { label: 'No effect', effects: { R42: -0.2 } },
@@ -402,6 +419,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Flow meter reads 1.0–3.0?',
+      highlight: ['pump', 'water'],
       options: [
         { label: 'Yes (in range)', effects: { R4: -0.4, R5: -0.4 } },
         { label: 'No (out of range)', effects: { R4: 0.2, R5: 0.2 } },
@@ -412,6 +430,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Zone terminal voltage during call (~24 VAC)?',
+      highlight: ['ctrl', 'valves'],
       options: [
         { label: '~24 VAC present', effects: { R7: 0.4, R22: -0.4, R6: -0.4 } },
         { label: '0 V', effects: { R22: 0.6, R63: 0.6, R11: 0.6 } },
@@ -423,6 +442,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Mains voltage at controller outlet?',
+      highlight: ['ctrl', 'mains'],
       options: [
         { label: 'Normal (~230 VAC)', effects: { R22: -0.4 } },
         { label: 'Low or absent', effects: { R22: 1.6 } },
@@ -434,6 +454,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
+      highlight: ['valves'],
       options: [
         { label: 'In range', effects: { R71: -0.4, R72: 0.2, R73: 0.2, R74: 0.2 } },
         { label: 'Open / infinite', effects: { R71: 1.6 } },
@@ -446,6 +467,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Common-wire continuity controller→valves?',
+      highlight: ['ctrl', 'valves'],
       options: [
         { label: 'Continuous, low resistance', effects: { R62: -0.4 } },
         { label: 'Open or high resistance', effects: { R62: 1.6 } },
@@ -457,6 +479,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: '24 VAC at controller pump/master terminal during call?',
+      highlight: ['ctrl', 'relay'],
       options: [
         { label: "24V present, relay won't pull", effects: { R31: 0.6 } },
         { label: '0 V', effects: { R22: 0.6, R11: 0.6 } },
@@ -468,6 +491,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Controller board visual check?',
+      highlight: ['ctrl'],
       options: [
         { label: 'Looks fine', effects: { R22: -0.2 } },
         { label: 'Corrosion / burn marks', effects: { R22: 1 } },
@@ -478,6 +502,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Dig & inspect hoses for damage?',
+      highlight: ['water', 'lateral'],
       options: [
         { label: 'Damage found', effects: { R51: 1, R81: 1 } },
         { label: 'No damage', effects: { R51: -0.4, R81: -0.4 } },
@@ -488,6 +513,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Open each valve and inspect internals?',
+      highlight: ['valves'],
       options: [
         { label: 'Intact, no debris', effects: { R72: -0.4, R73: -0.4 } },
         { label: 'Damaged or debris', effects: { R72: 1, R73: 0.6 } },
@@ -498,6 +524,7 @@ window.DATA = {
       stage: 4,
       group: 'Hard tests',
       text: 'Swap valve with known-good — issue stays with zone?',
+      highlight: ['valves'],
       options: [
         { label: 'Yes (stays with zone)', effects: { R7: -0.6, R6: 0.6, R8: 0.6 } },
         { label: 'No (follows the valve)', effects: { R7: 1.6 } },

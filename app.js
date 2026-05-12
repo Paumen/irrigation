@@ -152,11 +152,25 @@ const NODE_ICON_LAYOUT = {
 
 const STAGE_LABELS = ['', 'Ages', 'Symptoms', 'Events', 'Tests'];
 
-function severityLevel(pct) {
-  if (pct < 4) return 0;
-  if (pct < 8) return 1;
-  if (pct < 15) return 2;
-  return 3;
+function severityT(pct) {
+  return Math.max(0, Math.min(1, pct / 20));
+}
+
+function severityTFg(pct) {
+  return Math.max(0, Math.min(1, (pct - 6.5) / 3));
+}
+
+function withTransition(fn) {
+  const reduce =
+    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || reduce) {
+    fn();
+    return;
+  }
+  document.startViewTransition(async () => {
+    fn();
+    await new Promise((r) => requestAnimationFrame(r));
+  });
 }
 
 function iconTransform(name, cx, cy, size) {
@@ -205,7 +219,8 @@ function app() {
 
     iconTransform,
     nodeIconCx,
-    severityLevel,
+    severityT,
+    severityTFg,
 
     get scores() {
       const s = {};
@@ -317,8 +332,19 @@ function app() {
       return this.ranked.slice(5);
     },
 
-    sev(rcId) {
-      return severityLevel(this.severityPct[rcId] || 0);
+    sevT(rcId) {
+      return severityT(this.severityPct[rcId] || 0);
+    },
+    sevTFg(rcId) {
+      return severityTFg(this.severityPct[rcId] || 0);
+    },
+
+    get activeHighlights() {
+      return this.activeQuestion?.highlight || [];
+    },
+
+    isHighlighted(key) {
+      return this.activeHighlights.includes(key);
     },
 
     isAnswered(qid) {
@@ -335,20 +361,26 @@ function app() {
 
     setMatrixCell(rowId, colId) {
       const qid = this.activeQuestionId;
-      this.answers = {
-        ...this.answers,
-        [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
-      };
+      withTransition(() => {
+        this.answers = {
+          ...this.answers,
+          [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
+        };
+      });
     },
 
     handleAnswer(i) {
       const cur = this.activeQuestionId;
-      this.answers = { ...this.answers, [cur]: i };
+      withTransition(() => {
+        this.answers = { ...this.answers, [cur]: i };
+      });
       setTimeout(() => {
         if (this.activeQuestionId !== cur) return;
         const idx = QUESTIONS.findIndex((q) => q.id === cur);
         if (idx >= 0 && idx < QUESTIONS.length - 1) {
-          this.activeQuestionId = QUESTIONS[idx + 1].id;
+          withTransition(() => {
+            this.activeQuestionId = QUESTIONS[idx + 1].id;
+          });
         }
       }, 720);
     },
@@ -356,18 +388,31 @@ function app() {
     moveBy(d) {
       const idx = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
       const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + d))];
-      this.activeQuestionId = next.id;
+      withTransition(() => {
+        this.activeQuestionId = next.id;
+      });
     },
 
     pickStage(s) {
       const first = QUESTIONS.find((q) => q.stage === s);
-      if (first) this.activeQuestionId = first.id;
+      if (first)
+        withTransition(() => {
+          this.activeQuestionId = first.id;
+        });
+    },
+
+    goTo(qid) {
+      withTransition(() => {
+        this.activeQuestionId = qid;
+      });
     },
 
     doReset() {
-      this.answers = {};
-      this.activeRC = null;
-      this.activeQuestionId = QUESTIONS[0].id;
+      withTransition(() => {
+        this.answers = {};
+        this.activeRC = null;
+        this.activeQuestionId = QUESTIONS[0].id;
+      });
     },
 
     stagePct(s) {
@@ -384,15 +429,17 @@ function app() {
 
     renderDiagram() {
       const ICONS = window.ICONS;
+      const highlights = this.activeHighlights;
       let s = '';
       for (const b of NODES) {
-        const cx = b.x + b.w / 2;
         const pipsCount = b.pips.length;
         const groupW = pipsCount * PIP_SIZE;
         const groupX = b.x + (b.w - groupW) / 2;
         const fy = b.y + b.h - PIP_SIZE;
 
-        s += `<g data-node="${b.key}">`;
+        const isHigh = highlights.includes(b.key);
+        const nodeCls = isHigh ? 'node-group highlight' : 'node-group';
+        s += `<g data-node="${b.key}" class="${nodeCls}">`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
         const layout = nodeIconLayout(b.icons.length);
@@ -406,13 +453,15 @@ function app() {
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
           const px = groupX + i * PIP_SIZE;
-          const sv = this.sev(rcId);
+          const tBg = this.sevT(rcId).toFixed(3);
+          const tFg = this.sevTFg(rcId).toFixed(3);
           const isActive = this.activeRC === rcId;
           const justActive = this.recentRC === rcId;
           const gCls =
             (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
           const cls = isActive ? 'pip-background active' : 'pip-background';
-          s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}" data-sev="${sv}">`;
+          const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
+          s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
           s += `<rect x="${px}" y="${fy}" width="${PIP_SIZE}" height="${PIP_SIZE}" class="${cls}"/>`;
           s += `<text x="${px + PIP_SIZE / 2}" y="${fy + PIP_SIZE / 2 + 3.5}" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
           if (isActive) {
@@ -433,7 +482,8 @@ function app() {
 
       for (let i = 0; i < CONN_PIPS.length; i++) {
         const p = CONN_PIPS[i];
-        const sv = this.sev(p.rcId);
+        const tBg = this.sevT(p.rcId).toFixed(3);
+        const tFg = this.sevTFg(p.rcId).toFixed(3);
         const isActive = this.activeRC === p.rcId;
         const justActive = this.recentRC === p.rcId;
         const gCls =
@@ -441,7 +491,8 @@ function app() {
         const cls = isActive
           ? 'pip-background pip-background--connector active'
           : 'pip-background pip-background--connector';
-        s += `<g role="button" tabindex="0" class="${gCls}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}" data-sev="${sv}">`;
+        const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
+        s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}">`;
         s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
         s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId.replace(/^R/, '')}</text>`;
         s += `</g>`;

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=15" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -51,7 +51,7 @@
               ></marker>
             </defs>
 
-            <g data-flow="wifi">
+            <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
               <line x1="142" y1="36" x2="194" y2="36" class="line" />
               <g transform="translate(160.5 33) scale(0.015625)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
@@ -82,6 +82,7 @@
               x2="558"
               y2="36"
               class="line"
+              :class="isHighlighted('mains') ? 'flow-highlight' : ''"
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
@@ -91,7 +92,7 @@
               <text x="525" y="32" text-anchor="start" class="flow-label">230V</text>
             </g>
 
-            <g data-flow="water">
+            <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
               <path d="M 623 92 V 145 H 350 V 170" class="line" marker-end="url(#arr-water)" />
               <path d="M 623 92 V 145 H 350 V 170" class="hose-highlight" />
             </g>
@@ -102,7 +103,7 @@
               <text x="375" y="144" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
-            <g data-flow="lateral">
+            <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
               <path d="M 311 242 V 290 H 77 V 340" class="line" marker-end="url(#arr-water)" />
               <path d="M 337 242 V 305 H 259 V 340" class="line" marker-end="url(#arr-water)" />
               <path d="M 363 242 V 305 H 441 V 340" class="line" marker-end="url(#arr-water)" />
@@ -246,7 +247,7 @@
                 type="button"
                 class="rank-row"
                 :class="activeRC === r.id ? 'active' : ''"
-                :data-sev="severityLevel(rankPct(r))"
+                :style="`view-transition-name: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                 @click="activeRC = r.id"
               >
                 <code x-text="r.id"></code>
@@ -267,7 +268,7 @@
                     type="button"
                     class="rank-row"
                     :class="activeRC === r.id ? 'active' : ''"
-                    :data-sev="severityLevel(rankPct(r))"
+                    :style="`view-transition-name: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                     @click="activeRC = r.id"
                   >
                     <code x-text="r.id"></code>
@@ -291,7 +292,7 @@
           <ol>
             <template x-for="rec in recommendations" :key="rec.q.id">
               <li>
-                <button type="button" class="recommendation" @click="activeQuestionId = rec.q.id">
+                <button type="button" class="recommendation" @click="goTo(rec.q.id)">
                   <span class="stage" x-text="STAGE_LABELS[rec.q.stage]"></span>
                   <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                   <span class="recommendation-text" x-text="rec.q.text"></span>
@@ -320,9 +321,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=11"></script>
+    <script src="data.js?v=12"></script>
     <script src="icons.js?v=11"></script>
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
