@@ -139,17 +139,18 @@ header h2 {
 .section-title--bar button {
   width: auto;
   min-height: 0;
-  padding: var(--sp-s) var(--sp-l);
+  height: 1.9em;
+  padding: 0 var(--sp-l);
   font-size: var(--text-sm);
+  line-height: 1;
   border-color: currentColor;
   color: inherit;
   background: transparent;
 }
 
 .section-title--bar button[data-shape='square'] {
+  width: 1.9em;
   padding: 0;
-  width: calc(var(--sp-xxl) - 4px);
-  aspect-ratio: 1 / 1;
 }
 
 .section-title--bar button:hover:not(:disabled) {
