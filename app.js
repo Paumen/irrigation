@@ -435,7 +435,9 @@ function app() {
         const p = CONN_PIPS[i];
         const sv = this.sev(p.rcId);
         const isActive = this.activeRC === p.rcId;
-        const gCls = isActive ? 'pip-group active' : 'pip-group';
+        const justActive = this.recentRC === p.rcId;
+        const gCls =
+          (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
         const cls = isActive
           ? 'pip-background pip-background--connector active'
           : 'pip-background pip-background--connector';
