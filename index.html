@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=17" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -51,15 +51,15 @@
               ></marker>
             </defs>
 
-            <g data-flow="wifi">
-              <line x1="142" y1="36" x2="285" y2="36" class="line" />
+            <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
+              <line x1="132" y1="36" x2="295" y2="36" class="line" />
               <g transform="translate(206 33) scale(0.015625)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
               </g>
             </g>
 
             <g data-flow="ctrl">
-              <line x1="415" y1="36" x2="558" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="405" y1="36" x2="568" y2="36" class="line" marker-end="url(#arr-ctrl)" />
               <line x1="350" y1="92" x2="350" y2="180" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
@@ -82,6 +82,7 @@
               x2="623"
               y2="180"
               class="line"
+              :class="isHighlighted('mains') ? 'flow-highlight' : ''"
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
@@ -91,9 +92,9 @@
               <text x="586" y="110" text-anchor="start" class="flow-label">230V</text>
             </g>
 
-            <g data-flow="water">
-              <line x1="558" y1="239" x2="415" y2="239" class="line" marker-end="url(#arr-water)" />
-              <line x1="558" y1="239" x2="415" y2="239" class="hose-highlight" />
+            <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
+              <line x1="568" y1="239" x2="405" y2="239" class="line" marker-end="url(#arr-water)" />
+              <line x1="568" y1="239" x2="405" y2="239" class="hose-highlight" />
             </g>
             <g data-flow="water">
               <g transform="translate(417 224) scale(0.625)">
@@ -102,9 +103,9 @@
               <text x="435" y="238" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
-            <g data-flow="lateral">
-              <line x1="285" y1="239" x2="142" y2="239" class="line" marker-end="url(#arr-water)" />
-              <line x1="285" y1="239" x2="142" y2="239" class="hose-highlight" />
+            <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
+              <line x1="295" y1="239" x2="132" y2="239" class="line" marker-end="url(#arr-water)" />
+              <line x1="295" y1="239" x2="132" y2="239" class="hose-highlight" />
             </g>
 
             <g
@@ -240,7 +241,7 @@
                 type="button"
                 class="rank-row"
                 :class="activeRC === r.id ? 'active' : ''"
-                :data-sev="severityLevel(rankPct(r))"
+                :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                 @click="activeRC = r.id"
               >
                 <code x-text="r.id"></code>
@@ -261,7 +262,7 @@
                     type="button"
                     class="rank-row"
                     :class="activeRC === r.id ? 'active' : ''"
-                    :data-sev="severityLevel(rankPct(r))"
+                    :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                     @click="activeRC = r.id"
                   >
                     <code x-text="r.id"></code>
@@ -285,7 +286,7 @@
           <ol>
             <template x-for="rec in recommendations" :key="rec.q.id">
               <li>
-                <button type="button" class="recommendation" @click="activeQuestionId = rec.q.id">
+                <button type="button" class="recommendation" @click="goTo(rec.q.id)">
                   <span class="stage" x-text="STAGE_LABELS[rec.q.stage]"></span>
                   <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                   <span class="recommendation-text" x-text="rec.q.text"></span>
@@ -314,9 +315,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=11"></script>
+    <script src="data.js?v=12"></script>
     <script src="icons.js?v=11"></script>
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=14"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
