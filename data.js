@@ -213,7 +213,7 @@ window.DATA = {
       group: 'Symptoms',
       text: 'Pump behavior on start?',
       options: [
-        { label: 'Starts smoothly, builds pressure', effects: { R42: -0.5 } },
+        { label: 'Smooth, builds pressure', effects: { R42: -0.5 } },
         {
           label: "Starts but won't build pressure",
           effects: { R41: 0.6, R51: 0.6, R42: 0.6 },
@@ -256,7 +256,7 @@ window.DATA = {
       id: 'Q9',
       stage: 2,
       group: 'Symptoms',
-      text: 'Manually open valve at solenoid does zone run correctly?',
+      text: 'Manual solenoid bleed — zone runs?',
       options: [
         { label: 'Yes, zone runs', effects: { R6: 0.6, R71: 0.6 } },
         {
@@ -337,7 +337,7 @@ window.DATA = {
       stage: 3,
       type: 'matrix',
       group: 'Events',
-      text: 'Recent service or work — for each, how did the issue relate to it?',
+      text: 'Recent service or work — relation to issue?',
       columns: [
         { id: 'no', label: 'N/A', mult: 0.0 },
         { id: 'right', label: 'Started right after', mult: 1.0 },
@@ -370,7 +370,7 @@ window.DATA = {
       stage: 3,
       type: 'matrix',
       group: 'Events',
-      text: 'External events — for each, how did the issue relate to it?',
+      text: 'External events — relation to issue?',
       columns: [
         { id: 'no', label: 'N/A', mult: 0.0 },
         { id: 'right', label: 'Started right after', mult: 1.0 },
@@ -411,7 +411,7 @@ window.DATA = {
       id: 'D2',
       stage: 4,
       group: 'Hard tests',
-      text: 'Multimeter at zone terminal during call (~24 VAC zone-to-common)?',
+      text: 'Zone terminal voltage during call (~24 VAC)?',
       options: [
         { label: '~24 VAC present', effects: { R7: 0.4, R22: -0.4, R6: -0.4 } },
         { label: '0 V', effects: { R22: 0.6, R63: 0.6, R11: 0.6 } },
@@ -438,7 +438,7 @@ window.DATA = {
         { label: 'In range', effects: { R71: -0.4, R72: 0.2, R73: 0.2, R74: 0.2 } },
         { label: 'Open / infinite', effects: { R71: 1.6 } },
         { label: 'Near zero / very low', effects: { R71: 1.6 } },
-        { label: 'Fine at coil, bad at controller', effects: { R61: 1.6 } },
+        { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
       ],
     },
     {
@@ -458,9 +458,9 @@ window.DATA = {
       group: 'Hard tests',
       text: '24 VAC at controller pump/master terminal during call?',
       options: [
-        { label: '~24 VAC, relay does not pull in', effects: { R31: 0.6 } },
+        { label: "24V present, relay won't pull", effects: { R31: 0.6 } },
         { label: '0 V', effects: { R22: 0.6, R11: 0.6 } },
-        { label: 'Voltage present, relay clicks, no 230V', effects: { R31: 0.6 } },
+        { label: '24V in, clicks, no 230V out', effects: { R31: 0.6 } },
       ],
     },
     {
@@ -470,7 +470,7 @@ window.DATA = {
       text: 'Controller board visual check?',
       options: [
         { label: 'Looks fine', effects: { R22: -0.2 } },
-        { label: 'Not fine (corrosion, burn marks)', effects: { R22: 1 } },
+        { label: 'Corrosion / burn marks', effects: { R22: 1 } },
       ],
     },
     {
@@ -497,7 +497,7 @@ window.DATA = {
       id: 'D10',
       stage: 4,
       group: 'Hard tests',
-      text: 'Swap suspect valve with known-good — does problem stay with the zone?',
+      text: 'Swap valve with known-good — issue stays with zone?',
       options: [
         { label: 'Yes (stays with zone)', effects: { R7: -0.6, R6: 0.6, R8: 0.6 } },
         { label: 'No (follows the valve)', effects: { R7: 1.6 } },
@@ -505,3 +505,4 @@ window.DATA = {
     },
   ],
 };
+ 
