@@ -468,10 +468,11 @@ function app() {
       this.nodePressEnd();
       const startX = point.clientX || 0;
       const startY = point.clientY || 0;
+      const MOVE_LIMIT_SQ = 900;
       this._pressTimer = setTimeout(() => {
         this.pressedNode = key;
         this._pressTimer = null;
-      }, 350);
+      }, 280);
       const release = () => {
         window.removeEventListener('pointerup', release, true);
         window.removeEventListener('pointercancel', release, true);
@@ -482,16 +483,16 @@ function app() {
         this.nodePressEnd();
       };
       const onMove = (ev) => {
-        const dx = ev.clientX - startX;
-        const dy = ev.clientY - startY;
-        if (dx * dx + dy * dy > 100) release();
+        const dx = (ev.clientX || 0) - startX;
+        const dy = (ev.clientY || 0) - startY;
+        if (dx * dx + dy * dy > MOVE_LIMIT_SQ) release();
       };
       const onTouchMove = (ev) => {
         const t = ev.touches && ev.touches[0];
         if (!t) return;
         const dx = t.clientX - startX;
         const dy = t.clientY - startY;
-        if (dx * dx + dy * dy > 100) release();
+        if (dx * dx + dy * dy > MOVE_LIMIT_SQ) release();
       };
       window.addEventListener('pointerup', release, true);
       window.addEventListener('pointercancel', release, true);

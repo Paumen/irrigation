@@ -515,18 +515,10 @@ summary:hover,
 
 .pip-group {
   cursor: pointer;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform 0.2s ease-out;
 }
 
 .pip-group:hover {
-  transform: translate(-1px, -1px);
-}
-
-.pip-group.active {
-  transform: translate(-2px, -2px);
-  animation: pip-pop 0.35s cubic-bezier(0.34, 1.6, 0.64, 1);
+  filter: brightness(0.95);
 }
 
 .pip-group.active .pip-background {
@@ -541,12 +533,6 @@ summary:hover,
 .pip-group:focus-visible .pip-background {
   stroke: var(--c-5);
   stroke-width: var(--line-width-m);
-}
-
-@keyframes pip-pop {
-  0% { transform: translate(0, 0) scale(0.92); }
-  55% { transform: translate(-3px, -3px) scale(1.12); }
-  100% { transform: translate(-2px, -2px) scale(1); }
 }
 
 .node-press-bg {
