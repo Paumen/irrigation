@@ -85,7 +85,7 @@ window.DATA = {
       stage: 1,
       group: 'Component ages',
       text: 'Age of rotors / sprinklers',
-      highlight: ['sp1', 'sp2', 'sp3', 'sp4'],
+      highlight: ['sp4'],
       options: [
         { label: '0–4 yrs', effects: { R91: -0.2, R92: -0.12 } },
         { label: '4–8 yrs', effects: {} },
@@ -99,7 +99,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Scope of failure?',
-      highlight: ['sp1', 'sp2', 'sp3', 'sp4', 'valves'],
+      highlight: ['sp4', 'valves'],
       options: [
         {
           label: 'All zones fail',
@@ -133,7 +133,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'How does water leave rotors?',
-      highlight: ['sp1', 'sp2', 'sp3', 'sp4', 'lateral'],
+      highlight: ['sp4', 'lateral'],
       options: [
         {
           label: 'No water',
@@ -317,7 +317,7 @@ window.DATA = {
       stage: 2,
       group: 'Symptoms',
       text: 'Zone behavior over the run cycle?',
-      highlight: ['valves', 'sp1', 'sp2', 'sp3', 'sp4', 'lateral'],
+      highlight: ['valves', 'sp4', 'lateral'],
       options: [
         { label: 'Strong at start, fades', effects: { R52: 0.4, R82: 0.4, R41: 0.4 } },
         { label: 'Weak start to finish', effects: { R4: 0.2, R72: 0.2, R81: 0.2 } },
