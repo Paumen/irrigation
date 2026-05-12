@@ -68,7 +68,7 @@ const NODES = [
   {
     key: 'sp4',
     x: 12,
-    y: 300,
+    y: 180,
     w: BOX_W,
     h: BOX_H,
     label: 'SPRINKLER',
@@ -78,7 +78,7 @@ const NODES = [
   {
     key: 'valves',
     x: 285,
-    y: 300,
+    y: 180,
     w: BOX_W,
     h: BOX_H,
     label: 'VALVES',
@@ -88,7 +88,7 @@ const NODES = [
   {
     key: 'pump',
     x: 558,
-    y: 300,
+    y: 180,
     w: BOX_W,
     h: BOX_H,
     label: 'PUMP',
@@ -98,13 +98,13 @@ const NODES = [
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R51', x: 473, y: 336 },
-  { rcId: 'R52', x: 500, y: 336 },
-  { rcId: 'R61', x: 350, y: 165 },
-  { rcId: 'R62', x: 350, y: 192 },
-  { rcId: 'R63', x: 350, y: 219 },
-  { rcId: 'R81', x: 200, y: 336 },
-  { rcId: 'R82', x: 227, y: 336 },
+  { rcId: 'R51', x: 473, y: 239 },
+  { rcId: 'R52', x: 500, y: 239 },
+  { rcId: 'R61', x: 350, y: 109 },
+  { rcId: 'R62', x: 350, y: 136 },
+  { rcId: 'R63', x: 350, y: 163 },
+  { rcId: 'R81', x: 200, y: 239 },
+  { rcId: 'R82', x: 227, y: 239 },
 ];
 
 const NODE_ICON_LAYOUT = {
