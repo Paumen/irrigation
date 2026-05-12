@@ -1,4 +1,4 @@
-window.DATA = {
+DATA = {
   causes: [
     { id: 'R11', parent: 'R1', baseline: 0.8, label: 'Misconfiguration' },
     { id: 'R12', parent: 'R1', baseline: 0.9, label: 'App failure (bug, corruption)' },
@@ -35,10 +35,10 @@ window.DATA = {
       text: 'Age of pump',
       highlight: ['pump'],
       options: [
-        { label: '0–4 yrs', effects: { R4: -0.2 } },
+        { label: '0–4 yrs', effects: { R41: -0.2, R42: -0.2 } },
         { label: '4–8 yrs', effects: {} },
-        { label: '8–12 yrs', effects: { R4: 0.2 } },
-        { label: '12+ yrs', effects: { R4: 0.4 } },
+        { label: '8–12 yrs', effects: { R41: 0.2, R42: 0.2 } },
+        { label: '12+ yrs', effects: { R41: 0.4, R42: 0.4 } },
       ],
     },
     {
@@ -61,10 +61,10 @@ window.DATA = {
       text: 'Age of pump start relay',
       highlight: ['relay'],
       options: [
-        { label: '0–4 yrs', effects: { R3: -0.2 } },
+        { label: '0–4 yrs', effects: { R31: -0.2 } },
         { label: '4–8 yrs', effects: {} },
-        { label: '8–12 yrs', effects: { R3: 0.2 } },
-        { label: '12+ yrs', effects: { R3: 0.4 } },
+        { label: '8–12 yrs', effects: { R31: 0.2 } },
+        { label: '12+ yrs', effects: { R31: 0.4 } },
       ],
     },
     {
@@ -103,11 +103,32 @@ window.DATA = {
       options: [
         {
           label: 'All zones fail',
-          effects: { R1: 0.2, R2: 0.2, R3: 0.2, R4: 0.2, R5: 0.2 },
+          effects: {
+            R11: 0.2, R12: 0.2, R13: 0.2,
+            R22: 0.2, R23: 0.2,
+            R31: 0.2,
+            R41: 0.2, R42: 0.2,
+            R51: 0.2, R52: 0.2,
+          },
         },
-        { label: 'Multiple zones (not all)', effects: { R5: 0.2, R62: 0.2, R4: 0.2 } },
-        { label: 'Single zone', effects: { R61: 0.2, R63: 0.2, R7: 0.2, R8: 0.2 } },
-        { label: 'One sprinkler', effects: { R9: 2 } },
+        {
+          label: 'Multiple zones (not all)',
+          effects: {
+            R51: 0.2, R52: 0.2,
+            R62: 0.2,
+            R41: 0.2, R42: 0.2,
+          },
+        },
+        {
+          label: 'Single zone',
+          effects: {
+            R61: 0.2,
+            R63: 0.2,
+            R71: 0.2, R72: 0.2, R73: 0.2, R74: 0.2,
+            R81: 0.2, R82: 0.2,
+          },
+        },
+        { label: 'One sprinkler', effects: { R91: 2, R92: 2 } },
       ],
     },
     {
@@ -120,11 +141,17 @@ window.DATA = {
         { label: 'Manual works, app has issues', effects: { R11: 2, R13: 2 } },
         {
           label: 'Yes — nothing starts at all',
-          effects: { R2: 0.2, R3: 0.2, R63: 0.2 },
+          effects: { R22: 0.2, R23: 0.2, R31: 0.2, R63: 0.2 },
         },
         {
           label: 'Yes — both start something',
-          effects: { R4: 0.2, R5: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
+          effects: {
+            R41: 0.2, R42: 0.2,
+            R51: 0.2, R52: 0.2,
+            R71: 0.2, R72: 0.2, R73: 0.2, R74: 0.2,
+            R81: 0.2, R82: 0.2,
+            R91: 0.2, R92: 0.2,
+          },
         },
       ],
     },
@@ -137,7 +164,14 @@ window.DATA = {
       options: [
         {
           label: 'No water',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R42: 0.6, R6: 0.6, R71: 0.6 },
+          effects: {
+            R11: 0.6, R12: 0.6, R13: 0.6,
+            R22: 0.6, R23: 0.6,
+            R31: 0.6,
+            R42: 0.6,
+            R61: 0.6, R62: 0.6, R63: 0.6,
+            R71: 0.6,
+          },
         },
         {
           label: 'Weak',
@@ -145,7 +179,7 @@ window.DATA = {
             R41: 0.2,
             R42: 0.2,
             R52: 0.2,
-            R6: 0.2,
+            R61: 0.2, R62: 0.2, R63: 0.2,
             R72: 0.2,
             R74: 0.2,
             R82: 0.2,
@@ -177,13 +211,13 @@ window.DATA = {
         {
           label: 'Normal',
           effects: {
-            R1: 0.6,
-            R4: -0.4,
-            R5: -0.4,
-            R6: -0.4,
-            R7: -0.4,
-            R8: -0.4,
-            R9: -0.4,
+            R11: 0.6, R12: 0.6, R13: 0.6,
+            R41: -0.4, R42: -0.4,
+            R51: -0.4, R52: -0.4,
+            R61: -0.4, R62: -0.4, R63: -0.4,
+            R71: -0.4, R72: -0.4, R73: -0.4, R74: -0.4,
+            R81: -0.4, R82: -0.4,
+            R91: -0.4, R92: -0.4,
           },
         },
       ],
@@ -197,9 +231,23 @@ window.DATA = {
       options: [
         {
           label: 'Pump runs',
-          effects: { R4: 0.2, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
+          effects: {
+            R41: 0.2, R42: 0.2,
+            R51: 0.2, R52: 0.2,
+            R61: 0.2, R62: 0.2, R63: 0.2,
+            R71: 0.2, R72: 0.2, R73: 0.2, R74: 0.2,
+            R81: 0.2, R82: 0.2,
+            R91: 0.2, R92: 0.2,
+          },
         },
-        { label: 'Pump silent / hums', effects: { R31: 1, R42: 1, R1: 1, R2: 1 } },
+        {
+          label: 'Pump silent / hums',
+          effects: {
+            R31: 1, R42: 1,
+            R11: 1, R12: 1, R13: 1,
+            R22: 1, R23: 1,
+          },
+        },
       ],
     },
     {
@@ -211,7 +259,13 @@ window.DATA = {
       options: [
         {
           label: 'Strong, steady',
-          effects: { R5: 0.4, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: {
+            R51: 0.4, R52: 0.4,
+            R61: 0.4, R62: 0.4, R63: 0.4,
+            R71: 0.4, R72: 0.4, R73: 0.4, R74: 0.4,
+            R81: 0.4, R82: 0.4,
+            R91: 0.4, R92: 0.4,
+          },
         },
         { label: 'Weak / sputtering / air-laden', effects: { R41: 0.2 } },
         { label: 'None at all', effects: { R41: 0.6, R42: 0.6 } },
@@ -256,8 +310,14 @@ window.DATA = {
       text: 'What do you hear when valve activates?',
       highlight: ['valves', 'ctrl'],
       options: [
-        { label: 'Clear click', effects: { R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 } },
-        { label: 'Buzz / hum, no click', effects: { R71: 1, R6: 1 } },
+        {
+          label: 'Clear click',
+          effects: { R72: 0.4, R81: 0.4, R82: 0.4, R91: 0.4, R92: 0.6 },
+        },
+        {
+          label: 'Buzz / hum, no click',
+          effects: { R71: 1, R61: 1, R62: 1, R63: 1 },
+        },
         {
           label: 'Weak click',
           effects: { R61: 0.2, R62: 0.2, R63: 0.2, R71: 0.2 },
@@ -272,10 +332,14 @@ window.DATA = {
       text: 'Manual solenoid bleed — zone runs?',
       highlight: ['valves'],
       options: [
-        { label: 'Yes, zone runs', effects: { R6: 0.6, R71: 0.6 } },
+        { label: 'Yes, zone runs', effects: { R61: 0.6, R62: 0.6, R63: 0.6, R71: 0.6 } },
         {
           label: 'No flow even manually',
-          effects: { R72: 0.6, R73: 0.6, R8: 0.6, R5: 0.6 },
+          effects: {
+            R72: 0.6, R73: 0.6,
+            R81: 0.6, R82: 0.6,
+            R51: 0.6, R52: 0.6,
+          },
         },
       ],
     },
@@ -302,10 +366,27 @@ window.DATA = {
         },
         {
           label: 'Gradual, now every time',
-          effects: { R4: 0.4, R72: 0.4, R73: 0.4, R91: 0.4, R92: 0.12, R52: 0.4 },
+          effects: {
+            R41: 0.4, R42: 0.4,
+            R72: 0.4,
+            R73: 0.4,
+            R91: 0.4,
+            R92: 0.12,
+            R52: 0.4,
+          },
         },
-        { label: 'Gradual, still intermittent', effects: { R4: 0.2, R7: 0.2, R6: 0.2 } },
-        { label: 'Intermittent from start', effects: { R11: 0.2, R6: 0.2 } },
+        {
+          label: 'Gradual, still intermittent',
+          effects: {
+            R41: 0.2, R42: 0.2,
+            R71: 0.2, R72: 0.2, R73: 0.2, R74: 0.2,
+            R61: 0.2, R62: 0.2, R63: 0.2,
+          },
+        },
+        {
+          label: 'Intermittent from start',
+          effects: { R11: 0.2, R61: 0.2, R62: 0.2, R63: 0.2 },
+        },
         {
           label: 'Sometimes, no pattern',
           effects: { R13: 0.2, R61: 0.2, R62: 0.2, R42: 0.2 },
@@ -320,7 +401,10 @@ window.DATA = {
       highlight: ['valves', 'sp4', 'lateral'],
       options: [
         { label: 'Strong at start, fades', effects: { R52: 0.4, R82: 0.4, R41: 0.4 } },
-        { label: 'Weak start to finish', effects: { R4: 0.2, R72: 0.2, R81: 0.2 } },
+        {
+          label: 'Weak start to finish',
+          effects: { R41: 0.2, R42: 0.2, R72: 0.2, R81: 0.2 },
+        },
         { label: 'Fine until late, then drops', effects: { R42: 0.4, R71: 0.4 } },
         { label: 'Surges / hammers', effects: { R52: 0.4 } },
         { label: 'Same level throughout', effects: {} },
@@ -334,7 +418,10 @@ window.DATA = {
       highlight: ['ctrl', 'sw'],
       options: [
         { label: 'Briefly fixed', effects: { R12: 0.6, R13: 0.6, R23: 0.6 } },
-        { label: 'No effect', effects: { R1: -0.2, R2: -0.2 } },
+        {
+          label: 'No effect',
+          effects: { R11: -0.2, R12: -0.2, R13: -0.2, R22: -0.2, R23: -0.2 },
+        },
       ],
     },
     {
@@ -364,22 +451,26 @@ window.DATA = {
         { id: 'briefly', label: 'Briefly fixed, returned', mult: 0.2 },
       ],
       rows: [
-        { id: 'pump', label: 'Pump ', effects: { R4: 1 } },
-        { id: 'relay', label: 'Pump-start-relay ', effects: { R3: 1 } },
+        { id: 'pump', label: 'Pump ', effects: { R41: 1, R42: 1 } },
+        { id: 'relay', label: 'Pump-start-relay ', effects: { R31: 1 } },
         {
           id: 'ctrl',
           label: 'Controller ',
           effects: { R11: 1, R22: 1 },
         },
-        { id: 'app', label: 'App / wifi / settings', effects: { R1: 1 } },
-        { id: 'valves', label: 'Valve ', effects: { R7: 1 } },
+        { id: 'app', label: 'App / wifi / settings', effects: { R11: 1, R12: 1, R13: 1 } },
+        { id: 'valves', label: 'Valve ', effects: { R71: 1, R72: 1, R73: 1, R74: 1 } },
         {
           id: 'spr',
           label: 'Sprinkler ',
           effects: { R91: 0.6, R92: 1.0 },
         },
-        { id: 'zhose', label: 'Zone hose / fittings ', effects: { R8: 1, R5: 1 } },
-        { id: 'wiring', label: 'System wiring ', effects: { R6: 1 } },
+        {
+          id: 'zhose',
+          label: 'Zone hose / fittings ',
+          effects: { R81: 1, R82: 1, R51: 1, R52: 1 },
+        },
+        { id: 'wiring', label: 'System wiring ', effects: { R61: 1, R62: 1, R63: 1 } },
       ],
     },
     {
@@ -400,12 +491,16 @@ window.DATA = {
         {
           id: 'storm',
           label: 'Storm / lightning',
-          effects: { R22: 1, R6: 1, R12: 1 },
+          effects: { R22: 1, R61: 1, R62: 1, R63: 1, R12: 1 },
         },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
         { id: 'heat', label: 'Heatwave / drought', effects: { R41: 1 } },
         { id: 'outage', label: 'Power outage', effects: { R12: 1, R23: 1 } },
-        { id: 'pests', label: 'Pests / rodents', effects: { R51: 1, R81: 1, R6: 1 } },
+        {
+          id: 'pests',
+          label: 'Pests / rodents',
+          effects: { R51: 1, R81: 1, R61: 1, R62: 1, R63: 1 },
+        },
         {
           id: 'dig',
           label: 'Digging / vehicle',
@@ -421,8 +516,8 @@ window.DATA = {
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump', 'water'],
       options: [
-        { label: 'Yes (in range)', effects: { R4: -0.4, R5: -0.4 } },
-        { label: 'No (out of range)', effects: { R4: 0.2, R5: 0.2 } },
+        { label: 'Yes (in range)', effects: { R41: -0.4, R42: -0.4, R51: -0.4, R52: -0.4 } },
+        { label: 'No (out of range)', effects: { R41: 0.2, R42: 0.2, R51: 0.2, R52: 0.2 } },
       ],
     },
     {
@@ -432,7 +527,14 @@ window.DATA = {
       text: 'Zone terminal voltage during call (~24 VAC)?',
       highlight: ['ctrl', 'valves'],
       options: [
-        { label: '~24 VAC present', effects: { R7: 0.4, R22: -0.4, R6: -0.4 } },
+        {
+          label: '~24 VAC present',
+          effects: {
+            R71: 0.4, R72: 0.4, R73: 0.4, R74: 0.4,
+            R22: -0.4,
+            R61: -0.4, R62: -0.4, R63: -0.4,
+          },
+        },
         { label: '0 V', effects: { R22: 0.6, R63: 0.6, R11: 0.6 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
       ],
@@ -526,10 +628,19 @@ window.DATA = {
       text: 'Swap valve with known-good — issue stays with zone?',
       highlight: ['valves'],
       options: [
-        { label: 'Yes (stays with zone)', effects: { R7: -0.6, R6: 0.6, R8: 0.6 } },
-        { label: 'No (follows the valve)', effects: { R7: 1.6 } },
+        {
+          label: 'Yes (stays with zone)',
+          effects: {
+            R71: -0.6, R72: -0.6, R73: -0.6, R74: -0.6,
+            R61: 0.6, R62: 0.6, R63: 0.6,
+            R81: 0.6, R82: 0.6,
+          },
+        },
+        {
+          label: 'No (follows the valve)',
+          effects: { R71: 1.6, R72: 1.6, R73: 1.6, R74: 1.6 },
+        },
       ],
     },
   ],
 };
- 
