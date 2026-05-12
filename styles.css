@@ -93,8 +93,6 @@ header {
   place-content: space-between;
   place-items: center;
   padding: var(--sp-l) var(--sp-xl);
-  color: var(--c-1);
-  background: var(--c-5);
 }
 
 header h2 {
@@ -198,7 +196,6 @@ nav button > .bar > span {
 
 nav button[aria-current] {
   border-bottom: var(--line-active);
-  border-right-color: var(--c-5);
 }
 
 form > header {
@@ -413,14 +410,16 @@ footer > button {
 }
 
 button[aria-current],
-[role='button'][aria-current] {
+[role='button'][aria-current],
+.option:has(input[type='radio']:checked) {
   border-width: var(--line-width-m);
+  font-weight: var(--font-weight-l);
 }
 
 button[aria-pressed='true'],
-button.active,
-.option:has(input[type='radio']:checked) {
+button.active {
   border-width: var(--line-width-l);
+  font-weight: var(--font-weight-l);
   box-shadow: var(--line-width-l) var(--line-width-l) 0 0 currentColor;
   transform: translate(-1px, -1px);
 }
