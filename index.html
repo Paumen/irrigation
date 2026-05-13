@@ -14,6 +14,128 @@
   </head>
   <body>
     <main x-data="app" x-cloak>
+     <details class="schematic-card" open>
+        <summary class="section-title">Schematic</summary>
+        <figure>
+          <svg
+            viewBox="0 0 700 300"
+            preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <marker
+                id="arr-water"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              ></marker>
+              <marker
+                id="arr-ctrl"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              ></marker>
+              <marker
+                id="arr-mains"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              ></marker>
+            </defs>
+
+            <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
+              <line x1="132" y1="36" x2="295" y2="36" class="line" />
+              <g :transform="iconTransform('ms:wifi', 213, 22, 28)">
+                <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
+              </g>
+            </g>
+
+            <g data-flow="ctrl" :class="isHighlighted('ctrl') ? 'flow-highlight' : ''">
+              <line x1="405" y1="36" x2="568" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="350" y1="130" x2="350" y2="180" class="line" marker-end="url(#arr-ctrl)" />
+            </g>
+            <g data-flow="ctrl">
+              <g :transform="iconTransform('mdi:lightning-bolt-outline', 470, 22, 28)">
+                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
+              </g>
+              <text x="486" y="30" text-anchor="start" class="flow-label">24V</text>
+            </g>
+            <g data-flow="ctrl">
+              <g :transform="iconTransform('mdi:lightning-bolt-outline', 270, 155, 28)">
+                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
+              </g>
+              <text x="286" y="160" text-anchor="start" class="flow-label">24V</text>
+            </g>
+
+            <line
+              data-flow="mains"
+              x1="623"
+              y1="130"
+              x2="623"
+              y2="180"
+              class="line"
+              :class="isHighlighted('mains') ? 'flow-highlight' : ''"
+              marker-end="url(#arr-mains)"
+            />
+            <g data-flow="mains">
+              <g :transform="iconTransform('ms:bolt', 582, 155, 28)">
+                <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
+              </g>
+              <text x="598" y="160" text-anchor="start" class="flow-label">230V</text>
+            </g>
+
+            <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
+              <line x1="568" y1="265" x2="405" y2="265" class="line" marker-end="url(#arr-water)" />
+              <line x1="568" y1="265" x2="405" y2="265" class="hose-highlight" />
+            </g>
+            <g data-flow="water">
+              <g :transform="iconTransform('mdi:water-outline', 425, 251, 28)">
+                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
+              </g>
+              <text x="441" y="260" text-anchor="start" class="flow-label">H₂O</text>
+            </g>
+
+            <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
+              <line x1="295" y1="265" x2="132" y2="265" class="line" marker-end="url(#arr-water)" />
+              <line x1="295" y1="265" x2="132" y2="265" class="hose-highlight" />
+            </g>
+            <g data-flow="lateral">
+              <g :transform="iconTransform('mdi:water-outline', 205, 251, 28)">
+                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
+              </g>
+              <text x="221" y="260" text-anchor="start" class="flow-label">H₂O</text>
+            </g>
+
+            <g
+              @click="pipFromEvent($event)"
+              @keydown.enter.prevent="pipFromEvent($event)"
+              @keydown.space.prevent="pipFromEvent($event)"
+              x-html="renderDiagram()"
+            ></g>
+          </svg>
+
+          <figcaption>
+            <span><span class="swatch" data-flow="water" aria-hidden="true"></span> water</span>
+            <span
+              ><span class="swatch" data-flow="mains" aria-hidden="true"></span> 230V mains</span
+            >
+            <span
+              ><span class="swatch" data-flow="ctrl" aria-hidden="true"></span> 24V control</span
+            >
+            <span><span class="swatch" data-flow="wifi" aria-hidden="true"></span> Wi-Fi</span>
+          </figcaption>
+        </figure>
+      </details>
+      
       <details class="form-card" open>
         <summary class="section-title section-title--bar">
           <span class="section-title-text">Diagnostic</span>
@@ -150,127 +272,7 @@
         </nav>
       </details>
 
-      <details class="schematic-card" open>
-        <summary class="section-title">Schematic</summary>
-        <figure>
-          <svg
-            viewBox="0 0 700 300"
-            preserveAspectRatio="xMidYMid meet"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <marker
-                id="arr-water"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              ></marker>
-              <marker
-                id="arr-ctrl"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              ></marker>
-              <marker
-                id="arr-mains"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              ></marker>
-            </defs>
-
-            <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
-              <line x1="132" y1="36" x2="295" y2="36" class="line" />
-              <g :transform="iconTransform('ms:wifi', 213, 22, 28)">
-                <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
-              </g>
-            </g>
-
-            <g data-flow="ctrl" :class="isHighlighted('ctrl') ? 'flow-highlight' : ''">
-              <line x1="405" y1="36" x2="568" y2="36" class="line" marker-end="url(#arr-ctrl)" />
-              <line x1="350" y1="130" x2="350" y2="180" class="line" marker-end="url(#arr-ctrl)" />
-            </g>
-            <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 470, 22, 28)">
-                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
-              </g>
-              <text x="486" y="30" text-anchor="start" class="flow-label">24V</text>
-            </g>
-            <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 270, 155, 28)">
-                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
-              </g>
-              <text x="286" y="160" text-anchor="start" class="flow-label">24V</text>
-            </g>
-
-            <line
-              data-flow="mains"
-              x1="623"
-              y1="130"
-              x2="623"
-              y2="180"
-              class="line"
-              :class="isHighlighted('mains') ? 'flow-highlight' : ''"
-              marker-end="url(#arr-mains)"
-            />
-            <g data-flow="mains">
-              <g :transform="iconTransform('ms:bolt', 582, 155, 28)">
-                <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
-              </g>
-              <text x="598" y="160" text-anchor="start" class="flow-label">230V</text>
-            </g>
-
-            <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
-              <line x1="568" y1="265" x2="405" y2="265" class="line" marker-end="url(#arr-water)" />
-              <line x1="568" y1="265" x2="405" y2="265" class="hose-highlight" />
-            </g>
-            <g data-flow="water">
-              <g :transform="iconTransform('mdi:water-outline', 425, 251, 28)">
-                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
-              </g>
-              <text x="441" y="260" text-anchor="start" class="flow-label">H₂O</text>
-            </g>
-
-            <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
-              <line x1="295" y1="265" x2="132" y2="265" class="line" marker-end="url(#arr-water)" />
-              <line x1="295" y1="265" x2="132" y2="265" class="hose-highlight" />
-            </g>
-            <g data-flow="lateral">
-              <g :transform="iconTransform('mdi:water-outline', 205, 251, 28)">
-                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
-              </g>
-              <text x="221" y="260" text-anchor="start" class="flow-label">H₂O</text>
-            </g>
-
-            <g
-              @click="pipFromEvent($event)"
-              @keydown.enter.prevent="pipFromEvent($event)"
-              @keydown.space.prevent="pipFromEvent($event)"
-              x-html="renderDiagram()"
-            ></g>
-          </svg>
-
-          <figcaption>
-            <span><span class="swatch" data-flow="water" aria-hidden="true"></span> water</span>
-            <span
-              ><span class="swatch" data-flow="mains" aria-hidden="true"></span> 230V mains</span
-            >
-            <span
-              ><span class="swatch" data-flow="ctrl" aria-hidden="true"></span> 24V control</span
-            >
-            <span><span class="swatch" data-flow="wifi" aria-hidden="true"></span> Wi-Fi</span>
-          </figcaption>
-        </figure>
-      </details>
+      
 
       <details class="rank-card" open>
         <summary class="section-title">Root-cause</summary>
@@ -319,9 +321,6 @@
 
       <details class="rec-card" open>
         <summary class="section-title">Recommended Next</summary>
-        <template x-if="recommendations.length === 0">
-          <p class="recommendation-empty">No questions left to differentiate top suspects.</p>
-        </template>
         <template x-if="recommendations.length > 0">
           <ol>
             <template x-for="rec in recommendations" :key="rec.q.id">
@@ -360,4 +359,4 @@
     <script src="app.js?v=16"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
-</html>
+</html> 
