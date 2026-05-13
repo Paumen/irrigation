@@ -52,7 +52,7 @@
   --line-interactive: var(--line-width-s) solid var(--c-5);
   --line-active: var(--line-width-m) solid var(--c-5);
 
-  /* ─── Controls / motion ──────────────────────────── */
+  /* ─── Controls ──────────────────────────── */
   --time: 0.4s;
 }
 
