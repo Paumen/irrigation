@@ -23,83 +23,17 @@ window.DATA = {
     { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Sprinkler misconfigured (manual shutoff, arc/radius)' },
   ],
   questions: [
-    /* --- STAGE 1: COMPONENT AGES --- */
-    {
-      id: 'A1',
-      stage: 1,
-      group: 'Component ages',
-      text: 'Age of pump',
-      highlight: ['pump'],
-      options: [
-        { label: '0–4 yrs', effects: { R41: -0.2, R42: -0.2 } },
-        { label: '4–8 yrs', effects: {} },
-        { label: '8–12 yrs', effects: { R41: 0.2, R42: 0.2 } },
-        { label: '12+ yrs', effects: { R41: 0.4, R42: 0.4 } },
-      ],
-    },
-    {
-      id: 'A2',
-      stage: 1,
-      group: 'Component ages',
-      text: 'Age of valves (no replacements)',
-      highlight: ['valves'],
-      options: [
-        { label: '0–4 yrs', effects: { R71: -0.2, R72: -0.2, R73: -0.2 } },
-        { label: '4–8 yrs', effects: { R71: 0.2, R72: 0.2, R73: 0.2 } },
-        { label: '8–12 yrs', effects: { R71: 0.2, R72: 0.2, R73: 0.2 } },
-        { label: '12+ yrs', effects: { R71: 0.4, R72: 0.4, R73: 0.4 } },
-      ],
-    },
-    {
-      id: 'A3',
-      stage: 1,
-      group: 'Component ages',
-      text: 'Age of pump start relay',
-      highlight: ['relay'],
-      options: [
-        { label: '0–4 yrs', effects: { R31: -0.2 } },
-        { label: '4–8 yrs', effects: {} },
-        { label: '8–12 yrs', effects: { R31: 0.2 } },
-        { label: '12+ yrs', effects: { R31: 0.4 } },
-      ],
-    },
-    {
-      id: 'A4',
-      stage: 1,
-      group: 'Component ages',
-      text: 'Age of controller',
-      highlight: ['ctrl', 'sw', 'wifi'],
-      options: [
-        { label: '0–4 yrs', effects: { R12: -0.2, R22: -0.2, R23: -0.2 } },
-        { label: '4–8 yrs', effects: {} },
-        { label: '8–12 yrs', effects: { R12: 0.2, R22: 0.2, R23: 0.2 } },
-        { label: '12+ yrs', effects: { R12: 0.4, R22: 0.4, R23: 0.4 } },
-      ],
-    },
-    {
-      id: 'A5',
-      stage: 1,
-      group: 'Component ages',
-      text: 'Age of rotors / sprinklers',
-      highlight: ['sp4'],
-      options: [
-        { label: '0–4 yrs', effects: { R91: -0.2 } },
-        { label: '4–8 yrs', effects: {} },
-        { label: '8–12 yrs', effects: { R91: 0.2 } },
-        { label: '12+ yrs', effects: { R91: 0.4 } },
-      ],
-    },
-
-    /* --- STAGE 2: SYMPTOMS --- */
+    /* --- STAGE 1: SYMPTOMS --- */
     {
       id: 'Q1',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Scope of failure?',
       highlight: ['sp4', 'valves'],
       options: [
         {
           label: 'All zones fail',
+          icon: 'scope-all',
           effects: {
             R11: 0.2, R12: 0.2, R13: 0.2,
             R22: 0.2, R23: 0.2,
@@ -110,6 +44,7 @@ window.DATA = {
         },
         {
           label: 'Multiple zones (not all)',
+          icon: 'scope-multi',
           effects: {
             R41: 0.2, R42: 0.2,
             R51: 0.2, R52: 0.2,
@@ -118,6 +53,7 @@ window.DATA = {
         },
         {
           label: 'Single zone',
+          icon: 'scope-single',
           effects: {
             R61: 0.2, R63: 0.2,
             R71: 0.2, R72: 0.2, R73: 0.2, R74: 0.2,
@@ -126,6 +62,7 @@ window.DATA = {
         },
         {
           label: 'One sprinkler',
+          icon: 'scope-one',
           effects: {
             R91: 2, R92: 2,
           },
@@ -134,7 +71,7 @@ window.DATA = {
     },
     {
       id: 'Q2',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Same issue when starting via app vs controller?',
       highlight: ['sw', 'ctrl', 'wifi'],
@@ -167,13 +104,14 @@ window.DATA = {
     },
     {
       id: 'Q3',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'How does water leave rotors?',
       highlight: ['sp4', 'lateral'],
       options: [
         {
           label: 'No water',
+          icon: 'flow-none',
           effects: {
             R11: 0.6, R12: 0.6, R13: 0.6,
             R22: 0.6, R23: 0.6,
@@ -185,6 +123,7 @@ window.DATA = {
         },
         {
           label: 'Weak',
+          icon: 'flow-weak',
           effects: {
             R41: 0.2, R42: 0.2,
             R52: 0.2,
@@ -196,12 +135,14 @@ window.DATA = {
         },
         {
           label: 'Strong, then weak',
+          icon: 'flow-decline',
           effects: {
             R41: 0.6, R42: 0.6,
           },
         },
         {
           label: 'Weak, then strong',
+          icon: 'flow-rise',
           effects: {
             R41: 0.4,
             R52: 0.4,
@@ -210,6 +151,7 @@ window.DATA = {
         },
         {
           label: 'Pressure fluctuates',
+          icon: 'flow-fluct',
           effects: {
             R41: 0.2, R42: 0.2,
             R52: 0.2,
@@ -217,6 +159,7 @@ window.DATA = {
         },
         {
           label: 'Erratic, no pattern',
+          icon: 'pat-noise',
           effects: {
             R11: 0.4, R12: 0.4, R13: 0.4,
             R23: 0.4,
@@ -226,6 +169,7 @@ window.DATA = {
         },
         {
           label: 'Leaks when system is off',
+          icon: 'flow-leak',
           effects: {
             R51: 0.4,
             R72: 0.4, R73: 0.4, R74: 0.4,
@@ -234,6 +178,7 @@ window.DATA = {
         },
         {
           label: 'Geyser-like pressure',
+          icon: 'flow-geyser',
           effects: {
             R51: 0.4,
             R81: 0.4,
@@ -242,6 +187,7 @@ window.DATA = {
         },
         {
           label: 'Normal',
+          icon: 'flow-normal',
           effects: {
             R11: 0.6, R12: 0.6, R13: 0.6,
             R41: -0.4, R42: -0.4,
@@ -256,7 +202,7 @@ window.DATA = {
     },
     {
       id: 'Q4',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'How does the pump behave when turned on?',
       highlight: ['pump'],
@@ -299,12 +245,13 @@ window.DATA = {
     },
     {
       id: 'Q5',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'How did the problem progress?',
       options: [
         {
           label: 'Sudden, every time since',
+          icon: 'pat-sudden',
           effects: {
             R22: 0.2,
             R31: 0.2,
@@ -316,6 +263,7 @@ window.DATA = {
         },
         {
           label: 'Gradual, now every time',
+          icon: 'pat-gradual-all',
           effects: {
             R41: 0.4, R42: 0.4,
             R52: 0.4,
@@ -325,6 +273,7 @@ window.DATA = {
         },
         {
           label: 'Gradual, still intermittent',
+          icon: 'pat-gradual-int',
           effects: {
             R41: 0.2, R42: 0.2,
             R61: 0.2, R62: 0.2, R63: 0.2,
@@ -333,6 +282,7 @@ window.DATA = {
         },
         {
           label: 'Intermittent',
+          icon: 'pat-intermittent',
           effects: {
             R11: 0.2, R13: 0.2,
             R61: 0.2, R62: 0.2, R63: 0.2,
@@ -341,6 +291,7 @@ window.DATA = {
         },
         {
           label: 'Sometimes, no pattern',
+          icon: 'pat-noise',
           effects: {
             R13: 0.2,
             R42: 0.2,
@@ -351,7 +302,7 @@ window.DATA = {
     },
     {
       id: 'Q6',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'How is the flow at the manual hose?',
       highlight: ['pump', 'water'],
@@ -383,7 +334,7 @@ window.DATA = {
     },
     {
       id: 'Q7',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Do you see water / wet ground?',
       highlight: ['water', 'lateral', 'valves'],
@@ -418,7 +369,7 @@ window.DATA = {
     },
     {
       id: 'Q8',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'What do you hear when valve activates?',
       highlight: ['valves', 'ctrl'],
@@ -456,7 +407,7 @@ window.DATA = {
     },
     {
       id: 'Q9',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Manual solenoid bleed — zone runs?',
       highlight: ['valves'],
@@ -480,13 +431,14 @@ window.DATA = {
     },
     {
       id: 'Q10',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Zone behavior over the run cycle?',
       highlight: ['valves', 'sp4', 'lateral'],
       options: [
         {
           label: 'Strong at start, fades',
+          icon: 'flow-decline',
           effects: {
             R41: 0.4,
             R52: 0.4,
@@ -495,6 +447,7 @@ window.DATA = {
         },
         {
           label: 'Weak start to finish',
+          icon: 'flow-weak',
           effects: {
             R41: 0.2, R42: 0.2,
             R72: 0.2,
@@ -503,6 +456,7 @@ window.DATA = {
         },
         {
           label: 'Fine until late, then drops',
+          icon: 'flow-late-drop',
           effects: {
             R42: 0.4,
             R71: 0.4,
@@ -510,19 +464,21 @@ window.DATA = {
         },
         {
           label: 'Surges / hammers',
+          icon: 'flow-surge',
           effects: {
             R52: 0.4,
           },
         },
         {
           label: 'Same level throughout',
+          icon: 'flow-normal',
           effects: {},
         },
       ],
     },
     {
       id: 'Q11a',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Did restarting the controller help?',
       highlight: ['ctrl', 'sw'],
@@ -545,7 +501,7 @@ window.DATA = {
     },
     {
       id: 'Q11b',
-      stage: 2,
+      stage: 1,
       group: 'Symptoms',
       text: 'Did restarting the pump help?',
       highlight: ['pump', 'relay'],
@@ -566,10 +522,75 @@ window.DATA = {
       ],
     },
 
-    /* --- STAGE 3: EVENTS --- */
+    /* --- STAGE 2: EVENTS --- */
+    {
+      id: 'AGES',
+      stage: 2,
+      type: 'sliders',
+      group: 'Events',
+      text: 'How old is each component?',
+      highlight: ['pump', 'valves', 'relay', 'ctrl', 'sw', 'wifi', 'sp4'],
+      rows: [
+        {
+          id: 'pump',
+          label: 'Pump',
+          steps: [
+            { label: '—', effects: {} },
+            { label: '0–4 yrs', effects: { R41: -0.2, R42: -0.2 } },
+            { label: '4–8 yrs', effects: {} },
+            { label: '8–12 yrs', effects: { R41: 0.2, R42: 0.2 } },
+            { label: '12+ yrs', effects: { R41: 0.4, R42: 0.4 } },
+          ],
+        },
+        {
+          id: 'valves',
+          label: 'Valves',
+          steps: [
+            { label: '—', effects: {} },
+            { label: '0–4 yrs', effects: { R71: -0.2, R72: -0.2, R73: -0.2 } },
+            { label: '4–8 yrs', effects: { R71: 0.2, R72: 0.2, R73: 0.2 } },
+            { label: '8–12 yrs', effects: { R71: 0.2, R72: 0.2, R73: 0.2 } },
+            { label: '12+ yrs', effects: { R71: 0.4, R72: 0.4, R73: 0.4 } },
+          ],
+        },
+        {
+          id: 'relay',
+          label: 'Pump-start relay',
+          steps: [
+            { label: '—', effects: {} },
+            { label: '0–4 yrs', effects: { R31: -0.2 } },
+            { label: '4–8 yrs', effects: {} },
+            { label: '8–12 yrs', effects: { R31: 0.2 } },
+            { label: '12+ yrs', effects: { R31: 0.4 } },
+          ],
+        },
+        {
+          id: 'ctrl',
+          label: 'Controller',
+          steps: [
+            { label: '—', effects: {} },
+            { label: '0–4 yrs', effects: { R12: -0.2, R22: -0.2, R23: -0.2 } },
+            { label: '4–8 yrs', effects: {} },
+            { label: '8–12 yrs', effects: { R12: 0.2, R22: 0.2, R23: 0.2 } },
+            { label: '12+ yrs', effects: { R12: 0.4, R22: 0.4, R23: 0.4 } },
+          ],
+        },
+        {
+          id: 'spr',
+          label: 'Sprinklers / rotors',
+          steps: [
+            { label: '—', effects: {} },
+            { label: '0–4 yrs', effects: { R91: -0.2 } },
+            { label: '4–8 yrs', effects: {} },
+            { label: '8–12 yrs', effects: { R91: 0.2 } },
+            { label: '12+ yrs', effects: { R91: 0.4 } },
+          ],
+        },
+      ],
+    },
     {
       id: 'E1',
-      stage: 3,
+      stage: 2,
       type: 'matrix',
       group: 'Events',
       text: 'Recent service or work — relation to issue?',
@@ -594,7 +615,7 @@ window.DATA = {
     },
     {
       id: 'E2',
-      stage: 3,
+      stage: 2,
       type: 'matrix',
       group: 'Events',
       text: 'External events — relation to issue?',
@@ -616,10 +637,10 @@ window.DATA = {
       ],
     },
 
-    /* --- STAGE 4: HARD TESTS --- */
+    /* --- STAGE 3: HARD TESTS --- */
     {
       id: 'D1',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Zone terminal voltage during call (~24 VAC)?',
       highlight: ['ctrl', 'valves'],
@@ -638,7 +659,7 @@ window.DATA = {
     },
     {
       id: 'D2',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: '24 VAC at controller pump/master terminal during call?',
       highlight: ['ctrl', 'relay'],
@@ -650,7 +671,7 @@ window.DATA = {
     },
     {
       id: 'D3',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Common-wire continuity controller→valves?',
       highlight: ['ctrl', 'valves'],
@@ -662,7 +683,7 @@ window.DATA = {
     },
     {
       id: 'D4',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
       highlight: ['valves'],
@@ -675,7 +696,7 @@ window.DATA = {
     },
     {
       id: 'D5',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Swap valve with known-good — issue stays with zone?',
       highlight: ['valves'],
@@ -693,7 +714,7 @@ window.DATA = {
     },
     {
       id: 'D6',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Controller board visual check?',
       highlight: ['ctrl'],
@@ -704,7 +725,7 @@ window.DATA = {
     },
     {
       id: 'D7',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Open each valve and inspect internals?',
       highlight: ['valves'],
@@ -715,7 +736,7 @@ window.DATA = {
     },
     {
       id: 'D8',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Dig & inspect hoses for damage?',
       highlight: ['water', 'lateral'],
@@ -726,7 +747,7 @@ window.DATA = {
     },
     {
       id: 'D9',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Mains voltage at controller outlet?',
       highlight: ['ctrl', 'mains'],
@@ -738,7 +759,7 @@ window.DATA = {
     },
     {
       id: 'D10',
-      stage: 4,
+      stage: 3,
       group: 'Hard tests',
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump', 'water'],
@@ -749,4 +770,3 @@ window.DATA = {
     },
   ],
 };
- 

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=19" />
+    <link rel="stylesheet" href="styles.css?v=20" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -76,23 +76,52 @@
             </div>
           </template>
 
-          <template x-if="activeQuestion.type !== 'matrix'">
+          <template x-if="activeQuestion.type === 'sliders'">
+            <div class="sliders-grid">
+              <template x-for="row in activeQuestion.rows" :key="row.id">
+                <div class="slider-row" :data-active="sliderVal(row.id) > 0 ? 'true' : null">
+                  <span class="slider-label" x-text="row.label"></span>
+                  <input
+                    type="range"
+                    :min="0"
+                    :max="row.steps.length - 1"
+                    step="1"
+                    :value="sliderVal(row.id)"
+                    @input="setSliderVal(row.id, $event.target.value)"
+                    :aria-label="row.label"
+                    :list="`ticks-${activeQuestion.id}-${row.id}`"
+                  />
+                  <datalist :id="`ticks-${activeQuestion.id}-${row.id}`">
+                    <template x-for="(st, si) in row.steps" :key="si">
+                      <option :value="si"></option>
+                    </template>
+                  </datalist>
+                  <span class="slider-value" x-text="row.steps[sliderVal(row.id)].label"></span>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="!activeQuestion.type || (activeQuestion.type !== 'matrix' && activeQuestion.type !== 'sliders')">
             <div class="option-grid">
               <template x-for="(opt, i) in activeQuestion.options" :key="i">
-                <label class="option">
+                <label class="option" :data-has-icon="opt.icon ? 'true' : null">
                   <input
                     type="radio"
                     :name="`q-${activeQuestion.id}`"
                     :checked="activeAnswer === i"
                     @change="handleAnswer(i)"
                   />
+                  <template x-if="opt.icon">
+                    <svg viewBox="0 0 24 24" class="opt-icon" fill="currentColor" x-html="OPT_ICONS[opt.icon] || ''"></svg>
+                  </template>
                   <span x-text="opt.label"></span>
                 </label>
               </template>
             </div>
           </template>
 
-          <template x-if="activeQuestion.type === 'matrix'">
+          <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'sliders'">
             <footer>
               <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">Skip</button>
               <button type="button" @click="moveBy(1)" :disabled="isLast">Next ›</button>
@@ -106,9 +135,13 @@
               type="button"
               @click="pickStage(s)"
               :aria-current="activeStage === s ? 'step' : null"
+              :data-complete="isStageComplete(s) ? 'true' : null"
             >
               <span class="stage-info">
-                <span x-text="STAGE_LABELS[s]"></span>
+                <span class="stage-name">
+                  <span x-text="STAGE_LABELS[s]"></span>
+                  <span class="stage-check" aria-hidden="true">✓</span>
+                </span>
                 <small x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></small>
               </span>
               <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
@@ -162,7 +195,7 @@
               </g>
             </g>
 
-            <g data-flow="ctrl">
+            <g data-flow="ctrl" :class="isHighlighted('ctrl') ? 'flow-highlight' : ''">
               <line x1="405" y1="36" x2="568" y2="36" class="line" marker-end="url(#arr-ctrl)" />
               <line x1="350" y1="130" x2="350" y2="180" class="line" marker-end="url(#arr-ctrl)" />
             </g>
@@ -322,9 +355,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=12"></script>
-    <script src="icons.js?v=11"></script>
-    <script src="app.js?v=15"></script>
+    <script src="data.js?v=13"></script>
+    <script src="icons.js?v=12"></script>
+    <script src="app.js?v=16"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

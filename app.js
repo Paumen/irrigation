@@ -24,6 +24,15 @@ const QUESTIONS = window.DATA.questions.map((q) => {
       rows: q.rows.map((r) => ({ ...r, effects: eff(r.effects || {}) })),
     };
   }
+  if (q.type === 'sliders') {
+    return {
+      ...q,
+      rows: q.rows.map((r) => ({
+        ...r,
+        steps: r.steps.map((s) => ({ ...s, effects: eff(s.effects || {}) })),
+      })),
+    };
+  }
   return {
     ...q,
     options: q.options.map((o) => ({ ...o, effects: eff(o.effects || {}) })),
@@ -114,7 +123,7 @@ const NODE_ICON_LAYOUT = {
   4: { size: 18, gap: 24 },
 };
 
-const STAGE_LABELS = ['', 'Ages', 'Symptoms', 'Events', 'Tests'];
+const STAGE_LABELS = ['', 'Symptoms', 'Events', 'Tests'];
 
 function severityT(pct) {
   return Math.max(0, Math.min(1, pct / 20));
@@ -174,7 +183,8 @@ function app() {
     CONN_PIPS,
     RC,
     ICONS: window.ICONS,
-    STAGES: [1, 2, 3, 4],
+    OPT_ICONS: window.OPT_ICONS,
+    STAGES: [1, 2, 3],
     STAGE_LABELS,
 
     answers: {},
@@ -203,6 +213,16 @@ function app() {
             if (m === 0) return;
             Object.entries(row.effects).forEach(([rc, delta]) => {
               s[rc] = (s[rc] || 0) + delta * m;
+            });
+          });
+        } else if (q.type === 'sliders') {
+          q.rows.forEach((row) => {
+            const idx = ans[row.id];
+            if (idx === undefined || idx === null) return;
+            const step = row.steps[idx];
+            if (!step) return;
+            Object.entries(step.effects).forEach(([rc, delta]) => {
+              s[rc] = (s[rc] || 0) + delta;
             });
           });
         } else {
@@ -247,6 +267,13 @@ function app() {
               D += Math.abs(row.effects[rcId] || 0) * spread;
             });
           });
+        } else if (q.type === 'sliders') {
+          q.rows.forEach((row) => {
+            t5.forEach((rcId) => {
+              const deltas = row.steps.map((st) => st.effects[rcId] || 0);
+              D += Math.max(...deltas) - Math.min(...deltas);
+            });
+          });
         } else {
           t5.forEach((rcId) => {
             const deltas = q.options.map((o) => o.effects[rcId] || 0);
@@ -266,13 +293,17 @@ function app() {
         1: { answered: 0, total: 0 },
         2: { answered: 0, total: 0 },
         3: { answered: 0, total: 0 },
-        4: { answered: 0, total: 0 },
       };
       QUESTIONS.forEach((q) => {
         sp[q.stage].total++;
         if (this.isAnswered(q.id)) sp[q.stage].answered++;
       });
       return sp;
+    },
+
+    isStageComplete(s) {
+      const p = this.stageProgress[s];
+      return p && p.total > 0 && p.answered === p.total;
     },
 
     get activeQuestion() {
@@ -317,6 +348,9 @@ function app() {
       if (a === undefined || a === null) return false;
       const q = QUESTIONS.find((qq) => qq.id === qid);
       if (q?.type === 'matrix') return Object.keys(a).length > 0;
+      if (q?.type === 'sliders') {
+        return Object.values(a).some((v) => Number(v) > 0);
+      }
       return true;
     },
 
@@ -332,6 +366,20 @@ function app() {
           [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
         };
       });
+    },
+
+    sliderVal(rowId) {
+      const v = this.activeAnswer?.[rowId];
+      return v === undefined || v === null ? 0 : Number(v);
+    },
+
+    setSliderVal(rowId, val) {
+      const qid = this.activeQuestionId;
+      const v = parseInt(val, 10) || 0;
+      this.answers = {
+        ...this.answers,
+        [qid]: { ...(this.answers[qid] || {}), [rowId]: v },
+      };
     },
 
     handleAnswer(i) {

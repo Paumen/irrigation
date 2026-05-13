@@ -269,6 +269,29 @@ nav button > .stage-info {
   place-items: center;
 }
 
+.stage-name {
+  display: inline-flex;
+  gap: var(--sp-s);
+  align-items: center;
+}
+
+.stage-check {
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  font-size: 0.95em;
+  color: var(--c-rust-3);
+  opacity: 0;
+  transition:
+    width var(--time),
+    opacity var(--time);
+}
+
+nav button[data-complete='true'] .stage-check {
+  width: 1em;
+  opacity: 1;
+}
+
 nav button > .bar {
   margin: 0;
   background: var(--c-2);
@@ -280,6 +303,22 @@ nav button > .bar > span {
 
 nav button[aria-current] {
   border-bottom: 4px solid var(--c-5);
+}
+
+nav button[data-complete='true'] {
+  background: color-mix(in oklch, var(--c-1), var(--c-rust-1) 35%);
+}
+
+nav button[data-complete='true'] > .bar {
+  background: color-mix(in oklch, var(--c-2), var(--c-rust-1) 45%);
+}
+
+nav button[data-complete='true'] > .bar > span {
+  background: var(--c-rust-3);
+}
+
+nav button[data-complete='true'][aria-current] {
+  border-bottom-color: var(--c-rust-3);
 }
 
 form > header {
@@ -300,6 +339,115 @@ form > header h2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sp-l);
+}
+
+.option[data-has-icon] {
+  grid-template-columns: 16px 28px 1fr;
+}
+
+.opt-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--c-5);
+  fill: currentColor;
+  opacity: 0.85;
+}
+
+.option:has(input[type='radio']:checked) .opt-icon {
+  opacity: 1;
+}
+
+.sliders-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-l);
+}
+
+.slider-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(140px, 2fr) minmax(72px, auto);
+  gap: var(--sp-l);
+  align-items: center;
+  padding: var(--sp-l) var(--sp-xl);
+  border: var(--line-passive);
+  border-left: var(--line-width-l) solid var(--c-15);
+  background: var(--c-1);
+  transition: border-color var(--time);
+}
+
+.slider-row[data-active='true'] {
+  border-left-color: var(--c-5);
+}
+
+.slider-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  letter-spacing: var(--text-ls-tight);
+}
+
+.slider-row input[type='range'] {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slider-row input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  background: var(--c-2);
+  border: var(--line-passive);
+  border-radius: 3px;
+}
+
+.slider-row input[type='range']::-moz-range-track {
+  height: 6px;
+  background: var(--c-2);
+  border: var(--line-passive);
+  border-radius: 3px;
+}
+
+.slider-row input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  background: var(--c-1);
+  border: var(--line-active);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider-row input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--c-1);
+  border: var(--line-active);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider-row[data-active='true'] input[type='range']::-webkit-slider-thumb {
+  background: var(--c-5);
+}
+
+.slider-row[data-active='true'] input[type='range']::-moz-range-thumb {
+  background: var(--c-5);
+}
+
+.slider-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--text-ls-tight);
+  text-align: right;
+  color: var(--c-16);
+}
+
+.slider-row[data-active='true'] .slider-value {
+  color: var(--c-5);
+  font-weight: var(--font-weight-m);
 }
 
 ol {
@@ -874,6 +1022,57 @@ nav button > .bar {
 [data-flow].flow-highlight .line,
 .line.flow-highlight {
   stroke: var(--c-5);
+}
+
+[data-flow='water'].flow-highlight .line,
+[data-flow='lateral'].flow-highlight .line {
+  stroke: var(--c-hose);
+  stroke-dasharray: 14 8;
+  animation: flow-dash-water 0.9s linear infinite;
+}
+
+[data-flow='mains'].flow-highlight .line,
+.line[data-flow='mains'].flow-highlight {
+  stroke-dasharray: 10 6;
+  animation: flow-dash-mains 0.9s linear infinite;
+}
+
+[data-flow='ctrl'].flow-highlight .line {
+  animation: flow-dash-ctrl 0.7s linear infinite;
+}
+
+[data-flow='wifi'].flow-highlight .line {
+  animation: flow-dash-wifi 0.5s linear infinite;
+}
+
+@keyframes flow-dash-water {
+  to {
+    stroke-dashoffset: -22;
+  }
+}
+
+@keyframes flow-dash-mains {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+@keyframes flow-dash-ctrl {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+@keyframes flow-dash-wifi {
+  to {
+    stroke-dashoffset: -7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-flow].flow-highlight .line {
+    animation: none;
+  }
 }
 
 /* ─── View transitions ───────────────────────────── */
