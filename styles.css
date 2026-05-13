@@ -96,6 +96,7 @@ section {
 }
 
 .schematic-card {
+  order: 10;
   padding: var(--sp-l) var(--sp-xl);
 }
 
@@ -129,10 +130,10 @@ header h2 {
   font-family: var(--font-mono);
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
-  color: var(--c-1);
+  color: var(--c-5);
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
-  background: var(--c-5);
+  background: oklch(71% 0.04 72);
 }
 
 .section-title--bar {
@@ -256,7 +257,7 @@ nav button > .bar > span {
 }
 
 nav button[aria-current] {
-  border-bottom: var(--line-active);
+  border-bottom: 4px solid var(--c-5);
 }
 
 form > header {
@@ -517,8 +518,12 @@ summary:hover,
 .pip {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  font-weight: var(--font-weight-m);
+  font-weight: var(--font-weight-l);
   pointer-events: none;
+  paint-order: stroke fill;
+  stroke: var(--c-sev-bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
 }
 
 .flow-label {
@@ -553,6 +558,7 @@ summary:hover,
   cursor: pointer;
   transform-box: fill-box;
   transform-origin: center;
+  filter: drop-shadow(0 2px 4px oklch(25.6% 0.043 268 / 0.35));
 }
 
 .pip-group:hover {
@@ -617,6 +623,7 @@ summary:hover,
 
 .pip {
   fill: var(--c-sev-fg);
+  stroke: var(--c-sev-bg);
 }
 
 [data-flow] {
@@ -805,7 +812,7 @@ summary:hover,
 }
 
 nav button > .bar {
-  height: 3px;
+  height: 7px;
 }
 
 .bar > span {
@@ -858,13 +865,13 @@ nav button > .bar {
 }
 
 ::view-transition-group(*) {
-  animation-duration: 0.16s;
+  animation-duration: 0.4s;
   animation-timing-function: cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
 ::view-transition-old(*),
 ::view-transition-new(*) {
-  animation-duration: 0.12s;
+  animation-duration: 0.3s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -880,14 +887,15 @@ nav button > .bar {
 @container page (width >= 1080px) {
   main {
     grid-template-areas:
-      'schematic schematic'
       'form rank'
-      'form rec';
+      'form rec'
+      'schematic schematic';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 
   .schematic-card {
     grid-area: schematic;
+    order: 0;
   }
 
   .form-card {
