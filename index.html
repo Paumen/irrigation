@@ -162,22 +162,6 @@
             ›
           </button>
         </header>
-        <nav aria-label="Stages">
-          <template x-for="s in STAGES" :key="s">
-            <button
-              type="button"
-              @click="pickStage(s)"
-              :aria-current="activeStage === s ? 'step' : null"
-            >
-              <span class="stage-info">
-                <span x-text="STAGE_LABELS[s]"></span>
-                <small x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></small>
-              </span>
-              <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
-            </button>
-          </template>
-        </nav>
-
         <form @submit.prevent>
           <header>
             <h2 x-text="activeQuestion.text"></h2>
@@ -236,6 +220,22 @@
             </footer>
           </template>
         </form>
+
+        <nav aria-label="Stages">
+          <template x-for="s in STAGES" :key="s">
+            <button
+              type="button"
+              @click="pickStage(s)"
+              :aria-current="activeStage === s ? 'step' : null"
+            >
+              <span class="stage-info">
+                <span x-text="STAGE_LABELS[s]"></span>
+                <small x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></small>
+              </span>
+              <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
+            </button>
+          </template>
+        </nav>
       </section>
 
       <section class="rank-card" aria-labelledby="rank-heading">

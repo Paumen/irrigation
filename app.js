@@ -134,17 +134,17 @@ function withTransition(fn) {
   document.startViewTransition(fn);
 }
 
-function iconTransform(name, cx, cy, size, flipX = false) {
+function iconTransform(name, cx, cy, size, flipY = false) {
   const def = window.ICONS[name];
   if (!def) return '';
   const [minX, minY, vw, vh] = def.vb;
   const scale = size / Math.max(vw, vh);
-  const ty = cy - (minY + vh / 2) * scale;
-  if (flipX) {
-    const tx2 = cx + (minX + vw / 2) * scale;
-    return `translate(${tx2} ${ty}) scale(${-scale}, ${scale})`;
-  }
   const tx = cx - (minX + vw / 2) * scale;
+  if (flipY) {
+    const ty2 = cy + (minY + vh / 2) * scale;
+    return `translate(${tx} ${ty2}) scale(${scale}, ${-scale})`;
+  }
+  const ty = cy - (minY + vh / 2) * scale;
   return `translate(${tx} ${ty}) scale(${scale})`;
 }
 
