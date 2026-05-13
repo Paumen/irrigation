@@ -133,7 +133,7 @@ header h2 {
   color: var(--c-5);
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
-  background: oklch(71% 0.04 72);
+  background: oklch(83% 0.03 74);
 }
 
 .section-title--bar {
@@ -170,6 +170,7 @@ header h2 {
   background: oklch(100% 0 0 / 12%);
 }
 
+.section-title + nav,
 .section-title + form {
   padding-top: 0;
 }
@@ -221,7 +222,7 @@ nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   background: var(--c-1);
-  border-top: var(--line-passive);
+  border-bottom: var(--line-passive);
 }
 
 nav button {
