@@ -896,7 +896,7 @@ summary:hover,
   place-items: stretch;
   place-content: stretch;
   min-height: 0;
-  padding: var(--sp-l) var(--sp-xl);
+  padding: var(--sp-m) var(--sp-l);
   font-size: var(--text-sm);
   text-align: left;
   border-left: var(--line-width-l) solid var(--c-5);
@@ -942,7 +942,7 @@ summary:hover,
   place-items: center stretch;
   place-content: stretch;
   min-height: 0;
-  padding: var(--sp-s) var(--sp-l);
+  padding: var(--sp-m) var(--sp-l);
   font-size: var(--text-sm);
   text-align: left;
   border: none;
@@ -1069,10 +1069,7 @@ nav button > .bar {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  [data-flow].flow-highlight .line {
-    animation: none;
-  }
+
 }
 
 /* ─── View transitions ───────────────────────────── */
@@ -1095,12 +1092,7 @@ nav button > .bar {
   animation-duration: 0.3s;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation-duration: 0.001s;
-  }
+
 }
 
 /* ─── RESPONSIVE ─────────────────────────────────── */
