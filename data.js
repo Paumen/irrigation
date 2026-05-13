@@ -370,6 +370,7 @@ const DATA = {
           label: 'Weak / sputtering / air-laden',
           effects: {
             R41: 0.2,
+            R51: 0.2, R52: 0.2,
           },
         },
         {
