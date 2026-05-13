@@ -10,14 +10,14 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=17" />
+    <link rel="stylesheet" href="styles.css?v=18" />
   </head>
   <body>
     <main x-data="app" x-cloak>
       <section class="schematic-card">
         <figure>
           <svg
-            viewBox="0 0 700 270"
+            viewBox="0 0 700 300"
             preserveAspectRatio="xMidYMid meet"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -53,32 +53,32 @@
 
             <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
               <line x1="132" y1="36" x2="295" y2="36" class="line" />
-              <g transform="translate(206 33) scale(0.015625)">
+              <g transform="translate(203 36) scale(0.022)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
               </g>
             </g>
 
             <g data-flow="ctrl">
               <line x1="405" y1="36" x2="568" y2="36" class="line" marker-end="url(#arr-ctrl)" />
-              <line x1="350" y1="92" x2="350" y2="180" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="350" y1="130" x2="350" y2="180" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(465 18) scale(0.625)">
+              <g transform="translate(462 15) scale(0.875)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="483" y="32" text-anchor="start" class="flow-label">24V</text>
+              <text x="484" y="30" text-anchor="start" class="flow-label">24V</text>
             </g>
             <g data-flow="ctrl">
-              <g transform="translate(289 96) scale(0.625)">
+              <g transform="translate(300 140) scale(0.875)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="307" y="110" text-anchor="start" class="flow-label">24V</text>
+              <text x="318" y="154" text-anchor="start" class="flow-label">24V</text>
             </g>
 
             <line
               data-flow="mains"
               x1="623"
-              y1="92"
+              y1="130"
               x2="623"
               y2="180"
               class="line"
@@ -86,26 +86,32 @@
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
-              <g transform="translate(568 111) scale(0.015625)">
+              <g transform="translate(564 161) scale(0.022)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="586" y="110" text-anchor="start" class="flow-label">230V</text>
+              <text x="590" y="154" text-anchor="start" class="flow-label">230V</text>
             </g>
 
             <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
-              <line x1="568" y1="239" x2="405" y2="239" class="line" marker-end="url(#arr-water)" />
-              <line x1="568" y1="239" x2="405" y2="239" class="hose-highlight" />
+              <line x1="568" y1="265" x2="405" y2="265" class="line" marker-end="url(#arr-water)" />
+              <line x1="568" y1="265" x2="405" y2="265" class="hose-highlight" />
             </g>
             <g data-flow="water">
-              <g transform="translate(417 224) scale(0.625)">
+              <g transform="translate(414 247) scale(0.875)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="435" y="238" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="435" y="263" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
-              <line x1="295" y1="239" x2="132" y2="239" class="line" marker-end="url(#arr-water)" />
-              <line x1="295" y1="239" x2="132" y2="239" class="hose-highlight" />
+              <line x1="295" y1="265" x2="132" y2="265" class="line" marker-end="url(#arr-water)" />
+              <line x1="295" y1="265" x2="132" y2="265" class="hose-highlight" />
+            </g>
+            <g data-flow="lateral">
+              <g transform="translate(193 247) scale(0.875)">
+                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
+              </g>
+              <text x="214" y="263" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g
@@ -235,7 +241,7 @@
       <section class="rank-card" aria-labelledby="rank-heading">
         <h2 id="rank-heading" class="section-title">Root-cause</h2>
         <ol>
-          <template x-for="r in ranked.slice(0, 5)" :key="r.id">
+          <template x-for="r in ranked.slice(0, 4)" :key="r.id">
             <li>
               <button
                 type="button"

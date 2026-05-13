@@ -31,8 +31,8 @@ const QUESTIONS = window.DATA.questions.map((q) => {
 });
 
 const BOX_W = 110;
-const BOX_H = 72;
-const PIP_SIZE = 26;
+const BOX_H = 110;
+const PIP_SIZE = 30;
 
 const NODES = [
   {
@@ -98,13 +98,13 @@ const NODES = [
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R51', x: 473, y: 239 },
-  { rcId: 'R52', x: 500, y: 239 },
-  { rcId: 'R61', x: 350, y: 109 },
-  { rcId: 'R62', x: 350, y: 136 },
-  { rcId: 'R63', x: 350, y: 163 },
-  { rcId: 'R81', x: 200, y: 239 },
-  { rcId: 'R82', x: 227, y: 239 },
+  { rcId: 'R51', x: 455, y: 265 },
+  { rcId: 'R52', x: 490, y: 265 },
+  { rcId: 'R61', x: 350, y: 138 },
+  { rcId: 'R62', x: 350, y: 153 },
+  { rcId: 'R63', x: 350, y: 165 },
+  { rcId: 'R81', x: 183, y: 265 },
+  { rcId: 'R82', x: 218, y: 265 },
 ];
 
 const NODE_ICON_LAYOUT = {
@@ -134,12 +134,16 @@ function withTransition(fn) {
   document.startViewTransition(fn);
 }
 
-function iconTransform(name, cx, cy, size) {
+function iconTransform(name, cx, cy, size, flipY = false) {
   const def = window.ICONS[name];
   if (!def) return '';
   const [minX, minY, vw, vh] = def.vb;
   const scale = size / Math.max(vw, vh);
   const tx = cx - (minX + vw / 2) * scale;
+  if (flipY) {
+    const ty2 = cy + (minY + vh / 2) * scale;
+    return `translate(${tx} ${ty2}) scale(${scale}, ${-scale})`;
+  }
   const ty = cy - (minY + vh / 2) * scale;
   return `translate(${tx} ${ty}) scale(${scale})`;
 }
@@ -290,7 +294,7 @@ function app() {
       return this.answers[this.activeQuestionId];
     },
     get rankedRest() {
-      return this.ranked.slice(5);
+      return this.ranked.slice(4);
     },
 
     sevT(rcId) {
@@ -399,16 +403,19 @@ function app() {
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
         const layout = nodeIconLayout(b.icons.length);
+        const isFlipped = b.key === 'pump' || b.key === 'sp4';
+        const iconSizeScale = b.key === 'pump' ? 0.65 : 1.0;
         for (let i = 0; i < b.icons.length; i++) {
           const name = b.icons[i];
           const iconCx = nodeIconCx(b, i, b.icons.length);
-          const tr = iconTransform(name, iconCx, b.y + (BOX_H - PIP_SIZE) / 2, layout.size);
+          const tr = iconTransform(name, iconCx, b.y + (BOX_H - PIP_SIZE) / 2, layout.size * iconSizeScale, isFlipped);
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
 
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
-          const px = groupX + i * PIP_SIZE;
+          const cx = groupX + i * PIP_SIZE + PIP_SIZE / 2;
+          const cy = fy + PIP_SIZE / 2;
           const tBg = this.sevT(rcId).toFixed(3);
           const tFg = this.sevTFg(rcId).toFixed(3);
           const isActive = this.activeRC === rcId;
@@ -418,20 +425,12 @@ function app() {
           const cls = isActive ? 'pip-background active' : 'pip-background';
           const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
           s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
-          s += `<rect x="${px}" y="${fy}" width="${PIP_SIZE}" height="${PIP_SIZE}" class="${cls}"/>`;
-          s += `<text x="${px + PIP_SIZE / 2}" y="${fy + PIP_SIZE / 2 + 3.5}" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
+          s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${cls}"/>`;
+          s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
           if (isActive) {
-            s += `<rect x="${px + 1.5}" y="${fy + 1.5}" width="${PIP_SIZE - 3}" height="${PIP_SIZE - 3}" class="node-active"/>`;
+            s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
           }
           s += `</g>`;
-        }
-
-        if (pipsCount > 0) {
-          s += `<line x1="${groupX}" y1="${fy}" x2="${groupX + groupW}" y2="${fy}" class="node-divider"/>`;
-          for (let i = 1; i < pipsCount; i++) {
-            const x = groupX + i * PIP_SIZE;
-            s += `<line x1="${x}" y1="${fy}" x2="${x}" y2="${b.y + b.h}" class="node-divider"/>`;
-          }
         }
         s += `</g>`;
       }
@@ -449,8 +448,11 @@ function app() {
           : 'pip-background pip-background--connector';
         const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
         s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}">`;
-        s += `<rect x="${p.x - 13}" y="${p.y - 13}" width="26" height="26" rx="1.5" class="${cls}"/>`;
-        s += `<text x="${p.x}" y="${p.y + 3.5}" text-anchor="middle" class="pip">${p.rcId.replace(/^R/, '')}</text>`;
+        s += `<circle cx="${p.x}" cy="${p.y}" r="${PIP_SIZE / 2}" class="${cls}"/>`;
+        s += `<text x="${p.x}" y="${p.y}" dy=".35em" text-anchor="middle" class="pip">${p.rcId.replace(/^R/, '')}</text>`;
+        if (isActive) {
+          s += `<circle cx="${p.x}" cy="${p.y}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
+        }
         s += `</g>`;
       }
       return s;
