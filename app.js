@@ -100,9 +100,9 @@ const NODES = [
 const CONN_PIPS = [
   { rcId: 'R51', x: 455, y: 265 },
   { rcId: 'R52', x: 490, y: 265 },
-  { rcId: 'R61', x: 350, y: 138 },
-  { rcId: 'R62', x: 350, y: 153 },
-  { rcId: 'R63', x: 350, y: 165 },
+  { rcId: 'R61', x: 332, y: 155 },
+  { rcId: 'R62', x: 362, y: 155 },
+  { rcId: 'R63', x: 392, y: 155 },
   { rcId: 'R81', x: 183, y: 265 },
   { rcId: 'R82', x: 218, y: 265 },
 ];
@@ -134,17 +134,17 @@ function withTransition(fn) {
   document.startViewTransition(fn);
 }
 
-function iconTransform(name, cx, cy, size, flipY = false) {
+function iconTransform(name, cx, cy, size, flipX = false) {
   const def = window.ICONS[name];
   if (!def) return '';
   const [minX, minY, vw, vh] = def.vb;
   const scale = size / Math.max(vw, vh);
-  const tx = cx - (minX + vw / 2) * scale;
-  if (flipY) {
-    const ty2 = cy + (minY + vh / 2) * scale;
-    return `translate(${tx} ${ty2}) scale(${scale}, ${-scale})`;
-  }
   const ty = cy - (minY + vh / 2) * scale;
+  if (flipX) {
+    const tx2 = cx + (minX + vw / 2) * scale;
+    return `translate(${tx2} ${ty}) scale(${-scale}, ${scale})`;
+  }
+  const tx = cx - (minX + vw / 2) * scale;
   return `translate(${tx} ${ty}) scale(${scale})`;
 }
 

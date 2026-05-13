@@ -89,15 +89,34 @@ main {
   gap: var(--sp-xl);
 }
 
-section {
+section,
+main > details {
   position: relative;
   background: var(--c-1);
   border: var(--line-passive);
 }
 
-.schematic-card {
-  order: 10;
-  padding: var(--sp-l) var(--sp-xl);
+main > details > summary {
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+}
+
+main > details > summary::-webkit-details-marker {
+  display: none;
+}
+
+main > details > summary::after {
+  content: '▾';
+  margin-left: auto;
+  font-size: 0.9em;
+  line-height: 1;
+  opacity: 0.6;
+  transition: transform var(--time);
+}
+
+main > details:not([open]) > summary::after {
+  transform: rotate(-90deg);
 }
 
 .rank-card > ol,
@@ -125,6 +144,9 @@ header h2 {
 }
 
 .section-title {
+  display: flex;
+  gap: var(--sp-l);
+  align-items: center;
   padding: var(--sp-l) var(--sp-xl);
   margin: 0 0 var(--sp-xl);
   font-family: var(--font-mono);
@@ -133,7 +155,7 @@ header h2 {
   color: var(--c-5);
   text-transform: uppercase;
   letter-spacing: var(--text-ls-wide);
-  background: oklch(71% 0.04 72);
+  background: oklch(89% 0.018 72);
 }
 
 .section-title--bar {
@@ -142,7 +164,7 @@ header h2 {
   align-items: center;
 }
 
-.section-title--bar h2 {
+.section-title-text {
   flex: 1;
   margin: 0;
   font: inherit;
@@ -635,27 +657,27 @@ summary:hover,
 
 [data-flow='water'] {
   --c-flow: var(--c-hose);
-  --line-flow-width: 7px;
+  --line-flow-width: 10px;
 }
 
 [data-flow='lateral'] {
   --c-flow: var(--c-hose);
-  --line-flow-width: 6px;
+  --line-flow-width: 9px;
 }
 
 [data-flow='ctrl'] {
   --c-flow: var(--c-rust-3);
-  --line-flow-width: 3px;
-  --line-flow-dash: 6 3;
+  --line-flow-width: 5px;
+  --line-flow-dash: 8 4;
 }
 
 [data-flow='mains'] {
-  --line-flow-width: 3px;
+  --line-flow-width: 5px;
 }
 
 [data-flow='wifi'] {
-  --line-flow-width: 2.5px;
-  --line-flow-dash: 2 3;
+  --line-flow-width: 4px;
+  --line-flow-dash: 3 4;
 }
 
 .line {
@@ -888,14 +910,12 @@ nav button > .bar {
   main {
     grid-template-areas:
       'form rank'
-      'form rec'
-      'schematic schematic';
+      'schematic rec';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 
   .schematic-card {
     grid-area: schematic;
-    order: 0;
   }
 
   .form-card {
@@ -910,6 +930,8 @@ nav button > .bar {
     grid-area: rec;
   }
 
+  .form-card,
+  .schematic-card,
   .rank-card,
   .rec-card {
     place-self: start stretch;
