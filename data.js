@@ -1,4 +1,4 @@
-const DATA = {
+window.DATA = {
   causes: [
     { id: 'R11', parent: 'R1', baseline: 0.8, label: 'Misconfiguration' },
     { id: 'R12', parent: 'R1', baseline: 0.9, label: 'App failure (bug, corruption)' },
