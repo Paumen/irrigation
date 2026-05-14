@@ -422,14 +422,14 @@ function app() {
       });
     },
 
-    moveBy(d) {
+    moveBy(d, opts = {}) {
       const idx = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
       const curId = this.activeQuestionId;
       const curStage = this.activeStage;
       const wasAnswered = this.isAnswered(curId);
       const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + d))];
       withTransition(() => {
-        if (d > 0 && curStage === 2 && !wasAnswered) {
+        if (d > 0 && opts.markComplete && curStage === 2 && !wasAnswered) {
           this.skipped = { ...this.skipped, [curId]: true };
         }
         this.activeQuestionId = next.id;
