@@ -62,7 +62,7 @@
   --line-width-s: 1px;
   --line-width-m: 2px;
   --line-width-l: 3px;
-  --line-width-xl: 4.5px;
+  --line-width-xl: 6px;
   --line-passive: var(--line-width-s) solid var(--c-fg-med);
   --line-interactive: var(--line-width-s) solid var(--c-fg);
   --line-active: var(--line-width-m) solid var(--c-fg);
