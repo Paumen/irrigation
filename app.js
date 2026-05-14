@@ -41,7 +41,7 @@ function expandSliderRows(q) {
 }
 
 const QUESTIONS = window.DATA.questions.map((q) => {
-  const next = { ...q };
+  const next = { ...q, type: q.type || 'options' };
   if (next.type === 'matrix') {
     next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
     next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
@@ -50,11 +50,84 @@ const QUESTIONS = window.DATA.questions.map((q) => {
       ...r,
       steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
     }));
-  } else if (next.options) {
+  } else {
     next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
   }
   return next;
 });
+
+const TYPE_HANDLERS = {
+  options: {
+    score(q, ans, s) {
+      const opt = q.options[ans];
+      if (!opt) return;
+      for (const [rc, delta] of Object.entries(opt.effects)) {
+        s[rc] = (s[rc] || 0) + delta;
+      }
+    },
+    discriminator(q, t5) {
+      let D = 0;
+      for (const rcId of t5) {
+        const deltas = q.options.map((o) => o.effects[rcId] || 0);
+        D += Math.max(...deltas) - Math.min(...deltas);
+      }
+      return D;
+    },
+    isAnswered() {
+      return true;
+    },
+  },
+  matrix: {
+    score(q, ans, s) {
+      const colMul = q.colMul;
+      for (const row of q.rows) {
+        const m = colMul[ans[row.id] || 'no'] || 0;
+        if (m === 0) continue;
+        for (const [rc, delta] of Object.entries(row.effects)) {
+          s[rc] = (s[rc] || 0) + delta * m;
+        }
+      }
+    },
+    discriminator(q, t5) {
+      const mults = q.columns.map((c) => c.mult);
+      const spread = Math.max(...mults) - Math.min(...mults);
+      let D = 0;
+      for (const row of q.rows) {
+        for (const rcId of t5) D += Math.abs(row.effects[rcId] || 0) * spread;
+      }
+      return D;
+    },
+    isAnswered(_q, ans) {
+      return Object.keys(ans).length > 0;
+    },
+  },
+  sliders: {
+    score(q, ans, s) {
+      for (const row of q.rows) {
+        const idx = ans[row.id];
+        if (idx === undefined || idx === null) continue;
+        const step = row.steps[idx];
+        if (!step) continue;
+        for (const [rc, delta] of Object.entries(step.effects)) {
+          s[rc] = (s[rc] || 0) + delta;
+        }
+      }
+    },
+    discriminator(q, t5) {
+      let D = 0;
+      for (const row of q.rows) {
+        for (const rcId of t5) {
+          const deltas = row.steps.map((st) => st.effects[rcId] || 0);
+          D += Math.max(...deltas) - Math.min(...deltas);
+        }
+      }
+      return D;
+    },
+    isAnswered(_q, ans) {
+      return Object.values(ans).some((v) => Number(v) > 0);
+    },
+  },
+};
 
 const STAGES = window.DATA.stages.map((s) => s.id);
 const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
@@ -295,37 +368,11 @@ function app() {
       ALL_IDS.forEach((id) => {
         s[id] = RC[id].baseline;
       });
-      QUESTIONS.forEach((q) => {
+      for (const q of QUESTIONS) {
         const ans = this.answers[q.id];
-        if (ans === undefined || ans === null) return;
-        if (q.type === 'matrix') {
-          const colMul = q.colMul;
-          q.rows.forEach((row) => {
-            const colId = ans[row.id] || 'no';
-            const m = colMul[colId] || 0;
-            if (m === 0) return;
-            Object.entries(row.effects).forEach(([rc, delta]) => {
-              s[rc] = (s[rc] || 0) + delta * m;
-            });
-          });
-        } else if (q.type === 'sliders') {
-          q.rows.forEach((row) => {
-            const idx = ans[row.id];
-            if (idx === undefined || idx === null) return;
-            const step = row.steps[idx];
-            if (!step) return;
-            Object.entries(step.effects).forEach(([rc, delta]) => {
-              s[rc] = (s[rc] || 0) + delta;
-            });
-          });
-        } else {
-          const opt = q.options[ans];
-          if (!opt) return;
-          Object.entries(opt.effects).forEach(([rc, delta]) => {
-            s[rc] = (s[rc] || 0) + delta;
-          });
-        }
-      });
+        if (ans === undefined || ans === null) continue;
+        TYPE_HANDLERS[q.type].score(q, ans, s);
+      }
       return s;
     },
 
@@ -348,33 +395,8 @@ function app() {
 
     get recommendations() {
       const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      const unanswered = QUESTIONS.filter((q) => !this.isCompleted(q.id));
-      const scored = unanswered.map((q) => {
-        let D = 0;
-        if (q.type === 'matrix') {
-          const mults = q.columns.map((c) => c.mult);
-          const spread = Math.max(...mults) - Math.min(...mults);
-          q.rows.forEach((row) => {
-            t5.forEach((rcId) => {
-              D += Math.abs(row.effects[rcId] || 0) * spread;
-            });
-          });
-        } else if (q.type === 'sliders') {
-          q.rows.forEach((row) => {
-            t5.forEach((rcId) => {
-              const deltas = row.steps.map((st) => st.effects[rcId] || 0);
-              D += Math.max(...deltas) - Math.min(...deltas);
-            });
-          });
-        } else {
-          t5.forEach((rcId) => {
-            const deltas = q.options.map((o) => o.effects[rcId] || 0);
-            D += Math.max(...deltas) - Math.min(...deltas);
-          });
-        }
-        return { q, D };
-      });
-      return scored
+      return QUESTIONS.filter((q) => !this.isCompleted(q.id))
+        .map((q) => ({ q, D: TYPE_HANDLERS[q.type].discriminator(q, t5) }))
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
         .slice(0, 5);
@@ -436,25 +458,11 @@ function app() {
       const a = this.answers[qid];
       if (a === undefined || a === null) return false;
       const q = QUESTIONS.find((qq) => qq.id === qid);
-      if (q?.type === 'matrix') return Object.keys(a).length > 0;
-      if (q?.type === 'sliders') {
-        return Object.values(a).some((v) => Number(v) > 0);
-      }
-      return true;
+      return TYPE_HANDLERS[q.type].isAnswered(q, a);
     },
 
     rowAns(rowId) {
       return this.activeAnswer?.[rowId] || 'no';
-    },
-
-    setMatrixCell(rowId, colId) {
-      const qid = this.activeQuestionId;
-      withTransition(() => {
-        this.answers = {
-          ...this.answers,
-          [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
-        };
-      });
     },
 
     sliderVal(rowId) {
@@ -462,26 +470,34 @@ function app() {
       return v === undefined || v === null ? 2 : Number(v);
     },
 
-    setSliderVal(rowId, val) {
-      // Intentionally NOT wrapped in withTransition: a single drag fires many
-      // ticks; animating each would be jarring.
+    // animate=false skips withTransition: slider drag fires many ticks per
+    // gesture and animating each would be jarring.
+    setAnswer(value, { advance = false, animate = true } = {}) {
       const qid = this.activeQuestionId;
-      const v = parseInt(val, 10) || 0;
-      this.answers = {
-        ...this.answers,
-        [qid]: { ...(this.answers[qid] || {}), [rowId]: v },
+      const { i: idx } = this.activePos;
+      const write = () => {
+        this.answers = { ...this.answers, [qid]: value };
+        if (advance && idx >= 0 && idx < QUESTIONS.length - 1) {
+          this.activeQuestionId = QUESTIONS[idx + 1].id;
+        }
       };
+      if (animate) withTransition(write);
+      else write();
+    },
+
+    setMatrixCell(rowId, colId) {
+      const prev = this.answers[this.activeQuestionId] || {};
+      this.setAnswer({ ...prev, [rowId]: colId });
+    },
+
+    setSliderVal(rowId, val) {
+      const prev = this.answers[this.activeQuestionId] || {};
+      const v = parseInt(val, 10) || 0;
+      this.setAnswer({ ...prev, [rowId]: v }, { animate: false });
     },
 
     handleAnswer(i) {
-      const cur = this.activeQuestionId;
-      withTransition(() => {
-        this.answers = { ...this.answers, [cur]: i };
-        const idx = QUESTIONS.findIndex((q) => q.id === cur);
-        if (idx >= 0 && idx < QUESTIONS.length - 1) {
-          this.activeQuestionId = QUESTIONS[idx + 1].id;
-        }
-      });
+      this.setAnswer(i, { advance: true });
     },
 
     moveBy(d, opts = {}) {

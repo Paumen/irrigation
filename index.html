@@ -219,7 +219,7 @@
             </div>
           </template>
 
-          <template x-if="!activeQuestion.type || (activeQuestion.type !== 'matrix' && activeQuestion.type !== 'sliders')">
+          <template x-if="activeQuestion.type === 'options'">
             <div class="option-grid">
               <template x-for="(opt, i) in activeQuestion.options" :key="i">
                 <label class="option" :data-has-icon="opt.icon ? 'true' : null">
@@ -346,7 +346,7 @@
 
     <script src="data.js?v=14"></script>
     <script src="icons.js?v=12"></script>
-    <script src="app.js?v=22"></script>
+    <script src="app.js?v=23"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html> 
