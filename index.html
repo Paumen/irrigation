@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=28" />
+    <link rel="stylesheet" href="styles.css?v=29" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -24,25 +24,7 @@
           >
             <defs>
               <marker
-                id="arr-water"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              ></marker>
-              <marker
-                id="arr-ctrl"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              ></marker>
-              <marker
-                id="arr-mains"
+                id="arr"
                 viewBox="0 0 10 10"
                 refX="9"
                 refY="5"
@@ -52,68 +34,37 @@
               ></marker>
             </defs>
 
-            <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
-              <line x1="122" y1="60" x2="295" y2="60" class="line" />
-              <g :transform="iconTransform('ms:wifi', 208, 46, 28)">
-                <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
+            <template x-for="f in FLOWS" :key="f.id">
+              <g :data-flow="f.id" :class="{ 'flow-highlight': isHighlighted(f.id) }">
+                <template x-for="(l, i) in f.lines" :key="`l${i}`">
+                  <line
+                    :x1="l.x1"
+                    :y1="l.y1"
+                    :x2="l.x2"
+                    :y2="l.y2"
+                    class="line"
+                    :marker-end="l.arrow ? 'url(#arr)' : null"
+                  />
+                </template>
+                <template x-for="(l, i) in f.lines.filter(x => x.hose)" :key="`h${i}`">
+                  <line :x1="l.x1" :y1="l.y1" :x2="l.x2" :y2="l.y2" class="hose-highlight" />
+                </template>
+                <template x-for="(m, i) in f.markers" :key="`m${i}`">
+                  <g :transform="iconTransform(m.icon, m.cx, m.cy, 28)">
+                    <path :d="ICONS[m.icon].d" fill="currentColor" />
+                  </g>
+                </template>
+                <template x-for="(m, i) in f.markers.filter(x => x.label)" :key="`t${i}`">
+                  <text
+                    :x="m.cx + 16"
+                    :y="m.cy"
+                    text-anchor="start"
+                    class="flow-label"
+                    x-text="m.label"
+                  ></text>
+                </template>
               </g>
-            </g>
-
-            <g data-flow="ctrl" :class="isHighlighted('ctrl') ? 'flow-highlight' : ''">
-              <line x1="395" y1="60" x2="568" y2="60" class="line" marker-end="url(#arr-ctrl)" />
-              <line x1="345" y1="100" x2="345" y2="180" class="line" marker-end="url(#arr-ctrl)" />
-            </g>
-            <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 470, 46, 28)">
-                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
-              </g>
-              <text x="486" y="46" text-anchor="start" class="flow-label">24V</text>
-            </g>
-            <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 290, 140, 28)">
-                <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
-              </g>
-              <text x="306" y="140" text-anchor="start" class="flow-label">24V</text>
-            </g>
-
-            <line
-              data-flow="mains"
-              x1="618"
-              y1="100"
-              x2="618"
-              y2="180"
-              class="line"
-              :class="isHighlighted('mains') ? 'flow-highlight' : ''"
-              marker-end="url(#arr-mains)"
-            />
-            <g data-flow="mains">
-              <g :transform="iconTransform('ms:bolt', 563, 140, 28)">
-                <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
-              </g>
-              <text x="579" y="140" text-anchor="start" class="flow-label">230V</text>
-            </g>
-
-            <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
-              <line x1="568" y1="220" x2="395" y2="220" class="line" marker-end="url(#arr-water)" />
-              <line x1="568" y1="220" x2="395" y2="220" class="hose-highlight" />
-            </g>
-            <g data-flow="water">
-              <g :transform="iconTransform('mdi:water-outline', 470, 234, 28)">
-                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
-              </g>
-              <text x="486" y="234" text-anchor="start" class="flow-label">H₂O</text>
-            </g>
-
-            <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
-              <line x1="295" y1="220" x2="122" y2="220" class="line" marker-end="url(#arr-water)" />
-              <line x1="295" y1="220" x2="122" y2="220" class="hose-highlight" />
-            </g>
-            <g data-flow="lateral">
-              <g :transform="iconTransform('mdi:water-outline', 198, 234, 28)">
-                <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
-              </g>
-              <text x="214" y="234" text-anchor="start" class="flow-label">H₂O</text>
-            </g>
+            </template>
 
             <g
               @click="pipFromEvent($event)"
@@ -289,7 +240,7 @@
                 <button
                   type="button"
                   class="rank-row"
-                  :class="activeRC === r.id ? 'active' : ''"
+                  :class="{ 'active': activeRC === r.id }"
                   :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}; --c-sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                   @click="activeRC = r.id"
                 >
@@ -359,9 +310,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=15"></script>
+    <script src="data.js?v=16"></script>
     <script src="icons.js?v=13"></script>
-    <script src="app.js?v=25"></script>
+    <script src="app.js?v=26"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

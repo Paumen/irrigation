@@ -306,6 +306,7 @@ function app() {
     QUESTIONS,
     NODES,
     CONN_PIPS,
+    FLOWS: window.DATA.flows,
     RC,
     ICONS: window.ICONS,
     OPT_ICONS: window.OPT_ICONS,
