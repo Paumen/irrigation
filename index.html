@@ -202,7 +202,7 @@
                 <div
                   class="slider-row"
                   :data-active="sliderVal(row.id) > 0 ? 'true' : null"
-                  :style="`--fill: ${(sliderVal(row.id) / (row.steps.length - 1)) * 100}%`"
+                  :style="`--bg-fill: ${(sliderVal(row.id) / (row.steps.length - 1)) * 100}%`"
                 >
                   <span x-text="row.label"></span>
                   <input
@@ -288,7 +288,7 @@
                   type="button"
                   class="rank-row"
                   :class="activeRC === r.id ? 'active' : ''"
-                  :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
+                  :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}; --c-sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                   @click="activeRC = r.id"
                 >
                   <code x-text="r.id"></code>

@@ -600,7 +600,7 @@ function app() {
         'pip-background' +
         (connector ? ' pip-background--connector' : '') +
         (isActive ? ' active' : '');
-      const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
+      const style = `--c-sev-t:${tBg};--c-sev-t-fg:${tFg}`;
       let s = `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
       s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${bgCls}"/>`;
       s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;

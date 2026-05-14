@@ -1,10 +1,10 @@
-@property --sev-t {
+@property --c-sev-t {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
 }
 
-@property --sev-t-fg {
+@property --c-sev-t-fg {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
@@ -65,7 +65,7 @@
   --time: 0.5s;
 
   /* ─── Shared Assets ─────────────────────── */
-  --grid-pattern:
+  --bg-grid-pattern:
     linear-gradient(var(--c-fg-10) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
     linear-gradient(90deg, var(--c-fg-10) var(--line-width-s), transparent var(--line-width-s))
@@ -93,7 +93,7 @@ body {
   font-size: var(--text-md);
   color: var(--c-fg);
   letter-spacing: 0.04em;
-  background: var(--grid-pattern), var(--c-bg-alt);
+  background: var(--bg-grid-pattern), var(--c-bg-alt);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -114,7 +114,7 @@ header,
 .section-title {
   display: flex;
   gap: var(--sp-l);
-  align-items: center;
+  place-items: center stretch;
 }
 
 header {
@@ -146,7 +146,7 @@ figure {
   position: relative;
   padding: var(--sp-card-inline);
   margin: 0;
-  background: var(--grid-pattern), var(--c-bg-alt);
+  background: var(--bg-grid-pattern), var(--c-bg-alt);
   border: var(--line-passive);
 }
 
@@ -169,7 +169,7 @@ nav button {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--sp-s) var(--sp-l);
-  align-items: center;
+  place-items: center stretch;
   padding: var(--sp-l);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
@@ -238,7 +238,7 @@ h2 {
   display: grid;
   grid-template-columns: minmax(120px, 1fr) minmax(140px, 2fr) minmax(72px, auto);
   gap: var(--sp-l);
-  align-items: center;
+  place-items: center stretch;
   padding: var(--sp-m) var(--sp-l);
   font-size: var(--text-sm);
   background: var(--c-bg);
@@ -264,8 +264,8 @@ input[type='range']::-webkit-slider-runnable-track {
   height: var(--sp-slider-track-h);
   background: linear-gradient(
     to right,
-    var(--c-fg) var(--fill, 0%),
-    var(--c-bg-alt) var(--fill, 0%)
+    var(--c-fg) var(--bg-fill, 0%),
+    var(--c-bg-alt) var(--bg-fill, 0%)
   );
   border: var(--line-passive);
   border-radius: 3px;
@@ -275,8 +275,8 @@ input[type='range']::-moz-range-track {
   height: var(--sp-slider-track-h);
   background: linear-gradient(
     to right,
-    var(--c-fg) var(--fill, 0%),
-    var(--c-bg-alt) var(--fill, 0%)
+    var(--c-fg) var(--bg-fill, 0%),
+    var(--c-bg-alt) var(--bg-fill, 0%)
   );
   border: var(--line-passive);
   border-radius: 3px;
@@ -285,12 +285,12 @@ input[type='range']::-moz-range-track {
 input[type='range']::-webkit-slider-thumb {
   width: var(--sp-slider-thumb-d);
   height: var(--sp-slider-thumb-d);
-  margin-top: calc(var(--sp-slider-track-h) / 2 - var(--sp-slider-thumb-d) / 2 - 1px);
   appearance: none;
   cursor: pointer;
   background: var(--c-fg);
   border: var(--line-active);
   border-radius: 50%;
+  transform: translateY(calc(var(--sp-slider-track-h) / 2 - var(--sp-slider-thumb-d) / 2 - 1px));
 }
 
 input[type='range']::-moz-range-thumb {
@@ -630,13 +630,13 @@ button:disabled {
   --c-sev-bg: color-mix(
     in oklch,
     oklch(96% 0.012 80deg),
-    var(--c-rust-3) calc(var(--sev-t, 0) * 100%)
+    var(--c-rust-3) calc(var(--c-sev-t, 0) * 100%)
   );
-  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--sev-t-fg, 0) * 100%));
+  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--c-sev-t-fg, 0) * 100%));
 
   transition:
-    --sev-t var(--time),
-    --sev-t-fg var(--time);
+    --c-sev-t var(--time),
+    --c-sev-t-fg var(--time);
 }
 
 .pip-background {
@@ -894,7 +894,7 @@ code {
 }
 
 .rank-row {
-  view-transition-name: var(--vt-rc, none);
+  view-transition-name: var(--accent-vt-rc, none);
 }
 
 ::view-transition-group(*) {
