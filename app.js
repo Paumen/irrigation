@@ -1,17 +1,63 @@
 const RC = Object.fromEntries(window.DATA.causes.map((c) => [c.id, c]));
 const ALL_IDS = Object.keys(RC);
 
-const QUESTIONS = window.DATA.questions.map((q) => {
-  if (q.type === 'matrix') {
-    return {
-      ...q,
-      colMul: Object.fromEntries(q.columns.map((c) => [c.id, c.mult])),
-    };
+const RC_CHILDREN = (() => {
+  const m = {};
+  for (const c of window.DATA.causes) (m[c.parent] ||= []).push(c.id);
+  return m;
+})();
+
+// Effects may use a parent id (e.g. R7) as a broadcast for all its children;
+// per-child entries override the broadcast value.
+function expandEffects(effects) {
+  if (!effects) return effects;
+  const out = {};
+  for (const [k, v] of Object.entries(effects)) {
+    if (RC_CHILDREN[k]) for (const child of RC_CHILDREN[k]) out[child] = v;
   }
-  return { ...q };
+  for (const [k, v] of Object.entries(effects)) {
+    if (!RC_CHILDREN[k]) out[k] = v;
+  }
+  return out;
+}
+
+function expandSliderRows(q) {
+  const curves = window.DATA.sliderCurves || {};
+  const labels = q.stepLabels || [];
+  return q.rows.map((row) => {
+    if (row.steps) return row;
+    const curve = curves[row.curve] || [];
+    const causes = row.causes || [];
+    return {
+      ...row,
+      steps: labels.map((label, i) => ({
+        label,
+        effects: i === 0
+          ? {}
+          : Object.fromEntries(causes.map((rc) => [rc, curve[i - 1] ?? 0])),
+      })),
+    };
+  });
+}
+
+const QUESTIONS = window.DATA.questions.map((q) => {
+  const next = { ...q };
+  if (next.type === 'matrix') {
+    next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
+    next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
+  } else if (next.type === 'sliders') {
+    next.rows = expandSliderRows(next).map((r) => ({
+      ...r,
+      steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
+    }));
+  } else if (next.options) {
+    next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
+  }
+  return next;
 });
 
-const STAGES = [...new Set(QUESTIONS.map((q) => q.stage))].sort((a, b) => a - b);
+const STAGES = window.DATA.stages.map((s) => s.id);
+const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
 const STORAGE_KEY = 'irrigation:v1';
 const SEVERITY_FULL_PCT = 18; 
 
@@ -60,6 +106,7 @@ const NODES = [
     label: 'SPRINKLER',
     icons: ['mdi:sprinkler'],
     pips: ['R91', 'R92'],
+    flipX: true,
   },
   {
     key: 'valves',
@@ -80,6 +127,8 @@ const NODES = [
     label: 'PUMP',
     icons: ['mdi:water-pump'],
     pips: ['R41', 'R42'],
+    flipX: true,
+    iconScale: 0.65,
   },
 ];
 
@@ -100,15 +149,13 @@ const NODE_ICON_LAYOUT = {
   4: { size: 24, gap: 26 },
 };
 
-const STAGE_LABELS = { 1: 'Symptoms', 2: 'Events', 3: 'Tests' };
-
 function severityT(pct) {
   const t = Math.max(0, Math.min(1, pct / SEVERITY_FULL_PCT));
   return Math.sqrt(t);
 }
 
 function severityTFg(pct) {
-  return pct >= 4.5 ? 1 : 0;
+  return Math.max(0, Math.min(1, (pct - 3) / 3));
 }
 
 // Animate state mutations with the View Transitions API. No-op if the browser
@@ -149,6 +196,36 @@ function nodeIconCx(box, i, n) {
   return cx + start + i * gap;
 }
 
+function loadSaved() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (!saved || typeof saved !== 'object') return null;
+    migrateLegacyIds(saved);
+    return saved;
+  } catch {
+    return null;
+  }
+}
+
+// One-shot rename: legacy AGES/E1/E2 → E1/E2/E3. Presence of AGES anywhere in
+// saved state is the signal that the payload predates the rename.
+function migrateLegacyIds(saved) {
+  const hasLegacy =
+    saved.answers?.AGES !== undefined ||
+    saved.skipped?.AGES !== undefined ||
+    saved.activeQuestionId === 'AGES';
+  if (!hasLegacy) return;
+  const map = { AGES: 'E1', E1: 'E2', E2: 'E3' };
+  for (const dict of [saved.answers, saved.skipped]) {
+    if (!dict) continue;
+    const shifted = {};
+    for (const [k, v] of Object.entries(dict)) shifted[map[k] || k] = v;
+    Object.keys(dict).forEach((k) => delete dict[k]);
+    Object.assign(dict, shifted);
+  }
+  if (map[saved.activeQuestionId]) saved.activeQuestionId = map[saved.activeQuestionId];
+}
+
 function escapeAttr(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -182,23 +259,13 @@ function app() {
     severityTFg,
 
     init() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const saved = JSON.parse(raw);
-          if (saved && typeof saved === 'object') {
-            if (saved.answers && typeof saved.answers === 'object') {
-              this.answers = saved.answers;
-            }
-            if (saved.skipped && typeof saved.skipped === 'object') {
-              this.skipped = saved.skipped;
-            }
-            if (saved.activeQuestionId && QUESTIONS.some((q) => q.id === saved.activeQuestionId)) {
-              this.activeQuestionId = saved.activeQuestionId;
-            }
-          }
+      const saved = loadSaved();
+      if (saved) {
+        if (saved.answers && typeof saved.answers === 'object') this.answers = saved.answers;
+        if (saved.skipped && typeof saved.skipped === 'object') this.skipped = saved.skipped;
+        if (QUESTIONS.some((q) => q.id === saved.activeQuestionId)) {
+          this.activeQuestionId = saved.activeQuestionId;
         }
-      } catch {
       }
       this.$watch('answers', () => this._persist());
       this.$watch('skipped', () => this._persist());
@@ -319,11 +386,7 @@ function app() {
     },
 
     get stageProgress() {
-      const sp = {
-        1: { answered: 0, total: 0 },
-        2: { answered: 0, total: 0 },
-        3: { answered: 0, total: 0 },
-      };
+      const sp = Object.fromEntries(STAGES.map((s) => [s, { answered: 0, total: 0 }]));
       QUESTIONS.forEach((q) => {
         sp[q.stage].total++;
         if (this.isCompleted(q.id)) sp[q.stage].answered++;
@@ -490,8 +553,8 @@ function app() {
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
         const layout = nodeIconLayout(b.icons.length);
-        const isFlipped = b.key === 'pump' || b.key === 'sp4';
-        const iconSizeScale = b.key === 'pump' ? 0.65 : 1.0;
+        const isFlipped = !!b.flipX;
+        const iconSizeScale = b.iconScale ?? 1.0;
         for (let i = 0; i < b.icons.length; i++) {
           const name = b.icons[i];
           const iconCx = nodeIconCx(b, i, b.icons.length);
