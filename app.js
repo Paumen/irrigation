@@ -437,13 +437,6 @@ function app() {
       return this.answers[this.activeQuestionId];
     },
 
-    sevT(rcId) {
-      return severityT(this.severityPct[rcId] || 0);
-    },
-    sevTFg(rcId) {
-      return severityTFg(this.severityPct[rcId] || 0);
-    },
-
     get activeHighlights() {
       return this.activeQuestion?.highlight || [];
     },
@@ -595,8 +588,9 @@ function app() {
     },
 
     renderPip({ rcId, cx, cy, connector }) {
-      const tBg = this.sevT(rcId).toFixed(3);
-      const tFg = this.sevTFg(rcId).toFixed(3);
+      const pct = this.severityPct[rcId] || 0;
+      const tBg = severityT(pct).toFixed(3);
+      const tFg = severityTFg(pct).toFixed(3);
       const isActive = this.activeRC === rcId;
       const justActive = this.recentRC === rcId;
       const gCls =
