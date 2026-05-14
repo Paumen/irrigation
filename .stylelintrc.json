@@ -124,7 +124,7 @@
     "selector-max-specificity": [
       "0,2,1",
       {
-        "message": "Selector specificity exceeds allowed limit (max 0,2,0). Simplify the selector."
+        "message": "Selector specificity exceeds allowed limit (max 0,2,1). Simplify the selector."
       }
     ],
 
