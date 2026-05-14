@@ -116,7 +116,7 @@
     ],
 
     "selector-max-specificity": [
-      "0,3,1",
+      "0,2,1",
       {
         "message": "Selector specificity exceeds allowed limit (max 0,2,0). Simplify the selector."
       }
@@ -161,7 +161,7 @@
     "color-function-notation": [
       "modern",
       {
-        "message": "Use modern color notation (e.g., rgb(0 0 0)) instead of legacy commas."
+        "message": "Use modern color notation"
       }
     ],
 
