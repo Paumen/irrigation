@@ -174,6 +174,7 @@ function app() {
     activeRC: null,
     recentRC: null,
     showAllRecs: false,
+    showAllRanks: false,
 
     iconTransform,
     nodeIconCx,
@@ -352,9 +353,6 @@ function app() {
     },
     get activeAnswer() {
       return this.answers[this.activeQuestionId];
-    },
-    get rankedRest() {
-      return this.ranked.slice(4);
     },
 
     sevT(rcId) {

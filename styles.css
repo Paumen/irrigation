@@ -723,14 +723,7 @@ button:disabled, [aria-disabled='true'] {
   justify-self: start;
 }
 
-[data-card='rank'] details > summary {
-  font-size: var(--text-sm);
-  opacity: 0.55;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-[data-card='rec'] .see-more-btn {
+.see-more-btn {
   margin: 0 var(--sp-xl) var(--sp-xl);
   width: calc(100% - 2 * var(--sp-xl));
   font-size: var(--text-sm);

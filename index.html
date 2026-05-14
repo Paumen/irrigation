@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=23" />
+    <link rel="stylesheet" href="styles.css?v=24" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -272,8 +272,8 @@
       <details data-card="rank" open>
         <summary class="section-title">Root-cause</summary>
         <ol>
-          <template x-for="r in ranked.slice(0, 3)" :key="r.id">
-            <li>
+          <template x-for="(r, i) in ranked" :key="r.id">
+            <li x-show="showAllRanks || i < 3">
               <button
                 type="button"
                 class="rank-row"
@@ -289,28 +289,14 @@
             </li>
           </template>
         </ol>
-        <template x-if="rankedRest.length > 0">
-          <details>
-            <summary data-shape="ghost" x-text="`all ${ranked.length} ranked`"></summary>
-            <ol start="6">
-              <template x-for="r in rankedRest" :key="r.id">
-                <li>
-                  <button
-                    type="button"
-                    class="rank-row"
-                    :class="activeRC === r.id ? 'active' : ''"
-                    :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
-                    @click="activeRC = r.id"
-                  >
-                    <code x-text="r.id"></code>
-                    <span x-text="RC[r.id].label"></span>
-                    <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
-                    <span class="percent" x-text="`${rankPct(r)}%`"></span>
-                  </button>
-                </li>
-              </template>
-            </ol>
-          </details>
+        <template x-if="ranked.length > 3">
+          <button
+            type="button"
+            class="see-more-btn"
+            data-shape="ghost"
+            @click="showAllRanks = !showAllRanks"
+            x-text="showAllRanks ? 'See fewer' : `See more (${ranked.length - 3})`"
+          ></button>
         </template>
       </details>
 
@@ -360,7 +346,7 @@
 
     <script src="data.js?v=13"></script>
     <script src="icons.js?v=12"></script>
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=19"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html> 
