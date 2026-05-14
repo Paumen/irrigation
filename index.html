@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=28" />
@@ -15,7 +15,7 @@
   <body>
     <main x-data="app" x-cloak>
       <details data-card="schematic" open>
-        <summary class="section-title">Schematic</summary>
+        <summary class="section-title" data-style="caps">Schematic</summary>
         <figure>
           <svg
             viewBox="0 -22 700 344"
@@ -126,7 +126,7 @@
       </details>
 
       <details data-card="form" open>
-        <summary class="section-title">
+        <summary class="section-title" data-style="caps">
           <span>Diagnostic</span>
           <button
             type="button"
@@ -252,10 +252,21 @@
 
           <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'sliders'">
             <footer>
-              <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">
+              <button
+                type="button"
+                data-tone="mute"
+                data-style="caps"
+                @click="moveBy(1)"
+                :disabled="isLast"
+              >
                 Skip
               </button>
-              <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">
+              <button
+                type="button"
+                data-style="caps"
+                @click="moveBy(1, { markComplete: true })"
+                :disabled="isLast"
+              >
                 Next ›
               </button>
             </footer>
@@ -281,7 +292,7 @@
       </details>
 
       <details data-card="rank" open>
-        <summary class="section-title">Root-cause</summary>
+        <summary class="section-title" data-style="caps">Root-cause</summary>
         <div x-data="seeMore(3)">
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
@@ -314,7 +325,7 @@
       </details>
 
       <details data-card="rec" open>
-        <summary class="section-title">Recommended next check</summary>
+        <summary class="section-title" data-style="caps">Recommended next check</summary>
         <div x-data="seeMore(2)">
           <template x-if="recommendations.length > 0">
             <ol>
@@ -351,8 +362,15 @@
           This clears every answer and returns you to the first question. You can&rsquo;t undo this.
         </p>
         <footer>
-          <button type="button" autofocus @click="$refs.reset.close()">Keep my answers</button>
-          <button type="button" data-tone="danger" @click="doReset(); $refs.reset.close()">
+          <button type="button" data-style="caps" autofocus @click="$refs.reset.close()">
+            Keep my answers
+          </button>
+          <button
+            type="button"
+            data-tone="danger"
+            data-style="caps"
+            @click="doReset(); $refs.reset.close()"
+          >
             Reset everything
           </button>
         </footer>
