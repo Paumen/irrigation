@@ -20,7 +20,7 @@ window.DATA = {
     { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Zone hoses 25mm / fitting damage' },
     { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Zone hoses 25mm air / debris clog' },
     { id: 'R91', parent: 'R9', baseline: 1.1, label: 'Sprinkler debris / nozzle' },
-    { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Sprinkler misconfigured (manual shutoff, arc/radius)' },
+    { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Sprinkler misconfigured' },
   ],
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
@@ -110,7 +110,7 @@ window.DATA = {
       highlight: ['sp4', 'lateral'],
       options: [
         {
-          label: 'No water',
+          label: 'No water at all',
           icon: 'flow-none',
           effects: {
             R11: 0.6, R12: 0.6, R13: 0.6,
@@ -208,7 +208,7 @@ window.DATA = {
       highlight: ['pump'],
       options: [
         {
-          label: 'Runs smoothly / builds pressure',
+          label: 'Runs smoothly',
           effects: {
             R41: 0.2, R42: -0.3,
             R51: 0.2, R52: 0.2,
@@ -228,14 +228,7 @@ window.DATA = {
           },
         },
         {
-          label: "Starts but won't build pressure",
-          effects: {
-            R41: 0.6, R42: 0.6,
-            R51: 0.6,
-          },
-        },
-        {
-          label: 'Short-cycles on/off',
+          label: 'Short-cycles / Won't build presure',
           effects: {
             R41: 0.4, R42: 0.4,
             R51: 0.4,
@@ -283,12 +276,12 @@ window.DATA = {
         },
         
         {
-          label: 'Sometimes, no pattern',
+          label: 'No pattern',
           icon: 'pat-noise',
           effects: {
             R13: 0.2,
             R42: 0.2,
-            R61: 0.2, R62: 0.2,
+            R61: 0.4, R62: 0.4,
           },
         },
       ],
@@ -311,7 +304,7 @@ window.DATA = {
           },
         },
         {
-          label: 'Weak / sputtering / air-laden',
+          label: 'Weak / sputtering',
           effects: {
             R41: 0.2,
             R51: 0.2, R52: 0.2,
@@ -339,9 +332,9 @@ window.DATA = {
           },
         },
         {
-          label: 'Around a valve box',
+          label: 'In / around valve box',
           effects: {
-            R73: 2, R74: 2,
+            R73: 1.6, R74: 1.6,
           },
         },
         {
@@ -353,9 +346,9 @@ window.DATA = {
         {
           label: 'Nothing visible',
           effects: {
-            R51: -0.6,
-            R73: -0.6, R74: -0.6,
-            R81: -0.6,
+            R51: -0.4,
+            R73: -0.4, R74: -0.4,
+            R81: -0.4,
           },
         },
       ],
@@ -402,7 +395,7 @@ window.DATA = {
       id: 'Q9',
       stage: 1,
       group: 'Symptoms',
-      text: 'Manual solenoid bleed — zone runs?',
+      text: 'Manual open valve solenoid / bleed screw, runs?',
       highlight: ['valves'],
       options: [
         {
@@ -413,7 +406,7 @@ window.DATA = {
           },
         },
         {
-          label: 'No flow even manually',
+          label: 'Nothing',
           effects: {
             R51: 0.6, R52: 0.6,
             R72: 0.6, R73: 0.6,
