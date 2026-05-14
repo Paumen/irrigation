@@ -35,7 +35,6 @@
   --font-sans: 'Nunito Sans', sans-serif;
   --text-sm: clamp(0.688rem, 0.625rem + 0.25cqi, 0.813rem);
   --text-md: clamp(0.813rem, 0.75rem + 0.25cqi, 0.938rem);
-  --text-ls-wide: 0.1em;
   --font-weight-m: 600;
   --font-weight-l: 800;
 
@@ -45,18 +44,14 @@
   --sp-l: clamp(6px, 5px + 0.375cqi, 10px);
   --sp-xl: clamp(8px, 5px + 0.875cqi, 14px);
   --sp-xxl: clamp(18px, 12px + 1.5cqi, 28px);
-  --sp-slider-track-h: 4px;
-  --sp-slider-thumb-d: 16px;
 
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
-  --line-width-m: 2px;
-  --line-width-l: 3px;
-  --line-width-xl: 6px;
+  --line-width-m: 3px;
+  --line-width-l: 6px;
   --line-passive: var(--line-width-s) solid var(--c-fg-med);
   --line-interactive: var(--line-width-s) solid var(--c-fg);
   --line-active: var(--line-width-m) solid var(--c-fg);
-  --line-height-tight: 1;
 
   /* ─── Radii ──────────────────────────────────────── */
   --radius-s: 3px;
@@ -205,7 +200,7 @@ dialog {
   color: inherit;
   background: var(--c-bg);
   border: var(--line-width-m) solid var(--c-fg);
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 var(--c-fg);
+  box-shadow: var(--line-width-m) var(--line-width-m) 0 0 var(--c-fg);
 }
 
 dialog::backdrop {
@@ -255,7 +250,6 @@ summary,
 footer > button {
   place-content: center;
   place-items: center;
-  line-height: var(--line-height-tight);
 }
 
 summary {
@@ -282,7 +276,6 @@ footer > button {
 
 [data-style='caps'] {
   text-transform: uppercase;
-  letter-spacing: var(--text-ls-wide);
 }
 
 [data-tone='mute'] {
@@ -299,7 +292,6 @@ footer > button {
   min-height: 0;
   padding: 0 var(--sp-l);
   font-size: var(--text-sm);
-  line-height: var(--line-height-tight);
 }
 
 [data-shape='ghost'] {
@@ -330,8 +322,8 @@ button:active:not(:disabled),
 summary:active,
 button.active {
   font-weight: var(--font-weight-l);
-  border-width: var(--line-width-l);
-  box-shadow: var(--line-width-l) var(--line-width-l) 0 0 currentcolor;
+  border-width: var(--line-width-m);
+  box-shadow: var(--line-width-m) var(--line-width-m) 0 0 currentcolor;
   transform: translate(-1px, -1px);
 }
 
@@ -397,7 +389,7 @@ button:disabled {
   font-size: var(--text-sm);
   background: var(--c-bg);
   border: var(--line-passive);
-  border-left: var(--line-width-l) solid var(--c-fg-med);
+  border-left: var(--line-width-m) solid var(--c-fg-med);
   transition: border-color var(--time);
 }
 
@@ -427,7 +419,7 @@ input[type='range'] {
 }
 
 input[type='range']::-webkit-slider-runnable-track {
-  height: var(--sp-slider-track-h);
+  height: var(--sp-m);
   background: linear-gradient(
     to right,
     var(--c-fg) var(--bg-fill, 0%),
@@ -438,7 +430,7 @@ input[type='range']::-webkit-slider-runnable-track {
 }
 
 input[type='range']::-moz-range-track {
-  height: var(--sp-slider-track-h);
+  height: var(--sp-m);
   background: linear-gradient(
     to right,
     var(--c-fg) var(--bg-fill, 0%),
@@ -449,19 +441,19 @@ input[type='range']::-moz-range-track {
 }
 
 input[type='range']::-webkit-slider-thumb {
-  width: var(--sp-slider-thumb-d);
-  height: var(--sp-slider-thumb-d);
+  width: var(--sp-xl);
+  height: var(--sp-xl);
   appearance: none;
   cursor: pointer;
   background: var(--c-fg);
   border: var(--line-active);
   border-radius: var(--radius-circle);
-  transform: translateY(calc(var(--sp-slider-track-h) / 2 - var(--sp-slider-thumb-d) / 2 - 1px));
+  transform: translateY(calc(var(--sp-m) / 2 - var(--sp-xl) / 2 - 1px));
 }
 
 input[type='range']::-moz-range-thumb {
-  width: var(--sp-slider-thumb-d);
-  height: var(--sp-slider-thumb-d);
+  width: var(--sp-xl);
+  height: var(--sp-xl);
   appearance: none;
   cursor: pointer;
   background: var(--c-fg);
@@ -662,7 +654,7 @@ code {
   gap: var(--sp-m) var(--sp-l);
   padding: var(--sp-m) var(--sp-l);
   font-size: var(--text-sm);
-  border-left: var(--line-width-l) solid var(--c-fg);
+  border-left: var(--line-width-m) solid var(--c-fg);
 }
 
 .discriminator {
@@ -712,7 +704,7 @@ code {
   pointer-events: none;
   fill: none;
   stroke: var(--c-fg);
-  stroke-width: var(--line-width-l);
+  stroke-width: var(--line-width-m);
 }
 
 .node-group.highlight {
@@ -722,18 +714,18 @@ code {
 :where(.node-group).highlight .node-box {
   fill: var(--c-bg);
   stroke: var(--c-rust-3);
-  stroke-width: var(--line-width-l);
+  stroke-width: var(--line-width-m);
   animation: node-highlight-pulse 2.2s ease-in-out infinite;
 }
 
 @keyframes node-highlight-pulse {
   0%,
   100% {
-    stroke-width: var(--line-width-l);
+    stroke-width: var(--line-width-m);
   }
 
   50% {
-    stroke-width: var(--line-width-xl);
+    stroke-width: var(--line-width-l);
   }
 }
 
@@ -774,7 +766,7 @@ code {
 }
 
 .pip-background--connector.active {
-  stroke-width: var(--line-width-l);
+  stroke-width: var(--line-width-m);
 }
 
 .pip-group {
@@ -828,7 +820,7 @@ code {
 [data-flow] {
   color: var(--c-flow);
 
-  --line-flow-width: var(--line-width-l);
+  --line-flow-width: var(--line-width-m);
   --line-flow-dash: none;
   --c-flow: var(--c-fg);
 }
@@ -968,4 +960,4 @@ code {
   td {
     padding: var(--sp-s);
   }
-}
+   } 
