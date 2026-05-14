@@ -21,12 +21,9 @@
   --c-bg: oklch(96.4% 0.007 87deg);
   --c-bg-alt: #eae8e0;
   --c-fg: oklch(25.6% 0.043 268deg);
-  --c-fg-10: color-mix(in oklch, var(--c-fg), transparent 90%);
-  --c-fg-25: color-mix(in oklch, var(--c-fg), transparent 75%);
-  --c-fg-30: color-mix(in oklch, var(--c-fg), transparent 70%);
-  --c-fg-35: color-mix(in oklch, var(--c-fg), transparent 65%);
-  --c-fg-42: color-mix(in oklch, var(--c-fg), transparent 58%);
-  --c-fg-60: color-mix(in oklch, var(--c-fg), transparent 40%);
+  --c-fg-soft: color-mix(in oklch, var(--c-fg), transparent 85%);
+  --c-fg-med: color-mix(in oklch, var(--c-fg), transparent 65%);
+  --c-fg-strong: color-mix(in oklch, var(--c-fg), transparent 40%);
   --c-danger: oklch(53.9% 0.144 39deg);
   --c-sand: oklch(93% 0.014 80deg);
   --c-rust-1: oklch(82% 0.045 72deg);
@@ -58,7 +55,7 @@
   --line-width-s: 1px;
   --line-width-m: 2px;
   --line-width-l: 3px;
-  --line-passive: var(--line-width-s) solid var(--c-fg-30);
+  --line-passive: var(--line-width-s) solid var(--c-fg-med);
   --line-interactive: var(--line-width-s) solid var(--c-fg);
   --line-active: var(--line-width-m) solid var(--c-fg);
   --line-height-tight: 1;
@@ -73,12 +70,12 @@
 
   /* ─── Shared Assets ─────────────────────── */
   --bg-grid-pattern:
-    linear-gradient(var(--c-fg-10) var(--line-width-s), transparent var(--line-width-s))
+    linear-gradient(var(--c-fg-soft) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
-    linear-gradient(90deg, var(--c-fg-10) var(--line-width-s), transparent var(--line-width-s))
+    linear-gradient(90deg, var(--c-fg-soft) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl);
-  --shadow-standard: drop-shadow(0 3px 5px var(--c-fg-35)) drop-shadow(0 1px 1px var(--c-fg-25));
-  --shadow-active: drop-shadow(3px 3px 0 var(--c-fg)) drop-shadow(0 4px 6px var(--c-fg-35));
+  --shadow-standard: drop-shadow(0 3px 5px var(--c-fg-med)) drop-shadow(0 1px 1px var(--c-fg-med));
+  --shadow-active: drop-shadow(3px 3px 0 var(--c-fg)) drop-shadow(0 4px 6px var(--c-fg-med));
 }
 
 /* ─── NATIVE ELEMENTS ────────────────────────────── */
@@ -250,7 +247,7 @@ h2 {
   font-size: var(--text-sm);
   background: var(--c-bg);
   border: var(--line-passive);
-  border-left: var(--line-width-l) solid var(--c-fg-30);
+  border-left: var(--line-width-l) solid var(--c-fg-med);
   transition: border-color var(--time);
 }
 
@@ -313,7 +310,7 @@ input[type='range']::-moz-range-thumb {
 .slider-value {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  color: var(--c-fg-60);
+  color: var(--c-fg-strong);
   text-align: right;
 }
 
@@ -420,7 +417,7 @@ dialog {
 }
 
 dialog::backdrop {
-  background: var(--c-fg-60);
+  background: var(--c-fg-strong);
 }
 
 h3 {
@@ -571,13 +568,13 @@ button:disabled {
 
 .node-box {
   fill: var(--c-bg);
-  stroke: var(--c-fg-30);
+  stroke: var(--c-fg-med);
   stroke-width: var(--line-width-s);
 }
 
 .node-divider {
   pointer-events: none;
-  stroke: var(--c-fg-30);
+  stroke: var(--c-fg-med);
   stroke-width: var(--line-width-s);
 }
 
@@ -599,7 +596,7 @@ button:disabled {
 }
 
 .pip-group:hover {
-  filter: drop-shadow(0 5px 7px var(--c-fg-42)) drop-shadow(0 1px 1px var(--c-fg-30));
+  filter: drop-shadow(0 5px 7px var(--c-fg-med)) drop-shadow(0 1px 1px var(--c-fg-med));
   transform: translate(-1px, -1px);
 }
 
