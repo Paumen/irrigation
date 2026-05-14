@@ -176,8 +176,8 @@ const NODES = [
     y: 180,
     w: BOX_W,
     h: BOX_H,
-    label: 'SPRINKLER',
-    icons: ['mdi:sprinkler'],
+    label: 'ROTOR',
+    icons: ['mdi:rotor'],
     pips: ['R91', 'R92'],
     flipX: true,
   },
@@ -634,14 +634,18 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('app', app);
   Alpine.data('seeMore', (limit = 3) => ({
     open: false,
+    limit,
     visible(i) {
-      return this.open || i < limit;
+      return this.open || i < this.limit;
     },
     toggle() {
       this.open = !this.open;
     },
+    hasMore(total) {
+      return total > this.limit;
+    },
     label(total) {
-      return this.open ? 'See fewer' : `See more (${total - limit})`;
+      return this.open ? 'See fewer' : `See more (${total - this.limit})`;
     },
   }));
 });

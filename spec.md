@@ -2,13 +2,13 @@
 
 ## Goal
 
-Guide homeowners through fixing their sprinkler system by asking step-by-step questions. Use their answers to build a live, ranked list of the most likely broken parts, and show this on an easy-to-understand system map.
+Guide homeowners through fixing their rotor system by asking step-by-step questions. Use their answers to build a live, ranked list of the most likely broken parts, and show this on an easy-to-understand system map.
 
 ## Core Objectives
 
 - **Guided Diagnosis:** A flexible questionnaire where users can skip, change, or answer questions in any order.
 - **Live Ranking:** Real-time percentages showing the most likely causes, sorted from highest to lowest.
-- **Visual Map:** An interactive map of the sprinkler system that color-codes parts from healthy (green) to broken (red).
+- **Visual Map:** An interactive map of the rotor system that color-codes parts from healthy (green) to broken (red).
 - **Look and Feel:** Designed to look like an "engineering worksheet" / "diagnostics tool" / "system status dashboard".
 
 ## Information Tracking
