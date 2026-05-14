@@ -177,10 +177,9 @@ nav {
 
 nav button {
   display: grid;
-  gap: var(--sp-s);
-  place-content: start stretch;
-  place-items: stretch;
-  min-height: 0;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-s) var(--sp-l);
+  align-items: center;
   padding: var(--sp-l);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
@@ -189,35 +188,8 @@ nav button {
   border-right: var(--line-passive);
 }
 
-nav button > .stage-info {
-  display: flex;
-  gap: var(--sp-l);
-  place-content: space-between;
-  place-items: center;
-}
-
-.stage-name {
-  display: inline-flex;
-  gap: var(--sp-s);
-  align-items: center;
-}
-
-.stage-check {
-  display: inline-block;
-  width: 0;
-  overflow: hidden;
-  font-size: 0.95em;
-  color: var(--c-rust-3);
-  opacity: 0;
-  transition: width var(--time), opacity var(--time);
-}
-
-nav button[data-complete='true'] .stage-check {
-  width: 1em;
-  opacity: 1;
-}
-
 nav button > .bar {
+  grid-column: 1 / -1;
   margin: 0;
   background: var(--c-bg-alt);
 }
@@ -230,20 +202,9 @@ nav button[aria-current] {
   border-bottom: 4px solid var(--c-fg);
 }
 
-nav button[data-complete='true'] {
-  background: color-mix(in oklch, var(--c-bg), var(--c-rust-1) 35%);
-}
-
-nav button[data-complete='true'] > .bar {
-  background: color-mix(in oklch, var(--c-bg-alt), var(--c-rust-1) 45%);
-}
-
-nav button[data-complete='true'] > .bar > span {
-  background: var(--c-rust-3);
-}
-
-nav button[data-complete='true'][aria-current] {
-  border-bottom-color: var(--c-rust-3);
+nav button[data-complete='true'] > :first-child::after {
+  content: ' ✓';
+  color: var(--c-rust-3);
 }
 
 form > header {
@@ -700,7 +661,7 @@ button:disabled, [aria-disabled='true'] {
 
 .recommendation {
   display: grid;
-  grid-template-areas: 'stage discriminator' 'text text';
+  grid-template-areas: 'tag discriminator' 'text text';
   grid-template-columns: auto 1fr;
   gap: var(--sp-m) var(--sp-l);
   padding: var(--sp-m) var(--sp-l);
@@ -708,7 +669,7 @@ button:disabled, [aria-disabled='true'] {
   border-left: var(--line-width-l) solid var(--c-fg);
 }
 
-.stage { grid-area: stage; }
+.tag { grid-area: tag; }
 .discriminator { grid-area: discriminator; justify-self: end; }
 .recommendation-text { grid-area: text; font-family: var(--font-sans); text-align: left; text-transform: none; }
 
