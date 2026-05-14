@@ -108,7 +108,7 @@ function severityT(pct) {
 }
 
 function severityTFg(pct) {
-  return Math.max(0, Math.min(1, (pct - 5) / 3));
+  return pct >= 4.5 ? 1 : 0;
 }
 
 // Animate state mutations with the View Transitions API. No-op if the browser
@@ -169,9 +169,11 @@ function app() {
     STAGE_LABELS,
 
     answers: {},
+    skipped: {},
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
     recentRC: null,
+    showAllRecs: false,
 
     iconTransform,
     nodeIconCx,
@@ -187,6 +189,9 @@ function app() {
             if (saved.answers && typeof saved.answers === 'object') {
               this.answers = saved.answers;
             }
+            if (saved.skipped && typeof saved.skipped === 'object') {
+              this.skipped = saved.skipped;
+            }
             if (saved.activeQuestionId && QUESTIONS.some((q) => q.id === saved.activeQuestionId)) {
               this.activeQuestionId = saved.activeQuestionId;
             }
@@ -195,6 +200,7 @@ function app() {
       } catch {
       }
       this.$watch('answers', () => this._persist());
+      this.$watch('skipped', () => this._persist());
       this.$watch('activeQuestionId', () => this._persist());
     },
 
@@ -202,10 +208,22 @@ function app() {
       try {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ answers: this.answers, activeQuestionId: this.activeQuestionId }),
+          JSON.stringify({
+            answers: this.answers,
+            skipped: this.skipped,
+            activeQuestionId: this.activeQuestionId,
+          }),
         );
       } catch {
       }
+    },
+
+    isSkipped(qid) {
+      return !!this.skipped[qid] && !this.isAnswered(qid);
+    },
+
+    isCompleted(qid) {
+      return this.isAnswered(qid) || !!this.skipped[qid];
     },
 
     get scores() {
@@ -267,7 +285,7 @@ function app() {
 
     get recommendations() {
       const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      const unanswered = QUESTIONS.filter((q) => !this.isAnswered(q.id));
+      const unanswered = QUESTIONS.filter((q) => !this.isCompleted(q.id));
       const scored = unanswered.map((q) => {
         let D = 0;
         if (q.type === 'matrix') {
@@ -296,7 +314,7 @@ function app() {
       return scored
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
-        .slice(0, 3);
+        .slice(0, 5);
     },
 
     get stageProgress() {
@@ -307,7 +325,7 @@ function app() {
       };
       QUESTIONS.forEach((q) => {
         sp[q.stage].total++;
-        if (this.isAnswered(q.id)) sp[q.stage].answered++;
+        if (this.isCompleted(q.id)) sp[q.stage].answered++;
       });
       return sp;
     },
@@ -381,7 +399,7 @@ function app() {
 
     sliderVal(rowId) {
       const v = this.activeAnswer?.[rowId];
-      return v === undefined || v === null ? 0 : Number(v);
+      return v === undefined || v === null ? 2 : Number(v);
     },
 
     setSliderVal(rowId, val) {
@@ -408,8 +426,14 @@ function app() {
 
     moveBy(d) {
       const idx = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      const curId = this.activeQuestionId;
+      const curStage = this.activeStage;
+      const wasAnswered = this.isAnswered(curId);
       const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + d))];
       withTransition(() => {
+        if (d > 0 && curStage === 2 && !wasAnswered) {
+          this.skipped = { ...this.skipped, [curId]: true };
+        }
         this.activeQuestionId = next.id;
       });
     },
@@ -431,6 +455,7 @@ function app() {
     doReset() {
       withTransition(() => {
         this.answers = {};
+        this.skipped = {};
         this.activeRC = null;
         this.activeQuestionId = QUESTIONS[0].id;
       });

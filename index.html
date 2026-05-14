@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=22" />
+    <link rel="stylesheet" href="styles.css?v=23" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -53,27 +53,27 @@
             </defs>
 
             <g data-flow="wifi" :class="isHighlighted('wifi') ? 'flow-highlight' : ''">
-              <line x1="122" y1="36" x2="295" y2="36" class="line" />
-              <g :transform="iconTransform('ms:wifi', 208, 22, 28)">
+              <line x1="122" y1="60" x2="295" y2="60" class="line" />
+              <g :transform="iconTransform('ms:wifi', 208, 46, 28)">
                 <path :d="ICONS['ms:wifi'].d" fill="currentColor" />
               </g>
             </g>
 
             <g data-flow="ctrl" :class="isHighlighted('ctrl') ? 'flow-highlight' : ''">
-              <line x1="395" y1="36" x2="568" y2="36" class="line" marker-end="url(#arr-ctrl)" />
+              <line x1="395" y1="60" x2="568" y2="60" class="line" marker-end="url(#arr-ctrl)" />
               <line x1="345" y1="100" x2="345" y2="180" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 465, 22, 28)">
+              <g :transform="iconTransform('mdi:lightning-bolt-outline', 465, 46, 28)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="481" y="30" text-anchor="start" class="flow-label">24V</text>
+              <text x="481" y="46" text-anchor="start" class="flow-label">24V</text>
             </g>
             <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 265, 130, 28)">
+              <g :transform="iconTransform('mdi:lightning-bolt-outline', 270, 140, 28)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="281" y="135" text-anchor="start" class="flow-label">24V</text>
+              <text x="286" y="140" text-anchor="start" class="flow-label">24V</text>
             </g>
 
             <line
@@ -87,32 +87,32 @@
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
-              <g :transform="iconTransform('ms:bolt', 577, 130, 28)">
+              <g :transform="iconTransform('ms:bolt', 560, 140, 28)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="593" y="135" text-anchor="start" class="flow-label">230V</text>
+              <text x="576" y="140" text-anchor="start" class="flow-label">230V</text>
             </g>
 
             <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
-              <line x1="568" y1="265" x2="395" y2="265" class="line" marker-end="url(#arr-water)" />
-              <line x1="568" y1="265" x2="395" y2="265" class="hose-highlight" />
+              <line x1="568" y1="220" x2="395" y2="220" class="line" marker-end="url(#arr-water)" />
+              <line x1="568" y1="220" x2="395" y2="220" class="hose-highlight" />
             </g>
             <g data-flow="water">
-              <g :transform="iconTransform('mdi:water-outline', 420, 251, 28)">
+              <g :transform="iconTransform('mdi:water-outline', 420, 234, 28)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="436" y="260" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="436" y="234" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
-              <line x1="295" y1="265" x2="122" y2="265" class="line" marker-end="url(#arr-water)" />
-              <line x1="295" y1="265" x2="122" y2="265" class="hose-highlight" />
+              <line x1="295" y1="220" x2="122" y2="220" class="line" marker-end="url(#arr-water)" />
+              <line x1="295" y1="220" x2="122" y2="220" class="hose-highlight" />
             </g>
             <g data-flow="lateral">
-              <g :transform="iconTransform('mdi:water-outline', 200, 251, 28)">
+              <g :transform="iconTransform('mdi:water-outline', 200, 234, 28)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="216" y="260" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="216" y="234" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g
@@ -192,7 +192,11 @@
           <template x-if="activeQuestion.type === 'sliders'">
             <div class="sliders-grid">
               <template x-for="row in activeQuestion.rows" :key="row.id">
-                <div class="slider-row" :data-active="sliderVal(row.id) > 0 ? 'true' : null">
+                <div
+                  class="slider-row"
+                  :data-active="sliderVal(row.id) > 0 ? 'true' : null"
+                  :style="`--fill: ${(sliderVal(row.id) / (row.steps.length - 1)) * 100}%`"
+                >
                   <span x-text="row.label"></span>
                   <input
                     type="range"
@@ -311,11 +315,11 @@
       </details>
 
       <details data-card="rec" open>
-        <summary class="section-title">Recommended Next</summary>
+        <summary class="section-title">Recommended next check</summary>
         <template x-if="recommendations.length > 0">
           <ol>
-            <template x-for="rec in recommendations" :key="rec.q.id">
-              <li>
+            <template x-for="(rec, i) in recommendations" :key="rec.q.id">
+              <li x-show="showAllRecs || i < 2">
                 <button type="button" class="recommendation" @click="goTo(rec.q.id)">
                   <span class="stage" x-text="STAGE_LABELS[rec.q.stage]"></span>
                   <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
@@ -324,6 +328,15 @@
               </li>
             </template>
           </ol>
+        </template>
+        <template x-if="recommendations.length > 2">
+          <button
+            type="button"
+            class="see-more-btn"
+            data-shape="ghost"
+            @click="showAllRecs = !showAllRecs"
+            x-text="showAllRecs ? 'See fewer' : `See more (${recommendations.length - 2})`"
+          ></button>
         </template>
       </details>
 
@@ -347,7 +360,7 @@
 
     <script src="data.js?v=13"></script>
     <script src="icons.js?v=12"></script>
-    <script src="app.js?v=17"></script>
+    <script src="app.js?v=18"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html> 
