@@ -142,13 +142,6 @@ const CONN_PIPS = [
   { rcId: 'R82', x: 218, y: 280 },
 ];
 
-const NODE_ICON_LAYOUT = {
-  1: { size: 44, gap: 0 },
-  2: { size: 36, gap: 38 },
-  3: { size: 28, gap: 30 },
-  4: { size: 24, gap: 26 },
-};
-
 function severityT(pct) {
   const t = Math.max(0, Math.min(1, pct / SEVERITY_FULL_PCT));
   return Math.sqrt(t);
@@ -186,7 +179,10 @@ function iconTransform(name, cx, cy, size, flipX = false) {
 }
 
 function nodeIconLayout(n) {
-  return NODE_ICON_LAYOUT[n] || NODE_ICON_LAYOUT[4];
+  return {
+    size: Math.max(24, 44 - 8 * (n - 1)),
+    gap: n <= 1 ? 0 : Math.max(26, 38 - 8 * (n - 2)),
+  };
 }
 
 function nodeIconCx(box, i, n) {
@@ -333,22 +329,21 @@ function app() {
       return s;
     },
 
-    get ranked() {
+    get severityPct() {
       const s = this.scores;
       const total = ALL_IDS.reduce((sum, id) => sum + Math.max(0, s[id]), 0);
-      return ALL_IDS.map((id) => ({
-        id,
-        score: s[id],
-        pct: total > 0 ? (Math.max(0, s[id]) / total) * 100 : 0,
-      })).sort((a, b) => b.score - a.score);
-    },
-
-    get severityPct() {
       const m = {};
-      this.ranked.forEach((r) => {
-        m[r.id] = r.pct;
+      ALL_IDS.forEach((id) => {
+        m[id] = total > 0 ? (Math.max(0, s[id]) / total) * 100 : 0;
       });
       return m;
+    },
+
+    get ranked() {
+      const s = this.scores;
+      const pct = this.severityPct;
+      return ALL_IDS.map((id) => ({ id, score: s[id], pct: pct[id] }))
+        .sort((a, b) => b.score - a.score);
     },
 
     get recommendations() {
@@ -399,11 +394,15 @@ function app() {
       return p && p.total > 0 && p.answered === p.total;
     },
 
+    get activePos() {
+      const i = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      return { q: QUESTIONS[i], i };
+    },
     get activeQuestion() {
-      return QUESTIONS.find((q) => q.id === this.activeQuestionId);
+      return this.activePos.q;
     },
     get activeIdx() {
-      return QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      return this.activePos.i;
     },
     get activeStage() {
       return this.activeQuestion?.stage ?? 1;
@@ -486,7 +485,7 @@ function app() {
     },
 
     moveBy(d, opts = {}) {
-      const idx = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      const { i: idx } = this.activePos;
       const curId = this.activeQuestionId;
       const curStage = this.activeStage;
       const wasAnswered = this.isAnswered(curId);
@@ -537,16 +536,10 @@ function app() {
     renderDiagram() {
       const ICONS = window.ICONS;
       const highlights = this.activeHighlights;
+      const pips = [];
       let s = '';
-      for (const b of NODES) {
-        const pipsCount = b.pips.length;
-        const groupW = pipsCount * PIP_SIZE;
-        const groupX = b.x + (b.w - groupW) / 2;
-        const pipsAbove = b.y < 150;
-        const cyPip = pipsAbove
-          ? b.y - PIP_GAP - PIP_SIZE / 2
-          : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
 
+      for (const b of NODES) {
         const isHigh = highlights.includes(b.key);
         const nodeCls = isHigh ? 'node-group highlight' : 'node-group';
         s += `<g data-node="${b.key}" class="${nodeCls}">`;
@@ -563,48 +556,49 @@ function app() {
         }
         s += `</g>`;
 
+        const pipsCount = b.pips.length;
+        const groupW = pipsCount * PIP_SIZE;
+        const groupX = b.x + (b.w - groupW) / 2;
+        const cyPip = b.y < 150
+          ? b.y - PIP_GAP - PIP_SIZE / 2
+          : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
         for (let i = 0; i < pipsCount; i++) {
-          const rcId = b.pips[i];
-          const cx = groupX + i * PIP_SIZE + PIP_SIZE / 2;
-          const cy = cyPip;
-          const tBg = this.sevT(rcId).toFixed(3);
-          const tFg = this.sevTFg(rcId).toFixed(3);
-          const isActive = this.activeRC === rcId;
-          const justActive = this.recentRC === rcId;
-          const gCls =
-            (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
-          const cls = isActive ? 'pip-background active' : 'pip-background';
-          const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
-          s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
-          s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${cls}"/>`;
-          s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
-          if (isActive) {
-            s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
-          }
-          s += `</g>`;
+          pips.push({
+            rcId: b.pips[i],
+            cx: groupX + i * PIP_SIZE + PIP_SIZE / 2,
+            cy: cyPip,
+            connector: false,
+          });
         }
       }
 
-      for (let i = 0; i < CONN_PIPS.length; i++) {
-        const p = CONN_PIPS[i];
-        const tBg = this.sevT(p.rcId).toFixed(3);
-        const tFg = this.sevTFg(p.rcId).toFixed(3);
-        const isActive = this.activeRC === p.rcId;
-        const justActive = this.recentRC === p.rcId;
-        const gCls =
-          (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
-        const cls = isActive
-          ? 'pip-background pip-background--connector active'
-          : 'pip-background pip-background--connector';
-        const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
-        s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}">`;
-        s += `<circle cx="${p.x}" cy="${p.y}" r="${PIP_SIZE / 2}" class="${cls}"/>`;
-        s += `<text x="${p.x}" y="${p.y}" dy=".35em" text-anchor="middle" class="pip">${p.rcId.replace(/^R/, '')}</text>`;
-        if (isActive) {
-          s += `<circle cx="${p.x}" cy="${p.y}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
-        }
-        s += `</g>`;
+      for (const p of CONN_PIPS) {
+        pips.push({ rcId: p.rcId, cx: p.x, cy: p.y, connector: true });
       }
+
+      for (const p of pips) s += this.renderPip(p);
+      return s;
+    },
+
+    renderPip({ rcId, cx, cy, connector }) {
+      const tBg = this.sevT(rcId).toFixed(3);
+      const tFg = this.sevTFg(rcId).toFixed(3);
+      const isActive = this.activeRC === rcId;
+      const justActive = this.recentRC === rcId;
+      const gCls =
+        (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
+      const bgCls =
+        'pip-background' +
+        (connector ? ' pip-background--connector' : '') +
+        (isActive ? ' active' : '');
+      const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
+      let s = `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${bgCls}"/>`;
+      s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
+      if (isActive) {
+        s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
+      }
+      s += `</g>`;
       return s;
     },
 
