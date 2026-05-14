@@ -224,7 +224,7 @@
           <template x-if="activeQuestion.type === 'options'">
             <div class="option-grid">
               <template x-for="(opt, i) in activeQuestion.options" :key="i">
-                <label class="option" :data-has-icon="opt.icon ? 'true' : null">
+                <label class="option">
                   <input
                     type="radio"
                     :name="`q-${activeQuestion.id}`"
@@ -307,7 +307,7 @@
               <template x-for="(rec, i) in recommendations" :key="rec.q.id">
                 <li x-show="visible(i)">
                   <button type="button" class="recommendation" @click="goTo(rec.q.id)">
-                    <span class="tag" x-text="STAGE_LABELS[rec.q.stage]"></span>
+                    <span x-text="STAGE_LABELS[rec.q.stage]"></span>
                     <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                     <span class="recommendation-text" x-text="rec.q.text"></span>
                   </button>

@@ -227,7 +227,7 @@ form > header h2 {
   gap: var(--sp-l);
 }
 
-.option[data-has-icon] {
+.option:has(.opt-icon) {
   grid-template-columns: 16px 28px 1fr;
 }
 
@@ -661,7 +661,6 @@ button:disabled, [aria-disabled='true'] {
 
 .recommendation {
   display: grid;
-  grid-template-areas: 'tag discriminator' 'text text';
   grid-template-columns: auto 1fr;
   gap: var(--sp-m) var(--sp-l);
   padding: var(--sp-m) var(--sp-l);
@@ -669,9 +668,8 @@ button:disabled, [aria-disabled='true'] {
   border-left: var(--line-width-l) solid var(--c-fg);
 }
 
-.tag { grid-area: tag; }
-.discriminator { grid-area: discriminator; justify-self: end; }
-.recommendation-text { grid-area: text; font-family: var(--font-sans); text-align: left; text-transform: none; }
+.discriminator { justify-self: end; }
+.recommendation-text { grid-column: 1 / -1; font-family: var(--font-sans); text-align: left; text-transform: none; }
 
 .rank-row {
   display: grid;
