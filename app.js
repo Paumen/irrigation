@@ -32,9 +32,7 @@ function expandSliderRows(q) {
       ...row,
       steps: labels.map((label, i) => ({
         label,
-        effects: i === 0
-          ? {}
-          : Object.fromEntries(causes.map((rc) => [rc, curve[i - 1] ?? 0])),
+        effects: i === 0 ? {} : Object.fromEntries(causes.map((rc) => [rc, curve[i - 1] ?? 0])),
       })),
     };
   });
@@ -132,7 +130,7 @@ const TYPE_HANDLERS = {
 const STAGES = window.DATA.stages.map((s) => s.id);
 const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
 const STORAGE_KEY = 'irrigation:v1';
-const SEVERITY_FULL_PCT = 18; 
+const SEVERITY_FULL_PCT = 18;
 
 const BOX_W = 100;
 const BOX_H = 80;
@@ -347,10 +345,9 @@ function app() {
             answers: this.answers,
             skipped: this.skipped,
             activeQuestionId: this.activeQuestionId,
-          }),
+          })
         );
-      } catch {
-      }
+      } catch {}
     },
 
     isSkipped(qid) {
@@ -387,8 +384,9 @@ function app() {
     get ranked() {
       const s = this.scores;
       const pct = this.severityPct;
-      return ALL_IDS.map((id) => ({ id, score: s[id], pct: pct[id] }))
-        .sort((a, b) => b.score - a.score);
+      return ALL_IDS.map((id) => ({ id, score: s[id], pct: pct[id] })).sort(
+        (a, b) => b.score - a.score
+      );
     },
 
     get recommendations() {
@@ -558,7 +556,13 @@ function app() {
         for (let i = 0; i < b.icons.length; i++) {
           const name = b.icons[i];
           const iconCx = nodeIconCx(b, i, b.icons.length);
-          const tr = iconTransform(name, iconCx, b.y + b.h / 2, layout.size * iconSizeScale, isFlipped);
+          const tr = iconTransform(
+            name,
+            iconCx,
+            b.y + b.h / 2,
+            layout.size * iconSizeScale,
+            isFlipped
+          );
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
         s += `</g>`;
@@ -566,9 +570,7 @@ function app() {
         const pipsCount = b.pips.length;
         const groupW = pipsCount * PIP_SIZE;
         const groupX = b.x + (b.w - groupW) / 2;
-        const cyPip = b.y < 150
-          ? b.y - PIP_GAP - PIP_SIZE / 2
-          : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
+        const cyPip = b.y < 150 ? b.y - PIP_GAP - PIP_SIZE / 2 : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
         for (let i = 0; i < pipsCount; i++) {
           pips.push({
             rcId: b.pips[i],
@@ -593,8 +595,7 @@ function app() {
       const tFg = severityTFg(pct).toFixed(3);
       const isActive = this.activeRC === rcId;
       const justActive = this.recentRC === rcId;
-      const gCls =
-        (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
+      const gCls = (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
       const bgCls =
         'pip-background' +
         (connector ? ' pip-background--connector' : '') +
