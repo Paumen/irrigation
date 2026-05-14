@@ -231,7 +231,7 @@ window.DATA = {
           },
         },
         {
-          label: "Short-cycles / No presure",
+          label: "Short-cycles / No pressure",
           effects: {
             R41: 0.4, R42: 0.4,
             R51: 0.4,
@@ -546,7 +546,7 @@ window.DATA = {
       ],
       rows: [
         { id: 'pump', label: 'Pump ', effects: { R41: 1, R42: 1 } },
-        { id: 'relay', label: 'Start-relay ', effects: { R31: 1, ,  R61: 0.6, R62: 0.6, R63: 0.6 } },
+        { id: 'relay', label: 'Start-relay ', effects: { R31: 1, R61: 0.6, R62: 0.6, R63: 0.6 } },
         { id: 'ctrl', label: 'Controller ', effects: { R11: 1, R22: 1,  R61: 0.8, R62: 0.8, R63: 0.8 } },
         { id: 'app', label: 'App / wifi ', effects: { R11: 1, R12: 1, R13: 1 } },
         { id: 'valves', label: 'Valves ', effects: { R71: 1, R72: 1, R73: 1, R74: 1,  R61: 0.8, R62: 0.8, R63: 0.8} },
