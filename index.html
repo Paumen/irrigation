@@ -10,11 +10,11 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=21" />
+    <link rel="stylesheet" href="styles.css?v=22" />
   </head>
   <body>
     <main x-data="app" x-cloak>
-     <details class="schematic-card" open>
+     <details data-card="schematic" open>
         <summary class="section-title">Schematic</summary>
         <figure>
           <svg
@@ -127,9 +127,9 @@
         </figure>
       </details>
       
-      <details class="form-card" open>
-        <summary class="section-title section-title--bar">
-          <span class="section-title-text">Diagnostic</span>
+      <details data-card="form" open>
+        <summary class="section-title">
+          Diagnostic
           <button type="button" data-tone="mute" @click.stop="$refs.reset.showModal()">Reset</button>
           <button
             type="button"
@@ -193,7 +193,7 @@
             <div class="sliders-grid">
               <template x-for="row in activeQuestion.rows" :key="row.id">
                 <div class="slider-row" :data-active="sliderVal(row.id) > 0 ? 'true' : null">
-                  <span class="slider-label" x-text="row.label"></span>
+                  <span x-text="row.label"></span>
                   <input
                     type="range"
                     :min="0"
@@ -255,7 +255,7 @@
                   <span x-text="STAGE_LABELS[s]"></span>
                   <span class="stage-check" aria-hidden="true">✓</span>
                 </span>
-                <small x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></small>
+                <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
               </span>
               <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
             </button>
@@ -265,7 +265,7 @@
 
       
 
-      <details class="rank-card" open>
+      <details data-card="rank" open>
         <summary class="section-title">Root-cause</summary>
         <ol>
           <template x-for="r in ranked.slice(0, 3)" :key="r.id">
@@ -278,7 +278,7 @@
                 @click="activeRC = r.id"
               >
                 <code x-text="r.id"></code>
-                <span class="root-cause-label" x-text="RC[r.id].label"></span>
+                <span x-text="RC[r.id].label"></span>
                 <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
                 <span class="percent" x-text="`${rankPct(r)}%`"></span>
               </button>
@@ -299,7 +299,7 @@
                     @click="activeRC = r.id"
                   >
                     <code x-text="r.id"></code>
-                    <span class="root-cause-label" x-text="RC[r.id].label"></span>
+                    <span x-text="RC[r.id].label"></span>
                     <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
                     <span class="percent" x-text="`${rankPct(r)}%`"></span>
                   </button>
@@ -310,7 +310,7 @@
         </template>
       </details>
 
-      <details class="rec-card" open>
+      <details data-card="rec" open>
         <summary class="section-title">Recommended Next</summary>
         <template x-if="recommendations.length > 0">
           <ol>
