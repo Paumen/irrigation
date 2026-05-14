@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=27" />
+    <link rel="stylesheet" href="styles.css?v=28" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -130,10 +130,11 @@
       <details data-card="form" open>
         <summary class="section-title">
           Diagnostic
-          <button type="button" data-tone="mute" @click.stop="$refs.reset.showModal()">Reset</button>
+          <button type="button" data-tone="mute" data-size="sm" @click.stop="$refs.reset.showModal()">Reset</button>
           <button
             type="button"
             data-tone="mute"
+            data-size="sm"
             data-shape="square"
             @click.stop="moveBy(-1)"
             :disabled="isFirst"
@@ -145,6 +146,7 @@
           <button
             type="button"
             data-tone="mute"
+            data-size="sm"
             data-shape="square"
             @click.stop="moveBy(1)"
             :disabled="isLast"
@@ -219,7 +221,7 @@
             </div>
           </template>
 
-          <template x-if="!activeQuestion.type || (activeQuestion.type !== 'matrix' && activeQuestion.type !== 'sliders')">
+          <template x-if="activeQuestion.type === 'options'">
             <div class="option-grid">
               <template x-for="(opt, i) in activeQuestion.options" :key="i">
                 <label class="option" :data-has-icon="opt.icon ? 'true' : null">
@@ -271,59 +273,63 @@
 
       <details data-card="rank" open>
         <summary class="section-title">Root-cause</summary>
-        <ol>
-          <template x-for="(r, i) in ranked" :key="r.id">
-            <li x-show="showAllRanks || i < 3">
-              <button
-                type="button"
-                class="rank-row"
-                :class="activeRC === r.id ? 'active' : ''"
-                :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
-                @click="activeRC = r.id"
-              >
-                <code x-text="r.id"></code>
-                <span x-text="RC[r.id].label"></span>
-                <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
-                <span class="percent" x-text="`${rankPct(r)}%`"></span>
-              </button>
-            </li>
-          </template>
-        </ol>
-        <template x-if="ranked.length > 3">
-          <button
-            type="button"
-            class="see-more-btn"
-            data-shape="ghost"
-            @click="showAllRanks = !showAllRanks"
-            x-text="showAllRanks ? 'See fewer' : `See more (${ranked.length - 3})`"
-          ></button>
-        </template>
-      </details>
-
-      <details data-card="rec" open>
-        <summary class="section-title">Recommended next check</summary>
-        <template x-if="recommendations.length > 0">
+        <div x-data="seeMore(3)">
           <ol>
-            <template x-for="(rec, i) in recommendations" :key="rec.q.id">
-              <li x-show="showAllRecs || i < 2">
-                <button type="button" class="recommendation" @click="goTo(rec.q.id)">
-                  <span class="stage" x-text="STAGE_LABELS[rec.q.stage]"></span>
-                  <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
-                  <span class="recommendation-text" x-text="rec.q.text"></span>
+            <template x-for="(r, i) in ranked" :key="r.id">
+              <li x-show="visible(i)">
+                <button
+                  type="button"
+                  class="rank-row"
+                  :class="activeRC === r.id ? 'active' : ''"
+                  :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
+                  @click="activeRC = r.id"
+                >
+                  <code x-text="r.id"></code>
+                  <span x-text="RC[r.id].label"></span>
+                  <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
+                  <span class="percent" x-text="`${rankPct(r)}%`"></span>
                 </button>
               </li>
             </template>
           </ol>
-        </template>
-        <template x-if="recommendations.length > 2">
-          <button
-            type="button"
-            class="see-more-btn"
-            data-shape="ghost"
-            @click="showAllRecs = !showAllRecs"
-            x-text="showAllRecs ? 'See fewer' : `See more (${recommendations.length - 2})`"
-          ></button>
-        </template>
+          <template x-if="ranked.length > 3">
+            <button
+              type="button"
+              class="see-more-btn"
+              data-shape="ghost"
+              @click="toggle()"
+              x-text="label(ranked.length)"
+            ></button>
+          </template>
+        </div>
+      </details>
+
+      <details data-card="rec" open>
+        <summary class="section-title">Recommended next check</summary>
+        <div x-data="seeMore(2)">
+          <template x-if="recommendations.length > 0">
+            <ol>
+              <template x-for="(rec, i) in recommendations" :key="rec.q.id">
+                <li x-show="visible(i)">
+                  <button type="button" class="recommendation" @click="goTo(rec.q.id)">
+                    <span class="stage" x-text="STAGE_LABELS[rec.q.stage]"></span>
+                    <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
+                    <span class="recommendation-text" x-text="rec.q.text"></span>
+                  </button>
+                </li>
+              </template>
+            </ol>
+          </template>
+          <template x-if="recommendations.length > 2">
+            <button
+              type="button"
+              class="see-more-btn"
+              data-shape="ghost"
+              @click="toggle()"
+              x-text="label(recommendations.length)"
+            ></button>
+          </template>
+        </div>
       </details>
 
       <dialog
@@ -346,7 +352,7 @@
 
     <script src="data.js?v=14"></script>
     <script src="icons.js?v=12"></script>
-    <script src="app.js?v=22"></script>
+    <script src="app.js?v=24"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html> 

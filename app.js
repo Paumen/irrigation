@@ -41,7 +41,7 @@ function expandSliderRows(q) {
 }
 
 const QUESTIONS = window.DATA.questions.map((q) => {
-  const next = { ...q };
+  const next = { ...q, type: q.type || 'options' };
   if (next.type === 'matrix') {
     next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
     next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
@@ -50,11 +50,84 @@ const QUESTIONS = window.DATA.questions.map((q) => {
       ...r,
       steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
     }));
-  } else if (next.options) {
+  } else {
     next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
   }
   return next;
 });
+
+const TYPE_HANDLERS = {
+  options: {
+    score(q, ans, s) {
+      const opt = q.options[ans];
+      if (!opt) return;
+      for (const [rc, delta] of Object.entries(opt.effects)) {
+        s[rc] = (s[rc] || 0) + delta;
+      }
+    },
+    discriminator(q, t5) {
+      let D = 0;
+      for (const rcId of t5) {
+        const deltas = q.options.map((o) => o.effects[rcId] || 0);
+        D += Math.max(...deltas) - Math.min(...deltas);
+      }
+      return D;
+    },
+    isAnswered() {
+      return true;
+    },
+  },
+  matrix: {
+    score(q, ans, s) {
+      const colMul = q.colMul;
+      for (const row of q.rows) {
+        const m = colMul[ans[row.id] || 'no'] || 0;
+        if (m === 0) continue;
+        for (const [rc, delta] of Object.entries(row.effects)) {
+          s[rc] = (s[rc] || 0) + delta * m;
+        }
+      }
+    },
+    discriminator(q, t5) {
+      const mults = q.columns.map((c) => c.mult);
+      const spread = Math.max(...mults) - Math.min(...mults);
+      let D = 0;
+      for (const row of q.rows) {
+        for (const rcId of t5) D += Math.abs(row.effects[rcId] || 0) * spread;
+      }
+      return D;
+    },
+    isAnswered(_q, ans) {
+      return Object.keys(ans).length > 0;
+    },
+  },
+  sliders: {
+    score(q, ans, s) {
+      for (const row of q.rows) {
+        const idx = ans[row.id];
+        if (idx === undefined || idx === null) continue;
+        const step = row.steps[idx];
+        if (!step) continue;
+        for (const [rc, delta] of Object.entries(step.effects)) {
+          s[rc] = (s[rc] || 0) + delta;
+        }
+      }
+    },
+    discriminator(q, t5) {
+      let D = 0;
+      for (const row of q.rows) {
+        for (const rcId of t5) {
+          const deltas = row.steps.map((st) => st.effects[rcId] || 0);
+          D += Math.max(...deltas) - Math.min(...deltas);
+        }
+      }
+      return D;
+    },
+    isAnswered(_q, ans) {
+      return Object.values(ans).some((v) => Number(v) > 0);
+    },
+  },
+};
 
 const STAGES = window.DATA.stages.map((s) => s.id);
 const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
@@ -142,13 +215,6 @@ const CONN_PIPS = [
   { rcId: 'R82', x: 218, y: 280 },
 ];
 
-const NODE_ICON_LAYOUT = {
-  1: { size: 44, gap: 0 },
-  2: { size: 36, gap: 38 },
-  3: { size: 28, gap: 30 },
-  4: { size: 24, gap: 26 },
-};
-
 function severityT(pct) {
   const t = Math.max(0, Math.min(1, pct / SEVERITY_FULL_PCT));
   return Math.sqrt(t);
@@ -186,7 +252,10 @@ function iconTransform(name, cx, cy, size, flipX = false) {
 }
 
 function nodeIconLayout(n) {
-  return NODE_ICON_LAYOUT[n] || NODE_ICON_LAYOUT[4];
+  return {
+    size: Math.max(24, 44 - 8 * (n - 1)),
+    gap: n <= 1 ? 0 : Math.max(26, 38 - 8 * (n - 2)),
+  };
 }
 
 function nodeIconCx(box, i, n) {
@@ -250,8 +319,6 @@ function app() {
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
     recentRC: null,
-    showAllRecs: false,
-    showAllRanks: false,
 
     iconTransform,
     nodeIconCx,
@@ -299,87 +366,35 @@ function app() {
       ALL_IDS.forEach((id) => {
         s[id] = RC[id].baseline;
       });
-      QUESTIONS.forEach((q) => {
+      for (const q of QUESTIONS) {
         const ans = this.answers[q.id];
-        if (ans === undefined || ans === null) return;
-        if (q.type === 'matrix') {
-          const colMul = q.colMul;
-          q.rows.forEach((row) => {
-            const colId = ans[row.id] || 'no';
-            const m = colMul[colId] || 0;
-            if (m === 0) return;
-            Object.entries(row.effects).forEach(([rc, delta]) => {
-              s[rc] = (s[rc] || 0) + delta * m;
-            });
-          });
-        } else if (q.type === 'sliders') {
-          q.rows.forEach((row) => {
-            const idx = ans[row.id];
-            if (idx === undefined || idx === null) return;
-            const step = row.steps[idx];
-            if (!step) return;
-            Object.entries(step.effects).forEach(([rc, delta]) => {
-              s[rc] = (s[rc] || 0) + delta;
-            });
-          });
-        } else {
-          const opt = q.options[ans];
-          if (!opt) return;
-          Object.entries(opt.effects).forEach(([rc, delta]) => {
-            s[rc] = (s[rc] || 0) + delta;
-          });
-        }
-      });
+        if (ans === undefined || ans === null) continue;
+        TYPE_HANDLERS[q.type].score(q, ans, s);
+      }
       return s;
     },
 
-    get ranked() {
+    get severityPct() {
       const s = this.scores;
       const total = ALL_IDS.reduce((sum, id) => sum + Math.max(0, s[id]), 0);
-      return ALL_IDS.map((id) => ({
-        id,
-        score: s[id],
-        pct: total > 0 ? (Math.max(0, s[id]) / total) * 100 : 0,
-      })).sort((a, b) => b.score - a.score);
-    },
-
-    get severityPct() {
       const m = {};
-      this.ranked.forEach((r) => {
-        m[r.id] = r.pct;
+      ALL_IDS.forEach((id) => {
+        m[id] = total > 0 ? (Math.max(0, s[id]) / total) * 100 : 0;
       });
       return m;
     },
 
+    get ranked() {
+      const s = this.scores;
+      const pct = this.severityPct;
+      return ALL_IDS.map((id) => ({ id, score: s[id], pct: pct[id] }))
+        .sort((a, b) => b.score - a.score);
+    },
+
     get recommendations() {
       const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      const unanswered = QUESTIONS.filter((q) => !this.isCompleted(q.id));
-      const scored = unanswered.map((q) => {
-        let D = 0;
-        if (q.type === 'matrix') {
-          const mults = q.columns.map((c) => c.mult);
-          const spread = Math.max(...mults) - Math.min(...mults);
-          q.rows.forEach((row) => {
-            t5.forEach((rcId) => {
-              D += Math.abs(row.effects[rcId] || 0) * spread;
-            });
-          });
-        } else if (q.type === 'sliders') {
-          q.rows.forEach((row) => {
-            t5.forEach((rcId) => {
-              const deltas = row.steps.map((st) => st.effects[rcId] || 0);
-              D += Math.max(...deltas) - Math.min(...deltas);
-            });
-          });
-        } else {
-          t5.forEach((rcId) => {
-            const deltas = q.options.map((o) => o.effects[rcId] || 0);
-            D += Math.max(...deltas) - Math.min(...deltas);
-          });
-        }
-        return { q, D };
-      });
-      return scored
+      return QUESTIONS.filter((q) => !this.isCompleted(q.id))
+        .map((q) => ({ q, D: TYPE_HANDLERS[q.type].discriminator(q, t5) }))
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
         .slice(0, 5);
@@ -399,11 +414,15 @@ function app() {
       return p && p.total > 0 && p.answered === p.total;
     },
 
+    get activePos() {
+      const i = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      return { q: QUESTIONS[i], i };
+    },
     get activeQuestion() {
-      return QUESTIONS.find((q) => q.id === this.activeQuestionId);
+      return this.activePos.q;
     },
     get activeIdx() {
-      return QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      return this.activePos.i;
     },
     get activeStage() {
       return this.activeQuestion?.stage ?? 1;
@@ -437,25 +456,11 @@ function app() {
       const a = this.answers[qid];
       if (a === undefined || a === null) return false;
       const q = QUESTIONS.find((qq) => qq.id === qid);
-      if (q?.type === 'matrix') return Object.keys(a).length > 0;
-      if (q?.type === 'sliders') {
-        return Object.values(a).some((v) => Number(v) > 0);
-      }
-      return true;
+      return TYPE_HANDLERS[q.type].isAnswered(q, a);
     },
 
     rowAns(rowId) {
       return this.activeAnswer?.[rowId] || 'no';
-    },
-
-    setMatrixCell(rowId, colId) {
-      const qid = this.activeQuestionId;
-      withTransition(() => {
-        this.answers = {
-          ...this.answers,
-          [qid]: { ...(this.answers[qid] || {}), [rowId]: colId },
-        };
-      });
     },
 
     sliderVal(rowId) {
@@ -463,30 +468,38 @@ function app() {
       return v === undefined || v === null ? 2 : Number(v);
     },
 
-    setSliderVal(rowId, val) {
-      // Intentionally NOT wrapped in withTransition: a single drag fires many
-      // ticks; animating each would be jarring.
+    // animate=false skips withTransition: slider drag fires many ticks per
+    // gesture and animating each would be jarring.
+    setAnswer(value, { advance = false, animate = true } = {}) {
       const qid = this.activeQuestionId;
-      const v = parseInt(val, 10) || 0;
-      this.answers = {
-        ...this.answers,
-        [qid]: { ...(this.answers[qid] || {}), [rowId]: v },
+      const { i: idx } = this.activePos;
+      const write = () => {
+        this.answers = { ...this.answers, [qid]: value };
+        if (advance && idx >= 0 && idx < QUESTIONS.length - 1) {
+          this.activeQuestionId = QUESTIONS[idx + 1].id;
+        }
       };
+      if (animate) withTransition(write);
+      else write();
+    },
+
+    setMatrixCell(rowId, colId) {
+      const prev = this.answers[this.activeQuestionId] || {};
+      this.setAnswer({ ...prev, [rowId]: colId });
+    },
+
+    setSliderVal(rowId, val) {
+      const prev = this.answers[this.activeQuestionId] || {};
+      const v = parseInt(val, 10) || 0;
+      this.setAnswer({ ...prev, [rowId]: v }, { animate: false });
     },
 
     handleAnswer(i) {
-      const cur = this.activeQuestionId;
-      withTransition(() => {
-        this.answers = { ...this.answers, [cur]: i };
-        const idx = QUESTIONS.findIndex((q) => q.id === cur);
-        if (idx >= 0 && idx < QUESTIONS.length - 1) {
-          this.activeQuestionId = QUESTIONS[idx + 1].id;
-        }
-      });
+      this.setAnswer(i, { advance: true });
     },
 
     moveBy(d, opts = {}) {
-      const idx = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
+      const { i: idx } = this.activePos;
       const curId = this.activeQuestionId;
       const curStage = this.activeStage;
       const wasAnswered = this.isAnswered(curId);
@@ -537,16 +550,10 @@ function app() {
     renderDiagram() {
       const ICONS = window.ICONS;
       const highlights = this.activeHighlights;
+      const pips = [];
       let s = '';
-      for (const b of NODES) {
-        const pipsCount = b.pips.length;
-        const groupW = pipsCount * PIP_SIZE;
-        const groupX = b.x + (b.w - groupW) / 2;
-        const pipsAbove = b.y < 150;
-        const cyPip = pipsAbove
-          ? b.y - PIP_GAP - PIP_SIZE / 2
-          : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
 
+      for (const b of NODES) {
         const isHigh = highlights.includes(b.key);
         const nodeCls = isHigh ? 'node-group highlight' : 'node-group';
         s += `<g data-node="${b.key}" class="${nodeCls}">`;
@@ -563,48 +570,49 @@ function app() {
         }
         s += `</g>`;
 
+        const pipsCount = b.pips.length;
+        const groupW = pipsCount * PIP_SIZE;
+        const groupX = b.x + (b.w - groupW) / 2;
+        const cyPip = b.y < 150
+          ? b.y - PIP_GAP - PIP_SIZE / 2
+          : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
         for (let i = 0; i < pipsCount; i++) {
-          const rcId = b.pips[i];
-          const cx = groupX + i * PIP_SIZE + PIP_SIZE / 2;
-          const cy = cyPip;
-          const tBg = this.sevT(rcId).toFixed(3);
-          const tFg = this.sevTFg(rcId).toFixed(3);
-          const isActive = this.activeRC === rcId;
-          const justActive = this.recentRC === rcId;
-          const gCls =
-            (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
-          const cls = isActive ? 'pip-background active' : 'pip-background';
-          const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
-          s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
-          s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${cls}"/>`;
-          s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
-          if (isActive) {
-            s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
-          }
-          s += `</g>`;
+          pips.push({
+            rcId: b.pips[i],
+            cx: groupX + i * PIP_SIZE + PIP_SIZE / 2,
+            cy: cyPip,
+            connector: false,
+          });
         }
       }
 
-      for (let i = 0; i < CONN_PIPS.length; i++) {
-        const p = CONN_PIPS[i];
-        const tBg = this.sevT(p.rcId).toFixed(3);
-        const tFg = this.sevTFg(p.rcId).toFixed(3);
-        const isActive = this.activeRC === p.rcId;
-        const justActive = this.recentRC === p.rcId;
-        const gCls =
-          (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
-        const cls = isActive
-          ? 'pip-background pip-background--connector active'
-          : 'pip-background pip-background--connector';
-        const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
-        s += `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${p.rcId}" aria-label="Root cause ${p.rcId}: ${escapeAttr(RC[p.rcId].label)}">`;
-        s += `<circle cx="${p.x}" cy="${p.y}" r="${PIP_SIZE / 2}" class="${cls}"/>`;
-        s += `<text x="${p.x}" y="${p.y}" dy=".35em" text-anchor="middle" class="pip">${p.rcId.replace(/^R/, '')}</text>`;
-        if (isActive) {
-          s += `<circle cx="${p.x}" cy="${p.y}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
-        }
-        s += `</g>`;
+      for (const p of CONN_PIPS) {
+        pips.push({ rcId: p.rcId, cx: p.x, cy: p.y, connector: true });
       }
+
+      for (const p of pips) s += this.renderPip(p);
+      return s;
+    },
+
+    renderPip({ rcId, cx, cy, connector }) {
+      const tBg = this.sevT(rcId).toFixed(3);
+      const tFg = this.sevTFg(rcId).toFixed(3);
+      const isActive = this.activeRC === rcId;
+      const justActive = this.recentRC === rcId;
+      const gCls =
+        (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
+      const bgCls =
+        'pip-background' +
+        (connector ? ' pip-background--connector' : '') +
+        (isActive ? ' active' : '');
+      const style = `--sev-t:${tBg};--sev-t-fg:${tFg}`;
+      let s = `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${bgCls}"/>`;
+      s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
+      if (isActive) {
+        s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
+      }
+      s += `</g>`;
       return s;
     },
 
@@ -622,4 +630,18 @@ function app() {
   };
 }
 
-document.addEventListener('alpine:init', () => Alpine.data('app', app));
+document.addEventListener('alpine:init', () => {
+  Alpine.data('app', app);
+  Alpine.data('seeMore', (limit = 3) => ({
+    open: false,
+    visible(i) {
+      return this.open || i < limit;
+    },
+    toggle() {
+      this.open = !this.open;
+    },
+    label(total) {
+      return this.open ? 'See fewer' : `See more (${total - limit})`;
+    },
+  }));
+});
