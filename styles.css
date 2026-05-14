@@ -31,8 +31,6 @@
   --font-sans: 'Nunito Sans', sans-serif;
   --text-sm: clamp(0.6875rem, 0.625rem + 0.25cqi, 0.8125rem);
   --text-md: clamp(0.8125rem, 0.75rem + 0.25cqi, 0.9375rem);
-  --text-lg: clamp(0.9375rem, 0.84375rem + 0.4cqi, 1.125rem);
-  --text-ls-tight: 0.04em;
   --text-ls-wide: 0.1em;
   --font-weight-m: 600;
   --font-weight-l: 800;
@@ -86,6 +84,7 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   font-size: var(--text-md);
+  letter-spacing: 0.04em;
   color: var(--c-5);
   background: var(--grid-pattern), var(--c-2);
   -webkit-font-smoothing: antialiased;
@@ -104,17 +103,17 @@ main > details {
   border: var(--line-passive);
 }
 
-.rank-card > ol,
-.rec-card > ol,
-.rank-card > details {
+[data-card='rank'] > ol,
+[data-card='rec'] > ol,
+[data-card='rank'] > details {
   padding: 0 var(--sp-xl) var(--sp-xl);
 }
 
-.rec-card > .recommendation-empty {
+[data-card='rec'] > .recommendation-empty {
   margin: 0 var(--sp-xl) var(--sp-xl);
 }
 
-header, .section-title, .section-title--bar {
+header, .section-title {
   display: flex;
   gap: var(--sp-l);
   align-items: center;
@@ -123,13 +122,6 @@ header, .section-title, .section-title--bar {
 header {
   place-content: space-between;
   padding: var(--sp-l) var(--sp-xl);
-}
-
-header h2, .section-title-text {
-  flex: 1;
-  margin: 0;
-  font: inherit;
-  letter-spacing: inherit;
 }
 
 .section-title {
@@ -143,10 +135,11 @@ header h2, .section-title-text {
   background: oklch(95% 0.01 80);
 }
 
-.section-title--bar button {
+.section-title button {
   width: auto;
   min-height: 0;
   height: 1.9em;
+  margin-inline-start: auto;
   padding: 0 var(--sp-l);
   font-size: var(--text-sm);
   line-height: 1;
@@ -155,7 +148,11 @@ header h2, .section-title-text {
   background: transparent;
 }
 
-.section-title--bar button[data-shape='square'] {
+.section-title button ~ button {
+  margin-inline-start: 0;
+}
+
+.section-title button[data-shape='square'] {
   width: 1.9em;
   padding: 0;
 }
@@ -168,7 +165,7 @@ form {
   padding: var(--sp-xl);
 }
 
-.schematic-card figure {
+[data-card='schematic'] figure {
   position: relative;
   padding: var(--sp-xl);
   margin: 0;
@@ -176,7 +173,7 @@ form {
   border: var(--line-passive);
 }
 
-.schematic-card figure svg {
+[data-card='schematic'] figure svg {
   display: block;
   width: 100%;
   height: auto;
@@ -201,7 +198,6 @@ nav button {
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   text-transform: none;
-  letter-spacing: var(--text-ls-tight);
   border: none;
   border-right: var(--line-passive);
 }
@@ -272,10 +268,9 @@ form > header h2 {
   flex: 1;
   margin: 0;
   font-family: var(--font-sans);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-m);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-l);
   text-transform: none;
-  letter-spacing: var(--text-ls-tight);
 }
 
 .option-grid {
@@ -312,6 +307,7 @@ form > header h2 {
   gap: var(--sp-l);
   align-items: center;
   padding: var(--sp-m) var(--sp-l);
+  font-size: var(--text-sm);
   border: var(--line-passive);
   border-left: var(--line-width-l) solid var(--c-15);
   background: var(--c-1);
@@ -320,12 +316,6 @@ form > header h2 {
 
 .slider-row[data-active='true'] {
   border-left-color: var(--c-5);
-}
-
-.slider-label {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  letter-spacing: var(--text-ls-tight);
 }
 
 .slider-row input[type='range'] {
@@ -367,9 +357,7 @@ form > header h2 {
 
 .slider-value {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--text-ls-tight);
   text-align: right;
   color: var(--c-16);
 }
@@ -478,9 +466,8 @@ dialog::backdrop {
 
 h3 {
   margin: 0 0 var(--sp-m);
-  font-size: var(--text-lg);
+  font-size: var(--text-md);
   font-weight: var(--font-weight-l);
-  letter-spacing: var(--text-ls-tight);
 }
 
 p {
@@ -555,11 +542,14 @@ button:disabled, [aria-disabled='true'] {
 
 /* ─── Diagrams & Schematic Visuals ─────── */
 
-.pip {
+.pip, .flow-label {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
   font-weight: var(--font-weight-l);
   pointer-events: none;
+}
+
+.pip {
+  font-size: var(--text-sm);
   paint-order: stroke fill;
   stroke: var(--c-sev-bg);
   stroke-width: 3px;
@@ -568,12 +558,8 @@ button:disabled, [aria-disabled='true'] {
 }
 
 .flow-label {
-  font-family: var(--font-mono);
   font-size: var(--text-md);
-  font-weight: var(--font-weight-l);
-  letter-spacing: var(--text-ls-tight);
   fill: currentcolor;
-  pointer-events: none;
 }
 
 .node-box {
@@ -723,7 +709,6 @@ button:disabled, [aria-disabled='true'] {
 }
 
 code { grid-area: code; }
-.root-cause-label { text-align: left; }
 .percent { grid-area: percent; place-self: center end; font-variant-numeric: tabular-nums; color: var(--c-sev-bg); }
 
 .bar {
@@ -780,7 +765,7 @@ code { grid-area: code; }
 
 /* ─── View transitions ───────────────── */
 
-.form-card { view-transition-name: form-card; }
+[data-card='form'] { view-transition-name: form-card; }
 .rank-row { view-transition-name: var(--vt-rc, none); }
 
 ::view-transition-group(*) {
@@ -795,13 +780,12 @@ code { grid-area: code; }
     grid-template-areas: 'form rank' 'schematic rec';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
-  .schematic-card { grid-area: schematic; }
-  .form-card { grid-area: form; }
-  .rank-card { grid-area: rank; }
-  .rec-card { grid-area: rec; }
+  [data-card='schematic'] { grid-area: schematic; }
+  [data-card='form'] { grid-area: form; }
+  [data-card='rank'] { grid-area: rank; }
+  [data-card='rec'] { grid-area: rec; }
 }
 
 @container page (width <= 760px) {
-  form > header h2 { font-size: var(--text-md); }
   th, td { padding: var(--sp-s); }
-            }
+}
