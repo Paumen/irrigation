@@ -39,9 +39,10 @@ const QUESTIONS = window.DATA.questions.map((q) => {
   };
 });
 
-const BOX_W = 110;
-const BOX_H = 110;
-const PIP_SIZE = 30;
+const BOX_W = 100;
+const BOX_H = 80;
+const PIP_SIZE = 28;
+const PIP_GAP = 6;
 
 const NODES = [
   {
@@ -107,30 +108,31 @@ const NODES = [
 ];
 
 const CONN_PIPS = [
-  { rcId: 'R51', x: 455, y: 265 },
-  { rcId: 'R52', x: 490, y: 265 },
-  { rcId: 'R61', x: 332, y: 155 },
-  { rcId: 'R62', x: 362, y: 155 },
-  { rcId: 'R63', x: 392, y: 155 },
-  { rcId: 'R81', x: 183, y: 265 },
-  { rcId: 'R82', x: 218, y: 265 },
+  { rcId: 'R51', x: 455, y: 280 },
+  { rcId: 'R52', x: 490, y: 280 },
+  { rcId: 'R61', x: 327, y: 155 },
+  { rcId: 'R62', x: 357, y: 155 },
+  { rcId: 'R63', x: 387, y: 155 },
+  { rcId: 'R81', x: 183, y: 280 },
+  { rcId: 'R82', x: 218, y: 280 },
 ];
 
 const NODE_ICON_LAYOUT = {
-  1: { size: 26, gap: 0 },
-  2: { size: 24, gap: 30 },
-  3: { size: 20, gap: 26 },
-  4: { size: 18, gap: 24 },
+  1: { size: 44, gap: 0 },
+  2: { size: 36, gap: 38 },
+  3: { size: 28, gap: 30 },
+  4: { size: 24, gap: 26 },
 };
 
 const STAGE_LABELS = ['', 'Symptoms', 'Events', 'Tests'];
 
 function severityT(pct) {
-  return Math.max(0, Math.min(1, pct / 20));
+  const t = Math.max(0, Math.min(1, pct / 18));
+  return Math.sqrt(t);
 }
 
 function severityTFg(pct) {
-  return Math.max(0, Math.min(1, (pct - 6.5) / 3));
+  return Math.max(0, Math.min(1, (pct - 5) / 3));
 }
 
 function withTransition(fn) {
@@ -443,7 +445,10 @@ function app() {
         const pipsCount = b.pips.length;
         const groupW = pipsCount * PIP_SIZE;
         const groupX = b.x + (b.w - groupW) / 2;
-        const fy = b.y + b.h - PIP_SIZE;
+        const pipsAbove = b.y < 150;
+        const cyPip = pipsAbove
+          ? b.y - PIP_GAP - PIP_SIZE / 2
+          : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
 
         const isHigh = highlights.includes(b.key);
         const nodeCls = isHigh ? 'node-group highlight' : 'node-group';
@@ -456,14 +461,15 @@ function app() {
         for (let i = 0; i < b.icons.length; i++) {
           const name = b.icons[i];
           const iconCx = nodeIconCx(b, i, b.icons.length);
-          const tr = iconTransform(name, iconCx, b.y + (BOX_H - PIP_SIZE) / 2, layout.size * iconSizeScale, isFlipped);
+          const tr = iconTransform(name, iconCx, b.y + b.h / 2, layout.size * iconSizeScale, isFlipped);
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
+        s += `</g>`;
 
         for (let i = 0; i < pipsCount; i++) {
           const rcId = b.pips[i];
           const cx = groupX + i * PIP_SIZE + PIP_SIZE / 2;
-          const cy = fy + PIP_SIZE / 2;
+          const cy = cyPip;
           const tBg = this.sevT(rcId).toFixed(3);
           const tFg = this.sevTFg(rcId).toFixed(3);
           const isActive = this.activeRC === rcId;
@@ -480,7 +486,6 @@ function app() {
           }
           s += `</g>`;
         }
-        s += `</g>`;
       }
 
       for (let i = 0; i < CONN_PIPS.length; i++) {
