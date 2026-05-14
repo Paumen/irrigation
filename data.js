@@ -129,7 +129,7 @@ window.DATA = {
             R52: 0.2,
             R61: 0.2, R62: 0.2, R63: 0.2,
             R72: 0.2, R74: 0.2,
-            R82: 0.2,
+            R81: 0.2, R82: 0.2,
             R91: 0.2, R92: 0.2,
           },
         },
@@ -138,6 +138,9 @@ window.DATA = {
           icon: 'flow-decline',
           effects: {
             R41: 0.6, R42: 0.6,
+            R52: 0.4,
+            R71: 0.2,
+            R82: 0.4,
           },
         },
         {
@@ -416,54 +419,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q10',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'Zone behavior over the run cycle?',
-      highlight: ['valves', 'sp4', 'lateral'],
-      options: [
-        {
-          label: 'Strong at start, fades',
-          icon: 'flow-decline',
-          effects: {
-            R41: 0.4,
-            R52: 0.4,
-            R82: 0.4,
-          },
-        },
-        {
-          label: 'Weak start to finish',
-          icon: 'flow-weak',
-          effects: {
-            R41: 0.2, R42: 0.2,
-            R72: 0.2,
-            R81: 0.2,
-          },
-        },
-        {
-          label: 'Fine until late, then drops',
-          icon: 'flow-late-drop',
-          effects: {
-            R42: 0.4,
-            R71: 0.4,
-          },
-        },
-        {
-          label: 'Surges / hammers',
-          icon: 'flow-surge',
-          effects: {
-            R52: 0.4,
-          },
-        },
-        {
-          label: 'Same level throughout',
-          icon: 'flow-normal',
-          effects: {},
-        },
-      ],
-    },
-    {
-      id: 'Q11a',
+      id: 'Q11',
       stage: 1,
       group: 'Symptoms',
       text: 'Did restarting the controller help?',
@@ -486,7 +442,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q11b',
+      id: 'Q12',
       stage: 1,
       group: 'Symptoms',
       text: 'Did restarting the pump help?',
