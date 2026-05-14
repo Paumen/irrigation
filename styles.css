@@ -666,27 +666,39 @@ button:disabled {
 
 [data-flow='water'] {
   --c-flow: var(--c-hose);
+  --c-flow-active: var(--c-hose);
   --line-flow-width: 10px;
+  --line-flow-dash-active: 14 8;
+  --line-flow-end: -22;
 }
 
 [data-flow='lateral'] {
   --c-flow: var(--c-hose);
+  --c-flow-active: var(--c-hose);
   --line-flow-width: 8px;
+  --line-flow-dash-active: 14 8;
+  --line-flow-end: -22;
 }
 
 [data-flow='ctrl'] {
   --c-flow: var(--c-rust-3);
   --line-flow-width: 4px;
   --line-flow-dash: 10 4;
+  --line-flow-end: -12;
+  --line-flow-time: 0.7s;
 }
 
 [data-flow='mains'] {
   --line-flow-width: 4px;
+  --line-flow-dash-active: 10 6;
+  --line-flow-end: -16;
 }
 
 [data-flow='wifi'] {
   --line-flow-width: 4px;
   --line-flow-dash: 2 4;
+  --line-flow-end: -7;
+  --line-flow-time: 0.5s;
 }
 
 .line {
@@ -846,39 +858,10 @@ code {
   }
 }
 
-:where([data-flow]).flow-highlight .line,
-.line.flow-highlight {
-  stroke: var(--c-fg);
-}
-
-:where([data-flow='water']).flow-highlight .line,
-:where([data-flow='lateral']).flow-highlight .line {
-  stroke: var(--c-hose);
-  stroke-dasharray: 14 8;
-
-  --line-flow-end: -22;
-
-  animation: flow-dash 0.9s linear infinite;
-}
-
-:where([data-flow='mains']).flow-highlight .line {
-  stroke-dasharray: 10 6;
-
-  --line-flow-end: -16;
-
-  animation: flow-dash 0.9s linear infinite;
-}
-
-:where([data-flow='ctrl']).flow-highlight .line {
-  --line-flow-end: -12;
-
-  animation: flow-dash 0.7s linear infinite;
-}
-
-:where([data-flow='wifi']).flow-highlight .line {
-  --line-flow-end: -7;
-
-  animation: flow-dash 0.5s linear infinite;
+:where([data-flow]).flow-highlight .line {
+  stroke: var(--c-flow-active, var(--c-fg));
+  stroke-dasharray: var(--line-flow-dash-active, var(--line-flow-dash));
+  animation: flow-dash var(--line-flow-time, 0.9s) linear infinite;
 }
 
 @keyframes flow-dash {

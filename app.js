@@ -538,6 +538,32 @@ function app() {
       return Math.min(r.pct * 5, 100) + '%';
     },
 
+    renderFlows() {
+      const ICONS = window.ICONS;
+      let s = '';
+      for (const f of window.DATA.flows) {
+        const cls = this.isHighlighted(f.id) ? ' class="flow-highlight"' : '';
+        s += `<g data-flow="${f.id}"${cls}>`;
+        for (const l of f.lines) {
+          const arr = l.arrow ? ' marker-end="url(#arr)"' : '';
+          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" class="line"${arr}/>`;
+        }
+        for (const l of f.lines) {
+          if (!l.hose) continue;
+          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" class="hose-highlight"/>`;
+        }
+        for (const m of f.markers) {
+          const tr = iconTransform(m.icon, m.cx, m.cy, 28);
+          s += `<g transform="${tr}"><path d="${ICONS[m.icon].d}" fill="currentColor"/></g>`;
+          if (m.label) {
+            s += `<text x="${m.cx + 16}" y="${m.cy}" text-anchor="start" class="flow-label">${m.label}</text>`;
+          }
+        }
+        s += `</g>`;
+      }
+      return s;
+    },
+
     renderDiagram() {
       const ICONS = window.ICONS;
       const highlights = this.activeHighlights;

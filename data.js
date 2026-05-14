@@ -15,6 +15,39 @@ window.DATA = {
     { id: 2, label: 'Events' },
     { id: 3, label: 'Tests' },
   ],
+  flows: [
+    {
+      id: 'wifi',
+      lines: [{ x1: 122, y1: 60, x2: 295, y2: 60 }],
+      markers: [{ icon: 'ms:wifi', cx: 208, cy: 46 }],
+    },
+    {
+      id: 'ctrl',
+      lines: [
+        { x1: 395, y1: 60, x2: 568, y2: 60, arrow: true },
+        { x1: 345, y1: 100, x2: 345, y2: 180, arrow: true },
+      ],
+      markers: [
+        { icon: 'mdi:lightning-bolt-outline', cx: 470, cy: 46, label: '24V' },
+        { icon: 'mdi:lightning-bolt-outline', cx: 290, cy: 140, label: '24V' },
+      ],
+    },
+    {
+      id: 'mains',
+      lines: [{ x1: 618, y1: 100, x2: 618, y2: 180, arrow: true }],
+      markers: [{ icon: 'ms:bolt', cx: 563, cy: 140, label: '230V' }],
+    },
+    {
+      id: 'water',
+      lines: [{ x1: 568, y1: 220, x2: 395, y2: 220, arrow: true, hose: true }],
+      markers: [{ icon: 'mdi:water-outline', cx: 470, cy: 234, label: 'H₂O' }],
+    },
+    {
+      id: 'lateral',
+      lines: [{ x1: 295, y1: 220, x2: 122, y2: 220, arrow: true, hose: true }],
+      markers: [{ icon: 'mdi:water-outline', cx: 198, cy: 234, label: 'H₂O' }],
+    },
+  ],
   sliderCurves: {
     standard: [-0.2, 0, 0.2, 0.4],
     fast: [-0.2, 0.2, 0.2, 0.4],
