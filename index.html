@@ -123,16 +123,7 @@
             ></g>
           </svg>
 
-          <figcaption>
-            <span><span class="swatch" data-flow="water" aria-hidden="true"></span> water</span>
-            <span
-              ><span class="swatch" data-flow="mains" aria-hidden="true"></span> 230V mains</span
-            >
-            <span
-              ><span class="swatch" data-flow="ctrl" aria-hidden="true"></span> 24V control</span
-            >
-            <span><span class="swatch" data-flow="wifi" aria-hidden="true"></span> Wi-Fi</span>
-          </figcaption>
+          
         </figure>
       </details>
       
@@ -277,7 +268,7 @@
       <details class="rank-card" open>
         <summary class="section-title">Root-cause</summary>
         <ol>
-          <template x-for="r in ranked.slice(0, 4)" :key="r.id">
+          <template x-for="r in ranked.slice(0, 3)" :key="r.id">
             <li>
               <button
                 type="button"
