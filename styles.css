@@ -49,7 +49,6 @@
   --sp-xxl: clamp(18px, 12px + 1.5cqi, 28px);
   --sp-slider-track-h: 4px;
   --sp-slider-thumb-d: 16px;
-  --sp-card-inline: var(--sp-xl);
 
   /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
@@ -128,7 +127,7 @@ header {
 }
 
 .section-title {
-  padding: var(--sp-l) var(--sp-card-inline);
+  padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-mono);
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
@@ -143,12 +142,12 @@ header {
 }
 
 form {
-  padding: var(--sp-l) var(--sp-card-inline) var(--sp-card-inline);
+  padding: var(--sp-l) var(--sp-xl) var(--sp-xl);
 }
 
 figure {
   position: relative;
-  padding: var(--sp-card-inline);
+  padding: var(--sp-xl);
   margin: 0;
   background: var(--bg-grid-pattern), var(--c-bg-alt);
   border: var(--line-passive);
@@ -323,7 +322,7 @@ ol {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
-  padding: var(--sp-l) var(--sp-card-inline) var(--sp-card-inline);
+  padding: var(--sp-l) var(--sp-xl) var(--sp-xl);
   margin: 0;
   list-style: none;
 }
@@ -780,8 +779,8 @@ button:disabled {
 .see-more-btn {
   place-content: center;
   place-items: center;
-  width: calc(100% - 2 * var(--sp-card-inline));
-  margin: 0 var(--sp-card-inline) var(--sp-card-inline);
+  width: calc(100% - 2 * var(--sp-xl));
+  margin: 0 var(--sp-xl) var(--sp-xl);
   font-size: var(--text-sm);
   text-transform: none;
   letter-spacing: 0;
