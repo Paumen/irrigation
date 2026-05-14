@@ -127,7 +127,7 @@
 
       <details data-card="form" open>
         <summary class="section-title">
-          Diagnostic
+          <span>Diagnostic</span>
           <button
             type="button"
             data-tone="mute"
@@ -268,9 +268,11 @@
               type="button"
               @click="pickStage(s)"
               :aria-current="activeStage === s ? 'step' : null"
-              :data-complete="isStageComplete(s) ? 'true' : null"
             >
-              <span x-text="STAGE_LABELS[s]"></span>
+              <span
+                :data-complete="isStageComplete(s) ? 'true' : null"
+                x-text="STAGE_LABELS[s]"
+              ></span>
               <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
               <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
             </button>
