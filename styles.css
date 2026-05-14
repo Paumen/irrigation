@@ -54,6 +54,7 @@
   --line-width-s: 1px;
   --line-width-m: 2px;
   --line-width-l: 3px;
+  --line-width-xl: 4.5px;
   --line-passive: var(--line-width-s) solid var(--c-fg-med);
   --line-interactive: var(--line-width-s) solid var(--c-fg);
   --line-active: var(--line-width-m) solid var(--c-fg);
@@ -704,7 +705,7 @@ button:disabled {
   stroke: oklch(70% 0.04 220deg / 55%);
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.5px;
+  stroke-width: var(--line-width-m);
 }
 
 .swatch {
@@ -846,7 +847,7 @@ code {
   }
 
   50% {
-    stroke-width: 4.5px;
+    stroke-width: var(--line-width-xl);
   }
 }
 
