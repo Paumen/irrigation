@@ -218,10 +218,6 @@ function severityT(pct) {
   return Math.sqrt(t);
 }
 
-function severityTFg(pct) {
-  return Math.max(0, Math.min(1, (pct - 3) / 3));
-}
-
 // Animate state mutations with the View Transitions API. No-op if the browser
 // lacks support or the user prefers reduced motion. All mutations that affect
 // ranking order or the active question go through this.
@@ -321,7 +317,6 @@ function app() {
     iconTransform,
     nodeIconCx,
     severityT,
-    severityTFg,
 
     init() {
       const saved = loadSaved();
@@ -618,7 +613,6 @@ function app() {
     renderPip({ rcId, cx, cy, connector }) {
       const pct = this.severityPct[rcId] || 0;
       const tBg = severityT(pct).toFixed(3);
-      const tFg = severityTFg(pct).toFixed(3);
       const isActive = this.activeRC === rcId;
       const justActive = this.recentRC === rcId;
       const gCls = (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
@@ -626,7 +620,7 @@ function app() {
         'pip-background' +
         (connector ? ' pip-background--connector' : '') +
         (isActive ? ' active' : '');
-      const style = `--c-sev-t:${tBg};--c-sev-t-fg:${tFg}`;
+      const style = `--c-sev-t:${tBg}`;
       let s = `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
       s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${bgCls}"/>`;
       s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
