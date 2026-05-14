@@ -141,8 +141,8 @@ header {
   background: oklch(90% 0.014 80deg);
 }
 
-.section-title > button:first-of-type {
-  margin-inline-start: auto;
+.section-title > span {
+  flex: 1;
 }
 
 form {
@@ -199,7 +199,7 @@ nav button[aria-current] {
   border-bottom: 4px solid var(--c-fg);
 }
 
-nav button[data-complete='true'] > :first-child::after {
+nav [data-complete='true']::after {
   color: var(--c-rust-3);
   content: ' ✓';
 }
@@ -317,7 +317,7 @@ input[type='range']::-moz-range-thumb {
   text-align: right;
 }
 
-.slider-row[data-active='true'] .slider-value {
+:where(.slider-row)[data-active='true'] .slider-value {
   font-weight: var(--font-weight-m);
   color: var(--c-fg);
 }
@@ -535,7 +535,7 @@ button.active {
 
 button[aria-current],
 summary[aria-current],
-.option:has(input[type='radio']:checked) {
+.option:has(:checked) {
   font-weight: var(--font-weight-l);
   border-width: var(--line-width-m);
 }
@@ -608,8 +608,8 @@ button:disabled {
   transform: translate(-2px, -2px);
 }
 
-.pip-group.active .pip-background,
-.pip-group:focus-visible .pip-background {
+.pip-background.active,
+:where(.pip-group):focus-visible .pip-background {
   stroke: var(--c-fg);
   stroke-width: var(--line-width-m);
 }
@@ -836,7 +836,7 @@ code {
   color: var(--c-rust-4);
 }
 
-.node-group.highlight .node-box {
+:where(.node-group).highlight .node-box {
   fill: var(--c-bg);
   stroke: var(--c-rust-3);
   stroke-width: var(--line-width-l);
@@ -854,13 +854,13 @@ code {
   }
 }
 
-[data-flow].flow-highlight .line,
+:where([data-flow]).flow-highlight .line,
 .line.flow-highlight {
   stroke: var(--c-fg);
 }
 
-[data-flow='water'].flow-highlight .line,
-[data-flow='lateral'].flow-highlight .line {
+:where([data-flow='water']).flow-highlight .line,
+:where([data-flow='lateral']).flow-highlight .line {
   stroke: var(--c-hose);
   stroke-dasharray: 14 8;
 
@@ -869,7 +869,7 @@ code {
   animation: flow-dash 0.9s linear infinite;
 }
 
-[data-flow='mains'].flow-highlight .line {
+:where([data-flow='mains']).flow-highlight .line {
   stroke-dasharray: 10 6;
 
   --line-flow-end: -16;
@@ -877,13 +877,13 @@ code {
   animation: flow-dash 0.9s linear infinite;
 }
 
-[data-flow='ctrl'].flow-highlight .line {
+:where([data-flow='ctrl']).flow-highlight .line {
   --line-flow-end: -12;
 
   animation: flow-dash 0.7s linear infinite;
 }
 
-[data-flow='wifi'].flow-highlight .line {
+:where([data-flow='wifi']).flow-highlight .line {
   --line-flow-end: -7;
 
   animation: flow-dash 0.5s linear infinite;
