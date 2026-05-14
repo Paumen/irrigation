@@ -126,6 +126,7 @@ header {
 }
 
 header h2, .section-title-text {
+  flex: 1;
   margin: 0;
   font: inherit;
   letter-spacing: inherit;
@@ -263,6 +264,7 @@ nav button[data-complete='true'][aria-current] {
 }
 
 form > header {
+  padding: 0;
   margin: 0 0 var(--sp-xl);
 }
 
@@ -707,7 +709,7 @@ button:disabled, [aria-disabled='true'] {
 
 .stage { grid-area: stage; }
 .discriminator { grid-area: discriminator; justify-self: end; }
-.recommendation-text { grid-area: text; font-family: var(--font-sans); }
+.recommendation-text { grid-area: text; font-family: var(--font-sans); text-transform: none; }
 
 .rank-row {
   display: grid;
