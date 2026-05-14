@@ -709,7 +709,7 @@ button:disabled, [aria-disabled='true'] {
 
 .stage { grid-area: stage; }
 .discriminator { grid-area: discriminator; justify-self: end; }
-.recommendation-text { grid-area: text; font-family: var(--font-sans); text-transform: none; }
+.recommendation-text { grid-area: text; font-family: var(--font-sans); text-transform: none; text-align: left; }
 
 .rank-row {
   display: grid;
@@ -723,6 +723,7 @@ button:disabled, [aria-disabled='true'] {
 }
 
 code { grid-area: code; }
+.root-cause-label { text-align: left; }
 .percent { grid-area: percent; place-self: center end; font-variant-numeric: tabular-nums; color: var(--c-sev-bg); }
 
 .bar {
