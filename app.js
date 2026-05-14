@@ -319,8 +319,6 @@ function app() {
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
     recentRC: null,
-    showAllRecs: false,
-    showAllRanks: false,
 
     iconTransform,
     nodeIconCx,
@@ -632,4 +630,18 @@ function app() {
   };
 }
 
-document.addEventListener('alpine:init', () => Alpine.data('app', app));
+document.addEventListener('alpine:init', () => {
+  Alpine.data('app', app);
+  Alpine.data('seeMore', (limit = 3) => ({
+    open: false,
+    visible(i) {
+      return this.open || i < limit;
+    },
+    toggle() {
+      this.open = !this.open;
+    },
+    label(total) {
+      return this.open ? 'See fewer' : `See more (${total - limit})`;
+    },
+  }));
+});
