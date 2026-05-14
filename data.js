@@ -39,8 +39,8 @@ window.DATA = {
     { id: 'R74', parent: 'R7', baseline: 0.8, label: 'Valve misconfiguration' },
     { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Zone hoses 25mm / fitting damage' },
     { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Zone hoses 25mm air / debris clog' },
-    { id: 'R91', parent: 'R9', baseline: 1.1, label: 'Sprinkler debris / nozzle' },
-    { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Sprinkler misconfigured' },
+    { id: 'R91', parent: 'R9', baseline: 1.1, label: 'Rotor debris / nozzle' },
+    { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Rotor misconfigured' },
   ],
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
@@ -67,7 +67,7 @@ window.DATA = {
           effects: { R61: 0.2, R63: 0.2, R7: 0.2, R8: 0.2 },
         },
         {
-          label: 'One sprinkler',
+          label: 'One rotor',
           icon: 'scope-one',
           effects: { R9: 2 },
         },
