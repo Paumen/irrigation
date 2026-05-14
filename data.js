@@ -250,7 +250,7 @@ window.DATA = {
       text: 'How did the problem progress?',
       options: [
         {
-          label: 'Sudden, every time since',
+          label: 'Sudden',
           icon: 'pat-sudden',
           effects: {
             R22: 0.2,
@@ -262,7 +262,7 @@ window.DATA = {
           },
         },
         {
-          label: 'Gradual, now every time',
+          label: 'Gradual',
           icon: 'pat-gradual-all',
           effects: {
             R41: 0.4, R42: 0.4,
@@ -272,23 +272,16 @@ window.DATA = {
           },
         },
         {
-          label: 'Gradual, still intermittent',
+          label: 'Intermittent',
           icon: 'pat-gradual-int',
           effects: {
+            R11: 0.2, R13: 0.2,
             R41: 0.2, R42: 0.2,
             R61: 0.2, R62: 0.2, R63: 0.2,
             R71: 0.2, R72: 0.2, R73: 0.2, R74: 0.2,
           },
         },
-        {
-          label: 'Intermittent',
-          icon: 'pat-intermittent',
-          effects: {
-            R11: 0.2, R13: 0.2,
-            R61: 0.2, R62: 0.2, R63: 0.2,
-            R71: 0.2,
-          },
-        },
+        
         {
           label: 'Sometimes, no pattern',
           icon: 'pat-noise',
