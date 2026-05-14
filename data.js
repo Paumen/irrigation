@@ -548,7 +548,6 @@ window.DATA = {
         { id: 'pump', label: 'Pump ', effects: { R41: 1, R42: 1 } },
         { id: 'relay', label: 'Start-relay ', effects: { R31: 1, R61: 0.6, R62: 0.6, R63: 0.6 } },
         { id: 'ctrl', label: 'Controller ', effects: { R11: 1, R22: 1,  R61: 0.8, R62: 0.8, R63: 0.8 } },
-        { id: 'app', label: 'App / wifi ', effects: { R11: 1, R12: 1, R13: 1 } },
         { id: 'valves', label: 'Valves ', effects: { R71: 1, R72: 1, R73: 1, R74: 1,  R61: 0.8, R62: 0.8, R63: 0.8} },
         { id: 'spr', label: 'Rotors ', effects: { R91: 0.6, R92: 1.0 } },
         { id: 'zhose', label: 'Hoses / fittings ', effects: { R81: 1, R82: 1, R51: 1, R52: 1 } },
