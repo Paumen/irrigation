@@ -316,8 +316,8 @@ form > header h2 {
 }
 
 .opt-icon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   color: var(--c-5);
   fill: currentColor;
   opacity: 0.85;
