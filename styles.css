@@ -158,7 +158,7 @@ header {
 }
 
 .section-title + form {
-  padding-top: 0;
+  padding-top: var(--sp-l);
 }
 
 form {
