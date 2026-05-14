@@ -529,7 +529,7 @@ window.DATA = {
       type: 'sliders',
       group: 'Events',
       text: 'How old is each component?',
-      highlight: ['pump', 'valves', 'relay', 'ctrl', 'sw', 'wifi', 'sp4'],
+      highlight: ['pump', 'valves', 'relay', 'ctrl', 'wifi', 'sp4'],
       rows: [
         {
           id: 'pump',
@@ -577,7 +577,7 @@ window.DATA = {
         },
         {
           id: 'spr',
-          label: 'Sprinklers / rotors',
+          label: 'Rotors',
           steps: [
             { label: '—', effects: {} },
             { label: '0–4 yrs', effects: { R91: -0.2 } },
