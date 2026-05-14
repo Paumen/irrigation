@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=23" />
+    <link rel="stylesheet" href="styles.css?v=26" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -64,16 +64,16 @@
               <line x1="345" y1="100" x2="345" y2="180" class="line" marker-end="url(#arr-ctrl)" />
             </g>
             <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 465, 46, 28)">
+              <g :transform="iconTransform('mdi:lightning-bolt-outline', 470, 46, 28)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="481" y="46" text-anchor="start" class="flow-label">24V</text>
+              <text x="486" y="46" text-anchor="start" class="flow-label">24V</text>
             </g>
             <g data-flow="ctrl">
-              <g :transform="iconTransform('mdi:lightning-bolt-outline', 270, 140, 28)">
+              <g :transform="iconTransform('mdi:lightning-bolt-outline', 290, 140, 28)">
                 <path :d="ICONS['mdi:lightning-bolt-outline'].d" fill="currentColor" />
               </g>
-              <text x="286" y="140" text-anchor="start" class="flow-label">24V</text>
+              <text x="306" y="140" text-anchor="start" class="flow-label">24V</text>
             </g>
 
             <line
@@ -87,10 +87,10 @@
               marker-end="url(#arr-mains)"
             />
             <g data-flow="mains">
-              <g :transform="iconTransform('ms:bolt', 560, 140, 28)">
+              <g :transform="iconTransform('ms:bolt', 563, 140, 28)">
                 <path :d="ICONS['ms:bolt'].d" fill="currentColor" />
               </g>
-              <text x="576" y="140" text-anchor="start" class="flow-label">230V</text>
+              <text x="579" y="140" text-anchor="start" class="flow-label">230V</text>
             </g>
 
             <g data-flow="water" :class="isHighlighted('water') ? 'flow-highlight' : ''">
@@ -98,10 +98,10 @@
               <line x1="568" y1="220" x2="395" y2="220" class="hose-highlight" />
             </g>
             <g data-flow="water">
-              <g :transform="iconTransform('mdi:water-outline', 420, 234, 28)">
+              <g :transform="iconTransform('mdi:water-outline', 470, 234, 28)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="436" y="234" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="486" y="234" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g data-flow="lateral" :class="isHighlighted('lateral') ? 'flow-highlight' : ''">
@@ -109,10 +109,10 @@
               <line x1="295" y1="220" x2="122" y2="220" class="hose-highlight" />
             </g>
             <g data-flow="lateral">
-              <g :transform="iconTransform('mdi:water-outline', 200, 234, 28)">
+              <g :transform="iconTransform('mdi:water-outline', 198, 234, 28)">
                 <path :d="ICONS['mdi:water-outline'].d" fill="currentColor" />
               </g>
-              <text x="216" y="234" text-anchor="start" class="flow-label">H₂O</text>
+              <text x="214" y="234" text-anchor="start" class="flow-label">H₂O</text>
             </g>
 
             <g
@@ -241,7 +241,7 @@
           <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'sliders'">
             <footer>
               <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">Skip</button>
-              <button type="button" @click="moveBy(1)" :disabled="isLast">Next ›</button>
+              <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">Next ›</button>
             </footer>
           </template>
         </form>
@@ -272,8 +272,8 @@
       <details data-card="rank" open>
         <summary class="section-title">Root-cause</summary>
         <ol>
-          <template x-for="r in ranked.slice(0, 3)" :key="r.id">
-            <li>
+          <template x-for="(r, i) in ranked" :key="r.id">
+            <li x-show="showAllRanks || i < 3">
               <button
                 type="button"
                 class="rank-row"
@@ -289,28 +289,14 @@
             </li>
           </template>
         </ol>
-        <template x-if="rankedRest.length > 0">
-          <details>
-            <summary data-shape="ghost" x-text="`all ${ranked.length} ranked`"></summary>
-            <ol start="6">
-              <template x-for="r in rankedRest" :key="r.id">
-                <li>
-                  <button
-                    type="button"
-                    class="rank-row"
-                    :class="activeRC === r.id ? 'active' : ''"
-                    :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
-                    @click="activeRC = r.id"
-                  >
-                    <code x-text="r.id"></code>
-                    <span x-text="RC[r.id].label"></span>
-                    <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
-                    <span class="percent" x-text="`${rankPct(r)}%`"></span>
-                  </button>
-                </li>
-              </template>
-            </ol>
-          </details>
+        <template x-if="ranked.length > 3">
+          <button
+            type="button"
+            class="see-more-btn"
+            data-shape="ghost"
+            @click="showAllRanks = !showAllRanks"
+            x-text="showAllRanks ? 'See fewer' : `See more (${ranked.length - 3})`"
+          ></button>
         </template>
       </details>
 
@@ -360,7 +346,7 @@
 
     <script src="data.js?v=13"></script>
     <script src="icons.js?v=12"></script>
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=20"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html> 
