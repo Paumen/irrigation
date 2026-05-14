@@ -380,8 +380,8 @@ form > header h2 {
 
 .slider-row input[type='range']::-webkit-slider-thumb {
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   margin-top: -7px;
   background: var(--c-1);
   border: var(--line-active);
@@ -390,8 +390,8 @@ form > header h2 {
 }
 
 .slider-row input[type='range']::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   background: var(--c-1);
   border: var(--line-active);
   border-radius: 50%;
@@ -859,7 +859,7 @@ summary:hover,
   place-items: center stretch;
   place-content: stretch;
   min-height: 0;
-  padding: var(--sp-l) var(--sp-xl);
+  padding: var(--sp-m) var(--sp-l);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   text-align: left;
@@ -869,7 +869,7 @@ summary:hover,
 
 .option:has(:focus-visible) {
   outline: var(--line-active);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 .recommendation {
@@ -922,7 +922,8 @@ summary:hover,
   grid-template-areas:
     'code label percent'
     'code bar percent';
-  grid-template-columns: 48px 1fr 48px;
+  grid-template-columns: 48px 1fr 48
+    px;
   gap: 0 var(--sp-l);
   place-items: center stretch;
   place-content: stretch;
@@ -977,7 +978,7 @@ nav button > .bar {
 }
 
 .matrix-scroll {
-  padding: var(--sp-l) 0;
+  padding: var(--sp-m) 0;
   overflow-x: auto;
 }
 
