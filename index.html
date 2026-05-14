@@ -222,7 +222,7 @@
                   type="button"
                   class="rank-row"
                   :class="{ 'active': activeRC === r.id }"
-                  :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}; --c-sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
+                  :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
                   @click="activeRC = r.id"
                 >
                   <code x-text="r.id"></code>

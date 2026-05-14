@@ -8,12 +8,6 @@
   initial-value: 0;
 }
 
-@property --c-sev-t-fg {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}
-
 @property --line-flow-end {
   syntax: '<number>';
   inherits: true;
@@ -33,11 +27,7 @@
   --c-fg-med: color-mix(in oklch, var(--c-fg), transparent 65%);
   --c-fg-strong: color-mix(in oklch, var(--c-fg), transparent 40%);
   --c-danger: oklch(53.9% 0.144 39deg);
-  --c-sand: oklch(93% 0.014 80deg);
-  --c-rust-1: oklch(82% 0.045 72deg);
-  --c-rust-2: oklch(58% 0.115 50deg);
   --c-rust-3: oklch(38% 0.105 40deg);
-  --c-rust-4: oklch(28% 0.08 50deg);
   --c-hose: oklch(32% 0.05 220deg);
 
   /* ─── Typography ─────────────────────────────────── */
@@ -70,7 +60,6 @@
 
   /* ─── Radii ──────────────────────────────────────── */
   --radius-s: 3px;
-  --radius-pill: 999px;
   --radius-circle: 50%;
 
   /* ─── Motion ─────────────────────────────────────── */
@@ -325,7 +314,7 @@ footer > button {
 }
 
 [data-shape='circle'] {
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-circle);
 }
 
 /* ─── States ──────────────────────────────────────── */
@@ -698,11 +687,9 @@ code {
     oklch(96% 0.012 80deg),
     var(--c-rust-3) calc(var(--c-sev-t, 0) * 100%)
   );
-  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--c-sev-t-fg, 0) * 100%));
+  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--c-sev-t, 0) * 100%));
 
-  transition:
-    --c-sev-t var(--time),
-    --c-sev-t-fg var(--time);
+  transition: --c-sev-t var(--time);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -729,7 +716,7 @@ code {
 }
 
 .node-group.highlight {
-  color: var(--c-rust-4);
+  color: var(--c-rust-3);
 }
 
 :where(.node-group).highlight .node-box {
@@ -848,7 +835,6 @@ code {
 
 [data-flow='water'] {
   --c-flow: var(--c-hose);
-  --c-flow-active: var(--c-hose);
   --line-flow-width: 10px;
   --line-flow-dash-active: 14 8;
   --line-flow-end: -22;
@@ -856,7 +842,6 @@ code {
 
 [data-flow='lateral'] {
   --c-flow: var(--c-hose);
-  --c-flow-active: var(--c-hose);
   --line-flow-width: 8px;
   --line-flow-dash-active: 14 8;
   --line-flow-end: -22;
@@ -910,7 +895,7 @@ code {
 }
 
 :where([data-flow]).flow-highlight .line {
-  stroke: var(--c-flow-active, var(--c-fg));
+  stroke: var(--c-flow);
   stroke-dasharray: var(--line-flow-dash-active, var(--line-flow-dash));
   animation: flow-dash var(--line-flow-time, 0.9s) linear infinite;
 }
