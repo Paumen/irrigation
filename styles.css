@@ -133,8 +133,6 @@ header {
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
   color: var(--c-fg);
-  text-transform: uppercase;
-  letter-spacing: var(--text-ls-wide);
   background: oklch(90% 0.014 80deg);
 }
 
@@ -177,7 +175,6 @@ nav button {
   padding: var(--sp-l);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
-  text-transform: none;
   border: none;
   border-right: var(--line-passive);
 }
@@ -207,7 +204,6 @@ h2 {
   font-family: var(--font-sans);
   font-size: var(--text-md);
   font-weight: var(--font-weight-l);
-  text-transform: none;
 }
 
 .option-grid {
@@ -451,8 +447,6 @@ summary,
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
   color: inherit;
-  text-transform: uppercase;
-  letter-spacing: var(--text-ls-wide);
   cursor: pointer;
   background: none;
   border: var(--line-width-s) solid currentcolor;
@@ -469,6 +463,11 @@ footer > button {
   place-content: center;
   place-items: center;
   line-height: var(--line-height-tight);
+}
+
+[data-style='caps'] {
+  text-transform: uppercase;
+  letter-spacing: var(--text-ls-wide);
 }
 
 summary {
@@ -732,7 +731,6 @@ button:disabled {
   padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
-  text-transform: none;
 }
 
 .option:has(:focus-visible) {
@@ -757,7 +755,6 @@ button:disabled {
   grid-column: 1 / -1;
   font-family: var(--font-sans);
   text-align: left;
-  text-transform: none;
 }
 
 .rank-row {
@@ -783,8 +780,6 @@ button:disabled {
   width: calc(100% - 2 * var(--sp-xl));
   margin: 0 var(--sp-xl) var(--sp-xl);
   font-size: var(--text-sm);
-  text-transform: none;
-  letter-spacing: 0;
   opacity: 0.55;
 }
 
