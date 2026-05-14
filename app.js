@@ -1,43 +1,19 @@
 const RC = Object.fromEntries(window.DATA.causes.map((c) => [c.id, c]));
 const ALL_IDS = Object.keys(RC);
-const TARGETS = {};
-ALL_IDS.forEach((id) => {
-  TARGETS[id] = [id];
-  const p = RC[id].parent;
-  if (p) (TARGETS[p] ||= []).push(id);
-});
-const eff = (m) => {
-  const r = {};
-  Object.entries(m).forEach(([t, d]) => {
-    (TARGETS[t] || []).forEach((rc) => {
-      r[rc] = (r[rc] || 0) + d;
-    });
-  });
-  return r;
-};
 
 const QUESTIONS = window.DATA.questions.map((q) => {
   if (q.type === 'matrix') {
     return {
       ...q,
       colMul: Object.fromEntries(q.columns.map((c) => [c.id, c.mult])),
-      rows: q.rows.map((r) => ({ ...r, effects: eff(r.effects || {}) })),
     };
   }
-  if (q.type === 'sliders') {
-    return {
-      ...q,
-      rows: q.rows.map((r) => ({
-        ...r,
-        steps: r.steps.map((s) => ({ ...s, effects: eff(s.effects || {}) })),
-      })),
-    };
-  }
-  return {
-    ...q,
-    options: q.options.map((o) => ({ ...o, effects: eff(o.effects || {}) })),
-  };
+  return { ...q };
 });
+
+const STAGES = [...new Set(QUESTIONS.map((q) => q.stage))].sort((a, b) => a - b);
+const STORAGE_KEY = 'irrigation:v1';
+const SEVERITY_FULL_PCT = 18; 
 
 const BOX_W = 100;
 const BOX_H = 80;
@@ -124,10 +100,10 @@ const NODE_ICON_LAYOUT = {
   4: { size: 24, gap: 26 },
 };
 
-const STAGE_LABELS = ['', 'Symptoms', 'Events', 'Tests'];
+const STAGE_LABELS = { 1: 'Symptoms', 2: 'Events', 3: 'Tests' };
 
 function severityT(pct) {
-  const t = Math.max(0, Math.min(1, pct / 18));
+  const t = Math.max(0, Math.min(1, pct / SEVERITY_FULL_PCT));
   return Math.sqrt(t);
 }
 
@@ -135,6 +111,9 @@ function severityTFg(pct) {
   return Math.max(0, Math.min(1, (pct - 5) / 3));
 }
 
+// Animate state mutations with the View Transitions API. No-op if the browser
+// lacks support or the user prefers reduced motion. All mutations that affect
+// ranking order or the active question go through this.
 function withTransition(fn) {
   const reduce =
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -186,7 +165,7 @@ function app() {
     RC,
     ICONS: window.ICONS,
     OPT_ICONS: window.OPT_ICONS,
-    STAGES: [1, 2, 3],
+    STAGES,
     STAGE_LABELS,
 
     answers: {},
@@ -198,6 +177,36 @@ function app() {
     nodeIconCx,
     severityT,
     severityTFg,
+
+    init() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (saved && typeof saved === 'object') {
+            if (saved.answers && typeof saved.answers === 'object') {
+              this.answers = saved.answers;
+            }
+            if (saved.activeQuestionId && QUESTIONS.some((q) => q.id === saved.activeQuestionId)) {
+              this.activeQuestionId = saved.activeQuestionId;
+            }
+          }
+        }
+      } catch {
+      }
+      this.$watch('answers', () => this._persist());
+      this.$watch('activeQuestionId', () => this._persist());
+    },
+
+    _persist() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ answers: this.answers, activeQuestionId: this.activeQuestionId }),
+        );
+      } catch {
+      }
+    },
 
     get scores() {
       const s = {};
@@ -376,6 +385,8 @@ function app() {
     },
 
     setSliderVal(rowId, val) {
+      // Intentionally NOT wrapped in withTransition: a single drag fires many
+      // ticks; animating each would be jarring.
       const qid = this.activeQuestionId;
       const v = parseInt(val, 10) || 0;
       this.answers = {
