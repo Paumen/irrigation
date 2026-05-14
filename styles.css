@@ -53,7 +53,7 @@
   --line-active: var(--line-width-m) solid var(--c-5);
 
   /* ─── Controls ──────────────────────────── */
-  --time: 0.4s;
+  --time: 0.5s;
 
   /* ─── Shared Assets ─────────────────────── */
   --grid-pattern: 
@@ -201,7 +201,6 @@ nav button {
   font-variant-numeric: tabular-nums;
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
-  text-align: left;
   border: none;
   border-right: var(--line-passive);
 }
@@ -416,7 +415,7 @@ td:has(input[type='radio']) {
   padding: 0;
 }
 
-td > label {
+label {
   display: flex;
   place-content: center;
   place-items: center;
@@ -427,13 +426,11 @@ td > label {
 }
 
 th {
-  padding: var(--sp-m) var(--sp-s);
+  padding: var(--sp-s);
   hyphens: auto;
   color: var(--c-5);
-  text-align: center;
   word-break: break-word;
   background: var(--c-2);
-  font-weight: var(--font-weight-m);
 }
 
 input[type='radio'] {
@@ -500,10 +497,8 @@ p {
 
 button, summary, .option {
   display: grid;
-  place-items: center;
-  place-content: center;
   width: 100%;
-  min-height: var(--sp-xxl);
+  min-height: 32px;
   padding: 0 var(--sp-xl);
   font-family: var(--font-mono);
   font-size: var(--text-md);
@@ -514,14 +509,12 @@ button, summary, .option {
   background: none;
   border: var(--line-width-s) solid currentColor;
   cursor: pointer;
-  appearance: none;
   transition: background var(--time), border-width var(--time), box-shadow var(--time), transform var(--time), opacity var(--time);
 }
 
 summary {
   display: list-item;
   padding: var(--sp-s) var(--sp-m) var(--sp-s) var(--sp-l);
-  text-align: left;
   list-style-position: inside;
   border: none;
 }
@@ -536,7 +529,6 @@ header > button, footer > button {
 [data-shape='square'], [data-shape='circle'] { aspect-ratio: 1/1; width: auto; padding: 0; }
 [data-shape='circle'] { border-radius: 999px; }
 
-/* Consolidated Interaction States */
 button:hover:not(:disabled), [role='button']:hover, summary:hover, .option:hover {
   background: var(--c-2);
 }
@@ -695,7 +687,6 @@ button:disabled, [aria-disabled='true'] {
   padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
-  text-align: left;
   text-transform: none;
 }
 
@@ -729,7 +720,7 @@ button:disabled, [aria-disabled='true'] {
   border-bottom: var(--line-passive);
 }
 
-.rank-row > code { grid-area: code; }
+code { grid-area: code; }
 .percent { grid-area: percent; place-self: center end; font-variant-numeric: tabular-nums; color: var(--c-sev-bg); }
 
 .bar {
@@ -810,4 +801,4 @@ button:disabled, [aria-disabled='true'] {
 @container page (width <= 760px) {
   form > header h2 { font-size: var(--text-md); }
   th, td { padding: var(--sp-s); }
-}
+            }
