@@ -840,7 +840,7 @@ summary:hover,
   display: inline-block;
   width: 24px;
   height: 8px;
-  margin: 0 var(--sp-l) 0 0;
+  margin: 0 var(--sp-m) 0 0;
   vertical-align: middle;
   background: var(--c-flow);
 }
@@ -859,7 +859,7 @@ summary:hover,
   place-items: center stretch;
   place-content: stretch;
   min-height: 0;
-  padding: var(--sp-l) var(--sp-l);
+  padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   text-align: left;
@@ -887,35 +887,25 @@ summary:hover,
   border-left: var(--line-width-l) solid var(--c-5);
 }
 
-.recommendation > .stage,
-.recommendation > .discriminator {
+.stage,
+.discriminator {
   letter-spacing: var(--text-ls-tight);
 }
 
-.recommendation > .stage {
+.stage {
   grid-area: stage;
 }
 
-.recommendation > .discriminator {
+.discriminator {
   grid-area: discriminator;
   justify-self: end;
 }
 
-.recommendation > .recommendation-text {
+.recommendation-text {
   grid-area: text;
   font-family: var(--font-sans);
   text-transform: none;
   letter-spacing: var(--text-ls-tight);
-}
-
-.recommendation-empty {
-  padding: var(--sp-l) var(--sp-xl);
-  margin: 0;
-  font-style: italic;
-  text-align: center;
-  background: var(--c-1);
-  border: var(--line-passive);
-  border-left: var(--line-width-l) solid var(--c-15);
 }
 
 .rank-row {
@@ -939,19 +929,7 @@ summary:hover,
   grid-area: code;
 }
 
-.rank-row > .root-cause-label {
-  grid-area: label;
-  place-self: end stretch;
-  text-transform: none;
-  letter-spacing: var(--text-ls-tight);
-}
-
-.rank-row > .bar {
-  grid-area: bar;
-  place-self: start stretch;
-}
-
-.rank-row > .percent {
+.percent {
   grid-area: percent;
   place-self: center end;
   font-variant-numeric: tabular-nums;
@@ -965,10 +943,6 @@ summary:hover,
   overflow: hidden;
   background: var(--c-2);
   border: var(--line-passive);
-}
-
-nav button > .bar {
-  height: 7px;
 }
 
 .bar > span {
