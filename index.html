@@ -15,7 +15,7 @@
   <body>
     <main x-data="app" x-cloak>
       <details data-card="schematic" open>
-        <summary class="section-title" data-style="caps">Schematic</summary>
+        <summary data-style="caps">Schematic</summary>
         <figure>
           <svg
             viewBox="0 -22 700 344"
@@ -47,7 +47,7 @@
       </details>
 
       <details data-card="form" open>
-        <summary class="section-title" data-style="caps">
+        <summary data-style="caps">
           <span>Diagnostic</span>
           <button
             type="button"
@@ -88,7 +88,7 @@
           </header>
 
           <template x-if="activeQuestion.type === 'matrix'">
-            <div class="matrix-scroll">
+            <div data-q="matrix">
               <table :style="`--sp-cols: ${activeQuestion.columns.length}`">
                 <tr>
                   <th></th>
@@ -118,7 +118,7 @@
           </template>
 
           <template x-if="activeQuestion.type === 'sliders'">
-            <div class="sliders-grid">
+            <div data-q="sliders">
               <template x-for="row in activeQuestion.rows" :key="row.id">
                 <div
                   class="slider-row"
@@ -148,7 +148,7 @@
           </template>
 
           <template x-if="activeQuestion.type === 'options'">
-            <div class="option-grid">
+            <div data-q="options">
               <template x-for="(opt, i) in activeQuestion.options" :key="i">
                 <label class="option">
                   <input
@@ -160,7 +160,6 @@
                   <template x-if="opt.icon">
                     <svg
                       viewBox="0 0 24 24"
-                      class="opt-icon"
                       fill="currentColor"
                       x-html="OPT_ICONS[opt.icon] || ''"
                     ></svg>
@@ -213,7 +212,7 @@
       </details>
 
       <details data-card="rank" open>
-        <summary class="section-title" data-style="caps">Root-cause</summary>
+        <summary data-style="caps">Root-cause</summary>
         <div x-data="seeMore(3)">
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
@@ -246,7 +245,7 @@
       </details>
 
       <details data-card="rec" open>
-        <summary class="section-title" data-style="caps">Recommended next check</summary>
+        <summary data-style="caps">Recommended next check</summary>
         <div x-data="seeMore(2)">
           <template x-if="recommendations.length > 0">
             <ol>

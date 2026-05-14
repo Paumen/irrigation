@@ -537,21 +537,21 @@ function app() {
       const ICONS = window.ICONS;
       let s = '';
       for (const f of window.DATA.flows) {
-        const cls = this.isHighlighted(f.id) ? ' class="flow-highlight"' : '';
-        s += `<g data-flow="${f.id}"${cls}>`;
+        const act = this.isHighlighted(f.id) ? ' data-active="true"' : '';
+        s += `<g data-flow="${f.id}"${act}>`;
         for (const l of f.lines) {
           const arr = l.arrow ? ' marker-end="url(#arr)"' : '';
-          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" class="line"${arr}/>`;
+          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"${arr}/>`;
         }
         for (const l of f.lines) {
           if (!l.hose) continue;
-          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" class="hose-highlight"/>`;
+          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" data-hose="true"/>`;
         }
         for (const m of f.markers) {
           const tr = iconTransform(m.icon, m.cx, m.cy, 28);
           s += `<g transform="${tr}"><path d="${ICONS[m.icon].d}" fill="currentColor"/></g>`;
           if (m.label) {
-            s += `<text x="${m.cx + 16}" y="${m.cy}" text-anchor="start" class="flow-label">${m.label}</text>`;
+            s += `<text x="${m.cx + 16}" y="${m.cy}" text-anchor="start">${m.label}</text>`;
           }
         }
         s += `</g>`;
@@ -567,8 +567,8 @@ function app() {
 
       for (const b of NODES) {
         const isHigh = highlights.includes(b.key);
-        const nodeCls = isHigh ? 'node-group highlight' : 'node-group';
-        s += `<g data-node="${b.key}" class="${nodeCls}">`;
+        const act = isHigh ? ' data-active="true"' : '';
+        s += `<g data-node="${b.key}" class="node-group"${act}>`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
         const layout = nodeIconLayout(b.icons.length);
@@ -615,17 +615,16 @@ function app() {
       const tBg = severityT(pct).toFixed(3);
       const isActive = this.activeRC === rcId;
       const justActive = this.recentRC === rcId;
-      const gCls = (isActive ? 'pip-group active' : 'pip-group') + (justActive ? ' pip-pop' : '');
-      const bgCls =
-        'pip-background' +
-        (connector ? ' pip-background--connector' : '') +
-        (isActive ? ' active' : '');
-      const style = `--c-sev-t:${tBg}`;
-      let s = `<g role="button" tabindex="0" class="${gCls}" style="${style}" data-rc="${rcId}" aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
-      s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="${bgCls}"/>`;
+      const attrs =
+        ` class="pip-group" style="--c-sev-t:${tBg}" data-rc="${rcId}"` +
+        (isActive ? ` data-active="true"` : '') +
+        (justActive ? ` data-pop="true"` : '') +
+        (connector ? ` data-conn="true"` : '');
+      let s = `<g role="button" tabindex="0"${attrs} aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="pip-background"/>`;
       s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
       if (isActive) {
-        s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}" class="node-active"/>`;
+        s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}"/>`;
       }
       s += `</g>`;
       return s;

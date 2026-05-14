@@ -117,7 +117,7 @@ main > details {
 }
 
 header,
-.section-title {
+summary {
   display: flex;
   gap: var(--sp-l);
   place-items: center stretch;
@@ -129,16 +129,7 @@ header {
   margin: 0 0 var(--sp-xl);
 }
 
-.section-title {
-  padding: var(--sp-l) var(--sp-xl);
-  font-family: var(--font-mono);
-  font-size: var(--text-md);
-  font-weight: var(--font-weight-m);
-  color: var(--c-fg);
-  background: oklch(90% 0.014 80deg);
-}
-
-.section-title > span {
+summary > span {
   flex: 1;
 }
 
@@ -246,16 +237,17 @@ summary,
     opacity var(--time);
 }
 
-.section-title button,
+summary button,
 footer > button {
   place-content: center;
   place-items: center;
 }
 
 summary {
-  display: list-item;
-  padding: var(--sp-s) var(--sp-m) var(--sp-s) var(--sp-l);
-  list-style-position: inside;
+  padding: var(--sp-l) var(--sp-xl);
+  color: var(--c-fg);
+  list-style: none;
+  background: oklch(90% 0.014 80deg);
   border: none;
 }
 
@@ -343,13 +335,13 @@ button:disabled {
    7 · FORM CONTROLS — OPTIONS
    ════════════════════════════════════════════════════════════════ */
 
-.option-grid {
+[data-q='options'] {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sp-l);
 }
 
-.option:has(.opt-icon) {
+.option:has(svg) {
   grid-template-columns: 16px 28px 1fr;
 }
 
@@ -358,7 +350,7 @@ button:disabled {
   outline-offset: 3px;
 }
 
-.opt-icon {
+.option > svg {
   width: 16px;
   height: 16px;
   color: var(--c-fg);
@@ -366,7 +358,7 @@ button:disabled {
   fill: currentcolor;
 }
 
-.option:where(:has(input[type='radio']:checked)) .opt-icon {
+.option:where(:has(input[type='radio']:checked)) > svg {
   opacity: 1;
 }
 
@@ -374,7 +366,7 @@ button:disabled {
    8 · FORM CONTROLS — SLIDERS
    ════════════════════════════════════════════════════════════════ */
 
-.sliders-grid {
+[data-q='sliders'] {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-l);
@@ -465,7 +457,7 @@ input[type='range']::-moz-range-thumb {
    9 · FORM CONTROLS — MATRIX TABLE
    ════════════════════════════════════════════════════════════════ */
 
-.matrix-scroll {
+[data-q='matrix'] {
   padding: var(--sp-m) 0;
   overflow-x: auto;
 }
@@ -694,24 +686,11 @@ code {
   stroke-width: var(--line-width-s);
 }
 
-.node-divider {
-  pointer-events: none;
-  stroke: var(--c-fg-med);
-  stroke-width: var(--line-width-s);
-}
-
-.node-active {
-  pointer-events: none;
-  fill: none;
-  stroke: var(--c-fg);
-  stroke-width: var(--line-width-m);
-}
-
-.node-group.highlight {
+.node-group[data-active='true'] {
   color: var(--c-rust-3);
 }
 
-:where(.node-group).highlight .node-box {
+:where(.node-group)[data-active='true'] .node-box {
   fill: var(--c-bg);
   stroke: var(--c-rust-3);
   stroke-width: var(--line-width-m);
@@ -734,7 +713,7 @@ code {
    ════════════════════════════════════════════════════════════════ */
 
 .pip,
-.flow-label {
+[data-flow] text {
   font-family: var(--font-mono);
   font-weight: var(--font-weight-l);
   pointer-events: none;
@@ -749,7 +728,7 @@ code {
   paint-order: stroke fill;
 }
 
-.flow-label {
+[data-flow] text {
   font-size: var(--text-md);
   dominant-baseline: central;
   fill: currentcolor;
@@ -760,12 +739,12 @@ code {
   stroke: none;
 }
 
-.pip-background--connector {
+:where(.pip-group)[data-conn='true'] .pip-background {
   stroke: var(--c-fg);
   stroke-width: var(--line-width-s);
 }
 
-.pip-background--connector.active {
+:where(.pip-group[data-conn='true'])[data-active='true'] .pip-background {
   stroke-width: var(--line-width-m);
 }
 
@@ -784,18 +763,25 @@ code {
   transform: translate(-1px, -1px);
 }
 
-.pip-group.active {
+.pip-group[data-active='true'] {
   filter: var(--shadow-active);
   transform: translate(-2px, -2px);
 }
 
-.pip-background.active,
+:where(.pip-group)[data-active='true'] .pip-background,
 :where(.pip-group):focus-visible .pip-background {
   stroke: var(--c-fg);
   stroke-width: var(--line-width-m);
 }
 
-.pip-group.pip-pop {
+:where(.pip-group)[data-active='true'] > circle:not(.pip-background) {
+  pointer-events: none;
+  fill: none;
+  stroke: var(--c-fg);
+  stroke-width: var(--line-width-m);
+}
+
+.pip-group[data-pop='true'] {
   animation: pip-pop 0.32s cubic-bezier(0.34, 1.6, 0.64, 1);
 }
 
@@ -814,7 +800,7 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   18 · SCHEMATIC — FLOWS (lines, swatches, animated dashes)
+   18 · SCHEMATIC — FLOWS (lines, animated dashes)
    ════════════════════════════════════════════════════════════════ */
 
 [data-flow] {
@@ -860,7 +846,7 @@ code {
   --line-flow-time: 0.5s;
 }
 
-.line {
+[data-flow] line {
   fill: none;
   stroke: currentcolor;
   stroke-dasharray: var(--line-flow-dash);
@@ -869,24 +855,22 @@ code {
   stroke-width: var(--line-flow-width);
 }
 
-.hose-highlight {
+[data-flow] line[data-hose='true'] {
   pointer-events: none;
-  fill: none;
   stroke: oklch(70% 0.04 220deg / 55%);
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-dasharray: none;
   stroke-width: var(--line-width-m);
 }
 
 .node-group .node-box,
-[data-flow] .line {
+[data-flow] line {
   transition:
     fill var(--time),
     stroke var(--time),
     color var(--time);
 }
 
-:where([data-flow]).flow-highlight .line {
+:where([data-flow])[data-active='true'] line:not([data-hose]) {
   stroke: var(--c-flow);
   stroke-dasharray: var(--line-flow-dash-active, var(--line-flow-dash));
   animation: flow-dash var(--line-flow-time, 0.9s) linear infinite;
@@ -896,23 +880,6 @@ code {
   to {
     stroke-dashoffset: var(--line-flow-end);
   }
-}
-
-.swatch {
-  display: inline-block;
-  width: 24px;
-  height: 8px;
-  margin: 0 var(--sp-m) 0 0;
-  vertical-align: middle;
-  background: var(--c-flow);
-}
-
-.swatch[data-flow='ctrl'] {
-  background: repeating-linear-gradient(90deg, var(--c-flow) 0 5px, transparent 5px 8px);
-}
-
-.swatch[data-flow='wifi'] {
-  background: repeating-linear-gradient(90deg, var(--c-flow) 0 2px, transparent 2px 5px);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -960,4 +927,4 @@ code {
   td {
     padding: var(--sp-s);
   }
-   } 
+}
