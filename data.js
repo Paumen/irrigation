@@ -77,7 +77,7 @@ window.DATA = {
       highlight: ['sw', 'ctrl', 'wifi'],
       options: [
         {
-          label: 'Manual works, app has issues',
+          label: 'Only app has issues',
           effects: {
             R11: 1.6, R13: 1.6,
           },
