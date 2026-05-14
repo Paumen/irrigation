@@ -14,7 +14,7 @@
   </head>
   <body>
     <main x-data="app" x-cloak>
-     <details data-card="schematic" open>
+      <details data-card="schematic" open>
         <summary class="section-title">Schematic</summary>
         <figure>
           <svg
@@ -122,15 +122,20 @@
               x-html="renderDiagram()"
             ></g>
           </svg>
-
-          
         </figure>
       </details>
-      
+
       <details data-card="form" open>
         <summary class="section-title">
           Diagnostic
-          <button type="button" data-tone="mute" data-size="sm" @click.stop="$refs.reset.showModal()">Reset</button>
+          <button
+            type="button"
+            data-tone="mute"
+            data-size="sm"
+            @click.stop="$refs.reset.showModal()"
+          >
+            Reset
+          </button>
           <button
             type="button"
             data-tone="mute"
@@ -197,7 +202,7 @@
                 <div
                   class="slider-row"
                   :data-active="sliderVal(row.id) > 0 ? 'true' : null"
-                  :style="`--fill: ${(sliderVal(row.id) / (row.steps.length - 1)) * 100}%`"
+                  :style="`--bg-fill: ${(sliderVal(row.id) / (row.steps.length - 1)) * 100}%`"
                 >
                   <span x-text="row.label"></span>
                   <input
@@ -232,7 +237,12 @@
                     @change="handleAnswer(i)"
                   />
                   <template x-if="opt.icon">
-                    <svg viewBox="0 0 24 24" class="opt-icon" fill="currentColor" x-html="OPT_ICONS[opt.icon] || ''"></svg>
+                    <svg
+                      viewBox="0 0 24 24"
+                      class="opt-icon"
+                      fill="currentColor"
+                      x-html="OPT_ICONS[opt.icon] || ''"
+                    ></svg>
                   </template>
                   <span x-text="opt.label"></span>
                 </label>
@@ -242,8 +252,12 @@
 
           <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'sliders'">
             <footer>
-              <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">Skip</button>
-              <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">Next ›</button>
+              <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">
+                Skip
+              </button>
+              <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">
+                Next ›
+              </button>
             </footer>
           </template>
         </form>
@@ -264,8 +278,6 @@
         </nav>
       </details>
 
-      
-
       <details data-card="rank" open>
         <summary class="section-title">Root-cause</summary>
         <div x-data="seeMore(3)">
@@ -276,7 +288,7 @@
                   type="button"
                   class="rank-row"
                   :class="activeRC === r.id ? 'active' : ''"
-                  :style="`--vt-rc: rc-${r.id}; --sev-t: ${severityT(r.pct).toFixed(3)}; --sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
+                  :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}; --c-sev-t-fg: ${severityTFg(r.pct).toFixed(3)}`"
                   @click="activeRC = r.id"
                 >
                   <code x-text="r.id"></code>
@@ -350,4 +362,4 @@
     <script src="app.js?v=25"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
-</html> 
+</html>

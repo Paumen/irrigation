@@ -1,7 +1,6 @@
 ---
 name: shhhh
-description:
-  Use this agent to review comments and docstrings in code and remove any that
+description: Use this agent to review comments and docstrings in code and remove any that
   are not strictly essential to prevent a frontier LLM from making bad edits.
   The agent starts with no prior context about the task, codebase history, or
   surrounding conversation — it forms judgments only from the files it reads.
