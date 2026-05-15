@@ -252,6 +252,7 @@ summary button {
 }
 
 summary {
+  display: flex;
   padding: var(--sp-l) var(--sp-xl);
   color: var(--c-fg);
   list-style: none;
