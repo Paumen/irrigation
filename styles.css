@@ -587,9 +587,13 @@ nav button[aria-current] {
   border-bottom: 4px solid var(--c-fg);
 }
 
-nav [data-complete='true']::after {
+[data-complete='true'] .stage-label::after {
   color: var(--c-green-dark);
   content: ' ✓';
+}
+
+[data-complete='true'] .bar > span {
+  background: var(--c-green-dark);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -629,7 +633,6 @@ code {
   place-items: center;
   width: calc(100% - 2 * var(--sp-xl));
   min-height: 22px;
-  padding: 0 var(--sp-l);
   margin: 0 var(--sp-xl) var(--sp-xl);
   font-size: var(--text-sm);
   opacity: 0.55;

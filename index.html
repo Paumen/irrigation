@@ -193,18 +193,12 @@
             <button
               type="button"
               @click="pickStage(s)"
+              :data-complete="isStageComplete(s) ? 'true' : null"
               :aria-current="activeStage === s ? 'step' : null"
             >
-              <span
-                :data-complete="isStageComplete(s) ? 'true' : null"
-                x-text="STAGE_LABELS[s]"
-              ></span>
+              <span class="stage-label" x-text="STAGE_LABELS[s]"></span>
               <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
-              <span class="bar"
-                ><span
-                  :style="`width: ${stagePct(s)}%; ${isStageComplete(s) ? 'background: var(--c-green-dark)' : ''}`"
-                ></span
-              ></span>
+              <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
             </button>
           </template>
         </nav>

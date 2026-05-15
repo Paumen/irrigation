@@ -40,12 +40,12 @@ window.DATA = {
     {
       id: 'water',
       lines: [{ x1: 568, y1: 220, x2: 395, y2: 220, arrow: true, hose: true }],
-      markers: [{ icon: 'mdi:water', cx: 470, cy: 234, label: 'H₂O' }],
+      markers: [{ icon: 'ms:water-drop', cx: 470, cy: 234, label: 'H₂O' }],
     },
     {
       id: 'lateral',
       lines: [{ x1: 295, y1: 220, x2: 122, y2: 220, arrow: true, hose: true }],
-      markers: [{ icon: 'mdi:water', cx: 198, cy: 234, label: 'H₂O' }],
+      markers: [{ icon: 'ms:water-drop', cx: 198, cy: 234, label: 'H₂O' }],
     },
   ],
   sliderCurves: {
