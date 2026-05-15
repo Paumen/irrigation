@@ -136,10 +136,8 @@ summary > span {
 h2 {
   flex: 1;
   margin: 0 0 var(--sp-m);
-  font-family: var(--font-sans);
   font-size: var(--text-md);
   font-weight: var(--font-weight-l);
-  color: var(--c-fg);
 }
 
 form {
@@ -202,7 +200,6 @@ dialog::backdrop {
 p {
   margin: 0 0 var(--sp-l);
   font-size: var(--text-sm);
-  color: var(--c-fg);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -463,7 +460,6 @@ td {
 th {
   padding: var(--sp-s);
   hyphens: auto;
-  color: var(--c-fg);
   word-break: break-word;
   background: var(--c-bg-alt);
 }
@@ -636,7 +632,6 @@ code {
 
 .recommendation-text {
   grid-column: 1 / -1;
-  font-family: var(--font-sans);
   text-align: left;
 }
 
@@ -655,7 +650,6 @@ code {
 }
 
 :where(.node-group)[aria-current] .node-box {
-  fill: var(--c-bg);
   stroke: var(--c-accent);
   stroke-width: var(--line-width-m);
   animation: node-highlight-pulse 2.2s ease-in-out infinite;
@@ -802,6 +796,4 @@ code {
     padding: var(--sp-s);
   }
 }
-
-
-
+ 
