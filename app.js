@@ -568,7 +568,7 @@ function app() {
       for (const b of NODES) {
         const isHigh = highlights.includes(b.key);
         const act = isHigh ? ' data-active="true"' : '';
-        s += `<g data-node="${b.key}" class="node-group"${act}>`;
+        s += `<g class="node-group"${act}>`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
         const layout = nodeIconLayout(b.icons.length);
