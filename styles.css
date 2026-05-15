@@ -137,8 +137,7 @@ summary > span {
   flex: 1;
 }
 
-h2,
-h3 {
+h2 {
   flex: 1;
   margin: 0 0 var(--sp-m);
   font-family: var(--font-sans);
@@ -340,11 +339,6 @@ button:disabled {
 
 .option:has(svg) {
   grid-template-columns: 16px 28px 1fr;
-}
-
-.option:has(:focus-visible) {
-  outline: var(--line-active);
-  outline-offset: 3px;
 }
 
 .option > svg {
@@ -770,8 +764,7 @@ code {
   transform: translate(-2px, -2px);
 }
 
-:where(.pip-group)[data-active='true'] .pip-background,
-:where(.pip-group):focus-visible .pip-background {
+:where(.pip-group)[data-active='true'] .pip-background{
   stroke: var(--c-fg);
   stroke-width: var(--line-width-m);
 }
