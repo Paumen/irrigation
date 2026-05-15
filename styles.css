@@ -595,6 +595,13 @@ nav button[aria-current] {
    ════════════════════════════════════════════════════════════════ */
 
 .rank-row {
+  --c-sev-bg: color-mix(
+    in oklch,
+    oklch(96% 0.012 80deg),
+    var(--c-rust-3) calc(var(--c-sev-t, 0) * 100%)
+  );
+  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--c-sev-t, 0) * 100%));
+
   display: grid;
   grid-template-areas: 'code label percent' 'code bar percent';
   grid-template-columns: 48px 1fr 48px;
@@ -605,6 +612,7 @@ nav button[aria-current] {
   view-transition-name: var(--accent-vt-rc, none);
   border: none;
   border-bottom: var(--line-passive);
+  transition: --c-sev-t var(--time);
 }
 
 .rank-row > span:not(.bar, .percent) {
@@ -656,23 +664,6 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   15 · SCHEMATIC — SHARED SEVERITY COLORING
-   (used by both pip badges in the SVG and rank-row bars)
-   ════════════════════════════════════════════════════════════════ */
-
-.pip-group,
-.rank-row {
-  --c-sev-bg: color-mix(
-    in oklch,
-    oklch(96% 0.012 80deg),
-    var(--c-rust-3) calc(var(--c-sev-t, 0) * 100%)
-  );
-  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--c-sev-t, 0) * 100%));
-
-  transition: --c-sev-t var(--time);
-}
-
-/* ════════════════════════════════════════════════════════════════
    16 · SCHEMATIC — NODES
    ════════════════════════════════════════════════════════════════ */
 
@@ -705,93 +696,16 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   17 · SCHEMATIC — PIPS (severity badges + labels)
+   17 · SCHEMATIC — FLOW LABELS
    ════════════════════════════════════════════════════════════════ */
 
-.pip,
 [data-flow] text {
   font-family: var(--font-mono);
+  font-size: var(--text-md);
   font-weight: var(--font-weight-l);
   pointer-events: none;
-}
-
-.pip {
-  font-size: var(--text-sm);
-  fill: var(--c-sev-fg);
-  stroke: var(--c-sev-bg);
-  stroke-linejoin: round;
-  stroke-width: 3px;
-  paint-order: stroke fill;
-}
-
-[data-flow] text {
-  font-size: var(--text-md);
   dominant-baseline: central;
   fill: currentcolor;
-}
-
-.pip-background {
-  fill: var(--c-sev-bg);
-  stroke: none;
-}
-
-:where(.pip-group)[data-conn='true'] .pip-background {
-  stroke: var(--c-fg);
-  stroke-width: var(--line-width-s);
-}
-
-:where(.pip-group[data-conn='true'])[data-active='true'] .pip-background {
-  stroke-width: var(--line-width-m);
-}
-
-.pip-group {
-  cursor: pointer;
-  filter: var(--shadow-standard);
-  transition:
-    transform var(--time),
-    filter var(--time);
-  transform-origin: center;
-  transform-box: fill-box;
-}
-
-.pip-group:hover {
-  filter: drop-shadow(0 5px 7px var(--c-fg-med)) drop-shadow(0 1px 1px var(--c-fg-med));
-  transform: translate(-1px, -1px);
-}
-
-.pip-group[data-active='true'] {
-  filter: var(--shadow-active);
-  transform: translate(-2px, -2px);
-}
-
-:where(.pip-group)[data-active='true'] .pip-background{
-  stroke: var(--c-fg);
-  stroke-width: var(--line-width-m);
-}
-
-:where(.pip-group)[data-active='true'] > circle:not(.pip-background) {
-  pointer-events: none;
-  fill: none;
-  stroke: var(--c-fg);
-  stroke-width: var(--line-width-m);
-}
-
-.pip-group[data-pop='true'] {
-  animation: pip-pop 0.32s cubic-bezier(0.34, 1.6, 0.64, 1);
-}
-
-@keyframes pip-pop {
-  0% {
-    transform: scale(0.88) translate(0, 0);
-  }
-
-  55% {
-    transform: scale(1.14) translate(-2px, -2px);
-  }
-
-  100% {
-    transform: scale(1) translate(-2px, -2px);
-  }
 }
 
 /* ════════════════════════════════════════════════════════════════

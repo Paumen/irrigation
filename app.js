@@ -134,8 +134,6 @@ const SEVERITY_FULL_PCT = 18;
 
 const BOX_W = 100;
 const BOX_H = 80;
-const PIP_SIZE = 28;
-const PIP_GAP = 6;
 
 const NODES = [
   {
@@ -146,7 +144,6 @@ const NODES = [
     h: BOX_H,
     label: 'SOFTWARE',
     icons: ['mdi:cellphone'],
-    pips: ['R11', 'R12', 'R13'],
   },
   {
     key: 'ctrl',
@@ -156,7 +153,6 @@ const NODES = [
     h: BOX_H,
     label: 'CONTROLLER',
     icons: ['mdi:view-gallery-outline'],
-    pips: ['R22', 'R23'],
   },
   {
     key: 'relay',
@@ -166,7 +162,6 @@ const NODES = [
     h: BOX_H,
     label: 'RELAY',
     icons: ['mdi:electric-switch'],
-    pips: ['R31'],
   },
   {
     key: 'sp4',
@@ -176,7 +171,6 @@ const NODES = [
     h: BOX_H,
     label: 'ROTOR',
     icons: ['mdi:rotor'],
-    pips: ['R91', 'R92'],
     flipX: true,
   },
   {
@@ -187,7 +181,6 @@ const NODES = [
     h: BOX_H,
     label: 'VALVES',
     icons: ['ms:valve'],
-    pips: ['R71', 'R72', 'R73', 'R74'],
   },
   {
     key: 'pump',
@@ -197,20 +190,9 @@ const NODES = [
     h: BOX_H,
     label: 'PUMP',
     icons: ['mdi:water-pump'],
-    pips: ['R41', 'R42'],
     flipX: true,
     iconScale: 0.65,
   },
-];
-
-const CONN_PIPS = [
-  { rcId: 'R51', x: 455, y: 280 },
-  { rcId: 'R52', x: 490, y: 280 },
-  { rcId: 'R61', x: 327, y: 155 },
-  { rcId: 'R62', x: 357, y: 155 },
-  { rcId: 'R63', x: 387, y: 155 },
-  { rcId: 'R81', x: 183, y: 280 },
-  { rcId: 'R82', x: 218, y: 280 },
 ];
 
 function severityT(pct) {
@@ -289,19 +271,10 @@ function migrateLegacyIds(saved) {
   if (map[saved.activeQuestionId]) saved.activeQuestionId = map[saved.activeQuestionId];
 }
 
-function escapeAttr(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
 function app() {
   return {
     QUESTIONS,
     NODES,
-    CONN_PIPS,
     RC,
     ICONS: window.ICONS,
     OPT_ICONS: window.OPT_ICONS,
@@ -312,7 +285,6 @@ function app() {
     skipped: {},
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
-    recentRC: null,
 
     iconTransform,
     nodeIconCx,
@@ -562,7 +534,6 @@ function app() {
     renderDiagram() {
       const ICONS = window.ICONS;
       const highlights = this.activeHighlights;
-      const pips = [];
       let s = '';
 
       for (const b of NODES) {
@@ -587,59 +558,9 @@ function app() {
           s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
         }
         s += `</g>`;
-
-        const pipsCount = b.pips.length;
-        const groupW = pipsCount * PIP_SIZE;
-        const groupX = b.x + (b.w - groupW) / 2;
-        const cyPip = b.y < 150 ? b.y - PIP_GAP - PIP_SIZE / 2 : b.y + b.h + PIP_GAP + PIP_SIZE / 2;
-        for (let i = 0; i < pipsCount; i++) {
-          pips.push({
-            rcId: b.pips[i],
-            cx: groupX + i * PIP_SIZE + PIP_SIZE / 2,
-            cy: cyPip,
-            connector: false,
-          });
-        }
       }
 
-      for (const p of CONN_PIPS) {
-        pips.push({ rcId: p.rcId, cx: p.x, cy: p.y, connector: true });
-      }
-
-      for (const p of pips) s += this.renderPip(p);
       return s;
-    },
-
-    renderPip({ rcId, cx, cy, connector }) {
-      const pct = this.severityPct[rcId] || 0;
-      const tBg = severityT(pct).toFixed(3);
-      const isActive = this.activeRC === rcId;
-      const justActive = this.recentRC === rcId;
-      const attrs =
-        ` class="pip-group" style="--c-sev-t:${tBg}" data-rc="${rcId}"` +
-        (isActive ? ` data-active="true"` : '') +
-        (justActive ? ` data-pop="true"` : '') +
-        (connector ? ` data-conn="true"` : '');
-      let s = `<g role="button" tabindex="0"${attrs} aria-label="Root cause ${rcId}: ${escapeAttr(RC[rcId].label)}">`;
-      s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2}" class="pip-background"/>`;
-      s += `<text x="${cx}" y="${cy}" dy=".35em" text-anchor="middle" class="pip">${rcId.replace(/^R/, '')}</text>`;
-      if (isActive) {
-        s += `<circle cx="${cx}" cy="${cy}" r="${PIP_SIZE / 2 - 2}"/>`;
-      }
-      s += `</g>`;
-      return s;
-    },
-
-    pipFromEvent(e) {
-      const el = e.target.closest && e.target.closest('[data-rc]');
-      if (!el) return;
-      const rcId = el.getAttribute('data-rc');
-      if (!rcId) return;
-      this.activeRC = rcId;
-      this.recentRC = rcId;
-      setTimeout(() => {
-        if (this.recentRC === rcId) this.recentRC = null;
-      }, 360);
     },
   };
 }
