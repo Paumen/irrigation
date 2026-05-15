@@ -509,7 +509,7 @@ function app() {
       const ICONS = window.ICONS;
       let s = '';
       for (const f of window.DATA.flows) {
-        const act = this.isHighlighted(f.id) ? ' data-active="true"' : '';
+        const act = this.isHighlighted(f.id) ? ' aria-current="true"' : '';
         s += `<g data-flow="${f.id}"${act}>`;
         for (const l of f.lines) {
           const arr = l.arrow ? ' marker-end="url(#arr)"' : '';
@@ -538,7 +538,7 @@ function app() {
 
       for (const b of NODES) {
         const isHigh = highlights.includes(b.key);
-        const act = isHigh ? ' data-active="true"' : '';
+        const act = isHigh ? ' aria-current="true"' : '';
         s += `<g class="node-group"${act}>`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
