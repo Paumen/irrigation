@@ -15,7 +15,7 @@
   <body>
     <main x-data="app" x-cloak>
       <details data-card="schematic" open>
-        <summary data-style="caps">Schematic</summary>
+        <summary>Schematic</summary>
         <figure>
           <svg
             viewBox="0 -22 700 344"
@@ -47,12 +47,11 @@
       </details>
 
       <details data-card="form" open>
-        <summary data-style="caps">
+        <summary>
           <span>Diagnostic</span>
           <button
             type="button"
             data-tone="mute"
-            data-size="sm"
             @click.stop="$refs.reset.showModal()"
           >
             Reset
@@ -60,7 +59,6 @@
           <button
             type="button"
             data-tone="mute"
-            data-size="sm"
             data-shape="square"
             @click.stop="moveBy(-1)"
             :disabled="isFirst"
@@ -72,7 +70,6 @@
           <button
             type="button"
             data-tone="mute"
-            data-size="sm"
             data-shape="square"
             @click.stop="moveBy(1)"
             :disabled="isLast"
@@ -175,7 +172,6 @@
               <button
                 type="button"
                 data-tone="mute"
-                data-style="caps"
                 @click="moveBy(1)"
                 :disabled="isLast"
               >
@@ -183,7 +179,6 @@
               </button>
               <button
                 type="button"
-                data-style="caps"
                 @click="moveBy(1, { markComplete: true })"
                 :disabled="isLast"
               >
@@ -212,7 +207,7 @@
       </details>
 
       <details data-card="rank" open>
-        <summary data-style="caps">Root-cause</summary>
+        <summary>Root-cause</summary>
         <div x-data="seeMore(3)">
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
@@ -245,7 +240,7 @@
       </details>
 
       <details data-card="rec" open>
-        <summary data-style="caps">Recommended next check</summary>
+        <summary>Recommended next check</summary>
         <div x-data="seeMore(2)">
           <template x-if="recommendations.length > 0">
             <ol>
@@ -282,13 +277,12 @@
           This clears every answer and returns you to the first question. You can&rsquo;t undo this.
         </p>
         <footer>
-          <button type="button" data-style="caps" autofocus @click="$refs.reset.close()">
+          <button type="button" autofocus @click="$refs.reset.close()">
             Keep my answers
           </button>
           <button
             type="button"
             data-tone="danger"
-            data-style="caps"
             @click="doReset(); $refs.reset.close()"
           >
             Reset everything

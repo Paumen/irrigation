@@ -243,7 +243,16 @@ footer > button {
   place-items: center;
 }
 
+summary button {
+  width: auto;
+  height: 1.9em;
+  min-height: 0;
+  padding: 0 var(--sp-l);
+  font-size: var(--text-sm);
+}
+
 summary {
+  display: flex;
   padding: var(--sp-l) var(--sp-xl);
   color: var(--c-fg);
   list-style: none;
@@ -266,24 +275,12 @@ footer > button {
 
 /* ─── Modifiers ───────────────────────────────────── */
 
-[data-style='caps'] {
-  text-transform: uppercase;
-}
-
 [data-tone='mute'] {
   opacity: 0.4;
 }
 
 [data-tone='danger'] {
   color: var(--c-danger);
-}
-
-[data-size='sm'] {
-  width: auto;
-  height: 1.9em;
-  min-height: 0;
-  padding: 0 var(--sp-l);
-  font-size: var(--text-sm);
 }
 
 [data-shape='ghost'] {
