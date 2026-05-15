@@ -28,8 +28,8 @@ window.DATA = {
         { x1: 345, y1: 100, x2: 345, y2: 180, arrow: true },
       ],
       markers: [
-        { icon: 'mdi:lightning-bolt-outline', cx: 470, cy: 46, label: '24V' },
-        { icon: 'mdi:lightning-bolt-outline', cx: 290, cy: 140, label: '24V' },
+        { icon: 'ms:bolt', cx: 470, cy: 46, label: '24V' },
+        { icon: 'ms:bolt', cx: 290, cy: 140, label: '24V' },
       ],
     },
     {
@@ -40,12 +40,12 @@ window.DATA = {
     {
       id: 'water',
       lines: [{ x1: 568, y1: 220, x2: 395, y2: 220, arrow: true, hose: true }],
-      markers: [{ icon: 'mdi:water-outline', cx: 470, cy: 234, label: 'H₂O' }],
+      markers: [{ icon: 'mdi:water', cx: 470, cy: 234, label: 'H₂O' }],
     },
     {
       id: 'lateral',
       lines: [{ x1: 295, y1: 220, x2: 122, y2: 220, arrow: true, hose: true }],
-      markers: [{ icon: 'mdi:water-outline', cx: 198, cy: 234, label: 'H₂O' }],
+      markers: [{ icon: 'mdi:water', cx: 198, cy: 234, label: 'H₂O' }],
     },
   ],
   sliderCurves: {
