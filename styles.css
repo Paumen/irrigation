@@ -21,7 +21,7 @@
 :root {
   /* ─── Color ──────────────────────────────────────── */
   --c-bg: oklch(96.4% 0.007 87deg);
-  --c-bg-alt: #eae8e0;
+  --c-bg-alt: oklch(92% 0.013 85deg);
   --c-bg-alt2: oklch(86% 0.018 80deg);
   --c-fg: oklch(25.6% 0.043 268deg);
   --c-fg-soft: color-mix(in oklch, var(--c-fg), transparent 85%);
@@ -60,6 +60,13 @@
 
   /* ─── Motion ─────────────────────────────────────── */
   --time: 0.5s;
+  --time-pulse: 2.2s;
+
+  /* ─── Opacity ────────────────────────────────────── */
+  --o-1: 0.1;
+  --o-2: 0.4;
+  --o-3: 0.55;
+  --o-4: 0.85;
 
   /* ─── Shared Assets ──────────────────────────────── */
   --bg-grid-pattern:
@@ -116,14 +123,10 @@ main > details {
   border: var(--line-passive);
 }
 
-header,
-summary {
+header {
   display: flex;
   gap: var(--sp-l);
   place-items: center stretch;
-}
-
-header {
   place-content: space-between;
   padding: 0;
   margin: 0 0 var(--sp-xl);
@@ -204,11 +207,10 @@ p {
 
 /* ════════════════════════════════════════════════════════════════
    6 · BUTTONS  (button / summary / .option)
-   Base reset → structural variants → modifiers → states
+       Base reset → structural variants → modifiers → states
    ════════════════════════════════════════════════════════════════ */
 
 button,
-summary,
 .option {
   display: grid;
   width: 100%;
@@ -229,29 +231,38 @@ summary,
     opacity var(--time);
 }
 
-summary button,
-footer > button {
-  place-content: center;
-  place-items: center;
+summary {
+  display: flex;
+  gap: var(--sp-l);
+  place-items: center stretch;
+  padding: var(--sp-l) var(--sp-xl);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-m);
+  color: var(--c-fg);
+  cursor: pointer;
+  background: var(--c-bg-alt2);
+  list-style: none;
+  border: none;
+  transition:
+    background var(--time),
+    border-width var(--time),
+    box-shadow var(--time),
+    transform var(--time);
 }
 
 summary button {
+  place-content: center;
+  place-items: center;
   width: auto;
   height: 1.9em;
   min-height: 0;
   padding: 0 var(--sp-l);
 }
 
-summary {
-  display: flex;
-  padding: var(--sp-l) var(--sp-xl);
-  color: var(--c-fg);
-  list-style: none;
-  background: var(--c-bg-alt2);
-  border: none;
-}
-
 footer > button {
+  place-content: center;
+  place-items: center;
   width: auto;
 }
 
@@ -267,7 +278,7 @@ footer > button {
 /* ─── Modifiers ───────────────────────────────────── */
 
 [data-tone='mute'] {
-  opacity: 0.4;
+  opacity: var(--o-2);
 }
 
 [data-tone='danger'] {
@@ -308,7 +319,7 @@ summary[aria-current],
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.1;
+  opacity: var(--o-1);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -329,7 +340,7 @@ button:disabled {
   width: 16px;
   height: 16px;
   color: var(--c-fg);
-  opacity: 0.85;
+  opacity: var(--o-4);
   fill: currentcolor;
 }
 
@@ -425,6 +436,7 @@ input[type='range']::-moz-range-thumb {
   background: var(--c-fg);
   border: var(--line-bold);
   border-radius: var(--radius-circle);
+  transform: translateY(calc(var(--sp-m) / 2 - var(--sp-xl) / 2 - 1px));
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -554,7 +566,7 @@ nav .bar > span {
 }
 
 nav button[aria-current] {
-  border-bottom: 4px solid var(--c-fg);
+  border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
 [data-state='complete'] .stage-label::after {
@@ -612,7 +624,7 @@ code {
   min-height: 22px;
   margin: 0 var(--sp-xl) var(--sp-xl);
   font-size: var(--text-sm);
-  opacity: 0.55;
+  opacity: var(--o-3);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -637,7 +649,7 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   16 · SCHEMATIC — NODES
+   15 · SCHEMATIC — NODES
    ════════════════════════════════════════════════════════════════ */
 
 .node-box {
@@ -653,7 +665,7 @@ code {
 :where(.node-group)[aria-current] .node-box {
   stroke: var(--c-accent);
   stroke-width: var(--line-width-m);
-  animation: node-highlight-pulse 2.2s ease-in-out infinite;
+  animation: node-highlight-pulse var(--time-pulse) ease-in-out infinite;
 }
 
 @keyframes node-highlight-pulse {
@@ -668,7 +680,7 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   17 · SCHEMATIC — FLOW LABELS
+   16 · SCHEMATIC — FLOW LABELS
    ════════════════════════════════════════════════════════════════ */
 
 [data-flow] text {
@@ -681,7 +693,7 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   18 · SCHEMATIC — FLOWS (lines, animated dashes)
+   17 · SCHEMATIC — FLOWS (lines, animated dashes)
    ════════════════════════════════════════════════════════════════ */
 
 [data-flow] {
@@ -702,7 +714,6 @@ code {
   --c-flow: var(--c-accent);
   --line-flow-dash: 8 7;
   --line-flow-end: -15;
-  --line-flow-time: 0.7s;
 }
 
 [data-flow='mains'] {
@@ -713,7 +724,6 @@ code {
 [data-flow='wifi'] {
   --line-flow-dash: 4 6;
   --line-flow-end: -10;
-  --line-flow-time: 0.5s;
 }
 
 [data-flow] line {
@@ -722,7 +732,7 @@ code {
   stroke-dasharray: var(--line-flow-dash);
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 5px;
+  stroke-width: var(--line-width-l);
 }
 
 [data-flow] line[data-hose='true'] {
@@ -742,7 +752,7 @@ code {
 :where([data-flow])[aria-current] line:not([data-hose]) {
   stroke: var(--c-flow);
   stroke-dasharray: var(--line-flow-dash-on, var(--line-flow-dash));
-  animation: flow-dash var(--line-flow-time, 0.9s) linear infinite;
+  animation: flow-dash var(--time) linear infinite;
 }
 
 @keyframes flow-dash {
@@ -752,7 +762,7 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   19 · VIEW TRANSITIONS
+   18 · VIEW TRANSITIONS
    ════════════════════════════════════════════════════════════════ */
 
 [data-card='form'] {
@@ -765,7 +775,7 @@ code {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   20 · RESPONSIVE
+   19 · RESPONSIVE
    ════════════════════════════════════════════════════════════════ */
 
 @container page (width >= 1080px) {
@@ -797,4 +807,3 @@ code {
     padding: var(--sp-s);
   }
 }
- 
