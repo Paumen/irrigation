@@ -299,13 +299,6 @@ footer > button {
 
 /* ─── States ──────────────────────────────────────── */
 
-button:hover:not(:disabled),
-[role='button']:hover,
-summary:hover,
-.option:hover {
-  background: var(--c-bg-alt);
-}
-
 button:active:not(:disabled),
 summary:active,
 button.active {
@@ -514,10 +507,6 @@ input[type='radio'] {
   transition:
     background var(--time),
     border-color var(--time);
-}
-
-input[type='radio']:hover {
-  border-color: var(--c-fg);
 }
 
 input[type='radio']:checked {
