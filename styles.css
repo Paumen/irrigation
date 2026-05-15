@@ -212,6 +212,8 @@ p {
 
 button,
 .option {
+  user-select: none;
+  -webkit-user-select: none; 
   display: grid;
   width: 100%;
   min-height: 32px;
@@ -232,6 +234,8 @@ button,
 }
 
 summary {
+  user-select: none;
+  -webkit-user-select: none;
   display: flex;
   gap: var(--sp-l);
   place-items: center stretch;
