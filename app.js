@@ -132,66 +132,65 @@ const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.l
 const STORAGE_KEY = 'irrigation:v1';
 const SEVERITY_FULL_PCT = 18;
 
-const BOX_W = 100;
-const BOX_H = 80;
+const BOX_W = 120;
+const BOX_H = 100;
+
+const NODE_ICON_SIZE = 92;
 
 const NODES = [
   {
     key: 'sw',
-    x: 22,
-    y: 20,
+    x: 12,
+    y: 10,
     w: BOX_W,
     h: BOX_H,
     label: 'SOFTWARE',
-    icons: ['mdi:cellphone'],
+    image: 'icons/software.png',
   },
   {
     key: 'ctrl',
-    x: 295,
-    y: 20,
+    x: 285,
+    y: 10,
     w: BOX_W,
     h: BOX_H,
     label: 'CONTROLLER',
-    icons: ['mdi:view-gallery-outline'],
+    image: 'icons/controller.png',
   },
   {
     key: 'relay',
-    x: 568,
-    y: 20,
+    x: 558,
+    y: 10,
     w: BOX_W,
     h: BOX_H,
     label: 'RELAY',
-    icons: ['mdi:electric-switch'],
+    image: 'icons/relay.png',
   },
   {
     key: 'sp4',
-    x: 22,
-    y: 180,
+    x: 12,
+    y: 170,
     w: BOX_W,
     h: BOX_H,
     label: 'ROTOR',
-    icons: ['mdi:rotor'],
-    flipX: true,
+    image: 'icons/rotor.png',
   },
   {
     key: 'valves',
-    x: 295,
-    y: 180,
+    x: 285,
+    y: 170,
     w: BOX_W,
     h: BOX_H,
     label: 'VALVES',
-    icons: ['ms:valve'],
+    image: 'icons/valves.png',
   },
   {
     key: 'pump',
-    x: 568,
-    y: 180,
+    x: 558,
+    y: 170,
     w: BOX_W,
     h: BOX_H,
     label: 'PUMP',
-    icons: ['mdi:water-pump'],
-    flipX: true,
-    iconScale: 0.65,
+    image: 'icons/pump.png',
   },
 ];
 
@@ -225,20 +224,6 @@ function iconTransform(name, cx, cy, size, flipX = false) {
   }
   const tx = cx - (minX + vw / 2) * scale;
   return `translate(${tx} ${ty}) scale(${scale})`;
-}
-
-function nodeIconLayout(n) {
-  return {
-    size: Math.max(24, 44 - 8 * (n - 1)),
-    gap: n <= 1 ? 0 : Math.max(26, 38 - 8 * (n - 2)),
-  };
-}
-
-function nodeIconCx(box, i, n) {
-  const { gap } = nodeIconLayout(n);
-  const cx = box.x + box.w / 2;
-  const start = -((n - 1) / 2) * gap;
-  return cx + start + i * gap;
 }
 
 function loadSaved() {
@@ -287,7 +272,6 @@ function app() {
     activeRC: null,
 
     iconTransform,
-    nodeIconCx,
     severityT,
 
     init() {
@@ -532,7 +516,6 @@ function app() {
     },
 
     renderDiagram() {
-      const ICONS = window.ICONS;
       const highlights = this.activeHighlights;
       let s = '';
 
@@ -542,21 +525,10 @@ function app() {
         s += `<g class="node-group"${act}>`;
         s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
 
-        const layout = nodeIconLayout(b.icons.length);
-        const isFlipped = !!b.flipX;
-        const iconSizeScale = b.iconScale ?? 1.0;
-        for (let i = 0; i < b.icons.length; i++) {
-          const name = b.icons[i];
-          const iconCx = nodeIconCx(b, i, b.icons.length);
-          const tr = iconTransform(
-            name,
-            iconCx,
-            b.y + b.h / 2,
-            layout.size * iconSizeScale,
-            isFlipped
-          );
-          s += `<g transform="${tr}"><path d="${ICONS[name].d}" fill="currentColor"/></g>`;
-        }
+        const size = NODE_ICON_SIZE;
+        const ix = b.x + b.w / 2 - size / 2;
+        const iy = b.y + b.h / 2 - size / 2;
+        s += `<image href="${b.image}" x="${ix}" y="${iy}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`;
         s += `</g>`;
       }
 
