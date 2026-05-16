@@ -120,8 +120,8 @@ main > details {
 header {
   display: flex;
   gap: var(--sp-l);
-  place-items: center stretch;
   place-content: space-between;
+  place-items: center stretch;
   padding: 0;
   margin: 0 0 var(--sp-xl);
 }
@@ -205,8 +205,6 @@ p {
 
 button,
 .option {
-  user-select: none;
-  -webkit-user-select: none;
   display: grid;
   width: 100%;
   min-height: 32px;
@@ -216,6 +214,8 @@ button,
   font-weight: var(--font-weight-m);
   color: inherit;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
   background: none;
   border: var(--line-width-s) solid currentcolor;
   transition:
@@ -227,8 +227,6 @@ button,
 }
 
 summary {
-  user-select: none;
-  -webkit-user-select: none;
   display: flex;
   gap: var(--sp-l);
   place-items: center stretch;
@@ -237,9 +235,11 @@ summary {
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
   color: var(--c-fg);
-  cursor: pointer;
-  background: var(--c-bg-alt2);
   list-style: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  background: var(--c-bg-alt2);
   border: none;
   transition:
     background var(--time),
@@ -265,11 +265,15 @@ footer > button {
 
 .option {
   grid-template-columns: 16px 1fr;
-  font-size: var(--text-sm);
   gap: var(--sp-l);
   place-items: center stretch;
   padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
+  font-size: var(--text-sm);
+}
+
+.option:has(svg) {
+  grid-template-columns: 16px 28px 1fr;
 }
 
 /* ─── Modifiers ───────────────────────────────────── */
@@ -292,7 +296,27 @@ footer > button {
   padding: 0;
 }
 
+nav button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-s) var(--sp-l);
+  place-items: center stretch;
+  padding: var(--sp-l);
+  font-variant-numeric: tabular-nums;
+  border: none;
+  border-right: var(--line-passive);
+}
+
 /* ─── States ──────────────────────────────────────── */
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: var(--o-1);
+}
+
+nav button:has([data-state='complete']) {
+  --c-bar: var(--c-ok);
+}
 
 button:active:not(:disabled),
 summary:active {
@@ -313,11 +337,6 @@ summary[aria-current],
   border-width: var(--line-width-m);
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: var(--o-1);
-}
-
 /* ════════════════════════════════════════════════════════════════
    7 · FORM CONTROLS — OPTIONS
    ════════════════════════════════════════════════════════════════ */
@@ -328,10 +347,6 @@ button:disabled {
   gap: var(--sp-l);
 }
 
-.option:has(svg) {
-  grid-template-columns: 16px 28px 1fr;
-}
-
 .option > svg {
   width: 16px;
   height: 16px;
@@ -339,7 +354,7 @@ button:disabled {
   fill: currentcolor;
 }
 
-.option:where(:has(input[type='radio']:checked)) > svg {
+.option:has(:checked) > svg {
   opacity: 1;
 }
 
@@ -519,7 +534,7 @@ input[type='radio']:checked {
 .bar > span {
   display: block;
   height: 100%;
-  background: var(--c-fg);
+  background: var(--c-bar, var(--c-fg));
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -531,17 +546,6 @@ nav {
   grid-template-columns: repeat(3, 1fr);
   background: var(--c-bg);
   border-top: var(--line-passive);
-}
-
-nav button {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--sp-s) var(--sp-l);
-  place-items: center stretch;
-  padding: var(--sp-l);
-  font-variant-numeric: tabular-nums;
-  border: none;
-  border-right: var(--line-passive);
 }
 
 nav button > .bar {
@@ -560,10 +564,6 @@ nav button[aria-current] {
   color: var(--c-ok);
 }
 
-:where(nav button):has([data-state='complete']) .bar > span {
-  background: var(--c-ok);
-}
-
 /* ════════════════════════════════════════════════════════════════
    13 · RANKINGS (root-cause list)
    ════════════════════════════════════════════════════════════════ */
@@ -580,6 +580,7 @@ nav button[aria-current] {
     oklch(96% 0.012 80deg),
     var(--c-accent) calc(var(--c-sev-t, 0) * 100%)
   );
+  --c-bar: var(--c-rank-sev);
 
   grid-template-areas: 'code label percent' 'code bar percent';
   grid-template-columns: 48px 1fr 48px;
@@ -588,10 +589,6 @@ nav button[aria-current] {
   view-transition-name: var(--accent-vt-rc, none);
   border-bottom: var(--line-passive);
   transition: --c-sev-t var(--time);
-}
-
-.rank-row .bar > span {
-  background: var(--c-rank-sev);
 }
 
 .rank-row > span:not(.bar, .percent) {
@@ -646,13 +643,17 @@ code {
   fill: var(--c-bg);
   stroke: var(--c-fg-med);
   stroke-width: var(--line-width-s);
+  transition:
+    fill var(--time),
+    stroke var(--time),
+    color var(--time);
 }
 
 .node-group[aria-current] {
   color: var(--c-accent);
 }
 
-:where(.node-group)[aria-current] .node-box {
+[aria-current] .node-box {
   stroke: var(--c-accent);
   stroke-width: var(--line-width-m);
   animation: node-highlight-pulse var(--time-pulse) ease-in-out infinite;
@@ -724,6 +725,10 @@ code {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: var(--line-width-l);
+  transition:
+    fill var(--time),
+    stroke var(--time),
+    color var(--time);
 }
 
 [data-flow] line[data-hose='true'] {
@@ -732,15 +737,7 @@ code {
   stroke-dasharray: none;
 }
 
-.node-group .node-box,
-[data-flow] line {
-  transition:
-    fill var(--time),
-    stroke var(--time),
-    color var(--time);
-}
-
-:where([data-flow])[aria-current] line:not([data-hose]) {
+[aria-current] line:not([data-hose]) {
   stroke: var(--c-flow);
   stroke-dasharray: var(--line-flow-dash-on, var(--line-flow-dash));
   animation: flow-dash var(--time) linear infinite;
