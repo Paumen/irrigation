@@ -633,6 +633,10 @@ code {
   border-left: var(--line-width-m) solid var(--c-accent-alt2);
 }
 
+.stage-label {
+  text-transform: uppercase;
+}
+
 .discriminator {
   justify-self: end;
 }
