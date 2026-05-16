@@ -6,8 +6,8 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CSS_DIR="$PROJECT_ROOT/src/css"
-SRC_DIR="$PROJECT_ROOT/src"
+CSS_DIR="$PROJECT_ROOT"
+SRC_DIR="$PROJECT_ROOT"
 EXIT_CODE=0
 
 # Colors for output
@@ -18,9 +18,9 @@ NC='\033[0m' # No Color
 
 # ── Stylelint ──────────────────────────────────────────────
 run_stylelint() {
-  local target="${1:-"$CSS_DIR"}"
+  local target="${1:-"$CSS_DIR/**/*.css"}"
   echo "── Stylelint ──"
-  if npx stylelint "$target" --config "$PROJECT_ROOT/config/.stylelintrc.json" --configBasedir "$PROJECT_ROOT" 2>&1; then
+  if (cd "$PROJECT_ROOT" && npx stylelint "$target") 2>&1; then
     echo -e "${GREEN}Stylelint: passed${NC}"
   else
     echo -e "${RED}Stylelint: failed${NC}"
@@ -40,7 +40,7 @@ find_dead_classes() {
   if [ -n "${1:-}" ]; then
     css_files="$1"
   else
-    css_files=$(find "$CSS_DIR" -name '*.css' -not -name 'variables.css')
+    css_files=$(find "$CSS_DIR" -maxdepth 1 -name '*.css')
   fi
 
   for css_file in $css_files; do
@@ -64,7 +64,7 @@ find_dead_classes() {
       # Search for class in .js and .html files (as string literal or in classList/className)
       local found
       found=$(grep -rlE "(class(Name|List)?[^>]*['\"\`\s]${class}['\"\`\s,)]|class=\"[^\"]*\b${class}\b|'${class}'|\"${class}\")" \
-        "$SRC_DIR" --include='*.js' --include='*.html' 2>/dev/null || true)
+        "$SRC_DIR" --include='*.js' --include='*.html' --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null || true)
 
       if [ -z "$found" ]; then
         file_dead="${file_dead}  .${class}\n"
@@ -101,7 +101,7 @@ if [ -n "${1:-}" ]; then
   find_dead_classes "$1"
 else
   # Full check mode
-  run_stylelint "$CSS_DIR"
+  run_stylelint "**/*.css"
   find_dead_classes
 fi
 
