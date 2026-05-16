@@ -585,6 +585,7 @@ nav button:has([data-state='complete']) {
     var(--c-accent) calc(var(--c-sev-t, 0) * 100%)
   );
 
+  display: grid;
   grid-template-areas: 'code label percent' 'code bar percent';
   grid-template-columns: 48px 1fr 48px;
   gap: 0 var(--sp-l);

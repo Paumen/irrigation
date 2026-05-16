@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=38" />
+    <link rel="stylesheet" href="styles.css?v=39" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -44,7 +44,12 @@
       <details data-card="form" open>
         <summary>
           <span>Diagnostic</span>
-          <button type="button" data-tone="mute" @click.stop="$refs.reset.showModal()">
+          <button
+            type="button"
+            data-tone="mute"
+            :disabled="!hasAnswers"
+            @click.stop="$refs.reset.showModal()"
+          >
             Reset
           </button>
           <button
@@ -195,18 +200,15 @@
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
               <li x-show="visible(i)">
-                <button
-                  type="button"
+                <div
                   class="rank-row"
-                  :aria-current="activeRC === r.id ? 'true' : null"
                   :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
-                  @click="activeRC = r.id"
                 >
                   <code x-text="r.id"></code>
                   <span x-text="RC[r.id].label"></span>
                   <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
                   <span class="percent" x-text="`${rankPct(r)}%`"></span>
-                </button>
+                </div>
               </li>
             </template>
           </ol>
@@ -270,7 +272,7 @@
 
     <script src="data.js?v=19"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=37"></script>
+    <script src="app.js?v=38"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

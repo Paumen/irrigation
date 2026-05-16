@@ -185,9 +185,22 @@ function loadSaved() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (!saved || typeof saved !== 'object') return null;
     migrateLegacyIds(saved);
+    pruneUnknownIds(saved);
     return saved;
   } catch {
     return null;
+  }
+}
+
+// Drop answers, skipped entries, and an activeQuestionId that refer to
+// question ids no longer present in data.js.
+function pruneUnknownIds(saved) {
+  const keep = (dict) =>
+    dict ? Object.fromEntries(Object.entries(dict).filter(([k]) => Q_BY_ID[k])) : dict;
+  saved.answers = keep(saved.answers);
+  saved.skipped = keep(saved.skipped);
+  if (saved.activeQuestionId && !Q_BY_ID[saved.activeQuestionId]) {
+    delete saved.activeQuestionId;
   }
 }
 
@@ -219,7 +232,6 @@ function app() {
     answers: {},
     skipped: {},
     activeQuestionId: QUESTIONS[0].id,
-    activeRC: null,
 
     severityT,
 
@@ -250,6 +262,10 @@ function app() {
 
     isCompleted(qid) {
       return this.isAnswered(qid) || !!this.skipped[qid];
+    },
+
+    get hasAnswers() {
+      return Object.keys(this.answers).length > 0 || Object.keys(this.skipped).length > 0;
     },
 
     get ranked() {
@@ -382,10 +398,11 @@ function app() {
     },
 
     pickStage(s) {
-      const first = STAGE_QS[s]?.[0];
-      if (first)
+      const qs = STAGE_QS[s] || [];
+      const target = qs.find((q) => !this.isCompleted(q.id)) || qs[0];
+      if (target)
         withTransition(() => {
-          this.activeQuestionId = first.id;
+          this.activeQuestionId = target.id;
         });
     },
 
@@ -399,7 +416,6 @@ function app() {
       withTransition(() => {
         this.answers = {};
         this.skipped = {};
-        this.activeRC = null;
         this.activeQuestionId = QUESTIONS[0].id;
       });
     },
