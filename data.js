@@ -128,7 +128,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q3',
+      id: 'Q4',
       stage: 1,
       group: 'Symptoms',
       text: 'How does water leave rotors?',
@@ -177,7 +177,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q4',
+      id: 'Q3',
       stage: 1,
       group: 'Symptoms',
       text: 'How does the pump behave when turned on?',
@@ -198,9 +198,9 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q5',
+      id: 'E1',
       stage: 1,
-      group: 'Symptoms',
+      group: 'Events',
       text: 'How did the problem progress?',
       options: [
         {
@@ -297,7 +297,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q9',
+      id: 'D1',
       stage: 1,
       group: 'Symptoms',
       text: 'Manual open valve solenoid / bleed screw, runs?',
@@ -341,7 +341,7 @@ window.DATA = {
 
     /* --- STAGE 2: EVENTS --- */
     {
-      id: 'E1',
+      id: 'E2',
       stage: 2,
       type: 'sliders',
       group: 'Events',
@@ -357,7 +357,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'E2',
+      id: 'E3',
       stage: 2,
       type: 'matrix',
       group: 'Events',
@@ -374,7 +374,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'E3',
+      id: 'E4',
       stage: 2,
       type: 'matrix',
       group: 'Events',
@@ -392,7 +392,7 @@ window.DATA = {
 
     /* --- STAGE 3: HARD TESTS --- */
     {
-      id: 'D1',
+      id: 'D2',
       stage: 3,
       group: 'Hard tests',
       text: 'Zone terminal voltage during call (~24 VAC)?',
@@ -407,7 +407,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D2',
+      id: 'D3',
       stage: 3,
       group: 'Hard tests',
       text: '24 VAC at controller pump/master terminal during call?',
@@ -419,7 +419,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D3',
+      id: 'D4',
       stage: 3,
       group: 'Hard tests',
       text: 'Common-wire continuity controller→valves?',
@@ -431,7 +431,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D4',
+      id: 'D5',
       stage: 3,
       group: 'Hard tests',
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
@@ -444,7 +444,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D5',
+      id: 'D6',
       stage: 3,
       group: 'Hard tests',
       text: 'Swap valve with known-good — issue stays with zone?',
@@ -458,7 +458,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D6',
+      id: 'D7',
       stage: 3,
       group: 'Hard tests',
       text: 'Open each valve and inspect internals?',
@@ -469,7 +469,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D7',
+      id: 'D8',
       stage: 3,
       group: 'Hard tests',
       text: 'Dig & inspect hoses for damage?',
@@ -481,7 +481,7 @@ window.DATA = {
     },
     
     {
-      id: 'D8',
+      id: 'D9',
       stage: 3,
       group: 'Hard tests',
       text: 'Flow meter reads 1.0–3.0?',
