@@ -5,7 +5,7 @@ description: CSS conventions, prohibited patterns, and style architecture. Invok
 
 CSS Style Guide — invoke before editing any `.css` file or when resolving CSS lint/build errors.
 
-This skill governs all CSS work. Reference files in `spec/css-guide/` provide deeper guidance for complex work.
+This skill governs all CSS work. Reference files alongside this `SKILL.md` provide deeper guidance for complex work.
 
 ---
 
@@ -13,8 +13,8 @@ This skill governs all CSS work. Reference files in `spec/css-guide/` provide de
 
 - **Always** before editing or creating any `.css` file.
 - **Always** when a stylelint error, CSS build error, or visual bug occurs.
-- **On error**: read `spec/css-guide/prohibited.md` before attempting fixes.
-- **On design-heavy work** (new components, animations, layout changes): also read `spec/css-guide/patterns.md` and `spec/css-guide/architecture.md`.
+- **On error**: read `prohibited.md` (next to this file) before attempting fixes.
+- **On design-heavy work** (new components, animations, layout changes): also read `patterns.md` and `architecture.md`.
 
 ---
 
@@ -26,31 +26,30 @@ Before making ANY CSS change, complete these steps in order:
 2. **Read the current state** of the file you will edit.
 3. **Make the change** following the Do/Don't table below.
 4. **Validation is automatic** — the PostToolUse hook runs stylelint with `--fix` on every `.css` edit.
-5. **If errors remain**: read `spec/css-guide/prohibited.md`, fix using the approved alternative.
+5. **If errors remain**: read `prohibited.md` (next to this file), fix using the approved alternative.
 6. **Run `./scripts/css-check.sh`** for full validation (stylelint + dead code detection).
 
-
 ---
-                       
+
 ## Folder Structure (this skill)
 
 ```
-.claude/commands/css-guide.md          ← This file. Core rules, always loaded.
-scripts/css-check.sh                   ← Stylelint + dead CSS class detection. Run for full validation.
-spec/css-guide/
+.claude/skills/css-guide/
+├── SKILL.md                           ← This file. Core rules, always loaded.
 ├── prohibited.md                      ← Prohibited properties/values with rationales + alternatives.
 │                                        Read when: stylelint errors, unclear what to use.
 ├── patterns.md                        ← Component & interaction patterns with code examples.
 │                                        Read when: new components, animations, interaction states.
 └── architecture.md                    ← CSS architecture deep-dive (layers, scoping, sizing, theming).
                                          Read when: structural layout work, theming, responsiveness.
+scripts/css-check.sh                   ← Stylelint + dead CSS class detection. Run for full validation.
 ```
 
 **Automation:**
 
 - **PostToolUse hook** auto-runs `stylelint --fix` on every `.css` file edit.
 - **`./scripts/css-check.sh`** runs full validation: stylelint + dead code detection.
-- **`./scripts/css-check.sh src/css/layout.css`** runs checks on a single file.
+- **`./scripts/css-check.sh styles.css`** runs checks on a single file.
 
 ---
 
@@ -103,7 +102,7 @@ When in doubt: if `gap` can achieve the same result, use `gap`.
 Follow this decision tree — do NOT guess or try random fixes:
 
 1. **Read the exact error message.** Identify the property, value, and rule that failed.
-2. **Check `spec/css-guide/prohibited.md`** for the prohibited item and its approved alternative.
+2. **Check `prohibited.md`** (next to this file) for the prohibited item and its approved alternative.
 3. **If the alternative requires a variable** that doesn't exist → request permission to add it to `variables.css`.
 4. **If the alternative requires a new class** → request permission with the format above.
 5. **If you genuinely cannot find an alternative** → STOP and ask the human. Explain what you tried.
@@ -129,7 +128,7 @@ The cost of asking is zero. The cost of a CSS hack is technical debt that compou
 
 ## Reference Files
 
-For deeper guidance, read the appropriate reference file from `spec/css-guide/`:
+For deeper guidance, read the appropriate reference file from this skill's folder:
 
 | File              | Read when...                                                                                 |
 | :---------------- | :------------------------------------------------------------------------------------------- |

@@ -144,12 +144,12 @@ const ICON_INSET_X = (BOX_W - NODE_ICON_SIZE) / 2;
 const ICON_INSET_Y = (BOX_H - NODE_ICON_SIZE) / 2;
 
 const NODES = [
-  { key: 'sw', x: 12, y: 10, image: 'icons/software.png' },
-  { key: 'ctrl', x: 285, y: 10, image: 'icons/controller.png' },
-  { key: 'relay', x: 558, y: 10, image: 'icons/relay.png' },
-  { key: 'sp4', x: 12, y: 170, image: 'icons/rotor.png' },
-  { key: 'valves', x: 285, y: 170, image: 'icons/valves.png' },
-  { key: 'pump', x: 558, y: 170, image: 'icons/pump.png' },
+  { key: 'sw', x: 12, y: 10, image: 'media/software.png' },
+  { key: 'ctrl', x: 285, y: 10, image: 'media/controller.png' },
+  { key: 'relay', x: 558, y: 10, image: 'media/relay.png' },
+  { key: 'sp4', x: 12, y: 170, image: 'media/rotor.png' },
+  { key: 'valves', x: 285, y: 170, image: 'media/valves.png' },
+  { key: 'pump', x: 558, y: 170, image: 'media/pump.png' },
 ].map((n) => ({ ...n, w: BOX_W, h: BOX_H, iconX: n.x + ICON_INSET_X, iconY: n.y + ICON_INSET_Y }));
 
 function severityT(pct) {

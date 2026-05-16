@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Single-page diagnostic web app that walks a homeowner through an irrigation/rotor troubleshooting questionnaire and continually re-ranks the most likely root causes, visualised on a system schematic. Live at https://paumen.github.io/irrigation/. See `spec.md` for the product spec (sections, ranking, map, recommendation rules).
+Single-page diagnostic web app that walks a homeowner through an irrigation/rotor troubleshooting questionnaire and continually re-ranks the most likely root causes, visualised on a system schematic. Live at https://paumen.github.io/irrigation/. See `docs/spec.md` for the product spec (sections, ranking, map, recommendation rules).
 
 ## Build / run
 
