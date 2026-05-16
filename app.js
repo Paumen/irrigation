@@ -162,17 +162,25 @@ const SEVERITY_FULL_PCT = 18;
 const BOX_W = 120;
 const BOX_H = 100;
 const NODE_ICON_SIZE = 92;
-const ICON_INSET_X = (BOX_W - NODE_ICON_SIZE) / 2;
-const ICON_INSET_Y = (BOX_H - NODE_ICON_SIZE) / 2;
 
 const NODES = [
   { key: 'sw', x: 12, y: 10, image: 'media/software.png' },
-  { key: 'ctrl', x: 285, y: 10, image: 'media/controller.png' },
+  { key: 'ctrl', x: 285, y: 10, image: 'media/controller.png', iconSize: 120 },
   { key: 'relay', x: 558, y: 10, image: 'media/relay.png' },
   { key: 'sp4', x: 12, y: 170, image: 'media/rotor.png' },
   { key: 'valves', x: 285, y: 170, image: 'media/valves.png' },
   { key: 'pump', x: 558, y: 170, image: 'media/pump.png' },
-].map((n) => ({ ...n, w: BOX_W, h: BOX_H, iconX: n.x + ICON_INSET_X, iconY: n.y + ICON_INSET_Y }));
+].map((n) => {
+  const iconSize = n.iconSize ?? NODE_ICON_SIZE;
+  return {
+    ...n,
+    w: BOX_W,
+    h: BOX_H,
+    iconSize,
+    iconX: n.x + (BOX_W - iconSize) / 2,
+    iconY: n.y + (BOX_H - iconSize) / 2,
+  };
+});
 
 function severityT(pct) {
   const t = Math.max(0, Math.min(1, pct / SEVERITY_FULL_PCT));
@@ -529,7 +537,7 @@ function app() {
         return (
           `<g class="node-group"${act}>` +
           `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>` +
-          `<image href="${b.image}" x="${b.iconX}" y="${b.iconY}" width="${NODE_ICON_SIZE}" height="${NODE_ICON_SIZE}" preserveAspectRatio="xMidYMid meet"/>` +
+          `<image href="${b.image}" x="${b.iconX}" y="${b.iconY}" width="${b.iconSize}" height="${b.iconSize}" preserveAspectRatio="xMidYMid meet"/>` +
           `</g>`
         );
       }).join('');
