@@ -310,9 +310,7 @@ function app() {
     },
 
     questionState(qid) {
-      if (this.isAnswered(qid)) return 'complete';
-      if (this.isSkipped(qid)) return 'skipped';
-      return null;
+      return this.isCompleted(qid) ? 'complete' : null;
     },
 
     get scores() {

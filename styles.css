@@ -24,6 +24,7 @@
   --c-accent: oklch(38% 0.105 40deg);
   --c-accent-alt: oklch(32% 0.05 220deg);
   --c-accent-alt2: oklch(48% 0.025 80deg);
+  --c-ok: oklch(52% 0.12 165deg);
 
   /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -557,18 +558,12 @@ nav button[aria-current] {
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
-[data-state='complete']::after {
-  color: var(--c-accent-alt);
-  content: ' ✓';
-}
-
-[data-state='skipped']::after {
-  color: var(--c-fg-med);
-  content: ' ↷';
+[data-state='complete'] {
+  color: var(--c-ok);
 }
 
 :where(nav button):has([data-state='complete']) .bar > span {
-  background: var(--c-accent-alt);
+  background: var(--c-ok);
 }
 
 /* ════════════════════════════════════════════════════════════════
