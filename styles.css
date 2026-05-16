@@ -304,10 +304,14 @@ summary:active {
   transform: translate(-1px, -1px);
 }
 
+[aria-current],
+.option:has(:checked) {
+  font-weight: var(--font-weight-l);
+}
+
 button[aria-current],
 summary[aria-current],
 .option:has(:checked) {
-  font-weight: var(--font-weight-l);
   border-width: var(--line-width-m);
 }
 
@@ -376,7 +380,6 @@ button:disabled {
 }
 
 :where(.slider-row)[aria-current] .slider-value {
-  font-weight: var(--font-weight-m);
   color: var(--c-fg);
 }
 
