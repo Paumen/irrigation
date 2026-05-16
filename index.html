@@ -230,7 +230,7 @@
               <template x-for="(rec, i) in recommendations" :key="rec.q.id">
                 <li x-show="visible(i)">
                   <button type="button" class="recommendation" @click="goTo(rec.q.id)">
-                    <span x-text="STAGE_LABELS[rec.q.stage]"></span>
+                    <span class="stage-label" x-text="STAGE_LABELS[rec.q.stage]"></span>
                     <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                     <span class="recommendation-text" x-text="rec.q.text"></span>
                   </button>
