@@ -23,39 +23,15 @@ This skill governs all CSS work. Reference files in `spec/css-guide/` provide de
 Before making ANY CSS change, complete these steps in order:
 
 1. **Identify target file(s)** using the File Map below.
-2. **Check permissions** — does this file require explicit human permission? (See Permissions below.)
-3. **Read the current state** of the file you will edit.
-4. **Make the change** following the Do/Don't table below.
-5. **Validation is automatic** — the PostToolUse hook runs stylelint with `--fix` on every `.css` edit.
-6. **If errors remain**: read `spec/css-guide/prohibited.md`, fix using the approved alternative.
-7. **Run `./scripts/css-check.sh`** for full validation (stylelint + dead code detection).
-8. **Run `npm run build`** to catch any remaining issues.
+2. **Read the current state** of the file you will edit.
+3. **Make the change** following the Do/Don't table below.
+4. **Validation is automatic** — the PostToolUse hook runs stylelint with `--fix` on every `.css` edit.
+5. **If errors remain**: read `spec/css-guide/prohibited.md`, fix using the approved alternative.
+6. **Run `./scripts/css-check.sh`** for full validation (stylelint + dead code detection).
+
 
 ---
-
-## File Map
-
-```
-src/css/
-├── variables.css    — Design tokens only (colors, spacing, typography, etc.)
-│                      PROTECTED: requires human permission to edit.
-│                      HUMAN names all new custom properties.
-│
-├── layout.css       — Grid definitions, structural rules, container queries.
-│                      Purely spatial: no colors, no typography.
-│
-├── components.css   — Component styles: buttons, inputs, tags, icons, etc.
-│                      Surface colors, text, borders, interaction states.
-│
-└── special.css      — One-off component styles (quality meter, shimmer, notifications).
-                       PROTECTED: requires human permission to edit.
-                       Goal: keep this file small and shrinking.
-```
-
-**Import order:** `variables.css` → `layout.css` → `components.css` → `special.css`
-
----
-
+                       
 ## Folder Structure (this skill)
 
 ```
@@ -75,34 +51,6 @@ spec/css-guide/
 - **PostToolUse hook** auto-runs `stylelint --fix` on every `.css` file edit.
 - **`./scripts/css-check.sh`** runs full validation: stylelint + dead code detection.
 - **`./scripts/css-check.sh src/css/layout.css`** runs checks on a single file.
-
----
-
-## Permissions
-
-Permissions are defined in `CLAUDE.md` (File Permissions section) and are the single source of truth. This skill does NOT duplicate those rules — refer to `CLAUDE.md` for the canonical list.
-
-**CSS-specific reminders** (derived from CLAUDE.md):
-
-- `variables.css` and `special.css` require explicit human permission per edit.
-- New CSS classes require permission. Reuse existing classes first.
-- Inline styles in `.js` or `.html` require permission.
-- New color, size, or spacing values must be added as variables first, after human approval.
-- Linter/formatter config changes require permission.
-
-**Permission Request Format:**
-When you need permission, request it individually (not bundled) with:
-
-1. **Request ID#** (sequential, e.g., #01)
-2. **Affected File(s)**
-3. **Exception Needed** (specific property/value/class)
-4. **Rationale & Evidence** (why the standard is insufficient)
-5. **Alternatives Considered**
-
-> Example: Request ID: #01 | File: layout.css | Exception: new class `.card-collapsed` | Rationale: no existing class covers this state, `:has()` selector insufficient because [...] | Alternatives: using `[data-state]` attribute (tested, specificity conflict with...)
-
-**Granting Permission:**
-Permission is valid **only** if the human responds with the request ID# and the code: `SESAMOPENU`. This forces deliberate evaluation — not reflexive approval. Permissions are single-use and expire at the end of the session.
 
 ---
 
