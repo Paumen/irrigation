@@ -318,37 +318,28 @@ window.DATA = {
         },
       ],
     },
-    {
+        {
       id: 'Q10',
       stage: 1,
       group: 'Symptoms',
-      text: 'Did restarting the controller help?',
-      highlight: ['ctrl', 'sw'],
+      text: 'Did restarting anything help?',
+      highlight: ['ctrl', 'sw', 'pump', 'relay'],
       options: [
         {
-          label: 'Briefly fixed',
+          label: 'Controller restart briefly fixed it',
           effects: { R12: 0.6, R13: 0.6, R23: 0.6 },
         },
         {
-          label: 'No effect',
-          effects: { R1: -0.2, R2: -0.2 },
-        },
-      ],
-    },
-    {
-      id: 'Q11',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'Did restarting the pump help?',
-      highlight: ['pump', 'relay'],
-      options: [
-        {
-          label: 'Briefly fixed',
+          label: 'Pump restart briefly fixed it',
           effects: { R31: 0.4, R42: 0.4 },
         },
         {
-          label: 'No effect',
-          effects: { R42: -0.2 },
+          label: 'Tried, no effect',
+          effects: { R1: -0.2, R2: -0.2, R42: -0.2 },
+        },
+        {
+          label: "Haven't tried",
+          effects: {},
         },
       ],
     },
@@ -475,17 +466,6 @@ window.DATA = {
       id: 'D6',
       stage: 3,
       group: 'Hard tests',
-      text: 'Controller board visual check?',
-      highlight: ['ctrl'],
-      options: [
-        { label: 'Looks fine', effects: { R22: -0.2 } },
-        { label: 'Corrosion / burn marks', effects: { R22: 1 } },
-      ],
-    },
-    {
-      id: 'D7',
-      stage: 3,
-      group: 'Hard tests',
       text: 'Open each valve and inspect internals?',
       highlight: ['valves'],
       options: [
@@ -494,7 +474,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'D8',
+      id: 'D7',
       stage: 3,
       group: 'Hard tests',
       text: 'Dig & inspect hoses for damage?',
@@ -506,7 +486,7 @@ window.DATA = {
     },
     
     {
-      id: 'D9',
+      id: 'D8',
       stage: 3,
       group: 'Hard tests',
       text: 'Flow meter reads 1.0–3.0?',
