@@ -127,6 +127,27 @@ window.DATA = {
         },
       ],
     },
+        {
+      id: 'Q3',
+      stage: 1,
+      group: 'Symptoms',
+      text: 'How does the pump behave when turned on?',
+      highlight: ['pump'],
+      options: [
+        {
+          label: 'Runs smoothly',
+          effects: { R41: 0.2, R42: -0.3, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
+        },
+        {
+          label: 'Hums, trips breaker, or silent',
+          effects: { R1: 1, R2: 1, R31: 1, R42: 1 },
+        },
+        {
+          label: 'Short-cycles / No pressure',
+          effects: { R4: 0.4, R51: 0.4 },
+        },
+      ],
+    },
     {
       id: 'Q4',
       stage: 1,
@@ -176,30 +197,10 @@ window.DATA = {
         },
       ],
     },
-    {
-      id: 'Q3',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'How does the pump behave when turned on?',
-      highlight: ['pump'],
-      options: [
-        {
-          label: 'Runs smoothly',
-          effects: { R41: 0.2, R42: -0.3, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
-        },
-        {
-          label: 'Hums, trips breaker, or silent',
-          effects: { R1: 1, R2: 1, R31: 1, R42: 1 },
-        },
-        {
-          label: 'Short-cycles / No pressure',
-          effects: { R4: 0.4, R51: 0.4 },
-        },
-      ],
-    },
+
     {
       id: 'E1',
-      stage: 1,
+      stage: 2,
       group: 'Events',
       text: 'How did the problem progress?',
       options: [
@@ -298,7 +299,7 @@ window.DATA = {
     },
     {
       id: 'D1',
-      stage: 1,
+      stage: 3,
       group: 'Symptoms',
       text: 'Manual open valve solenoid / bleed screw, runs?',
       highlight: ['valves'],
