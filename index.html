@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=39" />
+    <link rel="stylesheet" href="styles.css?v=41" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -110,33 +110,32 @@
             </div>
           </template>
 
-          <template x-if="activeQuestion.type === 'sliders'">
-            <div data-q="sliders">
-              <template x-for="row in activeQuestion.rows" :key="row.id">
-                <div
-                  class="slider-row"
-                  :aria-current="sliderVal(row.id) > 0 ? 'true' : null"
-                  :style="`--bg-fill: ${(sliderVal(row.id) / (row.steps.length - 1)) * 100}%`"
+          <template x-if="activeQuestion.type === 'dates'">
+            <div data-q="dates">
+              <ul class="hw-list">
+                <template x-for="row in activeQuestion.rows" :key="row.id">
+                  <li class="hw-row">
+                    <span class="hw-label" x-text="row.label"></span>
+                    <span class="hw-model" x-text="row.model || ''"></span>
+                    <span class="hw-meta" x-text="hwDateLabel(row.id)"></span>
+                    <span class="hw-meta" x-text="hwBucketLabel(row.id)"></span>
+                  </li>
+                </template>
+              </ul>
+              <footer>
+                <button
+                  type="button"
+                  data-tone="mute"
+                  @click="moveBy(1, { markComplete: true })"
+                  :disabled="isLast"
                 >
-                  <span x-text="row.label"></span>
-                  <input
-                    type="range"
-                    :min="0"
-                    :max="row.steps.length - 1"
-                    step="1"
-                    :value="sliderVal(row.id)"
-                    @input="setSliderVal(row.id, $event.target.value)"
-                    :aria-label="row.label"
-                    :list="`ticks-${activeQuestion.id}-${row.id}`"
-                  />
-                  <datalist :id="`ticks-${activeQuestion.id}-${row.id}`">
-                    <template x-for="(st, si) in row.steps" :key="si">
-                      <option :value="si"></option>
-                    </template>
-                  </datalist>
-                  <span class="slider-value" x-text="row.steps[sliderVal(row.id)].label"></span>
-                </div>
-              </template>
+                  Skip
+                </button>
+                <button type="button" data-tone="mute" @click="goToSysInfo()">
+                  No — update dates
+                </button>
+                <button type="button" @click="confirmDates()">Yes — confirm</button>
+              </footer>
             </div>
           </template>
 
@@ -163,7 +162,7 @@
             </div>
           </template>
 
-          <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'sliders'">
+          <template x-if="activeQuestion.type === 'matrix'">
             <footer>
               <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">
                 Skip
@@ -252,6 +251,42 @@
         </div>
       </details>
 
+      <details data-card="sysinfo">
+        <summary><span>System Info</span></summary>
+        <div class="sysinfo">
+          <dl class="sysinfo-meta">
+            <dt>Installed</dt>
+            <dd x-text="SYSTEM.installedLabel"></dd>
+            <dt>Layout</dt>
+            <dd x-text="`${SYSTEM.layout} · ${SYSTEM.zoneCount} zones`"></dd>
+            <dt>Water source</dt>
+            <dd x-text="SYSTEM.waterSource"></dd>
+            <dt>Main hose</dt>
+            <dd x-text="SYSTEM.mainHose"></dd>
+            <dt>Zone hose</dt>
+            <dd x-text="SYSTEM.zoneHose"></dd>
+            <dt>Zone flow</dt>
+            <dd x-text="SYSTEM.zoneFlow"></dd>
+          </dl>
+          <ul class="hw-list">
+            <template x-for="row in hwRows" :key="row.id">
+              <li class="hw-row">
+                <span class="hw-label" x-text="row.label"></span>
+                <span class="hw-model" x-text="row.model || ''"></span>
+                <input
+                  type="date"
+                  :max="todayISO"
+                  :value="hwDates[row.id] || ''"
+                  @input="setHwDate(row.id, $event.target.value)"
+                  :aria-label="`${row.label} install or replacement date`"
+                />
+                <span class="hw-meta" x-text="hwAgeYearsLabel(row.id)"></span>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </details>
+
       <dialog
         x-ref="reset"
         aria-labelledby="reset-title"
@@ -270,9 +305,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=19"></script>
+    <script src="data.js?v=20"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=39"></script>
+    <script src="app.js?v=41"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

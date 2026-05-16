@@ -23,7 +23,7 @@ function expandEffects(effects) {
   return out;
 }
 
-function expandSliderRows(q) {
+function expandStepRows(q) {
   const curves = window.DATA.sliderCurves || {};
   const labels = q.stepLabels || [];
   return q.rows.map((row) => {
@@ -45,8 +45,8 @@ const QUESTIONS = window.DATA.questions.map((q) => {
   if (next.type === 'matrix') {
     next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
     next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
-  } else if (next.type === 'sliders') {
-    next.rows = expandSliderRows(next).map((r) => ({
+  } else if (next.type === 'dates') {
+    next.rows = expandStepRows(next).map((r) => ({
       ...r,
       steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
     }));
@@ -55,6 +55,8 @@ const QUESTIONS = window.DATA.questions.map((q) => {
   }
   return next;
 });
+
+const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
 
 const Q_BY_ID = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
 
@@ -103,7 +105,7 @@ const TYPE_HANDLERS = {
       return Object.keys(ans).length > 0;
     },
   },
-  sliders: {
+  dates: {
     score(q, ans, s) {
       for (const row of q.rows) {
         const idx = ans[row.id];
@@ -126,10 +128,30 @@ const TYPE_HANDLERS = {
       return D;
     },
     isAnswered(_q, ans) {
-      return Object.values(ans).some((v) => Number(v) > 0);
+      return !!ans && typeof ans === 'object';
     },
   },
 };
+
+const MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
+const DATE_FMT = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short' });
+
+function parseDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function ageYears(dateStr) {
+  const d = parseDate(dateStr);
+  return d ? (Date.now() - d.getTime()) / MS_PER_YEAR : null;
+}
+
+function dateStepIndex(years, buckets) {
+  if (years === null) return 0;
+  for (let i = 0; i < buckets.length; i++) if (years < buckets[i]) return i + 1;
+  return buckets.length + 1;
+}
 
 const STAGES = window.DATA.stages.map((s) => s.id);
 const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
@@ -228,9 +250,11 @@ function app() {
     OPT_ICONS: window.OPT_ICONS,
     STAGES,
     STAGE_LABELS,
+    SYSTEM: window.DATA.system || {},
 
     answers: {},
     skipped: {},
+    hwDates: { ...(window.DATA.hwDefaults || {}) },
     activeQuestionId: QUESTIONS[0].id,
 
     severityT,
@@ -240,10 +264,12 @@ function app() {
       if (saved) {
         if (saved.answers && typeof saved.answers === 'object') this.answers = saved.answers;
         if (saved.skipped && typeof saved.skipped === 'object') this.skipped = saved.skipped;
+        if (saved.hwDates && typeof saved.hwDates === 'object') this.hwDates = saved.hwDates;
         if (Q_BY_ID[saved.activeQuestionId]) this.activeQuestionId = saved.activeQuestionId;
       }
       this.$watch('answers', () => this._persist());
       this.$watch('skipped', () => this._persist());
+      this.$watch('hwDates', () => this._persist());
       this.$watch('activeQuestionId', () => this._persist());
     },
 
@@ -254,6 +280,7 @@ function app() {
           JSON.stringify({
             answers: this.answers,
             skipped: this.skipped,
+            hwDates: this.hwDates,
             activeQuestionId: this.activeQuestionId,
           })
         );
@@ -350,24 +377,16 @@ function app() {
       return this.activeAnswer?.[rowId] || 'no';
     },
 
-    sliderVal(rowId) {
-      const v = this.activeAnswer?.[rowId];
-      return v === undefined || v === null ? 2 : Number(v);
-    },
-
-    // animate=false skips withTransition: slider drag fires many ticks per
-    // gesture and animating each would be jarring.
-    setAnswer(value, { advance = false, animate = true } = {}) {
+    setAnswer(value, { advance = false } = {}) {
       const qid = this.activeQuestionId;
-      const write = () => {
+      withTransition(() => {
         this.answers = { ...this.answers, [qid]: value };
         if (advance) {
           const idx = QUESTIONS.findIndex((q) => q.id === qid);
           const next = QUESTIONS[idx + 1];
           if (next) this.activeQuestionId = next.id;
         }
-      };
-      animate ? withTransition(write) : write();
+      });
     },
 
     setMatrixCell(rowId, colId) {
@@ -375,14 +394,60 @@ function app() {
       this.setAnswer({ ...prev, [rowId]: colId });
     },
 
-    setSliderVal(rowId, val) {
-      const prev = this.answers[this.activeQuestionId] || {};
-      const v = parseInt(val, 10) || 0;
-      this.setAnswer({ ...prev, [rowId]: v }, { animate: false });
-    },
-
     handleAnswer(i) {
       this.setAnswer(i, { advance: true });
+    },
+
+    get hwRows() {
+      return DATES_Q ? DATES_Q.rows : [];
+    },
+
+    get todayISO() {
+      return new Date().toISOString().slice(0, 10);
+    },
+
+    hwDateLabel(rowId) {
+      const d = parseDate(this.hwDates[rowId]);
+      return d ? DATE_FMT.format(d) : 'not set';
+    },
+
+    hwBucketLabel(rowId) {
+      if (!DATES_Q) return '';
+      const idx = dateStepIndex(ageYears(this.hwDates[rowId]), DATES_Q.ageBuckets);
+      return DATES_Q.stepLabels[idx] || '';
+    },
+
+    hwAgeYearsLabel(rowId) {
+      const y = ageYears(this.hwDates[rowId]);
+      return y === null ? '—' : `${Math.floor(y)} yr${Math.floor(y) === 1 ? '' : 's'}`;
+    },
+
+    _datesAnswer() {
+      if (!DATES_Q) return {};
+      return Object.fromEntries(
+        DATES_Q.rows.map((row) => [
+          row.id,
+          dateStepIndex(ageYears(this.hwDates[row.id]), DATES_Q.ageBuckets),
+        ])
+      );
+    },
+
+    setHwDate(rowId, dateStr) {
+      this.hwDates = { ...this.hwDates, [rowId]: dateStr };
+      if (DATES_Q && this.answers[DATES_Q.id] !== undefined) {
+        this.answers = { ...this.answers, [DATES_Q.id]: this._datesAnswer() };
+      }
+    },
+
+    confirmDates() {
+      this.setAnswer(this._datesAnswer(), { advance: true });
+    },
+
+    goToSysInfo() {
+      const el = document.querySelector('[data-card="sysinfo"]');
+      if (!el) return;
+      el.open = true;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     moveBy(d, opts = {}) {
