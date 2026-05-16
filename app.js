@@ -212,16 +212,12 @@ function withTransition(fn) {
   document.startViewTransition(fn);
 }
 
-function iconTransform(name, cx, cy, size, flipX = false) {
+function iconTransform(name, cx, cy, size) {
   const def = window.ICONS[name];
   if (!def) return '';
   const [minX, minY, vw, vh] = def.vb;
   const scale = size / Math.max(vw, vh);
   const ty = cy - (minY + vh / 2) * scale;
-  if (flipX) {
-    const tx2 = cx + (minX + vw / 2) * scale;
-    return `translate(${tx2} ${ty}) scale(${-scale}, ${scale})`;
-  }
   const tx = cx - (minX + vw / 2) * scale;
   return `translate(${tx} ${ty}) scale(${scale})`;
 }
@@ -261,7 +257,6 @@ function app() {
     QUESTIONS,
     NODES,
     RC,
-    ICONS: window.ICONS,
     OPT_ICONS: window.OPT_ICONS,
     STAGES,
     STAGE_LABELS,
@@ -271,7 +266,6 @@ function app() {
     activeQuestionId: QUESTIONS[0].id,
     activeRC: null,
 
-    iconTransform,
     severityT,
 
     init() {
@@ -299,10 +293,6 @@ function app() {
           })
         );
       } catch {}
-    },
-
-    isSkipped(qid) {
-      return !!this.skipped[qid] && !this.isAnswered(qid);
     },
 
     isCompleted(qid) {
