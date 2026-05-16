@@ -132,16 +132,16 @@ const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.l
 const STORAGE_KEY = 'irrigation:v1';
 const SEVERITY_FULL_PCT = 18;
 
-const BOX_W = 100;
-const BOX_H = 80;
+const BOX_W = 120;
+const BOX_H = 100;
 
-const NODE_ICON_SIZE = 76;
+const NODE_ICON_SIZE = 92;
 
 const NODES = [
   {
     key: 'sw',
-    x: 22,
-    y: 20,
+    x: 12,
+    y: 10,
     w: BOX_W,
     h: BOX_H,
     label: 'SOFTWARE',
@@ -149,8 +149,8 @@ const NODES = [
   },
   {
     key: 'ctrl',
-    x: 295,
-    y: 20,
+    x: 285,
+    y: 10,
     w: BOX_W,
     h: BOX_H,
     label: 'CONTROLLER',
@@ -158,8 +158,8 @@ const NODES = [
   },
   {
     key: 'relay',
-    x: 568,
-    y: 20,
+    x: 558,
+    y: 10,
     w: BOX_W,
     h: BOX_H,
     label: 'RELAY',
@@ -167,8 +167,8 @@ const NODES = [
   },
   {
     key: 'sp4',
-    x: 22,
-    y: 180,
+    x: 12,
+    y: 170,
     w: BOX_W,
     h: BOX_H,
     label: 'ROTOR',
@@ -176,8 +176,8 @@ const NODES = [
   },
   {
     key: 'valves',
-    x: 295,
-    y: 180,
+    x: 285,
+    y: 170,
     w: BOX_W,
     h: BOX_H,
     label: 'VALVES',
@@ -185,8 +185,8 @@ const NODES = [
   },
   {
     key: 'pump',
-    x: 568,
-    y: 180,
+    x: 558,
+    y: 170,
     w: BOX_W,
     h: BOX_H,
     label: 'PUMP',

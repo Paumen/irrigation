@@ -18,34 +18,34 @@ window.DATA = {
   flows: [
     {
       id: 'wifi',
-      lines: [{ x1: 122, y1: 60, x2: 295, y2: 60 }],
+      lines: [{ x1: 132, y1: 60, x2: 285, y2: 60 }],
       markers: [{ icon: 'ms:wifi', cx: 208, cy: 46 }],
     },
     {
       id: 'ctrl',
       lines: [
-        { x1: 395, y1: 60, x2: 568, y2: 60, arrow: true },
-        { x1: 345, y1: 100, x2: 345, y2: 180, arrow: true },
+        { x1: 405, y1: 60, x2: 558, y2: 60, arrow: true },
+        { x1: 345, y1: 110, x2: 345, y2: 170, arrow: true },
       ],
       markers: [
-        { icon: 'ms:bolt', cx: 470, cy: 46, label: '24V' },
-        { icon: 'ms:bolt', cx: 290, cy: 140, label: '24V' },
+        { icon: 'ms:bolt', cx: 481, cy: 46, label: '24V' },
+        { icon: 'ms:bolt', cx: 275, cy: 140, label: '24V' },
       ],
     },
     {
       id: 'mains',
-      lines: [{ x1: 618, y1: 100, x2: 618, y2: 180, arrow: true }],
-      markers: [{ icon: 'ms:bolt', cx: 563, cy: 140, label: '230V' }],
+      lines: [{ x1: 618, y1: 110, x2: 618, y2: 170, arrow: true }],
+      markers: [{ icon: 'ms:bolt', cx: 548, cy: 140, label: '230V' }],
     },
     {
       id: 'water',
-      lines: [{ x1: 568, y1: 220, x2: 395, y2: 220, arrow: true, hose: true }],
-      markers: [{ icon: 'ms:water-drop', cx: 470, cy: 234, label: 'H₂O' }],
+      lines: [{ x1: 558, y1: 220, x2: 405, y2: 220, arrow: true, hose: true }],
+      markers: [{ icon: 'ms:water-drop', cx: 481, cy: 234, label: 'H₂O' }],
     },
     {
       id: 'lateral',
-      lines: [{ x1: 295, y1: 220, x2: 122, y2: 220, arrow: true, hose: true }],
-      markers: [{ icon: 'ms:water-drop', cx: 198, cy: 234, label: 'H₂O' }],
+      lines: [{ x1: 285, y1: 220, x2: 132, y2: 220, arrow: true, hose: true }],
+      markers: [{ icon: 'ms:water-drop', cx: 208, cy: 234, label: 'H₂O' }],
     },
   ],
   sliderCurves: {
