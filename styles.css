@@ -569,6 +569,8 @@ nav button:has([data-state='complete']) {
 .rank-row,
 .recommendation {
   padding: var(--sp-m) var(--sp-l);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   border: none;
 }
 
