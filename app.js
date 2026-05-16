@@ -309,10 +309,6 @@ function app() {
       return this.isAnswered(qid) || !!this.skipped[qid];
     },
 
-    questionState(qid) {
-      return this.isCompleted(qid) ? 'complete' : null;
-    },
-
     get scores() {
       const s = {};
       ALL_IDS.forEach((id) => {

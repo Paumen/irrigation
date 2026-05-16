@@ -337,7 +337,6 @@ button:disabled {
 .option > svg {
   width: 16px;
   height: 16px;
-  color: var(--c-fg);
   opacity: var(--o-4);
   fill: currentcolor;
 }
@@ -369,7 +368,7 @@ button:disabled {
 }
 
 .slider-row[aria-current] {
-  border-left-color: var(--c-fg);
+  border-left-color: var(--c-ok);
 }
 
 .slider-value {
@@ -377,10 +376,6 @@ button:disabled {
   font-variant-numeric: tabular-nums;
   color: var(--c-fg-strong);
   text-align: right;
-}
-
-:where(.slider-row)[aria-current] .slider-value {
-  color: var(--c-fg);
 }
 
 input[type='range'] {
@@ -506,7 +501,7 @@ input[type='radio'] {
 }
 
 input[type='radio']:checked {
-  background: radial-gradient(circle, var(--c-fg) 0 3px, transparent 3.5px), var(--c-bg);
+  background: radial-gradient(circle, currentcolor 0 3px, transparent 3.5px), var(--c-bg);
   border: var(--line-bold);
 }
 
@@ -561,7 +556,9 @@ nav button[aria-current] {
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
-[data-state='complete'] {
+[data-state='complete'],
+:has(> :checked),
+.slider-row[aria-current] {
   color: var(--c-ok);
 }
 
