@@ -155,14 +155,9 @@ window.DATA = {
           effects: { R41: 0.4, R52: 0.4, R82: 0.4 },
         },
         {
-          label: 'Pressure fluctuates',
-          icon: 'flow-fluct',
-          effects: { R4: 0.2, R52: 0.2 },
-        },
-        {
-          label: 'Erratic, no pattern',
+          label: 'Fluctuating / erratic',
           icon: 'pat-noise',
-          effects: { R1: 0.4, R23: 0.4, R6: 0.4, R71: 0.4 },
+          effects: { R1: 0.4, R23: 0.4, R4: 0.2, R52: 0.2, R6: 0.4, R71: 0.4 },
         },
         {
           label: 'Leaks when system is off',
