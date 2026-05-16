@@ -123,6 +123,14 @@
                 </template>
               </ul>
               <footer>
+                <button
+                  type="button"
+                  data-tone="mute"
+                  @click="moveBy(1, { markComplete: true })"
+                  :disabled="isLast"
+                >
+                  Skip
+                </button>
                 <button type="button" data-tone="mute" @click="goToSysInfo()">
                   No — update dates
                 </button>
@@ -299,7 +307,7 @@
 
     <script src="data.js?v=20"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=40"></script>
+    <script src="app.js?v=41"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
