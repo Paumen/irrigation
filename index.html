@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=33" />
+    <link rel="stylesheet" href="styles.css?v=34" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -72,7 +72,7 @@
         </summary>
         <form @submit.prevent>
           <header>
-            <h2 x-text="activeQuestion.text"></h2>
+            <h2 :data-state="questionState(activeQuestionId)" x-text="activeQuestion.text"></h2>
           </header>
 
           <template x-if="activeQuestion.type === 'matrix'">
@@ -175,10 +175,13 @@
             <button
               type="button"
               @click="pickStage(s)"
-              :data-state="isStageComplete(s) ? 'complete' : null"
               :aria-current="activeStage === s ? 'step' : null"
             >
-              <span class="stage-label" x-text="STAGE_LABELS[s]"></span>
+              <span
+                class="stage-label"
+                :data-state="isStageComplete(s) ? 'complete' : null"
+                x-text="STAGE_LABELS[s]"
+              ></span>
               <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
               <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
             </button>
@@ -267,7 +270,7 @@
 
     <script src="data.js?v=18"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=33"></script>
+    <script src="app.js?v=34"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

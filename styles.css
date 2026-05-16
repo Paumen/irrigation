@@ -557,12 +557,17 @@ nav button[aria-current] {
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
-[data-state='complete'] .stage-label::after {
+[data-state='complete']::after {
   color: var(--c-accent-alt);
   content: ' ✓';
 }
 
-[data-state='complete'] .bar > span {
+[data-state='skipped']::after {
+  color: var(--c-fg-med);
+  content: ' ↷';
+}
+
+:where(nav button):has([data-state='complete']) .bar > span {
   background: var(--c-accent-alt);
 }
 
