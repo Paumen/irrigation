@@ -58,10 +58,10 @@
   --time-pulse: 2.2s;
 
   /* ─── Opacity ────────────────────────────────────── */
-  --o-1: 0.1;
-  --o-2: 0.4;
-  --o-3: 0.55;
-  --o-4: 0.85;
+  --opacity-1: 0.1;
+  --opacity-2: 0.4;
+  --opacity-3: 0.55;
+  --opacity-4: 0.85;
 
   /* ─── Shared Assets ──────────────────────────────── */
   --bg-grid-pattern:
@@ -120,8 +120,8 @@ main > details {
 header {
   display: flex;
   gap: var(--sp-l);
-  place-items: center stretch;
   place-content: space-between;
+  place-items: center stretch;
   padding: 0;
   margin: 0 0 var(--sp-xl);
 }
@@ -205,8 +205,6 @@ p {
 
 button,
 .option {
-  user-select: none;
-  -webkit-user-select: none;
   display: grid;
   width: 100%;
   min-height: 32px;
@@ -216,6 +214,7 @@ button,
   font-weight: var(--font-weight-m);
   color: inherit;
   cursor: pointer;
+  user-select: none;
   background: none;
   border: var(--line-width-s) solid currentcolor;
   transition:
@@ -227,8 +226,6 @@ button,
 }
 
 summary {
-  user-select: none;
-  -webkit-user-select: none;
   display: flex;
   gap: var(--sp-l);
   place-items: center stretch;
@@ -237,9 +234,10 @@ summary {
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
   color: var(--c-fg);
-  cursor: pointer;
-  background: var(--c-bg-alt2);
   list-style: none;
+  cursor: pointer;
+  user-select: none;
+  background: var(--c-bg-alt2);
   border: none;
   transition:
     background var(--time),
@@ -265,17 +263,17 @@ footer > button {
 
 .option {
   grid-template-columns: 16px 1fr;
-  font-size: var(--text-sm);
   gap: var(--sp-l);
   place-items: center stretch;
   padding: var(--sp-l) var(--sp-xl);
   font-family: var(--font-sans);
+  font-size: var(--text-sm);
 }
 
 /* ─── Modifiers ───────────────────────────────────── */
 
 [data-tone='mute'] {
-  opacity: var(--o-2);
+  opacity: var(--opacity-2);
 }
 
 [data-tone='danger'] {
@@ -294,7 +292,12 @@ footer > button {
 
 /* ─── States ──────────────────────────────────────── */
 
-button:active:not(:disabled),
+button:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-1);
+}
+
+button:active,
 summary:active {
   font-weight: var(--font-weight-l);
   border-width: var(--line-width-m);
@@ -313,11 +316,6 @@ summary[aria-current],
   border-width: var(--line-width-m);
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: var(--o-1);
-}
-
 /* ════════════════════════════════════════════════════════════════
    7 · FORM CONTROLS — OPTIONS
    ════════════════════════════════════════════════════════════════ */
@@ -328,18 +326,18 @@ button:disabled {
   gap: var(--sp-l);
 }
 
-.option:has(svg) {
+[data-q='options'] .option:has(svg) {
   grid-template-columns: 16px 28px 1fr;
 }
 
 .option > svg {
   width: 16px;
   height: 16px;
-  opacity: var(--o-4);
+  opacity: var(--opacity-4);
   fill: currentcolor;
 }
 
-.option:where(:has(input[type='radio']:checked)) > svg {
+.option:has(:checked) > svg {
   opacity: 1;
 }
 
@@ -519,7 +517,7 @@ input[type='radio']:checked {
 .bar > span {
   display: block;
   height: 100%;
-  background: var(--c-fg);
+  background: var(--bg-bar, var(--c-fg));
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -533,7 +531,7 @@ nav {
   border-top: var(--line-passive);
 }
 
-nav button {
+[data-card='form'] nav button {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--sp-s) var(--sp-l);
@@ -560,8 +558,8 @@ nav button[aria-current] {
   color: var(--c-ok);
 }
 
-:where(nav button):has([data-state='complete']) .bar > span {
-  background: var(--c-ok);
+nav button:has([data-state='complete']) {
+  --bg-bar: var(--c-ok);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -616,7 +614,7 @@ code {
   min-height: 22px;
   margin: 0 var(--sp-xl) var(--sp-xl);
   font-size: var(--text-sm);
-  opacity: var(--o-3);
+  opacity: var(--opacity-3);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -642,17 +640,17 @@ code {
    15 · SCHEMATIC — NODES
    ════════════════════════════════════════════════════════════════ */
 
-.node-box {
-  fill: var(--c-bg);
+.node-group {
   stroke: var(--c-fg-med);
   stroke-width: var(--line-width-s);
 }
 
-.node-group[aria-current] {
-  color: var(--c-accent);
+.node-box {
+  fill: var(--c-bg);
 }
 
-:where(.node-group)[aria-current] .node-box {
+.node-group[aria-current] {
+  color: var(--c-accent);
   stroke: var(--c-accent);
   stroke-width: var(--line-width-m);
   animation: node-highlight-pulse var(--time-pulse) ease-in-out infinite;
@@ -720,7 +718,7 @@ code {
 [data-flow] line {
   fill: none;
   stroke: currentcolor;
-  stroke-dasharray: var(--line-flow-dash);
+  stroke-dasharray: var(--line-flow-dash-active, var(--line-flow-dash));
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: var(--line-width-l);
@@ -732,7 +730,8 @@ code {
   stroke-dasharray: none;
 }
 
-.node-group .node-box,
+.node-group,
+.node-box,
 [data-flow] line {
   transition:
     fill var(--time),
@@ -740,9 +739,9 @@ code {
     color var(--time);
 }
 
-:where([data-flow])[aria-current] line:not([data-hose]) {
-  stroke: var(--c-flow);
-  stroke-dasharray: var(--line-flow-dash-on, var(--line-flow-dash));
+[data-flow][aria-current] {
+  --line-flow-dash-active: var(--line-flow-dash-on, var(--line-flow-dash));
+
   animation: flow-dash var(--time) linear infinite;
 }
 
