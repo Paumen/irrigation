@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=40" />
+    <link rel="stylesheet" href="styles.css?v=41" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -112,13 +112,13 @@
 
           <template x-if="activeQuestion.type === 'dates'">
             <div data-q="dates">
-              <ul class="date-list">
+              <ul class="hw-list">
                 <template x-for="row in activeQuestion.rows" :key="row.id">
-                  <li class="date-list-row">
-                    <span class="date-list-label" x-text="row.label"></span>
-                    <span class="date-list-model" x-text="row.model || ''"></span>
-                    <span class="date-list-date" x-text="hwDateLabel(row.id)"></span>
-                    <span class="date-list-age" x-text="hwBucketLabel(row.id)"></span>
+                  <li class="hw-row">
+                    <span class="hw-label" x-text="row.label"></span>
+                    <span class="hw-model" x-text="row.model || ''"></span>
+                    <span class="hw-meta" x-text="hwDateLabel(row.id)"></span>
+                    <span class="hw-meta" x-text="hwBucketLabel(row.id)"></span>
                   </li>
                 </template>
               </ul>
@@ -268,11 +268,11 @@
             <dt>Zone flow</dt>
             <dd x-text="SYSTEM.zoneFlow"></dd>
           </dl>
-          <ul class="sysinfo-hw">
+          <ul class="hw-list">
             <template x-for="row in hwRows" :key="row.id">
-              <li class="sysinfo-row">
-                <span class="sysinfo-label" x-text="row.label"></span>
-                <span class="sysinfo-model" x-text="row.model || ''"></span>
+              <li class="hw-row">
+                <span class="hw-label" x-text="row.label"></span>
+                <span class="hw-model" x-text="row.model || ''"></span>
                 <input
                   type="date"
                   :max="todayISO"
@@ -280,7 +280,7 @@
                   @input="setHwDate(row.id, $event.target.value)"
                   :aria-label="`${row.label} install or replacement date`"
                 />
-                <span class="sysinfo-age" x-text="hwAgeYearsLabel(row.id)"></span>
+                <span class="hw-meta" x-text="hwAgeYearsLabel(row.id)"></span>
               </li>
             </template>
           </ul>

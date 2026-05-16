@@ -345,7 +345,7 @@ summary[aria-current],
 }
 
 /* ════════════════════════════════════════════════════════════════
-   8 · FORM CONTROLS — DATES (confirm hardware install dates)
+   8 · HARDWARE LIST  (shared by dates question + System Info card)
    ════════════════════════════════════════════════════════════════ */
 
 [data-q='dates'] {
@@ -353,7 +353,7 @@ summary[aria-current],
   gap: var(--sp-l);
 }
 
-.date-list {
+.hw-list {
   display: grid;
   gap: var(--sp-m);
   padding: 0;
@@ -361,27 +361,25 @@ summary[aria-current],
   list-style: none;
 }
 
-.date-list-row {
+.hw-row {
   display: grid;
-  grid-template-columns: minmax(96px, 1fr) minmax(0, 2fr) minmax(72px, auto) minmax(72px, auto);
+  grid-template-columns: minmax(96px, 1fr) minmax(0, 2fr) minmax(140px, auto) minmax(56px, auto);
   gap: var(--sp-m) var(--sp-l);
   place-items: center stretch;
   padding: var(--sp-m) var(--sp-l);
   background: var(--c-bg);
   border: var(--line-passive);
-  border-left: var(--line-width-m) solid var(--c-fg-med);
 }
 
-.date-list-label {
+.hw-label {
   font-weight: var(--font-weight-m);
 }
 
-.date-list-model {
+.hw-model {
   color: var(--c-fg-strong);
 }
 
-.date-list-date,
-.date-list-age {
+.hw-meta {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--c-fg-strong);
@@ -749,39 +747,6 @@ code {
 .sysinfo-meta dd {
   padding: 0;
   margin: 0;
-}
-
-.sysinfo-hw {
-  display: grid;
-  gap: var(--sp-m);
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.sysinfo-row {
-  display: grid;
-  grid-template-columns: minmax(96px, 1fr) minmax(0, 2fr) minmax(140px, auto) minmax(56px, auto);
-  gap: var(--sp-m) var(--sp-l);
-  place-items: center stretch;
-  padding: var(--sp-m) var(--sp-l);
-  background: var(--c-bg);
-  border: var(--line-passive);
-}
-
-.sysinfo-label {
-  font-weight: var(--font-weight-m);
-}
-
-.sysinfo-model {
-  color: var(--c-fg-strong);
-}
-
-.sysinfo-age {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--c-fg-strong);
-  text-align: right;
 }
 
 input[type='date'] {
