@@ -13,10 +13,12 @@ function expandEffects(effects) {
   if (!effects) return effects;
   const out = {};
   for (const [k, v] of Object.entries(effects)) {
-    if (RC_CHILDREN[k]) for (const child of RC_CHILDREN[k]) out[child] = v;
-  }
-  for (const [k, v] of Object.entries(effects)) {
-    if (!RC_CHILDREN[k]) out[k] = v;
+    const kids = RC_CHILDREN[k];
+    if (!kids) {
+      out[k] = v;
+      continue;
+    }
+    for (const id of kids) if (!(id in effects)) out[id] = v;
   }
   return out;
 }
@@ -53,6 +55,8 @@ const QUESTIONS = window.DATA.questions.map((q) => {
   }
   return next;
 });
+
+const Q_BY_ID = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
 
 const TYPE_HANDLERS = {
   options: {
@@ -129,70 +133,24 @@ const TYPE_HANDLERS = {
 
 const STAGES = window.DATA.stages.map((s) => s.id);
 const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
+const STAGE_QS = Object.fromEntries(STAGES.map((s) => [s, QUESTIONS.filter((q) => q.stage === s)]));
 const STORAGE_KEY = 'irrigation:v1';
 const SEVERITY_FULL_PCT = 18;
 
 const BOX_W = 120;
 const BOX_H = 100;
-
 const NODE_ICON_SIZE = 92;
+const ICON_INSET_X = (BOX_W - NODE_ICON_SIZE) / 2;
+const ICON_INSET_Y = (BOX_H - NODE_ICON_SIZE) / 2;
 
 const NODES = [
-  {
-    key: 'sw',
-    x: 12,
-    y: 10,
-    w: BOX_W,
-    h: BOX_H,
-    label: 'SOFTWARE',
-    image: 'icons/software.png',
-  },
-  {
-    key: 'ctrl',
-    x: 285,
-    y: 10,
-    w: BOX_W,
-    h: BOX_H,
-    label: 'CONTROLLER',
-    image: 'icons/controller.png',
-  },
-  {
-    key: 'relay',
-    x: 558,
-    y: 10,
-    w: BOX_W,
-    h: BOX_H,
-    label: 'RELAY',
-    image: 'icons/relay.png',
-  },
-  {
-    key: 'sp4',
-    x: 12,
-    y: 170,
-    w: BOX_W,
-    h: BOX_H,
-    label: 'ROTOR',
-    image: 'icons/rotor.png',
-  },
-  {
-    key: 'valves',
-    x: 285,
-    y: 170,
-    w: BOX_W,
-    h: BOX_H,
-    label: 'VALVES',
-    image: 'icons/valves.png',
-  },
-  {
-    key: 'pump',
-    x: 558,
-    y: 170,
-    w: BOX_W,
-    h: BOX_H,
-    label: 'PUMP',
-    image: 'icons/pump.png',
-  },
-];
+  { key: 'sw', x: 12, y: 10, image: 'icons/software.png' },
+  { key: 'ctrl', x: 285, y: 10, image: 'icons/controller.png' },
+  { key: 'relay', x: 558, y: 10, image: 'icons/relay.png' },
+  { key: 'sp4', x: 12, y: 170, image: 'icons/rotor.png' },
+  { key: 'valves', x: 285, y: 170, image: 'icons/valves.png' },
+  { key: 'pump', x: 558, y: 170, image: 'icons/pump.png' },
+].map((n) => ({ ...n, w: BOX_W, h: BOX_H, iconX: n.x + ICON_INSET_X, iconY: n.y + ICON_INSET_Y }));
 
 function severityT(pct) {
   const t = Math.max(0, Math.min(1, pct / SEVERITY_FULL_PCT));
@@ -242,13 +200,10 @@ function migrateLegacyIds(saved) {
     saved.activeQuestionId === 'AGES';
   if (!hasLegacy) return;
   const map = { AGES: 'E1', E1: 'E2', E2: 'E3' };
-  for (const dict of [saved.answers, saved.skipped]) {
-    if (!dict) continue;
-    const shifted = {};
-    for (const [k, v] of Object.entries(dict)) shifted[map[k] || k] = v;
-    Object.keys(dict).forEach((k) => delete dict[k]);
-    Object.assign(dict, shifted);
-  }
+  const remap = (dict) =>
+    dict ? Object.fromEntries(Object.entries(dict).map(([k, v]) => [map[k] || k, v])) : dict;
+  saved.answers = remap(saved.answers);
+  saved.skipped = remap(saved.skipped);
   if (map[saved.activeQuestionId]) saved.activeQuestionId = map[saved.activeQuestionId];
 }
 
@@ -273,9 +228,7 @@ function app() {
       if (saved) {
         if (saved.answers && typeof saved.answers === 'object') this.answers = saved.answers;
         if (saved.skipped && typeof saved.skipped === 'object') this.skipped = saved.skipped;
-        if (QUESTIONS.some((q) => q.id === saved.activeQuestionId)) {
-          this.activeQuestionId = saved.activeQuestionId;
-        }
+        if (Q_BY_ID[saved.activeQuestionId]) this.activeQuestionId = saved.activeQuestionId;
       }
       this.$watch('answers', () => this._persist());
       this.$watch('skipped', () => this._persist());
@@ -299,35 +252,21 @@ function app() {
       return this.isAnswered(qid) || !!this.skipped[qid];
     },
 
-    get scores() {
+    get ranked() {
       const s = {};
-      ALL_IDS.forEach((id) => {
-        s[id] = RC[id].baseline;
-      });
+      for (const id of ALL_IDS) s[id] = RC[id].baseline;
       for (const q of QUESTIONS) {
         const ans = this.answers[q.id];
         if (ans === undefined || ans === null) continue;
         TYPE_HANDLERS[q.type].score(q, ans, s);
       }
-      return s;
-    },
-
-    get severityPct() {
-      const s = this.scores;
-      const total = ALL_IDS.reduce((sum, id) => sum + Math.max(0, s[id]), 0);
-      const m = {};
-      ALL_IDS.forEach((id) => {
-        m[id] = total > 0 ? (Math.max(0, s[id]) / total) * 100 : 0;
-      });
-      return m;
-    },
-
-    get ranked() {
-      const s = this.scores;
-      const pct = this.severityPct;
-      return ALL_IDS.map((id) => ({ id, score: s[id], pct: pct[id] })).sort(
-        (a, b) => b.score - a.score
-      );
+      let posTotal = 0;
+      for (const id of ALL_IDS) posTotal += Math.max(0, s[id]);
+      return ALL_IDS.map((id) => ({
+        id,
+        score: s[id],
+        pct: posTotal > 0 ? (Math.max(0, s[id]) / posTotal) * 100 : 0,
+      })).sort((a, b) => b.score - a.score);
     },
 
     get recommendations() {
@@ -340,12 +279,15 @@ function app() {
     },
 
     get stageProgress() {
-      const sp = Object.fromEntries(STAGES.map((s) => [s, { answered: 0, total: 0 }]));
-      QUESTIONS.forEach((q) => {
-        sp[q.stage].total++;
-        if (this.isCompleted(q.id)) sp[q.stage].answered++;
-      });
-      return sp;
+      const out = {};
+      for (const s of STAGES) {
+        const qs = STAGE_QS[s];
+        out[s] = {
+          total: qs.length,
+          answered: qs.reduce((n, q) => n + (this.isCompleted(q.id) ? 1 : 0), 0),
+        };
+      }
+      return out;
     },
 
     isStageComplete(s) {
@@ -353,29 +295,26 @@ function app() {
       return p && p.total > 0 && p.answered === p.total;
     },
 
-    get activePos() {
-      const i = QUESTIONS.findIndex((q) => q.id === this.activeQuestionId);
-      return { q: QUESTIONS[i], i };
+    stagePct(s) {
+      const p = this.stageProgress[s];
+      return p.total ? (p.answered / p.total) * 100 : 0;
     },
+
     get activeQuestion() {
-      return this.activePos.q;
-    },
-    get activeIdx() {
-      return this.activePos.i;
+      return Q_BY_ID[this.activeQuestionId];
     },
     get activeStage() {
       return this.activeQuestion?.stage ?? 1;
     },
     get isFirst() {
-      return this.activeIdx <= 0;
+      return this.activeQuestionId === QUESTIONS[0].id;
     },
     get isLast() {
-      return this.activeIdx >= QUESTIONS.length - 1;
+      return this.activeQuestionId === QUESTIONS[QUESTIONS.length - 1].id;
     },
     get activeAnswer() {
       return this.answers[this.activeQuestionId];
     },
-
     get activeHighlights() {
       return this.activeQuestion?.highlight || [];
     },
@@ -387,7 +326,7 @@ function app() {
     isAnswered(qid) {
       const a = this.answers[qid];
       if (a === undefined || a === null) return false;
-      const q = QUESTIONS.find((qq) => qq.id === qid);
+      const q = Q_BY_ID[qid];
       return TYPE_HANDLERS[q.type].isAnswered(q, a);
     },
 
@@ -404,15 +343,15 @@ function app() {
     // gesture and animating each would be jarring.
     setAnswer(value, { advance = false, animate = true } = {}) {
       const qid = this.activeQuestionId;
-      const { i: idx } = this.activePos;
       const write = () => {
         this.answers = { ...this.answers, [qid]: value };
-        if (advance && idx >= 0 && idx < QUESTIONS.length - 1) {
-          this.activeQuestionId = QUESTIONS[idx + 1].id;
+        if (advance) {
+          const idx = QUESTIONS.findIndex((q) => q.id === qid);
+          const next = QUESTIONS[idx + 1];
+          if (next) this.activeQuestionId = next.id;
         }
       };
-      if (animate) withTransition(write);
-      else write();
+      animate ? withTransition(write) : write();
     },
 
     setMatrixCell(rowId, colId) {
@@ -431,21 +370,19 @@ function app() {
     },
 
     moveBy(d, opts = {}) {
-      const { i: idx } = this.activePos;
       const curId = this.activeQuestionId;
-      const curStage = this.activeStage;
-      const wasAnswered = this.isAnswered(curId);
+      const idx = QUESTIONS.findIndex((q) => q.id === curId);
       const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + d))];
+      const skipping =
+        d > 0 && opts.markComplete && this.activeStage === 2 && !this.isAnswered(curId);
       withTransition(() => {
-        if (d > 0 && opts.markComplete && curStage === 2 && !wasAnswered) {
-          this.skipped = { ...this.skipped, [curId]: true };
-        }
+        if (skipping) this.skipped = { ...this.skipped, [curId]: true };
         this.activeQuestionId = next.id;
       });
     },
 
     pickStage(s) {
-      const first = QUESTIONS.find((q) => q.stage === s);
+      const first = STAGE_QS[s]?.[0];
       if (first)
         withTransition(() => {
           this.activeQuestionId = first.id;
@@ -467,11 +404,6 @@ function app() {
       });
     },
 
-    stagePct(s) {
-      const sp = this.stageProgress[s];
-      return sp.total ? (sp.answered / sp.total) * 100 : 0;
-    },
-
     rankPct(r) {
       return Math.round(r.pct);
     },
@@ -481,48 +413,45 @@ function app() {
 
     renderFlows() {
       const ICONS = window.ICONS;
-      let s = '';
-      for (const f of window.DATA.flows) {
-        const act = this.isHighlighted(f.id) ? ' aria-current="true"' : '';
-        s += `<g data-flow="${f.id}"${act}>`;
-        for (const l of f.lines) {
-          const arr = l.arrow ? ' marker-end="url(#arr)"' : '';
-          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"${arr}/>`;
-        }
-        for (const l of f.lines) {
-          if (!l.hose) continue;
-          s += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" data-hose="true"/>`;
-        }
-        for (const m of f.markers) {
-          const tr = iconTransform(m.icon, m.cx, m.cy, 28);
-          s += `<g transform="${tr}"><path d="${ICONS[m.icon].d}" fill="currentColor"/></g>`;
-          if (m.label) {
-            s += `<text x="${m.cx + 16}" y="${m.cy}" text-anchor="start">${m.label}</text>`;
-          }
-        }
-        s += `</g>`;
-      }
-      return s;
+      return window.DATA.flows
+        .map((f) => {
+          const act = this.isHighlighted(f.id) ? ' aria-current="true"' : '';
+          const lines = f.lines
+            .map((l) => {
+              const arr = l.arrow ? ' marker-end="url(#arr)"' : '';
+              return `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"${arr}/>`;
+            })
+            .join('');
+          const hoses = f.lines
+            .filter((l) => l.hose)
+            .map(
+              (l) => `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" data-hose="true"/>`
+            )
+            .join('');
+          const markers = f.markers
+            .map((m) => {
+              const tr = iconTransform(m.icon, m.cx, m.cy, 28);
+              const text = m.label
+                ? `<text x="${m.cx + 16}" y="${m.cy}" text-anchor="start">${m.label}</text>`
+                : '';
+              return `<g transform="${tr}"><path d="${ICONS[m.icon].d}" fill="currentColor"/></g>${text}`;
+            })
+            .join('');
+          return `<g data-flow="${f.id}"${act}>${lines}${hoses}${markers}</g>`;
+        })
+        .join('');
     },
 
     renderDiagram() {
-      const highlights = this.activeHighlights;
-      let s = '';
-
-      for (const b of NODES) {
-        const isHigh = highlights.includes(b.key);
-        const act = isHigh ? ' aria-current="true"' : '';
-        s += `<g class="node-group"${act}>`;
-        s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>`;
-
-        const size = NODE_ICON_SIZE;
-        const ix = b.x + b.w / 2 - size / 2;
-        const iy = b.y + b.h / 2 - size / 2;
-        s += `<image href="${b.image}" x="${ix}" y="${iy}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`;
-        s += `</g>`;
-      }
-
-      return s;
+      return NODES.map((b) => {
+        const act = this.isHighlighted(b.key) ? ' aria-current="true"' : '';
+        return (
+          `<g class="node-group"${act}>` +
+          `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" class="node-box"/>` +
+          `<image href="${b.image}" x="${b.iconX}" y="${b.iconY}" width="${NODE_ICON_SIZE}" height="${NODE_ICON_SIZE}" preserveAspectRatio="xMidYMid meet"/>` +
+          `</g>`
+        );
+      }).join('');
     },
   };
 }
