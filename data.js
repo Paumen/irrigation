@@ -319,7 +319,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q11',
+      id: 'Q10',
       stage: 1,
       group: 'Symptoms',
       text: 'Did restarting the controller help?',
@@ -336,7 +336,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q12',
+      id: 'Q11',
       stage: 1,
       group: 'Symptoms',
       text: 'Did restarting the pump help?',
@@ -504,20 +504,9 @@ window.DATA = {
         { label: 'No damage', effects: { R51: -0.4, R81: -0.4 } },
       ],
     },
+    
     {
       id: 'D9',
-      stage: 3,
-      group: 'Hard tests',
-      text: 'Mains voltage at controller outlet?',
-      highlight: ['ctrl', 'mains'],
-      options: [
-        { label: 'Normal (~230 VAC)', effects: { R22: -0.4 } },
-        { label: 'Low or absent', effects: { R22: 1.6 } },
-        { label: 'Present but controller dead', effects: { R22: 1.6 } },
-      ],
-    },
-    {
-      id: 'D10',
       stage: 3,
       group: 'Hard tests',
       text: 'Flow meter reads 1.0–3.0?',
