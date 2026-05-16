@@ -135,7 +135,7 @@ const SEVERITY_FULL_PCT = 18;
 const BOX_W = 100;
 const BOX_H = 80;
 
-const NODE_ICON_SIZE = 56;
+const NODE_ICON_SIZE = 68;
 
 const NODES = [
   {
