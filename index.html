@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=32" />
+    <link rel="stylesheet" href="styles.css?v=33" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -44,11 +44,7 @@
       <details data-card="form" open>
         <summary>
           <span>Diagnostic</span>
-          <button
-            type="button"
-            data-tone="mute"
-            @click.stop="$refs.reset.showModal()"
-          >
+          <button type="button" data-tone="mute" @click.stop="$refs.reset.showModal()">
             Reset
           </button>
           <button
@@ -164,19 +160,10 @@
 
           <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'sliders'">
             <footer>
-              <button
-                type="button"
-                data-tone="mute"
-                @click="moveBy(1)"
-                :disabled="isLast"
-              >
+              <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">
                 Skip
               </button>
-              <button
-                type="button"
-                @click="moveBy(1, { markComplete: true })"
-                :disabled="isLast"
-              >
+              <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">
                 Next ›
               </button>
             </footer>
@@ -265,19 +252,13 @@
         aria-labelledby="reset-title"
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
       >
-        <h2 id="reset-title">Start over?</h3>
+        <h2 id="reset-title">Start over?</h2>
         <p>
           This clears every answer and returns you to the first question. You can&rsquo;t undo this.
         </p>
         <footer>
-          <button type="button" autofocus @click="$refs.reset.close()">
-            Keep my answers
-          </button>
-          <button
-            type="button"
-            data-tone="danger"
-            @click="doReset(); $refs.reset.close()"
-          >
+          <button type="button" autofocus @click="$refs.reset.close()">Keep my answers</button>
+          <button type="button" data-tone="danger" @click="doReset(); $refs.reset.close()">
             Reset everything
           </button>
         </footer>

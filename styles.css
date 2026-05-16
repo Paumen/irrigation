@@ -8,12 +8,6 @@
   initial-value: 0;
 }
 
-@property --line-flow-end {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}
-
 /* ════════════════════════════════════════════════════════════════
    2 · DESIGN TOKENS
    ════════════════════════════════════════════════════════════════ */
@@ -213,7 +207,7 @@ p {
 button,
 .option {
   user-select: none;
-  -webkit-user-select: none; 
+  -webkit-user-select: none;
   display: grid;
   width: 100%;
   min-height: 32px;
@@ -293,15 +287,10 @@ footer > button {
   border: none;
 }
 
-[data-shape='square'],
-[data-shape='circle'] {
+[data-shape='square'] {
   width: auto;
   aspect-ratio: 1/1;
   padding: 0;
-}
-
-[data-shape='circle'] {
-  border-radius: var(--radius-circle);
 }
 
 /* ─── States ──────────────────────────────────────── */
@@ -391,6 +380,13 @@ button:disabled {
 }
 
 input[type='range'] {
+  --bg-track: linear-gradient(
+    to right,
+    var(--c-fg) var(--bg-fill, 0%),
+    var(--c-bg-alt) var(--bg-fill, 0%)
+  );
+  --sp-thumb-offset: calc(var(--sp-m) / 2 - var(--sp-xl) / 2 - 1px);
+
   width: 100%;
   height: 24px;
   margin: 0;
@@ -401,22 +397,14 @@ input[type='range'] {
 
 input[type='range']::-webkit-slider-runnable-track {
   height: var(--sp-m);
-  background: linear-gradient(
-    to right,
-    var(--c-fg) var(--bg-fill, 0%),
-    var(--c-bg-alt) var(--bg-fill, 0%)
-  );
+  background: var(--bg-track);
   border: var(--line-passive);
   border-radius: var(--radius-s);
 }
 
 input[type='range']::-moz-range-track {
   height: var(--sp-m);
-  background: linear-gradient(
-    to right,
-    var(--c-fg) var(--bg-fill, 0%),
-    var(--c-bg-alt) var(--bg-fill, 0%)
-  );
+  background: var(--bg-track);
   border: var(--line-passive);
   border-radius: var(--radius-s);
 }
@@ -429,7 +417,7 @@ input[type='range']::-webkit-slider-thumb {
   background: var(--c-fg);
   border: var(--line-bold);
   border-radius: var(--radius-circle);
-  transform: translateY(calc(var(--sp-m) / 2 - var(--sp-xl) / 2 - 1px));
+  transform: translateY(var(--sp-thumb-offset));
 }
 
 input[type='range']::-moz-range-thumb {
@@ -440,7 +428,7 @@ input[type='range']::-moz-range-thumb {
   background: var(--c-fg);
   border: var(--line-bold);
   border-radius: var(--radius-circle);
-  transform: translateY(calc(var(--sp-m) / 2 - var(--sp-xl) / 2 - 1px));
+  transform: translateY(var(--sp-thumb-offset));
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -534,7 +522,7 @@ input[type='radio']:checked {
 .bar > span {
   display: block;
   height: 100%;
-  background: var(--c-sev-bg);
+  background: var(--c-fg);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -565,10 +553,6 @@ nav button > .bar {
   background: var(--c-bg-alt);
 }
 
-nav .bar > span {
-  background: var(--c-fg);
-}
-
 nav button[aria-current] {
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
@@ -586,24 +570,30 @@ nav button[aria-current] {
    13 · RANKINGS (root-cause list)
    ════════════════════════════════════════════════════════════════ */
 
+.rank-row,
+.recommendation {
+  padding: var(--sp-m) var(--sp-l);
+  border: none;
+}
+
 .rank-row {
-  --c-sev-bg: color-mix(
+  --c-rank-sev: color-mix(
     in oklch,
     oklch(96% 0.012 80deg),
     var(--c-accent) calc(var(--c-sev-t, 0) * 100%)
   );
-  --c-sev-fg: color-mix(in oklch, var(--c-fg), var(--c-bg) calc(var(--c-sev-t, 0) * 100%));
 
-  display: grid;
   grid-template-areas: 'code label percent' 'code bar percent';
   grid-template-columns: 48px 1fr 48px;
   gap: 0 var(--sp-l);
-  padding: var(--sp-m) var(--sp-l);
   text-align: left;
   view-transition-name: var(--accent-vt-rc, none);
-  border: none;
   border-bottom: var(--line-passive);
   transition: --c-sev-t var(--time);
+}
+
+.rank-row .bar > span {
+  background: var(--c-rank-sev);
 }
 
 .rank-row > span:not(.bar, .percent) {
@@ -618,7 +608,7 @@ code {
   grid-area: percent;
   place-self: center end;
   font-variant-numeric: tabular-nums;
-  color: var(--c-sev-bg);
+  color: var(--c-rank-sev);
 }
 
 .see-more-btn {
@@ -636,10 +626,8 @@ code {
    ════════════════════════════════════════════════════════════════ */
 
 .recommendation {
-  display: grid;
   grid-template-columns: auto 1fr;
   gap: var(--sp-m) var(--sp-l);
-  padding: var(--sp-m) var(--sp-l);
   border-left: var(--line-width-m) solid var(--c-accent-alt2);
 }
 
@@ -700,6 +688,7 @@ code {
    17 · SCHEMATIC — FLOWS (lines, animated dashes)
    ════════════════════════════════════════════════════════════════ */
 
+/* Vars below are scoped to [data-flow] descendants — not safe to consume elsewhere. */
 [data-flow] {
   color: var(--c-flow);
 
