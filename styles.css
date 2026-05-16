@@ -171,7 +171,6 @@ figure {
   padding: var(--sp-xl);
   margin: 0;
   background: var(--bg-grid-pattern), var(--c-bg-alt);
-  border: var(--line-passive);
 }
 
 figure svg {
