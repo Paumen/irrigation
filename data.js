@@ -127,7 +127,7 @@ window.DATA = {
         },
       ],
     },
-        {
+    {
       id: 'Q3',
       stage: 1,
       group: 'Symptoms',
@@ -314,7 +314,7 @@ window.DATA = {
         },
       ],
     },
-        {
+    {
       id: 'Q10',
       stage: 1,
       group: 'Symptoms',
@@ -480,7 +480,7 @@ window.DATA = {
         { label: 'No damage', effects: { R51: -0.4, R81: -0.4 } },
       ],
     },
-    
+
     {
       id: 'D9',
       stage: 3,
