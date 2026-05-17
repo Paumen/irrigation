@@ -146,11 +146,11 @@ li {
   display: contents;
 
   & > button {
-    grid-template-areas: 'stage discriminator' 'text text';
-    grid-template-columns: 1fr auto;
+    grid-template-areas: 'stage text discriminator';
+    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: var(--sp-s) var(--sp-l);
     place-items: center stretch;
-    padding: var(--sp-l);
+    padding: var(--sp-m) var(--sp-l);
     text-align: left;
 
     & > small {
@@ -171,9 +171,12 @@ li {
     & > span:not(.discriminator) {
       grid-area: text;
       place-self: center start;
+      overflow: hidden;
       font-family: var(--font-sans);
       font-size: var(--text-md);
+      text-overflow: ellipsis;
       text-transform: none;
+      white-space: nowrap;
     }
   }
 }
@@ -221,10 +224,11 @@ summary {
   font-size: var(--text-md);
   font-weight: var(--font-bold);
   text-transform: uppercase;
+  white-space: nowrap;
   list-style: none;
   cursor: pointer;
   user-select: none;
-  background: var(--c-bg-alt);
+  background: color-mix(in oklch, var(--c-bg-alt), var(--c-fg) 10%);
   border: none;
   transition:
     background var(--time),
@@ -293,7 +297,7 @@ nav button {
   grid-template-columns: 1fr auto;
   gap: var(--sp-m);
   place-items: center stretch;
-  padding: var(--sp-l);
+  padding: var(--sp-l) var(--sp-l) var(--sp-l) 0;
   font-variant-numeric: tabular-nums;
   border: none;
   border-right: var(--line-passive);
@@ -316,6 +320,10 @@ table {
   min-width: min-content;
   border-top: var(--line-passive);
   border-left: var(--line-passive);
+}
+
+[data-q='matrix'] table {
+  grid-template-columns: minmax(70px, max-content) repeat(var(--sp-cols), minmax(48px, 1fr));
 }
 
 tbody,
@@ -426,13 +434,20 @@ dd {
   margin: 0;
 }
 
-input[type='date'] {
+input[type='date'],
+input[type='text'] {
+  width: 100%;
   padding: var(--sp-s) var(--sp-m);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: inherit;
   background: var(--c-bg-alt);
   border: var(--line-passive);
+}
+
+[data-card='rank'] > div,
+[data-card='rec'] > div {
+  padding: var(--sp-s) var(--sp-l) var(--sp-l);
 }
 
 dl {
@@ -478,6 +493,8 @@ dl {
 }
 
 [data-shape='ghost'] {
+  min-height: 0;
+  padding: var(--sp-s) var(--sp-m);
   border-color: transparent;
 }
 

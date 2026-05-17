@@ -30,6 +30,7 @@ window.DATA = {
     ctrl: '2020-08-01',
     spr: '2020-08-01',
     mainHose: '2020-08-01',
+    zoneHose: '2020-08-01',
   },
   flows: [
     {
@@ -383,7 +384,7 @@ window.DATA = {
         },
         {
           id: 'relay',
-          label: 'Pump-start relay',
+          label: 'Start-Relay',
           model: 'Hunter',
           curve: 'standard',
           causes: ['R31'],
@@ -402,6 +403,20 @@ window.DATA = {
           curve: 'standard',
           causes: ['R91'],
         },
+        {
+          id: 'mainHose',
+          label: 'Main hose',
+          model: 'PE 32 mm (pump → valve box)',
+          curve: 'standard',
+          causes: ['R51'],
+        },
+        {
+          id: 'zoneHose',
+          label: 'Zone hose',
+          model: 'PE 25 mm (zones)',
+          curve: 'standard',
+          causes: ['R81'],
+        },
       ],
     },
     {
@@ -413,7 +428,7 @@ window.DATA = {
       columns: EVENT_COLS,
       rows: [
         { id: 'pump', label: 'Pump', effects: { R4: 1 } },
-        { id: 'relay', label: 'Start-relay', effects: { R31: 1, R6: 0.6 } },
+        { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
         { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.8 } },
         { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.8 } },
         { id: 'spr', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
