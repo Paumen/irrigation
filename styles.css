@@ -213,8 +213,6 @@ dialog {
   }
 }
 
-/* ══════════ 3 · BUTTONS   ══════════ */
-
 summary {
   display: flex;
   gap: var(--sp-l);
@@ -377,8 +375,6 @@ input[type='radio'] {
   border: var(--line-bold);
 }
 
-/* ══════════  5 · Row   ══════════ */
-
 nav button > .bar {
   grid-column: 1 / -1;
 }
@@ -448,7 +444,7 @@ dl {
   margin: 0;
 }
 
-/* ══════════ 12 · NODES   ══════════ */
+/* ══════════ 4 · NODES   ══════════ */
 
 .node-group {
   stroke: var(--c-fg-med);
@@ -473,7 +469,7 @@ dl {
     color var(--time);
 }
 
-/* ══════════ 13 · Modifiers   ══════════ */
+/* ══════════ 5 · Modifiers   ══════════ */
 
 [data-tone='mute'] {
   opacity: 0.4;
@@ -507,7 +503,7 @@ dl {
   opacity: 0.2;
 }
 
-:active {
+button:active {
   font-weight: var(--font-bold);
   border-width: var(--line-width-m);
   box-shadow: var(--line-width-m) var(--line-width-m) 0 0 currentcolor;
@@ -520,7 +516,7 @@ dl {
   border-width: var(--line-width-m);
 }
 
-/* ══════════ 14 ·  TRANSITIONS   ══════════ */
+/* ══════════ 6 ·  TRANSITIONS   ══════════ */
 
 @property --c-sev-t {
   syntax: '<number>';
@@ -533,7 +529,7 @@ dl {
   animation-timing-function: cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-/* ══════════ 15 · RESPONSIVE   ══════════ */
+/* ══════════ 7 · RESPONSIVE   ══════════ */
 
 @container page (width >= 1080px) {
   main {
@@ -552,4 +548,4 @@ dl {
   td {
     padding: var(--sp-s);
   }
-}
+} 
