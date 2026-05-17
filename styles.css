@@ -13,7 +13,6 @@
   --c-fg-med: color-mix(in oklch, var(--c-fg), transparent 65%);
   --c-fg-strong: color-mix(in oklch, var(--c-fg), transparent 40%);
   --c-accent: oklch(38% 0.105 40deg);
-  --c-accent-alt: oklch(32% 0.05 220deg);
   --c-accent-alt2: oklch(48% 0.025 80deg);
   --c-ok: oklch(52% 0.12 165deg);
 
@@ -45,7 +44,6 @@
 
   --opacity-1: 0.1;
   --opacity-2: 0.4;
-  --opacity-3: 0.55;
   --opacity-4: 0.85;
 
   --bg-grid-pattern:
