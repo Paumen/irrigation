@@ -492,37 +492,6 @@ function app() {
       return Math.min(r.pct * 5, 100) + '%';
     },
 
-    renderFlows() {
-      const ICONS = window.ICONS;
-      return window.DATA.flows
-        .map((f) => {
-          const act = this.isHighlighted(f.id) ? ' aria-current="true"' : '';
-          const lines = f.lines
-            .map((l) => {
-              const arr = l.arrow ? ' marker-end="url(#arr)"' : '';
-              return `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"${arr}/>`;
-            })
-            .join('');
-          const hoses = f.lines
-            .filter((l) => l.hose)
-            .map(
-              (l) => `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" data-hose="true"/>`
-            )
-            .join('');
-          const markers = f.markers
-            .map((m) => {
-              const tr = iconTransform(m.icon, m.cx, m.cy, 28);
-              const text = m.label
-                ? `<text x="${m.cx + 16}" y="${m.cy}" text-anchor="start">${m.label}</text>`
-                : '';
-              return `<g transform="${tr}"><path d="${ICONS[m.icon].d}" fill="currentColor"/></g>${text}`;
-            })
-            .join('');
-          return `<g data-flow="${f.id}"${act}>${lines}${hoses}${markers}</g>`;
-        })
-        .join('');
-    },
-
     renderDiagram() {
       return NODES.map((b) => {
         const act = this.isHighlighted(b.key) ? ' aria-current="true"' : '';
