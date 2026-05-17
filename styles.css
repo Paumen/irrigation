@@ -8,28 +8,24 @@
   --c-accent: oklch(38% 0.105 40deg);
   --c-accent-alt: oklch(48% 0.025 80deg);
   --c-ok: oklch(52% 0.12 165deg);
-
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
   --text-sm: clamp(0.688rem, 0.625rem + 0.25cqi, 0.813rem);
   --text-md: clamp(0.813rem, 0.75rem + 0.25cqi, 0.938rem);
   --font-bold: 800;
-
   --sp-s: 2px;
   --sp-m: clamp(4px, 2px + 0.25cqi, 8px);
   --sp-l: clamp(8px, 4px + 1.0cqi, 16px);
   --sp-xl: clamp(16px, 12px + 1.5cqi, 32px);
-
+  --sp-cols: 1;
   --line-width-s: 1px;
   --line-width-m: 3px;
   --line-passive: var(--line-width-s) solid var(--c-accent-alt);
   --line-interactive: var(--line-width-s) solid var(--c-fg);
   --line-bold: var(--line-width-m) solid var(--c-fg);
-
   --radius-circle: 50%;
-
   --time: 0.5s;
-
+  --accent-vt-rc: none;
   --bg-grid-pattern:
     linear-gradient(var(--c-fg-soft) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xl) var(--sp-xl),
@@ -111,18 +107,40 @@ ol {
   list-style: none;
 }
 
+button,
+.option {
+  display: grid;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 var(--sp-l);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  background: none;
+  border: var(--line-width-s) solid currentcolor;
+  transition:
+    background var(--time),
+    border-width var(--time),
+    box-shadow var(--time),
+    transform var(--time),
+    opacity var(--time);
+}
+
 li {
   display: contents;
 
   & > button {
-    grid-template-columns: 1fr auto;
     grid-template-areas: 'stage discriminator' 'text text';
+    grid-template-columns: 1fr auto;
     gap: var(--sp-s) var(--sp-l);
     place-items: center stretch;
     padding: var(--sp-l);
     text-align: left;
 
-    & > span:first-child {
+    & > .stage {
       grid-area: stage;
       place-self: center start;
       font-size: var(--text-sm);
@@ -137,7 +155,7 @@ li {
       color: var(--c-fg-strong);
     }
 
-    & > span:last-child {
+    & > .q-text {
       grid-area: text;
       place-self: center start;
       font-family: var(--font-sans);
@@ -155,8 +173,8 @@ footer {
 
 figure {
   position: relative;
-  margin: 0;
   padding: var(--sp-l);
+  margin: 0;
   background: var(--bg-grid-pattern), var(--c-bg-alt);
 
   & svg {
@@ -182,28 +200,6 @@ dialog {
 }
 
 /* ══════════ 3 · BUTTONS   ══════════ */
-
-button,
-.option {
-  display: grid;
-  width: 100%;
-  min-height: 32px;
-  padding: 0 var(--sp-l);
-  font-family: var(--font-mono);
-  font-size: var(--text-md);
-  color: inherit;
-  text-transform: uppercase;
-  cursor: pointer;
-  user-select: none;
-  background: none;
-  border: var(--line-width-s) solid currentcolor;
-  transition:
-    background var(--time),
-    border-width var(--time),
-    box-shadow var(--time),
-    transform var(--time),
-    opacity var(--time);
-}
 
 summary {
   display: flex;
@@ -281,26 +277,21 @@ nav {
 
 [data-card='form'] {
   view-transition-name: form-card;
+}
 
-  & nav button {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: var(--sp-m);
-    place-items: center stretch;
-    padding: var(--sp-l);
-    font-variant-numeric: tabular-nums;
-    border: none;
-    border-right: var(--line-passive);
+nav button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-m);
+  place-items: center stretch;
+  padding: var(--sp-l);
+  font-variant-numeric: tabular-nums;
+  border: none;
+  border-right: var(--line-passive);
+}
 
-    & > .bar {
-      grid-column: 1 / -1;
-      background: var(--c-bg-alt);
-    }
-
-    &[aria-current] {
-      border-bottom: var(--line-width-m) solid var(--c-fg);
-    }
-  }
+nav button[aria-current] {
+  border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
 /* ══════════ 4 · TABLE    ══════════ */
@@ -312,10 +303,10 @@ nav {
 
 table {
   display: grid;
+  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols), minmax(48px, 1fr));
   min-width: min-content;
   border-top: var(--line-passive);
   border-left: var(--line-passive);
-  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols), minmax(48px, 1fr));
 }
 
 tbody,
@@ -388,25 +379,30 @@ input[type='radio'] {
   }
 }
 
+nav button > .bar {
+  grid-column: 1 / -1;
+}
+
 .rank-row {
-  padding: var(--sp-m) var(--sp-l);
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  text-transform: none;
-  border: none;
   display: grid;
   grid-template-areas: 'code label percent' 'code bar percent';
   grid-template-columns: 48px 1fr 48px;
   gap: 0 var(--sp-l);
+  padding: var(--sp-m) var(--sp-l);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   text-align: left;
+  text-transform: none;
+  border: none;
   border-bottom: var(--line-passive);
+  transition: --c-sev-t var(--time);
+  view-transition-name: var(--accent-vt-rc);
+
   --c-rank-sev: color-mix(
     in oklch,
     oklch(96% 0.012 80deg),
     var(--c-accent) calc(var(--c-sev-t) * 100%)
   );
-  view-transition-name: var(--accent-vt-rc);
-  transition: --c-sev-t var(--time);
 
   & > span:not(.bar, .percent) {
     justify-self: start;
@@ -498,6 +494,7 @@ dl {
 
 [data-state='complete'] {
   color: var(--c-ok);
+
   --bg-bar: var(--c-ok);
 }
 
@@ -529,11 +526,6 @@ dl {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
-}
-
-:root {
-  --accent-vt-rc: none;
-  --sp-cols: 1;
 }
 
 ::view-transition-group(*) {
