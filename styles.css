@@ -136,9 +136,7 @@ footer {
   place-content: flex-end;
 }
 
-/* ══════════
-   3 · FRAMES 
-   ══════════ */
+/* ══════════   3 · FRAMES    ══════════ */
 
 figure {
   position: relative;
@@ -238,7 +236,7 @@ footer > button {
   text-transform: none;
 }
 
-/* ─── Modifiers ───────────────────────────────────── */
+/* ─── Modifiers ────── */
 
 [data-tone='mute'] {
   opacity: var(--opacity-2);
@@ -257,7 +255,7 @@ footer > button {
   aspect-ratio: 1/1;
 }
 
-/* ─── States ──────────────────────────────────────── */
+/* ─── States ──────────── */
 
 button:disabled {
   cursor: not-allowed;
