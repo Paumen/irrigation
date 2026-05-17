@@ -7,13 +7,11 @@
 :root {
   --c-bg: oklch(96.4% 0.007 87deg);
   --c-bg-alt: oklch(92% 0.013 85deg);
-  --c-bg-alt2: oklch(86% 0.018 80deg);
   --c-fg: oklch(25.6% 0.043 268deg);
   --c-fg-soft: color-mix(in oklch, var(--c-fg), transparent 85%);
   --c-fg-med: color-mix(in oklch, var(--c-fg), transparent 65%);
   --c-fg-strong: color-mix(in oklch, var(--c-fg), transparent 40%);
   --c-accent: oklch(38% 0.105 40deg);
-  --c-accent-alt: oklch(32% 0.05 220deg);
   --c-accent-alt2: oklch(48% 0.025 80deg);
   --c-ok: oklch(52% 0.12 165deg);
 
@@ -45,7 +43,6 @@
 
   --opacity-1: 0.1;
   --opacity-2: 0.4;
-  --opacity-3: 0.55;
   --opacity-4: 0.85;
 
   --bg-grid-pattern:
@@ -208,7 +205,7 @@ summary {
   list-style: none;
   cursor: pointer;
   user-select: none;
-  background: var(--c-bg-alt2);
+  background: var(--c-bg-alt);
   border: none;
   transition:
     background var(--time),
@@ -543,80 +540,12 @@ ol > li > button > span:last-child {
   }
 }
 
-/* ══════════   16 ·  FLOWS   ══════════ */
-
-[data-flow] text {
-  font-family: var(--font-mono);
-  font-size: var(--text-md);
-  font-weight: var(--font-weight-l);
-  pointer-events: none;
-  dominant-baseline: central;
-  fill: currentcolor;
-}
-
-[data-flow] {
-  color: var(--c-flow);
-
-  --line-flow-dash: none;
-  --c-flow: var(--c-fg);
-}
-
-[data-flow='water'],
-[data-flow='lateral'] {
-  --c-flow: var(--c-accent-alt);
-  --line-flow-dash-on: 12 10;
-  --line-flow-end: -22;
-}
-
-[data-flow='ctrl'] {
-  --c-flow: var(--c-accent);
-  --line-flow-dash: 8 7;
-  --line-flow-end: -15;
-}
-
-[data-flow='mains'] {
-  --line-flow-dash-on: 8 7;
-  --line-flow-end: -15;
-}
-
-[data-flow='wifi'] {
-  --line-flow-dash: 4 6;
-  --line-flow-end: -10;
-}
-
-[data-flow] line {
-  fill: none;
-  stroke: currentcolor;
-  stroke-dasharray: var(--line-flow-dash-active, var(--line-flow-dash));
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: var(--line-width-l);
-}
-
-[data-flow] line[data-hose='true'] {
-  pointer-events: none;
-  stroke: oklch(70% 0.04 220deg / 55%);
-  stroke-dasharray: none;
-}
-
 .node-group,
-.node-box,
-[data-flow] line {
+.node-box {
   transition:
     fill var(--time),
     stroke var(--time),
     color var(--time);
-}
-
-[data-flow][aria-current] {
-  --line-flow-dash-active: var(--line-flow-dash-on, var(--line-flow-dash));
-  animation: flow-dash var(--time) linear infinite;
-}
-
-@keyframes flow-dash {
-  to {
-    stroke-dashoffset: var(--line-flow-end);
-  }
 }
 
 dt {
