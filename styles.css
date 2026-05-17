@@ -499,7 +499,8 @@ dl {
 }
 
 button:active,
-.option:active {
+.option:active,
+summary:active {
   font-weight: var(--font-bold);
   border-width: var(--line-width-m);
   box-shadow: var(--line-width-m) var(--line-width-m) 0 0 currentcolor;
