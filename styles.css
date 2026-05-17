@@ -1,3 +1,9 @@
+/* ══════════ 0 · ALPINE-DRIVEN TOKENS ══════════ */
+/* Tokens set inline from Alpine templates in index.html.
+   --c-sev-t      per rank-row, animated (needs @property to interpolate)
+   --accent-vt-rc per rank-row, view-transition-name id
+   --sp-cols      per matrix grid, column count                              */
+
 @property --c-sev-t {
   syntax: '<number>';
   inherits: true;
