@@ -458,7 +458,7 @@ nav button:has([data-state='complete']) {
   --c-rank-sev: color-mix(
     in oklch,
     oklch(96% 0.012 80deg),
-    var(--c-accent) calc(var(--c-sev-t, 0) * 100%)
+    var(--c-accent) calc(var(--c-sev-t) * 100%)
   );
 
   display: grid;
