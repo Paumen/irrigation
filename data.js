@@ -18,8 +18,6 @@ window.DATA = {
   system: {
     installedISO: '2020-08-01',
     installedLabel: 'August 2020',
-    layout: 'In-ground',
-    zoneCount: 4,
     zoneFlow: '~2 m³/h',
     waterSource: 'Well pump',
     mainHose: 'PE 32 mm (pump → valve box)',
@@ -27,10 +25,11 @@ window.DATA = {
   },
   hwDefaults: {
     pump: '2023-01-01',
-    valves: '2026-01-01',
+    valves: '2026-05-01',
     relay: '2020-08-01',
     ctrl: '2020-08-01',
     spr: '2020-08-01',
+    mainHose: '2020-08-01',
   },
   flows: [
     {
