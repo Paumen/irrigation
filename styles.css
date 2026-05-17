@@ -7,7 +7,6 @@
   --c-fg-strong: color-mix(in oklch, var(--c-fg), transparent 40%);
   --c-accent: oklch(38% 0.105 40deg);
   --c-accent-alt: oklch(48% 0.025 80deg);
-  --c-ok: oklch(52% 0.12 165deg);
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
   --text-sm: clamp(0.688rem, 0.625rem + 0.25cqi, 0.813rem);
@@ -139,7 +138,7 @@ button,
   & > span {
     display: block;
     height: 100%;
-    background: var(--c-rank-sev);
+    background: var(--bg-bar, var(--c-fg));
   }
 }
 
@@ -234,15 +233,13 @@ summary {
     transform var(--time);
 
   & button {
-    place-content: center;
-    place-items: center;
-    width: auto;
     height: 1.9em;
     min-height: 0;
     padding: 0 var(--sp-l);
   }
 }
 
+summary button,
 footer > button {
   place-content: center;
   place-items: center;
@@ -370,7 +367,7 @@ input[type='radio'] {
     border-color var(--time);
 }
 
-:checked {
+input[type='radio']:checked {
   background: radial-gradient(circle, currentcolor 0 3px, transparent 3.5px), var(--c-bg);
   border: var(--line-bold);
 }
@@ -399,6 +396,7 @@ nav button > .bar {
     oklch(96% 0.012 80deg),
     var(--c-accent) calc(var(--c-sev-t) * 100%)
   );
+  --bg-bar: var(--c-rank-sev);
 
   & > span:not(.bar, .percent) {
     justify-self: start;
@@ -480,7 +478,7 @@ dl {
 }
 
 [data-shape='ghost'] {
-  border: none;
+  border-color: transparent;
 }
 
 [data-shape='square'] {
@@ -488,22 +486,13 @@ dl {
   aspect-ratio: 1/1;
 }
 
-[data-state='complete'] {
-  color: var(--c-ok);
-
-  --bg-bar: var(--c-ok);
-}
-
-.slider-row[aria-current] {
-  color: var(--c-ok);
-}
-
 :disabled {
-  cursor: not-allowed;
-  opacity: 0.2;
+  visibility: hidden;
 }
 
-button:active {
+button:active,
+.option:active,
+summary:active {
   font-weight: var(--font-bold);
   border-width: var(--line-width-m);
   box-shadow: var(--line-width-m) var(--line-width-m) 0 0 currentcolor;
@@ -511,7 +500,8 @@ button:active {
 }
 
 [aria-current],
-:checked {
+:checked,
+.option:has(:checked) {
   font-weight: var(--font-bold);
   border-width: var(--line-width-m);
 }

@@ -54,7 +54,7 @@ const QUESTIONS = window.DATA.questions.map((q) => {
     next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
   }
   return next;
-});
+}).sort((a, b) => a.stage - b.stage);
 
 const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
 
@@ -331,11 +331,6 @@ function app() {
         };
       }
       return out;
-    },
-
-    isStageComplete(s) {
-      const p = this.stageProgress[s];
-      return p && p.total > 0 && p.answered === p.total;
     },
 
     stagePct(s) {
