@@ -129,6 +129,20 @@ button,
     opacity var(--time);
 }
 
+.bar {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  background: var(--c-bg-alt);
+  border: var(--line-passive);
+
+  & > span {
+    display: block;
+    height: 100%;
+    background: var(--c-rank-sev);
+  }
+}
+
 li {
   display: contents;
 
@@ -140,7 +154,7 @@ li {
     padding: var(--sp-l);
     text-align: left;
 
-    & > .stage {
+    & > small {
       grid-area: stage;
       place-self: center start;
       font-size: var(--text-sm);
@@ -155,7 +169,7 @@ li {
       color: var(--c-fg-strong);
     }
 
-    & > .q-text {
+    & > span:not(.discriminator) {
       grid-area: text;
       place-self: center start;
       font-family: var(--font-sans);
@@ -364,20 +378,6 @@ input[type='radio'] {
 }
 
 /* ══════════  5 · Row   ══════════ */
-
-.bar {
-  display: block;
-  height: 6px;
-  overflow: hidden;
-  background: var(--c-bg-alt);
-  border: var(--line-passive);
-
-  & > span {
-    display: block;
-    height: 100%;
-    background: var(--c-rank-sev);
-  }
-}
 
 nav button > .bar {
   grid-column: 1 / -1;
