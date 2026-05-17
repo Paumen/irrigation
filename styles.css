@@ -93,6 +93,7 @@ main {
 section,
 main > details {
   position: relative;
+  min-width: 0;
   background: var(--c-bg);
   border: var(--line-passive);
 }
@@ -319,7 +320,7 @@ summary:active {
 
 table {
   display: grid;
-  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols, 1), minmax(max-content, 1fr));
+  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols, 1), minmax(48px, 1fr));
   min-width: min-content;
   border-top: var(--line-passive);
   border-left: var(--line-passive);
@@ -640,8 +641,11 @@ input[type='date'] {
   border-radius: var(--radius-s);
 }
 
-tr > td:only-of-type {
-  grid-column: 2 / -1;
+dl {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: var(--sp-s) var(--sp-l);
+  margin: 0;
 }
 
 /* ══════════ 18 ·  TRANSITIONS   ══════════ */

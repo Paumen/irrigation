@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=43" />
+    <link rel="stylesheet" href="styles.css?v=44" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -112,7 +112,9 @@
 
           <template x-if="activeQuestion.type === 'dates'">
             <div data-q="dates">
-              <table style="--sp-cols: 3">
+              <table
+                style="--sp-cols: 3; grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto"
+              >
                 <template x-for="row in activeQuestion.rows" :key="row.id">
                   <tr>
                     <th scope="row" x-text="row.label"></th>
@@ -251,31 +253,23 @@
       <details data-card="sysinfo">
         <summary><span>System Info</span></summary>
         <div>
-          <table style="--sp-cols: 3">
-            <tr>
-              <th scope="row">Installed</th>
-              <td x-text="SYSTEM.installedLabel"></td>
-            </tr>
-            <tr>
-              <th scope="row">Layout</th>
-              <td x-text="`${SYSTEM.layout} · ${SYSTEM.zoneCount} zones`"></td>
-            </tr>
-            <tr>
-              <th scope="row">Water source</th>
-              <td x-text="SYSTEM.waterSource"></td>
-            </tr>
-            <tr>
-              <th scope="row">Main hose</th>
-              <td x-text="SYSTEM.mainHose"></td>
-            </tr>
-            <tr>
-              <th scope="row">Zone hose</th>
-              <td x-text="SYSTEM.zoneHose"></td>
-            </tr>
-            <tr>
-              <th scope="row">Zone flow</th>
-              <td x-text="SYSTEM.zoneFlow"></td>
-            </tr>
+          <dl>
+            <dt>Installed</dt>
+            <dd x-text="SYSTEM.installedLabel"></dd>
+            <dt>Layout</dt>
+            <dd x-text="`${SYSTEM.layout} · ${SYSTEM.zoneCount} zones`"></dd>
+            <dt>Water source</dt>
+            <dd x-text="SYSTEM.waterSource"></dd>
+            <dt>Main hose</dt>
+            <dd x-text="SYSTEM.mainHose"></dd>
+            <dt>Zone hose</dt>
+            <dd x-text="SYSTEM.zoneHose"></dd>
+            <dt>Zone flow</dt>
+            <dd x-text="SYSTEM.zoneFlow"></dd>
+          </dl>
+          <table
+            style="--sp-cols: 3; grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto"
+          >
             <template x-for="row in hwRows" :key="row.id">
               <tr>
                 <th scope="row" x-text="row.label"></th>
