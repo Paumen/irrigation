@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=47" />
+    <link rel="stylesheet" href="styles.css?v=48" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -169,10 +169,7 @@
               @click="pickStage(s)"
               :aria-current="activeStage === s ? 'step' : null"
             >
-              <span
-                :data-state="isStageComplete(s) ? 'complete' : null"
-                x-text="STAGE_LABELS[s]"
-              ></span>
+              <span x-text="STAGE_LABELS[s]"></span>
               <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
               <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
             </button>
@@ -291,7 +288,7 @@
 
     <script src="data.js?v=20"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=41"></script>
+    <script src="app.js?v=42"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

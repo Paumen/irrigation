@@ -333,11 +333,6 @@ function app() {
       return out;
     },
 
-    isStageComplete(s) {
-      const p = this.stageProgress[s];
-      return p && p.total > 0 && p.answered === p.total;
-    },
-
     stagePct(s) {
       const p = this.stageProgress[s];
       return p.total ? (p.answered / p.total) * 100 : 0;
