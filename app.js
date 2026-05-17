@@ -54,7 +54,7 @@ const QUESTIONS = window.DATA.questions.map((q) => {
     next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
   }
   return next;
-});
+}).sort((a, b) => a.stage - b.stage);
 
 const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
 
