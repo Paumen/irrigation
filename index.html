@@ -112,13 +112,13 @@
 
           <template x-if="activeQuestion.type === 'dates'">
             <div data-q="dates">
-              <ul class="hw-list">
+              <ul>
                 <template x-for="row in activeQuestion.rows" :key="row.id">
-                  <li class="hw-row">
-                    <span class="hw-label" x-text="row.label"></span>
-                    <span class="hw-model" x-text="row.model || ''"></span>
-                    <span class="hw-meta" x-text="hwDateLabel(row.id)"></span>
-                    <span class="hw-meta" x-text="hwBucketLabel(row.id)"></span>
+                  <li>
+                    <span x-text="row.label"></span>
+                    <span x-text="row.model || ''"></span>
+                    <span x-text="hwDateLabel(row.id)"></span>
+                    <span x-text="hwBucketLabel(row.id)"></span>
                   </li>
                 </template>
               </ul>
@@ -182,7 +182,6 @@
               :aria-current="activeStage === s ? 'step' : null"
             >
               <span
-                class="stage-label"
                 :data-state="isStageComplete(s) ? 'complete' : null"
                 x-text="STAGE_LABELS[s]"
               ></span>
@@ -214,7 +213,6 @@
           <template x-if="hasMore(ranked.length)">
             <button
               type="button"
-              class="see-more-btn"
               data-shape="ghost"
               @click="toggle()"
               x-text="label(ranked.length)"
@@ -230,10 +228,10 @@
             <ol>
               <template x-for="(rec, i) in recommendations" :key="rec.q.id">
                 <li x-show="visible(i)">
-                  <button type="button" class="recommendation" @click="goTo(rec.q.id)">
-                    <span class="stage-label" x-text="STAGE_LABELS[rec.q.stage]"></span>
+                  <button type="button" @click="goTo(rec.q.id)">
+                    <span x-text="STAGE_LABELS[rec.q.stage]"></span>
                     <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
-                    <span class="recommendation-text" x-text="rec.q.text"></span>
+                    <span x-text="rec.q.text"></span>
                   </button>
                 </li>
               </template>
@@ -242,7 +240,6 @@
           <template x-if="hasMore(recommendations.length)">
             <button
               type="button"
-              class="see-more-btn"
               data-shape="ghost"
               @click="toggle()"
               x-text="label(recommendations.length)"
@@ -253,8 +250,8 @@
 
       <details data-card="sysinfo">
         <summary><span>System Info</span></summary>
-        <div class="sysinfo">
-          <dl class="sysinfo-meta">
+        <div>
+          <dl>
             <dt>Installed</dt>
             <dd x-text="SYSTEM.installedLabel"></dd>
             <dt>Layout</dt>
@@ -268,11 +265,11 @@
             <dt>Zone flow</dt>
             <dd x-text="SYSTEM.zoneFlow"></dd>
           </dl>
-          <ul class="hw-list">
+          <ul>
             <template x-for="row in hwRows" :key="row.id">
-              <li class="hw-row">
-                <span class="hw-label" x-text="row.label"></span>
-                <span class="hw-model" x-text="row.model || ''"></span>
+              <li>
+                <span x-text="row.label"></span>
+                <span x-text="row.model || ''"></span>
                 <input
                   type="date"
                   :max="todayISO"
@@ -280,7 +277,7 @@
                   @input="setHwDate(row.id, $event.target.value)"
                   :aria-label="`${row.label} install or replacement date`"
                 />
-                <span class="hw-meta" x-text="hwAgeYearsLabel(row.id)"></span>
+                <span x-text="hwAgeYearsLabel(row.id)"></span>
               </li>
             </template>
           </ul>
