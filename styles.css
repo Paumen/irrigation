@@ -11,6 +11,11 @@
 }
 
 :root {
+  --accent-vt-rc: none;
+  --sp-cols: 1;
+}
+
+:root {
   --c-bg: oklch(96.4% 0.007 87deg);
   --c-bg-alt: oklch(92% 0.013 85deg);
   --c-fg: oklch(25.6% 0.043 268deg);
@@ -323,7 +328,7 @@ summary:active {
 
 table {
   display: grid;
-  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols, 1), minmax(48px, 1fr));
+  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols), minmax(48px, 1fr));
   min-width: min-content;
   border-top: var(--line-passive);
   border-left: var(--line-passive);
@@ -461,7 +466,7 @@ nav button:has([data-state='complete']) {
   grid-template-columns: 48px 1fr 48px;
   gap: 0 var(--sp-l);
   text-align: left;
-  view-transition-name: var(--accent-vt-rc, none);
+  view-transition-name: var(--accent-vt-rc);
   border-bottom: var(--line-passive);
   transition: --c-sev-t var(--time);
 }
