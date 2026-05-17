@@ -15,6 +15,21 @@
   --sp-cols: 1;
 }
 
+table {
+  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols), minmax(48px, 1fr));
+}
+
+.rank-row {
+  --c-rank-sev: color-mix(
+    in oklch,
+    oklch(96% 0.012 80deg),
+    var(--c-accent) calc(var(--c-sev-t) * 100%)
+  );
+
+  view-transition-name: var(--accent-vt-rc);
+  transition: --c-sev-t var(--time);
+}
+
 :root {
   --c-bg: oklch(96.4% 0.007 87deg);
   --c-bg-alt: oklch(92% 0.013 85deg);
@@ -328,7 +343,6 @@ summary:active {
 
 table {
   display: grid;
-  grid-template-columns: minmax(140px, 1.4fr) repeat(var(--sp-cols), minmax(48px, 1fr));
   min-width: min-content;
   border-top: var(--line-passive);
   border-left: var(--line-passive);
@@ -455,20 +469,12 @@ nav button:has([data-state='complete']) {
 }
 
 .rank-row {
-  --c-rank-sev: color-mix(
-    in oklch,
-    oklch(96% 0.012 80deg),
-    var(--c-accent) calc(var(--c-sev-t) * 100%)
-  );
-
   display: grid;
   grid-template-areas: 'code label percent' 'code bar percent';
   grid-template-columns: 48px 1fr 48px;
   gap: 0 var(--sp-l);
   text-align: left;
-  view-transition-name: var(--accent-vt-rc);
   border-bottom: var(--line-passive);
-  transition: --c-sev-t var(--time);
 }
 
 .rank-row .bar > span {
