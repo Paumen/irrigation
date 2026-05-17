@@ -93,6 +93,7 @@ main {
 section,
 main > details {
   position: relative;
+  min-width: 0;
   background: var(--c-bg);
   border: var(--line-passive);
 }
@@ -114,15 +115,20 @@ h2 {
   font-weight: var(--font-weight-l);
 }
 
-form {
+form,
+details > div {
   padding: var(--sp-l);
+}
+
+details > div:has(> table) {
+  overflow-x: auto;
 }
 
 ol {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
-  padding: var(--sp-l);
+  padding: 0;
   list-style: none;
 }
 
@@ -476,8 +482,36 @@ code {
   color: var(--c-rank-sev);
 }
 
-.discriminator {
-  justify-self: end;
+ol > li > button {
+  grid-template-columns: 1fr auto;
+  grid-template-areas: 'stage discriminator' 'text text';
+  gap: var(--sp-s) var(--sp-l);
+  place-items: center stretch;
+  padding: var(--sp-l);
+  text-align: left;
+}
+
+ol > li > button > span:first-child {
+  grid-area: stage;
+  place-self: center start;
+  font-size: var(--text-sm);
+  color: var(--c-fg-strong);
+}
+
+ol > li > button > .discriminator {
+  grid-area: discriminator;
+  place-self: center end;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--c-fg-strong);
+}
+
+ol > li > button > span:last-child {
+  grid-area: text;
+  place-self: center start;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  text-transform: none;
 }
 
 /* ══════════ 15 · NODES   ══════════ */
@@ -605,6 +639,13 @@ input[type='date'] {
   background: var(--c-bg-alt);
   border: var(--line-passive);
   border-radius: var(--radius-s);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: var(--sp-s) var(--sp-l);
+  margin: 0;
 }
 
 /* ══════════ 18 ·  TRANSITIONS   ══════════ */

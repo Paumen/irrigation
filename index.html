@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=41" />
+    <link rel="stylesheet" href="styles.css?v=44" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -112,16 +112,18 @@
 
           <template x-if="activeQuestion.type === 'dates'">
             <div data-q="dates">
-              <ul>
+              <table
+                style="--sp-cols: 3; grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto"
+              >
                 <template x-for="row in activeQuestion.rows" :key="row.id">
-                  <li>
-                    <span x-text="row.label"></span>
-                    <span x-text="row.model || ''"></span>
-                    <span x-text="hwDateLabel(row.id)"></span>
-                    <span x-text="hwBucketLabel(row.id)"></span>
-                  </li>
+                  <tr>
+                    <th scope="row" x-text="row.label"></th>
+                    <td x-text="row.model || ''"></td>
+                    <td x-text="hwDateLabel(row.id)"></td>
+                    <td x-text="hwBucketLabel(row.id)"></td>
+                  </tr>
                 </template>
-              </ul>
+              </table>
               <footer>
                 <button
                   type="button"
@@ -265,22 +267,26 @@
             <dt>Zone flow</dt>
             <dd x-text="SYSTEM.zoneFlow"></dd>
           </dl>
-          <ul>
+          <table
+            style="--sp-cols: 3; grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto"
+          >
             <template x-for="row in hwRows" :key="row.id">
-              <li>
-                <span x-text="row.label"></span>
-                <span x-text="row.model || ''"></span>
-                <input
-                  type="date"
-                  :max="todayISO"
-                  :value="hwDates[row.id] || ''"
-                  @input="setHwDate(row.id, $event.target.value)"
-                  :aria-label="`${row.label} install or replacement date`"
-                />
-                <span x-text="hwAgeYearsLabel(row.id)"></span>
-              </li>
+              <tr>
+                <th scope="row" x-text="row.label"></th>
+                <td x-text="row.model || ''"></td>
+                <td>
+                  <input
+                    type="date"
+                    :max="todayISO"
+                    :value="hwDates[row.id] || ''"
+                    @input="setHwDate(row.id, $event.target.value)"
+                    :aria-label="`${row.label} install or replacement date`"
+                  />
+                </td>
+                <td x-text="hwAgeYearsLabel(row.id)"></td>
+              </tr>
             </template>
-          </ul>
+          </table>
         </div>
       </details>
 
