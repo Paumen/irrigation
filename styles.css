@@ -234,15 +234,13 @@ summary {
     transform var(--time);
 
   & button {
-    place-content: center;
-    place-items: center;
-    width: auto;
     height: 1.9em;
     min-height: 0;
     padding: 0 var(--sp-l);
   }
 }
 
+summary button,
 footer > button {
   place-content: center;
   place-items: center;
@@ -479,10 +477,6 @@ dl {
   color: var(--c-accent);
 }
 
-[data-shape='ghost'] {
-  border: none;
-}
-
 [data-shape='square'] {
   width: auto;
   aspect-ratio: 1/1;
@@ -492,10 +486,6 @@ dl {
   color: var(--c-ok);
 
   --bg-bar: var(--c-ok);
-}
-
-.slider-row[aria-current] {
-  color: var(--c-ok);
 }
 
 :disabled {
@@ -511,7 +501,8 @@ button:active {
 }
 
 [aria-current],
-:checked {
+:checked,
+.option:has(:checked) {
   font-weight: var(--font-bold);
   border-width: var(--line-width-m);
 }
