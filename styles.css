@@ -137,11 +137,12 @@ footer {
 }
 
 /* ══════════
-   5 · FRAMES (figure & dialog)
+   3 · FRAMES 
    ══════════ */
 
 figure {
   position: relative;
+  margin: 0;
   padding: var(--sp-l);
   background: var(--bg-grid-pattern), var(--c-bg-alt);
 }
