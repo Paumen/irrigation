@@ -139,7 +139,7 @@ button,
   & > span {
     display: block;
     height: 100%;
-    background: var(--c-rank-sev);
+    background: var(--bg-bar, var(--c-fg));
   }
 }
 
@@ -368,7 +368,7 @@ input[type='radio'] {
     border-color var(--time);
 }
 
-:checked {
+input[type='radio']:checked {
   background: radial-gradient(circle, currentcolor 0 3px, transparent 3.5px), var(--c-bg);
   border: var(--line-bold);
 }
@@ -397,6 +397,7 @@ nav button > .bar {
     oklch(96% 0.012 80deg),
     var(--c-accent) calc(var(--c-sev-t) * 100%)
   );
+  --bg-bar: var(--c-rank-sev);
 
   & > span:not(.bar, .percent) {
     justify-self: start;
@@ -477,6 +478,10 @@ dl {
   color: var(--c-accent);
 }
 
+[data-shape='ghost'] {
+  border-color: transparent;
+}
+
 [data-shape='square'] {
   width: auto;
   aspect-ratio: 1/1;
@@ -493,7 +498,8 @@ dl {
   opacity: 0.2;
 }
 
-button:active {
+button:active,
+.option:active {
   font-weight: var(--font-bold);
   border-width: var(--line-width-m);
   box-shadow: var(--line-width-m) var(--line-width-m) 0 0 currentcolor;
