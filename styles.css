@@ -1,19 +1,10 @@
-/* ════════════════════════════════════════════════════════════════
-   1 · CUSTOM @PROPERTY DECLARATIONS
-   ════════════════════════════════════════════════════════════════ */
-
 @property --c-sev-t {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   2 · DESIGN TOKENS
-   ════════════════════════════════════════════════════════════════ */
-
 :root {
-  /* ─── Color ──────────────────────────────────────── */
   --c-bg: oklch(96.4% 0.007 87deg);
   --c-bg-alt: oklch(92% 0.013 85deg);
   --c-bg-alt2: oklch(86% 0.018 80deg);
@@ -26,7 +17,6 @@
   --c-accent-alt2: oklch(48% 0.025 80deg);
   --c-ok: oklch(52% 0.12 165deg);
 
-  /* ─── Typography ─────────────────────────────────── */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-sans: 'Nunito Sans', sans-serif;
   --text-sm: clamp(0.688rem, 0.625rem + 0.25cqi, 0.813rem);
@@ -34,14 +24,12 @@
   --font-weight-m: 600;
   --font-weight-l: 800;
 
-  /* ─── Spacing ────────────────────────────────────── */
   --sp-s: 2px;
   --sp-m: clamp(3px, 2px + 0.25cqi, 5px);
   --sp-l: clamp(6px, 5px + 0.375cqi, 10px);
   --sp-xl: clamp(8px, 5px + 0.875cqi, 14px);
   --sp-xxl: clamp(18px, 12px + 1.5cqi, 28px);
 
-  /* ─── Borders ────────────────────────────────────── */
   --line-width-s: 1px;
   --line-width-m: 3px;
   --line-width-l: 6px;
@@ -49,21 +37,17 @@
   --line-interactive: var(--line-width-s) solid var(--c-fg);
   --line-bold: var(--line-width-m) solid var(--c-fg);
 
-  /* ─── Radii ──────────────────────────────────────── */
   --radius-s: 3px;
   --radius-circle: 50%;
 
-  /* ─── Motion ─────────────────────────────────────── */
   --time: 0.5s;
-  --time-pulse: 2.2s;
+  --time-pulse: 2.0s;
 
-  /* ─── Opacity ────────────────────────────────────── */
   --opacity-1: 0.1;
   --opacity-2: 0.4;
   --opacity-3: 0.55;
   --opacity-4: 0.85;
 
-  /* ─── Shared Assets ──────────────────────────────── */
   --bg-grid-pattern:
     linear-gradient(var(--c-fg-soft) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl),
@@ -71,9 +55,7 @@
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xxl) var(--sp-xxl);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   3 · BASE / RESET
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 1 · BASE / RESET ══════════ */
 
 * {
   box-sizing: border-box;
@@ -100,9 +82,7 @@ body {
   display: none;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   4 · LAYOUT & PAGE STRUCTURE
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 2 · LAYOUT  ══════════ */
 
 main {
   display: grid;
@@ -122,8 +102,6 @@ header {
   gap: var(--sp-l);
   place-content: space-between;
   place-items: center stretch;
-  padding: 0;
-  margin: 0 0 var(--sp-xl);
 }
 
 summary > span {
@@ -132,21 +110,19 @@ summary > span {
 
 h2 {
   flex: 1;
-  margin: 0 0 var(--sp-m);
   font-size: var(--text-md);
   font-weight: var(--font-weight-l);
 }
 
 form {
-  padding: var(--sp-l) var(--sp-xl) var(--sp-xl);
+  padding: var(--sp-l);
 }
 
 ol {
   display: flex;
   flex-direction: column;
   gap: var(--sp-l);
-  padding: var(--sp-l) var(--sp-xl) var(--sp-xl);
-  margin: 0;
+  padding: var(--sp-l);
   list-style: none;
 }
 
@@ -158,17 +134,15 @@ footer {
   display: flex;
   gap: var(--sp-l);
   place-content: flex-end;
-  margin: var(--sp-l) 0 0;
 }
 
-/* ════════════════════════════════════════════════════════════════
+/* ══════════
    5 · FRAMES (figure & dialog)
-   ════════════════════════════════════════════════════════════════ */
+   ══════════ */
 
 figure {
   position: relative;
-  padding: var(--sp-xl);
-  margin: 0;
+  padding: var(--sp-l);
   background: var(--bg-grid-pattern), var(--c-bg-alt);
 }
 
@@ -181,8 +155,8 @@ figure svg {
 }
 
 dialog {
-  max-width: min(400px, 90cqi);
-  padding: var(--sp-xl);
+  max-width: min(400px, 100cqi);
+  padding: var(--sp-l);
   color: inherit;
   background: var(--c-bg);
   border: var(--line-width-m) solid var(--c-fg);
@@ -193,25 +167,16 @@ dialog::backdrop {
   background: var(--c-fg-strong);
 }
 
-p {
-  margin: 0 0 var(--sp-l);
-  font-size: var(--text-sm);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   6 · BUTTONS  (button / summary / .option)
-       Base reset → structural variants → modifiers → states
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 6 · BUTTONS   ══════════ */
 
 button,
 .option {
   display: grid;
   width: 100%;
   min-height: 32px;
-  padding: 0 var(--sp-xl);
+  padding: 0 var(--sp-l);
   font-family: var(--font-mono);
   font-size: var(--text-md);
-  font-weight: var(--font-weight-m);
   color: inherit;
   text-transform: uppercase;
   cursor: pointer;
@@ -230,11 +195,10 @@ summary {
   display: flex;
   gap: var(--sp-l);
   place-items: center stretch;
-  padding: var(--sp-l) var(--sp-xl);
+  padding: var(--sp-l);
   font-family: var(--font-mono);
   font-size: var(--text-md);
   font-weight: var(--font-weight-m);
-  color: var(--c-fg);
   text-transform: uppercase;
   list-style: none;
   cursor: pointer;
@@ -265,9 +229,9 @@ footer > button {
 
 .option {
   grid-template-columns: 16px 1fr;
-  gap: var(--sp-l);
+  gap: var(--sp-m);
   place-items: center stretch;
-  padding: var(--sp-l) var(--sp-xl);
+  padding: var(--sp-l);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   text-transform: none;
@@ -290,7 +254,6 @@ footer > button {
 [data-shape='square'] {
   width: auto;
   aspect-ratio: 1/1;
-  padding: 0;
 }
 
 /* ─── States ──────────────────────────────────────── */
@@ -311,17 +274,11 @@ summary:active {
 [aria-current],
 .option:has(:checked) {
   font-weight: var(--font-weight-l);
-}
-
-button[aria-current],
-summary[aria-current],
-.option:has(:checked) {
   border-width: var(--line-width-m);
+
 }
 
-/* ════════════════════════════════════════════════════════════════
-   7 · FORM CONTROLS — OPTIONS
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 7 · CONTROLS  ══════════ */
 
 [data-q='options'] {
   display: grid;
@@ -344,10 +301,6 @@ summary[aria-current],
   opacity: 1;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   8 · HARDWARE LIST  (shared by dates question + System Info card)
-   ════════════════════════════════════════════════════════════════ */
-
 [data-q='dates'] {
   display: grid;
   gap: var(--sp-l);
@@ -356,8 +309,6 @@ summary[aria-current],
 .hw-list {
   display: grid;
   gap: var(--sp-m);
-  padding: 0;
-  margin: 0;
   list-style: none;
 }
 
@@ -366,29 +317,12 @@ summary[aria-current],
   grid-template-columns: minmax(96px, 1fr) minmax(0, 2fr) minmax(140px, auto) minmax(56px, auto);
   gap: var(--sp-m) var(--sp-l);
   place-items: center stretch;
-  padding: var(--sp-m) var(--sp-l);
+  padding: var(--sp-m);
   background: var(--c-bg);
   border: var(--line-passive);
 }
 
-.hw-label {
-  font-weight: var(--font-weight-m);
-}
-
-.hw-model {
-  color: var(--c-fg-strong);
-}
-
-.hw-meta {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  color: var(--c-fg-strong);
-  text-align: right;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   9 · FORM CONTROLS — MATRIX TABLE
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 9 · TABLE    ══════════ */
 
 [data-q='matrix'] {
   padding: var(--sp-m) 0;
@@ -438,9 +372,7 @@ label {
   cursor: pointer;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   10 · FORM CONTROLS — RADIO
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════  10 · RADIO   ══════════ */
 
 input[type='radio'] {
   width: 14px;
@@ -461,14 +393,11 @@ input[type='radio']:checked {
   border: var(--line-bold);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   11 · PROGRESS BAR (shared by nav & rankings)
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════  11 · BAR   ══════════ */
 
 .bar {
   display: block;
   height: 6px;
-  margin: var(--line-width-s) 0 0;
   overflow: hidden;
   background: var(--c-bg-alt);
   border: var(--line-passive);
@@ -480,9 +409,7 @@ input[type='radio']:checked {
   background: var(--bg-bar, var(--c-fg));
 }
 
-/* ════════════════════════════════════════════════════════════════
-   12 · NAVIGATION (stage tabs)
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════  12 · NAVIGATION   ══════════ */
 
 nav {
   display: grid;
@@ -494,7 +421,7 @@ nav {
 [data-card='form'] nav button {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: var(--sp-s) var(--sp-l);
+  gap: var(--sp-m) ;
   place-items: center stretch;
   padding: var(--sp-l);
   font-variant-numeric: tabular-nums;
@@ -504,7 +431,6 @@ nav {
 
 nav button > .bar {
   grid-column: 1 / -1;
-  margin: 0;
   background: var(--c-bg-alt);
 }
 
@@ -522,9 +448,7 @@ nav button:has([data-state='complete']) {
   --bg-bar: var(--c-ok);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   13 · RANKINGS (root-cause list)
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 13 · RANKINGS    ══════════ */
 
 .rank-row,
 .recommendation {
@@ -581,10 +505,6 @@ code {
   opacity: var(--opacity-3);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   14 · RECOMMENDATIONS (next-check list)
-   ════════════════════════════════════════════════════════════════ */
-
 .recommendation {
   grid-template-columns: auto 1fr;
   gap: var(--sp-m) var(--sp-l);
@@ -604,9 +524,7 @@ code {
   text-align: left;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   15 · SCHEMATIC — NODES
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 15 · NODES   ══════════ */
 
 .node-group {
   stroke: var(--c-fg-med);
@@ -635,9 +553,7 @@ code {
   }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   16 · SCHEMATIC — FLOW LABELS
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════   16 ·  FLOWS   ══════════ */
 
 [data-flow] text {
   font-family: var(--font-mono);
@@ -648,11 +564,6 @@ code {
   fill: currentcolor;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   17 · SCHEMATIC — FLOWS (lines, animated dashes)
-   ════════════════════════════════════════════════════════════════ */
-
-/* Vars below are scoped to [data-flow] descendants — not safe to consume elsewhere. */
 [data-flow] {
   color: var(--c-flow);
 
@@ -709,7 +620,6 @@ code {
 
 [data-flow][aria-current] {
   --line-flow-dash-active: var(--line-flow-dash-on, var(--line-flow-dash));
-
   animation: flow-dash var(--time) linear infinite;
 }
 
@@ -719,9 +629,7 @@ code {
   }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   17b · SYSTEM INFO CARD
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 17b · SYSTEM INFO CARD ══════════ */
 
 .sysinfo {
   display: grid;
@@ -737,14 +645,14 @@ code {
   margin: 0;
 }
 
-.sysinfo-meta dt {
+dt {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--c-fg-strong);
   text-transform: uppercase;
 }
 
-.sysinfo-meta dd {
+dd {
   padding: 0;
   margin: 0;
 }
@@ -759,9 +667,7 @@ input[type='date'] {
   border-radius: var(--radius-s);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   18 · VIEW TRANSITIONS
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 18 ·  TRANSITIONS   ══════════ */
 
 [data-card='form'] {
   view-transition-name: form-card;
@@ -772,9 +678,7 @@ input[type='date'] {
   animation-timing-function: cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   19 · RESPONSIVE
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════ 19 · RESPONSIVE   ══════════ */
 
 @container page (width >= 1080px) {
   main {
@@ -808,4 +712,4 @@ input[type='date'] {
   td {
     padding: var(--sp-s);
   }
-}
+   } 
