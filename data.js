@@ -1,5 +1,4 @@
 const EVENT_COLS = [
-  { id: 'no', label: 'N/A', mult: 0.0 },
   { id: 'right', label: 'Started right after', mult: 0.8 },
   { id: 'days', label: 'Started week(s) after', mult: 0.4 },
   { id: 'worse', label: 'Worsened (same)', mult: 0.0 },
