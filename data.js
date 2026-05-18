@@ -94,7 +94,7 @@ window.DATA = {
       stage: 1,
       group: 'Symptoms',
       text: 'Same issue when starting via app vs controller?',
-      highlight: ['sw', 'ctrl', 'wifi'],
+      highlight: ['sw', 'ctrl'],
       options: [
         {
           label: 'Only app has issues',
@@ -136,7 +136,7 @@ window.DATA = {
       stage: 1,
       group: 'Symptoms',
       text: 'How does water leave rotors?',
-      highlight: ['sp4', 'lateral'],
+      highlight: ['sp4'],
       options: [
         {
           label: 'No water at all',
@@ -186,7 +186,7 @@ window.DATA = {
       stage: 1,
       group: 'Symptoms',
       text: 'How is the flow at the manual hose?',
-      highlight: ['pump', 'water'],
+      highlight: ['pump'],
       options: [
         {
           label: 'Strong, steady',
@@ -289,7 +289,7 @@ window.DATA = {
       type: 'dates',
       group: 'Events',
       text: 'Do these dates still reflect the latest replacements?',
-      highlight: ['pump', 'valves', 'relay', 'ctrl', 'wifi', 'sp4'],
+      highlight: ['pump', 'valves', 'relay', 'ctrl', 'sp4'],
       stepLabels: ['—', '0–4 yrs', '4–8 yrs', '8–12 yrs', '12+ yrs'],
       ageBuckets: [4, 8, 12],
       rows: [
@@ -478,7 +478,7 @@ window.DATA = {
       optional: true,
       group: 'Extra',
       text: 'Do you see water / wet ground?',
-      highlight: ['water', 'lateral', 'valves'],
+      highlight: ['valves'],
       options: [
         {
           label: 'Along the main line route',
@@ -503,7 +503,7 @@ window.DATA = {
       optional: true,
       group: 'Extra',
       text: 'Dig & inspect hoses for damage?',
-      highlight: ['water', 'lateral'],
+      highlight: [],
       options: [
         { label: 'Damage found', effects: { R51: 1, R81: 1 } },
         { label: 'No damage', effects: { R51: -0.4, R81: -0.4 } },
@@ -515,7 +515,7 @@ window.DATA = {
       optional: true,
       group: 'Extra',
       text: 'Flow meter reads 1.0–3.0?',
-      highlight: ['pump', 'water'],
+      highlight: ['pump'],
       options: [
         { label: 'Yes (in range)', effects: { R4: -0.4, R5: -0.4 } },
         { label: 'No (out of range)', effects: { R4: 0.2, R5: 0.2 } },
