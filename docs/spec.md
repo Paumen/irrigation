@@ -16,7 +16,7 @@ Guide homeowners through fixing their irrigation system by asking step-by-step q
 We save user answers in one main place. All other details (like progress bars and problem rankings) are calculated automatically from those answers.
 
 - `answers` (stores the user's choice)
-- `currentQuestion` (the question currently on the screen)
+- `activeQuestion` (the question currently on the screen)
 - `progressPercentage` (questions answered divided by total questions in that section)
 - **Starting Information:** The list of possible causes, the layout of the system map, the questions (split into sections), and how much each answer changes the likelihood of a problem.
 
