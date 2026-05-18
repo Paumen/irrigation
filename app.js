@@ -262,7 +262,6 @@ function app() {
     hwDates: { ...(window.DATA.hwDefaults || {}) },
     hwModels: {},
     activeQuestionId: MAIN_QUESTIONS[0].id,
-    optionalCount: OPTIONAL_QUESTIONS.length,
 
     severityT,
 
@@ -333,11 +332,29 @@ function app() {
 
     get recommendations() {
       const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      return QUESTIONS.filter((q) => !this.isCompleted(q.id))
+      return MAIN_QUESTIONS.filter((q) => !this.isCompleted(q.id))
         .map((q) => ({ q, D: TYPE_HANDLERS[q.type].discriminator(q, t5) }))
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
         .slice(0, 5);
+    },
+
+    get mainProgress() {
+      const total = MAIN_QUESTIONS.length;
+      const done = MAIN_QUESTIONS.reduce((n, q) => n + (this.isCompleted(q.id) ? 1 : 0), 0);
+      return { total, done, pct: total ? done / total : 0 };
+    },
+
+    get optionalSuggestions() {
+      if (OPTIONAL_QUESTIONS.length === 0) return [];
+      const { pct } = this.mainProgress;
+      let stuck = pct >= 0.7;
+      if (!stuck && pct >= 0.4) {
+        const r = this.ranked;
+        if (r.length >= 2 && r[0].pct - r[1].pct < 3) stuck = true;
+      }
+      if (!stuck) return [];
+      return OPTIONAL_QUESTIONS.filter((q) => !this.isCompleted(q.id));
     },
 
     get stageProgress() {
@@ -487,12 +504,6 @@ function app() {
         if (skipping) this.skipped = { ...this.skipped, [curId]: true };
         this.activeQuestionId = next.id;
       });
-    },
-
-    enterOptional() {
-      const target =
-        OPTIONAL_QUESTIONS.find((q) => !this.isCompleted(q.id)) || OPTIONAL_QUESTIONS[0];
-      if (target) this.goTo(target.id);
     },
 
     pickStage(s) {

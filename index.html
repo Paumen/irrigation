@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=54" />
+    <link rel="stylesheet" href="styles.css?v=55" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -244,13 +244,25 @@
               x-text="label(recommendations.length)"
             ></button>
           </template>
-          <button
-            type="button"
-            data-shape="ghost"
-            x-show="optionalCount > 0"
-            @click="enterOptional()"
-            x-text="`+ Browse optional checks (${optionalCount})`"
-          ></button>
+          <template x-if="optionalSuggestions.length > 0">
+            <section class="optional-suggest" aria-label="Field tests">
+              <p>Still unsure? Try a field test:</p>
+              <ol>
+                <template x-for="q in optionalSuggestions" :key="q.id">
+                  <li>
+                    <button
+                      type="button"
+                      @click="goTo(q.id)"
+                      :aria-current="activeQuestionId === q.id ? 'true' : null"
+                    >
+                      <small>FIELD</small>
+                      <span x-text="q.text"></span>
+                    </button>
+                  </li>
+                </template>
+              </ol>
+            </section>
+          </template>
         </div>
       </details>
 
@@ -314,7 +326,7 @@
 
     <script src="data.js?v=22"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=45"></script>
+    <script src="app.js?v=46"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
