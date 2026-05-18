@@ -65,6 +65,11 @@ const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
 
 const Q_BY_ID = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
 
+// Per-cause bonus added when a question touches a contending cause at all,
+// regardless of how strong the effect is. Lets broad screening questions
+// outscore narrow tests when many causes are still in play.
+const BREADTH_WEIGHT = 1.5;
+
 const TYPE_HANDLERS = {
   options: {
     score(q, ans, s) {
@@ -74,13 +79,16 @@ const TYPE_HANDLERS = {
         s[rc] = (s[rc] || 0) + delta;
       }
     },
-    discriminator(q, t5) {
+    discriminator(q, ids) {
       let D = 0;
-      for (const rcId of t5) {
+      let breadth = 0;
+      for (const rcId of ids) {
         const deltas = q.options.map((o) => o.effects[rcId] || 0);
-        D += Math.max(...deltas) - Math.min(...deltas);
+        const spread = Math.max(...deltas) - Math.min(...deltas);
+        if (spread > 0) breadth++;
+        D += spread;
       }
-      return D;
+      return D + BREADTH_WEIGHT * breadth;
     },
     isAnswered() {
       return true;
@@ -97,14 +105,21 @@ const TYPE_HANDLERS = {
         }
       }
     },
-    discriminator(q, t5) {
+    discriminator(q, ids) {
       const mults = q.columns.map((c) => c.mult);
-      const spread = Math.max(...mults) - Math.min(...mults);
+      const multSpread = Math.max(...mults) - Math.min(...mults);
       let D = 0;
+      const affected = new Set();
       for (const row of q.rows) {
-        for (const rcId of t5) D += Math.abs(row.effects[rcId] || 0) * spread;
+        for (const rcId of ids) {
+          const e = Math.abs(row.effects[rcId] || 0);
+          if (e > 0) {
+            D += e * multSpread;
+            affected.add(rcId);
+          }
+        }
       }
-      return D;
+      return D + BREADTH_WEIGHT * affected.size;
     },
     isAnswered(_q, ans) {
       return Object.keys(ans).length > 0;
@@ -122,15 +137,20 @@ const TYPE_HANDLERS = {
         }
       }
     },
-    discriminator(q, t5) {
+    discriminator(q, ids) {
       let D = 0;
+      const affected = new Set();
       for (const row of q.rows) {
-        for (const rcId of t5) {
+        for (const rcId of ids) {
           const deltas = row.steps.map((st) => st.effects[rcId] || 0);
-          D += Math.max(...deltas) - Math.min(...deltas);
+          const spread = Math.max(...deltas) - Math.min(...deltas);
+          if (spread > 0) {
+            D += spread;
+            affected.add(rcId);
+          }
         }
       }
-      return D;
+      return D + BREADTH_WEIGHT * affected.size;
     },
     isAnswered(_q, ans) {
       return !!ans && typeof ans === 'object';
@@ -330,11 +350,47 @@ function app() {
       })).sort((a, b) => b.score - a.score);
     },
 
+    // Causes still "in contention" — pct within a factor of the leader and
+    // above an absolute floor. Wide & flat ranking → many causes; concentrated
+    // ranking → only the leaders. Floor of 3 avoids degenerate single-cause
+    // comparisons. This is what the discriminator scores against.
+    get _contendingIds() {
+      const ranked = this.ranked;
+      if (ranked.length === 0) return [];
+      const leader = ranked[0].pct;
+      const cutoff = Math.max(2, leader * 0.3);
+      const ids = ranked.filter((r) => r.pct >= cutoff).map((r) => r.id);
+      return ids.length >= 3 ? ids : ranked.slice(0, 3).map((r) => r.id);
+    },
+
+    get _disc() {
+      const ids = this._contendingIds;
+      const map = {};
+      let max = 0;
+      for (const q of QUESTIONS) {
+        if (this.isCompleted(q.id)) continue;
+        const D = TYPE_HANDLERS[q.type].discriminator(q, ids);
+        map[q.id] = D;
+        if (D > max) max = D;
+      }
+      return { map, max };
+    },
+
+    discriminatorLevel(qid) {
+      const { map, max } = this._disc;
+      const D = map[qid];
+      if (D === undefined || D <= 0 || max <= 0) return null;
+      const ratio = D / max;
+      if (ratio >= 2 / 3) return 'high';
+      if (ratio >= 1 / 3) return 'mid';
+      return 'low';
+    },
+
     get recommendations() {
-      const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      return QUESTIONS.filter((q) => !this.isCompleted(q.id))
-        .map((q) => ({ q, D: TYPE_HANDLERS[q.type].discriminator(q, t5) }))
-        .filter((r) => r.D > 0)
+      const { map } = this._disc;
+      return Object.entries(map)
+        .filter(([, D]) => D > 0)
+        .map(([qid, D]) => ({ q: Q_BY_ID[qid], D }))
         .sort((a, b) => b.D - a.D)
         .slice(0, 5);
     },

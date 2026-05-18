@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=56" />
+    <link rel="stylesheet" href="styles.css?v=57" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -64,6 +64,20 @@
         <form @submit.prevent>
           <header>
             <h2 x-text="activeQuestion.text"></h2>
+            <template x-if="discriminatorLevel(activeQuestionId)">
+              <span
+                class="relevancy"
+                :data-level="discriminatorLevel(activeQuestionId)"
+                :aria-label="`Relevancy: ${discriminatorLevel(activeQuestionId)}`"
+              >
+                <span class="meter" aria-hidden="true">
+                  <span class="pip pip-low"></span>
+                  <span class="pip pip-mid"></span>
+                  <span class="pip pip-high"></span>
+                </span>
+                <span x-text="discriminatorLevel(activeQuestionId)"></span>
+              </span>
+            </template>
           </header>
 
           <template x-if="activeQuestion.type === 'matrix'">
@@ -229,7 +243,18 @@
                     :aria-current="activeQuestionId === rec.q.id ? 'true' : null"
                   >
                     <small x-text="stageLabelFor(rec.q)"></small>
-                    <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
+                    <span
+                      class="relevancy"
+                      :data-level="discriminatorLevel(rec.q.id)"
+                      :aria-label="`Relevancy: ${discriminatorLevel(rec.q.id)}`"
+                    >
+                      <span class="meter" aria-hidden="true">
+                        <span class="pip pip-low"></span>
+                        <span class="pip pip-mid"></span>
+                        <span class="pip pip-high"></span>
+                      </span>
+                      <span x-text="discriminatorLevel(rec.q.id)"></span>
+                    </span>
                     <span x-text="rec.q.text"></span>
                   </button>
                 </li>
@@ -307,7 +332,7 @@
 
     <script src="data.js?v=22"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=48"></script>
+    <script src="app.js?v=51"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
