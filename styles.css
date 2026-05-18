@@ -142,11 +142,74 @@ button,
   }
 }
 
+.relevancy {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: var(--sp-m);
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--c-fg-strong);
+  text-transform: uppercase;
+  transition: color var(--time);
+
+  --bg-pip-low: var(--c-fg-soft);
+  --bg-pip-mid: var(--c-fg-soft);
+  --bg-pip-high: var(--c-fg-soft);
+}
+
+.relevancy[data-level='low'] {
+  --bg-pip-low: currentcolor;
+}
+
+.relevancy[data-level='mid'] {
+  color: var(--c-fg);
+
+  --bg-pip-low: currentcolor;
+  --bg-pip-mid: currentcolor;
+}
+
+.relevancy[data-level='high'] {
+  font-weight: var(--font-bold);
+  color: var(--c-accent);
+
+  --bg-pip-low: currentcolor;
+  --bg-pip-mid: currentcolor;
+  --bg-pip-high: currentcolor;
+}
+
+.meter {
+  display: grid;
+  grid-template-columns: repeat(3, 3px);
+  gap: var(--sp-s);
+  place-items: end stretch;
+  height: 12px;
+}
+
+.pip {
+  transition: background var(--time);
+}
+
+.pip-low {
+  height: 33%;
+  background: var(--bg-pip-low);
+}
+
+.pip-mid {
+  height: 66%;
+  background: var(--bg-pip-mid);
+}
+
+.pip-high {
+  height: 100%;
+  background: var(--bg-pip-high);
+}
+
 li {
   display: contents;
 
   & > button {
-    grid-template-areas: 'stage text discriminator';
+    grid-template-areas: 'stage text relevancy';
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: var(--sp-s) var(--sp-l);
     place-items: center stretch;
@@ -160,15 +223,12 @@ li {
       color: var(--c-fg-strong);
     }
 
-    & > .discriminator {
-      grid-area: discriminator;
+    & > .relevancy {
+      grid-area: relevancy;
       place-self: center end;
-      font-family: var(--font-mono);
-      font-size: var(--text-sm);
-      color: var(--c-fg-strong);
     }
 
-    & > span:not(.discriminator) {
+    & > span:not(.relevancy) {
       grid-area: text;
       place-self: center start;
       overflow: hidden;

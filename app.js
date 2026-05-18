@@ -330,11 +330,34 @@ function app() {
       })).sort((a, b) => b.score - a.score);
     },
 
-    get recommendations() {
+    get _disc() {
       const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      return QUESTIONS.filter((q) => !this.isCompleted(q.id))
-        .map((q) => ({ q, D: TYPE_HANDLERS[q.type].discriminator(q, t5) }))
-        .filter((r) => r.D > 0)
+      const map = {};
+      let max = 0;
+      for (const q of QUESTIONS) {
+        if (this.isCompleted(q.id)) continue;
+        const D = TYPE_HANDLERS[q.type].discriminator(q, t5);
+        map[q.id] = D;
+        if (D > max) max = D;
+      }
+      return { map, max };
+    },
+
+    discriminatorLevel(qid) {
+      const { map, max } = this._disc;
+      const D = map[qid];
+      if (D === undefined || D <= 0 || max <= 0) return null;
+      const ratio = D / max;
+      if (ratio >= 2 / 3) return 'high';
+      if (ratio >= 1 / 3) return 'mid';
+      return 'low';
+    },
+
+    get recommendations() {
+      const { map } = this._disc;
+      return Object.entries(map)
+        .filter(([, D]) => D > 0)
+        .map(([qid, D]) => ({ q: Q_BY_ID[qid], D }))
         .sort((a, b) => b.D - a.D)
         .slice(0, 5);
     },
