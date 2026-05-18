@@ -213,7 +213,6 @@ window.DATA = {
       ],
     },
 
-    
     {
       id: 'Q5',
       stage: 1,
@@ -412,7 +411,7 @@ window.DATA = {
     },
 
     /* --- STAGE 3: TESTS --- */
-        {
+    {
       id: 'D1',
       stage: 3,
       group: 'Tests',
@@ -506,9 +505,9 @@ window.DATA = {
         { label: 'Damaged or debris', effects: { R72: 1, R73: 0.6 } },
       ],
     },
-        {
+    {
       id: 'Extra1',
-      stage: 3,
+      optional: true,
       group: 'Extra',
       text: 'Do you see water / wet ground?',
       highlight: ['water', 'lateral', 'valves'],
@@ -530,11 +529,11 @@ window.DATA = {
           effects: { R51: -0.4, R73: -0.4, R74: -0.4, R81: -0.4 },
         },
       ],
-    }, 
+    },
     {
       id: 'extra2',
-      stage: 3,
-      group: 'extra',
+      optional: true,
+      group: 'Extra',
       text: 'Dig & inspect hoses for damage?',
       highlight: ['water', 'lateral'],
       options: [
@@ -545,8 +544,8 @@ window.DATA = {
 
     {
       id: 'extra3',
-      stage: 3,
-      group: 'extra',
+      optional: true,
+      group: 'Extra',
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump', 'water'],
       options: [

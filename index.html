@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=52" />
+    <link rel="stylesheet" href="styles.css?v=53" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -185,6 +185,16 @@
             </button>
           </template>
         </nav>
+
+        <button
+          class="optional-entry"
+          type="button"
+          data-shape="ghost"
+          x-show="optionalCount > 0"
+          @click="enterOptional()"
+          :aria-current="activeQuestion.optional ? 'true' : null"
+          x-text="`+ Optional checks (${optionalCount})`"
+        ></button>
       </details>
 
       <details data-card="rank" open>
@@ -228,7 +238,7 @@
                     @click="goTo(rec.q.id)"
                     :aria-current="activeQuestionId === rec.q.id ? 'true' : null"
                   >
-                    <small x-text="STAGE_LABELS[rec.q.stage]"></small>
+                    <small x-text="stageLabelFor(rec.q)"></small>
                     <span class="discriminator" x-text="`D = ${rec.D.toFixed(2)}`"></span>
                     <span x-text="rec.q.text"></span>
                   </button>
@@ -255,7 +265,10 @@
             <dd x-text="SYSTEM.zoneFlow"></dd>
           </dl>
           <table
-            style="--sp-cols: 3; grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto"
+            style="
+              --sp-cols: 3;
+              grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
+            "
           >
             <template x-for="row in hwRows" :key="row.id">
               <tr>
@@ -302,9 +315,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=21"></script>
+    <script src="data.js?v=22"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=44"></script>
+    <script src="app.js?v=45"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>
