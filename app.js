@@ -332,7 +332,7 @@ function app() {
 
     get recommendations() {
       const t5 = this.ranked.slice(0, 5).map((r) => r.id);
-      return MAIN_QUESTIONS.filter((q) => !this.isCompleted(q.id))
+      return QUESTIONS.filter((q) => !this.isCompleted(q.id))
         .map((q) => ({ q, D: TYPE_HANDLERS[q.type].discriminator(q, t5) }))
         .filter((r) => r.D > 0)
         .sort((a, b) => b.D - a.D)
