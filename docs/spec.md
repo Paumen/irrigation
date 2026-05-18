@@ -13,7 +13,7 @@ Guide homeowners through fixing their irrigation system by asking step-by-step q
 
 ## Information Tracking
 
-We save user answers in one main place. All other details (like progress bars and problem rankings) are calculated automatically from those answers.
+We save user answers. Progress bars and problem rankings are calculated from those answers.
 
 - `answers` (stores the user's choice)
 - `activeQuestion` (the question currently on the screen)
