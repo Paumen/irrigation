@@ -24,7 +24,7 @@
   --line-bold: var(--line-width-m) solid var(--c-fg);
   --radius-circle: 50%;
   --time: 0.5s;
-  --accent-vt-rc: none;
+  --accent-vt-cause: none;
   --bg-grid-pattern:
     linear-gradient(var(--c-fg-soft) var(--line-width-s), transparent var(--line-width-s))
       calc(var(--line-width-s) * -1) calc(var(--line-width-s) * -1) / var(--sp-xl) var(--sp-xl),
@@ -64,7 +64,6 @@ main {
   gap: var(--sp-l);
 }
 
-section,
 details {
   position: relative;
   min-width: 0;
@@ -336,7 +335,7 @@ footer > button {
   }
 }
 
-[data-q='dates'] {
+[data-q='ages'] {
   display: grid;
   gap: var(--sp-l);
 }
@@ -348,8 +347,8 @@ nav {
   border-top: var(--line-passive);
 }
 
-[data-card='form'] {
-  view-transition-name: form-card;
+[data-card='questionnaire'] {
+  view-transition-name: questionnaire-card;
 }
 
 nav button {
@@ -459,7 +458,7 @@ nav button > .bar {
   border: none;
   border-bottom: var(--line-passive);
   transition: --c-sev-t var(--time);
-  view-transition-name: var(--accent-vt-rc);
+  view-transition-name: var(--accent-vt-cause);
 
   --c-rank-sev: color-mix(
     in oklch,
@@ -507,8 +506,8 @@ input[type='text'] {
   border: var(--line-passive);
 }
 
-[data-card='rank'] > div,
-[data-card='rec'] > div {
+[data-card='ranking'] > div,
+[data-card='recommendations'] > div {
   padding: var(--sp-s) var(--sp-l) var(--sp-l);
 }
 
@@ -602,28 +601,28 @@ summary:active {
 
 @container page (width >= 1080px) {
   main {
-    grid-template-areas: 'form rank' 'schematic rec' 'sysinfo sysinfo';
+    grid-template-areas: 'questionnaire ranking' 'map recommendations' 'equipment equipment';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 
-  [data-card='schematic'] {
-    grid-area: schematic;
+  [data-card='map'] {
+    grid-area: map;
   }
 
-  [data-card='form'] {
-    grid-area: form;
+  [data-card='questionnaire'] {
+    grid-area: questionnaire;
   }
 
-  [data-card='rank'] {
-    grid-area: rank;
+  [data-card='ranking'] {
+    grid-area: ranking;
   }
 
-  [data-card='rec'] {
-    grid-area: rec;
+  [data-card='recommendations'] {
+    grid-area: recommendations;
   }
 
-  [data-card='sysinfo'] {
-    grid-area: sysinfo;
+  [data-card='equipment'] {
+    grid-area: equipment;
   }
 }
 

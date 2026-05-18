@@ -13,8 +13,6 @@ window.OPT_ICONS = {
     '<polyline points="2,6 14,17 22,17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
   'pat-gradual-int':
     '<path d="M2,7 q2,-3 4,0 q2,3 4,0 t4,0 t4,0 t4,0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M2,7 L22,17" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2" opacity="0.5"/>',
-  'pat-intermittent':
-    '<polyline points="2,7 5,7 5,17 9,17 9,7 13,7 13,17 17,17 17,7 22,7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
   'pat-noise':
     '<polyline points="2,12 4,7 7,16 10,8 13,15 16,9 19,14 22,11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
   'flow-none':
@@ -27,12 +25,6 @@ window.OPT_ICONS = {
     '<polyline points="2,7 22,17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
   'flow-rise':
     '<polyline points="2,17 22,7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
-  'flow-fluct':
-    '<path d="M2,12 q2,-5 4,0 t4,0 t4,0 t4,0 t4,0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
-  'flow-late-drop':
-    '<polyline points="2,8 14,8 22,17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
-  'flow-surge':
-    '<polyline points="2,12 5,5 8,16 11,7 14,15 17,8 20,14 22,12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
   'flow-leak':
     '<path d="M12,4 C8,10 7,14 7,16 a5,5 0 0 0 10,0 c0,-2 -1,-6 -5,-12 Z" fill="currentColor"/>',
   'flow-geyser':

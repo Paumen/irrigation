@@ -10,26 +10,26 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=57" />
+    <link rel="stylesheet" href="styles.css?v=58" />
   </head>
   <body>
     <main x-data="app" x-cloak>
-      <details data-card="schematic" open>
-        <summary>Schematic</summary>
+      <details data-card="map" open>
+        <summary>Map</summary>
         <figure>
           <svg
             viewBox="0 -22 700 344"
             preserveAspectRatio="xMidYMid meet"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g x-html="renderDiagram()"></g>
+            <g x-html="renderMap()"></g>
           </svg>
         </figure>
       </details>
 
-      <details data-card="form" open>
+      <details data-card="questionnaire" open>
         <summary>
-          <span>Diagnostic</span>
+          <span>Questionnaire</span>
           <button
             type="button"
             data-tone="mute"
@@ -64,18 +64,18 @@
         <form @submit.prevent>
           <header>
             <h2 x-text="activeQuestion.text"></h2>
-            <template x-if="discriminatorLevel(activeQuestionId)">
+            <template x-if="relevancyLevel(activeQuestionId)">
               <span
                 class="relevancy"
-                :data-level="discriminatorLevel(activeQuestionId)"
-                :aria-label="`Relevancy: ${discriminatorLevel(activeQuestionId)}`"
+                :data-level="relevancyLevel(activeQuestionId)"
+                :aria-label="`Relevancy: ${relevancyLevel(activeQuestionId)}`"
               >
                 <span class="meter" aria-hidden="true">
                   <span class="pip pip-low"></span>
                   <span class="pip pip-mid"></span>
                   <span class="pip pip-high"></span>
                 </span>
-                <span x-text="discriminatorLevel(activeQuestionId)"></span>
+                <span x-text="relevancyLevel(activeQuestionId)"></span>
               </span>
             </template>
           </header>
@@ -110,16 +110,16 @@
             </div>
           </template>
 
-          <template x-if="activeQuestion.type === 'dates'">
-            <div data-q="dates">
+          <template x-if="activeQuestion.type === 'ages'">
+            <div data-q="ages">
               <table
                 style="--sp-cols: 2; grid-template-columns: minmax(110px, max-content) auto auto"
               >
                 <template x-for="row in activeQuestion.rows" :key="row.id">
                   <tr>
                     <th scope="row" x-text="row.label"></th>
-                    <td x-text="hwDateLabel(row.id)"></td>
-                    <td x-text="hwBucketLabel(row.id)"></td>
+                    <td x-text="equipmentDateLabel(row.id)"></td>
+                    <td x-text="equipmentBucketLabel(row.id)"></td>
                   </tr>
                 </template>
               </table>
@@ -132,12 +132,12 @@
                 >
                   Skip
                 </button>
-                <button type="button" data-tone="mute" @click="goToSysInfo()">
+                <button type="button" data-tone="mute" @click="goToEquipment()">
                   No — update dates
                 </button>
                 <button
                   type="button"
-                  @click="confirmDates()"
+                  @click="confirmAges()"
                   :aria-current="isAnswered(activeQuestionId) ? 'true' : null"
                 >
                   Yes — confirm
@@ -201,18 +201,18 @@
         </nav>
       </details>
 
-      <details data-card="rank" open>
-        <summary>Root-cause</summary>
+      <details data-card="ranking" open>
+        <summary>Causes</summary>
         <div x-data="seeMore(3)">
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
               <li x-show="visible(i)">
                 <div
                   class="rank-row"
-                  :style="`--accent-vt-rc: rc-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
+                  :style="`--accent-vt-cause: cause-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
                 >
                   <code x-text="r.id"></code>
-                  <span x-text="RC[r.id].label"></span>
+                  <span x-text="CAUSES[r.id].label"></span>
                   <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
                   <span class="percent" x-text="`${rankPct(r)}%`"></span>
                 </div>
@@ -230,7 +230,7 @@
         </div>
       </details>
 
-      <details data-card="rec" open>
+      <details data-card="recommendations" open>
         <summary>Recommended next check</summary>
         <div x-data="seeMore(2)">
           <template x-if="recommendations.length > 0">
@@ -245,15 +245,15 @@
                     <small x-text="stageLabelFor(rec.q)"></small>
                     <span
                       class="relevancy"
-                      :data-level="discriminatorLevel(rec.q.id)"
-                      :aria-label="`Relevancy: ${discriminatorLevel(rec.q.id)}`"
+                      :data-level="relevancyLevel(rec.q.id)"
+                      :aria-label="`Relevancy: ${relevancyLevel(rec.q.id)}`"
                     >
                       <span class="meter" aria-hidden="true">
                         <span class="pip pip-low"></span>
                         <span class="pip pip-mid"></span>
                         <span class="pip pip-high"></span>
                       </span>
-                      <span x-text="discriminatorLevel(rec.q.id)"></span>
+                      <span x-text="relevancyLevel(rec.q.id)"></span>
                     </span>
                     <span x-text="rec.q.text"></span>
                   </button>
@@ -272,8 +272,8 @@
         </div>
       </details>
 
-      <details data-card="sysinfo">
-        <summary><span>System Info</span></summary>
+      <details data-card="equipment">
+        <summary><span>Equipment</span></summary>
         <div>
           <dl>
             <dt>Zone flow</dt>
@@ -285,14 +285,14 @@
               grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
             "
           >
-            <template x-for="row in hwRows" :key="row.id">
+            <template x-for="row in equipmentRows" :key="row.id">
               <tr>
                 <th scope="row" x-text="row.label"></th>
                 <td>
                   <input
                     type="text"
-                    :value="hwModelLabel(row.id)"
-                    @input="setHwModel(row.id, $event.target.value)"
+                    :value="equipmentModelLabel(row.id)"
+                    @input="setEquipmentModel(row.id, $event.target.value)"
                     :aria-label="`${row.label} description`"
                   />
                 </td>
@@ -300,12 +300,12 @@
                   <input
                     type="date"
                     :max="todayISO"
-                    :value="hwDates[row.id] || ''"
-                    @input="setHwDate(row.id, $event.target.value)"
+                    :value="equipmentDates[row.id] || ''"
+                    @input="setEquipmentDate(row.id, $event.target.value)"
                     :aria-label="`${row.label} install or replacement date`"
                   />
                 </td>
-                <td x-text="hwAgeYearsLabel(row.id)"></td>
+                <td x-text="equipmentAgeYearsLabel(row.id)"></td>
               </tr>
             </template>
           </table>
@@ -330,9 +330,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=22"></script>
-    <script src="icons.js?v=15"></script>
-    <script src="app.js?v=51"></script>
+    <script src="data.js?v=23"></script>
+    <script src="icons.js?v=16"></script>
+    <script src="app.js?v=52"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

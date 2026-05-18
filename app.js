@@ -1,7 +1,7 @@
-const RC = Object.fromEntries(window.DATA.causes.map((c) => [c.id, c]));
-const ALL_IDS = Object.keys(RC);
+const CAUSES = Object.fromEntries(window.DATA.causes.map((c) => [c.id, c]));
+const ALL_IDS = Object.keys(CAUSES);
 
-const RC_CHILDREN = (() => {
+const CAUSE_CHILDREN = (() => {
   const m = {};
   for (const c of window.DATA.causes) (m[c.parent] ||= []).push(c.id);
   return m;
@@ -13,7 +13,7 @@ function expandEffects(effects) {
   if (!effects) return effects;
   const out = {};
   for (const [k, v] of Object.entries(effects)) {
-    const kids = RC_CHILDREN[k];
+    const kids = CAUSE_CHILDREN[k];
     if (!kids) {
       out[k] = v;
       continue;
@@ -34,7 +34,7 @@ function expandStepRows(q) {
       ...row,
       steps: labels.map((label, i) => ({
         label,
-        effects: i === 0 ? {} : Object.fromEntries(causes.map((rc) => [rc, curve[i - 1] ?? 0])),
+        effects: i === 0 ? {} : Object.fromEntries(causes.map((id) => [id, curve[i - 1] ?? 0])),
       })),
     };
   });
@@ -46,7 +46,7 @@ const QUESTIONS = window.DATA.questions
     if (next.type === 'matrix') {
       next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
       next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
-    } else if (next.type === 'dates') {
+    } else if (next.type === 'ages') {
       next.rows = expandStepRows(next).map((r) => ({
         ...r,
         steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
@@ -61,7 +61,7 @@ const QUESTIONS = window.DATA.questions
 const MAIN_QUESTIONS = QUESTIONS.filter((q) => !q.optional);
 const OPTIONAL_QUESTIONS = QUESTIONS.filter((q) => q.optional);
 
-const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
+const AGES_Q = QUESTIONS.find((q) => q.type === 'ages') || null;
 
 const Q_BY_ID = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
 
@@ -75,15 +75,15 @@ const TYPE_HANDLERS = {
     score(q, ans, s) {
       const opt = q.options[ans];
       if (!opt) return;
-      for (const [rc, delta] of Object.entries(opt.effects)) {
-        s[rc] = (s[rc] || 0) + delta;
+      for (const [id, delta] of Object.entries(opt.effects)) {
+        s[id] = (s[id] || 0) + delta;
       }
     },
     discriminator(q, ids) {
       let D = 0;
       let breadth = 0;
-      for (const rcId of ids) {
-        const deltas = q.options.map((o) => o.effects[rcId] || 0);
+      for (const causeId of ids) {
+        const deltas = q.options.map((o) => o.effects[causeId] || 0);
         const spread = Math.max(...deltas) - Math.min(...deltas);
         if (spread > 0) breadth++;
         D += spread;
@@ -100,8 +100,8 @@ const TYPE_HANDLERS = {
       for (const row of q.rows) {
         const m = colMul[ans[row.id] || 'no'] || 0;
         if (m === 0) continue;
-        for (const [rc, delta] of Object.entries(row.effects)) {
-          s[rc] = (s[rc] || 0) + delta * m;
+        for (const [id, delta] of Object.entries(row.effects)) {
+          s[id] = (s[id] || 0) + delta * m;
         }
       }
     },
@@ -111,11 +111,11 @@ const TYPE_HANDLERS = {
       let D = 0;
       const affected = new Set();
       for (const row of q.rows) {
-        for (const rcId of ids) {
-          const e = Math.abs(row.effects[rcId] || 0);
+        for (const causeId of ids) {
+          const e = Math.abs(row.effects[causeId] || 0);
           if (e > 0) {
             D += e * multSpread;
-            affected.add(rcId);
+            affected.add(causeId);
           }
         }
       }
@@ -125,15 +125,15 @@ const TYPE_HANDLERS = {
       return Object.keys(ans).length > 0;
     },
   },
-  dates: {
+  ages: {
     score(q, ans, s) {
       for (const row of q.rows) {
         const idx = ans[row.id];
         if (idx === undefined || idx === null) continue;
         const step = row.steps[idx];
         if (!step) continue;
-        for (const [rc, delta] of Object.entries(step.effects)) {
-          s[rc] = (s[rc] || 0) + delta;
+        for (const [id, delta] of Object.entries(step.effects)) {
+          s[id] = (s[id] || 0) + delta;
         }
       }
     },
@@ -141,12 +141,12 @@ const TYPE_HANDLERS = {
       let D = 0;
       const affected = new Set();
       for (const row of q.rows) {
-        for (const rcId of ids) {
-          const deltas = row.steps.map((st) => st.effects[rcId] || 0);
+        for (const causeId of ids) {
+          const deltas = row.steps.map((st) => st.effects[causeId] || 0);
           const spread = Math.max(...deltas) - Math.min(...deltas);
           if (spread > 0) {
             D += spread;
-            affected.add(rcId);
+            affected.add(causeId);
           }
         }
       }
@@ -172,7 +172,7 @@ function ageYears(dateStr) {
   return d ? (Date.now() - d.getTime()) / MS_PER_YEAR : null;
 }
 
-function dateStepIndex(years, buckets) {
+function ageStepIndex(years, buckets) {
   if (years === null) return 0;
   for (let i = 0; i < buckets.length; i++) if (years < buckets[i]) return i + 1;
   return buckets.length + 1;
@@ -181,7 +181,7 @@ function dateStepIndex(years, buckets) {
 const STAGES = window.DATA.stages.map((s) => s.id);
 const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
 const STAGE_QS = Object.fromEntries(STAGES.map((s) => [s, QUESTIONS.filter((q) => q.stage === s)]));
-const STORAGE_KEY = 'irrigation:v1';
+const STORAGE_KEY = 'irrigation:v2';
 const SEVERITY_FULL_PCT = 18;
 
 const BOX_W = 120;
@@ -194,7 +194,7 @@ const NODES = [
   { key: 'sw', x: 12, y: 10, image: 'media/software.png' },
   { key: 'ctrl', x: 285, y: 10, image: 'media/controller.png' },
   { key: 'relay', x: 558, y: 10, image: 'media/relay.png' },
-  { key: 'sp4', x: 12, y: 170, image: 'media/rotor.png' },
+  { key: 'rotor', x: 12, y: 170, image: 'media/rotor.png' },
   { key: 'valves', x: 285, y: 170, image: 'media/valves.png' },
   { key: 'pump', x: 558, y: 170, image: 'media/pump.png' },
 ].map((n) => ({ ...n, w: BOX_W, h: BOX_H, iconX: n.x + ICON_INSET_X, iconY: n.y + ICON_INSET_Y }));
@@ -244,7 +244,7 @@ function app() {
   return {
     QUESTIONS,
     NODES,
-    RC,
+    CAUSES,
     OPT_ICONS: window.OPT_ICONS,
     STAGES,
     STAGE_LABELS,
@@ -252,8 +252,8 @@ function app() {
 
     answers: {},
     skipped: {},
-    hwDates: { ...(window.DATA.hwDefaults || {}) },
-    hwModels: {},
+    equipmentDates: { ...(window.DATA.equipmentDefaults || {}) },
+    equipmentModels: {},
     activeQuestionId: MAIN_QUESTIONS[0].id,
 
     severityT,
@@ -263,14 +263,16 @@ function app() {
       if (saved) {
         if (saved.answers && typeof saved.answers === 'object') this.answers = saved.answers;
         if (saved.skipped && typeof saved.skipped === 'object') this.skipped = saved.skipped;
-        if (saved.hwDates && typeof saved.hwDates === 'object') this.hwDates = saved.hwDates;
-        if (saved.hwModels && typeof saved.hwModels === 'object') this.hwModels = saved.hwModels;
+        if (saved.equipmentDates && typeof saved.equipmentDates === 'object')
+          this.equipmentDates = saved.equipmentDates;
+        if (saved.equipmentModels && typeof saved.equipmentModels === 'object')
+          this.equipmentModels = saved.equipmentModels;
         if (Q_BY_ID[saved.activeQuestionId]) this.activeQuestionId = saved.activeQuestionId;
       }
       this.$watch('answers', () => this._persist());
       this.$watch('skipped', () => this._persist());
-      this.$watch('hwDates', () => this._persist());
-      this.$watch('hwModels', () => this._persist());
+      this.$watch('equipmentDates', () => this._persist());
+      this.$watch('equipmentModels', () => this._persist());
       this.$watch('activeQuestionId', () => this._persist());
     },
 
@@ -281,21 +283,21 @@ function app() {
           JSON.stringify({
             answers: this.answers,
             skipped: this.skipped,
-            hwDates: this.hwDates,
-            hwModels: this.hwModels,
+            equipmentDates: this.equipmentDates,
+            equipmentModels: this.equipmentModels,
             activeQuestionId: this.activeQuestionId,
           })
         );
       } catch {}
     },
 
-    hwModelLabel(rowId) {
-      const row = DATES_Q?.rows.find((r) => r.id === rowId);
-      return this.hwModels[rowId] ?? row?.model ?? '';
+    equipmentModelLabel(rowId) {
+      const row = AGES_Q?.rows.find((r) => r.id === rowId);
+      return this.equipmentModels[rowId] ?? row?.model ?? '';
     },
 
-    setHwModel(rowId, value) {
-      this.hwModels = { ...this.hwModels, [rowId]: value };
+    setEquipmentModel(rowId, value) {
+      this.equipmentModels = { ...this.equipmentModels, [rowId]: value };
     },
 
     isCompleted(qid) {
@@ -308,7 +310,7 @@ function app() {
 
     get ranked() {
       const s = {};
-      for (const id of ALL_IDS) s[id] = RC[id].baseline;
+      for (const id of ALL_IDS) s[id] = CAUSES[id].baseline;
       for (const q of QUESTIONS) {
         const ans = this.answers[q.id];
         if (ans === undefined || ans === null) continue;
@@ -349,7 +351,7 @@ function app() {
       return { map, max };
     },
 
-    discriminatorLevel(qid) {
+    relevancyLevel(qid) {
       const { map, max } = this._disc;
       const D = map[qid];
       if (D === undefined || D <= 0 || max <= 0) return null;
@@ -452,53 +454,53 @@ function app() {
       }, 600);
     },
 
-    get hwRows() {
-      return DATES_Q ? DATES_Q.rows : [];
+    get equipmentRows() {
+      return AGES_Q ? AGES_Q.rows : [];
     },
 
     get todayISO() {
       return new Date().toISOString().slice(0, 10);
     },
 
-    hwDateLabel(rowId) {
-      const d = parseDate(this.hwDates[rowId]);
+    equipmentDateLabel(rowId) {
+      const d = parseDate(this.equipmentDates[rowId]);
       return d ? DATE_FMT.format(d) : 'not set';
     },
 
-    hwBucketLabel(rowId) {
-      if (!DATES_Q) return '';
-      const idx = dateStepIndex(ageYears(this.hwDates[rowId]), DATES_Q.ageBuckets);
-      return DATES_Q.stepLabels[idx] || '';
+    equipmentBucketLabel(rowId) {
+      if (!AGES_Q) return '';
+      const idx = ageStepIndex(ageYears(this.equipmentDates[rowId]), AGES_Q.ageBuckets);
+      return AGES_Q.stepLabels[idx] || '';
     },
 
-    hwAgeYearsLabel(rowId) {
-      const y = ageYears(this.hwDates[rowId]);
+    equipmentAgeYearsLabel(rowId) {
+      const y = ageYears(this.equipmentDates[rowId]);
       return y === null ? '—' : `${Math.floor(y)} yr${Math.floor(y) === 1 ? '' : 's'}`;
     },
 
-    _datesAnswer() {
-      if (!DATES_Q) return {};
+    _agesAnswer() {
+      if (!AGES_Q) return {};
       return Object.fromEntries(
-        DATES_Q.rows.map((row) => [
+        AGES_Q.rows.map((row) => [
           row.id,
-          dateStepIndex(ageYears(this.hwDates[row.id]), DATES_Q.ageBuckets),
+          ageStepIndex(ageYears(this.equipmentDates[row.id]), AGES_Q.ageBuckets),
         ])
       );
     },
 
-    setHwDate(rowId, dateStr) {
-      this.hwDates = { ...this.hwDates, [rowId]: dateStr };
-      if (DATES_Q && this.answers[DATES_Q.id] !== undefined) {
-        this.answers = { ...this.answers, [DATES_Q.id]: this._datesAnswer() };
+    setEquipmentDate(rowId, dateStr) {
+      this.equipmentDates = { ...this.equipmentDates, [rowId]: dateStr };
+      if (AGES_Q && this.answers[AGES_Q.id] !== undefined) {
+        this.answers = { ...this.answers, [AGES_Q.id]: this._agesAnswer() };
       }
     },
 
-    confirmDates() {
-      this.setAnswer(this._datesAnswer(), { advance: true });
+    confirmAges() {
+      this.setAnswer(this._agesAnswer(), { advance: true });
     },
 
-    goToSysInfo() {
-      const el = document.querySelector('[data-card="sysinfo"]');
+    goToEquipment() {
+      const el = document.querySelector('[data-card="equipment"]');
       if (!el) return;
       el.open = true;
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -547,7 +549,7 @@ function app() {
       return Math.min(r.pct * 6.25, 100) + '%';
     },
 
-    renderDiagram() {
+    renderMap() {
       return NODES.map((b) => {
         const act = this.isHighlighted(b.key) ? ' aria-current="true"' : '';
         return (

@@ -1,16 +1,16 @@
-const EVENT_COLS = [
+const TIMELINE_COLS = [
   { id: 'right', label: 'Started right after', mult: 0.8 },
   { id: 'days', label: 'Started week(s) after', mult: 0.4 },
   { id: 'worse', label: 'Worsened (same)', mult: 0.0 },
   { id: 'faster', label: 'Worsened (faster)', mult: 0.4 },
 ];
-const eventColsWithDays = (days) =>
-  EVENT_COLS.map((c) => (c.id === 'days' ? { ...c, mult: days } : c));
+const timelineColsWithDays = (days) =>
+  TIMELINE_COLS.map((c) => (c.id === 'days' ? { ...c, mult: days } : c));
 
 window.DATA = {
   stages: [
     { id: 1, label: 'Symptoms' },
-    { id: 2, label: 'Events' },
+    { id: 2, label: 'Timeline' },
     { id: 3, label: 'Tests' },
   ],
   system: {
@@ -19,18 +19,18 @@ window.DATA = {
     zoneFlow: '~2 m³/h',
     waterSource: 'Well pump',
     mainHose: 'PE 32 mm (pump → valve box)',
-    zoneHose: 'PE 25 mm (zones)',
+    hose: 'PE 25 mm (zones)',
   },
-  hwDefaults: {
+  equipmentDefaults: {
     pump: '2023-01-01',
     valves: '2026-05-01',
     relay: '2020-08-01',
     ctrl: '2020-08-01',
-    spr: '2020-08-01',
+    rotor: '2020-08-01',
     mainHose: '2020-08-01',
-    zoneHose: '2020-08-01',
+    hose: '2020-08-01',
   },
-  
+
   sliderCurves: {
     standard: [-0.2, 0, 0.2, 0.4],
     fast: [-0.2, 0.2, 0.2, 0.4],
@@ -44,8 +44,8 @@ window.DATA = {
     { id: 'R31', parent: 'R3', baseline: 1.2, label: 'Relay wiring fault' },
     { id: 'R41', parent: 'R4', baseline: 1.3, label: 'Pump suction-side fault' },
     { id: 'R42', parent: 'R4', baseline: 1.1, label: 'Pump hardware failure' },
-    { id: 'R51', parent: 'R5', baseline: 1.2, label: 'Main hose 32mm leak / break' },
-    { id: 'R52', parent: 'R5', baseline: 0.8, label: 'Main hose 32mm air / debris clog' },
+    { id: 'R51', parent: 'R5', baseline: 1.2, label: 'Main hose 32 mm leak / break' },
+    { id: 'R52', parent: 'R5', baseline: 0.8, label: 'Main hose 32 mm air / debris clog' },
     { id: 'R61', parent: 'R6', baseline: 1.2, label: 'Per-zone hot conductor fault' },
     { id: 'R62', parent: 'R6', baseline: 1.4, label: 'Common wire fault' },
     { id: 'R63', parent: 'R6', baseline: 0.8, label: 'Wire-to-triac connection fault' },
@@ -53,8 +53,8 @@ window.DATA = {
     { id: 'R72', parent: 'R7', baseline: 1.4, label: 'Diaphragm failure' },
     { id: 'R73', parent: 'R7', baseline: 0.7, label: 'Valve body / seal failure' },
     { id: 'R74', parent: 'R7', baseline: 0.8, label: 'Valve misconfiguration' },
-    { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Zone hoses 25mm / fitting damage' },
-    { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Zone hoses 25mm air / debris clog' },
+    { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Hoses 25 mm / fitting damage' },
+    { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Hoses 25 mm air / debris clog' },
     { id: 'R91', parent: 'R9', baseline: 1.1, label: 'Rotor debris / nozzle' },
     { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Rotor misconfigured' },
   ],
@@ -63,9 +63,8 @@ window.DATA = {
     {
       id: 'Q1',
       stage: 1,
-      group: 'Symptoms',
       text: 'Scope of failure?',
-      highlight: ['sp4', 'valves'],
+      highlight: ['rotor', 'valves'],
       options: [
         {
           label: 'All zones fail',
@@ -92,7 +91,6 @@ window.DATA = {
     {
       id: 'Q2',
       stage: 1,
-      group: 'Symptoms',
       text: 'Same issue when starting via app vs controller?',
       highlight: ['sw', 'ctrl'],
       options: [
@@ -113,7 +111,6 @@ window.DATA = {
     {
       id: 'Q3',
       stage: 1,
-      group: 'Symptoms',
       text: 'How does the pump behave when turned on?',
       highlight: ['pump'],
       options: [
@@ -134,9 +131,8 @@ window.DATA = {
     {
       id: 'Q4',
       stage: 1,
-      group: 'Symptoms',
       text: 'How does water leave rotors?',
-      highlight: ['sp4'],
+      highlight: ['rotor'],
       options: [
         {
           label: 'No water at all',
@@ -184,7 +180,6 @@ window.DATA = {
     {
       id: 'Q5',
       stage: 1,
-      group: 'Symptoms',
       text: 'How is the flow at the manual hose?',
       highlight: ['pump'],
       options: [
@@ -206,7 +201,6 @@ window.DATA = {
     {
       id: 'Q6',
       stage: 1,
-      group: 'Symptoms',
       text: 'What do you hear when valve activates?',
       highlight: ['valves', 'ctrl'],
       options: [
@@ -231,7 +225,6 @@ window.DATA = {
     {
       id: 'Q7',
       stage: 1,
-      group: 'Symptoms',
       text: 'Did restarting anything help?',
       highlight: ['ctrl', 'sw', 'pump', 'relay'],
       options: [
@@ -254,11 +247,10 @@ window.DATA = {
       ],
     },
 
-    /* --- STAGE 2: EVENTS --- */
+    /* --- STAGE 2: TIMELINE --- */
     {
-      id: 'E1',
+      id: 'Q8',
       stage: 2,
-      group: 'Events',
       text: 'How did the problem progress?',
       options: [
         {
@@ -284,12 +276,11 @@ window.DATA = {
       ],
     },
     {
-      id: 'E2',
+      id: 'Q9',
       stage: 2,
-      type: 'dates',
-      group: 'Events',
+      type: 'ages',
       text: 'Do these dates still reflect the latest replacements?',
-      highlight: ['pump', 'valves', 'relay', 'ctrl', 'sp4'],
+      highlight: ['pump', 'valves', 'relay', 'ctrl', 'rotor'],
       stepLabels: ['—', '0–4 yrs', '4–8 yrs', '8–12 yrs', '12+ yrs'],
       ageBuckets: [4, 8, 12],
       rows: [
@@ -322,7 +313,7 @@ window.DATA = {
           causes: ['R12', 'R22', 'R23'],
         },
         {
-          id: 'spr',
+          id: 'rotor',
           label: 'Rotors',
           model: 'Hunter I-20 + MP rotators',
           curve: 'standard',
@@ -336,8 +327,8 @@ window.DATA = {
           causes: ['R51'],
         },
         {
-          id: 'zoneHose',
-          label: 'Zone hose',
+          id: 'hose',
+          label: 'Hose',
           model: 'PE 25 mm (zones)',
           curve: 'standard',
           causes: ['R81'],
@@ -345,29 +336,27 @@ window.DATA = {
       ],
     },
     {
-      id: 'E3',
+      id: 'Q10',
       stage: 2,
       type: 'matrix',
-      group: 'Events',
       text: 'Recent service or work — relation to issue?',
-      columns: EVENT_COLS,
+      columns: TIMELINE_COLS,
       rows: [
         { id: 'pump', label: 'Pump', effects: { R4: 1 } },
         { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
         { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.8 } },
         { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.8 } },
-        { id: 'spr', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
-        { id: 'zhose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
+        { id: 'rotor', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
+        { id: 'hose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
         { id: 'wiring', label: 'Wiring', effects: { R6: 1 } },
       ],
     },
     {
-      id: 'E4',
+      id: 'Q11',
       stage: 2,
       type: 'matrix',
-      group: 'Events',
       text: 'External events — relation to issue?',
-      columns: eventColsWithDays(0.6),
+      columns: timelineColsWithDays(0.6),
       rows: [
         { id: 'storm', label: 'Storm / lightning', effects: { R22: 1, R6: 1, R12: 1 } },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
@@ -380,9 +369,8 @@ window.DATA = {
 
     /* --- STAGE 3: TESTS --- */
     {
-      id: 'D1',
+      id: 'Q12',
       stage: 3,
-      group: 'Tests',
       text: 'Manual open valve solenoid / bleed screw, runs?',
       highlight: ['valves'],
       options: [
@@ -397,9 +385,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'D2',
+      id: 'Q13',
       stage: 3,
-      group: 'Tests',
       text: 'Controller voltage during call (~24 VAC)?',
       highlight: ['ctrl', 'valves'],
       options: [
@@ -412,9 +399,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'D3',
+      id: 'Q14',
       stage: 3,
-      group: 'Tests',
       text: '24 VAC at controller pump start-relay during call?',
       highlight: ['ctrl', 'relay'],
       options: [
@@ -424,9 +410,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'D4',
+      id: 'Q15',
       stage: 3,
-      group: 'Tests',
       text: 'Resistance common wire slot and zone in controller?',
       highlight: ['ctrl', 'valves'],
       options: [
@@ -436,9 +421,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'D5',
+      id: 'Q16',
       stage: 3,
-      group: 'Tests',
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
       highlight: ['valves'],
       options: [
@@ -449,9 +433,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'D6',
+      id: 'Q17',
       stage: 3,
-      group: 'Tests',
       text: 'Swap valve with known-good — issue stays with zone?',
       highlight: ['valves'],
       options: [
@@ -463,9 +446,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'D7',
+      id: 'Q18',
       stage: 3,
-      group: 'Tests',
       text: 'Open each valve and inspect internals?',
       highlight: ['valves'],
       options: [
@@ -474,9 +456,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'Extra1',
+      id: 'QX1',
       optional: true,
-      group: 'Extra',
       text: 'Do you see water / wet ground?',
       highlight: ['valves'],
       options: [
@@ -499,9 +480,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'extra2',
+      id: 'QX2',
       optional: true,
-      group: 'Extra',
       text: 'Dig & inspect hoses for damage?',
       highlight: [],
       options: [
@@ -511,9 +491,8 @@ window.DATA = {
     },
 
     {
-      id: 'extra3',
+      id: 'QX3',
       optional: true,
-      group: 'Extra',
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump'],
       options: [
