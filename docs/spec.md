@@ -1,4 +1,4 @@
-# Spec
+# High level spec
 
 ## Goal
 
