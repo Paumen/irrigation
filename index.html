@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=53" />
+    <link rel="stylesheet" href="styles.css?v=54" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -185,16 +185,6 @@
             </button>
           </template>
         </nav>
-
-        <button
-          class="optional-entry"
-          type="button"
-          data-shape="ghost"
-          x-show="optionalCount > 0"
-          @click="enterOptional()"
-          :aria-current="activeQuestion.optional ? 'true' : null"
-          x-text="`+ Optional checks (${optionalCount})`"
-        ></button>
       </details>
 
       <details data-card="rank" open>
@@ -254,6 +244,13 @@
               x-text="label(recommendations.length)"
             ></button>
           </template>
+          <button
+            type="button"
+            data-shape="ghost"
+            x-show="optionalCount > 0"
+            @click="enterOptional()"
+            x-text="`+ Browse optional checks (${optionalCount})`"
+          ></button>
         </div>
       </details>
 

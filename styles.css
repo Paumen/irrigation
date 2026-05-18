@@ -308,11 +308,6 @@ nav button[aria-current] {
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
-.optional-entry {
-  border-top: var(--line-passive);
-  border-radius: 0;
-}
-
 /* ══════════ 4 · TABLE    ══════════ */
 
 [data-q='matrix'] {
@@ -550,18 +545,23 @@ summary:active {
     grid-template-areas: 'form rank' 'schematic rec' 'sysinfo sysinfo';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
+
   [data-card='schematic'] {
     grid-area: schematic;
   }
+
   [data-card='form'] {
     grid-area: form;
   }
+
   [data-card='rank'] {
     grid-area: rank;
   }
+
   [data-card='rec'] {
     grid-area: rec;
   }
+
   [data-card='sysinfo'] {
     grid-area: sysinfo;
   }
