@@ -74,9 +74,9 @@ const TYPE_HANDLERS = {
         s[rc] = (s[rc] || 0) + delta;
       }
     },
-    discriminator(q, t5) {
+    discriminator(q, ids) {
       let D = 0;
-      for (const rcId of t5) {
+      for (const rcId of ids) {
         const deltas = q.options.map((o) => o.effects[rcId] || 0);
         D += Math.max(...deltas) - Math.min(...deltas);
       }
@@ -97,12 +97,12 @@ const TYPE_HANDLERS = {
         }
       }
     },
-    discriminator(q, t5) {
+    discriminator(q, ids) {
       const mults = q.columns.map((c) => c.mult);
       const spread = Math.max(...mults) - Math.min(...mults);
       let D = 0;
       for (const row of q.rows) {
-        for (const rcId of t5) D += Math.abs(row.effects[rcId] || 0) * spread;
+        for (const rcId of ids) D += Math.abs(row.effects[rcId] || 0) * spread;
       }
       return D;
     },
@@ -122,10 +122,10 @@ const TYPE_HANDLERS = {
         }
       }
     },
-    discriminator(q, t5) {
+    discriminator(q, ids) {
       let D = 0;
       for (const row of q.rows) {
-        for (const rcId of t5) {
+        for (const rcId of ids) {
           const deltas = row.steps.map((st) => st.effects[rcId] || 0);
           D += Math.max(...deltas) - Math.min(...deltas);
         }
@@ -330,13 +330,26 @@ function app() {
       })).sort((a, b) => b.score - a.score);
     },
 
+    // Causes still "in contention" — pct within a factor of the leader and
+    // above an absolute floor. Wide & flat ranking → many causes; concentrated
+    // ranking → only the leaders. Floor of 3 avoids degenerate single-cause
+    // comparisons. This is what the discriminator scores against.
+    get _contendingIds() {
+      const ranked = this.ranked;
+      if (ranked.length === 0) return [];
+      const leader = ranked[0].pct;
+      const cutoff = Math.max(2, leader * 0.3);
+      const ids = ranked.filter((r) => r.pct >= cutoff).map((r) => r.id);
+      return ids.length >= 3 ? ids : ranked.slice(0, 3).map((r) => r.id);
+    },
+
     get _disc() {
-      const t5 = this.ranked.slice(0, 5).map((r) => r.id);
+      const ids = this._contendingIds;
       const map = {};
       let max = 0;
       for (const q of QUESTIONS) {
         if (this.isCompleted(q.id)) continue;
-        const D = TYPE_HANDLERS[q.type].discriminator(q, t5);
+        const D = TYPE_HANDLERS[q.type].discriminator(q, ids);
         map[q.id] = D;
         if (D > max) max = D;
       }
