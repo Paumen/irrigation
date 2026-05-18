@@ -6,7 +6,7 @@ Guide homeowners through fixing their irrigation system by asking step-by-step q
 
 ## Core Objectives
 
-- **Diagnosis:** A flexible questionnaire where users can skip, change, or answer questions in any order.
+- **Diagnosis:** A flexible questionnaire where users can forward, change, or answer questions in any order.
 - **Ranking:** Real-time percentages showing the most likely causes, sorted from highest to lowest.
 - **Map:** An interactive map of the irrigation system.
 - **Look and Feel:** Designed to look like an "engineering worksheet" / "diagnostics tool" / "system status dashboard".
