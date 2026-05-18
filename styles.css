@@ -382,6 +382,7 @@ input[type='radio']:checked {
 
 nav button > .bar {
   grid-column: 1 / -1;
+  margin: 0 0 0 var(--sp-l);
 }
 
 .rank-row {
