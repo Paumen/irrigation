@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=49" />
+    <link rel="stylesheet" href="styles.css?v=52" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -99,12 +99,11 @@
           <template x-if="activeQuestion.type === 'dates'">
             <div data-q="dates">
               <table
-                style="--sp-cols: 3; grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto"
+                style="--sp-cols: 2; grid-template-columns: minmax(110px, max-content) auto auto"
               >
                 <template x-for="row in activeQuestion.rows" :key="row.id">
                   <tr>
                     <th scope="row" x-text="row.label"></th>
-                    <td x-text="row.model || ''"></td>
                     <td x-text="hwDateLabel(row.id)"></td>
                     <td x-text="hwBucketLabel(row.id)"></td>
                   </tr>
@@ -115,14 +114,20 @@
                   type="button"
                   data-tone="mute"
                   @click="moveBy(1, { markComplete: true })"
-                  :disabled="isLast"
+                  :disabled="isLast || isAnswered(activeQuestionId)"
                 >
                   Skip
                 </button>
                 <button type="button" data-tone="mute" @click="goToSysInfo()">
                   No — update dates
                 </button>
-                <button type="button" @click="confirmDates()">Yes — confirm</button>
+                <button
+                  type="button"
+                  @click="confirmDates()"
+                  :aria-current="isAnswered(activeQuestionId) ? 'true' : null"
+                >
+                  Yes — confirm
+                </button>
               </footer>
             </div>
           </template>
@@ -152,7 +157,12 @@
 
           <template x-if="activeQuestion.type === 'matrix'">
             <footer>
-              <button type="button" data-tone="mute" @click="moveBy(1)" :disabled="isLast">
+              <button
+                type="button"
+                data-tone="mute"
+                @click="moveBy(1)"
+                :disabled="isLast || isAnswered(activeQuestionId)"
+              >
                 Skip
               </button>
               <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">
@@ -241,11 +251,6 @@
         <summary><span>System Info</span></summary>
         <div>
           <dl>
-            
-            <dt>Main hose</dt>
-            <dd x-text="SYSTEM.mainHose"></dd>
-            <dt>Zone hose</dt>
-            <dd x-text="SYSTEM.zoneHose"></dd>
             <dt>Zone flow</dt>
             <dd x-text="SYSTEM.zoneFlow"></dd>
           </dl>
@@ -255,7 +260,14 @@
             <template x-for="row in hwRows" :key="row.id">
               <tr>
                 <th scope="row" x-text="row.label"></th>
-                <td x-text="row.model || ''"></td>
+                <td>
+                  <input
+                    type="text"
+                    :value="hwModelLabel(row.id)"
+                    @input="setHwModel(row.id, $event.target.value)"
+                    :aria-label="`${row.label} description`"
+                  />
+                </td>
                 <td>
                   <input
                     type="date"
@@ -290,9 +302,9 @@
       </dialog>
     </main>
 
-    <script src="data.js?v=20"></script>
+    <script src="data.js?v=21"></script>
     <script src="icons.js?v=15"></script>
-    <script src="app.js?v=43"></script>
+    <script src="app.js?v=44"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

@@ -255,6 +255,7 @@ function app() {
     answers: {},
     skipped: {},
     hwDates: { ...(window.DATA.hwDefaults || {}) },
+    hwModels: {},
     activeQuestionId: QUESTIONS[0].id,
 
     severityT,
@@ -265,11 +266,13 @@ function app() {
         if (saved.answers && typeof saved.answers === 'object') this.answers = saved.answers;
         if (saved.skipped && typeof saved.skipped === 'object') this.skipped = saved.skipped;
         if (saved.hwDates && typeof saved.hwDates === 'object') this.hwDates = saved.hwDates;
+        if (saved.hwModels && typeof saved.hwModels === 'object') this.hwModels = saved.hwModels;
         if (Q_BY_ID[saved.activeQuestionId]) this.activeQuestionId = saved.activeQuestionId;
       }
       this.$watch('answers', () => this._persist());
       this.$watch('skipped', () => this._persist());
       this.$watch('hwDates', () => this._persist());
+      this.$watch('hwModels', () => this._persist());
       this.$watch('activeQuestionId', () => this._persist());
     },
 
@@ -281,10 +284,20 @@ function app() {
             answers: this.answers,
             skipped: this.skipped,
             hwDates: this.hwDates,
+            hwModels: this.hwModels,
             activeQuestionId: this.activeQuestionId,
           })
         );
       } catch {}
+    },
+
+    hwModelLabel(rowId) {
+      const row = DATES_Q?.rows.find((r) => r.id === rowId);
+      return this.hwModels[rowId] ?? row?.model ?? '';
+    },
+
+    setHwModel(rowId, value) {
+      this.hwModels = { ...this.hwModels, [rowId]: value };
     },
 
     isCompleted(qid) {
@@ -390,7 +403,12 @@ function app() {
     },
 
     handleAnswer(i) {
-      this.setAnswer(i, { advance: true });
+      const qid = this.activeQuestionId;
+      this.setAnswer(i);
+      setTimeout(() => {
+        if (this.activeQuestionId !== qid) return;
+        this.moveBy(1);
+      }, 600);
     },
 
     get hwRows() {
@@ -484,7 +502,7 @@ function app() {
       return Math.round(r.pct);
     },
     barWidth(r) {
-      return Math.min(r.pct * 5, 100) + '%';
+      return Math.min(r.pct * 6.25, 100) + '%';
     },
 
     renderDiagram() {
