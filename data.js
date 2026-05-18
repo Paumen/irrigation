@@ -213,6 +213,81 @@ window.DATA = {
       ],
     },
 
+    
+    {
+      id: 'Q5',
+      stage: 1,
+      group: 'Symptoms',
+      text: 'How is the flow at the manual hose?',
+      highlight: ['pump', 'water'],
+      options: [
+        {
+          label: 'Strong, steady',
+          effects: { R5: 0.4, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
+        },
+        {
+          label: 'Weak / sputtering',
+          effects: { R41: 0.2, R5: 0.2 },
+        },
+        {
+          label: 'None at all',
+          effects: { R4: 0.6 },
+        },
+      ],
+    },
+
+    {
+      id: 'Q6',
+      stage: 1,
+      group: 'Symptoms',
+      text: 'What do you hear when valve activates?',
+      highlight: ['valves', 'ctrl'],
+      options: [
+        {
+          label: 'Clear click',
+          effects: { R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
+        },
+        {
+          label: 'Buzz / hum, no click',
+          effects: { R6: 1, R71: 1 },
+        },
+        {
+          label: 'Weak click',
+          effects: { R6: 0.2, R71: 0.2 },
+        },
+        {
+          label: 'Silent',
+          effects: { R6: 1, R71: 1 },
+        },
+      ],
+    },
+    {
+      id: 'Q7',
+      stage: 1,
+      group: 'Symptoms',
+      text: 'Did restarting anything help?',
+      highlight: ['ctrl', 'sw', 'pump', 'relay'],
+      options: [
+        {
+          label: 'Controller restart briefly fixed it',
+          effects: { R12: 0.6, R13: 0.6, R23: 0.6 },
+        },
+        {
+          label: 'Pump restart briefly fixed it',
+          effects: { R31: 0.4, R42: 0.4 },
+        },
+        {
+          label: 'Tried, no effect',
+          effects: { R1: -0.2, R2: -0.2, R42: -0.2 },
+        },
+        {
+          label: "Haven't tried",
+          effects: {},
+        },
+      ],
+    },
+
+    /* --- STAGE 2: EVENTS --- */
     {
       id: 'E1',
       stage: 2,
@@ -241,121 +316,6 @@ window.DATA = {
         },
       ],
     },
-    {
-      id: 'Q6',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'How is the flow at the manual hose?',
-      highlight: ['pump', 'water'],
-      options: [
-        {
-          label: 'Strong, steady',
-          effects: { R5: 0.4, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
-        },
-        {
-          label: 'Weak / sputtering',
-          effects: { R41: 0.2, R5: 0.2 },
-        },
-        {
-          label: 'None at all',
-          effects: { R4: 0.6 },
-        },
-      ],
-    },
-    {
-      id: 'Q7',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'Do you see water / wet ground?',
-      highlight: ['water', 'lateral', 'valves'],
-      options: [
-        {
-          label: 'Along the main line route',
-          effects: { R51: 2 },
-        },
-        {
-          label: 'In / around valve box',
-          effects: { R73: 1.6, R74: 1.6 },
-        },
-        {
-          label: 'Along zone lines',
-          effects: { R81: 2 },
-        },
-        {
-          label: 'Nothing visible',
-          effects: { R51: -0.4, R73: -0.4, R74: -0.4, R81: -0.4 },
-        },
-      ],
-    },
-    {
-      id: 'Q8',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'What do you hear when valve activates?',
-      highlight: ['valves', 'ctrl'],
-      options: [
-        {
-          label: 'Clear click',
-          effects: { R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
-        },
-        {
-          label: 'Buzz / hum, no click',
-          effects: { R6: 1, R71: 1 },
-        },
-        {
-          label: 'Weak click',
-          effects: { R6: 0.2, R71: 0.2 },
-        },
-        {
-          label: 'Silent',
-          effects: { R6: 1, R71: 1 },
-        },
-      ],
-    },
-    {
-      id: 'D1',
-      stage: 3,
-      group: 'Symptoms',
-      text: 'Manual open valve solenoid / bleed screw, runs?',
-      highlight: ['valves'],
-      options: [
-        {
-          label: 'Yes, zone runs',
-          effects: { R6: 0.6, R71: 0.6 },
-        },
-        {
-          label: 'Nothing',
-          effects: { R5: 0.6, R72: 0.6, R73: 0.6, R8: 0.6 },
-        },
-      ],
-    },
-    {
-      id: 'Q10',
-      stage: 1,
-      group: 'Symptoms',
-      text: 'Did restarting anything help?',
-      highlight: ['ctrl', 'sw', 'pump', 'relay'],
-      options: [
-        {
-          label: 'Controller restart briefly fixed it',
-          effects: { R12: 0.6, R13: 0.6, R23: 0.6 },
-        },
-        {
-          label: 'Pump restart briefly fixed it',
-          effects: { R31: 0.4, R42: 0.4 },
-        },
-        {
-          label: 'Tried, no effect',
-          effects: { R1: -0.2, R2: -0.2, R42: -0.2 },
-        },
-        {
-          label: "Haven't tried",
-          effects: {},
-        },
-      ],
-    },
-
-    /* --- STAGE 2: EVENTS --- */
     {
       id: 'E2',
       stage: 2,
@@ -451,12 +411,29 @@ window.DATA = {
       ],
     },
 
-    /* --- STAGE 3: HARD TESTS --- */
+    /* --- STAGE 3: TESTS --- */
+        {
+      id: 'D1',
+      stage: 3,
+      group: 'Tests',
+      text: 'Manual open valve solenoid / bleed screw, runs?',
+      highlight: ['valves'],
+      options: [
+        {
+          label: 'Yes, zone runs',
+          effects: { R6: 0.6, R71: 0.6 },
+        },
+        {
+          label: 'Nothing',
+          effects: { R5: 0.6, R72: 0.6, R73: 0.6, R8: 0.6 },
+        },
+      ],
+    },
     {
       id: 'D2',
       stage: 3,
-      group: 'Hard tests',
-      text: 'Zone terminal voltage during call (~24 VAC)?',
+      group: 'Tests',
+      text: 'Controller voltage during call (~24 VAC)?',
       highlight: ['ctrl', 'valves'],
       options: [
         {
@@ -470,8 +447,8 @@ window.DATA = {
     {
       id: 'D3',
       stage: 3,
-      group: 'Hard tests',
-      text: '24 VAC at controller pump/master terminal during call?',
+      group: 'Tests',
+      text: '24 VAC at controller pump start-relay during call?',
       highlight: ['ctrl', 'relay'],
       options: [
         { label: "24V present, relay won't pull", effects: { R31: 0.6 } },
@@ -482,8 +459,8 @@ window.DATA = {
     {
       id: 'D4',
       stage: 3,
-      group: 'Hard tests',
-      text: 'Common-wire continuity controller→valves?',
+      group: 'Tests',
+      text: 'Resistance common wire slot and zone in controller?',
       highlight: ['ctrl', 'valves'],
       options: [
         { label: 'Continuous, low resistance', effects: { R62: -0.4 } },
@@ -494,7 +471,7 @@ window.DATA = {
     {
       id: 'D5',
       stage: 3,
-      group: 'Hard tests',
+      group: 'Tests',
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
       highlight: ['valves'],
       options: [
@@ -507,7 +484,7 @@ window.DATA = {
     {
       id: 'D6',
       stage: 3,
-      group: 'Hard tests',
+      group: 'Tests',
       text: 'Swap valve with known-good — issue stays with zone?',
       highlight: ['valves'],
       options: [
@@ -521,7 +498,7 @@ window.DATA = {
     {
       id: 'D7',
       stage: 3,
-      group: 'Hard tests',
+      group: 'Tests',
       text: 'Open each valve and inspect internals?',
       highlight: ['valves'],
       options: [
@@ -529,10 +506,35 @@ window.DATA = {
         { label: 'Damaged or debris', effects: { R72: 1, R73: 0.6 } },
       ],
     },
+        {
+      id: 'Extra1',
+      stage: extra,
+      group: 'Extra',
+      text: 'Do you see water / wet ground?',
+      highlight: ['water', 'lateral', 'valves'],
+      options: [
+        {
+          label: 'Along the main line route',
+          effects: { R51: 2 },
+        },
+        {
+          label: 'In / around valve box',
+          effects: { R73: 1.6, R74: 1.6 },
+        },
+        {
+          label: 'Along zone lines',
+          effects: { R81: 2 },
+        },
+        {
+          label: 'Nothing visible',
+          effects: { R51: -0.4, R73: -0.4, R74: -0.4, R81: -0.4 },
+        },
+      ],
+    }, 
     {
-      id: 'D8',
-      stage: 3,
-      group: 'Hard tests',
+      id: 'extra2',
+      stage: extra,
+      group: 'extra',
       text: 'Dig & inspect hoses for damage?',
       highlight: ['water', 'lateral'],
       options: [
@@ -542,9 +544,9 @@ window.DATA = {
     },
 
     {
-      id: 'D9',
-      stage: 3,
-      group: 'Hard tests',
+      id: 'extra3',
+      stage: extra,
+      group: 'extra',
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump', 'water'],
       options: [
