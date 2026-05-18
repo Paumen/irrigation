@@ -217,21 +217,10 @@ function withTransition(fn) {
   document.startViewTransition(fn);
 }
 
-function iconTransform(name, cx, cy, size) {
-  const def = window.ICONS[name];
-  if (!def) return '';
-  const [minX, minY, vw, vh] = def.vb;
-  const scale = size / Math.max(vw, vh);
-  const ty = cy - (minY + vh / 2) * scale;
-  const tx = cx - (minX + vw / 2) * scale;
-  return `translate(${tx} ${ty}) scale(${scale})`;
-}
-
 function loadSaved() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (!saved || typeof saved !== 'object') return null;
-    migrateLegacyIds(saved);
     pruneUnknownIds(saved);
     return saved;
   } catch {
@@ -249,22 +238,6 @@ function pruneUnknownIds(saved) {
   if (saved.activeQuestionId && !Q_BY_ID[saved.activeQuestionId]) {
     delete saved.activeQuestionId;
   }
-}
-
-// One-shot rename: legacy AGES/E1/E2 → E1/E2/E3. Presence of AGES anywhere in
-// saved state is the signal that the payload predates the rename.
-function migrateLegacyIds(saved) {
-  const hasLegacy =
-    saved.answers?.AGES !== undefined ||
-    saved.skipped?.AGES !== undefined ||
-    saved.activeQuestionId === 'AGES';
-  if (!hasLegacy) return;
-  const map = { AGES: 'E1', E1: 'E2', E2: 'E3' };
-  const remap = (dict) =>
-    dict ? Object.fromEntries(Object.entries(dict).map(([k, v]) => [map[k] || k, v])) : dict;
-  saved.answers = remap(saved.answers);
-  saved.skipped = remap(saved.skipped);
-  if (map[saved.activeQuestionId]) saved.activeQuestionId = map[saved.activeQuestionId];
 }
 
 function app() {
