@@ -4,7 +4,6 @@ const EVENT_COLS = [
   { id: 'days', label: 'Started week(s) after', mult: 0.4 },
   { id: 'worse', label: 'Worsened (same)', mult: 0.0 },
   { id: 'faster', label: 'Worsened (faster)', mult: 0.4 },
-  { id: 'briefly', label: 'Briefly fixed, returned', mult: 0.2 },
 ];
 const eventColsWithDays = (days) =>
   EVENT_COLS.map((c) => (c.id === 'days' ? { ...c, mult: days } : c));
@@ -432,7 +431,7 @@ window.DATA = {
         { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.8 } },
         { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.8 } },
         { id: 'spr', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
-        { id: 'zhose', label: 'Hoses / fittings', effects: { R8: 1, R5: 1 } },
+        { id: 'zhose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
         { id: 'wiring', label: 'Wiring', effects: { R6: 1 } },
       ],
     },
