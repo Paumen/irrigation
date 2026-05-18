@@ -339,24 +339,6 @@ function app() {
         .slice(0, 5);
     },
 
-    get mainProgress() {
-      const total = MAIN_QUESTIONS.length;
-      const done = MAIN_QUESTIONS.reduce((n, q) => n + (this.isCompleted(q.id) ? 1 : 0), 0);
-      return { total, done, pct: total ? done / total : 0 };
-    },
-
-    get optionalSuggestions() {
-      if (OPTIONAL_QUESTIONS.length === 0) return [];
-      const { pct } = this.mainProgress;
-      let stuck = pct >= 0.7;
-      if (!stuck && pct >= 0.4) {
-        const r = this.ranked;
-        if (r.length >= 2 && r[0].pct - r[1].pct < 3) stuck = true;
-      }
-      if (!stuck) return [];
-      return OPTIONAL_QUESTIONS.filter((q) => !this.isCompleted(q.id));
-    },
-
     get stageProgress() {
       const out = {};
       for (const s of STAGES) {

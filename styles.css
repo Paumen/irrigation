@@ -308,22 +308,6 @@ nav button[aria-current] {
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
-.optional-suggest {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-l);
-  padding: var(--sp-l) 0 0;
-  border-top: var(--line-passive);
-}
-
-.optional-suggest > p {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--c-fg-strong);
-  text-transform: uppercase;
-}
-
 /* ══════════ 4 · TABLE    ══════════ */
 
 [data-q='matrix'] {
