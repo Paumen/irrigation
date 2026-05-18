@@ -14,7 +14,7 @@
   --font-bold: 800;
   --sp-s: 2px;
   --sp-m: clamp(4px, 2px + 0.25cqi, 8px);
-  --sp-l: clamp(8px, 4px + 1.0cqi, 16px);
+  --sp-l: clamp(8px, 4px + 1cqi, 16px);
   --sp-xl: clamp(16px, 12px + 1.5cqi, 32px);
   --sp-cols: 1;
   --line-width-s: 1px;
@@ -545,11 +545,26 @@ summary:active {
     grid-template-areas: 'form rank' 'schematic rec' 'sysinfo sysinfo';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
-  [data-card='schematic'] {grid-area: schematic;  }
-  [data-card='form'] {   grid-area: form;  }
-  [data-card='rank'] {    grid-area: rank;  }
-  [data-card='rec'] {    grid-area: rec;  }
-  [data-card='sysinfo'] {    grid-area: sysinfo;  }
+
+  [data-card='schematic'] {
+    grid-area: schematic;
+  }
+
+  [data-card='form'] {
+    grid-area: form;
+  }
+
+  [data-card='rank'] {
+    grid-area: rank;
+  }
+
+  [data-card='rec'] {
+    grid-area: rec;
+  }
+
+  [data-card='sysinfo'] {
+    grid-area: sysinfo;
+  }
 }
 
 @container page (width <= 760px) {
@@ -557,4 +572,4 @@ summary:active {
   td {
     padding: var(--sp-s);
   }
-} 
+}

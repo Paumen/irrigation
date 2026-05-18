@@ -40,21 +40,26 @@ function expandStepRows(q) {
   });
 }
 
-const QUESTIONS = window.DATA.questions.map((q) => {
-  const next = { ...q, type: q.type || 'options' };
-  if (next.type === 'matrix') {
-    next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
-    next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
-  } else if (next.type === 'dates') {
-    next.rows = expandStepRows(next).map((r) => ({
-      ...r,
-      steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
-    }));
-  } else {
-    next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
-  }
-  return next;
-}).sort((a, b) => a.stage - b.stage);
+const QUESTIONS = window.DATA.questions
+  .map((q) => {
+    const next = { ...q, type: q.type || 'options' };
+    if (next.type === 'matrix') {
+      next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
+      next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
+    } else if (next.type === 'dates') {
+      next.rows = expandStepRows(next).map((r) => ({
+        ...r,
+        steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
+      }));
+    } else {
+      next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
+    }
+    return next;
+  })
+  .sort((a, b) => (a.stage ?? Infinity) - (b.stage ?? Infinity));
+
+const MAIN_QUESTIONS = QUESTIONS.filter((q) => !q.optional);
+const OPTIONAL_QUESTIONS = QUESTIONS.filter((q) => q.optional);
 
 const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
 
@@ -256,7 +261,7 @@ function app() {
     skipped: {},
     hwDates: { ...(window.DATA.hwDefaults || {}) },
     hwModels: {},
-    activeQuestionId: QUESTIONS[0].id,
+    activeQuestionId: MAIN_QUESTIONS[0].id,
 
     severityT,
 
@@ -357,11 +362,17 @@ function app() {
     get activeStage() {
       return this.activeQuestion?.stage ?? 1;
     },
+    get flowQuestions() {
+      return this.activeQuestion?.optional ? OPTIONAL_QUESTIONS : MAIN_QUESTIONS;
+    },
     get isFirst() {
-      return this.activeQuestionId === QUESTIONS[0].id;
+      return this.activeQuestionId === this.flowQuestions[0]?.id;
     },
     get isLast() {
-      return this.activeQuestionId === QUESTIONS[QUESTIONS.length - 1].id;
+      return this.activeQuestionId === this.flowQuestions[this.flowQuestions.length - 1]?.id;
+    },
+    stageLabelFor(q) {
+      return q?.optional ? 'Optional' : STAGE_LABELS[q?.stage];
     },
     get activeAnswer() {
       return this.answers[this.activeQuestionId];
@@ -387,11 +398,12 @@ function app() {
 
     setAnswer(value, { advance = false } = {}) {
       const qid = this.activeQuestionId;
+      const list = this.flowQuestions;
       withTransition(() => {
         this.answers = { ...this.answers, [qid]: value };
         if (advance) {
-          const idx = QUESTIONS.findIndex((q) => q.id === qid);
-          const next = QUESTIONS[idx + 1];
+          const idx = list.findIndex((q) => q.id === qid);
+          const next = list[idx + 1];
           if (next) this.activeQuestionId = next.id;
         }
       });
@@ -465,8 +477,9 @@ function app() {
 
     moveBy(d, opts = {}) {
       const curId = this.activeQuestionId;
-      const idx = QUESTIONS.findIndex((q) => q.id === curId);
-      const next = QUESTIONS[Math.max(0, Math.min(QUESTIONS.length - 1, idx + d))];
+      const list = this.flowQuestions;
+      const idx = list.findIndex((q) => q.id === curId);
+      const next = list[Math.max(0, Math.min(list.length - 1, idx + d))];
       const skipping =
         d > 0 && opts.markComplete && this.activeStage === 2 && !this.isAnswered(curId);
       withTransition(() => {
@@ -494,7 +507,7 @@ function app() {
       withTransition(() => {
         this.answers = {};
         this.skipped = {};
-        this.activeQuestionId = QUESTIONS[0].id;
+        this.activeQuestionId = MAIN_QUESTIONS[0].id;
       });
     },
 
