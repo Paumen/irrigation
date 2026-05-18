@@ -65,6 +65,11 @@ const DATES_Q = QUESTIONS.find((q) => q.type === 'dates') || null;
 
 const Q_BY_ID = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
 
+// Per-cause bonus added when a question touches a contending cause at all,
+// regardless of how strong the effect is. Lets broad screening questions
+// outscore narrow tests when many causes are still in play.
+const BREADTH_WEIGHT = 1.5;
+
 const TYPE_HANDLERS = {
   options: {
     score(q, ans, s) {
@@ -76,11 +81,14 @@ const TYPE_HANDLERS = {
     },
     discriminator(q, ids) {
       let D = 0;
+      let breadth = 0;
       for (const rcId of ids) {
         const deltas = q.options.map((o) => o.effects[rcId] || 0);
-        D += Math.max(...deltas) - Math.min(...deltas);
+        const spread = Math.max(...deltas) - Math.min(...deltas);
+        if (spread > 0) breadth++;
+        D += spread;
       }
-      return D;
+      return D + BREADTH_WEIGHT * breadth;
     },
     isAnswered() {
       return true;
@@ -99,12 +107,19 @@ const TYPE_HANDLERS = {
     },
     discriminator(q, ids) {
       const mults = q.columns.map((c) => c.mult);
-      const spread = Math.max(...mults) - Math.min(...mults);
+      const multSpread = Math.max(...mults) - Math.min(...mults);
       let D = 0;
+      const affected = new Set();
       for (const row of q.rows) {
-        for (const rcId of ids) D += Math.abs(row.effects[rcId] || 0) * spread;
+        for (const rcId of ids) {
+          const e = Math.abs(row.effects[rcId] || 0);
+          if (e > 0) {
+            D += e * multSpread;
+            affected.add(rcId);
+          }
+        }
       }
-      return D;
+      return D + BREADTH_WEIGHT * affected.size;
     },
     isAnswered(_q, ans) {
       return Object.keys(ans).length > 0;
@@ -124,13 +139,18 @@ const TYPE_HANDLERS = {
     },
     discriminator(q, ids) {
       let D = 0;
+      const affected = new Set();
       for (const row of q.rows) {
         for (const rcId of ids) {
           const deltas = row.steps.map((st) => st.effects[rcId] || 0);
-          D += Math.max(...deltas) - Math.min(...deltas);
+          const spread = Math.max(...deltas) - Math.min(...deltas);
+          if (spread > 0) {
+            D += spread;
+            affected.add(rcId);
+          }
         }
       }
-      return D;
+      return D + BREADTH_WEIGHT * affected.size;
     },
     isAnswered(_q, ans) {
       return !!ans && typeof ans === 'object';
