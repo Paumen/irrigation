@@ -508,7 +508,7 @@ window.DATA = {
     },
         {
       id: 'Extra1',
-      stage: extra,
+      stage: 3,
       group: 'Extra',
       text: 'Do you see water / wet ground?',
       highlight: ['water', 'lateral', 'valves'],
@@ -533,7 +533,7 @@ window.DATA = {
     }, 
     {
       id: 'extra2',
-      stage: extra,
+      stage: 3,
       group: 'extra',
       text: 'Dig & inspect hoses for damage?',
       highlight: ['water', 'lateral'],
@@ -545,7 +545,7 @@ window.DATA = {
 
     {
       id: 'extra3',
-      stage: extra,
+      stage: 3,
       group: 'extra',
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump', 'water'],
