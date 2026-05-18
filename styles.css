@@ -299,6 +299,7 @@ nav button {
   place-items: center stretch;
   padding: var(--sp-l) var(--sp-l) var(--sp-l) 0;
   font-variant-numeric: tabular-nums;
+  text-align: left;
   border: none;
   border-right: var(--line-passive);
 }
