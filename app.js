@@ -440,17 +440,52 @@ function app() {
     },
 
     setMatrixCell(rowId, colId) {
-      const prev = this.answers[this.activeQuestionId] || {};
+      const qid = this.activeQuestionId;
+      const cur = this.answers[qid]?.[rowId];
+      if (cur === colId) {
+        this.clearAnswer(qid, rowId);
+        return;
+      }
+      const prev = this.answers[qid] || {};
       this.setAnswer({ ...prev, [rowId]: colId });
     },
 
     handleAnswer(i) {
       const qid = this.activeQuestionId;
+      if (this.activeAnswer === i) {
+        this.clearAnswer(qid);
+        return;
+      }
       this.setAnswer(i);
       setTimeout(() => {
         if (this.activeQuestionId !== qid) return;
         this.moveBy(1);
       }, 600);
+    },
+
+    clearAnswer(qid, key) {
+      withTransition(() => {
+        if (key === undefined) {
+          const { [qid]: _drop, ...rest } = this.answers;
+          this.answers = rest;
+        } else {
+          const { [key]: _drop, ...rest } = this.answers[qid] || {};
+          this.answers = { ...this.answers, [qid]: rest };
+        }
+        if (this.skipped[qid]) {
+          const { [qid]: _s, ...sk } = this.skipped;
+          this.skipped = sk;
+        }
+      });
+    },
+
+    resetStage(s) {
+      const ids = new Set(STAGE_QS[s].map((q) => q.id));
+      const drop = (d) => Object.fromEntries(Object.entries(d).filter(([k]) => !ids.has(k)));
+      withTransition(() => {
+        this.answers = drop(this.answers);
+        this.skipped = drop(this.skipped);
+      });
     },
 
     get equipmentRows() {

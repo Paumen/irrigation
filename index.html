@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=63" />
+    <link rel="stylesheet" href="styles.css?v=64" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -99,7 +99,7 @@
                             type="radio"
                             :name="`${activeQuestion.id}-${row.id}`"
                             :checked="rowAns(row.id) === c.id"
-                            @change="setMatrixCell(row.id, c.id)"
+                            @click="setMatrixCell(row.id, c.id)"
                           />
                         </label>
                       </td>
@@ -154,7 +154,7 @@
                     type="radio"
                     :name="`q-${activeQuestion.id}`"
                     :checked="activeAnswer === i"
-                    @change="handleAnswer(i)"
+                    @click="handleAnswer(i)"
                   />
                   <template x-if="opt.icon">
                     <svg
@@ -317,10 +317,21 @@
         aria-labelledby="reset-title"
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
       >
-        <h2 id="reset-title">Start over?</h2>
-        <p>
-          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
-        </p>
+        <h2 id="reset-title">Reset answers</h2>
+        <p>Clear a single stage, or start over from scratch. You can&rsquo;t undo this.</p>
+        <div class="stage-reset">
+          <template x-for="s in STAGES" :key="s">
+            <button
+              type="button"
+              data-tone="mute"
+              :disabled="stageProgress[s].answered === 0"
+              @click="resetStage(s); $refs.reset.close()"
+            >
+              <span x-text="STAGE_LABELS[s]"></span>
+              <small x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></small>
+            </button>
+          </template>
+        </div>
         <footer>
           <button type="button" autofocus @click="$refs.reset.close()">Keep my answers</button>
           <button type="button" data-tone="danger" @click="doReset(); $refs.reset.close()">
@@ -332,7 +343,7 @@
 
     <script src="data.js?v=23"></script>
     <script src="icons.js?v=16"></script>
-    <script src="app.js?v=55"></script>
+    <script src="app.js?v=56"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

@@ -274,6 +274,28 @@ dialog {
   }
 }
 
+.stage-reset {
+  display: grid;
+  gap: var(--sp-m);
+  margin: var(--sp-l) 0;
+
+  & > button {
+    grid-template-columns: 1fr auto;
+    place-items: center stretch;
+    padding: var(--sp-m) var(--sp-l);
+
+    & > span {
+      place-self: center start;
+    }
+
+    & > small {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--c-fg-strong);
+    }
+  }
+}
+
 summary {
   display: flex;
   gap: var(--sp-l);
