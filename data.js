@@ -185,11 +185,11 @@ window.DATA = {
       options: [
         {
           label: 'Strong, steady',
-          effects: { R5: 0.4, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: { R4:-0.6, R5: -0.6, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
         },
         {
           label: 'Weak / sputtering',
-          effects: { R41: 0.2, R5: 0.2 },
+          effects: { R41: 0.4, R5: 0.4 },
         },
         {
           label: 'None at all',
@@ -206,7 +206,7 @@ window.DATA = {
       options: [
         {
           label: 'Clear click',
-          effects: { R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
+          effects: { R71: -0.4, R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
         },
         {
           label: 'Buzz / hum, no click',
@@ -392,7 +392,7 @@ window.DATA = {
       options: [
         {
           label: '~24 VAC present',
-          effects: { R22: -0.4, R6: -0.4, R7: 0.4 },
+          effects: { R11: -0.4, R12: -0.4, R21: -0.4, R22: -0.6, R6: -0.4, R7: 0.4 },
         },
         { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
@@ -427,7 +427,7 @@ window.DATA = {
       highlight: ['valves'],
       options: [
         { label: 'In range', effects: { R7: 0.2, R71: -0.4 } },
-        { label: 'Open / infinite', effects: { R71: 1.6 } },
+        { label: 'Open / infinite', effects: { R71: 1.6, R62: 0.8 } },
         { label: 'Near zero / very low', effects: { R71: 1.6 } },
         { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
       ],
