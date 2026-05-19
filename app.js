@@ -256,6 +256,8 @@ function app() {
     equipmentModels: {},
     activeQuestionId: MAIN_QUESTIONS[0].id,
     resetScope: 'all',
+    resultsTab: 'causes',
+    resultsTabIndex: { causes: 0, next: 1, equipment: 2 },
 
     severityT,
 
@@ -546,9 +548,9 @@ function app() {
     },
 
     goToEquipment() {
-      const el = document.querySelector('[data-card="equipment"]');
+      this.resultsTab = 'equipment';
+      const el = document.querySelector('[data-card="results"]');
       if (!el) return;
-      el.open = true;
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 

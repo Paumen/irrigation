@@ -30,12 +30,7 @@
       <details data-card="questionnaire" open>
         <summary>
           <span>Questionnaire</span>
-          <button
-            type="button"
-            data-tone="mute"
-            :disabled="!hasAnswers"
-            @click.stop="openReset()"
-          >
+          <button type="button" data-tone="mute" :disabled="!hasAnswers" @click.stop="openReset()">
             Reset
           </button>
           <button
@@ -201,9 +196,57 @@
         </nav>
       </details>
 
-      <details data-card="ranking" open>
-        <summary>Causes</summary>
-        <div x-data="seeMore(3)">
+      <div data-card="results">
+        <div
+          class="tabs-bar"
+          role="tablist"
+          :style="`--accent-tab-pos: ${resultsTabIndex[resultsTab] * 100}%`"
+        >
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            id="tab-causes"
+            aria-controls="panel-causes"
+            :aria-selected="resultsTab === 'causes' ? 'true' : 'false'"
+            @click="resultsTab = 'causes'"
+          >
+            Causes
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            id="tab-next"
+            aria-controls="panel-next"
+            :aria-selected="resultsTab === 'next' ? 'true' : 'false'"
+            @click="resultsTab = 'next'"
+          >
+            Next
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            id="tab-equipment"
+            aria-controls="panel-equipment"
+            :aria-selected="resultsTab === 'equipment' ? 'true' : 'false'"
+            @click="resultsTab = 'equipment'"
+          >
+            Equipment
+          </button>
+          <span class="tabs-indicator" aria-hidden="true"></span>
+        </div>
+
+        <div
+          class="tab-panel"
+          role="tabpanel"
+          id="panel-causes"
+          aria-labelledby="tab-causes"
+          data-panel="causes"
+          x-show="resultsTab === 'causes'"
+          x-data="seeMore(3)"
+        >
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
               <li x-show="visible(i)">
@@ -228,11 +271,16 @@
             ></button>
           </template>
         </div>
-      </details>
 
-      <details data-card="recommendations" open>
-        <summary>Recommended next check</summary>
-        <div x-data="seeMore(2)">
+        <div
+          class="tab-panel"
+          role="tabpanel"
+          id="panel-next"
+          aria-labelledby="tab-next"
+          data-panel="next"
+          x-show="resultsTab === 'next'"
+          x-data="seeMore(2)"
+        >
           <template x-if="recommendations.length > 0">
             <ol>
               <template x-for="(rec, i) in recommendations" :key="rec.q.id">
@@ -270,16 +318,21 @@
             ></button>
           </template>
         </div>
-      </details>
 
-      <details data-card="equipment">
-        <summary><span>Equipment</span></summary>
-        <div>
+        <div
+          class="tab-panel"
+          role="tabpanel"
+          id="panel-equipment"
+          aria-labelledby="tab-equipment"
+          data-panel="equipment"
+          x-show="resultsTab === 'equipment'"
+        >
           <dl>
             <dt>Zone flow</dt>
             <dd x-text="SYSTEM.zoneFlow"></dd>
           </dl>
           <table
+            class="equipment-list"
             style="
               --sp-cols: 3;
               grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
@@ -310,7 +363,7 @@
             </template>
           </table>
         </div>
-      </details>
+      </div>
 
       <dialog
         x-ref="reset"
