@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=63" />
+    <link rel="stylesheet" href="styles.css?v=65" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -34,7 +34,7 @@
             type="button"
             data-tone="mute"
             :disabled="!hasAnswers"
-            @click.stop="$refs.reset.showModal()"
+            @click.stop="openReset()"
           >
             Reset
           </button>
@@ -99,7 +99,7 @@
                             type="radio"
                             :name="`${activeQuestion.id}-${row.id}`"
                             :checked="rowAns(row.id) === c.id"
-                            @change="setMatrixCell(row.id, c.id)"
+                            @click="setMatrixCell(row.id, c.id)"
                           />
                         </label>
                       </td>
@@ -154,7 +154,7 @@
                     type="radio"
                     :name="`q-${activeQuestion.id}`"
                     :checked="activeAnswer === i"
-                    @change="handleAnswer(i)"
+                    @click="handleAnswer(i)"
                   />
                   <template x-if="opt.icon">
                     <svg
@@ -317,22 +317,31 @@
         aria-labelledby="reset-title"
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
       >
-        <h2 id="reset-title">Start over?</h2>
-        <p>
-          This clears every answer and returns you to the first question. You can&rsquo;t undo this.
-        </p>
+        <h2 id="reset-title">Reset answers</h2>
+        <p>Choose what to clear. You can&rsquo;t undo this.</p>
+        <label class="reset-scope">
+          <span>Scope</span>
+          <select x-model="resetScope">
+            <option value="all">All stages</option>
+            <template x-for="s in STAGES" :key="s">
+              <option
+                :value="s"
+                :disabled="stageProgress[s].answered === 0"
+                x-text="`${STAGE_LABELS[s]} (${stageProgress[s].answered}/${stageProgress[s].total})`"
+              ></option>
+            </template>
+          </select>
+        </label>
         <footer>
-          <button type="button" autofocus @click="$refs.reset.close()">Keep my answers</button>
-          <button type="button" data-tone="danger" @click="doReset(); $refs.reset.close()">
-            Reset everything
-          </button>
+          <button type="button" autofocus @click="$refs.reset.close()">Cancel</button>
+          <button type="button" data-tone="danger" @click="applyReset()">Reset</button>
         </footer>
       </dialog>
     </main>
 
     <script src="data.js?v=23"></script>
     <script src="icons.js?v=16"></script>
-    <script src="app.js?v=55"></script>
+    <script src="app.js?v=57"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

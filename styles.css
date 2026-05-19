@@ -274,6 +274,31 @@ dialog {
   }
 }
 
+.reset-scope {
+  display: grid;
+  grid-template-columns: minmax(60px, max-content) 1fr;
+  gap: var(--sp-m) var(--sp-l);
+  place-items: center stretch;
+  margin: var(--sp-l) 0;
+
+  & > span {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--c-fg-strong);
+    text-transform: uppercase;
+  }
+}
+
+select {
+  width: 100%;
+  padding: var(--sp-s) var(--sp-m);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: inherit;
+  background: var(--c-bg-alt);
+  border: var(--line-passive);
+}
+
 summary {
   display: flex;
   gap: var(--sp-l);
