@@ -246,17 +246,12 @@ footer {
   place-content: flex-end;
 }
 
-figure {
-  position: relative;
-  margin: 0;
-
-  & svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: clamp(220px, 40dvh, 480px);
-    object-fit: contain;
-  }
+[data-card='map'] {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: clamp(220px, 40dvh, 480px);
+  object-fit: contain;
 }
 
 dialog {
