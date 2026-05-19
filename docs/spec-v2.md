@@ -3,28 +3,20 @@
 ## Goal
 
 Guide homeowners through fixing their irrigation system with a
-live, ranked list of likely causes — and make the experience feel less like a form
-and more like a working diagnostic bench. The map becomes a real wiring diagram
-that reacts to the active question; the questionnaire gains finer-grained control
-over answers and stages; and an assistant helps the user proactively.
+live, ranked list of likely causes — like a working diagnostic bench. The map reacts to states and progress. Using app is more intuitive via interactions, visualization, feedback, progressive disclosure. An assistant helps the user proactively.
 
 ## Core Objectives
 
-- **Map as wiring diagram.** Typed connection lines (Wi-Fi, water, 24V, 230V) and
+- **Redesigned and integrated Map** Typed connection lines (Wi-Fi, water, 24V, 230V) and
   per-node health indicators turn the schematic from decoration into a navigation
   surface that mirrors the Causes ranking.
-- **Active context.** At any moment, the user can see which stage, which question,
-  and which parts of the system the current question is about. Stage, question,
-  and map highlight as one piece.
-- **Reversible answers.** Users can deselect a single answer or reset a single
-  stage without losing the rest of their progress.
-- Integrated bot proactive support and llm analysis.
+- **Redesigned Questionare layout and interaction** Improved interaction and experience. User can swipe trough questions and intuitively knows progress and possible interactions that spatially make sense. At any moment, the user knows in which stage, which question,
+  and which parts of the system the current question is about. 
+- Integrated bot proactive support and llm provides analysis upon request.
   
 ## Layout Changes
 
-- **Stage / question fusion.** The active stage in the stage nav visually
-  continues into the question card (shared border or fill) so the user reads
-  stage + question as a single unit.
+- **Questionaire, stages, progress feel as one piece** 
 - Causes, Equipment, and Suggested next become one tabbed card. Causes shown by default.
 - **Illustrations and help text.** Questions that benefit from visual context —
   most importantly the multimeter probe-placement tests — gain inline
@@ -32,24 +24,20 @@ over answers and stages; and an assistant helps the user proactively.
 
 ## Map
 
-- **Typed connection lines.** Lines between nodes are drawn with distinct visual
-  styles per connection type:
+- **connection lines.** are distinqtuive and clear and animated when active:
   - Wi-F
-  - Water: 
+  - Water 
   - 24V control cable
   - 230V mains
-    
-- **Node status indicator.** Each node carries a small status badge whose colour
-  reflects the aggregated likelihood score of the causes attached to that node
+- **Node status indicator.** Each node signals a status
+  reflecting the aggregated likelihood score of the causes attached to that node
   (derived from the same `severityT` used in the
   Causes list).
-- **Node click → sub-causes.** Clicking a node opens a small popover listing the
+- **Node click → sub-causes.** Clicking a node reveals 
   causes attached to it, each with its current rank and percentage. The popover
-  links back to the Causes panel — clicking a cause in the popover 
-  highlights it in the main ranking.
+  links back to the Causes panel.
 - **Active-question emphasis.** When a question is active, the nodes and lines
-  that contribute to its scoring are highlighted/animated; everything else dims. The
-  emphasis is purely visual — no state changes.
+  that contribute to its scoring are focussef/highlighted/animated; while others dim or neutral.
 
 ## Robby (assistant character)
 
