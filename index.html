@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=59" />
+    <link rel="stylesheet" href="styles.css?v=60" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -61,6 +61,21 @@
             ›
           </button>
         </summary>
+
+        <nav aria-label="Stages">
+          <template x-for="s in STAGES" :key="s">
+            <button
+              type="button"
+              @click="pickStage(s)"
+              :aria-current="activeStage === s ? 'step' : null"
+            >
+              <span x-text="STAGE_LABELS[s]"></span>
+              <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
+              <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
+            </button>
+          </template>
+        </nav>
+
         <form @submit.prevent>
           <header>
             <h2 x-text="activeQuestion.text"></h2>
@@ -185,20 +200,6 @@
             </footer>
           </template>
         </form>
-
-        <nav aria-label="Stages">
-          <template x-for="s in STAGES" :key="s">
-            <button
-              type="button"
-              @click="pickStage(s)"
-              :aria-current="activeStage === s ? 'step' : null"
-            >
-              <span x-text="STAGE_LABELS[s]"></span>
-              <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
-              <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
-            </button>
-          </template>
-        </nav>
       </details>
 
       <details data-card="ranking" open>

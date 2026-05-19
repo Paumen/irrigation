@@ -343,7 +343,7 @@ footer > button {
 nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  background: var(--c-bg);
+  background: var(--c-bg-alt);
 }
 
 [data-card='questionnaire'] {
@@ -358,14 +358,18 @@ nav button {
   padding: var(--sp-l) var(--sp-l) var(--sp-l) 0;
   font-variant-numeric: tabular-nums;
   text-align: left;
+  background: transparent;
   border: none;
-  border-top: var(--line-passive);
+  border-top: var(--line-width-m) solid transparent;
   border-right: var(--line-passive);
+  border-bottom: var(--line-passive);
 }
 
 nav button[aria-current] {
-  border-top: var(--line-width-s) solid transparent;
-  border-bottom: var(--line-width-m) solid var(--c-fg);
+  background: var(--c-bg);
+  border-top-color: var(--c-fg);
+  border-right: var(--line-passive);
+  border-bottom: var(--line-width-s) solid transparent;
 }
 
 /* ══════════ 4 · TABLE    ══════════ */
