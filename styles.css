@@ -248,9 +248,7 @@ footer {
 
 figure {
   position: relative;
-  padding: var(--sp-l);
   margin: 0;
-  background: var(--bg-grid-pattern), var(--c-bg-alt);
 
   & svg {
     display: block;

@@ -14,18 +14,15 @@
   </head>
   <body>
     <main x-data="app" x-cloak>
-      <details data-card="map" open>
-        <summary>Map</summary>
-        <figure>
-          <svg
-            viewBox="0 -22 700 344"
-            preserveAspectRatio="xMidYMid meet"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g x-html="renderMap()"></g>
-          </svg>
-        </figure>
-      </details>
+      <figure data-card="map">
+        <svg
+          viewBox="0 -22 700 344"
+          preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g x-html="renderMap()"></g>
+        </svg>
+      </figure>
 
       <details data-card="questionnaire" open>
         <summary>
