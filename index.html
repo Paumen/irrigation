@@ -22,6 +22,175 @@
       <g x-html="renderMap()"></g>
     </svg>
 
+    <div data-card="results">
+      <div
+        class="tabs-bar"
+        role="tablist"
+        :style="`--accent-tab-pos: ${resultsTabIndex[resultsTab] * 100}%`"
+      >
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          id="tab-causes"
+          aria-controls="panel-causes"
+          :aria-selected="resultsTab === 'causes' ? 'true' : 'false'"
+          @click="resultsTab = 'causes'"
+        >
+          Causes
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          id="tab-next"
+          aria-controls="panel-next"
+          :aria-selected="resultsTab === 'next' ? 'true' : 'false'"
+          @click="resultsTab = 'next'"
+        >
+          Next
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          id="tab-equipment"
+          aria-controls="panel-equipment"
+          :aria-selected="resultsTab === 'equipment' ? 'true' : 'false'"
+          @click="resultsTab = 'equipment'"
+        >
+          Equipment
+        </button>
+        <span class="tabs-indicator" aria-hidden="true"></span>
+      </div>
+
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="panel-causes"
+        aria-labelledby="tab-causes"
+        data-panel="causes"
+        x-show="resultsTab === 'causes'"
+        x-data="seeMore(5)"
+      >
+        <ol>
+          <template x-for="(r, i) in ranked" :key="r.id">
+            <li x-show="visible(i)">
+              <div
+                class="rank-row"
+                :style="`--accent-vt-cause: cause-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
+              >
+                <code x-text="r.id"></code>
+                <span x-text="CAUSES[r.id].label"></span>
+                <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
+                <span class="percent" x-text="`${rankPct(r)}%`"></span>
+              </div>
+            </li>
+          </template>
+        </ol>
+        <template x-if="hasMore(ranked.length)">
+          <button
+            type="button"
+            data-shape="ghost"
+            @click="toggle()"
+            x-text="label(ranked.length)"
+          ></button>
+        </template>
+      </div>
+
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="panel-next"
+        aria-labelledby="tab-next"
+        data-panel="next"
+        x-show="resultsTab === 'next'"
+        x-data="seeMore(5)"
+      >
+        <template x-if="recommendations.length > 0">
+          <ol>
+            <template x-for="(rec, i) in recommendations" :key="rec.q.id">
+              <li x-show="visible(i)">
+                <button
+                  type="button"
+                  @click="goTo(rec.q.id)"
+                  :aria-current="activeQuestionId === rec.q.id ? 'true' : null"
+                >
+                  <small x-text="stageLabelFor(rec.q)"></small>
+                  <span
+                    class="relevancy"
+                    :data-level="relevancyLevel(rec.q.id)"
+                    :aria-label="`Relevancy: ${relevancyLevel(rec.q.id)}`"
+                  >
+                    <span class="meter" aria-hidden="true">
+                      <span class="pip pip-low"></span>
+                      <span class="pip pip-mid"></span>
+                      <span class="pip pip-high"></span>
+                    </span>
+                    <span x-text="relevancyLevel(rec.q.id)"></span>
+                  </span>
+                  <span x-text="rec.q.text"></span>
+                </button>
+              </li>
+            </template>
+          </ol>
+        </template>
+        <template x-if="hasMore(recommendations.length)">
+          <button
+            type="button"
+            data-shape="ghost"
+            @click="toggle()"
+            x-text="label(recommendations.length)"
+          ></button>
+        </template>
+      </div>
+
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="panel-equipment"
+        aria-labelledby="tab-equipment"
+        data-panel="equipment"
+        x-show="resultsTab === 'equipment'"
+      >
+        <dl>
+          <dt>Zone flow</dt>
+          <dd x-text="SYSTEM.zoneFlow"></dd>
+        </dl>
+        <table
+          class="equipment-list"
+          style="
+            --sp-cols: 3;
+            grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
+          "
+        >
+          <template x-for="row in equipmentRows" :key="row.id">
+            <tr>
+              <th scope="row" x-text="row.label"></th>
+              <td>
+                <input
+                  type="text"
+                  :value="equipmentModelLabel(row.id)"
+                  @input="setEquipmentModel(row.id, $event.target.value)"
+                  :aria-label="`${row.label} description`"
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  :max="todayISO"
+                  :value="equipmentDates[row.id] || ''"
+                  @input="setEquipmentDate(row.id, $event.target.value)"
+                  :aria-label="`${row.label} install or replacement date`"
+                />
+              </td>
+              <td x-text="equipmentAgeYearsLabel(row.id)"></td>
+            </tr>
+          </template>
+        </table>
+      </div>
+    </div>
+
     <details data-card="questionnaire" open>
       <summary>
         <span>Questionnaire</span>
@@ -191,175 +360,6 @@
         <span class="stages-indicator" aria-hidden="true"></span>
       </nav>
     </details>
-
-    <div data-card="results">
-      <div
-        class="tabs-bar"
-        role="tablist"
-        :style="`--accent-tab-pos: ${resultsTabIndex[resultsTab] * 100}%`"
-      >
-        <button
-          type="button"
-          class="tab-btn"
-          role="tab"
-          id="tab-causes"
-          aria-controls="panel-causes"
-          :aria-selected="resultsTab === 'causes' ? 'true' : 'false'"
-          @click="resultsTab = 'causes'"
-        >
-          Causes
-        </button>
-        <button
-          type="button"
-          class="tab-btn"
-          role="tab"
-          id="tab-next"
-          aria-controls="panel-next"
-          :aria-selected="resultsTab === 'next' ? 'true' : 'false'"
-          @click="resultsTab = 'next'"
-        >
-          Next
-        </button>
-        <button
-          type="button"
-          class="tab-btn"
-          role="tab"
-          id="tab-equipment"
-          aria-controls="panel-equipment"
-          :aria-selected="resultsTab === 'equipment' ? 'true' : 'false'"
-          @click="resultsTab = 'equipment'"
-        >
-          Equipment
-        </button>
-        <span class="tabs-indicator" aria-hidden="true"></span>
-      </div>
-
-      <div
-        class="tab-panel"
-        role="tabpanel"
-        id="panel-causes"
-        aria-labelledby="tab-causes"
-        data-panel="causes"
-        x-show="resultsTab === 'causes'"
-        x-data="seeMore(5)"
-      >
-        <ol>
-          <template x-for="(r, i) in ranked" :key="r.id">
-            <li x-show="visible(i)">
-              <div
-                class="rank-row"
-                :style="`--accent-vt-cause: cause-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
-              >
-                <code x-text="r.id"></code>
-                <span x-text="CAUSES[r.id].label"></span>
-                <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
-                <span class="percent" x-text="`${rankPct(r)}%`"></span>
-              </div>
-            </li>
-          </template>
-        </ol>
-        <template x-if="hasMore(ranked.length)">
-          <button
-            type="button"
-            data-shape="ghost"
-            @click="toggle()"
-            x-text="label(ranked.length)"
-          ></button>
-        </template>
-      </div>
-
-      <div
-        class="tab-panel"
-        role="tabpanel"
-        id="panel-next"
-        aria-labelledby="tab-next"
-        data-panel="next"
-        x-show="resultsTab === 'next'"
-        x-data="seeMore(5)"
-      >
-        <template x-if="recommendations.length > 0">
-          <ol>
-            <template x-for="(rec, i) in recommendations" :key="rec.q.id">
-              <li x-show="visible(i)">
-                <button
-                  type="button"
-                  @click="goTo(rec.q.id)"
-                  :aria-current="activeQuestionId === rec.q.id ? 'true' : null"
-                >
-                  <small x-text="stageLabelFor(rec.q)"></small>
-                  <span
-                    class="relevancy"
-                    :data-level="relevancyLevel(rec.q.id)"
-                    :aria-label="`Relevancy: ${relevancyLevel(rec.q.id)}`"
-                  >
-                    <span class="meter" aria-hidden="true">
-                      <span class="pip pip-low"></span>
-                      <span class="pip pip-mid"></span>
-                      <span class="pip pip-high"></span>
-                    </span>
-                    <span x-text="relevancyLevel(rec.q.id)"></span>
-                  </span>
-                  <span x-text="rec.q.text"></span>
-                </button>
-              </li>
-            </template>
-          </ol>
-        </template>
-        <template x-if="hasMore(recommendations.length)">
-          <button
-            type="button"
-            data-shape="ghost"
-            @click="toggle()"
-            x-text="label(recommendations.length)"
-          ></button>
-        </template>
-      </div>
-
-      <div
-        class="tab-panel"
-        role="tabpanel"
-        id="panel-equipment"
-        aria-labelledby="tab-equipment"
-        data-panel="equipment"
-        x-show="resultsTab === 'equipment'"
-      >
-        <dl>
-          <dt>Zone flow</dt>
-          <dd x-text="SYSTEM.zoneFlow"></dd>
-        </dl>
-        <table
-          class="equipment-list"
-          style="
-            --sp-cols: 3;
-            grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
-          "
-        >
-          <template x-for="row in equipmentRows" :key="row.id">
-            <tr>
-              <th scope="row" x-text="row.label"></th>
-              <td>
-                <input
-                  type="text"
-                  :value="equipmentModelLabel(row.id)"
-                  @input="setEquipmentModel(row.id, $event.target.value)"
-                  :aria-label="`${row.label} description`"
-                />
-              </td>
-              <td>
-                <input
-                  type="date"
-                  :max="todayISO"
-                  :value="equipmentDates[row.id] || ''"
-                  @input="setEquipmentDate(row.id, $event.target.value)"
-                  :aria-label="`${row.label} install or replacement date`"
-                />
-              </td>
-              <td x-text="equipmentAgeYearsLabel(row.id)"></td>
-            </tr>
-          </template>
-        </table>
-      </div>
-    </div>
 
     <dialog
       x-ref="reset"

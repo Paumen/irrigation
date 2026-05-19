@@ -721,7 +721,7 @@ summary:active {
 
 @container page (width >= 1080px) {
   body {
-    grid-template-areas: 'questionnaire results' 'map results';
+    grid-template-areas: 'map results' 'questionnaire questionnaire';
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 
@@ -729,12 +729,12 @@ summary:active {
     grid-area: map;
   }
 
-  [data-card='questionnaire'] {
-    grid-area: questionnaire;
-  }
-
   [data-card='results'] {
     grid-area: results;
+  }
+
+  [data-card='questionnaire'] {
+    grid-area: questionnaire;
   }
 }
 
