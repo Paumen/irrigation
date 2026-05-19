@@ -377,16 +377,17 @@ nav button {
   place-items: center stretch;
   padding: var(--sp-l) var(--sp-l) var(--sp-l) 0;
   font-variant-numeric: tabular-nums;
+  color: var(--c-fg-strong);
   text-align: left;
   background: transparent;
   border: none;
-  border-right: var(--line-passive);
   transition:
     color var(--time),
     background var(--time);
 }
 
 nav button[aria-current] {
+  color: var(--c-accent);
   background: var(--c-bg);
 }
 
@@ -396,7 +397,7 @@ nav button[aria-current] {
   width: 100%;
   height: var(--line-width-m);
   pointer-events: none;
-  background: var(--c-fg);
+  background: var(--c-accent);
   transition: transform var(--time) cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(var(--accent-stage-pos, 0%));
 }
@@ -577,7 +578,7 @@ input[type='text'] {
 }
 
 .tab-btn[aria-selected='true'] {
-  color: var(--c-fg);
+  color: var(--c-accent);
   background: var(--c-bg);
 }
 
@@ -592,7 +593,7 @@ input[type='text'] {
   width: 100%;
   height: var(--line-width-m);
   pointer-events: none;
-  background: var(--c-fg);
+  background: var(--c-accent);
   transition: transform var(--time) cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(var(--accent-tab-pos, 0%));
 }
