@@ -388,6 +388,8 @@ nav button[aria-current] {
 /* ══════════ 4 · TABLE    ══════════ */
 
 [data-q='matrix'] {
+  container-type: inline-size;
+  container-name: matrix;
   padding: var(--sp-m) 0;
   overflow-x: auto;
 }
@@ -714,7 +716,7 @@ summary:active {
   }
 }
 
-@container page (width <= 760px) {
+@container matrix (width < 500px) {
   th,
   td {
     padding: var(--sp-s);
