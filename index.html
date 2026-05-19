@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=64" />
+    <link rel="stylesheet" href="styles.css?v=65" />
   </head>
   <body>
     <main x-data="app" x-cloak>
@@ -34,7 +34,7 @@
             type="button"
             data-tone="mute"
             :disabled="!hasAnswers"
-            @click.stop="$refs.reset.showModal()"
+            @click.stop="openReset()"
           >
             Reset
           </button>
@@ -318,32 +318,30 @@
         @click="if ($event.target === $refs.reset) $refs.reset.close()"
       >
         <h2 id="reset-title">Reset answers</h2>
-        <p>Clear a single stage, or start over from scratch. You can&rsquo;t undo this.</p>
-        <div class="stage-reset">
-          <template x-for="s in STAGES" :key="s">
-            <button
-              type="button"
-              data-tone="mute"
-              :disabled="stageProgress[s].answered === 0"
-              @click="resetStage(s); $refs.reset.close()"
-            >
-              <span x-text="STAGE_LABELS[s]"></span>
-              <small x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></small>
-            </button>
-          </template>
-        </div>
+        <p>Choose what to clear. You can&rsquo;t undo this.</p>
+        <label class="reset-scope">
+          <span>Scope</span>
+          <select x-model="resetScope">
+            <option value="all">All stages</option>
+            <template x-for="s in STAGES" :key="s">
+              <option
+                :value="s"
+                :disabled="stageProgress[s].answered === 0"
+                x-text="`${STAGE_LABELS[s]} (${stageProgress[s].answered}/${stageProgress[s].total})`"
+              ></option>
+            </template>
+          </select>
+        </label>
         <footer>
-          <button type="button" autofocus @click="$refs.reset.close()">Keep my answers</button>
-          <button type="button" data-tone="danger" @click="doReset(); $refs.reset.close()">
-            Reset everything
-          </button>
+          <button type="button" autofocus @click="$refs.reset.close()">Cancel</button>
+          <button type="button" data-tone="danger" @click="applyReset()">Reset</button>
         </footer>
       </dialog>
     </main>
 
     <script src="data.js?v=23"></script>
     <script src="icons.js?v=16"></script>
-    <script src="app.js?v=56"></script>
+    <script src="app.js?v=57"></script>
     <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
   </body>
 </html>

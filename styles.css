@@ -274,26 +274,29 @@ dialog {
   }
 }
 
-.stage-reset {
+.reset-scope {
   display: grid;
-  gap: var(--sp-m);
+  grid-template-columns: minmax(60px, max-content) 1fr;
+  gap: var(--sp-m) var(--sp-l);
+  place-items: center stretch;
   margin: var(--sp-l) 0;
 
-  & > button {
-    grid-template-columns: 1fr auto;
-    place-items: center stretch;
-    padding: var(--sp-m) var(--sp-l);
-
-    & > span {
-      place-self: center start;
-    }
-
-    & > small {
-      font-family: var(--font-mono);
-      font-size: var(--text-sm);
-      color: var(--c-fg-strong);
-    }
+  & > span {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--c-fg-strong);
+    text-transform: uppercase;
   }
+}
+
+select {
+  width: 100%;
+  padding: var(--sp-s) var(--sp-m);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: inherit;
+  background: var(--c-bg-alt);
+  border: var(--line-passive);
 }
 
 summary {

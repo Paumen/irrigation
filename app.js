@@ -255,6 +255,7 @@ function app() {
     equipmentDates: { ...(window.DATA.equipmentDefaults || {}) },
     equipmentModels: {},
     activeQuestionId: MAIN_QUESTIONS[0].id,
+    resetScope: 'all',
 
     severityT,
 
@@ -486,6 +487,17 @@ function app() {
         this.answers = drop(this.answers);
         this.skipped = drop(this.skipped);
       });
+    },
+
+    openReset() {
+      this.resetScope = 'all';
+      this.$refs.reset.showModal();
+    },
+
+    applyReset() {
+      if (this.resetScope === 'all') this.doReset();
+      else this.resetStage(this.resetScope);
+      this.$refs.reset.close();
     },
 
     get equipmentRows() {
