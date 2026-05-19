@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>V2 stage-fusion mockups</title>
+    <title>V2 stage-fusion mockups — round 2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -32,12 +32,127 @@
         color: var(--c-fg-strong);
       }
 
-      .stage-chip {
-        display: inline-grid;
-        grid-template-columns: auto auto;
+      /* ───── A · Carousel ───── */
+      .mock-a-head {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: var(--sp-l);
+        place-items: center stretch;
+        padding: var(--sp-l);
+        background: var(--c-fg);
+        color: var(--c-bg);
+      }
+
+      .mock-a-head > h2 {
+        font-family: var(--font-mono);
+        font-size: var(--text-md);
+        font-weight: var(--font-bold);
+        text-transform: uppercase;
+      }
+
+      .mock-a-head > .progress {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+      }
+
+      .mock-a-dots {
+        display: grid;
+        grid-auto-flow: column;
         gap: var(--sp-s);
         place-items: center;
-        padding: var(--sp-s) var(--sp-m);
+      }
+
+      .mock-a-dots > span {
+        width: 8px;
+        height: 8px;
+        background: color-mix(in oklch, var(--c-bg), transparent 60%);
+        border-radius: var(--radius-circle);
+      }
+
+      .mock-a-dots > span[aria-current] {
+        width: 24px;
+        background: var(--c-bg);
+        border-radius: 4px;
+      }
+
+      .mock-a-foot {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        background: var(--c-bg);
+        border-top: var(--line-passive);
+      }
+
+      .mock-a-foot > button {
+        padding: var(--sp-l);
+        border: none;
+        border-right: var(--line-passive);
+      }
+
+      /* ───── B · Stepper ───── */
+      .mock-b-head {
+        display: grid;
+        gap: var(--sp-m);
+        padding: var(--sp-l);
+        background: var(--c-bg);
+      }
+
+      .mock-b-trail {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: var(--sp-s);
+      }
+
+      .mock-b-trail > span {
+        height: 4px;
+        background: var(--c-bg-alt);
+        border: var(--line-passive);
+      }
+
+      .mock-b-trail > span[aria-current] {
+        background: var(--c-fg);
+        border-color: var(--c-fg);
+      }
+
+      .mock-b-trail > span[data-done] {
+        background: var(--c-fg-strong);
+        border-color: var(--c-fg-strong);
+      }
+
+      .mock-b-label {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: var(--sp-l);
+        place-items: baseline stretch;
+        font-family: var(--font-mono);
+        font-size: var(--text-md);
+        text-transform: uppercase;
+      }
+
+      .mock-b-label > small {
+        font-size: var(--text-sm);
+        color: var(--c-fg-strong);
+      }
+
+      .mock-b-label > strong {
+        font-weight: var(--font-bold);
+      }
+
+      /* ───── C · Segmented control ───── */
+      .mock-c-seg {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--sp-s);
+        padding: var(--sp-l);
+        background: var(--c-bg);
+      }
+
+      .mock-c-seg > button {
+        display: grid;
+        gap: 2px;
+        padding: var(--sp-m);
         font-family: var(--font-mono);
         font-size: var(--text-sm);
         text-transform: uppercase;
@@ -45,56 +160,49 @@
         border: var(--line-passive);
       }
 
-      .stage-chip-active {
+      .mock-c-seg > button[aria-current] {
         font-weight: var(--font-bold);
         color: var(--c-bg);
         background: var(--c-fg);
         border-color: var(--c-fg);
       }
 
-      .mock-c summary {
-        display: grid;
-        grid-template-columns: auto 1fr auto auto auto;
-        gap: var(--sp-l);
-        place-items: center stretch;
+      .mock-c-seg > button > small {
+        font-size: var(--text-sm);
+        opacity: 0.7;
       }
 
-      .mock-c-rail {
-        display: grid;
-        grid-template-columns: minmax(120px, auto) 1fr;
+      /* ───── D · Matched accent (bottom nav, original layout) ───── */
+      .mock-d h2 {
+        padding-left: var(--sp-l);
+        border-left: var(--line-width-m) solid var(--c-fg);
       }
 
-      .mock-c-rail > ul {
+      .mock-d nav {
         display: grid;
-        gap: 0;
-        padding: 0;
-        margin: 0;
-        list-style: none;
-        background: var(--c-bg-alt);
+        grid-template-columns: repeat(3, 1fr);
+        background: var(--c-bg);
+        border-top: var(--line-passive);
+      }
+
+      .mock-d nav > button {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--sp-m);
+        padding: var(--sp-l) var(--sp-l) var(--sp-l) 0;
+        font-family: var(--font-mono);
+        font-size: var(--text-md);
+        text-transform: uppercase;
+        background: transparent;
+        border: none;
         border-right: var(--line-passive);
       }
 
-      .mock-c-rail > ul > li {
-        display: grid;
-        gap: var(--sp-s);
-        padding: var(--sp-l);
-        font-family: var(--font-mono);
-        font-size: var(--text-sm);
-        color: var(--c-fg-strong);
-        text-transform: uppercase;
-        border-bottom: var(--line-passive);
-      }
-
-      .mock-c-rail > ul > li[aria-current] {
+      .mock-d nav > button[aria-current] {
         font-weight: var(--font-bold);
-        color: var(--c-fg);
-        background: var(--c-bg);
-        border-right: var(--line-width-m) solid var(--c-bg);
-        box-shadow: inset var(--line-width-m) 0 0 0 var(--c-fg);
-      }
-
-      .mock-c-rail > div {
-        padding: var(--sp-l);
+        color: var(--c-bg);
+        background: var(--c-fg);
+        border-color: var(--c-fg);
       }
     </style>
   </head>
@@ -110,30 +218,36 @@
           text-transform: uppercase;
         "
       >
-        Stage fusion — 3 options
+        Stage fusion — round 2 (mobile)
       </h1>
 
-      <!-- Option A: stage chip inline in question header ============================== -->
+      <!-- ───── A · CAROUSEL ──────────────────────────────────────────────── -->
       <section class="mock-frame">
-        <h3>A · Stage chip in question header</h3>
+        <h3>A · Carousel — stage IS the page</h3>
         <p>
-          The active stage label sits as a filled chip next to the question text. No tabs. Stage
-          switching stays at the bottom of the card as plain navigation buttons.
+          Each stage is a separate page. Header shows stage name, progress, and dots. Swipe or
+          tap dots/arrows to switch. Stage and question share the same page — no separation.
         </p>
 
         <details data-card="questionnaire" open>
           <summary>
             <span>Questionnaire</span>
             <button type="button" data-tone="mute">Reset</button>
-            <button type="button" data-tone="mute" data-shape="square">‹</button>
-            <button type="button" data-tone="mute" data-shape="square">›</button>
           </summary>
+
+          <div class="mock-a-head">
+            <span class="mock-a-dots" aria-label="Stage 1 of 3">
+              <span aria-current="true"></span>
+              <span></span>
+              <span></span>
+            </span>
+            <h2>Symptoms</h2>
+            <span class="progress">0 / 7</span>
+          </div>
+
           <form @submit.prevent>
-            <header style="gap: var(--sp-m); flex-wrap: wrap">
-              <span class="stage-chip stage-chip-active"
-                ><span>Symptoms</span><span>0/7</span></span
-              >
-              <h2 style="flex: 1">Scope of failure?</h2>
+            <header>
+              <h2>Scope of failure?</h2>
               <span class="relevancy" data-level="high">
                 <span class="meter" aria-hidden="true">
                   <span class="pip pip-low"></span>
@@ -154,30 +268,42 @@
               >
             </div>
           </form>
-          <nav aria-label="Stages">
-            <button type="button" aria-current="step"><span>Symptoms</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
-            <button type="button"><span>Timeline</span><span>0/4</span><span class="bar"><span style="width: 0%"></span></span></button>
-            <button type="button"><span>Tests</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
-          </nav>
+
+          <div class="mock-a-foot">
+            <button type="button" data-tone="mute" disabled>‹ Prev stage</button>
+            <button type="button">Next stage ›</button>
+          </div>
         </details>
       </section>
 
-      <!-- Option B: stage IS the card title ========================================== -->
-      <section class="mock-frame mock-c">
-        <h3>B · Stage is the card title</h3>
+      <!-- ───── B · STEPPER ──────────────────────────────────────────────── -->
+      <section class="mock-frame">
+        <h3>B · Stepper — progress trail + active label</h3>
         <p>
-          The summary bar shows the active stage and progress directly. There is no extra row of
-          tabs at the top. A small stage selector at the bottom lets the user jump.
+          Top of card: three short bars showing stage progression (done / current / upcoming),
+          with the active stage labeled below them. Question follows immediately. The bar above
+          the active label IS the fusion cue — same fill, same column.
         </p>
 
         <details data-card="questionnaire" open>
           <summary>
-            <span>Symptoms</span>
-            <span style="font-family: var(--font-mono); font-weight: 400">· 0 of 7</span>
+            <span>Questionnaire</span>
             <button type="button" data-tone="mute">Reset</button>
-            <button type="button" data-tone="mute" data-shape="square">‹</button>
-            <button type="button" data-tone="mute" data-shape="square">›</button>
           </summary>
+
+          <div class="mock-b-head">
+            <div class="mock-b-trail">
+              <span aria-current="true"></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="mock-b-label">
+              <small>Step 1 of 3</small>
+              <strong>Symptoms</strong>
+              <small>0 / 7</small>
+            </div>
+          </div>
+
           <form @submit.prevent>
             <header>
               <h2>Scope of failure?</h2>
@@ -201,63 +327,109 @@
               >
             </div>
           </form>
-          <nav aria-label="Stages">
-            <button type="button" aria-current="step"><span>Symptoms</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
-            <button type="button"><span>Timeline</span><span>0/4</span><span class="bar"><span style="width: 0%"></span></span></button>
-            <button type="button"><span>Tests</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
-          </nav>
         </details>
       </section>
 
-      <!-- Option C: vertical left rail =============================================== -->
+      <!-- ───── C · SEGMENTED CONTROL ───────────────────────────────────── -->
       <section class="mock-frame">
-        <h3>C · Vertical stage rail</h3>
+        <h3>C · Segmented control (iOS-style)</h3>
         <p>
-          Stages live as a left column. The active one extends a solid band across into the question
-          area, physically touching it. Strong "stage owns this question" reading.
+          Pill segments at the top of the card. Active segment has solid dark fill (matches the
+          color of the question h2 below — same dark family). Inactive segments are muted with
+          a thin border. Tap to switch.
         </p>
 
         <details data-card="questionnaire" open>
           <summary>
             <span>Questionnaire</span>
             <button type="button" data-tone="mute">Reset</button>
-            <button type="button" data-tone="mute" data-shape="square">‹</button>
-            <button type="button" data-tone="mute" data-shape="square">›</button>
           </summary>
-          <div class="mock-c-rail">
-            <ul>
-              <li aria-current="step"><span>Symptoms</span><span>0/7</span></li>
-              <li><span>Timeline</span><span>0/4</span></li>
-              <li><span>Tests</span><span>0/7</span></li>
-            </ul>
-            <div>
-              <header style="margin-bottom: var(--sp-l)">
-                <h2>Scope of failure?</h2>
-                <span class="relevancy" data-level="high">
-                  <span class="meter" aria-hidden="true">
-                    <span class="pip pip-low"></span>
-                    <span class="pip pip-mid"></span>
-                    <span class="pip pip-high"></span>
-                  </span>
-                  <span>high</span>
-                </span>
-              </header>
-              <div data-q="options">
-                <label class="option"
-                  ><input type="radio" name="qc" /><span>All zones fail</span></label
-                >
-                <label class="option"
-                  ><input type="radio" name="qc" /><span>Multiple zones (not all)</span></label
-                >
-                <label class="option"
-                  ><input type="radio" name="qc" /><span>Single zone</span></label
-                >
-                <label class="option"
-                  ><input type="radio" name="qc" checked /><span>One rotor</span></label
-                >
-              </div>
-            </div>
+
+          <div class="mock-c-seg">
+            <button type="button" aria-current="step">
+              <span>Symptoms</span>
+              <small>0/7</small>
+            </button>
+            <button type="button">
+              <span>Timeline</span>
+              <small>0/4</small>
+            </button>
+            <button type="button">
+              <span>Tests</span>
+              <small>0/7</small>
+            </button>
           </div>
+
+          <form @submit.prevent>
+            <header>
+              <h2>Scope of failure?</h2>
+              <span class="relevancy" data-level="high">
+                <span class="meter" aria-hidden="true">
+                  <span class="pip pip-low"></span>
+                  <span class="pip pip-mid"></span>
+                  <span class="pip pip-high"></span>
+                </span>
+                <span>high</span>
+              </span>
+            </header>
+            <div data-q="options">
+              <label class="option"><input type="radio" name="qc" /><span>All zones fail</span></label>
+              <label class="option"
+                ><input type="radio" name="qc" /><span>Multiple zones (not all)</span></label
+              >
+              <label class="option"><input type="radio" name="qc" /><span>Single zone</span></label>
+              <label class="option"
+                ><input type="radio" name="qc" checked /><span>One rotor</span></label
+              >
+            </div>
+          </form>
+        </details>
+      </section>
+
+      <!-- ───── D · MATCHED ACCENT (bottom nav, original layout) ───────── -->
+      <section class="mock-frame mock-d">
+        <h3>D · Matched accent — bottom nav (closest to current)</h3>
+        <p>
+          Keep the existing layout (nav at bottom). Active stage button is a solid dark block.
+          The question h2 gets a matching dark left-edge accent. Same colour = one piece.
+          Minimal structural change.
+        </p>
+
+        <details data-card="questionnaire" open>
+          <summary>
+            <span>Questionnaire</span>
+            <button type="button" data-tone="mute">Reset</button>
+          </summary>
+
+          <form @submit.prevent>
+            <header>
+              <h2>Scope of failure?</h2>
+              <span class="relevancy" data-level="high">
+                <span class="meter" aria-hidden="true">
+                  <span class="pip pip-low"></span>
+                  <span class="pip pip-mid"></span>
+                  <span class="pip pip-high"></span>
+                </span>
+                <span>high</span>
+              </span>
+            </header>
+            <div data-q="options">
+              <label class="option"><input type="radio" name="qd" /><span>All zones fail</span></label>
+              <label class="option"
+                ><input type="radio" name="qd" /><span>Multiple zones (not all)</span></label
+              >
+              <label class="option"><input type="radio" name="qd" /><span>Single zone</span></label>
+              <label class="option"
+                ><input type="radio" name="qd" checked /><span>One rotor</span></label
+              >
+            </div>
+          </form>
+
+          <nav aria-label="Stages">
+            <button type="button" aria-current="step"><span>Symptoms</span><span>0/7</span></button>
+            <button type="button"><span>Timeline</span><span>0/4</span></button>
+            <button type="button"><span>Tests</span><span>0/7</span></button>
+          </nav>
         </details>
       </section>
     </main>
