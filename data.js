@@ -14,12 +14,8 @@ window.DATA = {
     { id: 3, label: 'Tests' },
   ],
   system: {
-    installedISO: '2020-08-01',
-    installedLabel: 'August 2020',
     zoneFlow: '~2 m³/h',
     waterSource: 'Well pump',
-    mainHose: 'PE 32 mm (pump → valve box)',
-    hose: 'PE 25 mm (zones)',
   },
   equipmentDefaults: {
     pump: '2023-01-01',
@@ -37,15 +33,15 @@ window.DATA = {
   },
   causes: [
     { id: 'R11', parent: 'R1', baseline: 0.8, label: 'Misconfiguration' },
-    { id: 'R12', parent: 'R1', baseline: 0.9, label: 'App failure (bug, corruption)' },
+    { id: 'R12', parent: 'R1', baseline: 0.9, label: 'App failure (bug, etc)' },
     { id: 'R13', parent: 'R1', baseline: 0.8, label: 'Connectivity (wifi)' },
     { id: 'R22', parent: 'R2', baseline: 0.9, label: 'Controller hardware failure' },
     { id: 'R23', parent: 'R2', baseline: 0.8, label: 'Controller firmware / config' },
     { id: 'R31', parent: 'R3', baseline: 1.2, label: 'Relay wiring fault' },
     { id: 'R41', parent: 'R4', baseline: 1.3, label: 'Pump suction-side fault' },
     { id: 'R42', parent: 'R4', baseline: 1.1, label: 'Pump hardware failure' },
-    { id: 'R51', parent: 'R5', baseline: 1.2, label: 'Main hose 32 mm leak / break' },
-    { id: 'R52', parent: 'R5', baseline: 0.8, label: 'Main hose 32 mm air / debris clog' },
+    { id: 'R51', parent: 'R5', baseline: 1.2, label: 'Main hose 32mm leak / break' },
+    { id: 'R52', parent: 'R5', baseline: 0.8, label: 'Main hose 32mm air / debris clog' },
     { id: 'R61', parent: 'R6', baseline: 1.2, label: 'Per-zone hot conductor fault' },
     { id: 'R62', parent: 'R6', baseline: 1.4, label: 'Common wire fault' },
     { id: 'R63', parent: 'R6', baseline: 0.8, label: 'Wire-to-triac connection fault' },
@@ -53,8 +49,8 @@ window.DATA = {
     { id: 'R72', parent: 'R7', baseline: 1.4, label: 'Diaphragm failure' },
     { id: 'R73', parent: 'R7', baseline: 0.7, label: 'Valve body / seal failure' },
     { id: 'R74', parent: 'R7', baseline: 0.8, label: 'Valve misconfiguration' },
-    { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Hoses 25 mm / fitting damage' },
-    { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Hoses 25 mm air / debris clog' },
+    { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Hoses 25mm / fitting damage' },
+    { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Hoses 25mm air / debris clog' },
     { id: 'R91', parent: 'R9', baseline: 1.1, label: 'Rotor debris / nozzle' },
     { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Rotor misconfigured' },
   ],
@@ -137,7 +133,7 @@ window.DATA = {
         {
           label: 'No water at all',
           icon: 'flow-none',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R42: 0.6, R6: 0.6, R71: 0.6 },
+          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.2, R42: 0.6, R51: 0.2, R6: 0.6, R71: 0.6 },
         },
         {
           label: 'Weak',
@@ -185,7 +181,7 @@ window.DATA = {
       options: [
         {
           label: 'Strong, steady',
-          effects: { R4:-0.6, R5: -0.6, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: { R4:-1.6, R5: -1.6, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
         },
         {
           label: 'Weak / sputtering',
@@ -342,7 +338,7 @@ window.DATA = {
       text: 'Recent service or work — relation to issue?',
       columns: TIMELINE_COLS,
       rows: [
-        { id: 'pump', label: 'Pump', effects: { R4: 1 } },
+        { id: 'pump', label: 'Pump', effects: { R41: 0.4, R42: 1.0 } },
         { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
         { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.8 } },
         { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.8 } },
@@ -380,7 +376,7 @@ window.DATA = {
         },
         {
           label: 'Nothing',
-          effects: { R5: 0.6, R72: 0.6, R73: 0.6, R8: 0.6 },
+          effects: { R5: 1.0, R72: 1.0, R73: 1.0, R8: 1.0 },
         },
       ],
     },
@@ -394,7 +390,7 @@ window.DATA = {
           label: '~24 VAC present',
           effects: { R11: -0.4, R12: -0.4, R21: -0.4, R22: -0.6, R6: -0.4, R7: 0.4 },
         },
-        { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6 } },
+        { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6, R7: -0.4 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
       ],
     },
