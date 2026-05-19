@@ -518,6 +518,30 @@ dl {
   margin: 0;
 }
 
+[data-card='equipment'] > div {
+  display: grid;
+  gap: var(--sp-l);
+}
+
+[data-card='equipment'] table {
+  gap: var(--sp-s) var(--sp-l);
+  border: 0;
+}
+
+[data-card='equipment'] table th,
+[data-card='equipment'] table td {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+[data-card='equipment'] table th {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--c-fg-strong);
+  text-transform: uppercase;
+}
+
 /* ══════════ 4 · NODES   ══════════ */
 
 .node-group {

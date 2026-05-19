@@ -366,8 +366,7 @@ function app() {
       return Object.entries(map)
         .filter(([, D]) => D > 0)
         .map(([qid, D]) => ({ q: Q_BY_ID[qid], D }))
-        .sort((a, b) => b.D - a.D)
-        .slice(0, 5);
+        .sort((a, b) => b.D - a.D);
     },
 
     get stageProgress() {
