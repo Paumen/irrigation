@@ -360,9 +360,9 @@ footer > button {
 
 nav {
   display: grid;
+  grid-template-rows: 1fr auto;
   grid-template-columns: repeat(3, 1fr);
-  background: var(--c-bg);
-  border-top: var(--line-passive);
+  background: color-mix(in oklch, var(--c-bg-alt), var(--c-fg) 10%);
 }
 
 [data-card='questionnaire'] {
@@ -372,17 +372,33 @@ nav {
 nav button {
   display: grid;
   grid-template-columns: 1fr auto;
+  grid-row: 1;
   gap: var(--sp-m);
   place-items: center stretch;
   padding: var(--sp-l) var(--sp-l) var(--sp-l) 0;
   font-variant-numeric: tabular-nums;
   text-align: left;
+  background: transparent;
   border: none;
   border-right: var(--line-passive);
+  transition:
+    color var(--time),
+    background var(--time);
 }
 
 nav button[aria-current] {
-  border-bottom: var(--line-width-m) solid var(--c-fg);
+  background: var(--c-bg);
+}
+
+.stages-indicator {
+  grid-row: 2;
+  grid-column: 1;
+  width: 100%;
+  height: var(--line-width-m);
+  pointer-events: none;
+  background: var(--c-fg);
+  transition: transform var(--time) cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(var(--accent-stage-pos, 0%));
 }
 
 /* ══════════ 4 · TABLE    ══════════ */

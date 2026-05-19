@@ -176,7 +176,7 @@
         </template>
       </form>
 
-      <nav aria-label="Stages">
+      <nav aria-label="Stages" :style="`--accent-stage-pos: ${STAGES.indexOf(activeStage) * 100}%`">
         <template x-for="s in STAGES" :key="s">
           <button
             type="button"
@@ -188,6 +188,7 @@
             <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
           </button>
         </template>
+        <span class="stages-indicator" aria-hidden="true"></span>
       </nav>
     </details>
 
