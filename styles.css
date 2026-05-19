@@ -39,9 +39,15 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html {
   container-type: inline-size;
   container-name: page;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-l);
   padding: var(--sp-l) var(--sp-l) var(--sp-xl);
   margin: 0;
   font-family: var(--font-sans);
@@ -52,17 +58,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-[x-cloak] {
+body[x-cloak] > * {
   display: none;
 }
 
 /* ══════════ 2 · LAYOUT  ══════════ */
-
-main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-l);
-}
 
 details {
   position: relative;
@@ -696,7 +696,7 @@ summary:active {
 /* ══════════ 7 · RESPONSIVE   ══════════ */
 
 @container page (width >= 1080px) {
-  main {
+  body {
     grid-template-areas: 'questionnaire results' 'map results';
     grid-template-columns: minmax(0, 1fr) 360px;
   }

@@ -12,381 +12,379 @@
     />
     <link rel="stylesheet" href="styles.css?v=65" />
   </head>
-  <body>
-    <main x-data="app" x-cloak>
-      <svg
-        data-card="map"
-        viewBox="0 -22 700 344"
-        preserveAspectRatio="xMidYMid meet"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g x-html="renderMap()"></g>
-      </svg>
+  <body x-data="app" x-cloak>
+    <svg
+      data-card="map"
+      viewBox="0 -22 700 344"
+      preserveAspectRatio="xMidYMid meet"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g x-html="renderMap()"></g>
+    </svg>
 
-      <details data-card="questionnaire" open>
-        <summary>
-          <span>Questionnaire</span>
-          <button type="button" data-tone="mute" :disabled="!hasAnswers" @click.stop="openReset()">
-            Reset
-          </button>
-          <button
-            type="button"
-            data-tone="mute"
-            data-shape="square"
-            @click.stop="moveBy(-1)"
-            :disabled="isFirst"
-            aria-label="Previous question"
-            title="Previous"
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            data-tone="mute"
-            data-shape="square"
-            @click.stop="moveBy(1)"
-            :disabled="isLast"
-            aria-label="Next question"
-            title="Next"
-          >
-            ›
-          </button>
-        </summary>
-        <form @submit.prevent>
-          <header>
-            <h2 x-text="activeQuestion.text"></h2>
-            <template x-if="relevancyLevel(activeQuestionId)">
-              <span
-                class="relevancy"
-                :data-level="relevancyLevel(activeQuestionId)"
-                :aria-label="`Relevancy: ${relevancyLevel(activeQuestionId)}`"
-              >
-                <span class="meter" aria-hidden="true">
-                  <span class="pip pip-low"></span>
-                  <span class="pip pip-mid"></span>
-                  <span class="pip pip-high"></span>
-                </span>
-                <span x-text="relevancyLevel(activeQuestionId)"></span>
+    <details data-card="questionnaire" open>
+      <summary>
+        <span>Questionnaire</span>
+        <button type="button" data-tone="mute" :disabled="!hasAnswers" @click.stop="openReset()">
+          Reset
+        </button>
+        <button
+          type="button"
+          data-tone="mute"
+          data-shape="square"
+          @click.stop="moveBy(-1)"
+          :disabled="isFirst"
+          aria-label="Previous question"
+          title="Previous"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          data-tone="mute"
+          data-shape="square"
+          @click.stop="moveBy(1)"
+          :disabled="isLast"
+          aria-label="Next question"
+          title="Next"
+        >
+          ›
+        </button>
+      </summary>
+      <form @submit.prevent>
+        <header>
+          <h2 x-text="activeQuestion.text"></h2>
+          <template x-if="relevancyLevel(activeQuestionId)">
+            <span
+              class="relevancy"
+              :data-level="relevancyLevel(activeQuestionId)"
+              :aria-label="`Relevancy: ${relevancyLevel(activeQuestionId)}`"
+            >
+              <span class="meter" aria-hidden="true">
+                <span class="pip pip-low"></span>
+                <span class="pip pip-mid"></span>
+                <span class="pip pip-high"></span>
               </span>
-            </template>
-          </header>
+              <span x-text="relevancyLevel(activeQuestionId)"></span>
+            </span>
+          </template>
+        </header>
 
-          <template x-if="activeQuestion.type === 'matrix'">
-            <div data-q="matrix">
-              <table :style="`--sp-cols: ${activeQuestion.columns.length}`">
+        <template x-if="activeQuestion.type === 'matrix'">
+          <div data-q="matrix">
+            <table :style="`--sp-cols: ${activeQuestion.columns.length}`">
+              <tr>
+                <th></th>
+                <template x-for="c in activeQuestion.columns" :key="c.id">
+                  <th scope="col" :title="c.label" x-text="c.label"></th>
+                </template>
+              </tr>
+              <template x-for="row in activeQuestion.rows" :key="row.id">
                 <tr>
-                  <th></th>
+                  <th scope="row" x-text="row.label"></th>
                   <template x-for="c in activeQuestion.columns" :key="c.id">
-                    <th scope="col" :title="c.label" x-text="c.label"></th>
+                    <td>
+                      <label :aria-label="`${row.label}: ${c.label}`">
+                        <input
+                          type="radio"
+                          :name="`${activeQuestion.id}-${row.id}`"
+                          :checked="rowAns(row.id) === c.id"
+                          @click="setMatrixCell(row.id, c.id)"
+                        />
+                      </label>
+                    </td>
                   </template>
                 </tr>
-                <template x-for="row in activeQuestion.rows" :key="row.id">
-                  <tr>
-                    <th scope="row" x-text="row.label"></th>
-                    <template x-for="c in activeQuestion.columns" :key="c.id">
-                      <td>
-                        <label :aria-label="`${row.label}: ${c.label}`">
-                          <input
-                            type="radio"
-                            :name="`${activeQuestion.id}-${row.id}`"
-                            :checked="rowAns(row.id) === c.id"
-                            @click="setMatrixCell(row.id, c.id)"
-                          />
-                        </label>
-                      </td>
-                    </template>
-                  </tr>
-                </template>
-              </table>
-            </div>
-          </template>
-
-          <template x-if="activeQuestion.type === 'ages'">
-            <div data-q="ages">
-              <table
-                style="--sp-cols: 2; grid-template-columns: minmax(110px, max-content) auto auto"
-              >
-                <template x-for="row in activeQuestion.rows" :key="row.id">
-                  <tr>
-                    <th scope="row" x-text="row.label"></th>
-                    <td x-text="equipmentDateLabel(row.id)"></td>
-                    <td x-text="equipmentBucketLabel(row.id)"></td>
-                  </tr>
-                </template>
-              </table>
-              <footer>
-                <button
-                  type="button"
-                  data-tone="mute"
-                  @click="moveBy(1, { markComplete: true })"
-                  :disabled="isLast || isAnswered(activeQuestionId)"
-                >
-                  Skip
-                </button>
-                <button type="button" data-tone="mute" @click="goToEquipment()">
-                  No — update dates
-                </button>
-                <button
-                  type="button"
-                  @click="confirmAges()"
-                  :aria-current="isAnswered(activeQuestionId) ? 'true' : null"
-                >
-                  Yes — confirm
-                </button>
-              </footer>
-            </div>
-          </template>
-
-          <template x-if="activeQuestion.type === 'options'">
-            <div data-q="options">
-              <template x-for="(opt, i) in activeQuestion.options" :key="i">
-                <label class="option">
-                  <input
-                    type="radio"
-                    :name="`q-${activeQuestion.id}`"
-                    :checked="activeAnswer === i"
-                    @click="handleAnswer(i)"
-                  />
-                  <template x-if="opt.icon">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      x-html="OPT_ICONS[opt.icon] || ''"
-                    ></svg>
-                  </template>
-                  <span x-text="opt.label"></span>
-                </label>
               </template>
-            </div>
-          </template>
+            </table>
+          </div>
+        </template>
 
-          <template x-if="activeQuestion.type === 'matrix'">
+        <template x-if="activeQuestion.type === 'ages'">
+          <div data-q="ages">
+            <table
+              style="--sp-cols: 2; grid-template-columns: minmax(110px, max-content) auto auto"
+            >
+              <template x-for="row in activeQuestion.rows" :key="row.id">
+                <tr>
+                  <th scope="row" x-text="row.label"></th>
+                  <td x-text="equipmentDateLabel(row.id)"></td>
+                  <td x-text="equipmentBucketLabel(row.id)"></td>
+                </tr>
+              </template>
+            </table>
             <footer>
               <button
                 type="button"
                 data-tone="mute"
-                @click="moveBy(1)"
+                @click="moveBy(1, { markComplete: true })"
                 :disabled="isLast || isAnswered(activeQuestionId)"
               >
                 Skip
               </button>
-              <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">
-                Next ›
+              <button type="button" data-tone="mute" @click="goToEquipment()">
+                No — update dates
+              </button>
+              <button
+                type="button"
+                @click="confirmAges()"
+                :aria-current="isAnswered(activeQuestionId) ? 'true' : null"
+              >
+                Yes — confirm
               </button>
             </footer>
-          </template>
-        </form>
+          </div>
+        </template>
 
-        <nav aria-label="Stages">
-          <template x-for="s in STAGES" :key="s">
+        <template x-if="activeQuestion.type === 'options'">
+          <div data-q="options">
+            <template x-for="(opt, i) in activeQuestion.options" :key="i">
+              <label class="option">
+                <input
+                  type="radio"
+                  :name="`q-${activeQuestion.id}`"
+                  :checked="activeAnswer === i"
+                  @click="handleAnswer(i)"
+                />
+                <template x-if="opt.icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    x-html="OPT_ICONS[opt.icon] || ''"
+                  ></svg>
+                </template>
+                <span x-text="opt.label"></span>
+              </label>
+            </template>
+          </div>
+        </template>
+
+        <template x-if="activeQuestion.type === 'matrix'">
+          <footer>
             <button
               type="button"
-              @click="pickStage(s)"
-              :aria-current="activeStage === s ? 'step' : null"
+              data-tone="mute"
+              @click="moveBy(1)"
+              :disabled="isLast || isAnswered(activeQuestionId)"
             >
-              <span x-text="STAGE_LABELS[s]"></span>
-              <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
-              <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
+              Skip
             </button>
+            <button type="button" @click="moveBy(1, { markComplete: true })" :disabled="isLast">
+              Next ›
+            </button>
+          </footer>
+        </template>
+      </form>
+
+      <nav aria-label="Stages">
+        <template x-for="s in STAGES" :key="s">
+          <button
+            type="button"
+            @click="pickStage(s)"
+            :aria-current="activeStage === s ? 'step' : null"
+          >
+            <span x-text="STAGE_LABELS[s]"></span>
+            <span x-text="`${stageProgress[s].answered}/${stageProgress[s].total}`"></span>
+            <span class="bar"><span :style="`width: ${stagePct(s)}%`"></span></span>
+          </button>
+        </template>
+      </nav>
+    </details>
+
+    <div data-card="results">
+      <div
+        class="tabs-bar"
+        role="tablist"
+        :style="`--accent-tab-pos: ${resultsTabIndex[resultsTab] * 100}%`"
+      >
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          id="tab-causes"
+          aria-controls="panel-causes"
+          :aria-selected="resultsTab === 'causes' ? 'true' : 'false'"
+          @click="resultsTab = 'causes'"
+        >
+          Causes
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          id="tab-next"
+          aria-controls="panel-next"
+          :aria-selected="resultsTab === 'next' ? 'true' : 'false'"
+          @click="resultsTab = 'next'"
+        >
+          Next
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          id="tab-equipment"
+          aria-controls="panel-equipment"
+          :aria-selected="resultsTab === 'equipment' ? 'true' : 'false'"
+          @click="resultsTab = 'equipment'"
+        >
+          Equipment
+        </button>
+        <span class="tabs-indicator" aria-hidden="true"></span>
+      </div>
+
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="panel-causes"
+        aria-labelledby="tab-causes"
+        data-panel="causes"
+        x-show="resultsTab === 'causes'"
+        x-data="seeMore(5)"
+      >
+        <ol>
+          <template x-for="(r, i) in ranked" :key="r.id">
+            <li x-show="visible(i)">
+              <div
+                class="rank-row"
+                :style="`--accent-vt-cause: cause-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
+              >
+                <code x-text="r.id"></code>
+                <span x-text="CAUSES[r.id].label"></span>
+                <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
+                <span class="percent" x-text="`${rankPct(r)}%`"></span>
+              </div>
+            </li>
           </template>
-        </nav>
-      </details>
+        </ol>
+        <template x-if="hasMore(ranked.length)">
+          <button
+            type="button"
+            data-shape="ghost"
+            @click="toggle()"
+            x-text="label(ranked.length)"
+          ></button>
+        </template>
+      </div>
 
-      <div data-card="results">
-        <div
-          class="tabs-bar"
-          role="tablist"
-          :style="`--accent-tab-pos: ${resultsTabIndex[resultsTab] * 100}%`"
-        >
-          <button
-            type="button"
-            class="tab-btn"
-            role="tab"
-            id="tab-causes"
-            aria-controls="panel-causes"
-            :aria-selected="resultsTab === 'causes' ? 'true' : 'false'"
-            @click="resultsTab = 'causes'"
-          >
-            Causes
-          </button>
-          <button
-            type="button"
-            class="tab-btn"
-            role="tab"
-            id="tab-next"
-            aria-controls="panel-next"
-            :aria-selected="resultsTab === 'next' ? 'true' : 'false'"
-            @click="resultsTab = 'next'"
-          >
-            Next
-          </button>
-          <button
-            type="button"
-            class="tab-btn"
-            role="tab"
-            id="tab-equipment"
-            aria-controls="panel-equipment"
-            :aria-selected="resultsTab === 'equipment' ? 'true' : 'false'"
-            @click="resultsTab = 'equipment'"
-          >
-            Equipment
-          </button>
-          <span class="tabs-indicator" aria-hidden="true"></span>
-        </div>
-
-        <div
-          class="tab-panel"
-          role="tabpanel"
-          id="panel-causes"
-          aria-labelledby="tab-causes"
-          data-panel="causes"
-          x-show="resultsTab === 'causes'"
-          x-data="seeMore(5)"
-        >
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="panel-next"
+        aria-labelledby="tab-next"
+        data-panel="next"
+        x-show="resultsTab === 'next'"
+        x-data="seeMore(5)"
+      >
+        <template x-if="recommendations.length > 0">
           <ol>
-            <template x-for="(r, i) in ranked" :key="r.id">
+            <template x-for="(rec, i) in recommendations" :key="rec.q.id">
               <li x-show="visible(i)">
-                <div
-                  class="rank-row"
-                  :style="`--accent-vt-cause: cause-${r.id}; --c-sev-t: ${severityT(r.pct).toFixed(3)}`"
+                <button
+                  type="button"
+                  @click="goTo(rec.q.id)"
+                  :aria-current="activeQuestionId === rec.q.id ? 'true' : null"
                 >
-                  <code x-text="r.id"></code>
-                  <span x-text="CAUSES[r.id].label"></span>
-                  <span class="bar"><span :style="`width: ${barWidth(r)}`"></span></span>
-                  <span class="percent" x-text="`${rankPct(r)}%`"></span>
-                </div>
+                  <small x-text="stageLabelFor(rec.q)"></small>
+                  <span
+                    class="relevancy"
+                    :data-level="relevancyLevel(rec.q.id)"
+                    :aria-label="`Relevancy: ${relevancyLevel(rec.q.id)}`"
+                  >
+                    <span class="meter" aria-hidden="true">
+                      <span class="pip pip-low"></span>
+                      <span class="pip pip-mid"></span>
+                      <span class="pip pip-high"></span>
+                    </span>
+                    <span x-text="relevancyLevel(rec.q.id)"></span>
+                  </span>
+                  <span x-text="rec.q.text"></span>
+                </button>
               </li>
             </template>
           </ol>
-          <template x-if="hasMore(ranked.length)">
-            <button
-              type="button"
-              data-shape="ghost"
-              @click="toggle()"
-              x-text="label(ranked.length)"
-            ></button>
-          </template>
-        </div>
-
-        <div
-          class="tab-panel"
-          role="tabpanel"
-          id="panel-next"
-          aria-labelledby="tab-next"
-          data-panel="next"
-          x-show="resultsTab === 'next'"
-          x-data="seeMore(5)"
-        >
-          <template x-if="recommendations.length > 0">
-            <ol>
-              <template x-for="(rec, i) in recommendations" :key="rec.q.id">
-                <li x-show="visible(i)">
-                  <button
-                    type="button"
-                    @click="goTo(rec.q.id)"
-                    :aria-current="activeQuestionId === rec.q.id ? 'true' : null"
-                  >
-                    <small x-text="stageLabelFor(rec.q)"></small>
-                    <span
-                      class="relevancy"
-                      :data-level="relevancyLevel(rec.q.id)"
-                      :aria-label="`Relevancy: ${relevancyLevel(rec.q.id)}`"
-                    >
-                      <span class="meter" aria-hidden="true">
-                        <span class="pip pip-low"></span>
-                        <span class="pip pip-mid"></span>
-                        <span class="pip pip-high"></span>
-                      </span>
-                      <span x-text="relevancyLevel(rec.q.id)"></span>
-                    </span>
-                    <span x-text="rec.q.text"></span>
-                  </button>
-                </li>
-              </template>
-            </ol>
-          </template>
-          <template x-if="hasMore(recommendations.length)">
-            <button
-              type="button"
-              data-shape="ghost"
-              @click="toggle()"
-              x-text="label(recommendations.length)"
-            ></button>
-          </template>
-        </div>
-
-        <div
-          class="tab-panel"
-          role="tabpanel"
-          id="panel-equipment"
-          aria-labelledby="tab-equipment"
-          data-panel="equipment"
-          x-show="resultsTab === 'equipment'"
-        >
-          <dl>
-            <dt>Zone flow</dt>
-            <dd x-text="SYSTEM.zoneFlow"></dd>
-          </dl>
-          <table
-            class="equipment-list"
-            style="
-              --sp-cols: 3;
-              grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
-            "
-          >
-            <template x-for="row in equipmentRows" :key="row.id">
-              <tr>
-                <th scope="row" x-text="row.label"></th>
-                <td>
-                  <input
-                    type="text"
-                    :value="equipmentModelLabel(row.id)"
-                    @input="setEquipmentModel(row.id, $event.target.value)"
-                    :aria-label="`${row.label} description`"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="date"
-                    :max="todayISO"
-                    :value="equipmentDates[row.id] || ''"
-                    @input="setEquipmentDate(row.id, $event.target.value)"
-                    :aria-label="`${row.label} install or replacement date`"
-                  />
-                </td>
-                <td x-text="equipmentAgeYearsLabel(row.id)"></td>
-              </tr>
-            </template>
-          </table>
-        </div>
+        </template>
+        <template x-if="hasMore(recommendations.length)">
+          <button
+            type="button"
+            data-shape="ghost"
+            @click="toggle()"
+            x-text="label(recommendations.length)"
+          ></button>
+        </template>
       </div>
 
-      <dialog
-        x-ref="reset"
-        aria-labelledby="reset-title"
-        @click="if ($event.target === $refs.reset) $refs.reset.close()"
+      <div
+        class="tab-panel"
+        role="tabpanel"
+        id="panel-equipment"
+        aria-labelledby="tab-equipment"
+        data-panel="equipment"
+        x-show="resultsTab === 'equipment'"
       >
-        <h2 id="reset-title">Reset answers</h2>
-        <p>Choose what to clear. You can&rsquo;t undo this.</p>
-        <label class="reset-scope">
-          <span>Scope</span>
-          <select x-model="resetScope">
-            <option value="all">All stages</option>
-            <template x-for="s in STAGES" :key="s">
-              <option
-                :value="s"
-                :disabled="stageProgress[s].answered === 0"
-                x-text="`${STAGE_LABELS[s]} (${stageProgress[s].answered}/${stageProgress[s].total})`"
-              ></option>
-            </template>
-          </select>
-        </label>
-        <footer>
-          <button type="button" autofocus @click="$refs.reset.close()">Cancel</button>
-          <button type="button" data-tone="danger" @click="applyReset()">Reset</button>
-        </footer>
-      </dialog>
-    </main>
+        <dl>
+          <dt>Zone flow</dt>
+          <dd x-text="SYSTEM.zoneFlow"></dd>
+        </dl>
+        <table
+          class="equipment-list"
+          style="
+            --sp-cols: 3;
+            grid-template-columns: minmax(110px, max-content) minmax(0, 1fr) auto auto;
+          "
+        >
+          <template x-for="row in equipmentRows" :key="row.id">
+            <tr>
+              <th scope="row" x-text="row.label"></th>
+              <td>
+                <input
+                  type="text"
+                  :value="equipmentModelLabel(row.id)"
+                  @input="setEquipmentModel(row.id, $event.target.value)"
+                  :aria-label="`${row.label} description`"
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  :max="todayISO"
+                  :value="equipmentDates[row.id] || ''"
+                  @input="setEquipmentDate(row.id, $event.target.value)"
+                  :aria-label="`${row.label} install or replacement date`"
+                />
+              </td>
+              <td x-text="equipmentAgeYearsLabel(row.id)"></td>
+            </tr>
+          </template>
+        </table>
+      </div>
+    </div>
+
+    <dialog
+      x-ref="reset"
+      aria-labelledby="reset-title"
+      @click="if ($event.target === $refs.reset) $refs.reset.close()"
+    >
+      <h2 id="reset-title">Reset answers</h2>
+      <p>Choose what to clear. You can&rsquo;t undo this.</p>
+      <label class="reset-scope">
+        <span>Scope</span>
+        <select x-model="resetScope">
+          <option value="all">All stages</option>
+          <template x-for="s in STAGES" :key="s">
+            <option
+              :value="s"
+              :disabled="stageProgress[s].answered === 0"
+              x-text="`${STAGE_LABELS[s]} (${stageProgress[s].answered}/${stageProgress[s].total})`"
+            ></option>
+          </template>
+        </select>
+      </label>
+      <footer>
+        <button type="button" autofocus @click="$refs.reset.close()">Cancel</button>
+        <button type="button" data-tone="danger" @click="applyReset()">Reset</button>
+      </footer>
+    </dialog>
 
     <script src="data.js?v=23"></script>
     <script src="icons.js?v=16"></script>
