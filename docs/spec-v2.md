@@ -6,8 +6,7 @@ Guide homeowners through fixing their irrigation system with a
 live, ranked list of likely causes — and make the experience feel less like a form
 and more like a working diagnostic bench. The map becomes a real wiring diagram
 that reacts to the active question; the questionnaire gains finer-grained control
-over answers and stages; and an assistant helps.
-user proactively.
+over answers and stages; and an assistant helps the user proactively.
 
 ## Core Objectives
 
@@ -26,7 +25,7 @@ user proactively.
 - **Stage / question fusion.** The active stage in the stage nav visually
   continues into the question card (shared border or fill) so the user reads
   stage + question as a single unit.
-- causes, system info, suggest next become one tabbed card. Cause shown by default.
+- Causes, Equipment, and Suggested next become one tabbed card. Causes shown by default.
 - **Illustrations and help text.** Questions that benefit from visual context —
   most importantly the multimeter probe-placement tests — gain inline
   illustrations or short help text. Added per-question, not globally. 
@@ -59,6 +58,11 @@ A retro robot character with **proactive guidance and support**
 - Surfaces the top suggested question proactive or when clicked.
 - Comments when the top cause changes or when confidence crosses a threshold.
 - Cheers on stage completion.
-- LLM triggered by an explicit button.
--- Sends the answered-question payload and the current ranking to an LLM and
-  shows a plain-language summary of the top causes and recommended next steps.
+- On-demand "ask Robby" mode: the user can ask for additional insights,
+  input, or context at any time and Robby responds in-character.
+- Expands or explains the active question on request — restating it in
+  plainer language, clarifying what's being asked, and why it matters
+  for the current ranking.
+- LLM triggered by an explicit button. Sends the answered-question
+  payload and the current ranking to an LLM and shows a plain-language
+  summary of the top causes and recommended next steps.
