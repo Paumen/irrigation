@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>V2 stage-fusion mockups</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Nunito+Sans:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=60" />
+    <style>
+      .mock-frame {
+        max-width: 560px;
+        margin: 0 auto var(--sp-xl);
+      }
+
+      .mock-frame > h3 {
+        padding: 0 var(--sp-m);
+        margin: 0 0 var(--sp-m);
+        font-family: var(--font-mono);
+        font-size: var(--text-md);
+        text-transform: uppercase;
+      }
+
+      .mock-frame > p {
+        padding: 0 var(--sp-m);
+        margin: 0 0 var(--sp-l);
+        font-size: var(--text-sm);
+        color: var(--c-fg-strong);
+      }
+
+      .stage-chip {
+        display: inline-grid;
+        grid-template-columns: auto auto;
+        gap: var(--sp-s);
+        place-items: center;
+        padding: var(--sp-s) var(--sp-m);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        background: var(--c-bg-alt);
+        border: var(--line-passive);
+      }
+
+      .stage-chip-active {
+        font-weight: var(--font-bold);
+        color: var(--c-bg);
+        background: var(--c-fg);
+        border-color: var(--c-fg);
+      }
+
+      .mock-c summary {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto auto;
+        gap: var(--sp-l);
+        place-items: center stretch;
+      }
+
+      .mock-c-rail {
+        display: grid;
+        grid-template-columns: minmax(120px, auto) 1fr;
+      }
+
+      .mock-c-rail > ul {
+        display: grid;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        background: var(--c-bg-alt);
+        border-right: var(--line-passive);
+      }
+
+      .mock-c-rail > ul > li {
+        display: grid;
+        gap: var(--sp-s);
+        padding: var(--sp-l);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--c-fg-strong);
+        text-transform: uppercase;
+        border-bottom: var(--line-passive);
+      }
+
+      .mock-c-rail > ul > li[aria-current] {
+        font-weight: var(--font-bold);
+        color: var(--c-fg);
+        background: var(--c-bg);
+        border-right: var(--line-width-m) solid var(--c-bg);
+        box-shadow: inset var(--line-width-m) 0 0 0 var(--c-fg);
+      }
+
+      .mock-c-rail > div {
+        padding: var(--sp-l);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1
+        style="
+          max-width: 560px;
+          margin: 0 auto var(--sp-l);
+          padding: 0 var(--sp-m);
+          font-family: var(--font-mono);
+          font-size: var(--text-md);
+          text-transform: uppercase;
+        "
+      >
+        Stage fusion — 3 options
+      </h1>
+
+      <!-- Option A: stage chip inline in question header ============================== -->
+      <section class="mock-frame">
+        <h3>A · Stage chip in question header</h3>
+        <p>
+          The active stage label sits as a filled chip next to the question text. No tabs. Stage
+          switching stays at the bottom of the card as plain navigation buttons.
+        </p>
+
+        <details data-card="questionnaire" open>
+          <summary>
+            <span>Questionnaire</span>
+            <button type="button" data-tone="mute">Reset</button>
+            <button type="button" data-tone="mute" data-shape="square">‹</button>
+            <button type="button" data-tone="mute" data-shape="square">›</button>
+          </summary>
+          <form @submit.prevent>
+            <header style="gap: var(--sp-m); flex-wrap: wrap">
+              <span class="stage-chip stage-chip-active"
+                ><span>Symptoms</span><span>0/7</span></span
+              >
+              <h2 style="flex: 1">Scope of failure?</h2>
+              <span class="relevancy" data-level="high">
+                <span class="meter" aria-hidden="true">
+                  <span class="pip pip-low"></span>
+                  <span class="pip pip-mid"></span>
+                  <span class="pip pip-high"></span>
+                </span>
+                <span>high</span>
+              </span>
+            </header>
+            <div data-q="options">
+              <label class="option"><input type="radio" name="qa" /><span>All zones fail</span></label>
+              <label class="option"
+                ><input type="radio" name="qa" /><span>Multiple zones (not all)</span></label
+              >
+              <label class="option"><input type="radio" name="qa" /><span>Single zone</span></label>
+              <label class="option"
+                ><input type="radio" name="qa" checked /><span>One rotor</span></label
+              >
+            </div>
+          </form>
+          <nav aria-label="Stages">
+            <button type="button" aria-current="step"><span>Symptoms</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
+            <button type="button"><span>Timeline</span><span>0/4</span><span class="bar"><span style="width: 0%"></span></span></button>
+            <button type="button"><span>Tests</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
+          </nav>
+        </details>
+      </section>
+
+      <!-- Option B: stage IS the card title ========================================== -->
+      <section class="mock-frame mock-c">
+        <h3>B · Stage is the card title</h3>
+        <p>
+          The summary bar shows the active stage and progress directly. There is no extra row of
+          tabs at the top. A small stage selector at the bottom lets the user jump.
+        </p>
+
+        <details data-card="questionnaire" open>
+          <summary>
+            <span>Symptoms</span>
+            <span style="font-family: var(--font-mono); font-weight: 400">· 0 of 7</span>
+            <button type="button" data-tone="mute">Reset</button>
+            <button type="button" data-tone="mute" data-shape="square">‹</button>
+            <button type="button" data-tone="mute" data-shape="square">›</button>
+          </summary>
+          <form @submit.prevent>
+            <header>
+              <h2>Scope of failure?</h2>
+              <span class="relevancy" data-level="high">
+                <span class="meter" aria-hidden="true">
+                  <span class="pip pip-low"></span>
+                  <span class="pip pip-mid"></span>
+                  <span class="pip pip-high"></span>
+                </span>
+                <span>high</span>
+              </span>
+            </header>
+            <div data-q="options">
+              <label class="option"><input type="radio" name="qb" /><span>All zones fail</span></label>
+              <label class="option"
+                ><input type="radio" name="qb" /><span>Multiple zones (not all)</span></label
+              >
+              <label class="option"><input type="radio" name="qb" /><span>Single zone</span></label>
+              <label class="option"
+                ><input type="radio" name="qb" checked /><span>One rotor</span></label
+              >
+            </div>
+          </form>
+          <nav aria-label="Stages">
+            <button type="button" aria-current="step"><span>Symptoms</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
+            <button type="button"><span>Timeline</span><span>0/4</span><span class="bar"><span style="width: 0%"></span></span></button>
+            <button type="button"><span>Tests</span><span>0/7</span><span class="bar"><span style="width: 0%"></span></span></button>
+          </nav>
+        </details>
+      </section>
+
+      <!-- Option C: vertical left rail =============================================== -->
+      <section class="mock-frame">
+        <h3>C · Vertical stage rail</h3>
+        <p>
+          Stages live as a left column. The active one extends a solid band across into the question
+          area, physically touching it. Strong "stage owns this question" reading.
+        </p>
+
+        <details data-card="questionnaire" open>
+          <summary>
+            <span>Questionnaire</span>
+            <button type="button" data-tone="mute">Reset</button>
+            <button type="button" data-tone="mute" data-shape="square">‹</button>
+            <button type="button" data-tone="mute" data-shape="square">›</button>
+          </summary>
+          <div class="mock-c-rail">
+            <ul>
+              <li aria-current="step"><span>Symptoms</span><span>0/7</span></li>
+              <li><span>Timeline</span><span>0/4</span></li>
+              <li><span>Tests</span><span>0/7</span></li>
+            </ul>
+            <div>
+              <header style="margin-bottom: var(--sp-l)">
+                <h2>Scope of failure?</h2>
+                <span class="relevancy" data-level="high">
+                  <span class="meter" aria-hidden="true">
+                    <span class="pip pip-low"></span>
+                    <span class="pip pip-mid"></span>
+                    <span class="pip pip-high"></span>
+                  </span>
+                  <span>high</span>
+                </span>
+              </header>
+              <div data-q="options">
+                <label class="option"
+                  ><input type="radio" name="qc" /><span>All zones fail</span></label
+                >
+                <label class="option"
+                  ><input type="radio" name="qc" /><span>Multiple zones (not all)</span></label
+                >
+                <label class="option"
+                  ><input type="radio" name="qc" /><span>Single zone</span></label
+                >
+                <label class="option"
+                  ><input type="radio" name="qc" checked /><span>One rotor</span></label
+                >
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+    </main>
+  </body>
+</html>
