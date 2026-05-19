@@ -273,53 +273,7 @@ function app() {
       this.$watch('skipped', () => this._persist());
       this.$watch('equipmentDates', () => this._persist());
       this.$watch('equipmentModels', () => this._persist());
-      this.$watch('activeQuestionId', () => {
-        this._persist();
-        this._scrollPagerToActive();
-      });
-      this.$nextTick(() => this._scrollPagerToActive('auto'));
-    },
-
-    _scrollPagerToActive(behavior = 'smooth') {
-      const pager = this.$refs.pager;
-      if (!pager) return;
-      const target = pager.querySelector(`[data-qid="${this.activeQuestionId}"]`);
-      if (!target) return;
-      const pagerRect = pager.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const delta = targetRect.left - pagerRect.left + targetRect.width / 2 - pagerRect.width / 2;
-      if (Math.abs(delta) < 4) return;
-      this._suppressPagerSync = true;
-      pager.scrollBy({ left: delta, behavior });
-      clearTimeout(this._pagerSyncTimer);
-      this._pagerSyncTimer = setTimeout(() => {
-        this._suppressPagerSync = false;
-      }, 500);
-    },
-
-    syncActiveFromPager(event) {
-      if (this._suppressPagerSync) return;
-      const pager = event.currentTarget;
-      const center = pager.scrollLeft + pager.clientWidth / 2;
-      let best = null;
-      let bestDist = Infinity;
-      for (const el of pager.children) {
-        if (!el.dataset || !el.dataset.qid) continue;
-        const elCenter = el.offsetLeft + el.offsetWidth / 2;
-        const dist = Math.abs(elCenter - center);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = el;
-        }
-      }
-      if (best && best.dataset.qid !== this.activeQuestionId) {
-        this._suppressPagerSync = true;
-        this.activeQuestionId = best.dataset.qid;
-        clearTimeout(this._pagerSyncTimer);
-        this._pagerSyncTimer = setTimeout(() => {
-          this._suppressPagerSync = false;
-        }, 200);
-      }
+      this.$watch('activeQuestionId', () => this._persist());
     },
 
     _persist() {
@@ -468,11 +422,12 @@ function app() {
       return TYPE_HANDLERS[q.type].isAnswered(q, a);
     },
 
-    rowAns(qid, rowId) {
-      return this.answers[qid]?.[rowId] || 'no';
+    rowAns(rowId) {
+      return this.activeAnswer?.[rowId] || 'no';
     },
 
-    setAnswer(value, { advance = false, qid = this.activeQuestionId } = {}) {
+    setAnswer(value, { advance = false } = {}) {
+      const qid = this.activeQuestionId;
       const list = this.flowQuestions;
       withTransition(() => {
         this.answers = { ...this.answers, [qid]: value };
@@ -484,13 +439,14 @@ function app() {
       });
     },
 
-    setMatrixCell(qid, rowId, colId) {
-      const prev = this.answers[qid] || {};
-      this.setAnswer({ ...prev, [rowId]: colId }, { qid });
+    setMatrixCell(rowId, colId) {
+      const prev = this.answers[this.activeQuestionId] || {};
+      this.setAnswer({ ...prev, [rowId]: colId });
     },
 
-    handleAnswer(qid, i) {
-      this.setAnswer(i, { qid });
+    handleAnswer(i) {
+      const qid = this.activeQuestionId;
+      this.setAnswer(i);
       setTimeout(() => {
         if (this.activeQuestionId !== qid) return;
         this.moveBy(1);
