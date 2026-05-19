@@ -245,7 +245,7 @@
           aria-labelledby="tab-causes"
           data-panel="causes"
           x-show="resultsTab === 'causes'"
-          x-data="seeMore(3)"
+          x-data="seeMore(5)"
         >
           <ol>
             <template x-for="(r, i) in ranked" :key="r.id">
@@ -279,7 +279,7 @@
           aria-labelledby="tab-next"
           data-panel="next"
           x-show="resultsTab === 'next'"
-          x-data="seeMore(2)"
+          x-data="seeMore(5)"
         >
           <template x-if="recommendations.length > 0">
             <ol>
