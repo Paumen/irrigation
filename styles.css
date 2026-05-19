@@ -344,7 +344,6 @@ nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   background: var(--c-bg);
-  border-top: var(--line-passive);
 }
 
 [data-card='questionnaire'] {
@@ -360,10 +359,12 @@ nav button {
   font-variant-numeric: tabular-nums;
   text-align: left;
   border: none;
+  border-top: var(--line-passive);
   border-right: var(--line-passive);
 }
 
 nav button[aria-current] {
+  border-top: var(--line-width-s) solid transparent;
   border-bottom: var(--line-width-m) solid var(--c-fg);
 }
 
@@ -516,6 +517,30 @@ dl {
   grid-template-columns: minmax(120px, max-content) 1fr;
   gap: var(--sp-s) var(--sp-l);
   margin: 0;
+}
+
+[data-card='equipment'] > div {
+  display: grid;
+  gap: var(--sp-l);
+}
+
+[data-card='equipment'] table {
+  gap: var(--sp-s) var(--sp-l);
+  border: 0;
+}
+
+[data-card='equipment'] table th,
+[data-card='equipment'] table td {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+[data-card='equipment'] table th {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--c-fg-strong);
+  text-transform: uppercase;
 }
 
 /* ══════════ 4 · NODES   ══════════ */

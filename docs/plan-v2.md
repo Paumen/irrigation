@@ -112,20 +112,20 @@ Independent. Last, because it needs an API key / endpoint decision.
 
 ## Effort vs benefit
 
-| Item                                 | Effort | Benefit  |
-| ------------------------------------ | ------ | -------- |
-| Stage / question fusion              | S      | High     |
-| Equipment restyle                    | S      | Mid      |
-| See-more uncap                       | XS     | Mid      |
-| Clear single answer                  | S      | High     |
-| Per-stage reset                      | S      | Mid      |
-| Typed connection lines               | M      | High     |
-| Node status badges                   | M      | High     |
-| Active-question emphasis on map      | S      | High     |
-| Node click → popover → Causes link   | M      | Mid-High |
-| Probe-placement illustrations        | M      | High (for test stage) |
-| Robby (scoped)                       | M      | Mid      |
-| LLM explanation                      | M      | Mid      |
+| Item                               | Effort | Benefit               |
+| ---------------------------------- | ------ | --------------------- |
+| Stage / question fusion            | S      | High                  |
+| Equipment restyle                  | S      | Mid                   |
+| See-more uncap                     | XS     | Mid                   |
+| Clear single answer                | S      | High                  |
+| Per-stage reset                    | S      | Mid                   |
+| Typed connection lines             | M      | High                  |
+| Node status badges                 | M      | High                  |
+| Active-question emphasis on map    | S      | High                  |
+| Node click → popover → Causes link | M      | Mid-High              |
+| Probe-placement illustrations      | M      | High (for test stage) |
+| Robby (scoped)                     | M      | Mid                   |
+| LLM explanation                    | M      | Mid                   |
 
 XS ≈ <1h, S ≈ half-day, M ≈ 1–2 days.
 

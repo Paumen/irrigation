@@ -45,8 +45,8 @@ at the end.
   - Water: solid, cyan, thicker stroke
   - 24V control cable: dashed, amber
   - 230V mains: solid, red
-  Styles are defined as CSS custom properties / classes so the legend and the
-  diagram share a single source of truth.
+    Styles are defined as CSS custom properties / classes so the legend and the
+    diagram share a single source of truth.
 - **Node status indicator.** Each node carries a small status badge whose colour
   reflects the aggregated likelihood score of the causes attached to that node
   (e.g. green / amber / red bands derived from the same `severityT` used in the
