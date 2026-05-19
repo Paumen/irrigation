@@ -535,12 +535,14 @@ input[type='text'] {
 
 .tabs-bar {
   display: grid;
+  grid-template-rows: auto 1fr;
   grid-template-columns: repeat(3, 1fr);
   background: color-mix(in oklch, var(--c-bg-alt), var(--c-fg) 10%);
 }
 
 .tab-btn {
   display: grid;
+  grid-row: 2;
   place-items: center;
   width: auto;
   min-height: 0;
@@ -553,11 +555,14 @@ input[type='text'] {
   cursor: pointer;
   background: transparent;
   border: none;
-  transition: color var(--time);
+  transition:
+    color var(--time),
+    background var(--time);
 }
 
 .tab-btn[aria-selected='true'] {
   color: var(--c-fg);
+  background: var(--c-bg);
 }
 
 .tab-btn:active {
@@ -566,7 +571,7 @@ input[type='text'] {
 }
 
 .tabs-indicator {
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 1;
   width: 100%;
   height: var(--line-width-m);
