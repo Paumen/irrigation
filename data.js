@@ -120,7 +120,7 @@ window.DATA = {
         },
         {
           label: 'silent',
-          effects: { R1: 0.6, R2: 1.0, R31: 0.6, R42: 0.6 },
+          effects: { R1: 0.4, R2: 1.0, R31: 0.6, R42: 0.6 },
         },
         {
           label: 'Short-cycles / No pressure',
