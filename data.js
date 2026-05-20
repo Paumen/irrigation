@@ -392,7 +392,7 @@ window.DATA = {
       options: [
         {
           label: '~24 VAC present',
-          effects: { R11: -0.4, R12: -0.4, R22: -1, R63: -0.4, R7: 0.4 },
+          effects: { R11: -0.4, R12: -0.4, R22: -1, R63: -0.4, R71: 0.6 },
         },
         { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6, R7: -0.4 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
