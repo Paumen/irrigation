@@ -137,7 +137,7 @@ window.DATA = {
         {
           label: 'No water at all',
           icon: 'flow-none',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.2, R42: 0.6, R5: 0.2, R6: 0.6, R71: 0.6 },
+          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.2, R42: 0.6, R5: 0.2, R6: 0.4, R71: 0.6 },
         },
         {
           label: 'Weak',
@@ -185,7 +185,7 @@ window.DATA = {
       options: [
         {
           label: 'Strong, steady',
-          effects: { R4:-1, R5: -1, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: { R4:-1, R5: -1, R6: 0.2, R7: 0.4, R8: 0.4, R9: 0.4 },
         },
         {
           label: 'Weak / sputtering',
@@ -209,7 +209,7 @@ window.DATA = {
           effects: { R71: -0.4, R72: 0.4, R73: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
         },
         {
-          label: 'Buzz / hum, no click',
+          label: 'Buzz / hum',
           effects: { R6: 1, R71: 0.6 },
         },
         {
@@ -217,8 +217,8 @@ window.DATA = {
           effects: { R6: 0.2, R71: 0.2 },
         },
         {
-          label: 'Silent',
-          effects: { R6: 0.6, R71: 1 },
+          label: 'Silent / No click',
+          effects: { R6: 0.4, R71: 1 },
         },
       ],
     },
