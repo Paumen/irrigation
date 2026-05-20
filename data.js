@@ -80,7 +80,7 @@ window.DATA = {
         {
           label: 'One rotor',
           icon: 'scope-one',
-          effects: { R9: 2 },
+          effects: { R9: 1.6 },
         },
       ],
     },
@@ -92,7 +92,7 @@ window.DATA = {
       options: [
         {
           label: 'Only app has issues',
-          effects: { R1 1.6 },
+          effects: { R1: 1.6 },
         },
         {
           label: 'Yes — nothing starts at all',
@@ -112,7 +112,7 @@ window.DATA = {
       options: [
         {
           label: 'Runs smoothly',
-          effects: { R41: 0.2, R42: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
+          effects: { R4: -0.2, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
         },
         {
           label: 'Hums, trips breaker',
@@ -137,7 +137,7 @@ window.DATA = {
         {
           label: 'No water at all',
           icon: 'flow-none',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.2, R42: 0.6, R51: 0.2, R6: 0.6, R71: 0.6 },
+          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.2, R42: 0.6, R5: 0.2, R6: 0.6, R71: 0.6 },
         },
         {
           label: 'Weak',
@@ -152,7 +152,7 @@ window.DATA = {
         {
           label: 'Weak, then strong',
           icon: 'flow-rise',
-          effects: { R41: 0.4, R52: 0.4, R82: 0.4 },
+          effects: { R41: 0.4, R52: 0.2, R82: 0.2 },
         },
         {
           label: 'Fluctuating / erratic',
@@ -162,7 +162,7 @@ window.DATA = {
         {
           label: 'Leaks when system is off',
           icon: 'flow-leak',
-          effects: { R51: 0.4, R72: 0.4, R73: 0.4, R74: 0.4, R81: 0.4 },
+          effects: {  R72: 0.4, R73: 0.4, R74: 0.4 },
         },
         {
           label: 'Geyser-like pressure',
@@ -358,7 +358,7 @@ window.DATA = {
       text: 'External events — relation to issue?',
       columns: timelineColsWithDays(0.6),
       rows: [
-        { id: 'storm', label: 'Storm / lightning', effects: { R22: 1, R6: 1, R12: 1 } },
+        { id: 'storm', label: 'Storm / lightning', effects: { R22: 1, R6: 1, R13: 1 } },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
         { id: 'heat', label: 'Heatwave / drought', effects: { R41: 1 } },
         { id: 'outage', label: 'Power outage', effects: { R12: 1, R23: 1 } },
@@ -392,7 +392,7 @@ window.DATA = {
       options: [
         {
           label: '~24 VAC present',
-          effects: { R11: -0.4, R12: -0.4, R22: -1, R6: -0.4, R7: 0.4 },
+          effects: { R11: -0.4, R12: -0.4, R22: -1, R63: -0.4, R7: 0.4 },
         },
         { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6, R7: -0.4 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
@@ -463,7 +463,7 @@ window.DATA = {
       options: [
         {
           label: 'Along the main line route',
-          effects: { R51: 2 },
+          effects: { R51: 1.6 },
         },
         {
           label: 'In / around valve box',
@@ -471,7 +471,7 @@ window.DATA = {
         },
         {
           label: 'Along zone lines',
-          effects: { R81: 2 },
+          effects: { R81: 1.6 },
         },
         {
           label: 'Nothing visible',
