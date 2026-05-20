@@ -152,7 +152,7 @@ window.DATA = {
         {
           label: 'Weak, then strong',
           icon: 'flow-rise',
-          effects: { R41: 0.4, R52: 0.2, R82: 0.2 },
+          effects: { R41: 0.4},
         },
         {
           label: 'Fluctuating / erratic',
@@ -361,7 +361,7 @@ window.DATA = {
         { id: 'storm', label: 'Storm / lightning', effects: { R22: 1, R6: 1, R13: 1 } },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
         { id: 'heat', label: 'Heatwave / drought', effects: { R41: 1 } },
-        { id: 'outage', label: 'Power outage', effects: { R12: 1, R23: 1 } },
+        { id: 'outage', label: 'Power outage', effects: { R13: 1, R23: 1 } },
         { id: 'pests', label: 'Pests / rodents', effects: { R51: 1, R81: 1, R6: 1 } },
         { id: 'dig', label: 'Digging / vehicle', effects: { R51: 1, R61: 1, R62: 1, R81: 1 } },
       ],
