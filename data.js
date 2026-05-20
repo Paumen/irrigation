@@ -65,7 +65,7 @@ window.DATA = {
         {
           label: 'All zones fail',
           icon: 'scope-all',
-          effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.2, R5: 0.2 },
+          effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.2, R5: 0.2, R62: 0.2 },
         },
         {
           label: 'Multiple zones (not all)',
@@ -92,7 +92,7 @@ window.DATA = {
       options: [
         {
           label: 'Only app has issues',
-          effects: { R11: 1.6, R13: 1.6 },
+          effects: { R1 1.6 },
         },
         {
           label: 'Yes — nothing starts at all',
@@ -112,11 +112,15 @@ window.DATA = {
       options: [
         {
           label: 'Runs smoothly',
-          effects: { R41: 0.2, R42: -0.3, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
+          effects: { R41: 0.2, R42: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
         },
         {
-          label: 'Hums, trips breaker, or silent',
-          effects: { R1: 1, R2: 1, R31: 1, R42: 1 },
+          label: 'Hums, trips breaker',
+          effects: { R31: 0.6, R42: 0.6 },
+        },
+        {
+          label: 'silent',
+          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R42: 0.6 },
         },
         {
           label: 'Short-cycles / No pressure',
@@ -143,7 +147,7 @@ window.DATA = {
         {
           label: 'Strong, then weak',
           icon: 'flow-decline',
-          effects: { R4: 0.6, R52: 0.4, R71: 0.2, R82: 0.4 },
+          effects: { R4: 0.6, R52: 0.4, R82: 0.4 },
         },
         {
           label: 'Weak, then strong',
@@ -181,11 +185,11 @@ window.DATA = {
       options: [
         {
           label: 'Strong, steady',
-          effects: { R4:-1.6, R5: -1.6, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: { R4:-1, R5: -1, R6: 0.4, R7: 0.4, R8: 0.4, R9: 0.4 },
         },
         {
           label: 'Weak / sputtering',
-          effects: { R41: 0.4, R5: 0.4 },
+          effects: { R41: 0.4, R42: 0.2, R5: 0.4 },
         },
         {
           label: 'None at all',
@@ -202,11 +206,11 @@ window.DATA = {
       options: [
         {
           label: 'Clear click',
-          effects: { R71: -0.4, R72: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
+          effects: { R71: -0.4, R72: 0.4, R73: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
         },
         {
           label: 'Buzz / hum, no click',
-          effects: { R6: 1, R71: 1 },
+          effects: { R6: 1, R71: 0.6 },
         },
         {
           label: 'Weak click',
@@ -214,7 +218,7 @@ window.DATA = {
         },
         {
           label: 'Silent',
-          effects: { R6: 1, R71: 1 },
+          effects: { R6: 0.6, R71: 1 },
         },
       ],
     },
@@ -234,7 +238,7 @@ window.DATA = {
         },
         {
           label: 'Tried, no effect',
-          effects: { R1: -0.2, R2: -0.2, R42: -0.2 },
+          effects: { },
         },
         {
           label: "Haven't tried",
@@ -252,12 +256,12 @@ window.DATA = {
         {
           label: 'Sudden',
           icon: 'pat-sudden',
-          effects: { R22: 0.2, R31: 0.2, R51: 0.2, R63: 0.2, R71: 0.2, R92: 0.3 },
+          effects: { R22: 0.2, R31: 0.2, R51: 0.2, R63: 0.2, R71: 0.2, R92: 0.2 },
         },
         {
           label: 'Gradual',
           icon: 'pat-gradual-all',
-          effects: { R4: 0.4, R52: 0.4, R72: 0.4, R73: 0.4, R91: 0.4, R92: 0.1 },
+          effects: { R4: 0.4, R52: 0.4, R72: 0.4, R73: 0.4, R91: 0.4 },
         },
         {
           label: 'Intermittent',
@@ -340,8 +344,8 @@ window.DATA = {
       rows: [
         { id: 'pump', label: 'Pump', effects: { R41: 0.4, R42: 1.0 } },
         { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
-        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.8 } },
-        { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.8 } },
+        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.6} },
+        { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.6 } },
         { id: 'rotor', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
         { id: 'hose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
         { id: 'wiring', label: 'Wiring', effects: { R6: 1 } },
@@ -388,7 +392,7 @@ window.DATA = {
       options: [
         {
           label: '~24 VAC present',
-          effects: { R11: -0.4, R12: -0.4, R21: -0.4, R22: -0.6, R6: -0.4, R7: 0.4 },
+          effects: { R11: -0.4, R12: -0.4, R22: -1, R6: -0.4, R7: 0.4 },
         },
         { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6, R7: -0.4 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
@@ -423,7 +427,7 @@ window.DATA = {
       highlight: ['valves'],
       options: [
         { label: 'In range', effects: { R7: 0.2, R71: -0.4 } },
-        { label: 'Open / infinite', effects: { R71: 1.6, R62: 0.8 } },
+        { label: 'Open / infinite', effects: { R71: 1.6, R62: 0.6 } },
         { label: 'Near zero / very low', effects: { R71: 1.6 } },
         { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
       ],
@@ -436,7 +440,7 @@ window.DATA = {
       options: [
         {
           label: 'Yes (stays with zone)',
-          effects: { R6: 0.6, R7: -0.6, R8: 0.6 },
+          effects: { R6: 0.6, R7: -0.4, R8: 0.6 },
         },
         { label: 'No (follows the valve)', effects: { R7: 1.6 } },
       ],
