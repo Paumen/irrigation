@@ -32,27 +32,27 @@ window.DATA = {
     fast: [-0.2, 0.2, 0.2, 0.4],
   },
   causes: [
-    { id: 'R11', parent: 'R1', baseline: 0.8, label: 'Misconfiguration' },
-    { id: 'R12', parent: 'R1', baseline: 0.9, label: 'App failure (bug, etc)' },
-    { id: 'R13', parent: 'R1', baseline: 0.8, label: 'Connectivity (wifi)' },
-    { id: 'R22', parent: 'R2', baseline: 0.9, label: 'Controller hardware failure' },
-    { id: 'R23', parent: 'R2', baseline: 0.8, label: 'Controller firmware / config' },
+    { id: 'R11', parent: 'R1', baseline: 1.2, label: 'Misconfiguration' },
+    { id: 'R12', parent: 'R1', baseline: 1.2, label: 'App failure (bug, etc)' },
+    { id: 'R13', parent: 'R1', baseline: 1.2, label: 'Connectivity (wifi)' },
+    { id: 'R22', parent: 'R2', baseline: 1.2, label: 'Controller hardware failure' },
+    { id: 'R23', parent: 'R2', baseline: 1.2, label: 'Controller firmware / config' },
     { id: 'R31', parent: 'R3', baseline: 1.2, label: 'Relay wiring fault' },
-    { id: 'R41', parent: 'R4', baseline: 1.3, label: 'Pump suction-side fault' },
-    { id: 'R42', parent: 'R4', baseline: 1.1, label: 'Pump hardware failure' },
-    { id: 'R51', parent: 'R5', baseline: 1.2, label: 'Main hose 32mm leak / break' },
-    { id: 'R52', parent: 'R5', baseline: 0.8, label: 'Main hose 32mm air / debris clog' },
-    { id: 'R61', parent: 'R6', baseline: 1.2, label: 'Per-zone hot conductor fault' },
-    { id: 'R62', parent: 'R6', baseline: 1.4, label: 'Common wire fault' },
+    { id: 'R41', parent: 'R4', baseline: 1.2, label: 'Pump suction-side fault' },
+    { id: 'R42', parent: 'R4', baseline: 1.0, label: 'Pump hardware failure' },
+    { id: 'R51', parent: 'R5', baseline: 0.8, label: 'Main hose 32mm leak / break' },
+    { id: 'R52', parent: 'R5', baseline: 1.0, label: 'Main hose 32mm air / debris clog' },
+    { id: 'R61', parent: 'R6', baseline: 1.0, label: 'Per-zone hot conductor fault' },
+    { id: 'R62', parent: 'R6', baseline: 0.8, label: 'Common wire fault' },
     { id: 'R63', parent: 'R6', baseline: 0.8, label: 'Wire-to-triac connection fault' },
-    { id: 'R71', parent: 'R7', baseline: 1.2, label: 'Solenoid failure' },
-    { id: 'R72', parent: 'R7', baseline: 1.4, label: 'Diaphragm failure' },
-    { id: 'R73', parent: 'R7', baseline: 0.7, label: 'Valve body / seal failure' },
-    { id: 'R74', parent: 'R7', baseline: 0.8, label: 'Valve misconfiguration' },
-    { id: 'R81', parent: 'R8', baseline: 1.1, label: 'Hoses 25mm / fitting damage' },
-    { id: 'R82', parent: 'R8', baseline: 0.9, label: 'Hoses 25mm air / debris clog' },
-    { id: 'R91', parent: 'R9', baseline: 1.1, label: 'Rotor debris / nozzle' },
-    { id: 'R92', parent: 'R9', baseline: 1.0, label: 'Rotor misconfigured' },
+    { id: 'R71', parent: 'R7', baseline: 1.0, label: 'Solenoid failure' },
+    { id: 'R72', parent: 'R7', baseline: 1.2, label: 'Diaphragm failure' },
+    { id: 'R73', parent: 'R7', baseline: 0.8, label: 'Valve body / seal failure' },
+    { id: 'R74', parent: 'R7', baseline: 1.0, label: 'Valve misconfiguration' },
+    { id: 'R81', parent: 'R8', baseline: 0.8, label: 'Hoses 25mm / fitting damage' },
+    { id: 'R82', parent: 'R8', baseline: 0.8, label: 'Hoses 25mm air / debris clog' },
+    { id: 'R91', parent: 'R9', baseline: 1.2, label: 'Rotor debris / nozzle' },
+    { id: 'R92', parent: 'R9', baseline: 1.2, label: 'Rotor misconfigured' },
   ],
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
@@ -65,7 +65,7 @@ window.DATA = {
         {
           label: 'All zones fail',
           icon: 'scope-all',
-          effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.2, R5: 0.2, R62: 0.2 },
+          effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.4, R5: 0.4, R62: 0.2 },
         },
         {
           label: 'Multiple zones (not all)',
@@ -112,37 +112,37 @@ window.DATA = {
       options: [
         {
           label: 'Runs smoothly',
-          effects: { R4: -0.2, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
+          effects: { R4: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
           label: 'Hums, trips breaker',
-          effects: { R31: 0.6, R42: 0.6 },
+          effects: { R31: 1.0, R42: 1.0 },
         },
         {
           label: 'silent',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R42: 0.6 },
+          effects: { R1: 0.6, R2: 1.0, R31: 0.6, R42: 0.6 },
         },
         {
           label: 'Short-cycles / No pressure',
-          effects: { R4: 0.4, R51: 0.4 },
+          effects: { R4: 0.6, R51: 0.4 },
         },
       ],
     },
     {
       id: 'Q4',
       stage: 1,
-      text: 'How does water leave rotors?',
+      text: 'How does water leave rotor(s)?',
       highlight: ['rotor'],
       options: [
         {
           label: 'No water at all',
           icon: 'flow-none',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.2, R42: 0.6, R5: 0.2, R6: 0.4, R71: 0.6 },
+          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.4, R42: 0.6, R5: 0.4, R6: 0.4, R71: 0.4 },
         },
         {
           label: 'Weak',
           icon: 'flow-weak',
-          effects: { R4: 0.2, R52: 0.2, R6: 0.2, R72: 0.2, R74: 0.2, R8: 0.2, R9: 0.2 },
+          effects: { R4: 0.2, R52: 0.2, R6: 0.2, R72: 0.2, R74: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
           label: 'Strong, then weak',
@@ -157,7 +157,7 @@ window.DATA = {
         {
           label: 'Fluctuating / erratic',
           icon: 'pat-noise',
-          effects: { R1: 0.4, R23: 0.4, R4: 0.2, R52: 0.2, R6: 0.4, R71: 0.4 },
+          effects: { R1: 0.4, R23: 0.4, R4: 0.4, R52: 0.2, R6: 0.4, R71: 0.2 },
         },
         {
           label: 'Leaks when system is off',
@@ -167,7 +167,7 @@ window.DATA = {
         {
           label: 'Geyser-like pressure',
           icon: 'flow-geyser',
-          effects: { R51: 0.4, R81: 0.4, R91: 0.4 },
+          effects: { R51: 0.4, R81: 0.4, R91: 0.6 },
         },
         {
           label: 'Normal',
@@ -185,15 +185,15 @@ window.DATA = {
       options: [
         {
           label: 'Strong, steady',
-          effects: { R4:-1, R5: -1, R6: 0.2, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: { R4: -0.6, R5: -1, R6: 0.2, R7: 0.4, R8: 0.4, R9: 0.4 },
         },
         {
           label: 'Weak / sputtering',
-          effects: { R41: 0.4, R42: 0.2, R5: 0.4 },
+          effects: { R41: 0.6, R42: 0.4, R5: 0.6 },
         },
         {
           label: 'None at all',
-          effects: { R4: 0.6 },
+          effects: { R4: 1.0, R5: 0.4 },
         },
       ],
     },
@@ -206,11 +206,11 @@ window.DATA = {
       options: [
         {
           label: 'Clear click',
-          effects: { R71: -0.4, R72: 0.4, R73: 0.4, R8: 0.4, R91: 0.4, R92: 0.6 },
+          effects: { R71: -0.6, R72: 0.4, R73: 0.4, R8: 0.4, R9: 0.6 },
         },
         {
           label: 'Buzz / hum',
-          effects: { R6: 1, R71: 0.6 },
+          effects: { R6: 1, R71: 0.4 },
         },
         {
           label: 'Weak click',
@@ -218,7 +218,7 @@ window.DATA = {
         },
         {
           label: 'Silent / No click',
-          effects: { R6: 0.4, R71: 1 },
+          effects: { R6: 0.4, R71: 0.6 },
         },
       ],
     },
@@ -230,7 +230,7 @@ window.DATA = {
       options: [
         {
           label: 'Controller restart briefly fixed it',
-          effects: { R12: 0.6, R13: 0.6, R23: 0.6 },
+          effects: { R12: 0.6, R13: 0.6, R23: 1.0 },
         },
         {
           label: 'Pump restart briefly fixed it',
@@ -238,10 +238,6 @@ window.DATA = {
         },
         {
           label: 'Tried, no effect',
-          effects: { },
-        },
-        {
-          label: "Haven't tried",
           effects: {},
         },
       ],
@@ -256,7 +252,7 @@ window.DATA = {
         {
           label: 'Sudden',
           icon: 'pat-sudden',
-          effects: { R22: 0.2, R31: 0.2, R51: 0.2, R63: 0.2, R71: 0.2, R92: 0.2 },
+          effects: { R22: 0.4, R31: 0.2, R51: 0.2, R63: 0.2, R71: 0.2, R9: 0.4 },
         },
         {
           label: 'Gradual',
@@ -392,25 +388,14 @@ window.DATA = {
       options: [
         {
           label: '~24 VAC present',
-          effects: { R11: -0.4, R12: -0.4, R22: -1, R63: -0.4, R71: 0.6 },
+          effects: { R11: -0.4, R12: -0.4, R22: -0.2, R63: -0.4, R71: 0.4 },
         },
-        { label: '0 V', effects: { R11: 0.6, R22: 0.6, R63: 0.6, R7: -0.4 } },
+        { label: '0 V', effects: { R11: 0.6, R22: 1.6, R63: 0.6, R7: -0.4 } },
         { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
       ],
     },
     {
       id: 'Q14',
-      stage: 3,
-      text: '24 VAC at controller pump start-relay during call?',
-      highlight: ['ctrl', 'relay'],
-      options: [
-        { label: "24V present, relay won't pull", effects: { R31: 0.6 } },
-        { label: '0 V', effects: { R11: 0.6, R22: 0.6 } },
-        { label: '24V in, clicks, no 230V out', effects: { R31: 0.6 } },
-      ],
-    },
-    {
-      id: 'Q15',
       stage: 3,
       text: 'Resistance common wire slot and zone in controller?',
       highlight: ['ctrl', 'valves'],
@@ -421,32 +406,32 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q16',
+      id: 'Q15',
       stage: 3,
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
       highlight: ['valves'],
       options: [
-        { label: 'In range', effects: { R71: -0.4 } },
+        { label: 'In range', effects: { R71: -1.0 } },
         { label: 'Open / infinite', effects: { R71: 1.6, R62: 0.6 } },
         { label: 'Near zero / very low', effects: { R71: 1.6 } },
         { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
       ],
     },
     {
-      id: 'Q17',
+      id: 'Q16',
       stage: 3,
       text: 'Swap valve with known-good — issue stays with zone?',
       highlight: ['valves'],
       options: [
         {
           label: 'Yes (stays with zone)',
-          effects: { R6: 0.6, R7: -0.4, R8: 0.6 },
+          effects: { R6: 0.6, R7: -0.6, R8: 0.6 },
         },
         { label: 'No (follows the valve)', effects: { R7: 1.6 } },
       ],
     },
     {
-      id: 'Q18',
+      id: 'Q17',
       stage: 3,
       text: 'Open each valve and inspect internals?',
       highlight: ['valves'],
@@ -475,7 +460,7 @@ window.DATA = {
         },
         {
           label: 'Nothing visible',
-          effects: { R51: -0.4, R73: -0.4, R74: -0.4, R81: -0.4 },
+          effects: { R51: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
         },
       ],
     },
@@ -485,7 +470,7 @@ window.DATA = {
       text: 'Dig & inspect hoses for damage?',
       highlight: [],
       options: [
-        { label: 'Damage found', effects: { R51: 1, R81: 1 } },
+        { label: 'Damage found', effects: { R51: 1.6, R81: 1.6 } },
         { label: 'No damage', effects: { R51: -0.4, R81: -0.4 } },
       ],
     },
@@ -497,7 +482,7 @@ window.DATA = {
       highlight: ['pump'],
       options: [
         { label: 'Yes (in range)', effects: { R4: -0.4, R5: -0.4 } },
-        { label: 'No (out of range)', effects: { R4: 0.2, R5: 0.2 } },
+        { label: 'No (out of range)', effects: { R4: 0.4, R5: 0.6 } },
       ],
     },
   ],
