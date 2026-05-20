@@ -426,7 +426,7 @@ window.DATA = {
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
       highlight: ['valves'],
       options: [
-        { label: 'In range', effects: { R7: 0.2, R71: -0.4 } },
+        { label: 'In range', effects: { R71: -0.4 } },
         { label: 'Open / infinite', effects: { R71: 1.6, R62: 0.6 } },
         { label: 'Near zero / very low', effects: { R71: 1.6 } },
         { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
