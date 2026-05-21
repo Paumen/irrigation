@@ -84,52 +84,8 @@ window.DATA = {
         },
       ],
     },
-    {
+        {
       id: 'Q2',
-      stage: 1,
-      text: 'Same issue when starting via app vs controller?',
-      highlight: ['sw', 'ctrl'],
-      options: [
-        {
-          label: 'Only app has issues',
-          effects: { R1: 1.6 },
-        },
-        {
-          label: 'Yes — nothing starts at all',
-          effects: { R2: 0.2, R31: 0.2, R63: 0.2 },
-        },
-        {
-          label: 'Yes — both start something',
-          effects: { R4: 0.2, R5: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
-        },
-      ],
-    },
-    {
-      id: 'Q3',
-      stage: 1,
-      text: 'How does the pump behave when turned on?',
-      highlight: ['pump'],
-      options: [
-        {
-          label: 'Runs smoothly',
-          effects: { R4: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.4 },
-        },
-        {
-          label: 'Hums, trips breaker',
-          effects: { R31: 1.0, R42: 1.0 },
-        },
-        {
-          label: 'silent',
-          effects: { R1: 0.4, R2: 1.0, R31: 0.6, R42: 0.6 },
-        },
-        {
-          label: 'Short-cycles / No pressure',
-          effects: { R4: 0.6, R51: 0.4 },
-        },
-      ],
-    },
-    {
-      id: 'Q4',
       stage: 1,
       text: 'How does water leave rotor(s)?',
       highlight: ['rotor'],
@@ -173,6 +129,51 @@ window.DATA = {
           label: 'Normal',
           icon: 'flow-normal',
           effects: { R1: 0.6, R4: -0.4, R5: -0.4, R6: -0.4, R7: -0.4, R8: -0.4, R9: -0.4 },
+        },
+      ],
+    },
+
+    {
+      id: 'Q3',
+      stage: 1,
+      text: 'How does the pump behave when turned on?',
+      highlight: ['pump'],
+      options: [
+        {
+          label: 'Runs smoothly',
+          effects: { R4: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.4 },
+        },
+        {
+          label: 'Hums, trips breaker',
+          effects: { R31: 1.0, R42: 1.0 },
+        },
+        {
+          label: 'silent',
+          effects: { R1: 0.4, R2: 1.0, R31: 0.6, R42: 0.6 },
+        },
+        {
+          label: 'Short-cycles / No pressure',
+          effects: { R4: 0.6, R51: 0.4 },
+        },
+      ],
+    },
+    {
+      id: 'Q4',
+      stage: 1,
+      text: 'Same issue when starting via app vs controller?',
+      highlight: ['sw', 'ctrl'],
+      options: [
+        {
+          label: 'Only app has issues',
+          effects: { R1: 1.6 },
+        },
+        {
+          label: 'Yes — nothing starts at all',
+          effects: { R2: 0.2, R31: 0.2, R63: 0.2 },
+        },
+        {
+          label: 'Yes — both start something',
+          effects: { R4: 0.2, R5: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
         },
       ],
     },
@@ -441,7 +442,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'QX1',
+      id: 'Q18',
       optional: true,
       text: 'Do you see water / wet ground?',
       highlight: ['valves'],
@@ -465,7 +466,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'QX2',
+      id: 'Q19',
       optional: true,
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump'],
