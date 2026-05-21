@@ -72,25 +72,25 @@ zones:
     heads:
       i20_rotors: 1
       mp_rotators: 2
-    precipitation_rate_mm_h: 2.2
+    flow_rating_m3h:: 2.2
 
   - id: 2
     heads:
       i20_rotors: 2
       mp_rotators: 0
-    precipitation_rate_mm_h: 2.0
+    flow_rating_m3h:: 2.0
 
   - id: 3
     heads:
       i20_rotors: 2
       mp_rotators: 0
-    precipitation_rate_mm_h: 2.0
+    flow_rating_m3h:: 2.0
 
   - id: 4
     heads:
       i20_rotors: 0
       mp_rotators: 3
-    precipitation_rate_mm_h: 1.5
+    flow_rating_m3h:: 1.5
 
 # ---------------------------
 # Piping (hydraulic)
