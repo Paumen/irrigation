@@ -100,27 +100,28 @@ Treat the top entries of `next` as the engine's recommended next questions. Trea
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.
    - Between rounds, if more then >3 questions are answered, surface a short list of the current top three causes so the user sees the hypothesis narrowing.
 
-5. **After the loop, branch on whether one cause clearly leads.** "Clearly leads" = top cause's `pct` is well above the second (rule of thumb: top is ≥1.5× the second, and the gap held across the last few rounds — not just the most recent answer). Two cases:
+5. **After the loop, branch on whether causes on top clearly lead**, i.e. the gap held across the last few rounds — not just the most recent answer. Two cases:
 
-   - **Clear leader present →** confirm it with **two extra checks**: one low-effort recollection question (e.g. "does the pump sound steady when it starts?") and one stronger physical test (e.g. "what's the solenoid coil resistance — should be 20–60 Ω"). Don't stack multiple physical-test questions in a row. The engine's `D` and `relevancy` indicate diagnostic power but **not** effort — judging effort is your job. Then go to step 7.
+   - **Clear leaderk(s) present →** confirm it with **two extra checks**: one low-/mid-effort question (e.g. "does the pump sound steady when it starts?") and one stronger physical test (e.g. "what's the solenoid coil resistance — should be 20–60 Ω"). Don't stack multiple physical-test questions in a row.The user might need time to do the test, get overwhelmed, or have clarification question on how to do the test. The engine's `D` and `relevancy` indicate diagnostic power but **not** effort — judging effort is your job. Then go to step 8.
 
    - **No clear leader (dead-ended) →** go to step 6.
 
-6. **Dead-end handling.** Diagnose why the loop stalled:
-   - **Conflicting information** — answers point in incompatible directions. Ask clarification questions on the specific points that disagree before concluding.
-   - **Insufficient information** — no incompatibility, just not enough signal. Run "five whys" silently against the current top candidates; consider an open-ended question; if the engine catalogue clearly doesn't cover the symptoms, read a local vendor PDF (see `sources.md`) or `WebFetch` an outside reference.
-   - Then go to step 7.
+6.
+6.1 Share your analysis so far, strictly split what you know, what you interpreted from user feedback, what you inferred/assumed, and what you don't know. 
+6.2 Let user validate/confirm/review. Adapt/adjust/add based on user feedback if needed. 
+6.3 Evaluate if any questions with high differentiators are left.
+6.4  If dead end, determine if it's because information you have is conflicting or or I sufficient.
+  - If conflicting ask clarification questions.
+  - If not sufficient, and no useful predifined questions left, eg if symptoms or cause direction appears to deviate from predefined question and/or cause buckets, consider adding own/new open or closed ended questions, reading sources, doing a websearch, using "5 times why" technique silently. 
 
-7. **Present findings.** Split your output strictly into four parts, in this order:
-   - **What you know** — direct observations from the user.
-   - **What you interpreted** — what their words probably mean.
-   - **What you inferred** — what the engine and your reasoning add.
-   - **What you don't know** — open questions, ambiguities, untested assumptions.
-   Then state the area to investigate, the cheapest next physical check, and when to call a professional.
+8. **Present findings.** State the area to investigate, the cheapest next physical check.
 
 ## Stopping the loop
 
-There is exactly one stop rule: `next[0].relevancy` is `low` or `null` **and** at least 3 questions have been answered. When that fires, exit the question loop and proceed to step 5. Step 5 decides whether the outcome is a clean conclusion (verify the leader, then present) or a dead-end (step 6, then present).
+Stop rules: 
+- `next[0].relevancy` is `low` or `null` **and** at least 5 questions have been answered.
+- User explicitlybtells you they have found the actual cause, or issue is fixed.
+- User explicitly tells you they will stop troubleshooting or you investigating for now.
 
 ## Asking questions
 
