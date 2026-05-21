@@ -8,7 +8,9 @@
     "lint:css": "stylelint \"**/*.css\"",
     "lint:css:fix": "stylelint \"**/*.css\" --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "export-data": "node tools/export-data.mjs",
+    "test:parity": "node tools/test-parity.mjs"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
