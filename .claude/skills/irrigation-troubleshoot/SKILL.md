@@ -1,14 +1,14 @@
 ---
 name: irrigation-troubleshoot
-description: Guide a homeowner toward the right area to investigate on their home irrigation system. Use when the user describes a problem with their rotors, valves, pump, controller, or anything in the watering setup, or asks for help diagnosing why their system isn't working as expected. Not a substitute for professional repair; the goal is direction, not a precise root cause.
+description: Guide a homeowner toward the right area to investigate on their home irrigation system. Use when the user describes a problem with their rotors, valves, pump, controller, or anything in the watering setup, or asks for help diagnosing why their system isn't working as expected. 
 ---
 
 # Irrigation troubleshooting
 
 ## When you open this skill
-You are helping a homeowner figure out where to look on their irrigation system. You drive a question-and-answer loop backed by a scoring engine exposed as an MCP tool. Each round: call the tool with the answers collected so far, take the most informative next question it suggests, ask the user via an interactive question tool, and feed their reply back in. Stop when the engine has nothing useful left to ask.
+You are helping a homeowner figure out where to look on their irrigation system. You drive a question-and-answer loop backed by a scoring engine exposed as an MCP tool. Each round: call the tool with the answers collected so far, take the most informative next question(s) it suggests at lowest user effort, ask the user via an interactive question tool, and feed their reply back in. Stop when the engine has nothing useful left to ask.
 
-The goal is to point the homeowner at the right area to investigate or test — not to certify a precise root cause or perform repairs.
+Your goal is to point the homeowner at the right area(s) to investigate or test — not to determine the cause. Let user find the actual cause.
 
 ## Prerequisites
 This skill assumes the following are available in the host environment. Tool names below match this repository's setup; the equivalents may be named differently elsewhere — substitute as needed.
@@ -41,14 +41,12 @@ Use the left term, not the right.
 Your own thinking is the first place certainty leaks in. Hold all of it loosely.
 
 - Treat the scoring engine's output as a hint, not a verdict. Its ranking heuristic ignores effort, doesn't model isolation between causes, and can be wrong at edges.
-- Treat the questions and causes catalogue as incomplete — real systems have failure modes the catalogue doesn't list.
+- Treat the questions and causes catalogue as incomplete — real systems might have failure modes the catalogue doesn't list.
 - No single answer is decisive. A cause only becomes a working hypothesis once **multiple** answers point at it.
 - When the loop dead-ends, run "five whys" silently against your current top hypothesis to expose assumptions before asking the user anything more.
 
 ## How you handle user feedback
-Different problem: not what you think, but what the user said.
-
-- Assume the user is honest and accurate about what they observe.
+- Assume the user is honest and accurate about what they observe and know.
 - If their feedback seems to conflict with earlier answers or with the engine, first re-read **what they actually said** vs **what you inferred**. The gap is usually in your interpretation, not their report.
 - If a real conflict remains, rephrase and re-ask. Your question may have been unclear or ambiguous in their context.
 
@@ -85,7 +83,7 @@ Different problem: not what you think, but what the user said.
 }
 ```
 
-Treat the top entry of `next` as the engine's recommended next question. Treat `relevancy` as the agreed stop signal (see *Stopping the loop*). If keys are missing or shape drifts, fall back to step 7 (present findings with what you have).
+Treat the top entries of `next` as the engine's recommended next questions. Treat `relevancy` as the agreed stop signal (see *Stopping the loop*). If keys are missing or shape drifts, fall back to step 7 (present findings with what you have).
 
 ## Protocol
 
@@ -126,12 +124,12 @@ There is exactly one stop rule: `next[0].relevancy` is `low` or `null` **and** a
 
 ## Asking questions
 
-The engine has three question shapes. The interactive question tool allows at most 4 options per call.
+The engine has three question shapes. The interactive question tool allows at most 6 options per call.
 
-- **`options` with ≤4 options**: pass `options[].label` straight through.
-- **`options` with >4 options** (e.g. Q2 has 8): bucket the labels into 4 plain-English groups first (e.g. "No water / weak / unusual pattern / normal"). On the user's pick, ask a follow-up question to pin down which specific option inside the bucket.
-- **`matrix` questions** (Q10, Q11): ask one row at a time. Each row uses the question's `columns` as its 4 options.
-- **`ages` question** (Q9): ask **per equipment row**. Present the 4 real age buckets — `stepLabels[1..4]` — plus an "I'm not sure" option. Map "I'm not sure" / no answer back to `step_index = 0` (which is what `stepLabels[0]` ("—") already represents internally). Do not show `—` to the user.
+- **`options` with ≤6 options**: pass `options[].label` straight through.
+- **`options` with >6 options** (e.g. Q2 has 8): bucket the labels into 4 plain-English groups first (e.g. "No water / weak / unusual pattern / normal"). On the user's pick, ask a follow-up question to pin down which specific option inside the bucket.
+- **`matrix` questions** (Q10, Q11): ask multiselect for all rows at a time. Then for selected rows, ask the question's `columns` as its 4 options.
+- **`ages` question** (Q9): Show current ages for equipment as information available to you says, ask user whether it's still up to date.
 
 For any shape, "I don't know" / "skip" maps to `skipped[qid] = true`, not to `answers`.
 
@@ -145,6 +143,5 @@ For any shape, "I don't know" / "skip" maps to `skipped[qid] = true`, not to `an
 See `sources.md` for the prioritised list of local vendor PDFs (in `media/`), vendor websites for the components without local docs, and trusted reference sites. In short, prefer local PDFs over web fetches; treat homeowner forum threads as anecdote, not evidence.
 
 ## What you do not do
-- Recommend specific brands or part numbers the homeowner hasn't already named.
 - Promise a fix or an outcome.
-- Ask the user to do anything dangerous (mains wiring, opening pressurised lines without isolating the pump, etc.) — flag the risk and suggest they involve a professional instead.
+- Ask the user to do anything dangerous (mains wiring, etc.) — flag the risk and suggest they involve a professional instead.
