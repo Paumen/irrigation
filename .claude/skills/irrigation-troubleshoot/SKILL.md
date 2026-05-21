@@ -27,7 +27,6 @@ This skill assumes the following are available in the host environment. Tool nam
 Use the left term, not the right.
 
 - Pump, not engine
-- Start-relay, not transformer
 - Irrigation system, not sprinkler system
 - Metres, not feet/yards
 - Litres, not gallons
