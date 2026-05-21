@@ -106,6 +106,8 @@ class Engine:
             for cid, delta in q["options"][ans]["effects"].items():
                 s[cid] = s.get(cid, 0) + delta
         elif t == "matrix":
+            if not isinstance(ans, dict):
+                return
             col_mul = q["colMul"]
             for row in q["rows"]:
                 m = col_mul.get(ans.get(row["id"], "no"), 0)
@@ -114,9 +116,11 @@ class Engine:
                 for cid, delta in row["effects"].items():
                     s[cid] = s.get(cid, 0) + delta * m
         elif t == "ages":
+            if not isinstance(ans, dict):
+                return
             for row in q["rows"]:
-                idx = ans.get(row["id"]) if ans else None
-                if idx is None or idx < 0 or idx >= len(row["steps"]):
+                idx = ans.get(row["id"])
+                if idx is None or not isinstance(idx, int) or idx < 0 or idx >= len(row["steps"]):
                     continue
                 for cid, delta in row["steps"][idx]["effects"].items():
                     s[cid] = s.get(cid, 0) + delta
