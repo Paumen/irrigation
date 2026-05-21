@@ -163,3 +163,11 @@ control_paths:
   - source: user
     via: [phone_app, rainmachine_cloud, home_wifi]
     target: controller
+
+# ---------------------------
+# Control paths (signal flow from user to system)
+# ---------------------------
+settings:
+  - programs: [run all zones sequentially, run individual zone, pump start only]
+  - pump_start_to valve_start_delay_seconds: 5
+
