@@ -1,6 +1,6 @@
 ---
 name: irrigation-troubleshoot
-description: Guide a homeowner toward the right area to investigate on their home irrigation system. Use when the user describes a problem with their sprinklers, rotors, valves, pump, controller, or anything in the watering setup, or asks for help diagnosing why their system isn't working as expected. Not a substitute for professional repair; the goal is direction, not a precise root cause.
+description: Guide a homeowner toward the right area to investigate on their home irrigation system. Use when the user describes a problem with their rotors, valves, pump, controller, or anything in the watering setup, or asks for help diagnosing why their system isn't working as expected. Not a substitute for professional repair; the goal is direction, not a precise root cause.
 ---
 
 # Irrigation troubleshooting
@@ -28,6 +28,7 @@ Use the left term, not the right.
 
 - Pump, not engine
 - Irrigation system, not sprinkler system
+- Heads or rotprs/rotators, not sprinklers
 - Metres, not feet/yards
 - Litres, not gallons
 - Power supply, not mains
