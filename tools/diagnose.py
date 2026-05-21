@@ -29,7 +29,7 @@ def _engine() -> Engine:
         return Engine(json.load(f))
 
 
-def _summarize_question(q: dict, relevancy: str | None) -> dict:
+def _summarize_question(q: dict, relevancy: str | None, D: float) -> dict:
     out = {
         "id": q["id"],
         "text": q["text"],
@@ -37,6 +37,7 @@ def _summarize_question(q: dict, relevancy: str | None) -> dict:
         "stage": q.get("stage"),
         "optional": bool(q.get("optional")),
         "relevancy": relevancy,
+        "D": round(D, 4),
     }
     if q["type"] == "options":
         out["options"] = [{"index": i, "label": o["label"]} for i, o in enumerate(q["options"])]
@@ -55,7 +56,7 @@ def diagnose(
     answers: dict[str, Any] | None = None,
     skipped: dict[str, bool] | None = None,
     top_n_causes: int = 5,
-    top_n_next: int = 3,
+    top_n_next: int = 5,
 ) -> dict:
     """Run scoring and recommend the next question(s).
 
@@ -82,7 +83,11 @@ def diagnose(
             for r in ranked[:top_n_causes]
         ],
         "next": [
-            _summarize_question(rec["q"], engine.relevancy_level(rec["q"]["id"], answers, skipped))
+            _summarize_question(
+                rec["q"],
+                engine.relevancy_level(rec["q"]["id"], answers, skipped),
+                rec["D"],
+            )
             for rec in recs[:top_n_next]
         ],
         "answered_count": sum(1 for qid in answers if engine.is_answered(qid, answers[qid])),
