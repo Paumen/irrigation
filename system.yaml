@@ -104,7 +104,9 @@ piping:
     pressure_rating_bar: 10
     installed: 2020-08
     length_m: 20
-
+    notes: |
+      zero freeze damage historically
+  
   zone_laterals:
     from: valve_box
     to: zone_heads
@@ -112,6 +114,8 @@ piping:
     material: polyethylene
     pressure_rating_bar: 10
     installed: 2020-08
+    notes: |
+      zero freeze damage historically
 
   manual_line:
     from: valve_box           # unvalved tee off the manifold (no shutoff at the tee)
@@ -159,41 +163,3 @@ control_paths:
   - source: user
     via: [phone_app, rainmachine_cloud, home_wifi]
     target: controller
-
-# ---------------------------
-# Wiring
-# ---------------------------
-wiring:
-
-  high_voltage_230v:
-    - {from: mains, to: controller}
-    - {from: mains, to: pump_start_relay}
-    - {from: pump_start_relay, to: pump}
-
-  low_voltage_24v:
-    - {from: controller, to: pump_start_relay, signal: pump_start}
-    - {from: controller, to: pump_start_relay, signal: common_psr}
-    - {from: controller, to: valve_box,        signal: zone_1}
-    - {from: controller, to: valve_box,        signal: zone_2}
-    - {from: controller, to: valve_box,        signal: zone_3}
-    - {from: controller, to: valve_box,        signal: zone_4}
-    - {from: controller, to: valve_box,        signal: common_zones}
-
-  cable_runs:
-    controller_to_valve_box_m: 10
-    controller_to_psr_m: 10
-
-# ---------------------------
-# Control paths (signal flow from user to system)
-# ---------------------------
-control_paths:
-  - source: user
-    via: [touchscreen]
-    target: controller
-  - source: user
-    via: [phone_app, home_wifi]
-    target: controller
-  - source: user
-    via: [phone_app, rainmachine_cloud, home_wifi]
-    target: controller
- 
