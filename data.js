@@ -465,7 +465,6 @@ window.DATA = {
       ],
     },
     {
-    {
       id: 'QX2',
       optional: true,
       text: 'Flow meter reads 1.0–3.0?',
