@@ -96,11 +96,11 @@ Treat the top entry of `next` as the engine's recommended next question. Treat `
 3. **Bootstrap the engine.** Call the engine tool with empty `answers` to get the initial ranking and recommended first question.
 
 4. **Loop.** Each round:
-   - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below).
-   - If `relevancy` is `low` or `null` and at least 3 questions have been answered, **exit the loop** and continue at step 5.
+   - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below). For low effort questions, you can ask 2-4 at once, especially in first roundk(s) and if question relevance are high.
+   - If `relevancy` is `low`, `mid` or `null` and at least 5 questions have been answered, **exit the loop** and continue at step 5.
    - Map the user's pick back to the answer shape (see *Answer shapes*), add it to `answers`, and call the tool again.
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.
-   - Between rounds, surface a one-line snapshot of the current top three causes with their percentages so the user sees the hypothesis narrowing.
+   - Between rounds, if more then >3 questions are answered, surface a one-line snapshot of the current top three causes with their percentages so the user sees the hypothesis narrowing.
 
 5. **After the loop, branch on whether one cause clearly leads.** "Clearly leads" = top cause's `pct` is well above the second (rule of thumb: top is ≥1.5× the second, and the gap held across the last few rounds — not just the most recent answer). Two cases:
 
