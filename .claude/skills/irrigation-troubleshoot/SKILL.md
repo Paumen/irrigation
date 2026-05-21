@@ -91,7 +91,7 @@ Treat the top entry of `next` as the engine's recommended next question. Treat `
 
 1. **Open with intent.** If the user's first message doesn't make the problem clear, ask **one** open-ended text question to understand what they're seeing. Don't fire up the question loop yet.
 
-2. **Read `system.yaml`.** It contains the homeowner's actual equipment models, install dates, zone count, pipe sizes, and wiring. Use it as the source of truth for anything physical about this specific system.
+2. **Read `setup.yaml`.** It contains the homeowner's actual equipment models, install dates, zone count, pipe sizes, and wiring. Use it as the source of truth for anything physical about this specific system.
 
 3. **Bootstrap the engine.** Call the engine tool with empty `answers` to get the initial ranking and recommended first question.
 
