@@ -13,7 +13,7 @@ export default [
     },
   },
   {
-    files: ['app.js', 'data.js', 'icons.js'],
+    files: ['app.js', 'data.js', 'icons.js', 'engine.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'script',

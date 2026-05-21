@@ -1,186 +1,17 @@
-const CAUSES = Object.fromEntries(window.DATA.causes.map((c) => [c.id, c]));
-const ALL_IDS = Object.keys(CAUSES);
+const ENGINE = window.createEngine(window.DATA);
+const {
+  CAUSES,
+  QUESTIONS,
+  MAIN_QUESTIONS,
+  OPTIONAL_QUESTIONS,
+  AGES_Q,
+  Q_BY_ID,
+  STAGES,
+  STAGE_LABELS,
+} = ENGINE;
 
-const CAUSE_CHILDREN = (() => {
-  const m = {};
-  for (const c of window.DATA.causes) (m[c.parent] ||= []).push(c.id);
-  return m;
-})();
-
-// Effects may use a parent id (e.g. R7) as a broadcast for all its children;
-// per-child entries override the broadcast value.
-function expandEffects(effects) {
-  if (!effects) return effects;
-  const out = {};
-  for (const [k, v] of Object.entries(effects)) {
-    const kids = CAUSE_CHILDREN[k];
-    if (!kids) {
-      out[k] = v;
-      continue;
-    }
-    for (const id of kids) if (!(id in effects)) out[id] = v;
-  }
-  return out;
-}
-
-function expandStepRows(q) {
-  const curves = window.DATA.sliderCurves || {};
-  const labels = q.stepLabels || [];
-  return q.rows.map((row) => {
-    if (row.steps) return row;
-    const curve = curves[row.curve] || [];
-    const causes = row.causes || [];
-    return {
-      ...row,
-      steps: labels.map((label, i) => ({
-        label,
-        effects: i === 0 ? {} : Object.fromEntries(causes.map((id) => [id, curve[i - 1] ?? 0])),
-      })),
-    };
-  });
-}
-
-const QUESTIONS = window.DATA.questions
-  .map((q) => {
-    const next = { ...q, type: q.type || 'options' };
-    if (next.type === 'matrix') {
-      next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
-      next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
-    } else if (next.type === 'ages') {
-      next.rows = expandStepRows(next).map((r) => ({
-        ...r,
-        steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
-      }));
-    } else {
-      next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
-    }
-    return next;
-  })
-  .sort((a, b) => (a.stage ?? Infinity) - (b.stage ?? Infinity));
-
-const MAIN_QUESTIONS = QUESTIONS.filter((q) => !q.optional);
-const OPTIONAL_QUESTIONS = QUESTIONS.filter((q) => q.optional);
-
-const AGES_Q = QUESTIONS.find((q) => q.type === 'ages') || null;
-
-const Q_BY_ID = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]));
-
-// Per-cause bonus added when a question touches a contending cause at all,
-// regardless of how strong the effect is. Lets broad screening questions
-// outscore narrow tests when many causes are still in play.
-const BREADTH_WEIGHT = 1.5;
-
-const TYPE_HANDLERS = {
-  options: {
-    score(q, ans, s) {
-      const opt = q.options[ans];
-      if (!opt) return;
-      for (const [id, delta] of Object.entries(opt.effects)) {
-        s[id] = (s[id] || 0) + delta;
-      }
-    },
-    discriminator(q, ids) {
-      let D = 0;
-      let breadth = 0;
-      for (const causeId of ids) {
-        const deltas = q.options.map((o) => o.effects[causeId] || 0);
-        const spread = Math.max(...deltas) - Math.min(...deltas);
-        if (spread > 0) breadth++;
-        D += spread;
-      }
-      return D + BREADTH_WEIGHT * breadth;
-    },
-    isAnswered() {
-      return true;
-    },
-  },
-  matrix: {
-    score(q, ans, s) {
-      const colMul = q.colMul;
-      for (const row of q.rows) {
-        const m = colMul[ans[row.id] || 'no'] || 0;
-        if (m === 0) continue;
-        for (const [id, delta] of Object.entries(row.effects)) {
-          s[id] = (s[id] || 0) + delta * m;
-        }
-      }
-    },
-    discriminator(q, ids) {
-      const mults = q.columns.map((c) => c.mult);
-      const multSpread = Math.max(...mults) - Math.min(...mults);
-      let D = 0;
-      const affected = new Set();
-      for (const row of q.rows) {
-        for (const causeId of ids) {
-          const e = Math.abs(row.effects[causeId] || 0);
-          if (e > 0) {
-            D += e * multSpread;
-            affected.add(causeId);
-          }
-        }
-      }
-      return D + BREADTH_WEIGHT * affected.size;
-    },
-    isAnswered(_q, ans) {
-      return Object.keys(ans).length > 0;
-    },
-  },
-  ages: {
-    score(q, ans, s) {
-      for (const row of q.rows) {
-        const idx = ans[row.id];
-        if (idx === undefined || idx === null) continue;
-        const step = row.steps[idx];
-        if (!step) continue;
-        for (const [id, delta] of Object.entries(step.effects)) {
-          s[id] = (s[id] || 0) + delta;
-        }
-      }
-    },
-    discriminator(q, ids) {
-      let D = 0;
-      const affected = new Set();
-      for (const row of q.rows) {
-        for (const causeId of ids) {
-          const deltas = row.steps.map((st) => st.effects[causeId] || 0);
-          const spread = Math.max(...deltas) - Math.min(...deltas);
-          if (spread > 0) {
-            D += spread;
-            affected.add(causeId);
-          }
-        }
-      }
-      return D + BREADTH_WEIGHT * affected.size;
-    },
-    isAnswered(_q, ans) {
-      return !!ans && typeof ans === 'object';
-    },
-  },
-};
-
-const MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
 const DATE_FMT = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short' });
 
-function parseDate(dateStr) {
-  if (!dateStr) return null;
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? null : d;
-}
-
-function ageYears(dateStr) {
-  const d = parseDate(dateStr);
-  return d ? (Date.now() - d.getTime()) / MS_PER_YEAR : null;
-}
-
-function ageStepIndex(years, buckets) {
-  if (years === null) return 0;
-  for (let i = 0; i < buckets.length; i++) if (years < buckets[i]) return i + 1;
-  return buckets.length + 1;
-}
-
-const STAGES = window.DATA.stages.map((s) => s.id);
-const STAGE_LABELS = Object.fromEntries(window.DATA.stages.map((s) => [s.id, s.label]));
-const STAGE_QS = Object.fromEntries(STAGES.map((s) => [s, QUESTIONS.filter((q) => q.stage === s)]));
 const STORAGE_KEY = 'irrigation:v2';
 const SEVERITY_FULL_PCT = 18;
 
@@ -304,7 +135,7 @@ function app() {
     },
 
     isCompleted(qid) {
-      return this.isAnswered(qid) || !!this.skipped[qid];
+      return ENGINE.isCompleted(qid, this.answers, this.skipped);
     },
 
     get hasAnswers() {
@@ -312,76 +143,23 @@ function app() {
     },
 
     get ranked() {
-      const s = {};
-      for (const id of ALL_IDS) s[id] = CAUSES[id].baseline;
-      for (const q of QUESTIONS) {
-        const ans = this.answers[q.id];
-        if (ans === undefined || ans === null) continue;
-        TYPE_HANDLERS[q.type].score(q, ans, s);
-      }
-      let posTotal = 0;
-      for (const id of ALL_IDS) posTotal += Math.max(0, s[id]);
-      return ALL_IDS.map((id) => ({
-        id,
-        score: s[id],
-        pct: posTotal > 0 ? (Math.max(0, s[id]) / posTotal) * 100 : 0,
-      })).sort((a, b) => b.score - a.score);
-    },
-
-    // Causes still "in contention" — pct within a factor of the leader and
-    // above an absolute floor. Wide & flat ranking → many causes; concentrated
-    // ranking → only the leaders. Floor of 3 avoids degenerate single-cause
-    // comparisons. This is what the discriminator scores against.
-    get _contendingIds() {
-      const ranked = this.ranked;
-      if (ranked.length === 0) return [];
-      const leader = ranked[0].pct;
-      const cutoff = Math.max(2, leader * 0.3);
-      const ids = ranked.filter((r) => r.pct >= cutoff).map((r) => r.id);
-      return ids.length >= 3 ? ids : ranked.slice(0, 3).map((r) => r.id);
+      return ENGINE.rank(this.answers);
     },
 
     get _disc() {
-      const ids = this._contendingIds;
-      const map = {};
-      let max = 0;
-      for (const q of QUESTIONS) {
-        if (this.isCompleted(q.id)) continue;
-        const D = TYPE_HANDLERS[q.type].discriminator(q, ids);
-        map[q.id] = D;
-        if (D > max) max = D;
-      }
-      return { map, max };
+      return ENGINE.discriminators(this.answers, this.skipped);
     },
 
     relevancyLevel(qid) {
-      const { map, max } = this._disc;
-      const D = map[qid];
-      if (D === undefined || D <= 0 || max <= 0) return null;
-      const ratio = D / max;
-      if (ratio >= 2 / 3) return 'high';
-      if (ratio >= 1 / 3) return 'mid';
-      return 'low';
+      return ENGINE.relevancyLevel(qid, this.answers, this.skipped);
     },
 
     get recommendations() {
-      const { map } = this._disc;
-      return Object.entries(map)
-        .filter(([, D]) => D > 0)
-        .map(([qid, D]) => ({ q: Q_BY_ID[qid], D }))
-        .sort((a, b) => b.D - a.D);
+      return ENGINE.recommendations(this.answers, this.skipped);
     },
 
     get stageProgress() {
-      const out = {};
-      for (const s of STAGES) {
-        const qs = STAGE_QS[s];
-        out[s] = {
-          total: qs.length,
-          answered: qs.reduce((n, q) => n + (this.isCompleted(q.id) ? 1 : 0), 0),
-        };
-      }
-      return out;
+      return ENGINE.stageProgress(this.answers, this.skipped);
     },
 
     stagePct(s) {
@@ -419,10 +197,7 @@ function app() {
     },
 
     isAnswered(qid) {
-      const a = this.answers[qid];
-      if (a === undefined || a === null) return false;
-      const q = Q_BY_ID[qid];
-      return TYPE_HANDLERS[q.type].isAnswered(q, a);
+      return ENGINE.isAnswered(qid, this.answers[qid]);
     },
 
     rowAns(rowId) {
@@ -483,7 +258,7 @@ function app() {
     },
 
     resetStage(s) {
-      const ids = new Set(STAGE_QS[s].map((q) => q.id));
+      const ids = new Set(ENGINE.STAGE_QS[s].map((q) => q.id));
       const drop = (d) => Object.fromEntries(Object.entries(d).filter(([k]) => !ids.has(k)));
       withTransition(() => {
         this.answers = drop(this.answers);
@@ -511,18 +286,18 @@ function app() {
     },
 
     equipmentDateLabel(rowId) {
-      const d = parseDate(this.equipmentDates[rowId]);
+      const d = window.parseDate(this.equipmentDates[rowId]);
       return d ? DATE_FMT.format(d) : 'not set';
     },
 
     equipmentBucketLabel(rowId) {
       if (!AGES_Q) return '';
-      const idx = ageStepIndex(ageYears(this.equipmentDates[rowId]), AGES_Q.ageBuckets);
+      const idx = window.ageStepIndex(window.ageYears(this.equipmentDates[rowId]), AGES_Q.ageBuckets);
       return AGES_Q.stepLabels[idx] || '';
     },
 
     equipmentAgeYearsLabel(rowId) {
-      const y = ageYears(this.equipmentDates[rowId]);
+      const y = window.ageYears(this.equipmentDates[rowId]);
       return y === null ? '—' : `${Math.floor(y)} yr${Math.floor(y) === 1 ? '' : 's'}`;
     },
 
@@ -531,7 +306,7 @@ function app() {
       return Object.fromEntries(
         AGES_Q.rows.map((row) => [
           row.id,
-          ageStepIndex(ageYears(this.equipmentDates[row.id]), AGES_Q.ageBuckets),
+          window.ageStepIndex(window.ageYears(this.equipmentDates[row.id]), AGES_Q.ageBuckets),
         ])
       );
     },
@@ -568,7 +343,7 @@ function app() {
     },
 
     pickStage(s) {
-      const qs = STAGE_QS[s] || [];
+      const qs = ENGINE.STAGE_QS[s] || [];
       const target = qs.find((q) => !this.isCompleted(q.id)) || qs[0];
       if (target)
         withTransition(() => {
