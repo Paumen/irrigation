@@ -63,22 +63,22 @@ window.DATA = {
       highlight: ['rotor', 'valves'],
       options: [
         {
-          label: 'All zones fail',
+          label: 'All 4 zones fail',
           icon: 'scope-all',
           effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.4, R5: 0.4, R62: 0.2 },
         },
         {
-          label: 'Multiple zones (not all)',
+          label: '2-3 zones fail',
           icon: 'scope-multi',
           effects: { R4: 0.2, R5: 0.2, R62: 0.2 },
         },
         {
-          label: 'Single zone',
+          label: 'Single zone fails',
           icon: 'scope-single',
           effects: { R61: 0.2, R63: 0.2, R7: 0.2, R8: 0.2 },
         },
         {
-          label: 'One rotor',
+          label: 'single rotor fails',
           icon: 'scope-one',
           effects: { R9: 1.6 },
         },
@@ -367,7 +367,7 @@ window.DATA = {
     {
       id: 'Q12',
       stage: 3,
-      text: 'Manual open valve solenoid / bleed screw, runs?',
+      text: 'Manual open valve via bleed screw, runs?',
       highlight: ['valves'],
       options: [
         {
@@ -397,12 +397,12 @@ window.DATA = {
     {
       id: 'Q14',
       stage: 3,
-      text: 'Resistance common wire slot and zone in controller?',
+      text: 'Resistance slots in controller?',
       highlight: ['ctrl', 'valves'],
       options: [
-        { label: 'Continuous, low resistance', effects: { R62: -0.4 } },
-        { label: 'Open or high resistance', effects: { R62: 1.6 } },
-        { label: 'Intermittent when wiggled', effects: { R62: 0.6 } },
+        { label: 'Continuous, low resistance', effects: { R6: -0.4 } },
+        { label: 'Open or high resistance', effects: { R6: 1.6 } },
+        { label: 'Intermittent when wiggled', effects: { R6: 0.6 } },
       ],
     },
     {
@@ -465,18 +465,8 @@ window.DATA = {
       ],
     },
     {
-      id: 'QX2',
-      optional: true,
-      text: 'Dig & inspect hoses for damage?',
-      highlight: [],
-      options: [
-        { label: 'Damage found', effects: { R51: 1.6, R81: 1.6 } },
-        { label: 'No damage', effects: { R51: -0.4, R81: -0.4 } },
-      ],
-    },
-
     {
-      id: 'QX3',
+      id: 'QX2',
       optional: true,
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump'],
