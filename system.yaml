@@ -27,7 +27,7 @@ equipment:
     output: 230V to pump
     notes: |
       Switches power to well pump before any zone activation.
-      Different location then valve box.
+      Different location than valve box.
 
   pump:
     type: well_pump
@@ -72,25 +72,27 @@ zones:
     heads:
       i20_rotors: 1
       mp_rotators: 2
-    flow_rating_m3h:: 2.2
+      flow_rating_m3h: 2.2
+      notes: |
+        mixing heads is on purpose for different precipitation needs for lawn vs flower beds.
 
   - id: 2
     heads:
       i20_rotors: 2
       mp_rotators: 0
-    flow_rating_m3h:: 2.0
+      flow_rating_m3h: 2.0
 
   - id: 3
     heads:
       i20_rotors: 2
       mp_rotators: 0
-    flow_rating_m3h:: 2.0
+      flow_rating_m3h: 2.0
 
   - id: 4
     heads:
       i20_rotors: 0
       mp_rotators: 3
-    flow_rating_m3h:: 1.5
+      flow_rating_m3h: 1.5
 
 # ---------------------------
 # Piping (hydraulic)
@@ -100,8 +102,8 @@ piping:
     from: pump
     to: valve_box
     size_mm: 32
-    material: polyethylene
-    pressure_rating_bar: 10
+    material: Polyethylene LDPE 3mm
+    pressure_rating_bar: 6.3
     installed: 2020-08
     length_m: 20
     notes: |
@@ -111,8 +113,8 @@ piping:
     from: valve_box
     to: zone_heads
     size_mm: 25
-    material: polyethylene
-    pressure_rating_bar: 10
+    material: Polyethylene LDPE 3mm 
+    pressure_rating_bar: 6.3
     installed: 2020-08
     notes: |
       zero freeze damage historically
@@ -121,11 +123,11 @@ piping:
     from: valve_box           # unvalved tee off the manifold (no shutoff at the tee)
     to: manual_valve          # ball valve at the hose outlet end
     size_mm: 16
-    material: polyethylene
-    pressure_rating_bar: 10
+    material: Polyethylene LDPE 3mm
+    pressure_rating_bar: 6.3
     installed: 2020-08
     notes: |
-      To use the manual valve the pump is started via the controller. Assuming all solonoid valves are shut, the manual hose fills with water, and can be opened and hose end.
+      To use the manual valve the pump is started via the controller. Assuming all solenoid valves are shut, the manual hose fills with water, and can be opened and hose end.
       
 # ---------------------------
 # Wiring
@@ -170,9 +172,8 @@ control_paths:
 system_design_choices:
   - back_flow_preventer_installed: false # well is completely isolated from drinking water.
   - master_valve_installed: false # pump is purely controller-triggered, and provides the leak-limiting shutoff a master valve would add. 
-  - flow_meter_installed: false # max one zone runs at a time, pump supply spec vastly exceeds per zone requirements, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
-  - presure_meter_installed: false # max one zone runs at a time, pump spec vastly exceeds per zone requirements, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
-
+  - flow_meter_installed: false # max one zone runs at a time, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
+  - pressure_meter_installed: false # max one zone runs at a time, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
 
 
 
