@@ -32,7 +32,7 @@ equipment:
   pump:
     type: well_pump
     model: [TBD]               # A-brand
-    installed: 2023            # original 2003 pump replaced
+    installed: 2023-06         # original 2003 pump replaced
     location: well
     input: 230V from pump start relay
     flow_rating_m3h: 3     
@@ -50,6 +50,20 @@ equipment:
     notes: |
       Solenoid resistance spec: 20-60 ohm
 
+  rotors:
+    model: Hunter I-20
+    installed: 2020-08
+    location: outdoor in-ground
+    features: [Radius setscrew, FloStop]
+    type: pop-up
+
+  spray_bodies_mp:
+    model: Hunter Pro-Spray PRS40 
+    installed: 2020-08
+    location: outdoor in-ground
+    features: [Radius setscrew, FloStop]
+    type: pop-up
+  
 # ---------------------------
 # Zones (automated)
 # ---------------------------
