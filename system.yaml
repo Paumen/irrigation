@@ -96,6 +96,84 @@ piping:
     installed: 2020-08
 
   manual_line:
+    from: valve_box           # unvalved tee off the manifold (no shutoff at the tee)
+    to: manual_valve          # ball valve at the hose outlet end
+    size_mm: 16
+    material: polyethylene
+    pressure_rating_bar: 10
+    installed: 2020-08
+    
+
+# ---------------------------
+# Wiring
+# ---------------------------
+wiring:
+
+  high_voltage_230v:
+    - {from: mains, to: controller}
+    - {from: mains, to: pump_start_relay}
+    - {from: pump_start_relay, to: pump}
+
+  low_voltage_24v:
+    - {from: controller, to: pump_start_relay, signal: pump_start}
+    - {from: controller, to: pump_start_relay, signal: common_psr}
+    - {from: controller, to: valve_box,        signal: zone_1}
+    - {from: controller, to: valve_box,        signal: zone_2}
+    - {from: controller, to: valve_box,        signal: zone_3}
+    - {from: controller, to: valve_box,        signal: zone_4}
+    - {from: controller, to: valve_box,        signal: common_zones}
+
+  cable_runs:
+    controller_to_valve_box_m: 10
+    controller_to_psr_m: 10
+
+# ---------------------------
+# Control paths (signal flow from user to system)
+# ---------------------------
+control_paths:
+  - source: user
+    via: [touchscreen]
+    target: controller
+  - source: user
+    via: [phone_app, home_wifi]
+    target: controller
+  - source: user
+    via: [phone_app, rainmachine_cloud, home_wifi]
+    target: controller
+  - id: 3
+    heads:
+      i20_rotors: 2
+      mp_rotators: 0
+    precipitation_rate_mm_h: 2.0
+
+  - id: 4
+    heads:
+      i20_rotors: 0
+      mp_rotators: 3
+    precipitation_rate_mm_h: 1.5
+
+# ---------------------------
+# Piping (hydraulic)
+# ---------------------------
+piping:
+  main_line:
+    from: pump
+    to: valve_box
+    size_mm: 32
+    material: polyethylene
+    pressure_rating_bar: 10
+    installed: 2020-08
+    length_m: 20
+
+  zone_laterals:
+    from: valve_box
+    to: zone_heads
+    size_mm: 25
+    material: polyethylene
+    pressure_rating_bar: 10
+    installed: 2020-08
+
+  manual_line:
     from: valve_box
     to: manual_valve
     size_mm: 16
