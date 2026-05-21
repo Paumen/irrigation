@@ -50,18 +50,18 @@ equipment:
     notes: |
       Solenoid resistance spec: 20-60 ohm
 
-  rotors:
-    model: Hunter I-20
+  heads_rotors:
+    model: Hunter I-20-04-SS
     installed: 2020-08
     location: outdoor in-ground
-    features: [Radius setscrew, FloStop]
+    features: [Radius setscrew, FloStop, Stainless steel riser]
     type: pop-up
 
-  spray_bodies_mp:
+  heads_spray_bodies_mp:
     model: Hunter Pro-Spray PRS40 
     installed: 2020-08
     location: outdoor in-ground
-    features: [Radius setscrew, FloStop]
+    features: [40 PSI pressure-regulated]  # Optimal for MP Rotator
     type: pop-up
   
 # ---------------------------
