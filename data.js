@@ -34,10 +34,10 @@ window.DATA = {
   causes: [
     { id: 'R11', parent: 'R1', baseline: 1.2, label: 'Misconfiguration' },
     { id: 'R12', parent: 'R1', baseline: 1.2, label: 'App failure (bug, etc)' },
-    { id: 'R13', parent: 'R1', baseline: 1.2, label: 'Connectivity (wifi)' },
-    { id: 'R22', parent: 'R2', baseline: 1.2, label: 'Controller hardware failure' },
+    { id: 'R13', parent: 'R1', baseline: 1.2, label: 'Cloud / connectivity' },
+    { id: 'R22', parent: 'R2', baseline: 1.2, label: 'Controller hardware or power failure' },
     { id: 'R23', parent: 'R2', baseline: 1.2, label: 'Controller firmware / config' },
-    { id: 'R31', parent: 'R3', baseline: 1.2, label: 'Relay fault (wiring or contacts)' },
+    { id: 'R31', parent: 'R3', baseline: 1.2, label: 'Relay fault' },
     { id: 'R41', parent: 'R4', baseline: 1.2, label: 'Pump suction-side fault' },
     { id: 'R42', parent: 'R4', baseline: 1.0, label: 'Pump hardware failure' },
     { id: 'R51', parent: 'R5', baseline: 0.8, label: 'Main hose 32mm leak / break' },
@@ -48,11 +48,11 @@ window.DATA = {
     { id: 'R71', parent: 'R7', baseline: 1.0, label: 'Solenoid failure' },
     { id: 'R72', parent: 'R7', baseline: 1.2, label: 'Diaphragm failure' },
     { id: 'R73', parent: 'R7', baseline: 0.8, label: 'Valve body / seal failure' },
-    { id: 'R74', parent: 'R7', baseline: 1.0, label: 'Valve misconfiguration' },
+    { id: 'R74', parent: 'R7', baseline: 1.0, label: 'Valve / manual-bleed misconfiguration' },
     { id: 'R81', parent: 'R8', baseline: 0.8, label: 'Hoses 25mm / fitting damage' },
     { id: 'R82', parent: 'R8', baseline: 0.8, label: 'Hoses 25mm air / debris clog' },
-    { id: 'R91', parent: 'R9', baseline: 1.2, label: 'Rotor debris / nozzle' },
-    { id: 'R92', parent: 'R9', baseline: 1.2, label: 'Rotor misconfigured' },
+    { id: 'R91', parent: 'R9', baseline: 1.2, label: 'Rotor debris, nozzle, or pressure regulator' },
+    { id: 'R92', parent: 'R9', baseline: 1.2, label: 'Rotor stuck / misconfigured' },
   ],
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
