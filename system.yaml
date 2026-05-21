@@ -32,7 +32,7 @@ equipment:
     model: [TBD]
     installed: 2023            # original 2003 pump replaced
     location: well
-    flow_rating_m3h: [TBD]     # sufficient
+    flow_rating_m3h: 3     
     pressure_rating_bar: [TBD] # sufficient
     acts_as_shutoff: true  
 
@@ -140,17 +140,6 @@ control_paths:
   - source: user
     via: [phone_app, rainmachine_cloud, home_wifi]
     target: controller
-  - id: 3
-    heads:
-      i20_rotors: 2
-      mp_rotators: 0
-    precipitation_rate_mm_h: 2.0
-
-  - id: 4
-    heads:
-      i20_rotors: 0
-      mp_rotators: 3
-    precipitation_rate_mm_h: 1.5
 
 # ---------------------------
 # Piping (hydraulic)
