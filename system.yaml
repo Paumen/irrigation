@@ -17,7 +17,7 @@ equipment:
     location: indoor house
     interfaces: [touchscreen, wifi, mobile_app, remote_via_wifi]
     notes: |
-      Cloud-connected. Weather-based scheduling enabled.
+      Cloud-connected.
 
   pump_start_relay:
     model: Hunter PSR 52
@@ -25,21 +25,25 @@ equipment:
     location: indoor shed
     input: 24V from controller
     output: 230V to pump
-    notes: Switches mains to well pump before any zone activation.
+    notes: |
+      Switches mains to well pump before any zone activation.
+      Different location then valve box.
 
   pump:
     type: well_pump
-    model: [TBD]
+    model: [TBD]               # A-brand
     installed: 2023            # original 2003 pump replaced
     location: well
+    input: 230V from pump start relay
     flow_rating_m3h: 3     
-    pressure_rating_bar: [TBD] # sufficient
+    pressure_rating_bar: [TBD]  # sufficient
     acts_as_shutoff: true  
 
   zone_valves:
     model: Hunter PGV-101G
     installed: 2026-05         
     location: outdoor valvebox
+    input: 24V from controller
     count: 4
     type: globe
     features: [bleed_screw, flow_control]
@@ -102,8 +106,9 @@ piping:
     material: polyethylene
     pressure_rating_bar: 10
     installed: 2020-08
-    
-
+    notes: |
+      To use the manual valve the pump is started via the controller. Assuming all solonoid valves are shut, the manual hose fills with water, and can be opened and hose end.
+      
 # ---------------------------
 # Wiring
 # ---------------------------
@@ -140,35 +145,6 @@ control_paths:
   - source: user
     via: [phone_app, rainmachine_cloud, home_wifi]
     target: controller
-
-# ---------------------------
-# Piping (hydraulic)
-# ---------------------------
-piping:
-  main_line:
-    from: pump
-    to: valve_box
-    size_mm: 32
-    material: polyethylene
-    pressure_rating_bar: 10
-    installed: 2020-08
-    length_m: 20
-
-  zone_laterals:
-    from: valve_box
-    to: zone_heads
-    size_mm: 25
-    material: polyethylene
-    pressure_rating_bar: 10
-    installed: 2020-08
-
-  manual_line:
-    from: valve_box
-    to: manual_valve
-    size_mm: 16
-    material: polyethylene
-    pressure_rating_bar: 10
-    installed: 2020-08
 
 # ---------------------------
 # Wiring
