@@ -165,9 +165,21 @@ control_paths:
     target: controller
 
 # ---------------------------
-# Control paths (signal flow from user to system)
+# System Design Choices
 # ---------------------------
-settings:
-  - programs: [run all zones sequentially, run individual zone, pump start only]
-  - pump_start_to valve_start_delay_seconds: 5
+system_design_choices:
+  - back_flow_preventer_installed: false # well is completely isolated from drinking water.
+  - master_valve_installed: false # pump is purely controller-triggered, and provides the leak-limiting shutoff a master valve would add. 
+  - flow_meter_installed: false # max one zone runs at a time, pump supply spec vastly exceeds per zone requirements, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
+  - presure_meter_installed: false # max one zone runs at a time, pump spec vastly exceeds per zone requirements, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
+
+
+
+
+
+
+
+
+
+
 
