@@ -150,54 +150,14 @@ window.DATA = {
           effects: { R4: 0.2, R52: 0.2, R6: 0.2, R72: 0.2, R74: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
-          label: 'Changes during the run (declining or building)',
+          label: 'Changes during the run (strong→weak or weak→strong)',
           icon: 'flow-decline',
           effects: { R4: 0.6, R41: 0.4, R52: 0.4, R82: 0.4 },
         },
         {
           label: 'Erratic — random ups/downs or sudden spike',
           icon: 'pat-noise',
-          effects: {},
-        },
-      ],
-    },
-    {
-      id: 'Q2qe',
-      effort: 5, // continue characterising the erratic flow
-      stage: 1,
-      requires: { Q2q: [3] },
-      text: 'Is the erratic flow random ups and downs, or a sudden high-pressure spike?',
-      highlight: ['rotor'],
-      options: [
-        {
-          label: 'Random ups and downs (fluctuating)',
-          icon: 'pat-noise',
-          effects: { R1: 0.4, R23: 0.4, R4: 0.4, R52: 0.2, R6: 0.4, R71: 0.2 },
-        },
-        {
-          label: 'Sudden high-pressure spike (geyser)',
-          icon: 'flow-geyser',
-          effects: { R51: 0.4, R81: 0.4, R91: 0.6 },
-        },
-      ],
-    },
-    {
-      id: 'Q2s',
-      effort: 5, // quick count of which zones get water
-      stage: 1,
-      requires: { Q2: [2] },
-      text: 'How many zones get water at the same time — all four, or just some?',
-      highlight: ['valves', 'ctrl'],
-      options: [
-        {
-          label: 'All four zones at once',
-          icon: 'scope-all',
-          effects: { R22: 0.4, R23: 0.4, R62: 0.4 },
-        },
-        {
-          label: 'Two or three zones',
-          icon: 'scope-multi',
-          effects: { R72: 0.2, R74: 0.2 },
+          effects: { R1: 0.4, R23: 0.4, R4: 0.4, R51: 0.4, R52: 0.2, R6: 0.4, R71: 0.2, R81: 0.4, R91: 0.6 },
         },
       ],
     },
@@ -547,6 +507,10 @@ window.DATA = {
         {
           label: 'Nothing visible',
           effects: { R51: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
+        },
+        {
+          label: 'Drips at heads/rotors when system is off',
+          effects: { R72: 0.4, R73: 0.4, R74: 0.4 },
         },
       ],
     },

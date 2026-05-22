@@ -29,10 +29,10 @@ const CASES = [
   { Q1: 2 },
   { Q1: 3 },
   { Q2: 3 }, // no water anywhere
-  { Q2: 0, Q2q: 3, Q2qe: 0 }, // selected → erratic → fluctuating
+  { Q2: 0, Q2q: 3 }, // selected → erratic (fluctuating/geyser merged)
   { Q2: 0, Q2q: 0 }, // selected → normal
   { Q1: 0, Q2: 3 }, // all zones fail + no water anywhere
-  { Q1: 3, Q2: 0, Q2q: 3, Q2qe: 1 }, // single rotor + selected → erratic → geyser
+  { Q1: 3, Q2: 0, Q2q: 3 }, // single rotor + selected → erratic
   { Q1: 0, Q2: 3, Q3: 1, Q4: 0 },
   { Q5: 2, Q6: 3 },
   { Q10: { pump: 'right', valves: 'days' } },
@@ -40,8 +40,9 @@ const CASES = [
   { Q9: { pump: 4, valves: 1, relay: 4, ctrl: 4, rotor: 4, mainHose: 4, hose: 4 } },
   { Q1: 0, Q9: { pump: 4, valves: 1 }, Q10: { pump: 'right' }, Q13: 1 },
   { Q18: 0, Q19: 1 },
-  { Q2: 2, Q2s: 0 }, // multiple zones → all four
+  { Q2: 2 }, // multiple zones
   { Q2: 1 }, // different zone
+  { Q18: 4 }, // drips at heads when off
 ];
 
 const EPS = 1e-9;
