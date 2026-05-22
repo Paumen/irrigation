@@ -59,7 +59,7 @@ than hydraulic.
 
 ## Testing solenoid voltage
 
-![Testing solenoid voltage with a multimeter](media/Testing_Solenoid_Voltage_0.png)
+![Testing solenoid voltage with a multimeter](media/Testing Solenoid Voltage_0.png)
 
 Use the AC-voltage setting. Solenoids have two wires — one common, one station power (commons are
 usually shared across the system to save wire). With the station activated, place one probe on the

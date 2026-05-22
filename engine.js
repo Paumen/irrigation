@@ -137,7 +137,7 @@
           return D + BREADTH_WEIGHT * affected.size;
         },
         isAnswered(_q, ans) {
-          return Object.keys(ans).length > 0;
+          return !!ans && typeof ans === 'object';
         },
       },
       ages: {
