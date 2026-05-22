@@ -11,6 +11,7 @@ contents:
   - external parts (bonnet, flow control, bleed screw, solenoid)
   - manual operation (turn solenoid / open bleed screw)
   - flow control adjustment
+  - per-valve pressure regulation (Accusync) — system-wide vs per-valve vs at-the-head tiers
   - installation (placement, arrow orientation, cut threads, teflon paste-or-tape rule, waterproof connectors)
   - external leak checklist
   - weeping when off (low-head drainage vs valve debris)
@@ -92,6 +93,40 @@ A fully open valve (4–5 full turns counter-clockwise) can pass ~5 bar, which i
 some heads such as pop-up sprays. Throttling the flow control brings pressure down to a workable
 level. On this system the PRS40 spray bodies are already pressure-regulated to ~2.8 bar, so flow
 control is mostly relevant to balancing zones, not protecting heads.
+
+## Per-valve pressure regulation (Accusync) — when flow control isn't enough
+
+Flow control on the valve is a *throttle* — it bleeds pressure as a function of how
+restrictive you've made it. It works fine when supply pressure is steady. It does **not**
+hold the downstream pressure at a fixed setpoint when supply pressure varies, the way a
+pressure-regulating body or a dedicated valve-level regulator does. The three options
+form a tier:
+
+1. **System-wide pressure regulator** (upstream of the valve manifold). Coarse and
+   simple — every zone sees the same regulated pressure, and you lose the ability to
+   tune individual zones. Useful when supply pressure is wildly higher than every zone
+   needs and design varies little between zones. Not fitted on this system; covered as
+   R5 context in `sources.md`.
+2. **Per-valve pressure regulator (Hunter Accusync).** Sits on each individual valve
+   and holds its downstream pressure at a per-zone setpoint regardless of upstream
+   variation. The right answer when zones have **elevation changes** or **long lateral
+   runs** that make zone-by-zone pressure drop unequal. Each zone gets its own design
+   pressure, which the rest of the system can't see.
+3. **Pressure-regulated body at the head** (PRS30, PRS40, PRB rotors). The finest level
+   of control — every head holds its nozzle pressure regardless of what arrives. This
+   system uses the PRS40 variant of Pro-Spray for the MP Rotators, which is why the
+   MP heads run consistently across zones.
+
+**For this system.** The PGV-101G valves are **not** regulated, and there is no system-
+wide regulator. The PRS40 bodies handle the MP heads. The I-20 rotors are unregulated
+and rely on supply pressure landing in their 1.7–4.8 bar window (see `heads.md`).
+
+When to think about Accusync: if a zone is **consistently misty or over-radius** at
+the heads, the PRS40 isn't engaging (inlet too low — see `heads.md` *Misting from the
+MP on top*), and the cause is *not* a single head's regulator failing but the whole
+zone running too hot or too cold, then a per-valve regulator on *that* valve is the
+standard remedy. Treat it as a design fix, not a troubleshooting one — bring it up
+once the routine causes (filter, nozzle, riser seal, broken lateral) are ruled out.
 
 ## Installation (and how to avoid causing damage)
 
@@ -211,3 +246,5 @@ When servicing, this is the screen to clean of grit; well water makes this routi
 - `valve-solenoid.md` — coil, plunger, exhaust/entry ports, voltage and resistance tests.
 - `wiring.md` — wire gauge/run, waterproof connectors, swap-wire and continuity tests.
 - `controller.md` — voltage at controller terminals.
+- `laterals.md` — zone-wide weakness from a punctured lateral (the alternative cause to a partly-open valve diaphragm when one zone is weak).
+- `heads.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.

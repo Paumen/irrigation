@@ -160,3 +160,91 @@ images:
     causes: [R3, R31]
     relates: distance to controller
     used_in: [relay.md]
+
+  IMG.i20-callouts:
+    file: media/i20-callouts.png
+    caption: I-20 top callouts — Lifting Socket, Arc Adjustment (left dial), Nozzle / Radius Adjustment Screw (centre), Flo-Stop (right dial).
+    subjects: [heads]
+    causes: [R9, R91, R92, R93]
+    relates: identify adjustment points before turning anything
+    used_in: [heads.md]
+
+  IMG.rotor-adjustment-arrows:
+    file: media/rotor-adjustment-arrows.png
+    caption: Hunter wrench rotating the arc adjustment (90° per full turn) and the radius/range screw above it; small arrow shows reduced throw.
+    subjects: [heads]
+    causes: [R9, R91, R93]
+    relates: arc & radius adjustment direction
+    used_in: [heads.md]
+
+  IMG.rotor-cap-internals-separated:
+    file: media/rotor-cap-internals-separated.jpg
+    caption: Body cap unscrewed and internal assembly lifted out of the rotor body — the access step for filter cleaning, riser-seal replacement, and drain-check-valve install.
+    subjects: [heads]
+    causes: [R9, R91, R92, R93]
+    relates: body-cap removal; internal-assembly access
+    used_in: [heads.md]
+
+  IMG.rotor-filter-exploded:
+    file: media/rotor-filter-exploded.png
+    caption: Exploded view — internal assembly (1) with the cylindrical filter screen (2) at its base; lift the screen out with needle-nose pliers to rinse.
+    subjects: [heads]
+    causes: [R9, R91]
+    relates: filter cleaning when rotor won't rotate
+    used_in: [heads.md]
+
+  IMG.rotor-riser-seal-grip:
+    file: media/rotor-riser-seal-grip.jpg
+    caption: Grip the spring and riser body firmly with one hand while removing the old rubber seal with the other — the spring tension releases when the seal lifts off.
+    subjects: [heads]
+    causes: [R9, R92]
+    relates: riser-seal replacement; flow-by / stem leak
+    used_in: [heads.md]
+
+  IMG.rotor-lifting-socket:
+    file: media/rotor-lifting-socket.png
+    caption: Riser pulled up by the lifting socket — exposes the nozzle, arc dial, radius screw, and Flo-Stop for adjustment without removing the rotor.
+    subjects: [heads]
+    causes: [R9, R91, R93]
+    relates: access nozzle and adjustment dials in-place
+    used_in: [heads.md]
+
+  IMG.rotor-arc-wrench:
+    file: media/rotor-arc-wrench.png
+    caption: Hunter wrench inserted into the arc-adjustment socket; turn clockwise to increase arc (each full turn = 90°), counterclockwise to decrease.
+    subjects: [heads]
+    causes: [R9, R93]
+    relates: arc adjustment 40°–360°
+    used_in: [heads.md]
+
+  IMG.rotor-internal-assembly-removal:
+    file: media/rotor-internal-assembly-removal.png
+    caption: Lifting the internal assembly out of the rotor body once the body cap is unscrewed — first step for filter cleaning, riser-seal change, or right-side arc reset.
+    subjects: [heads]
+    causes: [R9, R91, R92, R93]
+    relates: body-cap removal; access to internals
+    used_in: [heads.md]
+
+  IMG.rotor-trajectory-chart:
+    file: media/rotor-trajectory-chart.png
+    caption: Trajectory geometry — A = degrees of trajectory, B = max height of spray, C = distance from head to maximum height. Use to check head-to-obstruction clearance.
+    subjects: [heads]
+    causes: [R9, R93]
+    relates: standard 25° vs low-angle 13° nozzles; spraying over fences/hedges
+    used_in: [heads.md]
+
+  IMG.rotor-do-not-kick:
+    file: media/rotor-do-not-kick.png
+    caption: Don't step on or kick the rotor — vandalism/impact can drift the right-stop arc. Patented auto arc return brings the original arc back the next time the zone calls.
+    subjects: [heads]
+    causes: [R9, R93]
+    relates: arc drift; "always full circle" symptom
+    used_in: [heads.md]
+
+  IMG.rotor-swing-joint:
+    file: media/rotor-swing-joint.png
+    caption: Hunter swing joint between the lateral and the rotor — flexes to absorb shock and lets you set final head height to grade after install.
+    subjects: [heads]
+    causes: [R9, R91, R92]
+    relates: rotor install/replacement; setting height to grade; reducing lateral stress
+    used_in: [heads.md]

@@ -36,6 +36,11 @@ runtime.
 ### R5 — Main line (32 mm, pump → valve box)
 - Local doc: none yet.
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
+- Design context: Hunter's "Controlling High Pressure" article (residential rotors) describes
+  whole-system pressure regulation as the coarsest of three tiers (system-wide → per-valve →
+  at-the-head). Not fitted on this system; the regulation that exists is at the head, via the
+  PRS40 bodies. See `knowledge/valve.md` *Per-valve pressure regulation (Accusync)* for the
+  tier comparison.
 
 ### R6 — Field wiring (24 V low-voltage)
 - Local doc: `knowledge/wiring.md` — **partial** (wire-distance table, connectors, isolation tests).
@@ -48,8 +53,15 @@ runtime.
 - Fallback: `media/PGV101G.pdf`, then Hunter support (https://www.hunterindustries.com/support).
 
 ### R8 — Zone laterals (25 mm)
-- Local doc: none yet.
-- Fallback: IrrigationTutorials.com, then web.
+- Local doc: `knowledge/laterals.md` — **partial** (broken-lateral signature, field-diagnosis
+  steps, dead-end winterization rule, cap-off/shorten-lateral procedure).
+- Read when: a whole zone is weak with no fault visible at the heads; one or more heads on a
+  zone won't pop up while siblings on the same zone are fine; a persistent wet patch or soft
+  ground along a known lateral run; you're removing a head or restructuring a zone and a stub
+  will be left behind; you suspect recent garden / fence / driveway work damaged a pipe.
+- Fallback: IrrigationTutorials.com, then web. Hunter's "Rotor Not Fully Popping Up" article
+  has the textbook broken-lateral signature ("look for new trees and shrub plantings, new or
+  repaired fences"); that material is already folded into `laterals.md`.
 
 ### R9 — Heads (Hunter I-20 rotors, Pro-Spray PRS40, MP Rotator nozzles)
 - Local doc: `knowledge/heads.md` — entry point covering all three head-side components for this system
