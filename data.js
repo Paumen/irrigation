@@ -106,7 +106,7 @@ window.DATA = {
       id: 'Q2',
       effort: 5, // visual check at the heads while running
       stage: 1,
-      text: 'How does water leave rotor(s)?',
+      text: 'When a zone runs (controller or app starts it), how does water come out of the rotors?',
       highlight: ['rotor'],
       options: [
         {
