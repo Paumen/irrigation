@@ -42,7 +42,7 @@ const CASES = [
   { Q18: 0, Q19: 1 },
   { Q2: 2 }, // multiple zones
   { Q2: 1 }, // different zone
-  { Q18: 4 }, // drips at heads when off
+  { Q18: 1 }, // around valves or drips at heads when off (merged)
 ];
 
 const EPS = 1e-9;

@@ -497,8 +497,8 @@ window.DATA = {
           effects: { R51: 1.6 },
         },
         {
-          label: 'In / around valve box',
-          effects: { R73: 1.6, R74: 1.6 },
+          label: 'Around the valve box, or drips at the heads when system is off',
+          effects: { R72: 0.4, R73: 1.6, R74: 1.6 },
         },
         {
           label: 'Along zone lines',
@@ -506,11 +506,7 @@ window.DATA = {
         },
         {
           label: 'Nothing visible',
-          effects: { R51: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
-        },
-        {
-          label: 'Drips at heads/rotors when system is off',
-          effects: { R72: 0.4, R73: 0.4, R74: 0.4 },
+          effects: { R51: -0.2, R72: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
         },
       ],
     },
