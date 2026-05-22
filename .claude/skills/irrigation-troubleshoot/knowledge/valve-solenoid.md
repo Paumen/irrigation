@@ -43,6 +43,8 @@ or not open fully.
 
 ![Turning the solenoid by hand](media/valves-simply-turn-solenoid.gif)
 
+![Solenoid rotation direction (full-valve view)](media/pgv_not_opening_3.png)
+
 Turn the solenoid counter-clockwise ¼ to ½ turn to open the valve by hand; clockwise until snug to
 close. Useful as a first isolation step: if the zone runs when you turn the solenoid by hand but not
 when the controller calls it, the fault is electrical (wiring, controller, or solenoid coil) rather

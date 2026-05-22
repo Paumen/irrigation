@@ -132,6 +132,8 @@ blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
 
 ![External leak points](media/valve_external_leak_image_0.png)
 
+![Bleed screw on top of the valve](media/valve_bleed_screw_image_0.png)
+
 Run the checklist in cheapest-first order:
 
 - **Bleed screw open or damaged** — hand-tighten clockwise.
@@ -174,6 +176,23 @@ Solenoid (summary — full detail in `valve-solenoid.md`):
 - 350 mA inrush / 190 mA holding at 60 Hz
 - 370 mA inrush / 210 mA holding at 50 Hz
 - Coil resistance spec for this system: 20–60 Ω
+
+Pressure loss across the 1" PGV (Globe — the body type on this system; converted from
+Hunter's GPM/PSI source table):
+
+| Flow (m³/h) | Flow (l/min) | Loss (bar) |
+|---|---|---|
+| 0.23 | 3.8 | 0.21 |
+| 1.14 | 19 | 0.28 |
+| 2.27 | 38 | 0.28 |
+| 3.41 | 57 | 0.34 |
+| 4.54 | 76 | 0.34 |
+| 5.68 | 95 | 0.41 |
+| 6.81 | 114 | 0.55 |
+| 9.08 | 151 | 0.97 |
+
+Per-zone flow on this system runs ~2.2 m³/h (≈37 l/min), so each zone valve costs ~0.28 bar of
+the available pump head — useful when budgeting pressure for the heads downstream.
 
 ## Filter / mesh (PGV 1")
 
