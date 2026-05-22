@@ -132,6 +132,8 @@ blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
 
 ![External leak points](media/valve_external_leak_image_0.png)
 
+![Bleed screw on top of the valve](media/valve_bleed_screw_image_0.png)
+
 Run the checklist in cheapest-first order:
 
 - **Bleed screw open or damaged** — hand-tighten clockwise.
