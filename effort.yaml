@@ -63,7 +63,7 @@ questions:
   Q4: 3   # App vs controller — start the system both ways and compare
   Q5: 3   # Manual hose flow — open the manual hose at the pump and look
   Q6: 4   # Sound at valve activation — stand at the valve box during a cycle
-  Q7: 6   # Did restarting help — recall from earlier attempts
+  Q7: 3   # Did restarting help — if not already tried, requires power-cycling controller/pump and running a cycle
   Q8: 6   # Progression pattern — recall how the issue started
   Q9: 6   # Equipment ages — already in setup.yaml; confirm from memory
   Q10: 4  # Recent service or work — recall a distant one-off and reason before/after
