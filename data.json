@@ -226,7 +226,7 @@
       "id": "Q2",
       "effort": 5,
       "stage": 1,
-      "text": "Run one zone — where does the water actually come out?",
+      "text": "Start one zone from the app and walk the yard. Where does water actually come out?",
       "highlight": [
         "rotor",
         "valves",
@@ -355,7 +355,7 @@
       "id": "Q3",
       "effort": 5,
       "stage": 1,
-      "text": "How does the pump behave when you turn it on?",
+      "text": "Start a zone from the app and listen at the pump. What does it do?",
       "highlight": [
         "pump"
       ],
@@ -473,7 +473,7 @@
       "id": "Q6",
       "effort": 4,
       "stage": 1,
-      "text": "Listen at the valve — what do you hear when it activates?",
+      "text": "Start a zone from the app and stand at the valve box. What do you hear?",
       "highlight": [
         "valves",
         "ctrl"
@@ -914,7 +914,7 @@
       "id": "Q13",
       "effort": 2,
       "stage": 3,
-      "text": "Controller output voltage during a call (~24 VAC expected)?",
+      "text": "Press \"start zone\" on the controller itself. At the zone terminal with a multimeter, what do you read?",
       "highlight": [
         "ctrl",
         "valves"
