@@ -75,12 +75,12 @@ window.DATA = {
         {
           label: 'Single zone fails',
           icon: 'scope-single',
-          effects: { R61: 0.2, R63: 0.2, R7: 0.2, R8: 0.2 },
+          effects: { R61: 0.2, R62: -2.0, R63: 0.2, R7: 0.2, R8: 0.2 },
         },
         {
           label: 'single rotor fails',
           icon: 'scope-one',
-          effects: { R9: 1.6 },
+          effects: { R62: -2.0, R9: 1.6 },
         },
       ],
     },
@@ -373,7 +373,7 @@ window.DATA = {
       options: [
         {
           label: 'Yes, zone runs',
-          effects: { R6: 0.6, R71: 0.6 },
+          effects: { R6: 0.6, R71: 0.6, R7: -1.4, R8: -1.8, R9: -1.8 },
         },
         {
           label: 'Nothing',

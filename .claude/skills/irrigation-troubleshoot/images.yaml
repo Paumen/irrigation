@@ -90,7 +90,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.internal-components:
-    file: media/valves-internal-components_0__1_.gif
+    file: media/valves-internal-components_0.gif
     caption: Internal components exploded — 1 support ring, 2 diaphragm, 3 spring.
     subjects: [valve-internals]
     causes: [R7, R72]
@@ -122,7 +122,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.solenoid-voltage-reading:
-    file: media/Testing_Solenoid_Voltage_0.png
+    file: media/Testing Solenoid Voltage_0.png
     caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
     subjects: [valve-solenoid]
     causes: [R6, R7, R61, R62, R63, R71]
@@ -130,7 +130,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.controller-voltage-reading:
-    file: media/24_VAC_Showing_26VAC.png
+    file: media/24 VAC_Showing 26VAC.png
     caption: Multimeter at the controller terminals reading ~26 VAC with the station active.
     subjects: [controller]
     causes: [R2, R22, R23]

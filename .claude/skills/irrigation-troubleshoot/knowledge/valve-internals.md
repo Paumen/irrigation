@@ -25,7 +25,7 @@ and the hydraulics together often shift the reasoning more than any single fact.
 
 ## Components
 
-![Internal components — support ring, diaphragm, spring](media/valves-internal-components_0__1_.gif)
+![Internal components — support ring, diaphragm, spring](media/valves-internal-components_0.gif)
 
 - **Diaphragm support ring** — seats and aligns the diaphragm in the body.
 - **Diaphragm** — the flexible rubber disc with a plastic centre. The plastic centre carries

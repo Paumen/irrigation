@@ -167,7 +167,7 @@ class Engine:
         if t == "options":
             return True
         if t == "matrix":
-            return isinstance(ans, dict) and len(ans) > 0
+            return isinstance(ans, dict)
         if t == "ages":
             return isinstance(ans, dict)
         return False
