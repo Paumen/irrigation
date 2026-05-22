@@ -2,6 +2,7 @@
   'use strict';
 
   const BREADTH_WEIGHT = 1.5;
+  const MATRIX_EXPECTED_FILLED = 0.75;
   const MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
 
   function parseDate(dateStr) {
@@ -123,18 +124,23 @@
         discriminator(q, ids) {
           const mults = q.columns.map((c) => c.mult);
           const multSpread = Math.max(...mults) - Math.min(...mults);
+          const p = q.rows.length > 0 ? MATRIX_EXPECTED_FILLED / q.rows.length : 0;
           let D = 0;
-          const affected = new Set();
+          const rowsAffecting = {};
           for (const row of q.rows) {
             for (const causeId of ids) {
               const e = Math.abs(row.effects[causeId] || 0);
               if (e > 0) {
-                D += e * multSpread;
-                affected.add(causeId);
+                D += e * multSpread * p;
+                rowsAffecting[causeId] = (rowsAffecting[causeId] || 0) + 1;
               }
             }
           }
-          return D + BREADTH_WEIGHT * affected.size;
+          let breadth = 0;
+          for (const k of Object.values(rowsAffecting)) {
+            breadth += 1 - Math.pow(1 - p, k);
+          }
+          return D + BREADTH_WEIGHT * breadth;
         },
         isAnswered(_q, ans) {
           return !!ans && typeof ans === 'object';
