@@ -76,7 +76,7 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 
 ### Common faults
 
-- **Won't pop up.** Debris in the well, weak riser seal, body cracked. Most often: a pebble or twig in the well. Pull the cap and clear. Low system pressure is also a candidate — check pressure at the manifold while the zone runs. Note: a worn riser seal causes *flow-by* (water flushed out as the riser starts to rise) which bleeds the pressure needed to seat the riser; Hunter rotors are designed for zero flow-by, so visible flush during pop-up = replace the riser seal + spring seat.
+- **Won't pop up.** Debris in the well, weak riser seal, body cracked. Most often: a pebble or twig in the well. Pull the cap and clear. Low system pressure is also a candidate — check pressure at the manifold while the zone runs. Note: a worn riser seal causes *flow-by* (water flushed out as the riser starts to rise) which bleeds the pressure needed to seat the riser; Hunter rotors are designed for zero flow-by, so visible flush during pop-up = replace the riser seal + spring seat. If the whole zone is weak (not just this head): a punctured lateral after recent garden / fence / driveway work is the textbook cause — see `laterals.md` *Broken-lateral signature*. Could also be a partly-stuck valve diaphragm restricting flow to the zone — see `valve-internals.md`.
 - **Pops up but won't rotate.** Sand or grit in the drive, or the nozzle is too small for the available pressure (a gear-drive needs flow to drive). Pull the rotor, flush in clean water, reinstall. Persistent → replace the rotor. The bottom-of-internal-assembly **filter** is the most common culprit before the drive itself — pull it with needle-nose pliers and rinse before condemning the rotor (see *Adjustment & service procedures* below).
 - **Wrong arc / always 360°.** The FloStop or arc adjustment is at end-stop. Reset per the Hunter wrench instructions. Auto arc return will bring the original arc back the next time the valve calls. Don't step on or kick rotors during mowing — the impact drifts the right stop, and auto arc return is the recovery, not a license to abuse the head.
 
@@ -145,7 +145,7 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
 **Temporary shutoff of one rotor (without removing the head).** Use the blank nozzle from the I-20 Low-Angle Nozzle Set (P/N **356605SP**) — it pops up with the zone but throws no water. **Temporary use only**: the riser still pops up, so this is not a permanent cap, and the blank must be removed before winterization. For a true permanent cap, see *Capping off a head in-ground* below. Note: this system's I-20s have Flo-Stop, so for temporary shutoff just use Flo-Stop — the blank nozzle is mostly useful for flushing a lateral during maintenance.
 
-**Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant in this climate (Wijchen, NL — winterization required):
+**Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant in this climate (Wijchen, NL — winterization required). The general dead-end-on-a-winterized-lateral rule that drives this is in `laterals.md` *Dead-end winterization rule*; the same procedure is mirrored there so either doc can be read standalone.
 - *Removing a head that is not at the end of its lateral:* dig down to expose the threaded fitting under the rotor, unscrew the rotor (plus any riser nipple), thread on a same-size cap or plug with Teflon tape, turn the zone on briefly to check for leaks, then backfill.
 - *Removing the last head on a lateral (this branch will get winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the lateral just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
 
@@ -285,6 +285,8 @@ Two distinct causes, with the same symptom:
 
 ## See also
 
-- `valve.md` — *Weeping when off* for the valve-side cause of low-head drainage.
+- `valve.md` — *Weeping when off* for the valve-side cause of low-head drainage; also for valve-side regulation when PRS40 isn't enough (Accusync).
+- `valve-internals.md` — partly-stuck diaphragm restricting flow to a zone, an alternative cause when a whole zone is weak.
+- `laterals.md` — *Broken-lateral signature* and *Dead-end winterization rule* for the zone-wide-weakness case and for head removal/cap-off planning.
 - `wiring.md` — heads are mechanical only; no wiring at the head.
 - `setup.yaml` — per-zone head counts and types for this system.

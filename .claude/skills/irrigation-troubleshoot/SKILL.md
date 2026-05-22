@@ -38,9 +38,9 @@ Use the left term, not the right.
 - App, not software
 
 ## Reference content next to this skill
-- `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: R*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`. Read on the triggers in *When to read `knowledge/`* below.
+- `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: R*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`. Read on the triggers in *When to read `knowledge/`* below.
 - `images.yaml` — image manifest. Lookup by engine question id (`questions:`), R-code at either area or specific level (`causes:`), or subject doc (`subjects:`). Each entry resolves to a `media/<file>` path with a normalized caption.
-- `sources.md` — R1–R9 routing ladder. Use as the next stop when `knowledge/` is partial or absent (R1, R4, R5, R8, R9 currently have no local doc).
+- `sources.md` — R1–R9 routing ladder. Use as the next stop when `knowledge/` is partial or absent (R1, R4, R5 currently have no local doc; R6 / R8 are partial; R2, R3, R7, R9 are covered).
 - `setup.yaml` (project root) — the homeowner's actual equipment, install dates, zone count, pipe sizes, and wiring. Source of truth for anything physical about this specific system.
 
 Path conventions: `media/` and `setup.yaml` are project-root-relative. `knowledge/`, `images.yaml`, and `sources.md` live next to this `SKILL.md`.
@@ -54,7 +54,7 @@ Open the relevant `knowledge/<area>.md` (and its `parent:` / sibling docs) when 
 - The loop narrowed to one or two areas but you have no confident cause yet — read the area's doc end-to-end. `valve-internals.md` and `valve-solenoid.md` are deliberately split out from `valve.md` for exactly this case.
 - You suspect a cause that isn't in the engine catalogue. Read the doc to confirm whether it's a known mode for the specific hardware/model, then drop to `sources.md` for the vendor PDF or vendor support.
 
-When the area has no local `knowledge/` doc (R1, R4, R5, R8, R9), skip straight to `sources.md`.
+When the area has no local `knowledge/` doc (R1, R4, R5), skip straight to `sources.md`.
 
 ## How you reason (your priors)
 Your own thinking is the first place certainty leaks in. Hold all of it loosely.
