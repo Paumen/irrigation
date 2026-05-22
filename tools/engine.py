@@ -226,12 +226,26 @@ class Engine:
         lvl = q.get("effort")
         return float(lvl) * self._effort_weight if isinstance(lvl, (int, float)) else 0.0
 
+    def _requires_met(self, q: dict, answers: dict | None) -> bool:
+        req = q.get("requires")
+        if not req:
+            return True
+        for dep_qid, allowed in req.items():
+            ans = (answers or {}).get(dep_qid)
+            if not isinstance(ans, int) or isinstance(ans, bool):
+                return False
+            if ans not in allowed:
+                return False
+        return True
+
     def discriminators(self, answers: dict | None = None, skipped: dict | None = None) -> dict:
         ids = self.contending_ids(answers)
         m: dict[str, float] = {}
         mx = 0.0
         for q in self.questions:
             if self.is_completed(q["id"], answers, skipped):
+                continue
+            if not self._requires_met(q, answers):
                 continue
             D = self._disc(q, ids) + self._effort_term(q)
             m[q["id"]] = D
