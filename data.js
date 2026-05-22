@@ -1,8 +1,8 @@
 const TIMELINE_COLS = [
   { id: 'right', label: 'Started right after', mult: 0.8 },
-  { id: 'days', label: 'Started week(s) after', mult: 0.4 },
-  { id: 'worse', label: 'Worsened (same)', mult: 0.0 },
-  { id: 'faster', label: 'Worsened (faster)', mult: 0.4 },
+  { id: 'days', label: 'Started weeks after', mult: 0.4 },
+  { id: 'worse', label: 'Worsened — same rate', mult: 0.0 },
+  { id: 'faster', label: 'Worsened — faster', mult: 0.4 },
 ];
 const timelineColsWithDays = (days) =>
   TIMELINE_COLS.map((c) => (c.id === 'days' ? { ...c, mult: days } : c));
@@ -77,7 +77,7 @@ window.DATA = {
       id: 'Q1',
       effort: 6, // they already know which zones fail
       stage: 1,
-      text: 'Scope of failure?',
+      text: 'What is the scope of the failure?',
       highlight: ['rotor', 'valves'],
       options: [
         {
@@ -86,17 +86,17 @@ window.DATA = {
           effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.4, R5: 0.4, R62: 0.2 },
         },
         {
-          label: '2-3 zones fail',
+          label: '2–3 zones fail',
           icon: 'scope-multi',
           effects: { R4: 0.2, R5: 0.2, R62: 0.2 },
         },
         {
-          label: 'Single zone fails',
+          label: 'One zone fails',
           icon: 'scope-single',
           effects: { R61: 0.2, R62: -2.0, R63: 0.2, R7: 0.2, R8: 0.2 },
         },
         {
-          label: 'single rotor fails',
+          label: 'One rotor fails',
           icon: 'scope-one',
           effects: { R62: -2.0, R9: 1.6 },
         },
@@ -106,21 +106,21 @@ window.DATA = {
       id: 'Q2',
       effort: 5, // walk-observe: start a zone and look around at the heads
       stage: 1,
-      text: 'When you run a single zone (via app or controller), where does water come out at the rotors?',
+      text: 'Run one zone — where does the water actually come out?',
       highlight: ['rotor', 'valves', 'ctrl'],
       options: [
         {
-          label: 'At the selected zone (correct routing)',
+          label: 'At the selected zone (correct)',
           icon: 'flow-normal',
           effects: { R6: -0.4, R74: -0.4, R11: -0.2, R23: -0.2, R71: -0.2, R63: -0.2 },
         },
         {
-          label: 'At a different zone instead',
+          label: 'At a different zone',
           icon: 'scope-one',
           effects: { R61: 0.6, R63: 0.4, R74: 0.4, R11: 0.4, R72: 0.2 },
         },
         {
-          label: 'At multiple zones at once',
+          label: 'At several zones at once',
           icon: 'scope-multi',
           effects: { R72: 0.6, R62: 0.4, R74: 0.4, R23: 0.4, R6: 0.4, R4: 0.2 },
         },
@@ -136,11 +136,11 @@ window.DATA = {
       effort: 5, // continue walk-observe at the working zone
       stage: 1,
       requires: { Q2: [0] },
-      text: 'How does the water look at that zone, once the pump is up to pressure?',
+      text: 'With the pump up to pressure, how does the flow at that zone look?',
       highlight: ['rotor'],
       options: [
         {
-          label: 'Normal — looks fine',
+          label: 'Normal and steady',
           icon: 'flow-normal',
           effects: { R1: 0.6, R4: -0.4, R5: -0.4, R6: -0.4, R7: -0.4, R8: -0.4, R9: -0.4 },
         },
@@ -150,12 +150,12 @@ window.DATA = {
           effects: { R4: 0.2, R52: 0.2, R6: 0.2, R72: 0.2, R74: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
-          label: 'Changes during the run (strong→weak or weak→strong)',
+          label: 'Ramps up or down during the run',
           icon: 'flow-decline',
           effects: { R4: 0.6, R41: 0.4, R52: 0.4, R82: 0.4 },
         },
         {
-          label: 'Erratic — random ups/downs or sudden spike',
+          label: 'Erratic — random surges or drops',
           icon: 'pat-noise',
           effects: { R1: 0.4, R23: 0.4, R4: 0.4, R51: 0.4, R52: 0.2, R6: 0.4, R71: 0.2, R81: 0.4, R91: 0.6 },
         },
@@ -166,7 +166,7 @@ window.DATA = {
       id: 'Q3',
       effort: 5, // listen at the pump while running
       stage: 1,
-      text: 'How does the pump behave when turned on?',
+      text: 'How does the pump behave when you turn it on?',
       highlight: ['pump'],
       options: [
         {
@@ -174,15 +174,15 @@ window.DATA = {
           effects: { R4: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
-          label: 'Hums, trips breaker',
+          label: 'Hums and trips the breaker',
           effects: { R31: 1.0, R42: 1.0 },
         },
         {
-          label: 'silent',
+          label: 'Stays silent',
           effects: { R1: 0.4, R2: 1.0, R31: 0.6, R42: 0.6 },
         },
         {
-          label: 'Short-cycles / No pressure',
+          label: 'Short-cycles or makes no pressure',
           effects: { R4: 0.6, R51: 0.4 },
         },
       ],
@@ -191,19 +191,19 @@ window.DATA = {
       id: 'Q4',
       effort: 3, // start the system both ways and compare
       stage: 1,
-      text: 'Same issue when starting via app vs controller?',
+      text: 'Does it fail the same way from the app and from the controller?',
       highlight: ['sw', 'ctrl'],
       options: [
         {
-          label: 'Only app has issues',
+          label: 'No — only the app fails',
           effects: { R1: 1.6 },
         },
         {
-          label: 'Yes — nothing starts at all',
+          label: 'Same — nothing starts',
           effects: { R2: 0.2, R31: 0.2, R63: 0.2 },
         },
         {
-          label: 'Yes — both start something',
+          label: 'Same — something starts',
           effects: { R4: 0.2, R5: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
         },
       ],
@@ -213,15 +213,15 @@ window.DATA = {
       id: 'Q5',
       effort: 3, // open the manual hose at the pump and look
       stage: 1,
-      text: 'How is the flow at the manual hose?',
+      text: 'Open the manual hose — how is the flow?',
       highlight: ['pump'],
       options: [
         {
-          label: 'Strong, steady',
+          label: 'Strong and steady',
           effects: { R4: -0.6, R5: -1, R6: 0.2, R7: 0.4, R8: 0.4, R9: 0.4 },
         },
         {
-          label: 'Weak / sputtering',
+          label: 'Weak or sputtering',
           effects: { R41: 0.6, R42: 0.4, R5: 0.6 },
         },
         {
@@ -235,7 +235,7 @@ window.DATA = {
       id: 'Q6',
       effort: 4, // stand at the valve box during a cycle
       stage: 1,
-      text: 'What do you hear when valve activates?',
+      text: 'Listen at the valve — what do you hear when it activates?',
       highlight: ['valves', 'ctrl'],
       options: [
         {
@@ -243,7 +243,7 @@ window.DATA = {
           effects: { R71: -0.6, R72: 0.4, R73: 0.4, R8: 0.4, R9: 0.6 },
         },
         {
-          label: 'Buzz / hum',
+          label: 'Buzz or hum',
           effects: { R6: 1, R71: 0.4 },
         },
         {
@@ -251,7 +251,7 @@ window.DATA = {
           effects: { R6: 0.2, R71: 0.2 },
         },
         {
-          label: 'Silent / No click',
+          label: 'Silent — no click',
           effects: { R6: 0.4, R71: 0.6 },
         },
       ],
@@ -260,7 +260,7 @@ window.DATA = {
       id: 'Q7',
       effort: 3, // if not tried, requires power-cycling and a test run
       stage: 1,
-      text: 'Did restarting anything help?',
+      text: 'Did a restart help?',
       highlight: ['ctrl', 'sw', 'pump', 'relay'],
       options: [
         {
@@ -272,7 +272,11 @@ window.DATA = {
           effects: { R31: 0.4, R42: 0.4 },
         },
         {
-          label: 'Tried, no effect',
+          label: 'Tried — no effect',
+          effects: {},
+        },
+        {
+          label: "Haven't tried",
           effects: {},
         },
       ],
@@ -301,7 +305,7 @@ window.DATA = {
           effects: { R11: 0.2, R13: 0.2, R4: 0.2, R6: 0.2, R7: 0.2 },
         },
         {
-          label: 'No pattern',
+          label: 'No clear pattern',
           icon: 'pat-noise',
           effects: { R13: 0.2, R42: 0.2, R61: 0.4, R62: 0.4 },
         },
@@ -312,7 +316,7 @@ window.DATA = {
       effort: 6, // install dates already in setup.yaml; confirm from memory
       stage: 2,
       type: 'ages',
-      text: 'Do these dates still reflect the latest replacements?',
+      text: 'Do these dates still reflect your latest replacements?',
       highlight: ['pump', 'valves', 'relay', 'ctrl', 'rotor'],
       stepLabels: ['—', '0–4 yrs', '4–8 yrs', '8–12 yrs', '12+ yrs'],
       ageBuckets: [4, 8, 12],
@@ -361,7 +365,7 @@ window.DATA = {
         },
         {
           id: 'hose',
-          label: 'Hose',
+          label: 'Zone hose',
           model: 'PE 25 mm (zones)',
           curve: 'standard',
           causes: ['R81'],
@@ -373,7 +377,7 @@ window.DATA = {
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
-      text: 'Recent service or work — relation to issue?',
+      text: 'Recent service or work — how does it relate to the issue? (leave blank if not applicable)',
       columns: TIMELINE_COLS,
       rows: [
         { id: 'pump', label: 'Pump', effects: { R41: 0.4, R42: 1.0 } },
@@ -390,15 +394,15 @@ window.DATA = {
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
-      text: 'External events — relation to issue?',
+      text: 'External events — how do they relate to the issue? (leave blank if not applicable)',
       columns: timelineColsWithDays(0.6),
       rows: [
-        { id: 'storm', label: 'Storm / lightning', effects: { R22: 1, R6: 1, R13: 1 } },
+        { id: 'storm', label: 'Storm or lightning', effects: { R22: 1, R6: 1, R13: 1 } },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
-        { id: 'heat', label: 'Heatwave / drought', effects: { R41: 1 } },
+        { id: 'heat', label: 'Heatwave or drought', effects: { R41: 1 } },
         { id: 'outage', label: 'Power outage', effects: { R13: 1, R23: 1 } },
-        { id: 'pests', label: 'Pests / rodents', effects: { R51: 1, R81: 1, R6: 1 } },
-        { id: 'dig', label: 'Digging / vehicle', effects: { R51: 1, R61: 1, R62: 1, R81: 1 } },
+        { id: 'pests', label: 'Pests or rodents', effects: { R51: 1, R81: 1, R6: 1 } },
+        { id: 'dig', label: 'Digging or vehicle', effects: { R51: 1, R61: 1, R62: 1, R81: 1 } },
       ],
     },
 
@@ -407,15 +411,19 @@ window.DATA = {
       id: 'Q12',
       effort: 3, // open valve box, turn the solenoid
       stage: 3,
-      text: 'Manual open valve via bleed screw, runs?',
+      text: 'Open the valve manually with the bleed screw — does the zone run?',
       highlight: ['valves'],
       options: [
         {
-          label: 'Yes, zone runs',
+          label: 'Yes — zone runs',
           effects: { R6: 0.6, R71: 0.6, R7: -1.4, R8: -1.8, R9: -1.8 },
         },
         {
-          label: 'Nothing',
+          label: 'Partial — weak flow',
+          effects: { R6: 0.2, R71: 0.2, R72: 0.6, R73: 0.4, R4: 0.4, R52: 0.4, R82: 0.4, R9: 0.4 },
+        },
+        {
+          label: 'No — nothing happens',
           effects: { R5: 1.0, R72: 1.0, R73: 1.0, R8: 1.0 },
         },
       ],
@@ -424,7 +432,7 @@ window.DATA = {
       id: 'Q13',
       effort: 2, // multimeter at terminals
       stage: 3,
-      text: 'Controller voltage during call (~24 VAC)?',
+      text: 'Controller output voltage during a call (~24 VAC expected)?',
       highlight: ['ctrl', 'valves'],
       options: [
         {
@@ -432,18 +440,18 @@ window.DATA = {
           effects: { R11: -0.4, R12: -0.4, R22: -0.2, R63: -0.4, R71: 0.4 },
         },
         { label: '0 V', effects: { R11: 0.6, R22: 1.6, R63: 0.6, R7: -0.4 } },
-        { label: 'Low / fluctuating', effects: { R61: 0.6, R62: 0.6 } },
+        { label: 'Low or fluctuating', effects: { R61: 0.6, R62: 0.6 } },
       ],
     },
     {
       id: 'Q14',
       effort: 2, // multimeter at terminals
       stage: 3,
-      text: 'Resistance slots in controller?',
+      text: 'Field-wire resistance at the controller terminals?',
       highlight: ['ctrl', 'valves'],
       options: [
-        { label: 'Continuous, low resistance', effects: { R6: -0.4 } },
-        { label: 'Open or high resistance', effects: { R6: 1.6 } },
+        { label: 'Low and continuous', effects: { R6: -0.4 } },
+        { label: 'Open or high', effects: { R6: 1.6 } },
         { label: 'Intermittent when wiggled', effects: { R6: 0.6 } },
       ],
     },
@@ -451,11 +459,11 @@ window.DATA = {
       id: 'Q15',
       effort: 2, // multimeter at the solenoid
       stage: 3,
-      text: 'Solenoid coil resistance (typical 20–60 Ω)?',
+      text: 'Solenoid coil resistance (typically 20–60 Ω)?',
       highlight: ['valves'],
       options: [
         { label: 'In range', effects: { R71: -1.0 } },
-        { label: 'Open / infinite', effects: { R71: 1.6, R62: 0.6 } },
+        { label: 'Open or infinite', effects: { R71: 1.6, R62: 0.6 } },
         { label: 'Near zero / very low', effects: { R71: 1.6 } },
         { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
       ],
@@ -464,44 +472,44 @@ window.DATA = {
       id: 'Q16',
       effort: 1, // requires a spare valve and plumbing
       stage: 3,
-      text: 'Swap valve with known-good — issue stays with zone?',
+      text: 'Swap in a known-good valve — does the issue stay with the zone?',
       highlight: ['valves'],
       options: [
         {
-          label: 'Yes (stays with zone)',
+          label: 'Yes — stays with the zone',
           effects: { R6: 0.6, R7: -0.6, R8: 0.6 },
         },
-        { label: 'No (follows the valve)', effects: { R7: 1.6 } },
+        { label: 'No — follows the valve', effects: { R7: 1.6 } },
       ],
     },
     {
       id: 'Q17',
       effort: 2, // disassembly, no plumbing change
       stage: 3,
-      text: 'Open each valve and inspect internals?',
+      text: 'Open each valve and inspect the internals — what do you find?',
       highlight: ['valves'],
       options: [
         { label: 'Intact, no debris', effects: { R72: -0.4, R73: -0.4 } },
-        { label: 'Damaged or debris', effects: { R72: 1, R73: 0.6 } },
+        { label: 'Damage or debris present', effects: { R72: 1, R73: 0.6 } },
       ],
     },
     {
       id: 'Q18',
       effort: 5, // walk the route and look
       optional: true,
-      text: 'Do you see water / wet ground?',
+      text: 'Walk the system — do you see water or wet ground?',
       highlight: ['valves'],
       options: [
         {
-          label: 'Along the main line route',
+          label: 'Along the main-line route',
           effects: { R51: 1.6 },
         },
         {
-          label: 'Around the valve box, or drips at the heads when system is off',
+          label: 'At the valve box, or drips from the heads when off',
           effects: { R72: 0.4, R73: 1.6, R74: 1.6 },
         },
         {
-          label: 'Along zone lines',
+          label: 'Along the zone lines',
           effects: { R81: 1.6 },
         },
         {
@@ -514,12 +522,12 @@ window.DATA = {
       id: 'Q19',
       effort: 1, // no flow meter installed; would need to install one
       optional: true,
-      text: 'Flow meter reads 1.0–3.0?',
+      text: 'Does the flow meter read 1.0–3.0 m³/h?',
       highlight: ['pump'],
       options: [
-        { label: 'Yes (in range)', effects: { R4: -0.4, R5: -0.4 } },
-        { label: 'No (out of range)', effects: { R4: 0.4, R5: 0.6 } },
+        { label: 'Yes — in range', effects: { R4: -0.4, R5: -0.4 } },
+        { label: 'No — out of range', effects: { R4: 0.4, R5: 0.6 } },
       ],
     },
   ],
-};
+}; 
