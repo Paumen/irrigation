@@ -10,11 +10,14 @@ from __future__ import annotations
 from typing import Any
 
 BREADTH_WEIGHT = 1.5
+MATRIX_EXPECTED_FILLED = 1
 
 
 class Engine:
     def __init__(self, data: dict[str, Any]):
         self._data = data
+        w = data.get("effortWeight")
+        self._effort_weight: float = float(w) if isinstance(w, (int, float)) else 0.0
         self.causes: dict[str, dict] = {c["id"]: c for c in data["causes"]}
         self.all_ids: list[str] = list(self.causes.keys())
 
@@ -140,15 +143,18 @@ class Engine:
         if t == "matrix":
             mults = [c["mult"] for c in q["columns"]]
             mult_spread = max(mults) - min(mults)
+            n_rows = len(q["rows"])
+            p = (MATRIX_EXPECTED_FILLED / n_rows) if n_rows > 0 else 0
             D = 0.0
-            affected: set[str] = set()
+            rows_affecting: dict[str, int] = {}
             for row in q["rows"]:
                 for cause_id in ids:
                     e = abs(row["effects"].get(cause_id, 0))
                     if e > 0:
-                        D += e * mult_spread
-                        affected.add(cause_id)
-            return D + BREADTH_WEIGHT * len(affected)
+                        D += e * mult_spread * p
+                        rows_affecting[cause_id] = rows_affecting.get(cause_id, 0) + 1
+            breadth = sum(1 - (1 - p) ** k for k in rows_affecting.values())
+            return D + BREADTH_WEIGHT * breadth
         if t == "ages":
             D = 0.0
             affected = set()
@@ -216,6 +222,10 @@ class Engine:
             return ids
         return [r["id"] for r in ranked[:3]]
 
+    def _effort_term(self, q: dict) -> float:
+        lvl = q.get("effort")
+        return float(lvl) * self._effort_weight if isinstance(lvl, (int, float)) else 0.0
+
     def discriminators(self, answers: dict | None = None, skipped: dict | None = None) -> dict:
         ids = self.contending_ids(answers)
         m: dict[str, float] = {}
@@ -223,7 +233,7 @@ class Engine:
         for q in self.questions:
             if self.is_completed(q["id"], answers, skipped):
                 continue
-            D = self._disc(q, ids)
+            D = self._disc(q, ids) + self._effort_term(q)
             m[q["id"]] = D
             if D > mx:
                 mx = D

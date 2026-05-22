@@ -31,6 +31,23 @@ window.DATA = {
     standard: [-0.2, 0, 0.2, 0.4],
     fast: [-0.2, 0.2, 0.2, 0.4],
   },
+
+  // Effort scoring: per-question level (1..6) is set on each question
+  // below. The engine adds `level * effortWeight` to the discriminator,
+  // so higher level = lower homeowner effort = bigger D boost.
+  //
+  // Levels:
+  //   6 easy-recollection    — recent / repeated / already on hand
+  //   5 walk-observe         — easy visual or audible check while running
+  //   4 observe-or-recall-hard — wait, compare, or recall a distant one-off
+  //   3 minor-manual         — open box, manual cycle, bleed screw
+  //   2 tools-or-disassembly — multimeter, valve internals
+  //   1 significant-labor    — install missing hardware, swap parts, dig
+  //
+  // Weight 5.0 puts a level-6 question's effort term (30) on par with
+  // the maximum breadth term (21 causes * 1.5).
+  effortWeight: 5.0,
+
   causes: [
     { id: 'R11', parent: 'R1', baseline: 1.2, label: 'Misconfiguration' },
     { id: 'R12', parent: 'R1', baseline: 1.2, label: 'App failure (bug, etc)' },
@@ -58,6 +75,7 @@ window.DATA = {
     /* --- STAGE 1: SYMPTOMS --- */
     {
       id: 'Q1',
+      effort: 6, // they already know which zones fail
       stage: 1,
       text: 'Scope of failure?',
       highlight: ['rotor', 'valves'],
@@ -86,6 +104,7 @@ window.DATA = {
     },
         {
       id: 'Q2',
+      effort: 5, // visual check at the heads while running
       stage: 1,
       text: 'How does water leave rotor(s)?',
       highlight: ['rotor'],
@@ -135,6 +154,7 @@ window.DATA = {
 
     {
       id: 'Q3',
+      effort: 5, // listen at the pump while running
       stage: 1,
       text: 'How does the pump behave when turned on?',
       highlight: ['pump'],
@@ -159,6 +179,7 @@ window.DATA = {
     },
     {
       id: 'Q4',
+      effort: 3, // start the system both ways and compare
       stage: 1,
       text: 'Same issue when starting via app vs controller?',
       highlight: ['sw', 'ctrl'],
@@ -180,6 +201,7 @@ window.DATA = {
 
     {
       id: 'Q5',
+      effort: 3, // open the manual hose at the pump and look
       stage: 1,
       text: 'How is the flow at the manual hose?',
       highlight: ['pump'],
@@ -201,6 +223,7 @@ window.DATA = {
 
     {
       id: 'Q6',
+      effort: 4, // stand at the valve box during a cycle
       stage: 1,
       text: 'What do you hear when valve activates?',
       highlight: ['valves', 'ctrl'],
@@ -225,6 +248,7 @@ window.DATA = {
     },
     {
       id: 'Q7',
+      effort: 3, // if not tried, requires power-cycling and a test run
       stage: 1,
       text: 'Did restarting anything help?',
       highlight: ['ctrl', 'sw', 'pump', 'relay'],
@@ -247,6 +271,7 @@ window.DATA = {
     /* --- STAGE 2: TIMELINE --- */
     {
       id: 'Q8',
+      effort: 6, // recall how the issue started
       stage: 2,
       text: 'How did the problem progress?',
       options: [
@@ -274,6 +299,7 @@ window.DATA = {
     },
     {
       id: 'Q9',
+      effort: 6, // install dates already in setup.yaml; confirm from memory
       stage: 2,
       type: 'ages',
       text: 'Do these dates still reflect the latest replacements?',
@@ -334,6 +360,7 @@ window.DATA = {
     },
     {
       id: 'Q10',
+      effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
       text: 'Recent service or work — relation to issue?',
@@ -350,6 +377,7 @@ window.DATA = {
     },
     {
       id: 'Q11',
+      effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
       text: 'External events — relation to issue?',
@@ -367,6 +395,7 @@ window.DATA = {
     /* --- STAGE 3: TESTS --- */
     {
       id: 'Q12',
+      effort: 3, // open valve box, turn the solenoid
       stage: 3,
       text: 'Manual open valve via bleed screw, runs?',
       highlight: ['valves'],
@@ -383,6 +412,7 @@ window.DATA = {
     },
     {
       id: 'Q13',
+      effort: 2, // multimeter at terminals
       stage: 3,
       text: 'Controller voltage during call (~24 VAC)?',
       highlight: ['ctrl', 'valves'],
@@ -397,6 +427,7 @@ window.DATA = {
     },
     {
       id: 'Q14',
+      effort: 2, // multimeter at terminals
       stage: 3,
       text: 'Resistance slots in controller?',
       highlight: ['ctrl', 'valves'],
@@ -408,6 +439,7 @@ window.DATA = {
     },
     {
       id: 'Q15',
+      effort: 2, // multimeter at the solenoid
       stage: 3,
       text: 'Solenoid coil resistance (typical 20–60 Ω)?',
       highlight: ['valves'],
@@ -420,6 +452,7 @@ window.DATA = {
     },
     {
       id: 'Q16',
+      effort: 1, // requires a spare valve and plumbing
       stage: 3,
       text: 'Swap valve with known-good — issue stays with zone?',
       highlight: ['valves'],
@@ -433,6 +466,7 @@ window.DATA = {
     },
     {
       id: 'Q17',
+      effort: 2, // disassembly, no plumbing change
       stage: 3,
       text: 'Open each valve and inspect internals?',
       highlight: ['valves'],
@@ -443,6 +477,7 @@ window.DATA = {
     },
     {
       id: 'Q18',
+      effort: 5, // walk the route and look
       optional: true,
       text: 'Do you see water / wet ground?',
       highlight: ['valves'],
@@ -467,6 +502,7 @@ window.DATA = {
     },
     {
       id: 'Q19',
+      effort: 1, // no flow meter installed; would need to install one
       optional: true,
       text: 'Flow meter reads 1.0–3.0?',
       highlight: ['pump'],
