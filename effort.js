@@ -4,7 +4,7 @@ window.EFFORT = {
   "levels": {
     "1": {
       "name": "significant-labor",
-      "description": "Swap hardware with a known-good spare, dig up hoses, replace a part, or call in a professional. Requires spares, plumbing skill, or significant time.\n"
+      "description": "Install missing hardware (e.g. a flow meter), swap parts with a known-good spare, dig up hoses, or call in a professional. Requires spares, plumbing skill, or significant time.\n"
     },
     "2": {
       "name": "tools-or-disassembly",
@@ -15,16 +15,16 @@ window.EFFORT = {
       "description": "Light hands-on work — open the controller cabinet or valve box, run a manual cycle, turn a bleed screw, swap an app setting. No tools beyond what's already at the controller.\n"
     },
     "4": {
-      "name": "observe-deliberate",
-      "description": "Stand at a specific spot during a cycle, listen or watch for multiple signals, wait for the system to settle, or compare two states. More attention than a casual walk-through.\n"
+      "name": "observe-or-recall-hard",
+      "description": "Either stand at a specific spot during a cycle and watch/listen for multiple signals, wait for the system to settle, compare two states — or recall a distant, one-off event (a storm last month, a service visit weeks ago) and reason about behaviour before vs after. Mentally or physically deliberate.\n"
     },
     "5": {
       "name": "walk-observe",
-      "description": "Walk through the garden while the system runs and easily see or hear what's happening at a head, hose, or meter. Single obvious signal, no instruments.\n"
+      "description": "Walk through the garden while the system runs and easily see or hear what's happening at a head, hose, or meter that already exists. Single obvious signal, no instruments.\n"
     },
     "6": {
-      "name": "recollection",
-      "description": "User already knows the answer from memory. No observation, no walking, no waiting — they recall something from earlier this week (or the system already has the data, e.g. install dates).\n"
+      "name": "easy-recollection",
+      "description": "Recent and repeated. User already knows the answer from memory because the system did the thing this week, or the data is already on hand (e.g. install dates in setup.yaml). No walking, no waiting, no comparison.\n"
     }
   },
   "questions": {
@@ -37,8 +37,8 @@ window.EFFORT = {
     "Q7": 6,
     "Q8": 6,
     "Q9": 6,
-    "Q10": 6,
-    "Q11": 6,
+    "Q10": 4,
+    "Q11": 4,
     "Q12": 3,
     "Q13": 2,
     "Q14": 2,
@@ -46,6 +46,6 @@ window.EFFORT = {
     "Q16": 1,
     "Q17": 2,
     "Q18": 5,
-    "Q19": 5
+    "Q19": 1
   }
 };

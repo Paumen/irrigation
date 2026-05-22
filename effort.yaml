@@ -16,23 +16,26 @@ weight: 5.0
 
 levels:
   6:
-    name: recollection
+    name: easy-recollection
     description: >
-      User already knows the answer from memory. No observation, no
-      walking, no waiting — they recall something from earlier this
-      week (or the system already has the data, e.g. install dates).
+      Recent and repeated. User already knows the answer from memory
+      because the system did the thing this week, or the data is
+      already on hand (e.g. install dates in setup.yaml). No walking,
+      no waiting, no comparison.
   5:
     name: walk-observe
     description: >
       Walk through the garden while the system runs and easily see or
-      hear what's happening at a head, hose, or meter. Single obvious
-      signal, no instruments.
+      hear what's happening at a head, hose, or meter that already
+      exists. Single obvious signal, no instruments.
   4:
-    name: observe-deliberate
+    name: observe-or-recall-hard
     description: >
-      Stand at a specific spot during a cycle, listen or watch for
-      multiple signals, wait for the system to settle, or compare two
-      states. More attention than a casual walk-through.
+      Either stand at a specific spot during a cycle and watch/listen
+      for multiple signals, wait for the system to settle, compare
+      two states — or recall a distant, one-off event (a storm last
+      month, a service visit weeks ago) and reason about behaviour
+      before vs after. Mentally or physically deliberate.
   3:
     name: minor-manual
     description: >
@@ -48,9 +51,9 @@ levels:
   1:
     name: significant-labor
     description: >
-      Swap hardware with a known-good spare, dig up hoses, replace a
-      part, or call in a professional. Requires spares, plumbing
-      skill, or significant time.
+      Install missing hardware (e.g. a flow meter), swap parts with a
+      known-good spare, dig up hoses, or call in a professional.
+      Requires spares, plumbing skill, or significant time.
 
 # Per-question effort level. Levels reference the table above.
 questions:
@@ -63,8 +66,8 @@ questions:
   Q7: 6   # Did restarting help — recall from earlier attempts
   Q8: 6   # Progression pattern — recall how the issue started
   Q9: 6   # Equipment ages — already in setup.yaml; confirm from memory
-  Q10: 6  # Recent service or work — recall recent activity
-  Q11: 6  # Storms, freeze, outages, pests — recall recent events
+  Q10: 4  # Recent service or work — recall a distant one-off and reason before/after
+  Q11: 4  # Storms, freeze, outages, pests — recall a distant one-off and reason before/after
   Q12: 3  # Manual bleed screw open — open valve box, turn the solenoid
   Q13: 2  # Controller voltage during call — multimeter at terminals
   Q14: 2  # Resistance slots in controller — multimeter at terminals
@@ -72,4 +75,4 @@ questions:
   Q16: 1  # Swap valve with known-good — requires a spare and plumbing
   Q17: 2  # Open each valve and inspect — disassembly, no plumbing change
   Q18: 5  # Visible water or wet ground — walk the route and look
-  Q19: 5  # Flow meter reading — read the meter while a zone runs
+  Q19: 1  # Flow meter reading — no meter installed (setup.yaml), would need to install one
