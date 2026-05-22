@@ -77,7 +77,7 @@ window.DATA = {
       id: 'Q1',
       effort: 6, // they already know which zones fail
       stage: 1,
-      text: 'What is the scope of the failure?',
+      text: 'Run the system from the app and watch the heads. What happens?',
       highlight: ['rotor', 'valves'],
       options: [
         {
@@ -106,7 +106,7 @@ window.DATA = {
       id: 'Q2',
       effort: 5, // walk-observe: start a zone and look around at the heads
       stage: 1,
-      text: 'Run one zone — where does the water actually come out?',
+      text: 'Start one zone from the app and walk the yard. Where does water actually come out?',
       highlight: ['rotor', 'valves', 'ctrl'],
       options: [
         {
@@ -166,7 +166,7 @@ window.DATA = {
       id: 'Q3',
       effort: 5, // listen at the pump while running
       stage: 1,
-      text: 'How does the pump behave when you turn it on?',
+      text: 'Start a zone from the app and listen at the pump. What does it do?',
       highlight: ['pump'],
       options: [
         {
@@ -235,7 +235,7 @@ window.DATA = {
       id: 'Q6',
       effort: 4, // stand at the valve box during a cycle
       stage: 1,
-      text: 'Listen at the valve — what do you hear when it activates?',
+      text: 'Start a zone from the app and stand at the valve box. What do you hear?',
       highlight: ['valves', 'ctrl'],
       options: [
         {
@@ -432,7 +432,7 @@ window.DATA = {
       id: 'Q13',
       effort: 2, // multimeter at terminals
       stage: 3,
-      text: 'Controller output voltage during a call (~24 VAC expected)?',
+      text: 'Press "start zone" on the controller itself. At the zone terminal with a multimeter, what do you read?',
       highlight: ['ctrl', 'valves'],
       options: [
         {
