@@ -52,10 +52,15 @@ runtime.
 - Fallback: IrrigationTutorials.com, then web.
 
 ### R9 — Heads (Hunter I-20 rotors, Pro-Spray PRS40, MP Rotator nozzles)
-- Local doc: none yet.
-- Fallback: `media/I20.pdf` (rotors), `media/ProSpraytm PRS40.pdf` (spray bodies),
-  `media/Standard MP Rotator Nozzle.pdf` (nozzles); then Hunter support.
-  (`.doc` equivalents exist for I-20 and Pro-Spray; prefer the `.pdf`.)
+- Local doc: `knowledge/heads.md` — entry point covering all three head-side components for this system
+  (rotors, regulated bodies, MP nozzles), with the MP ↔ PRS40 pairing and low-head drainage diagnosis.
+- Read when: engine points at the heads area (R9); rotor won't pop up / won't rotate / wrong arc; misting at
+  a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
+- Fallback: `media/I20.pdf`, `media/ProSpraytm PRS40.pdf`, `media/Standard MP Rotator Nozzle.pdf`,
+  `media/RC-219-MP820-...pdf` (MP Rotator written specs — has the bar/kPa conversions, materials, mesh
+  sizes), then Hunter support. The `.doc` equivalents for I-20 and Pro-Spray are **older but richer**
+  than the current `.pdf` spec sheets (regulator-activation differential, FloGuard diagnostic, full body
+  dimensions, cap markings) — worth reading when the PDFs don't answer.
 
 ## Web sources (use when the area's local doc and PDF don't cover the symptom)
 

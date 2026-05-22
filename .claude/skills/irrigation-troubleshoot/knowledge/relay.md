@@ -81,6 +81,23 @@ from the source's feet/AWG values; mm² are nearest-standard equivalents):
 This system's controller→relay run is 10 m, so length is comfortably within range on any sane gauge —
 useful mainly to **exclude** wire length as a cause.
 
+## Electrical specifications (PSR-52)
+
+Switching capacity:
+- Max full-load amps: 40 A
+- Max resistive amps: 50 A
+- HP at 120 VAC: 3 hp
+- HP at 230 VAC: **7.5 hp** — comfortably above the DAB Jet well pump on this system.
+
+Coil (the 24 V side the controller drives):
+- Inrush: 60 VA / **2.5 A**
+- Holding: 5 VA / **0.21 A**
+
+The inrush is what determines wire sizing on the controller→relay run: the coil draws 2.5 A
+*momentarily* every time the controller calls a zone, which is why undersized wire makes a relay
+chatter on a new install. On this system the dedicated common from the controller and the 10 m
+run sit comfortably inside the gauge table above.
+
 ## Chattering / buzzing relay
 
 Chattering is almost always **insufficient amperage** reaching the relay from the controller. The
