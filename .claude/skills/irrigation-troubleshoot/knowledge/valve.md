@@ -1,0 +1,194 @@
+---
+subject: Zone valve (Hunter PGV-101G)
+root_cause_area: R7
+serves: [troubleshooting, install, replace, maintain, how-it-works]
+deeper: [valve-internals, valve-solenoid]
+system_note: 4 valves, globe type, outdoor valve box, installed 2026-05, bleed screw + flow control, 24 V from controller.
+summary: Whole-valve reference for the PGV-101G — how it works, install and damage-avoidance, manual operation, leak modes, specs, filter.
+read_when: engine points at the valve area (R7); homeowner installing/replacing a valve or asking how it works; any valve symptom not clearly localised to the solenoid or the diaphragm.
+contents:
+  - operation / hydraulics (pressure balance, metering orifice)
+  - external parts (bonnet, flow control, bleed screw, solenoid)
+  - manual operation (turn solenoid / open bleed screw)
+  - flow control adjustment
+  - installation (placement, arrow orientation, cut threads, teflon paste-or-tape rule, waterproof connectors)
+  - external leak checklist
+  - weeping when off (low-head drainage vs valve debris)
+  - slow-closing valve (metering ports)
+  - specifications (operating + solenoid summary)
+  - filter / mesh (PGV 1")
+---
+
+# Zone valve — Hunter PGV-101G
+
+This is the whole-valve neighbourhood. Read it end to end when the engine narrows to
+the valve area, when the homeowner is installing/replacing a valve, or when they ask how
+the valve works. The dense interior is split out: see `valve-internals.md` (diaphragm,
+spring, seat, support ring, metering ports) and `valve-solenoid.md` (coil, plunger,
+exhaust/entry ports). Much of what isolates or excludes a valve cause lives in those two.
+
+## How the valve works (operation / hydraulics)
+
+Water enters from the system main line and pushes against the centre of the diaphragm.
+A small orifice in the diaphragm lets water bleed through into the upper chamber, between
+the diaphragm and the bonnet. From there it travels on through a port in the bonnet to the
+solenoid area. The solenoid holds a light, spring-loaded metal piston that — when the valve
+is closed — covers the inlet port hole.
+
+The surface area the water acts on **above** the diaphragm is larger than the area **below**
+it, so the downward force wins and the valve stays shut. The valve only opens when the water
+trapped in the upper chamber is released — which is exactly what energising the solenoid (or
+opening the bleed screw, or turning the solenoid) does: it uncovers the port, the upper
+chamber drains downstream faster than the metering orifice can refill it, pressure above the
+diaphragm drops, and inlet pressure lifts the diaphragm off its seat.
+
+This is why the metering orifice and the solenoid ports are the two places a tiny piece of
+debris causes outsized trouble — they govern the pressure balance, not the main flow.
+
+## Parts (external)
+
+![Valve parts callout (1 body, 2 flow control, 3 bleed screw, 4 solenoid)](media/valves-work_0.gif)
+
+- **Bonnet** — the top section, held by captive bonnet screws (jar-top on some models).
+- **Flow control handle** — limits the diaphragm's stroke to throttle flow/pressure.
+- **Bleed screw** — external manual bleed; releases upper-chamber pressure to open the valve by hand.
+- **Solenoid** — the cylinder with two wires; the electrical actuator (see `valve-solenoid.md`).
+
+Interior parts (support ring, diaphragm, spring, seat) are in `valve-internals.md`.
+
+## Manual operation
+
+There are two ways to open a zone valve by hand. Both release upper-chamber pressure.
+
+**1 — Turn the solenoid**
+
+![Manually turning the solenoid](media/valves-simply-turn-solenoid.gif)
+
+Turn the solenoid (the cylinder with two wires) counter-clockwise ¼ to ½ turn. To close,
+turn it clockwise until snug on the valve.
+
+**2 — Open the bleed screw**
+
+![Opening the bleed screw](media/valves-the-bleed-screw.gif)
+
+Loosen the bleed screw just enough to release air — ¼ to ½ turn. Hand-tighten it to close
+the valve again. Some water trickling from the bleed screw is normal.
+
+On this system the manual hose is fed off the manifold: the pump is started from the
+controller, and with all solenoids shut the manual hose fills and can be opened at the hose
+end. The valve closes within about 15 seconds after the solenoid or bleed screw is returned
+to its closed position.
+
+## Flow control adjustment
+
+![Flow control cutaway](media/icv_cutaway.jpg)
+
+The flow control knob behaves like a tap/gate — its job is to allow or restrict the water
+passing through the valve. Mechanically it limits the diaphragm's stroke: the control rests
+on top of the diaphragm and caps how far it can lift, which adds pressure loss and lets you
+fine-tune head performance.
+
+A fully open valve (4–5 full turns counter-clockwise) can pass ~5 bar, which is too much for
+some heads such as pop-up sprays. Throttling the flow control brings pressure down to a workable
+level. On this system the PRS40 spray bodies are already pressure-regulated to ~2.8 bar, so flow
+control is mostly relevant to balancing zones, not protecting heads.
+
+## Installation (and how to avoid causing damage)
+
+![Flow direction — arrow toward the heads](media/valve_flow_direction_image.png)
+
+**Placement.** Put the valve manifold somewhere accessible for maintenance, close to the
+area the valves serve, but positioned so you are not sprayed when you operate the system by hand.
+
+**Orientation — the single most common new-install fault.** Each valve has an inlet and an
+outlet, with an arrow moulded into the body showing the direction water must flow. The arrow
+must point **toward the heads**. A valve plumbed backwards will not hold/seat correctly. Whether
+the valve sits vertical or horizontal does not matter hydraulically — that is only a maintenance
+convenience.
+
+> Note: these valves were installed 2026-05 (new). On a new install, backwards orientation,
+> unflushed construction debris, an unseated diaphragm, and loose bonnet screws are all live
+> possibilities even when nothing has "failed". Check the arrow first.
+
+**Use nipples with cut threads, not moulded threads.** Moulded thread sizes vary a lot
+between brands, so a moulded male adapter can end up too tight with one brand and too loose
+with another. Cut threads avoid this.
+
+**Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
+while the paste acts as a lubricant; the installer can then unintentionally drive the male
+adapter in too far and **split the valve body**.
+- Paste: fills the voids between threads. Hand-tighten the nipple into the valve, then ~¼ turn
+  more with a wrench.
+- Tape: wrap the pipe three full times. Hand-tighten, then ~½ turn more with a wrench.
+
+**Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
+damage them.
+
+**Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
+Non-waterproof connections corrode, which raises electrical resistance; high resistance can
+blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
+
+## External leak (valve leaking to the outside)
+
+![External leak points](media/valve_external_leak_image_0.png)
+
+Run the checklist in cheapest-first order:
+
+- **Bleed screw open or damaged** — hand-tighten clockwise.
+- **Solenoid loose or turned on manually** — hand-tighten clockwise until snug.
+- **Loose bonnet/body screws** — tighten until snug.
+- **Diaphragm not seated correctly** — remove the bonnet and inspect alignment (`valve-internals.md`).
+- **Crack in the body** — requires valve replacement.
+
+## Weeping / leaking when the system is OFF
+
+There are two distinct causes, and the most common one is **not** the valve:
+
+- **Low-head drainage (most common).** The lowest head on a zone lets water drain out of the
+  lateral hose after the valve closes. The tell: residual water stops once the pipe has emptied,
+  then stays dry. This is a head/lateral issue, fixed with check valves (e.g. HCV) on heads or
+  laterals — a check valve in the head will *not* fix a valve leak, and vice versa. See `heads.md`.
+- **Water passing through the zone valve.** Usually debris holding the diaphragm off its seat,
+  or a damaged diaphragm/seat. Disassemble, rinse all parts in clean water, reassemble; replace
+  the diaphragm assembly if visibly damaged. See `valve-internals.md`.
+
+Do not assume the valve. Decide which by whether the leak self-stops after the lateral empties.
+
+## Slow-closing valve
+
+Designed to close within ~10–20 seconds of the solenoid de-energising. Slower than that almost
+always means a restriction in the diaphragm metering port(s) — debris clogging the small holes
+that meter water to the upper chamber, so the valve closes very slowly or stays open. Fix is to
+replace the diaphragm assembly. Full detail in `valve-internals.md`.
+
+## Specifications (PGV)
+
+Operating:
+- Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
+- Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
+- Temperature rating: 66 °C
+- Warranty: 2 years
+
+Solenoid (summary — full detail in `valve-solenoid.md`):
+- 24 VAC
+- 350 mA inrush / 190 mA holding at 60 Hz
+- 370 mA inrush / 210 mA holding at 50 Hz
+- Coil resistance spec for this system: 20–60 Ω
+
+## Filter / mesh (PGV 1")
+
+The PGV 1" filter screen sits **on the diaphragm**. The screen is specified by its opening size in
+mm/micron below; the "US mesh equivalent" column is a cross-reference to the US screen-mesh standard
+only (mesh number = openings per 25.4 mm; higher number = finer screen). Use the metric figures.
+
+| Model | Opening | Micron | US mesh equiv. (ref) | Location |
+|---|---|---|---|---|
+| PGV 1" (and ASV ¾"/1") | 0.254 mm × 0.482 mm rectangular | 484 | 36 | on diaphragm |
+
+When servicing, this is the screen to clean of grit; well water makes this routine.
+
+## See also
+- `valve-internals.md` — diaphragm, spring, seat, support ring, metering ports, disassembly.
+- `valve-solenoid.md` — coil, plunger, exhaust/entry ports, voltage and resistance tests.
+- `wiring.md` — wire gauge/run, waterproof connectors, swap-wire and continuity tests.
+- `controller.md` — voltage at controller terminals.
