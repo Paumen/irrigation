@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Any
 
 BREADTH_WEIGHT = 1.5
-MATRIX_EXPECTED_FILLED = 0.75
+MATRIX_EXPECTED_FILLED = 1
 
 
 class Engine:

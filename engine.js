@@ -2,7 +2,7 @@
   'use strict';
 
   const BREADTH_WEIGHT = 1.5;
-  const MATRIX_EXPECTED_FILLED = 0.75;
+  const MATRIX_EXPECTED_FILLED = 1;
   const MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
 
   function parseDate(dateStr) {
