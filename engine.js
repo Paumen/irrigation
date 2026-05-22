@@ -22,12 +22,10 @@
     return buckets.length + 1;
   }
 
-  function createEngine(DATA, EFFORT) {
-    const EFFORT_WEIGHT = (EFFORT && typeof EFFORT.weight === 'number') ? EFFORT.weight : 0;
-    const EFFORT_LEVELS = (EFFORT && EFFORT.questions) || {};
-    function effortTerm(qid) {
-      const lvl = EFFORT_LEVELS[qid];
-      return typeof lvl === 'number' ? lvl * EFFORT_WEIGHT : 0;
+  function createEngine(DATA) {
+    const EFFORT_WEIGHT = typeof DATA.effortWeight === 'number' ? DATA.effortWeight : 0;
+    function effortTerm(q) {
+      return typeof q.effort === 'number' ? q.effort * EFFORT_WEIGHT : 0;
     }
     const CAUSES = Object.fromEntries(DATA.causes.map((c) => [c.id, c]));
     const ALL_IDS = Object.keys(CAUSES);
@@ -234,7 +232,7 @@
       let max = 0;
       for (const q of QUESTIONS) {
         if (isCompleted(q.id, answers, skipped)) continue;
-        const D = TYPE_HANDLERS[q.type].discriminator(q, ids) + effortTerm(q.id);
+        const D = TYPE_HANDLERS[q.type].discriminator(q, ids) + effortTerm(q);
         map[q.id] = D;
         if (D > max) max = D;
       }

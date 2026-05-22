@@ -14,19 +14,10 @@ MATRIX_EXPECTED_FILLED = 1
 
 
 class Engine:
-    def __init__(self, data: dict[str, Any], effort: dict[str, Any] | None = None):
+    def __init__(self, data: dict[str, Any]):
         self._data = data
-        self._effort_weight: float = 0.0
-        self._effort_levels: dict[str, float] = {}
-        if effort:
-            w = effort.get("weight")
-            if isinstance(w, (int, float)):
-                self._effort_weight = float(w)
-            qs = effort.get("questions") or {}
-            if isinstance(qs, dict):
-                self._effort_levels = {
-                    str(k): float(v) for k, v in qs.items() if isinstance(v, (int, float))
-                }
+        w = data.get("effortWeight")
+        self._effort_weight: float = float(w) if isinstance(w, (int, float)) else 0.0
         self.causes: dict[str, dict] = {c["id"]: c for c in data["causes"]}
         self.all_ids: list[str] = list(self.causes.keys())
 
@@ -231,9 +222,9 @@ class Engine:
             return ids
         return [r["id"] for r in ranked[:3]]
 
-    def _effort_term(self, qid: str) -> float:
-        lvl = self._effort_levels.get(qid)
-        return lvl * self._effort_weight if lvl is not None else 0.0
+    def _effort_term(self, q: dict) -> float:
+        lvl = q.get("effort")
+        return float(lvl) * self._effort_weight if isinstance(lvl, (int, float)) else 0.0
 
     def discriminators(self, answers: dict | None = None, skipped: dict | None = None) -> dict:
         ids = self.contending_ids(answers)
@@ -242,7 +233,7 @@ class Engine:
         for q in self.questions:
             if self.is_completed(q["id"], answers, skipped):
                 continue
-            D = self._disc(q, ids) + self._effort_term(q["id"])
+            D = self._disc(q, ids) + self._effort_term(q)
             m[q["id"]] = D
             if D > mx:
                 mx = D

@@ -13,9 +13,8 @@ const root = join(here, '..');
 
 const ctx = vm.createContext({ window: {} });
 vm.runInContext(readFileSync(join(root, 'data.js'), 'utf-8'), ctx);
-vm.runInContext(readFileSync(join(root, 'effort.js'), 'utf-8'), ctx);
 vm.runInContext(readFileSync(join(root, 'engine.js'), 'utf-8'), ctx);
-const jsEngine = ctx.window.createEngine(ctx.window.DATA, ctx.window.EFFORT);
+const jsEngine = ctx.window.createEngine(ctx.window.DATA);
 
 const onDisk = JSON.parse(readFileSync(join(root, 'data.json'), 'utf-8'));
 if (JSON.stringify(ctx.window.DATA) !== JSON.stringify(onDisk)) {
@@ -78,8 +77,7 @@ import json, sys
 sys.path.insert(0, "tools")
 from engine import Engine
 data = json.load(open("data.json"))
-effort = json.load(open("effort.json"))
-engine = Engine(data, effort)
+engine = Engine(data)
 answers = json.loads(sys.stdin.read())
 print(json.dumps({
   "ranked": engine.rank(answers),

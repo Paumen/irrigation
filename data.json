@@ -40,6 +40,7 @@
       0.4
     ]
   },
+  "effortWeight": 5,
   "causes": [
     {
       "id": "R11",
@@ -171,6 +172,7 @@
   "questions": [
     {
       "id": "Q1",
+      "effort": 6,
       "stage": 1,
       "text": "Scope of failure?",
       "highlight": [
@@ -222,6 +224,7 @@
     },
     {
       "id": "Q2",
+      "effort": 5,
       "stage": 1,
       "text": "How does water leave rotor(s)?",
       "highlight": [
@@ -318,6 +321,7 @@
     },
     {
       "id": "Q3",
+      "effort": 5,
       "stage": 1,
       "text": "How does the pump behave when turned on?",
       "highlight": [
@@ -362,6 +366,7 @@
     },
     {
       "id": "Q4",
+      "effort": 3,
       "stage": 1,
       "text": "Same issue when starting via app vs controller?",
       "highlight": [
@@ -397,6 +402,7 @@
     },
     {
       "id": "Q5",
+      "effort": 3,
       "stage": 1,
       "text": "How is the flow at the manual hose?",
       "highlight": [
@@ -433,6 +439,7 @@
     },
     {
       "id": "Q6",
+      "effort": 4,
       "stage": 1,
       "text": "What do you hear when valve activates?",
       "highlight": [
@@ -475,6 +482,7 @@
     },
     {
       "id": "Q7",
+      "effort": 3,
       "stage": 1,
       "text": "Did restarting anything help?",
       "highlight": [
@@ -507,6 +515,7 @@
     },
     {
       "id": "Q8",
+      "effort": 6,
       "stage": 2,
       "text": "How did the problem progress?",
       "options": [
@@ -558,6 +567,7 @@
     },
     {
       "id": "Q9",
+      "effort": 6,
       "stage": 2,
       "type": "ages",
       "text": "Do these dates still reflect the latest replacements?",
@@ -653,6 +663,7 @@
     },
     {
       "id": "Q10",
+      "effort": 4,
       "stage": 2,
       "type": "matrix",
       "text": "Recent service or work — relation to issue?",
@@ -739,6 +750,7 @@
     },
     {
       "id": "Q11",
+      "effort": 4,
       "stage": 2,
       "type": "matrix",
       "text": "External events — relation to issue?",
@@ -821,6 +833,7 @@
     },
     {
       "id": "Q12",
+      "effort": 3,
       "stage": 3,
       "text": "Manual open valve via bleed screw, runs?",
       "highlight": [
@@ -850,6 +863,7 @@
     },
     {
       "id": "Q13",
+      "effort": 2,
       "stage": 3,
       "text": "Controller voltage during call (~24 VAC)?",
       "highlight": [
@@ -887,6 +901,7 @@
     },
     {
       "id": "Q14",
+      "effort": 2,
       "stage": 3,
       "text": "Resistance slots in controller?",
       "highlight": [
@@ -916,6 +931,7 @@
     },
     {
       "id": "Q15",
+      "effort": 2,
       "stage": 3,
       "text": "Solenoid coil resistance (typical 20–60 Ω)?",
       "highlight": [
@@ -951,6 +967,7 @@
     },
     {
       "id": "Q16",
+      "effort": 1,
       "stage": 3,
       "text": "Swap valve with known-good — issue stays with zone?",
       "highlight": [
@@ -975,6 +992,7 @@
     },
     {
       "id": "Q17",
+      "effort": 2,
       "stage": 3,
       "text": "Open each valve and inspect internals?",
       "highlight": [
@@ -999,6 +1017,7 @@
     },
     {
       "id": "Q18",
+      "effort": 5,
       "optional": true,
       "text": "Do you see water / wet ground?",
       "highlight": [
@@ -1037,6 +1056,7 @@
     },
     {
       "id": "Q19",
+      "effort": 1,
       "optional": true,
       "text": "Flow meter reads 1.0–3.0?",
       "highlight": [

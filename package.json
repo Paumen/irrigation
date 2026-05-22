@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "export-data": "node tools/export-data.mjs",
-    "export-effort": "node tools/export-effort.mjs",
     "test:parity": "node tools/test-parity.mjs"
   },
   "devDependencies": {
