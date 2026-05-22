@@ -77,7 +77,7 @@ window.DATA = {
       id: 'Q1',
       effort: 6, // they already know which zones fail
       stage: 1,
-      text: 'What is the scope of the failure?',
+      text: 'Run the system from the app and watch the heads. What happens?',
       highlight: ['rotor', 'valves'],
       options: [
         {
