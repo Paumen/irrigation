@@ -21,12 +21,18 @@ sys.path.insert(0, str(Path(__file__).parent))
 from engine import Engine
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data.json"
+EFFORT_PATH = Path(__file__).resolve().parent.parent / "effort.json"
 
 
 @lru_cache(maxsize=1)
 def _engine() -> Engine:
     with open(DATA_PATH) as f:
-        return Engine(json.load(f))
+        data = json.load(f)
+    effort = None
+    if EFFORT_PATH.exists():
+        with open(EFFORT_PATH) as f:
+            effort = json.load(f)
+    return Engine(data, effort)
 
 
 def _summarize_question(q: dict, relevancy: str | None, D: float) -> dict:

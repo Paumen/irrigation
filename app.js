@@ -1,4 +1,4 @@
-const ENGINE = window.createEngine(window.DATA);
+const ENGINE = window.createEngine(window.DATA, window.EFFORT);
 const {
   CAUSES,
   QUESTIONS,
