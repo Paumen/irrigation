@@ -226,12 +226,23 @@
       return ids.length >= 3 ? ids : ranked.slice(0, 3).map((r) => r.id);
     }
 
+    function requiresMet(q, answers) {
+      if (!q.requires) return true;
+      for (const [depQid, allowed] of Object.entries(q.requires)) {
+        const ans = answers && answers[depQid];
+        if (typeof ans !== 'number') return false;
+        if (!allowed.includes(ans)) return false;
+      }
+      return true;
+    }
+
     function discriminators(answers, skipped) {
       const ids = contendingIds(answers);
       const map = {};
       let max = 0;
       for (const q of QUESTIONS) {
         if (isCompleted(q.id, answers, skipped)) continue;
+        if (!requiresMet(q, answers)) continue;
         const D = TYPE_HANDLERS[q.type].discriminator(q, ids) + effortTerm(q);
         map[q.id] = D;
         if (D > max) max = D;

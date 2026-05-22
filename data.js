@@ -104,50 +104,60 @@ window.DATA = {
     },
         {
       id: 'Q2',
-      effort: 5, // visual check at the heads while running
+      effort: 5, // walk-observe: start a zone and look around at the heads
       stage: 1,
-      text: 'How does water leave rotor(s)?',
-      highlight: ['rotor'],
+      text: 'When you run a single zone (via app or controller), where does water come out at the rotors?',
+      highlight: ['rotor', 'valves', 'ctrl'],
       options: [
         {
-          label: 'No water at all',
+          label: 'At the selected zone (correct routing)',
+          icon: 'flow-normal',
+          effects: { R6: -0.4, R74: -0.4, R11: -0.2, R23: -0.2, R71: -0.2, R63: -0.2 },
+        },
+        {
+          label: 'At a different zone instead',
+          icon: 'scope-one',
+          effects: { R61: 0.6, R63: 0.4, R74: 0.4, R11: 0.4, R72: 0.2 },
+        },
+        {
+          label: 'At multiple zones at once',
+          icon: 'scope-multi',
+          effects: { R72: 0.6, R62: 0.4, R74: 0.4, R23: 0.4, R6: 0.4, R4: 0.2 },
+        },
+        {
+          label: 'No water anywhere',
           icon: 'flow-none',
           effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.4, R42: 0.6, R5: 0.4, R6: 0.4, R71: 0.4 },
         },
+      ],
+    },
+    {
+      id: 'Q2q',
+      effort: 5, // continue walk-observe at the working zone
+      stage: 1,
+      requires: { Q2: [0] },
+      text: 'How does the water look at that zone, once the pump is up to pressure?',
+      highlight: ['rotor'],
+      options: [
         {
-          label: 'Weak',
+          label: 'Normal — looks fine',
+          icon: 'flow-normal',
+          effects: { R1: 0.6, R4: -0.4, R5: -0.4, R6: -0.4, R7: -0.4, R8: -0.4, R9: -0.4 },
+        },
+        {
+          label: 'Weak throughout',
           icon: 'flow-weak',
           effects: { R4: 0.2, R52: 0.2, R6: 0.2, R72: 0.2, R74: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
-          label: 'Strong, then weak',
+          label: 'Changes during the run (strong→weak or weak→strong)',
           icon: 'flow-decline',
-          effects: { R4: 0.6, R52: 0.4, R82: 0.4 },
+          effects: { R4: 0.6, R41: 0.4, R52: 0.4, R82: 0.4 },
         },
         {
-          label: 'Weak, then strong',
-          icon: 'flow-rise',
-          effects: { R41: 0.4},
-        },
-        {
-          label: 'Fluctuating / erratic',
+          label: 'Erratic — random ups/downs or sudden spike',
           icon: 'pat-noise',
-          effects: { R1: 0.4, R23: 0.4, R4: 0.4, R52: 0.2, R6: 0.4, R71: 0.2 },
-        },
-        {
-          label: 'Leaks when system is off',
-          icon: 'flow-leak',
-          effects: {  R72: 0.4, R73: 0.4, R74: 0.4 },
-        },
-        {
-          label: 'Geyser-like pressure',
-          icon: 'flow-geyser',
-          effects: { R51: 0.4, R81: 0.4, R91: 0.6 },
-        },
-        {
-          label: 'Normal',
-          icon: 'flow-normal',
-          effects: { R1: 0.6, R4: -0.4, R5: -0.4, R6: -0.4, R7: -0.4, R8: -0.4, R9: -0.4 },
+          effects: { R1: 0.4, R23: 0.4, R4: 0.4, R51: 0.4, R52: 0.2, R6: 0.4, R71: 0.2, R81: 0.4, R91: 0.6 },
         },
       ],
     },
@@ -487,8 +497,8 @@ window.DATA = {
           effects: { R51: 1.6 },
         },
         {
-          label: 'In / around valve box',
-          effects: { R73: 1.6, R74: 1.6 },
+          label: 'Around the valve box, or drips at the heads when system is off',
+          effects: { R72: 0.4, R73: 1.6, R74: 1.6 },
         },
         {
           label: 'Along zone lines',
@@ -496,7 +506,7 @@ window.DATA = {
         },
         {
           label: 'Nothing visible',
-          effects: { R51: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
+          effects: { R51: -0.2, R72: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
         },
       ],
     },

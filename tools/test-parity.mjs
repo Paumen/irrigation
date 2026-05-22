@@ -28,18 +28,21 @@ const CASES = [
   { Q1: 1 },
   { Q1: 2 },
   { Q1: 3 },
-  { Q2: 0 },
-  { Q2: 4 },
-  { Q2: 7 },
-  { Q1: 0, Q2: 0 },
-  { Q1: 3, Q2: 6 },
-  { Q1: 0, Q2: 0, Q3: 1, Q4: 0 },
+  { Q2: 3 }, // no water anywhere
+  { Q2: 0, Q2q: 3 }, // selected → erratic (fluctuating/geyser merged)
+  { Q2: 0, Q2q: 0 }, // selected → normal
+  { Q1: 0, Q2: 3 }, // all zones fail + no water anywhere
+  { Q1: 3, Q2: 0, Q2q: 3 }, // single rotor + selected → erratic
+  { Q1: 0, Q2: 3, Q3: 1, Q4: 0 },
   { Q5: 2, Q6: 3 },
   { Q10: { pump: 'right', valves: 'days' } },
   { Q11: { storm: 'right', freeze: 'worse' } },
   { Q9: { pump: 4, valves: 1, relay: 4, ctrl: 4, rotor: 4, mainHose: 4, hose: 4 } },
   { Q1: 0, Q9: { pump: 4, valves: 1 }, Q10: { pump: 'right' }, Q13: 1 },
   { Q18: 0, Q19: 1 },
+  { Q2: 2 }, // multiple zones
+  { Q2: 1 }, // different zone
+  { Q18: 1 }, // around valves or drips at heads when off (merged)
 ];
 
 const EPS = 1e-9;
