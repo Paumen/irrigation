@@ -1,8 +1,8 @@
 const TIMELINE_COLS = [
-  { id: 'right', label: 'Started right after', mult: 0.8 },
-  { id: 'days', label: 'Started week(s) after', mult: 0.4 },
-  { id: 'worse', label: 'Worsened (same)', mult: 0.0 },
-  { id: 'faster', label: 'Worsened (faster)', mult: 0.4 },
+  { id: 'right', label: 'Issue started right after', mult: 0.8 },
+  { id: 'days', label: 'Issue started days or weeks after', mult: 0.4 },
+  { id: 'worse', label: 'No effect on the issue', mult: 0.0 },
+  { id: 'faster', label: 'Sped up an existing decline', mult: 0.4 },
 ];
 const timelineColsWithDays = (days) =>
   TIMELINE_COLS.map((c) => (c.id === 'days' ? { ...c, mult: days } : c));
@@ -77,26 +77,26 @@ window.DATA = {
       id: 'Q1',
       effort: 6, // they already know which zones fail
       stage: 1,
-      text: 'Scope of failure?',
+      text: 'Which parts of the system show the problem?',
       highlight: ['rotor', 'valves'],
       options: [
         {
-          label: 'All 4 zones fail',
+          label: 'All 4 zones',
           icon: 'scope-all',
           effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.4, R5: 0.4, R62: 0.2 },
         },
         {
-          label: '2-3 zones fail',
+          label: '2 or 3 zones',
           icon: 'scope-multi',
           effects: { R4: 0.2, R5: 0.2, R62: 0.2 },
         },
         {
-          label: 'Single zone fails',
+          label: 'A single zone',
           icon: 'scope-single',
           effects: { R61: 0.2, R62: -2.0, R63: 0.2, R7: 0.2, R8: 0.2 },
         },
         {
-          label: 'single rotor fails',
+          label: 'A single rotor in an otherwise-working zone',
           icon: 'scope-one',
           effects: { R62: -2.0, R9: 1.6 },
         },
@@ -170,20 +170,20 @@ window.DATA = {
       highlight: ['pump'],
       options: [
         {
-          label: 'Runs smoothly',
+          label: 'Runs normally',
           effects: { R4: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.4 },
         },
         {
-          label: 'Hums, trips breaker',
-          effects: { R31: 1.0, R42: 1.0 },
-        },
-        {
-          label: 'silent',
+          label: 'Silent — does not start',
           effects: { R1: 0.4, R2: 1.0, R31: 0.6, R42: 0.6 },
         },
         {
-          label: 'Short-cycles / No pressure',
-          effects: { R4: 0.6, R51: 0.4 },
+          label: 'Hums or trips the breaker',
+          effects: { R31: 1.0, R42: 1.0 },
+        },
+        {
+          label: 'Runs but low/no pressure (cycles, sputters, or loud)',
+          effects: { R4: 0.6, R41: 0.4, R51: 0.4 },
         },
       ],
     },
@@ -191,19 +191,23 @@ window.DATA = {
       id: 'Q4',
       effort: 3, // start the system both ways and compare
       stage: 1,
-      text: 'Same issue when starting via app vs controller?',
+      text: 'Does the problem behave the same when starting via the app vs the controller buttons?',
       highlight: ['sw', 'ctrl'],
       options: [
         {
-          label: 'Only app has issues',
+          label: 'Only the app misbehaves (controller works fine)',
           effects: { R1: 1.6 },
         },
         {
-          label: 'Yes — nothing starts at all',
+          label: 'Only the controller misbehaves (app works fine)',
+          effects: { R2: 0.6, R23: 0.4 },
+        },
+        {
+          label: 'Both fail to start anything',
           effects: { R2: 0.2, R31: 0.2, R63: 0.2 },
         },
         {
-          label: 'Yes — both start something',
+          label: 'Both start the system, problem still happens',
           effects: { R4: 0.2, R5: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
         },
       ],
@@ -286,24 +290,19 @@ window.DATA = {
       text: 'How did the problem progress?',
       options: [
         {
-          label: 'Sudden',
+          label: 'Sudden — went from working to broken at once',
           icon: 'pat-sudden',
           effects: { R22: 0.4, R31: 0.2, R51: 0.2, R63: 0.2, R71: 0.2, R9: 0.4 },
         },
         {
-          label: 'Gradual',
+          label: 'Gradual — got worse over days or weeks',
           icon: 'pat-gradual-all',
           effects: { R4: 0.4, R52: 0.4, R72: 0.4, R73: 0.4, R91: 0.4 },
         },
         {
-          label: 'Intermittent',
-          icon: 'pat-gradual-int',
-          effects: { R11: 0.2, R13: 0.2, R4: 0.2, R6: 0.2, R7: 0.2 },
-        },
-        {
-          label: 'No pattern',
+          label: 'Intermittent or no clear pattern — comes and goes',
           icon: 'pat-noise',
-          effects: { R13: 0.2, R42: 0.2, R61: 0.4, R62: 0.4 },
+          effects: { R11: 0.2, R13: 0.2, R4: 0.2, R42: 0.2, R6: 0.2, R61: 0.4, R62: 0.4, R7: 0.2 },
         },
       ],
     },
@@ -407,15 +406,19 @@ window.DATA = {
       id: 'Q12',
       effort: 3, // open valve box, turn the solenoid
       stage: 3,
-      text: 'Manual open valve via bleed screw, runs?',
+      text: 'Open a valve manually using its bleed screw — does the zone water?',
       highlight: ['valves'],
       options: [
         {
-          label: 'Yes, zone runs',
+          label: 'Yes, the zone runs normally',
           effects: { R6: 0.6, R71: 0.6, R7: -1.4, R8: -1.8, R9: -1.8 },
         },
         {
-          label: 'Nothing',
+          label: 'Partial / weak flow',
+          effects: { R52: 0.4, R72: 0.6, R6: 0.2 },
+        },
+        {
+          label: 'Nothing — no water reaches the rotors',
           effects: { R5: 1.0, R72: 1.0, R73: 1.0, R8: 1.0 },
         },
       ],
@@ -478,10 +481,11 @@ window.DATA = {
       id: 'Q17',
       effort: 2, // disassembly, no plumbing change
       stage: 3,
-      text: 'Open each valve and inspect internals?',
+      text: 'Open the failing zone\'s valve and inspect internals?',
       highlight: ['valves'],
       options: [
         { label: 'Intact, no debris', effects: { R72: -0.4, R73: -0.4 } },
+        { label: 'Mild wear or light scale (not obviously broken)', effects: { R72: 0.2, R73: 0.2 } },
         { label: 'Damaged or debris', effects: { R72: 1, R73: 0.6 } },
       ],
     },
@@ -489,7 +493,7 @@ window.DATA = {
       id: 'Q18',
       effort: 5, // walk the route and look
       optional: true,
-      text: 'Do you see water / wet ground?',
+      text: 'Walk the route during or just after a run — do you see water or wet ground anywhere?',
       highlight: ['valves'],
       options: [
         {
