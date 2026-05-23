@@ -320,7 +320,7 @@ images:
     used_in: [playbooks/identify.md]
 
   IMG.valve-solenoid-probe-illustrated:
-    file: media/valve-solenoid-probe-illustrated.png
+    file: media/valve-solenoid-probe-illustrated.jpg
     caption: Illustrated probe placement on the valve solenoid — red and black leads on the two solenoid wires for voltage (V≈) during a call or resistance (Ω) with the controller off.
     subjects: [valve-solenoid, wiring]
     causes: [F7, F3]
@@ -329,7 +329,7 @@ images:
     used_in: [playbooks/explain.md]
 
   IMG.controller-probe-illustrated:
-    file: media/controller-probe-illustrated.png
+    file: media/controller-probe-illustrated.jpg
     caption: Illustrated probe placement at the controller terminals — red lead on the station terminal, black lead on C / COM, ET bar chart visible above.
     subjects: [controller, wiring]
     causes: [F2]
