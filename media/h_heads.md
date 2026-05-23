@@ -277,4 +277,56 @@ C.	The check valve can be factory or field-installed in pop-up models.
 3.5	FloGuardTM Technology
 A.	In the event of a missing nozzle, the FloGuard feature shall reduce the flow from the riser to a low-flow 10 ft (3 m) tall stream indicating the need for maintenance. 
 
+Here is the text extracted from the document, omitting the performance data tables:
+## Standard MP Rotator® Nozzle
+### Key Benefits
+ * **Low precipitation rate** of approximately 0.4\text{ in/hr}, lowest in the industry.
+ * **Automatic matched precipitation** for simplified irrigation design and flexibility.
+ * **Double-pop feature** protects the nozzle from external debris.
+ * **High distribution uniformity** for a healthy landscape with maximum water efficiency.
+ * **Wind-resistant, multi-stream technology** prevents misting.
+ * **Adjustable arc only when MP Rotator is running** for vandal resistance.
+ * **Removable filter screen** prevents nozzle from clogging.
+ * **Color-coded** for easy identification.
+### Operating Specifications
+ * Radius reduction up to approximately 25% on all models.
+ * Recommended operating pressure: 40 PSI.
+ * Minimum radius setting achieved at 30 PSI.
+ * Warranty period: 3 years.
+### Options
+ * Pair with Pro-Spray® PRS40 pop-up for pressure regulation to 40 PSI for nominal radius settings.
+ * Pair with Pro-Spray PRS30 pop-up for pressure regulation to 30 PSI for minimum radius settings.
+### Model Overview
+#### MP1000
+ * **Radius:** 8 to 15'
+ * **Type:** Adjustable Arc & Full Circle
+ * **Color Configurations:**
+   * Maroon: 90^{\circ} to 210^{\circ}
+   * Lt. Blue: 210° to 270°
+   * Olive: 360°
+#### MP2000
+ * **Radius:** 13 to 21'
+ * **Type:** Adjustable Arc & Full Circle
+ * **Color Configurations:**
+   * Black: 90^{\circ} to 210^{\circ}
+   * Green: 210° to 270°
+   * Red: 360°
+#### MP3000
+ * **Radius:** 22 to 30'
+ * **Type:** Adjustable Arc & Full Circle
+ * **Color Configurations:**
+   * Blue: 90^{\circ} to 210°
+   * Yellow: 210° to 270°
+   * Grey: 360"
+#### MP3500
+ * **Radius:** 31 to 35'
+ * **Type:** Adjustable Arc
+ * **Color Configuration:**
+   * Lt. Brown: 90° to 210
+#### MP CORNER
+ * **Radius:** 8' to 15'
+ * **Type:** Adjustable Arc: 45 to 105
+ * **Color Code:** Turquoise
+*Note: "Bold Recommended pressure" is noted on pages 5 and 6 as a table footnote reference.*
+© 2026 Hunter Industries Inc. Hunter, the Hunter logo, and other marks are trademarks of Hunter Industries Inc., registered in the U.S. and certain other countries.
 
