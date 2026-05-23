@@ -142,6 +142,10 @@ instance, to avoid double-counting.
 **Forward-looking codes (no historical cause, absent from migration):**
 `F3.4`, `F4.4`, `F5.8`. (`F2.8` is sourced from the R22 split.)
 
+**Stale code (images.yaml only, never in `data.js`):** `R93` — used in
+`.claude/skills/irrigation-troubleshoot/images.yaml` for arc/range/nozzle rotor
+images. Resolves to **`F9.4`** in the new taxonomy. Rekey at migration time.
+
 ---
 
 ## 3. Migration table (live `data.js` → F)
@@ -234,6 +238,18 @@ String = rename/move. Array = 1→many split (manual apportioning required, §5)
 Each split source's `baseline` and every per-question `effects` entry divides between
 its two targets.
 
+**Baseline apportioning.** Naive duplication doubles the prior. Suggested defaults
+(tune as needed):
+
+| Source | `baseline` | → first | → second |
+|---|---|---|---|
+| R22 (1.2) | F2.1 0.8 | F2.8 0.4 | unit defects more common than socket-side power |
+| R23 (1.2) | F2.5 0.6 | F2.6 0.6 | firmware ≈ settings a priori |
+| R71 (1.0) | F7.1.1 0.5 | F7.3.1 0.5 | coil ≈ plunger a priori |
+| R72 (1.2) | F7.1.2 0.7 | F7.3.2 0.5 | diaphragm tears more common than metering-port debris |
+| R91 (1.2) | F9.1.1 0.6 | F9.3 0.6 | regulator ≈ debris a priori |
+| R92 (1.2) | F9.1.2 0.4 | F9.4 0.8 | arc/range mis-set more common than gear-drive seized |
+
 ### R22 → F2.1 (unit defect) + F2.8 (socket-side power)
 Hits: Q3 (1.0), Q9 ctrl row, Q10b ctrl (1.0), Q11 storm (1.0), Q13 (1.6), Q20 (−0.2).
 Q11 storm → F2.8; Q13 "0 V" → F2.1; Q3 "silent" → both.
@@ -279,6 +295,8 @@ duplicates as-is.
 | Q11 storm row | 1.0 | 0.2 | 1.0 |
 | Q13 "0 V" | 1.6 | 1.6 | drop |
 | Q20 "Clicks, 230 V out" | -0.2 | -0.2 | -0.4 |
+| Q20 "Silent — no click" | 0.6 | 0.4 | 0.6 |
+| Q10b ctrl row | 1.0 | 1.0 | 0.4 |
 | Q9 ctrl row (age) | — | yes | drop |
 
 ### R23 → F2.5 (firmware) + F2.6 (settings)
@@ -297,6 +315,7 @@ duplicates as-is.
 |---|---|---|---|
 | Q6 "Buzz or hum" | 0.4 | drop | 0.4 |
 | Q6 "Silent — no click" | 0.6 | 0.6 | 0.2 |
+| Q13 "~24 VAC present" | 0.4 | 0.2 | 0.4 |
 | Q15 "In range" | -1.0 | -1.0 | drop |
 | Q15 "Open or infinite" | 1.6 | 1.6 | drop |
 | Q15 "Near zero / very low" | 1.6 | 1.6 | drop |
@@ -306,13 +325,16 @@ duplicates as-is.
 
 | Question / option | Current R72 | F7.1.2 | F7.3.2 |
 |---|---|---|---|
+| Q8 "Gradual" | 0.4 | 0.2 | 0.4 |
 | Q17 "Damage or debris present" | 1.0 | 0.6 | 0.4 |
+| Q18 "drips from heads when off" | 0.4 | 0.4 | 0.2 |
 
 ### R91 → F9.1.1 (regulator) + F9.3 (debris/nozzle)
 
 | Question / option | Current R91 | F9.1.1 | F9.3 |
 |---|---|---|---|
 | Q2q "Erratic" | 0.6 | 0.2 | 0.6 |
+| Q10 rotor row | 0.6 | 0.4 | 0.6 |
 | Q9 rotor row (age) | — | yes | drop |
 
 ### R92 → F9.1.2 (gear-drive seized) + F9.4 (arc/range)
@@ -320,6 +342,18 @@ duplicates as-is.
 | Question / option | Current R92 | F9.1.2 | F9.4 |
 |---|---|---|---|
 | Q10 rotor row | 1.0 | 0.2 | 1.0 |
+
+### Parent-broadcast asymmetries
+
+Cases where a parent-level broadcast (e.g., `R2:x` or `R7:x`) post-migration
+would lift or suppress *all* children of the new component uniformly via the
+flat `parent: 'F<component>'` link, but the symptom semantically targets only
+a subset. Replace the broadcast with explicit per-child effects.
+
+| Question / option | Current broadcast | Replace with |
+|---|---|---|
+| Q3 "Stays silent" | R2: 1.0 | F2.1: 1.0, F2.8: 1.0 (skip F2.5, F2.6 — firmware/settings don't silence the controller) |
+| Q12 "Yes — zone runs" (bleed test) | R7: -1.4 | F7.1.2: -1.4, F7.1.3: -1.4, F7.3.2: -1.4, F7.4: -1.4 (skip F7.1.1, F7.3.1 — bleed-runs confirms hydraulics OK, so the electrical valve faults remain plausible per §2 F7 note) |
 
 ### Cross-family move (R11 → F2.6) — parent-broadcast compensation
 
