@@ -30,6 +30,8 @@ Read this when the engine narrows to F9 (rotor debris / nozzle / pressure regula
 
 ## I-20 rotor
 
+![Hunter I-20 rotor — stainless riser, nozzle turret, and pop-up body.](media/rotor-i20-product.png)
+
 Hunter's mid-range gear-drive rotor. This system runs the **I-20-04-SS** variant: 4" pop-up height, stainless-steel riser, radius setscrew, FloStop. The rotor's drive is non-strippable, meaning turning the turret backwards by hand will not damage internals.
 
 ### Operating envelope
@@ -95,7 +97,9 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
 ![Riser pulled up by the lifting socket to access the nozzle and dials in-place](media/rotor-lifting-socket.png)
 
-**Hunter adjustment wrench.** The right tool is a Hunter wrench: a 3/32" Allen key on one end, plastic arc-adjustment key on the other, with two finger loops. A bare 3/32" Allen key works for radius adjustment only.
+**Hunter adjustment wrench.** The right tool is a Hunter wrench: a 3/32" Allen key on one end, plastic arc-adjustment key on the other, with two finger loops. A bare 3/32" Allen key works for radius adjustment only. The plastic-only consumer key (no Allen end) engages the same lifting / arc / flow-stop sockets and is fine for arc and lift work, but won't drive the radius screw.
+
+![Plastic adjustment key — engages the lifting socket and the arc / flow-stop sockets; same slots as the metal Hunter wrench, consumer variant without the Allen end.](media/rotor-adjustment-key-plastic.jpg)
 
 **Arc adjustment (40°–360°).**
 1. Insert the plastic key end into the arc adjustment socket.
@@ -111,6 +115,26 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 3. **Caution: more than five full clockwise turns can drop the screw out of the nozzle.** Replacement screw is sold separately if lost.
 
 ![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](media/rotor-adjustment-arrows.png)
+
+**Nozzle install / replacement.** Use Hunter's nozzle insertion collar (P/N **123200**) — a white plastic sleeve that clips around the riser body to hold it up while you work — plus the adjustment wrench. The slot layout on the I-20 cap matches the PGP shown in the callout below.
+
+![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](media/rotor-nozzle-insertion-collar.jpg)
+
+![Hunter PGP rotor top callouts — same slot layout as the I-20: Lifting Socket (centre top), Adjustment Socket with +/− (left), Nozzle/Range Adjustment Screw (top right), Model Identification (right).](media/pgp-rotor-cap-callouts.png)
+
+1. Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
+
+   ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](media/rotor-nozzle-install-step-1.jpg)
+
+2. Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
+
+   ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](media/rotor-nozzle-install-step-2.jpg)
+
+3. Turn the **nozzle / radius adjustment screw** a **quarter turn clockwise** to lock the nozzle in place. More than a quarter turn starts to reduce the radius — don't over-turn.
+
+   ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](media/rotor-nozzle-install-step-3.jpg)
+
+After install: cycle the head a couple of times to confirm the nozzle is locked and the rotor returns to its arc. Use Flo-Stop (below) if you don't want to run the whole zone for that check.
 
 **Flo-Stop (shut off one rotor while the zone runs).** Insert the Hunter wrench into the centre hole of the rubber cover (the Flo-Stop port) and turn clockwise until flow at this head stops. Use this for nozzle swaps or quick service without shutting the whole zone. Turn counterclockwise to restore flow.
 
