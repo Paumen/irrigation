@@ -45,16 +45,20 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
    - voltage / resistance verification with the homeowner's actual meter → `IMG.multimeter-stanley-front` + `IMG.multimeter-stanley-leads`
    - head-pressure verification (PRS40 regulation check) → `IMG.pressure-gauge-test-on-riser`
 
-   Send the image at the step where the user actually needs it, not all at the top. One image per logical step beats a wall of pictures.
+   Use judgement on image count and placement. A broad first-turn answer rarely needs more than one orienting picture; a deep procedural walkthrough can want more, surfaced at the beats they help. Avoid dumping a gallery up-front when the user hasn't asked for one yet.
 
-   **Deliver images with `SendUserFile`.** Markdown `![](media/...)` paths do **not** render in the user's chat UI — the user sees nothing. Pass the absolute file path to `SendUserFile` and put the manifest's `caption:` in the tool's `caption` field. Batch all images for one answer into a single `SendUserFile` call (the tool takes a list).
+   **Deliver images with `SendUserFile`.** Markdown `![](media/...)` paths do **not** render in the user's chat UI — the user sees nothing. Pass the absolute file path to `SendUserFile` and put the manifest's `caption:` in the tool's `caption` field.
 
-6. **Compose the procedure.**
+6. **Compose the procedure — pace it to the question.**
 
-   - **Numbered steps**, short, one action per step. No paragraphs.
-   - **Pre-flight checklist** at the top: power state, depressurisation, tools, parts, expected duration.
-   - **Stop points**: explicit "if you see X, stop and tell me — don't push past it" where the doc warns about a damage mode (cross-threaded fitting, kicked rotor cap, solenoid wires touching, etc.).
-   - **Verification step at the end**: how the homeowner confirms the procedure worked (water on, no weeping, correct arc, valve closes cleanly).
+   The single biggest failure mode is dumping a full service-manual answer on the first turn of a session, when the user only asked a broad question. Match the depth of your reply to the depth of the ask; deliver in beats and let the user pull more.
+
+   - **Broad / first-turn question** ("how do I clean a valve?", "what's involved in replacing a rotor?"): give the high-level shape, the safety bit as a one-line preamble, and the first one or two actions — then stop. Don't pre-list every step, failure mode, and verification.
+   - **Specific / mid-procedure question** ("the diaphragm is out, what am I looking at?", "what torque on the bonnet screws?"): go as deep as the question warrants. Surface the inspection criteria, the relevant image, the exact number from the doc.
+   - **Use judgement on delivery shape.** Numbered steps when the order matters; prose when it doesn't; a short paragraph plus a question when you're handing the turn back. No required template — pick what reads least like a manual for the question you got.
+   - **Safety still goes first** — but as a one-line preamble, not a "Pre-flight" header with five bullets. "Pump off at the controller, open the bleed screw for a few seconds to let pressure out" is enough.
+   - **Surface stop-points and inspection criteria at the moment they apply**, not as a preemptive list. The user doesn't need every failure mode before they pick up a screwdriver.
+   - **Verification belongs at the end of the procedure**, not the end of the first message — bring it up when the user is actually close to done.
    - **Numbers come from the doc**, not from memory. Torque, thread sealant type, coil resistance range, riser height — copy from the doc / PDF or omit and point to it.
 
 7. **Offer the natural follow-up.** End with one short prompt: "want me to walk through testing it once you're done, or how to clean the filter while you're in there?" Keeps the conversation in the same skill.
@@ -89,9 +93,20 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
 >
 > Want me to walk through cleaning the bleed-screw o-ring while you're in there?
 
+That example is appropriate-length because the question is specific and the procedure is short (two parallel options). Contrast with a broad first-turn question:
+
+> **"How do I clean a valve?"** (broad, first-turn)
+>
+> "Cleaning" on a PGV-101G can mean a few different things — which one?
+>
+> *(Use `AskUserQuestion` with the three live options: filter mesh, internal parts, solenoid. Once they pick, open with the safety preamble + first one or two actions, then stop. Don't pre-write the disassembly + inspection + reassembly + verification on a one-line question.)*
+>
+> Why this shape: the homeowner has not told you what's wrong or what they want to do. A full disassembly + every failure mode + verification on a vague intent forces them to read past a lot of irrelevant text to find the bit that applies to them — exactly the "feels like reading a manual" failure.
+
 ## What you do not do
 - Don't walk through 230 V work. Refuse, recommend a pro.
 - Don't approximate vendor numbers. Quote from the doc/PDF or omit.
-- Don't roll multiple actions into one step. One action per step, every time.
+- Don't roll multiple actions into one step inside a numbered procedure — one action per step there. But don't impose numbered steps on a three-line answer either.
+- Don't front-load a broad question with the full procedure. If the user asked "how do I clean a valve?" they have not asked for 11 steps + every failure mode + verification — give them the shape and the first move, let them pull.
 - Don't drift into diagnosis. If "how do I install a new valve" turns into "actually my current one weeps when off, can you help find why" — switch to `irrigation-troubleshoot`.
 - Don't expose internal IDs to the user. Captions only — and never paste a `media/<file>` path into prose; the file goes via `SendUserFile`.
