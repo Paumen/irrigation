@@ -513,7 +513,7 @@ window.DATA = {
       id: 'Q19',
       effort: 1, // no flow meter installed; would need to install one
       optional: true,
-      text: 'Does the flow meter read 1.0–3.0 m³/h?',
+      text: 'Install flow meter, run a zone, does the flow meter read 1.0–3.0 m³/h?',
       highlight: ['pump'],
       options: [
         { label: 'Yes — in range', effects: { R4: -0.4, R5: -0.4 } },
@@ -540,6 +540,18 @@ window.DATA = {
     { "label": "Corroded, green, or wet", "effects": { "R63": 1.6, "R62": 0.4 } },
     { "label": "Loose, backed-out, or twisted bare", "effects": { "R63": 1.0, "R61": 0.4 } }
   ]
-    } 
+    },
+    {
+  id: 'Q22', effort: 5, stage: 1,
+  text: 'Run a zone, open valve box, look at valves and heads?',
+  multiselect: true,
+  highlight: ['valves', 'rotors'],
+  options: [
+    { label: 'water coming out of wrong zone',         effects: { } },
+    { label: 'water coming out of valve',       effects: {  } },
+    { label: 'water coming out of activated zone',  effects: {  } },
+    { label: 'water coming out of non-activated zone',  effects: {  } },
   ],
+    } 
+  ]
 }; 
