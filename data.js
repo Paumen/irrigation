@@ -367,15 +367,25 @@ window.DATA = {
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
-      text: 'Recent service or work — how does it relate to the issue? (leave blank if not applicable)',
+      text: 'Recent hydraulic work — how does it relate to the issue? (leave blank if not applicable)',
       columns: TIMELINE_COLS,
       rows: [
         { id: 'pump', label: 'Pump', effects: { R41: 0.4, R42: 1.0 } },
-        { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
-        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.6} },
         { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.6 } },
         { id: 'rotor', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
         { id: 'hose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
+      ],
+    },
+    {
+      id: 'Q10b',
+      effort: 4,
+      stage: 2,
+      type: 'matrix',
+      text: 'Recent electrical/control work — how does it relate to the issue? (leave blank if not applicable)',
+      columns: TIMELINE_COLS,
+      rows: [
+        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.6 } },
+        { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
         { id: 'wiring', label: 'Wiring', effects: { R6: 1 } },
       ],
     },
@@ -384,12 +394,22 @@ window.DATA = {
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
-      text: 'External events — how do they relate to the issue? (leave blank if not applicable)',
+      text: 'Weather events — how do they relate to the issue? (leave blank if not applicable)',
       columns: timelineColsWithDays(0.6),
       rows: [
         { id: 'storm', label: 'Storm or lightning', effects: { R22: 1, R6: 1, R13: 1 } },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
         { id: 'heat', label: 'Heatwave or drought', effects: { R41: 1 } },
+      ],
+    },
+    {
+      id: 'Q11b',
+      effort: 4,
+      stage: 2,
+      type: 'matrix',
+      text: 'Other external events — how do they relate to the issue? (leave blank if not applicable)',
+      columns: timelineColsWithDays(0.6),
+      rows: [
         { id: 'outage', label: 'Power outage', effects: { R13: 1, R23: 1 } },
         { id: 'pests', label: 'Pests or rodents', effects: { R51: 1, R81: 1, R6: 1 } },
         { id: 'dig', label: 'Digging or vehicle', effects: { R51: 1, R61: 1, R62: 1, R81: 1 } },
@@ -545,13 +565,12 @@ window.DATA = {
   id: 'Q22', effort: 5, stage: 1,
   text: 'Run a zone, open valve box, look at valves and heads?',
   multiselect: true,
-  highlight: ['valves', 'rotors'],
+  highlight: ['valves', 'rotor'],
   options: [
-    { label: 'water coming out of wrong zone',         effects: { } },
-    { label: 'water coming out of valve',       effects: {  } },
-    { label: 'water coming out of activated zone',  effects: {  } },
-    { label: 'water coming out of non-activated zone',  effects: {  } },
+    { label: "water coming out of a zone you didn't activate", effects: { R61: 1.0, R63: 0.4, R74: 1.0, R72: 0.6, R73: 0.4, R4: -0.2, R5: -0.2 } },
+    { label: 'water coming out of valve', effects: { R73: 1.0, R71: 0.4, R72: 0.2 } },
+    { label: 'water coming out of activated zone', effects: { R31: -0.2, R22: -0.2, R61: -0.2, R63: -0.2, R71: -0.2, R4: -0.2, R5: -0.2 } },
   ],
-    } 
+    }
   ]
 }; 

@@ -36,13 +36,19 @@ const CASES = [
   { Q1: 0, Q2: 3, Q3: 1, Q4: 0 },
   { Q5: 2, Q6: 3 },
   { Q10: { pump: 'right', valves: 'days' } },
+  { Q10b: { ctrl: 'right', wiring: 'days' } },
   { Q11: { storm: 'right', freeze: 'worse' } },
+  { Q11b: { pests: 'right', dig: 'days' } },
   { Q9: { pump: 4, valves: 1, relay: 4, ctrl: 4, rotor: 4, mainHose: 4, hose: 4 } },
   { Q1: 0, Q9: { pump: 4, valves: 1 }, Q10: { pump: 'right' }, Q13: 1 },
   { Q18: 0, Q19: 1 },
   { Q2: 2 }, // multiple zones
   { Q2: 1 }, // different zone
   { Q18: 1 }, // around valves or drips at heads when off (merged)
+  { Q22: [0] }, // multi: rogue / wrong-zone observation alone
+  { Q22: [0, 2] }, // multi: rogue zone + activated zone running (rules out swap)
+  { Q22: [1, 2] }, // multi: valve leak + activated zone running
+  { Q22: [] }, // multi: empty array (treated as unanswered)
 ];
 
 const EPS = 1e-9;

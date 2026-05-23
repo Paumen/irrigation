@@ -241,6 +241,21 @@ function app() {
       }, 600);
     },
 
+    isSelectedMulti(i) {
+      return Array.isArray(this.activeAnswer) && this.activeAnswer.includes(i);
+    },
+
+    handleAnswerMulti(i) {
+      const qid = this.activeQuestionId;
+      const cur = Array.isArray(this.activeAnswer) ? this.activeAnswer : [];
+      const set = new Set(cur);
+      if (set.has(i)) set.delete(i);
+      else set.add(i);
+      const next = [...set].sort((a, b) => a - b);
+      if (next.length === 0) this.clearAnswer(qid);
+      else this.setAnswer(next);
+    },
+
     clearAnswer(qid, key) {
       withTransition(() => {
         if (key === undefined) {

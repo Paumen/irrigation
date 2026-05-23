@@ -400,41 +400,48 @@
       "id": "Q4",
       "effort": 3,
       "stage": 1,
-      "text": "Does it fail the same way from the app and from the controller?",
+      "text": "Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?",
       "highlight": [
         "sw",
         "ctrl"
       ],
       "options": [
         {
-          "label": "No — only the app fails",
+          "label": "All three behave the same",
           "effects": {
-            "R1": 1.6
+            "R11": -0.2,
+            "R12": -0.6,
+            "R13": -0.6
           }
         },
         {
-          "label": "Same — nothing starts",
+          "label": "Touchscreen OK, app fails both networks",
           "effects": {
-            "R2": 0.2,
-            "R31": 0.2,
-            "R63": 0.2
+            "R12": 1,
+            "R13": 0.4
           }
         },
         {
-          "label": "Same — something starts",
+          "label": "App OK on Wi-Fi, fails on cellular",
           "effects": {
-            "R4": 0.2,
-            "R5": 0.2,
-            "R7": 0.2,
-            "R8": 0.2,
-            "R9": 0.2
+            "R13": 1.6,
+            "R12": -0.4
+          }
+        },
+        {
+          "label": "Nothing works on any path",
+          "effects": {
+            "R2": 0.4,
+            "R11": 0.2,
+            "R12": -0.4,
+            "R13": -0.4
           }
         }
       ]
     },
     {
       "id": "Q5",
-      "effort": 3,
+      "effort": 4,
       "stage": 1,
       "text": "Open the manual hose — how is the flow?",
       "highlight": [
@@ -702,7 +709,7 @@
       "effort": 4,
       "stage": 2,
       "type": "matrix",
-      "text": "Recent service or work — how does it relate to the issue? (leave blank if not applicable)",
+      "text": "Recent hydraulic work — how does it relate to the issue? (leave blank if not applicable)",
       "columns": [
         {
           "id": "right",
@@ -735,23 +742,6 @@
           }
         },
         {
-          "id": "relay",
-          "label": "Start-Relay",
-          "effects": {
-            "R31": 1,
-            "R6": 0.6
-          }
-        },
-        {
-          "id": "ctrl",
-          "label": "Controller",
-          "effects": {
-            "R11": 1,
-            "R22": 1,
-            "R6": 0.6
-          }
-        },
-        {
           "id": "valves",
           "label": "Valves",
           "effects": {
@@ -774,6 +764,54 @@
             "R8": 1,
             "R5": 1
           }
+        }
+      ]
+    },
+    {
+      "id": "Q10b",
+      "effort": 4,
+      "stage": 2,
+      "type": "matrix",
+      "text": "Recent electrical/control work — how does it relate to the issue? (leave blank if not applicable)",
+      "columns": [
+        {
+          "id": "right",
+          "label": "Started right after",
+          "mult": 0.8
+        },
+        {
+          "id": "days",
+          "label": "Started weeks after",
+          "mult": 0.4
+        },
+        {
+          "id": "worse",
+          "label": "Worsened — same rate",
+          "mult": 0
+        },
+        {
+          "id": "faster",
+          "label": "Worsened — faster",
+          "mult": 0.4
+        }
+      ],
+      "rows": [
+        {
+          "id": "ctrl",
+          "label": "Controller",
+          "effects": {
+            "R11": 1,
+            "R22": 1,
+            "R6": 0.6
+          }
+        },
+        {
+          "id": "relay",
+          "label": "Start-Relay",
+          "effects": {
+            "R31": 1,
+            "R6": 0.6
+          }
         },
         {
           "id": "wiring",
@@ -789,7 +827,7 @@
       "effort": 4,
       "stage": 2,
       "type": "matrix",
-      "text": "External events — how do they relate to the issue? (leave blank if not applicable)",
+      "text": "Weather events — how do they relate to the issue? (leave blank if not applicable)",
       "columns": [
         {
           "id": "right",
@@ -837,7 +875,38 @@
           "effects": {
             "R41": 1
           }
+        }
+      ]
+    },
+    {
+      "id": "Q11b",
+      "effort": 4,
+      "stage": 2,
+      "type": "matrix",
+      "text": "Other external events — how do they relate to the issue? (leave blank if not applicable)",
+      "columns": [
+        {
+          "id": "right",
+          "label": "Started right after",
+          "mult": 0.8
         },
+        {
+          "id": "days",
+          "label": "Started weeks after",
+          "mult": 0.6
+        },
+        {
+          "id": "worse",
+          "label": "Worsened — same rate",
+          "mult": 0
+        },
+        {
+          "id": "faster",
+          "label": "Worsened — faster",
+          "mult": 0.4
+        }
+      ],
+      "rows": [
         {
           "id": "outage",
           "label": "Power outage",
@@ -1109,7 +1178,7 @@
       "id": "Q19",
       "effort": 1,
       "optional": true,
-      "text": "Does the flow meter read 1.0–3.0 m³/h?",
+      "text": "Install flow meter, run a zone, does the flow meter read 1.0–3.0 m³/h?",
       "highlight": [
         "pump"
       ],
@@ -1126,6 +1195,127 @@
           "effects": {
             "R4": 0.4,
             "R5": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q20",
+      "effort": 2,
+      "stage": 1,
+      "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
+      "highlight": [
+        "relay",
+        "pump"
+      ],
+      "options": [
+        {
+          "label": "Clicks, 230 V at output",
+          "effects": {
+            "R31": -1.2,
+            "R42": 0.6,
+            "R41": 0.4,
+            "R63": -0.4,
+            "R22": -0.2
+          }
+        },
+        {
+          "label": "Clicks, but no 230 V out",
+          "effects": {
+            "R31": 1.6,
+            "R42": -0.4
+          }
+        },
+        {
+          "label": "Clicks, but breaker trips",
+          "effects": {
+            "R31": 1,
+            "R42": 1
+          }
+        },
+        {
+          "label": "Silent — no click",
+          "effects": {
+            "R31": 0.6,
+            "R22": 0.6,
+            "R63": 0.6,
+            "R23": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q21",
+      "effort": 2,
+      "stage": 1,
+      "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Clean, dry, sealed connectors",
+          "effects": {
+            "R63": -0.2
+          }
+        },
+        {
+          "label": "Corroded, green, or wet",
+          "effects": {
+            "R63": 1.6,
+            "R62": 0.4
+          }
+        },
+        {
+          "label": "Loose, backed-out, or twisted bare",
+          "effects": {
+            "R63": 1,
+            "R61": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q22",
+      "effort": 5,
+      "stage": 1,
+      "text": "Run a zone, open valve box, look at valves and heads?",
+      "multiselect": true,
+      "highlight": [
+        "valves",
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "water coming out of a zone you didn't activate",
+          "effects": {
+            "R61": 1,
+            "R63": 0.4,
+            "R74": 1,
+            "R72": 0.6,
+            "R73": 0.4,
+            "R4": -0.2,
+            "R5": -0.2
+          }
+        },
+        {
+          "label": "water coming out of valve",
+          "effects": {
+            "R73": 1,
+            "R71": 0.4,
+            "R72": 0.2
+          }
+        },
+        {
+          "label": "water coming out of activated zone",
+          "effects": {
+            "R31": -0.2,
+            "R22": -0.2,
+            "R61": -0.2,
+            "R63": -0.2,
+            "R71": -0.2,
+            "R4": -0.2,
+            "R5": -0.2
           }
         }
       ]
