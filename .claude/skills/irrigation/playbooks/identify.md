@@ -25,13 +25,14 @@ Identification is mostly a lookup-and-match exercise. `setup.yaml` already says 
      - **Controller:** RainMachine HD-16 TOUCH = colour touchscreen, "RainMachine" word-mark, 16 zone terminals inside.
    - **Cross-check the install year and zone wiring** in `setup.yaml`. A part installed in 2020-08 alongside the others is almost certainly what the file says; a part installed later by someone else is the more likely mismatch.
 
-4. **Surface the image.** From `../irrigation-troubleshoot/images.yaml`, pick the entry whose `subjects:` matches the area. Common identification images:
+4. **Surface the image.** From `../irrigation-troubleshoot/images.yaml`, pick the entry whose `subjects:` matches the area. Common identification images, grouped by what the user is trying to confirm:
 
-   - rotor → `subjects: [heads]` (parts callout, cap internals, lifting socket)
-   - valve body → `IMG.parts-callout`
-   - solenoid → `subjects: [valve-solenoid]`
-   - relay → `subjects: [relay]`
-   - controller → `subjects: [controller]`
+   - **Valve (PGV-101G)** → `IMG.pgv-valve-product` (anchor), `IMG.pgv-valve-solenoid-label` (the stamped "24VAC SOLENOID PAT. NO. 5979482" + ¼-turn arrows — the strongest single tell), `IMG.pgv-valve-lineup` (slip vs threaded vs MM body variants).
+   - **Valve — exclusion** (homeowner does *not* have these): `IMG.pgv-valve-dc-variant`, `IMG.pgv-valve-dc-labelled` (PGV-101-MM-DC), `IMG.pgv-valve-dc-variant-installed`. Use to confirm the homeowner's solenoid label says "24VAC" rather than "DC LATCHING".
+   - **Rotor (I-20-04-SS)** → `IMG.rotor-i20-product` (anchor), `IMG.rotor-i20-family-heights` (4" / 6" / 12" — homeowner has the 4"), `IMG.rotor-i20-nozzle-selector-close` (the "3.0" etc. number on the blue cap tells you the installed nozzle), `IMG.pgp-rotor-cap-callouts` (slot layout — same on the I-20).
+   - **Solenoid** → `subjects: [valve-solenoid]`; `IMG.pgv-valve-solenoid-label` is the canonical identification close-up.
+   - **Relay (PSR-52)** → `IMG.relay-controller-wiring-diagram` (helps confirm the same wiring pattern the homeowner has).
+   - **Controller (RainMachine HD-16 TOUCH)** → `IMG.rainmachine-similar-model` — **illustrative only**: the photo is a Mini-12 (12 zones, otherwise the same layout); the homeowner's HD-16 has 16 zones. Caption must say "similar layout" or "similar model", *not* "your controller".
 
    Inline the image with the caption from the manifest.
 

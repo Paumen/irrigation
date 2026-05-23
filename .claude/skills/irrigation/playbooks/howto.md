@@ -35,8 +35,15 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
    - bleed screw / manual operation → `IMG.bleed-screw`
    - flow-direction arrow on valve body → `IMG.flow-direction`
    - external leak inspection points → `IMG.external-leak`
-   - rotor parts callout / cap removal / nozzle change / arc adjustment → search by `subjects: [heads]`
-   - solenoid coil / plunger → search by `subjects: [valve-solenoid]`
+   - solenoid ¼-turn ON/OFF (manual operation) → `IMG.pgv-valve-solenoid-label`
+   - solenoid swap (replacement part view) → `IMG.valve-solenoid-replacement-product` (and the procedure itself is in `knowledge/valve-solenoid.md` *Replacing the solenoid*)
+   - rotor parts callout / cap removal / arc adjustment → search by `subjects: [heads]`
+   - rotor adjustment-key options → `IMG.rotor-adjustment-key-plastic` (the consumer plastic key alongside the existing metal-wrench shots)
+   - **rotor nozzle install / replacement** → already documented end-to-end in `knowledge/heads.md` *Nozzle install / replacement*; uses `IMG.rotor-nozzle-insertion-collar` (P/N 123200), `IMG.pgp-rotor-cap-callouts`, and `IMG.rotor-nozzle-install-step-1/2/3`. Refer the user to that procedure rather than restating it.
+   - rotor install / replacement with a swing joint → `IMG.swing-joint-product` (the part) + `IMG.rotor-install-swing-joint-illustrated` (the buried cross-section)
+   - MP Rotator nozzle work (Z1, Z4) → `IMG.mp-rotator-wrench` for the orange nozzle key
+   - voltage / resistance verification with the homeowner's actual meter → `IMG.multimeter-stanley-front` + `IMG.multimeter-stanley-leads`
+   - head-pressure verification (PRS40 regulation check) → `IMG.pressure-gauge-test-on-riser`
 
    Inline the image at the step where the user actually needs it, not all at the top. One image per logical step beats a wall of pictures.
 

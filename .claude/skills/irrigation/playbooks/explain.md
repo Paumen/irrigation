@@ -24,11 +24,14 @@ This is a read-and-summarise playbook. Most answers already exist in `knowledge/
 
 4. **Look up the image.** Open `../irrigation-troubleshoot/images.yaml`, find the entry whose `subjects:` lists the area. For "how it works", the canonical entries are:
 
-   - valve → `IMG.parts-callout` (the cutaway with bodied parts labelled)
-   - solenoid → search by `subjects: [valve-solenoid]`
+   - valve → `IMG.parts-callout` (the cutaway with parts labelled) + `IMG.pgv-valve-product` (anchor product photo)
+   - solenoid → search by `subjects: [valve-solenoid]`; `IMG.pgv-valve-solenoid-label` shows the ¼-turn ON/OFF stamping
    - internals → search by `subjects: [valve-internals]`
-   - relay → search by `subjects: [relay]`
-   - rotor → search by `subjects: [heads]`
+   - relay → `IMG.relay-controller-wiring-diagram` (controller ↔ PSR-52 layout + 4.5 m clearance) and others by `subjects: [relay]`
+   - rotor → `IMG.rotor-i20-product` (anchor) + others by `subjects: [heads]`; `IMG.pgp-rotor-cap-callouts` for "what each slot on the cap does"
+   - controller scheduling / ET / rain-skip → `IMG.controller-et-scheduling-illustrated`
+
+   For explaining a **measurement** (voltage at controller, coil resistance, etc.) when the user hasn't picked up the meter yet, use the illustrated explainers — `IMG.multimeter-illustrated`, `IMG.controller-probe-illustrated`, `IMG.valve-solenoid-probe-illustrated`. Once they're actually testing, switch to the real Stanley FATMAX FMHT82563-0 photos (`IMG.multimeter-stanley-front` and `IMG.multimeter-stanley-leads`) — that's the homeowner's actual meter.
 
    Use the manifest's `caption:` verbatim (or close). Reference the image by its `media/<file>` path — never by the `IMG.*` id.
 

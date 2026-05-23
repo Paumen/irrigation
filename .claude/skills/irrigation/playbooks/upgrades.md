@@ -56,6 +56,21 @@ A starting set to reason from — not a list to recite verbatim. Match recommend
 - **Drip on the flower-bed zone (Z1, Z4)** — the mixed-precipitation note on Z1 in `setup.yaml` flags exactly this. Drip on flowers, rotors on lawn, separate zones — better plant health and water efficiency. Real upgrade candidate.
 - **Replacement of the manual line with a valved tee** — `setup.yaml` notes the manual line has no shutoff at the manifold. Adding a valve there is a small cost / small effort improvement to controllability.
 
+## Image references (use sparingly — most upgrade answers carry no image)
+
+When the user picks one of the candidates to dig into, *that* answer can carry a single image. Use the manifest to find it:
+
+- **Drip on the flower-bed zone** → `IMG.drip-line-inline-emitter` (brown 16 mm inline-emitter tubing — what they'd be buying).
+- **Rain-skip / ET-based scheduling** → `IMG.controller-et-scheduling-illustrated` (weather-aware bar chart visual). Useful when explaining what the HD-16 TOUCH already does natively over Wi-Fi.
+- **Per-valve Accusync regulation** — no specific image in the manifest; refer to `knowledge/valve.md` *Per-valve pressure regulation* for the tiered diagram.
+- **Why a wired Hunter sensor is *not* a strong upgrade for this homeowner** (their HD-16 TOUCH already does rain-skip and ET over Wi-Fi):
+  - `IMG.sensor-solar-sync` — combined rain + solar/ET; redundant with what the controller already does.
+  - `IMG.sensor-wm-clik-side` / `IMG.sensor-wm-clik-open` / `IMG.sensor-wm-clik-internals` — rain-only, also redundant.
+  - `IMG.sensor-wind-clik` — wind-pause; niche, only justifies itself if windy throw is a recurring issue on rotors.
+  - `IMG.sensor-wss-wireless` — wireless variant of Solar Sync; same redundancy argument.
+
+  These images mostly anchor "here's what you'd be buying, and here's why it duplicates the HD-16's existing capability". Don't surface them as endorsements.
+
 ## What you do not do
 - Don't recommend upgrades that contradict `system_design_choices` without explicitly engaging with the reason. "Add a master valve" is incomplete; "the file says no master valve because the pump is the shutoff — that's still true, so I wouldn't add one" is the actual answer.
 - Don't ignore install effort or cost. A 50 EUR sensor is different from a 500 EUR re-pipe.
