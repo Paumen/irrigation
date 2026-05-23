@@ -188,25 +188,15 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q4',
-      effort: 3, // start the system both ways and compare
-      stage: 1,
-      text: 'Does it fail the same way from the app and from the controller?',
-      highlight: ['sw', 'ctrl'],
-      options: [
-        {
-          label: 'No — only the app fails',
-          effects: { R1: 1.6 },
-        },
-        {
-          label: 'Same — nothing starts',
-          effects: { R2: 0.2, R31: 0.2, R63: 0.2 },
-        },
-        {
-          label: 'Same — something starts',
-          effects: { R4: 0.2, R5: 0.2, R7: 0.2, R8: 0.2, R9: 0.2 },
-        },
-      ],
+  "id": "Q4", "effort": 3, "stage": 1,
+  "text": "Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?",
+  "highlight": ["sw", "ctrl"],
+  "options": [
+    { "label": "All three behave the same", "effects": { "R11": -0.2, "R12": -0.6, "R13": -0.6 } },
+    { "label": "Touchscreen OK, app fails both networks", "effects": { "R12": 1.0, "R13": 0.4 } },
+    { "label": "App OK on Wi-Fi, fails on cellular", "effects": { "R13": 1.6, "R12": -0.4 } },
+    { "label": "Nothing works on any path", "effects": { "R2": 0.4, "R11": 0.2, "R12": -0.4, "R13": -0.4 } }
+  ]
     },
 
     {
@@ -518,6 +508,7 @@ window.DATA = {
         },
       ],
     },
+    
     {
       id: 'Q19',
       effort: 1, // no flow meter installed; would need to install one
@@ -529,5 +520,26 @@ window.DATA = {
         { label: 'No — out of range', effects: { R4: 0.4, R5: 0.6 } },
       ],
     },
+    {
+  "id": "Q20", "effort": 2, "stage": 3,
+  "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
+  "highlight": ["relay", "pump"],
+  "options": [
+    { "label": "Clicks, 230 V at output", "effects": { "R31": -1.2, "R42": 0.6, "R41": 0.4, "R63": -0.4, "R22": -0.2 } },
+    { "label": "Clicks, but no 230 V out", "effects": { "R31": 1.6, "R42": -0.4 } },
+    { "label": "Clicks, but breaker trips", "effects": { "R31": 1.0, "R42": 1.0 } },
+    { "label": "Silent — no click", "effects": { "R31": 0.6, "R22": 0.6, "R63": 0.6, "R23": 0.4 } }
+  ]
+    },
+    {
+  "id": "Q21", "effort": 2, "stage": 3,
+  "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
+  "highlight": ["valves"],
+  "options": [
+    { "label": "Clean, dry, sealed connectors", "effects": { "R63": -0.2 } },
+    { "label": "Corroded, green, or wet", "effects": { "R63": 1.6, "R62": 0.4 } },
+    { "label": "Loose, backed-out, or twisted bare", "effects": { "R63": 1.0, "R61": 0.4 } }
+  ]
+    } 
   ],
 }; 
