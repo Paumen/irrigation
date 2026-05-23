@@ -75,7 +75,8 @@ All six playbooks (`explain`, `identify`, `howto`, `capacity`, `upgrades`, `main
 
 ## Images
 - Look up the topic in `../irrigation-troubleshoot/images.yaml` by `subjects:` (e.g. `valve`, `heads`, `relay`) before answering "how does X work" or "show me X". A picture often replaces three paragraphs.
-- Cite the image inline using its `media/<file>` path and the manifest's `caption:`. Don't expose the internal `IMG.*` ID to the user.
+- **Deliver images with `SendUserFile`, not inline markdown.** Markdown `![](media/...)` paths do **not** render in the user's chat UI — the user sees nothing. Always pass the absolute file path to `SendUserFile` and put the manifest's `caption:` in the tool's `caption` field. Send all images for one answer in a single `SendUserFile` call (the tool accepts a list).
+- Don't expose the internal `IMG.*` ID or the raw `media/<file>` path to the user — the caption carries the meaning.
 - If no manifest image fits the question, check `media/` for an obvious match (filenames are descriptive) before falling back to a vendor PDF.
 
 ## Safety rules (apply across every playbook)

@@ -154,7 +154,9 @@ For any shape, "I don't know" / "skip" maps to `skipped[qid] = true`, not to `an
 
 ### Images alongside questions
 
-Before asking, look up the question id in `images.yaml` (`questions:` field). If a matching `IMG.*` exists, surface its `file` + `caption` inline with the question — for tests this disambiguates probe placement, parts, and expected appearance. Common pairings: Q12 (manual bleed / turn-solenoid), Q13 (voltage at controller / solenoid), Q17 (diaphragm inspection), Q18 (external leak points).
+Before asking, look up the question id in `images.yaml` (`questions:` field). If a matching `IMG.*` exists, surface its `file` + `caption` alongside the question — for tests this disambiguates probe placement, parts, and expected appearance. Common pairings: Q12 (manual bleed / turn-solenoid), Q13 (voltage at controller / solenoid), Q17 (diaphragm inspection), Q18 (external leak points).
+
+**Deliver images with `SendUserFile`, not inline markdown.** Markdown `![](media/...)` paths do **not** render in the user's chat UI. Pass the absolute file path to `SendUserFile` with the manifest's `caption:` in the tool's `caption` field; batch all images for one turn into a single call.
 
 If the user asks to see something not tied to the current question, search `images.yaml` by `subjects:` and `causes:` — both the area code (`F7`) and the specific cause code (`F7.1.1`) are valid lookups.
 

@@ -34,12 +34,12 @@ Identification is mostly a lookup-and-match exercise. `setup.yaml` already says 
    - **Relay (PSR-52)** → `IMG.relay-controller-wiring-diagram` (helps confirm the same wiring pattern the homeowner has).
    - **Controller (RainMachine HD-16 TOUCH)** → `IMG.rainmachine-similar-model` — **illustrative only**: the photo is a Mini-12 (12 zones, otherwise the same layout); the homeowner's HD-16 has 16 zones. Caption must say "similar layout" or "similar model", *not* "your controller".
 
-   Inline the image with the caption from the manifest.
+   **Send the image with `SendUserFile`, not inline markdown.** Markdown `![](media/...)` paths do **not** render in the user's chat UI. Pass the absolute file path to `SendUserFile` with the manifest's `caption:` in the tool's `caption` field. Batch multiple images for one answer into a single call.
 
 5. **Compose the answer.**
 
    - **Model name + what it is in one sentence** ("Hunter PGV-101G — 1-inch globe-type zone valve, 24 V solenoid.").
-   - **The image**, with caption.
+   - **The image**, sent via `SendUserFile` with the caption attached.
    - **The tell**: the one or two visible features that confirm it's this model and not a sibling ("bleed screw on top of the bonnet + black solenoid on the side = PGV family; the 'G' suffix means the flow-control variant").
    - **Mismatch note** if `setup.yaml` says something different from what the user is seeing: "Your setup file says X but you're looking at Y — want me to update the file, or do you want to figure out why they differ?"
 

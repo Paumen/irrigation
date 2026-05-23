@@ -45,7 +45,9 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
    - voltage / resistance verification with the homeowner's actual meter → `IMG.multimeter-stanley-front` + `IMG.multimeter-stanley-leads`
    - head-pressure verification (PRS40 regulation check) → `IMG.pressure-gauge-test-on-riser`
 
-   Inline the image at the step where the user actually needs it, not all at the top. One image per logical step beats a wall of pictures.
+   Send the image at the step where the user actually needs it, not all at the top. One image per logical step beats a wall of pictures.
+
+   **Deliver images with `SendUserFile`.** Markdown `![](media/...)` paths do **not** render in the user's chat UI — the user sees nothing. Pass the absolute file path to `SendUserFile` and put the manifest's `caption:` in the tool's `caption` field. Batch all images for one answer into a single `SendUserFile` call (the tool takes a list).
 
 6. **Compose the procedure.**
 
@@ -73,7 +75,7 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
 > 3. Water should flow into the zone within a few seconds. A fine spray vents from under the screw — that's normal.
 > 4. To close: turn the bleed screw clockwise, hand-tight only. Don't use a tool.
 >
-> ![Bleed screw on top of the valve; loosen to bleed, hand-tighten to close.](../../media/valve_bleed_screw_image_0.png)
+> *(image: `media/valve_bleed_screw_image_0.png` — sent via `SendUserFile` with caption "Bleed screw on top of the valve; loosen to bleed, hand-tighten to close.")*
 >
 > Option B: turn the solenoid (also fine, no spray).
 > 1. Find the black solenoid on the side of the valve.
@@ -92,4 +94,4 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
 - Don't approximate vendor numbers. Quote from the doc/PDF or omit.
 - Don't roll multiple actions into one step. One action per step, every time.
 - Don't drift into diagnosis. If "how do I install a new valve" turns into "actually my current one weeps when off, can you help find why" — switch to `irrigation-troubleshoot`.
-- Don't expose internal IDs to the user. Image captions and `media/<file>` paths only.
+- Don't expose internal IDs to the user. Captions only — and never paste a `media/<file>` path into prose; the file goes via `SendUserFile`.
