@@ -28,6 +28,8 @@ the valve works. The dense interior is split out: see `valve-internals.md` (diap
 spring, seat, support ring, metering ports) and `valve-solenoid.md` (coil, plunger,
 exhaust/entry ports). Much of what isolates or excludes a valve cause lives in those two.
 
+![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](media/pgv-valve-product.png)
+
 ## How the valve works (operation / hydraulics)
 
 Water enters from the system main line and pushes against the centre of the diaphragm.

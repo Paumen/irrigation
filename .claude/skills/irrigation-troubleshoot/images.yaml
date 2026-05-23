@@ -74,14 +74,6 @@ images:
     questions: [Q12]
     used_in: [valve.md, valve-solenoid.md]
 
-  IMG.solenoid-turn-diagram:
-    file: media/pgv_not_opening_3.png
-    caption: Turning the solenoid to open the valve by hand (full-valve view, rotation arrow).
-    subjects: [valve-solenoid, valve]
-    causes: [F7, F7.1.1, F7.3.1]
-    questions: [Q12]
-    used_in: [valve-solenoid.md]
-
   IMG.manual-solenoid-inbox:
     file: media/manual_solenoid_0.png
     caption: Valve in the box; turning the solenoid by hand for manual operation.
@@ -119,6 +111,7 @@ images:
     caption: Solenoid wiring — common and station power leads to the field wires.
     subjects: [valve-solenoid, wiring]
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
+    questions: [Q15]
     used_in: [valve-solenoid.md]
 
   IMG.solenoid-voltage-reading:
@@ -126,7 +119,7 @@ images:
     caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
     subjects: [valve-solenoid]
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
-    questions: [Q13]
+    questions: [Q13, Q15]
     used_in: [valve-solenoid.md]
 
   IMG.controller-voltage-reading:
@@ -134,7 +127,7 @@ images:
     caption: Multimeter at the controller terminals reading ~26 VAC with the station active.
     subjects: [controller]
     causes: [F2, F2.1, F2.8, F2.5, F2.6]
-    questions: [Q13]
+    questions: [Q13, Q14]
     used_in: [controller.md]
 
   IMG.controller-probe-diagram:
@@ -142,24 +135,8 @@ images:
     caption: Probe placement at the controller — one on the station terminal, one on C/COM.
     subjects: [controller]
     causes: [F2, F2.1, F2.8, F2.5, F2.6]
-    questions: [Q13]
+    questions: [Q13, Q14]
     used_in: [controller.md]
-
-  IMG.relay-controller-connection:
-    file: media/1000381422.png
-    caption: Controller terminals — 1 = P/MV (pump), 2 = common — wired to the relay's yellow leads.
-    subjects: [relay, controller]
-    causes: [F4, F4.1]
-    relates: controller connection
-    used_in: [relay.md]
-
-  IMG.relay-distance:
-    file: media/1000381423.png
-    caption: Controller-to-relay wire run; observe minimum 4.5 m and the per-gauge maximum.
-    subjects: [relay]
-    causes: [F4, F4.1]
-    relates: distance to controller
-    used_in: [relay.md]
 
   IMG.i20-callouts:
     file: media/i20-callouts.png
@@ -248,3 +225,308 @@ images:
     causes: [F9, F9.1.1, F9.3, F9.1.2]
     relates: rotor install/replacement; setting height to grade; reducing lateral stress
     used_in: [heads.md]
+
+  # --------------------------------------------------------------------------
+  # Added for the `irrigation` umbrella skill (explain / identify / howto /
+  # capacity / upgrades / maintenance playbooks). Not yet embedded in any
+  # knowledge/ doc — `used_in: []` reflects manifest-only registration.
+  # --------------------------------------------------------------------------
+
+  IMG.multimeter-illustrated:
+    file: media/multimeter-illustrated.jpg
+    caption: Multimeter with red and black probes — illustration for voltage and resistance checks.
+    subjects: [wiring, valve-solenoid, controller]
+    relates: friendlier explainer alternative to the homeowner's real meter photos; use in explain.md when the homeowner has not yet picked up the meter
+    used_in: [playbooks/explain.md]
+
+  IMG.multimeter-stanley-front:
+    file: media/multimeter-stanley-fmht82563-front.jpg
+    caption: Stanley FATMAX FMHT82563-0 (the homeowner's meter) — front view, rotary selector OFF; V≈ for AC volts, Ω for resistance.
+    subjects: [wiring, valve-solenoid, controller]
+    questions: [Q13, Q14, Q15]
+    relates: which dial position for controller voltage (V≈) vs field-wire / solenoid coil resistance (Ω)
+    used_in: [controller.md, valve-solenoid.md, playbooks/howto.md, playbooks/explain.md]
+
+  IMG.multimeter-stanley-leads:
+    file: media/multimeter-stanley-fmht82563-with-leads.jpg
+    caption: Stanley FATMAX FMHT82563-0 with test leads attached — black to COM, red to VΩ port.
+    subjects: [wiring, valve-solenoid, controller]
+    questions: [Q13, Q14, Q15]
+    relates: lead placement before any voltage or resistance check
+    used_in: [controller.md, valve-solenoid.md, playbooks/howto.md, playbooks/explain.md]
+
+  IMG.controller-et-scheduling-illustrated:
+    file: media/controller-et-scheduling-illustrated.jpg
+    caption: Illustrated weather-aware controller — sun/cloud/rain icons drive a daily run-length bar chart; terminals P, C, 1–4, C, R below.
+    subjects: [controller]
+    relates: ET-based scheduling and rain-skip behaviour; useful when explaining what the RainMachine does automatically
+    used_in: [playbooks/explain.md, playbooks/upgrades.md]
+
+  IMG.rainmachine-similar-model:
+    file: media/rainmachine-similar-model.jpg
+    caption: A similar RainMachine model (Mini-12, 12 zone terminals) — illustrative only; the homeowner's actual controller is the HD-16 TOUCH, which has the same touchscreen-and-terminal layout with 16 zone outputs.
+    subjects: [controller]
+    relates: illustrative stand-in; not the homeowner's exact model — caption must say "similar" not "your controller"
+    used_in: [playbooks/identify.md]
+
+  IMG.relay-controller-wiring-diagram:
+    file: media/relay-controller-wiring-diagram.webp
+    caption: Controller-to-pump-start-relay wiring — common wire, master-valve / pump-start wire, and the 4.5 m minimum separation from the relay's high-voltage side.
+    subjects: [relay, wiring]
+    causes: [F4]
+    questions: [Q20]
+    relates: PSR-52 install layout; clearance rule; controller terminals to relay leads; locating the relay when checking whether it switches
+    used_in: [relay.md, playbooks/explain.md, playbooks/identify.md]
+
+  IMG.pgv-valve-product:
+    file: media/pgv-valve-product.png
+    caption: Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: product view for identify.md; matches the homeowner's PGV-101G profile
+    used_in: [valve.md, playbooks/explain.md, playbooks/identify.md]
+
+  IMG.pgv-valve-solenoid-label:
+    file: media/pgv-valve-solenoid-label.jpg
+    caption: PGV-100 solenoid close-up — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.
+    subjects: [valve-solenoid, valve]
+    causes: [F7]
+    questions: [Q12]
+    relates: identify the solenoid by stamped text; ¼-turn manual operation reference
+    used_in: [valve-solenoid.md, playbooks/explain.md, playbooks/identify.md, playbooks/howto.md]
+
+  IMG.pgv-valve-lineup:
+    file: media/pgv-valve-lineup.jpg
+    caption: Hunter PGV-100 family lineup — four bodies showing slip vs threaded ends and minor body variations.
+    subjects: [valve]
+    causes: [F7]
+    relates: identify which PGV variant the homeowner has (slip-FIP, threaded-MM, etc.)
+    used_in: [playbooks/identify.md]
+
+  IMG.pgv-valve-dc-variant:
+    file: media/pgv-valve-dc-variant.jpg
+    caption: PGV with DC latching solenoid variant — silver "DC LATCHING SOLENOID" label and two-wire lead. NOT the homeowner's setup; this homeowner's PGV-101G uses a 24 VAC solenoid.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: exclusion image — use to confirm the homeowner does NOT have the DC-latching version
+    used_in: [playbooks/identify.md]
+
+  IMG.pgv-valve-dc-labelled:
+    file: media/pgv-valve-dc-labelled.jpg
+    caption: Hunter PGV-101-MM-DC labelled — male-male threaded body with DC latching solenoid (p/n 458200). NOT the homeowner's model; included for identify-mismatch context.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: exclusion image with explicit part number; pair with IMG.pgv-valve-product to contrast AC vs DC variants
+    used_in: [playbooks/identify.md]
+
+  IMG.valve-solenoid-probe-illustrated:
+    file: media/valve-solenoid-probe-illustrated.png
+    caption: Illustrated probe placement on the valve solenoid — red and black leads on the two solenoid wires for voltage (V≈) during a call or resistance (Ω) with the controller off.
+    subjects: [valve-solenoid, wiring]
+    causes: [F7, F3]
+    questions: [Q13, Q15]
+    relates: alt-style explainer for solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your meter looks like" + "where to put the probes"
+    used_in: [playbooks/explain.md]
+
+  IMG.controller-probe-illustrated:
+    file: media/controller-probe-illustrated.png
+    caption: Illustrated probe placement at the controller terminals — red lead on the station terminal, black lead on C / COM, ET bar chart visible above.
+    subjects: [controller, wiring]
+    causes: [F2]
+    questions: [Q13, Q14]
+    relates: alt-style explainer for controller voltage / field-wire resistance check; pair with the real Stanley FATMAX photo
+    used_in: [playbooks/explain.md]
+
+  IMG.rotor-i20-product:
+    file: media/rotor-i20-product.png
+    caption: Hunter I-20 rotor — single product view showing stainless riser, nozzle turret, and pop-up body.
+    subjects: [heads]
+    relates: canonical product photo for identify.md and explain.md
+    used_in: [heads.md, playbooks/explain.md, playbooks/identify.md]
+
+  IMG.rotor-i20-product-alt:
+    file: media/rotor-i20-product-alt.jpg
+    caption: Hunter I-20 — alternate product view with the riser fully extended above the pop-up cap.
+    subjects: [heads]
+    relates: cleaner riser-extended angle; second-choice if rotor-i20-product.png does not suit the context
+    used_in: []
+
+  IMG.rotor-i20-spraying-close:
+    file: media/rotor-i20-spraying-close.jpg
+    caption: I-20 rotor in action — stainless riser fully extended, fan of water from the nozzle.
+    subjects: [heads]
+    relates: dynamic / "rotor working" shot for explainers and verification steps
+    used_in: []
+
+  IMG.rotor-i20-nozzle-selector-close:
+    file: media/rotor-i20-nozzle-selector-close.jpg
+    caption: I-20 nozzle selector close-up — number visible on the blue cap (here "3.0") shows the installed nozzle's flow rating.
+    subjects: [heads]
+    relates: nozzle identification by selector number; nozzle change procedure
+    used_in: [playbooks/identify.md]
+
+  IMG.rotor-i20-garden-scene:
+    file: media/rotor-i20-garden-scene.jpg
+    caption: I-20 rotor in a garden setting — typical pop-up height and spray pattern.
+    subjects: [heads]
+    relates: context shot for "what one head looks like in a flower bed" — usable in explain.md or upgrades.md (drip-vs-rotor discussion)
+    used_in: []
+
+  IMG.rotor-i20-family-heights:
+    file: media/rotor-i20-family-heights.jpg
+    caption: Hunter I-20 family — three pop-up riser heights side by side (short, medium, tall body).
+    subjects: [heads]
+    relates: identify which I-20 variant the homeowner has by riser length (this homeowner has I-20-04-SS, the 4-inch)
+    used_in: [playbooks/identify.md]
+
+  # --------------------------------------------------------------------------
+  # Second batch for the `irrigation` umbrella skill — adds sensors (WM-CLIK,
+  # Solar Sync, Wind-Clik, Wireless WSS), drip line, swing-joint product +
+  # install cross-section, MP Rotator wrench, pressure gauge, replacement
+  # solenoid, additional DC-variant PGV, and an illustrated relay enclosure.
+  # Two entries flagged TO IDENTIFY where the model is not yet confirmed.
+  # --------------------------------------------------------------------------
+
+  IMG.relay-enclosure-cutaway-illustrated:
+    file: media/relay-enclosure-cutaway-illustrated.png
+    caption: Illustrated relay enclosure cutaway — contactor at the top with high-voltage leads (black), low-voltage terminals below with green / blue / yellow conductors, and two waterproof gel-cap connectors at the bottom.
+    subjects: [relay, wiring]
+    causes: [F4]
+    questions: [Q20]
+    relates: top-down PSR-style enclosure interior; explainer alternative to the PSR-52 PDF cutaway; orients the user to what's inside before they check whether the contactor switches
+    used_in: []
+
+  IMG.sensor-wm-clik-side:
+    file: media/sensor-wm-clik-side.jpg
+    caption: Hunter WM-CLIK rain sensor — side view; threshold-disc canister on top, calibration cap (1/8"–3/4" / 3–19 mm), spring-loaded vent post, swing bracket on the right.
+    subjects: [controller]
+    relates: rain-skip upgrade candidate (note this homeowner's HD-16 TOUCH already gets rain-skip via Wi-Fi / cloud); pair with the open and internals shots to explain how it works
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-wm-clik-open:
+    file: media/sensor-wm-clik-open.jpg
+    caption: WM-CLIK with calibration cap removed — exposes the hygroscopic-disc stack inside the metal cup and the switch arm; rainfall-threshold markings on the housing.
+    subjects: [controller]
+    relates: explainer image — how the rain sensor decides "wet enough to skip" (disc stack swells until the arm trips)
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-wm-clik-internals:
+    file: media/sensor-wm-clik-internals.jpg
+    caption: WM-CLIK internal switch module — threshold scale showing 3 mm / 6 mm rain calibration steps; UL-listed Class 2 dry-contact output to the dual-conductor blue lead.
+    subjects: [controller]
+    relates: EU-metric calibration markings; dry-contact wiring to the controller's SEN / COMMON terminals
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-solar-sync:
+    file: media/sensor-solar-sync.jpg
+    caption: Hunter Solar Sync — combined rain + solar / ET sensor; cup on the left catches rain, ribbed module behind it carries the solar sensor; "DRYOUT TIME" knob sets how long the system stays paused after a rain event.
+    subjects: [controller]
+    relates: ET + rain-skip in one wired sensor; mostly relevant to non-RainMachine controllers — the homeowner's HD-16 TOUCH already does ET natively over Wi-Fi
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-wind-clik:
+    file: media/sensor-wind-clik.jpg
+    caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
+    subjects: [controller]
+    relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted throw on windy days
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-wss-wireless:
+    file: media/sensor-wss-wireless.jpg
+    caption: Hunter WSS (Wireless Solar Sync) sensor — UV dome on top, rain canister below, on a swing bracket; transmits to a controller-side receiver instead of wired SEN terminals.
+    subjects: [controller]
+    relates: wireless variant of Solar Sync; useful where running a sensor cable to an indoor controller is impractical
+    used_in: [playbooks/upgrades.md]
+
+  IMG.drip-line-inline-emitter:
+    file: media/drip-line-inline-emitter.jpg
+    caption: Inline-emitter dripline — brown 16 mm tubing with built-in pressure-compensating emitters at fixed spacing; coiled.
+    subjects: [laterals, heads]
+    relates: drip-conversion upgrade for flower-bed zones (the upgrades playbook flags this homeowner's Z1 and Z4 as candidates)
+    used_in: [playbooks/upgrades.md]
+
+  IMG.swing-joint-product:
+    file: media/swing-joint-product.jpg
+    caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the lateral.
+    subjects: [heads, laterals]
+    relates: rotor install / replacement; reduces lateral stress when a head is kicked or stepped on
+    used_in: [playbooks/howto.md]
+
+  IMG.rotor-install-swing-joint-illustrated:
+    file: media/rotor-install-swing-joint-illustrated.jpg
+    caption: Cross-section illustration — pop-up rotor installed via a swing joint onto a buried lateral; head sits flush with grade, swing joint hidden in the soil.
+    subjects: [heads, laterals]
+    relates: rotor install reference for howto.md; pair with swing-joint-product for "what it is" + "how it sits in the soil"
+    used_in: [playbooks/howto.md]
+
+  IMG.mp-rotator-wrench:
+    file: media/mp-rotator-wrench.jpg
+    caption: Hunter "MP ROTATOR" wrench — orange plastic key with a ringed grip for the nozzle and a pointed end for cutting around the surrounding turf.
+    subjects: [heads]
+    relates: MP Rotator nozzle install / removal / arc-adjust; this homeowner's Z1 and Z4 use MP Rotators on Pro-Spray PRS40 bodies
+    used_in: [playbooks/howto.md]
+
+  IMG.rotor-nozzle-insertion-collar:
+    file: media/rotor-nozzle-insertion-collar.jpg
+    caption: Hunter nozzle insertion collar (P/N 123200) — white plastic sleeve that clips around the riser body to hold the rotor cap accessible while installing or swapping a nozzle.
+    subjects: [heads]
+    relates: rotor nozzle install procedure (3 steps); pair with rotor-nozzle-install-step-1/2/3 and rotor-adjustment-key-plastic
+    used_in: [heads.md]
+
+  IMG.rotor-nozzle-install-step-1:
+    file: media/rotor-nozzle-install-step-1.jpg
+    caption: Rotor nozzle install — step 1 — insert the plastic end of the Hunter adjustment wrench into the lifting socket on the rotor cap and turn 90°. Pulling up on the riser then opens access to the nozzle port.
+    subjects: [heads]
+    relates: rotor nozzle install procedure; uses rotor-adjustment-key-plastic and rotor-nozzle-insertion-collar
+    used_in: [heads.md]
+
+  IMG.rotor-nozzle-install-step-2:
+    file: media/rotor-nozzle-install-step-2.jpg
+    caption: Rotor nozzle install — step 2 — first check the nozzle screw isn't blocking the socket, then slip the (blue) nozzle into the nozzle socket; the socket is angled up 25°. The white nozzle insertion collar holds the riser open.
+    subjects: [heads]
+    relates: rotor nozzle install procedure; nozzle socket angle (25°); the triangle on the rubber cover marks the direction of water flow when the rotor is retracted
+    used_in: [heads.md]
+
+  IMG.rotor-nozzle-install-step-3:
+    file: media/rotor-nozzle-install-step-3.jpg
+    caption: Rotor nozzle install — step 3 — turn the radius reduction / nozzle adjustment screw a quarter turn clockwise to lock the nozzle in place. More than a quarter turn reduces the radius.
+    subjects: [heads]
+    relates: rotor nozzle install procedure; do not over-turn the radius reduction screw (limits throw)
+    used_in: [heads.md]
+
+  IMG.rotor-adjustment-key-plastic:
+    file: media/rotor-adjustment-key-plastic.jpg
+    caption: Hunter rotor adjustment key (plastic variant) — engages the lifting socket and the arc / flow-stop / radius sockets on PGP and I-20 rotor caps; same function as the metal Hunter wrench shown elsewhere.
+    subjects: [heads]
+    relates: rotor arc / radius / flow-stop adjustment; the metal-wrench equivalent is depicted in rotor-arc-wrench.png, rotor-adjustment-arrows.png, and rotor-lifting-socket.png — pair with pgp-rotor-cap-callouts for "what each slot does"; this homeowner's I-20-04-SS uses the same key pattern as the PGP
+    used_in: [heads.md, playbooks/howto.md]
+
+  IMG.pgp-rotor-cap-callouts:
+    file: media/pgp-rotor-cap-callouts.png
+    caption: Hunter PGP rotor top callouts — Lifting Socket (centre top), Adjustment Socket with +/- (left), Nozzle / Range Adjustment Screw (top right), Model Identification (right). Same slot layout as the I-20.
+    subjects: [heads]
+    relates: identify where the adjustment key engages on the rotor cap; pair with rotor-adjustment-key-plastic; applies to this homeowner's I-20-04-SS as well as the PGP shown
+    used_in: [heads.md]
+
+  IMG.pressure-gauge-test-on-riser:
+    file: media/pressure-gauge-test-on-riser.jpg
+    caption: Hunter pressure-test gauge attached to a Pro-Spray pop-up riser (in place of the nozzle) — reads in psi and bar; verifies head operating pressure (~2.8 bar / 40 psi for a PRS40 body).
+    subjects: [heads]
+    relates: pressure check during capacity diagnosis or verification; confirms the PRS40 regulation is doing its job
+    used_in: [playbooks/howto.md]
+
+  IMG.valve-solenoid-replacement-product:
+    file: media/valve-solenoid-replacement-product.jpg
+    caption: Replacement valve solenoid — black cylindrical body with looped 24 V leads and threaded base with O-ring (purple). Form factor matches the Hunter PGV solenoid; verify exact model and coil resistance (20–60 Ω per the homeowner's setup) against the seller listing before fitting.
+    subjects: [valve-solenoid, valve]
+    causes: [F7]
+    relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; pair with pgv-valve-solenoid-label to compare with the installed unit before ordering
+    used_in: [valve-solenoid.md, playbooks/howto.md]
+
+  IMG.pgv-valve-dc-variant-installed:
+    file: media/pgv-valve-dc-variant-installed.png
+    caption: Hunter PGV with DC latching solenoid — "DC LATCHING" stamped on the solenoid body, FIP threaded ports. NOT the homeowner's variant (homeowner has the 24 VAC AC solenoid); shown for exclusion / contrast.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: alternate angle of the DC variant from the previous batch; pair with pgv-valve-dc-variant and pgv-valve-dc-labelled for identify.md "what you DO have vs DON'T have" contrast
+    used_in: [playbooks/identify.md]

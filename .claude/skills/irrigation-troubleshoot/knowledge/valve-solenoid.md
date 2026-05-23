@@ -43,12 +43,12 @@ or not open fully.
 
 ![Turning the solenoid by hand](media/valves-simply-turn-solenoid.gif)
 
-![Solenoid rotation direction (full-valve view)](media/pgv_not_opening_3.png)
+![PGV-100 solenoid close-up — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.](media/pgv-valve-solenoid-label.jpg)
 
 Turn the solenoid counter-clockwise ¼ to ½ turn to open the valve by hand; clockwise until snug to
-close. Useful as a first isolation step: if the zone runs when you turn the solenoid by hand but not
-when the controller calls it, the fault is electrical (wiring, controller, or solenoid coil) rather
-than hydraulic.
+close. The arrows stamped on the solenoid body mark the ON / OFF direction. Useful as a first
+isolation step: if the zone runs when you turn the solenoid by hand but not when the controller
+calls it, the fault is electrical (wiring, controller, or solenoid coil) rather than hydraulic.
 
 ## Specifications
 
@@ -60,6 +60,10 @@ than hydraulic.
 ## Testing solenoid voltage
 
 ![Testing solenoid voltage with a multimeter](media/Testing Solenoid Voltage_0.png)
+
+![Stanley FATMAX FMHT82563-0 — the homeowner's meter; rotary selector OFF (V≈ for AC volts, Ω for resistance).](media/multimeter-stanley-fmht82563-front.jpg)
+
+![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](media/multimeter-stanley-fmht82563-with-leads.jpg)
 
 Use the AC-voltage setting. Solenoids have two wires — one common, one station power (commons are
 usually shared across the system to save wire). With the station activated, place one probe on the
@@ -112,6 +116,8 @@ If the valve turns on via the external bleed screw but not electrically, suspect
 7. Activate the station from the controller to test.
 
 ## Replacing the solenoid
+
+![Replacement valve solenoid — black cylindrical body, looped 24 V leads, threaded base with O-ring. Form factor matches the PGV; verify coil resistance (20–60 Ω) and thread before swapping.](media/valve-solenoid-replacement-product.jpg)
 
 If the controller delivers correct voltage (24–28 VAC) at the valve's wire connection and the valve
 still won't operate, replace the solenoid. Shut off, unscrew the old solenoid counter-clockwise,

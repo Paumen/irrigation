@@ -51,7 +51,7 @@ on a **dedicated** common.
 
 ## Controller connection (P/MV + common)
 
-![Controller terminals 1 = P/MV, 2 = common → relay](media/1000381422.png)
+![Controller-to-pump-start-relay wiring — controller's P/MV terminal and common to the relay's yellow leads; 4.5 m minimum separation from the relay's high-voltage side.](media/relay-controller-wiring-diagram.webp)
 
 1. Remove the relay cover plate (four Phillips screws).
 2. Run a single wire from the controller **common** terminal to one yellow relay wire.
@@ -63,7 +63,7 @@ The yellow wires in the relay's lower wiring compartment are the ones that go to
 
 ## Distance to the controller
 
-![Controller ↔ relay distance](media/1000381423.png)
+The 4.5 m minimum separation is also labelled on the wiring diagram above.
 
 **Minimum.** Keep at least **4.5 m** (15 ft) between controller and relay. When the relay contacts
 make and break, they generate electromagnetic noise that can travel back along the 24 V coil wires;
