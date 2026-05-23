@@ -146,7 +146,7 @@ instance, to avoid double-counting.
 
 ## 3. Migration table (live `data.js` → F)
 
-**Four 1→2 splits** (⮌ = one live code maps to two F-codes). Parent broadcasts:
+**Six 1→2 splits** (⮌ = one live code maps to two F-codes). Parent broadcasts:
 `R1→F1, R2→F2, R3→F4, R4→F5, R5→F6, R6→F3, R7→F7, R8→F8, R9→F9`.
 
 | Live | → F | Kind |
@@ -164,8 +164,8 @@ instance, to avoid double-counting.
 | R61 | F3.1.1 | move |
 | R62 | F3.1.2 | move |
 | R63 | F3.1.3 | move |
-| R71 | F7.1.1 | rename |
-| R72 | F7.1.2 | rename |
+| R71 | **F7.1.1 + F7.3.1** | ⮌ split |
+| R72 | **F7.1.2 + F7.3.2** | ⮌ split |
 | R73 | F7.1.3 | rename |
 | R74 | F7.4 | rename (mode-level) |
 | R81 | F8.1 | rename |
@@ -202,8 +202,8 @@ String = rename/move. Array = 1→many split (manual apportioning required, §5)
   "R61": "F3.1.1",
   "R62": "F3.1.2",
   "R63": "F3.1.3",
-  "R71": "F7.1.1",
-  "R72": "F7.1.2",
+  "R71": ["F7.1.1", "F7.3.1"],
+  "R72": ["F7.1.2", "F7.3.2"],
   "R73": "F7.1.3",
   "R74": "F7.4",
   "R81": "F8.1",
@@ -233,6 +233,15 @@ Q7 "restart fixed it" → F2.5; Q11b outage → lean F2.5.
 (`F2.6` also absorbs `R11`'s schedule effects as a straight move — no apportioning
 needed for that portion; just sum it into the `F2.6` baseline/effects.)
 
+### R71 → F7.1.1 (coil) + F7.3.1 (plunger / port obstruction)
+Hits: Q2, Q2q, Q6, Q12, Q13, Q15, Q22.
+Q15 coil-resistance → F7.1.1; Q6 "buzz or hum" → F7.3.1; Q12 "bleed runs" → both
+(per the §2 F7 bleed-test note, electrical fault = coil or plunger).
+
+### R72 → F7.1.2 (diaphragm tear) + F7.3.2 (metering port / screen debris)
+Hits: Q10 valves row, Q12, Q17, Q18.
+Q17 "damage or debris" → both (the option label conflates them; split 0.6 / 0.4).
+
 ### R91 → F9.1.1 (regulator) + F9.3 (debris/nozzle)
 Hits: Q2q (0.6), Q8 gradual (0.4), Q10 rotor row (0.6). Split both.
 
@@ -242,6 +251,79 @@ Hits: Q10 rotor row (1.0). Lean F9.4, small weight on F9.1.2.
 (Parent `R9`→`F9` broadcasts hit all F9 children automatically.)
 
 **Default rule if not hand-tuning:** duplicate each effect to both children, then trim.
+
+---
+
+## 5.5 Per-question recalibration
+
+Effects in `data.js` that need adjustment beyond §5's default rule — cases where a
+split-source effect should be **moved**, **dropped on one side**, or
+**asymmetrically weighted** rather than duplicated. Anything not listed below
+duplicates as-is.
+
+### R22 → F2.1 (unit) + F2.8 (socket-side power)
+
+| Question / option | Current R22 | F2.1 | F2.8 |
+|---|---|---|---|
+| Q11 storm row | 1.0 | 0.2 | 1.0 |
+| Q13 "0 V" | 1.6 | 1.6 | drop |
+| Q20 "Clicks, 230 V out" | -0.2 | -0.2 | -0.4 |
+| Q9 ctrl row (age) | — | yes | drop |
+
+### R23 → F2.5 (firmware) + F2.6 (settings)
+
+| Question / option | Current R23 | F2.5 | F2.6 |
+|---|---|---|---|
+| Q7 "Restart fixed it" | 1.0 | 1.0 | drop |
+| Q11b outage | 1.0 | 1.0 | 0.2 |
+| Q2q "Erratic" | 0.4 | 0.4 | 0.2 |
+| Q2 "Several zones at once" | 0.4 | 0.2 | 0.4 |
+| Q9 ctrl row (age) | — | 0.4 | drop |
+
+### R71 → F7.1.1 (coil) + F7.3.1 (plunger / port obstruction)
+
+| Question / option | Current R71 | F7.1.1 | F7.3.1 |
+|---|---|---|---|
+| Q6 "Buzz or hum" | 0.4 | drop | 0.4 |
+| Q6 "Silent — no click" | 0.6 | 0.6 | 0.2 |
+| Q15 "In range" | -1.0 | -1.0 | drop |
+| Q15 "Open or infinite" | 1.6 | 1.6 | drop |
+| Q15 "Near zero / very low" | 1.6 | 1.6 | drop |
+| Q22 "water from valve" | 0.4 | drop | drop |
+
+### R72 → F7.1.2 (diaphragm tear) + F7.3.2 (metering port / debris)
+
+| Question / option | Current R72 | F7.1.2 | F7.3.2 |
+|---|---|---|---|
+| Q17 "Damage or debris present" | 1.0 | 0.6 | 0.4 |
+
+### R91 → F9.1.1 (regulator) + F9.3 (debris/nozzle)
+
+| Question / option | Current R91 | F9.1.1 | F9.3 |
+|---|---|---|---|
+| Q2q "Erratic" | 0.6 | 0.2 | 0.6 |
+| Q9 rotor row (age) | — | yes | drop |
+
+### R92 → F9.1.2 (gear-drive seized) + F9.4 (arc/range)
+
+| Question / option | Current R92 | F9.1.2 | F9.4 |
+|---|---|---|---|
+| Q10 rotor row | 1.0 | 0.2 | 1.0 |
+
+### Cross-family move (R11 → F2.6) — parent-broadcast compensation
+
+The R11 move out of the R1 family means F1 parent broadcasts no longer reach
+F2.6. Restore the lost signal with an explicit hit:
+
+| Question / option | Action |
+|---|---|
+| Q1 "All 4 zones fail" | add explicit `F2.6: 0.2` |
+
+### Downstream cleanup
+
+- **Q9 ctrl row** `causes: ['R12', 'R22', 'R23']` → `['F2.1', 'F2.5']`. Drop
+  F1.5 (app bugs aren't controller-age-correlated), drop F2.8 (socket/breaker
+  don't age), drop F2.6 (stored settings don't age).
 
 ---
 
