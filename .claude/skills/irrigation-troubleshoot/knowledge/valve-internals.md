@@ -1,6 +1,6 @@
 ---
 subject: Valve internals (diaphragm assembly)
-root_cause_area: R7
+root_cause_area: F7
 serves: [troubleshooting, replace, clean, maintain, how-it-works]
 parent: valve
 summary: The diaphragm-assembly interior — failure modes, internal hydraulics, and the disassembly/inspection procedure.

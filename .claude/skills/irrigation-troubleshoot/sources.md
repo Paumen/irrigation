@@ -1,6 +1,6 @@
 # Sources & routing
 
-How to use this file: the engine returns root-cause **areas** (R1–R9). Resolve the area here to its
+How to use this file: the engine returns root-cause **areas** (F1–F9). Resolve the area here to its
 subject doc and read that first — `knowledge/` docs are normalized to EU units and the skill's
 vocabulary. If the local doc doesn't cover the symptom, fall back down the ladder: **local
 `knowledge/` doc → raw vendor PDF in `media/` → web**. Consult this at *confirm* time (the engine has
@@ -15,25 +15,30 @@ runtime.
 
 ## Routing by root-cause area
 
-### R1 — App / control (schedule, cloud, app)
+### F1 — App / control (schedule, cloud, app)
 - Local doc: none yet.
 - Fallback: RainMachine app + support (https://support.rainmachine.com/), then web.
 
-### R2 — Controller (RainMachine HD-16 TOUCH)
+### F2 — Controller (RainMachine HD-16 TOUCH)
 - Local doc: `knowledge/controller.md` — **partial** (voltage-at-terminals test only).
 - Read when: checking the controller outputs 24–28 VAC on a station; isolating controller vs downstream.
 - Fallback: RainMachine support (https://support.rainmachine.com/), then web. No local PDF.
 
-### R3 — Pump start relay (Hunter PSR-52)
+### F3 — Field wiring (24 V low-voltage)
+- Local doc: `knowledge/wiring.md` — **partial** (wire-distance table, connectors, isolation tests).
+- Read when: a conductor/splice/common is suspected; excluding wire length; isolating wiring vs valve vs controller.
+- Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
+
+### F4 — Pump start relay (Hunter PSR-52)
 - Local doc: `knowledge/relay.md`.
 - Read when: pump won't start while the controller calls; relay chatters/buzzes; rewiring the relay.
 - Fallback: `media/PSR52.pdf`, then Hunter support (https://www.hunterindustries.com/support).
 
-### R4 — Pump (DAB well pump)
+### F5 — Pump (DAB well pump)
 - Local doc: none yet.
 - Fallback: DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
-### R5 — Main line (32 mm, pump → valve box)
+### F6 — Main line (32 mm, pump → valve box)
 - Local doc: none yet.
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
 - Design context: Hunter's "Controlling High Pressure" article (residential rotors) describes
@@ -42,17 +47,12 @@ runtime.
   PRS40 bodies. See `knowledge/valve.md` *Per-valve pressure regulation (Accusync)* for the
   tier comparison.
 
-### R6 — Field wiring (24 V low-voltage)
-- Local doc: `knowledge/wiring.md` — **partial** (wire-distance table, connectors, isolation tests).
-- Read when: a conductor/splice/common is suspected; excluding wire length; isolating wiring vs valve vs controller.
-- Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
-
-### R7 — Zone valve (Hunter PGV-101G)
+### F7 — Zone valve (Hunter PGV-101G)
 - Local docs: `knowledge/valve.md` (whole-valve, entry point) → deeper: `knowledge/valve-internals.md`, `knowledge/valve-solenoid.md`.
 - Read when: engine points at the valve area; install/replace; "how does it work"; any valve symptom — then go deeper to internals (diaphragm/spring/seat/metering) or solenoid (coil/plunger/ports) as the symptom narrows.
 - Fallback: `media/PGV101G.pdf`, then Hunter support (https://www.hunterindustries.com/support).
 
-### R8 — Zone laterals (25 mm)
+### F8 — Zone laterals (25 mm)
 - Local doc: `knowledge/laterals.md` — **partial** (broken-lateral signature, field-diagnosis
   steps, dead-end winterization rule, cap-off/shorten-lateral procedure).
 - Read when: a whole zone is weak with no fault visible at the heads; one or more heads on a
@@ -63,10 +63,10 @@ runtime.
   has the textbook broken-lateral signature ("look for new trees and shrub plantings, new or
   repaired fences"); that material is already folded into `laterals.md`.
 
-### R9 — Heads (Hunter I-20 rotors, Pro-Spray PRS40, MP Rotator nozzles)
+### F9 — Heads (Hunter I-20 rotors, Pro-Spray PRS40, MP Rotator nozzles)
 - Local doc: `knowledge/heads.md` — entry point covering all three head-side components for this system
   (rotors, regulated bodies, MP nozzles), with the MP ↔ PRS40 pairing and low-head drainage diagnosis.
-- Read when: engine points at the heads area (R9); rotor won't pop up / won't rotate / wrong arc; misting at
+- Read when: engine points at the heads area (F9); rotor won't pop up / won't rotate / wrong arc; misting at
   a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
 - Fallback: `media/I20.pdf`, `media/ProSpraytm PRS40.pdf`, `media/Standard MP Rotator Nozzle.pdf`,
   `media/RC-219-MP820-...pdf` (MP Rotator written specs — has the bar/kPa conversions, materials, mesh
@@ -81,7 +81,7 @@ runtime.
   troubleshooting for valves, rotors, controllers, sensors.
 - **IrrigationTutorials.com** — articles by Jess Stryker (irrigation engineer); strong on design,
   hydraulics, and common-failure patterns.
-- **DAB** — manufacturer documentation for the well pump (R4).
+- **DAB** — manufacturer documentation for the well pump (F5).
 
 ## What not to cite
 

@@ -1,6 +1,6 @@
 ---
 subject: Zone laterals (25 mm PE, valve manifold → heads)
-root_cause_area: R8
+root_cause_area: F8
 serves: [troubleshooting, maintain, install, how-it-works]
 coverage: partial
 system_note: >
@@ -21,12 +21,12 @@ contents:
 
 # Zone laterals — 25 mm PE, valve manifold to heads
 
-This is the **R8** neighbourhood: the polyethylene pipes that carry water from
+This is the **F8** neighbourhood: the polyethylene pipes that carry water from
 the valve manifold out to the heads on each zone. On this system there are
 four such laterals (one per zone), 25 mm PE, buried, mixing I-20 rotors and
 MP-on-PRS40 spray bodies per zone.
 
-Read this when the engine narrows to R8, or when a head-side symptom (won't
+Read this when the engine narrows to F8, or when a head-side symptom (won't
 pop up, weak throw, brown spots on the far end of a zone) doesn't match
 anything wrong at the head itself. Laterals fail mostly by **puncture** —
 people put a spade, a fence post, or a tree root through one — not by aging
@@ -66,7 +66,7 @@ Cheapest-first checks before digging up the lawn:
 1. **Compare zones.** Run each of the four zones in turn at the controller.
    If only the suspect zone is weak, the fault is downstream of *that*
    zone's valve — i.e. its lateral or its heads. If multiple zones are
-   weak, look upstream (main line R5, pump R4, controller call R2).
+   weak, look upstream (main line F6, pump F5, controller call F2).
 2. **Walk the lateral path during the run.** A punctured lateral pushes
    water into the soil. Look for a wet patch, soft/spongy ground,
    unusually dense grass, water bubbling at the surface, or a sinkhole

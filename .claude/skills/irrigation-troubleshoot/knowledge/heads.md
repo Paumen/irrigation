@@ -1,6 +1,6 @@
 ---
 subject: Heads (rotors, spray bodies, MP Rotator nozzles)
-root_cause_area: R9
+root_cause_area: F9
 serves: [troubleshooting, replace, clean, maintain, how-it-works]
 system_note: >
   Hunter I-20-04-SS rotors, Hunter Pro-Spray PRS40 spray bodies (regulated to
@@ -8,7 +8,7 @@ system_note: >
   All heads installed 2020-08, outdoor in-ground, pop-up. Zones mix rotors with
   MP rotators deliberately for different precipitation needs (lawn vs flower beds).
 summary: Heads reference covering the three components on the head side of this system — I-20 rotors, Pro-Spray PRS40 bodies, MP Rotator nozzles. Pressure/flow envelopes, common faults, the MP ↔ PRS40 pairing, and low-head drainage.
-read_when: engine points at the heads area (R9); rotor won't pop up / won't rotate / wrong arc / wrong coverage; misting at a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
+read_when: engine points at the heads area (F9); rotor won't pop up / won't rotate / wrong arc / wrong coverage; misting at a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
 contents:
   - I-20 rotor — features, operating envelope, common faults, nozzle racks
   - I-20 adjustment & service — arc/radius adjustment, Flo-Stop, filter cleaning, riser-seal replacement, drain check valve, shutoff/blank nozzle, capping off in-ground
@@ -26,7 +26,7 @@ The heads are the parts that actually throw water at the lawn. Three components 
 - **Pro-Spray PRS40 bodies** — pressure-regulated pop-up bodies (~2.8 bar / 40 PSI at the nozzle) that carry the MP nozzles.
 - **MP Rotator nozzles** — multi-stream nozzles that screw into the PRS40 for tighter, slower coverage of flower beds and odd-shaped areas.
 
-Read this when the engine narrows to R9 (rotor debris / nozzle / pressure regulator, or rotor stuck / misconfigured), when something looks wrong at one head, or when the homeowner is changing a nozzle or replacing a body. For weeping that *looks* like a head fault but might be the valve, see `valve.md` *Weeping when off* — the distinguishing test is below in *Low-head drainage*.
+Read this when the engine narrows to F9 (rotor debris / nozzle / pressure regulator, or rotor stuck / misconfigured), when something looks wrong at one head, or when the homeowner is changing a nozzle or replacing a body. For weeping that *looks* like a head fault but might be the valve, see `valve.md` *Weeping when off* — the distinguishing test is below in *Low-head drainage*.
 
 ## I-20 rotor
 

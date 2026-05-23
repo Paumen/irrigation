@@ -39,9 +39,9 @@ Use the left term, not the right.
 - App, not software
 
 ## Reference content next to this skill
-- `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: R*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`. Read on the triggers in *When to read `knowledge/`* below.
-- `images.yaml` — image manifest. Lookup by engine question id (`questions:`), R-code at either area or specific level (`causes:`), or subject doc (`subjects:`). Each entry resolves to a `media/<file>` path with a normalized caption.
-- `sources.md` — R1–R9 routing ladder. Use as the next stop when `knowledge/` is partial or absent (R1, R4, R5 currently have no local doc; R6 / R8 are partial; R2, R3, R7, R9 are covered).
+- `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: F*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`. Read on the triggers in *When to read `knowledge/`* below.
+- `images.yaml` — image manifest. Lookup by engine question id (`questions:`), F-code at either area or specific level (`causes:`), or subject doc (`subjects:`). Each entry resolves to a `media/<file>` path with a normalized caption.
+- `sources.md` — F1–F9 routing ladder. Use as the next stop when `knowledge/` is partial or absent (F1, F5, F6 currently have no local doc; F3 / F8 are partial; F2, F4, F7, F9 are covered).
 - `setup.yaml` (project root) — the homeowner's actual equipment, install dates, zone count, pipe sizes, and wiring. Source of truth for anything physical about this specific system.
 
 Path conventions: `media/` and `setup.yaml` are project-root-relative. `knowledge/`, `images.yaml`, and `sources.md` live next to this `SKILL.md`.
@@ -55,7 +55,7 @@ Open the relevant `knowledge/<area>.md` (and its `parent:` / sibling docs) when 
 - The loop narrowed to one or two areas but you have no confident cause yet — read the area's doc end-to-end. `valve-internals.md` and `valve-solenoid.md` are deliberately split out from `valve.md` for exactly this case.
 - You suspect a cause that isn't in the engine catalogue. Read the doc to confirm whether it's a known mode for the specific hardware/model, then drop to `sources.md` for the vendor PDF or vendor support.
 
-When the area has no local `knowledge/` doc (R1, R4, R5), skip straight to `sources.md`.
+When the area has no local `knowledge/` doc (F1, F5, F6), skip straight to `sources.md`.
 
 ## How you reason (your priors)
 Your own thinking is the first place certainty leaks in. Hold all of it loosely.
@@ -77,7 +77,7 @@ Your own thinking is the first place certainty leaks in. Hold all of it loosely.
 ```
 {
   "ranked": [
-    { "id": "R72", "label": "Diaphragm failure", "pct": 18.3, "score": 2.4 },
+    { "id": "F7.1.2", "label": "Valve diaphragm (tear / perished)", "pct": 18.3, "score": 2.4 },
     ...                                              // top 5 by score
   ],
   "next": [
@@ -156,7 +156,7 @@ For any shape, "I don't know" / "skip" maps to `skipped[qid] = true`, not to `an
 
 Before asking, look up the question id in `images.yaml` (`questions:` field). If a matching `IMG.*` exists, surface its `file` + `caption` inline with the question — for tests this disambiguates probe placement, parts, and expected appearance. Common pairings: Q12 (manual bleed / turn-solenoid), Q13 (voltage at controller / solenoid), Q17 (diaphragm inspection), Q18 (external leak points).
 
-If the user asks to see something not tied to the current question, search `images.yaml` by `subjects:` and `causes:` — both the area code (`R7`) and the specific cause code (`R71`) are valid lookups.
+If the user asks to see something not tied to the current question, search `images.yaml` by `subjects:` and `causes:` — both the area code (`F7`) and the specific cause code (`F7.1.1`) are valid lookups.
 
 ## Answer shapes (what to send back to the tool)
 - `options`: integer — the chosen option's index in `options[]`.
