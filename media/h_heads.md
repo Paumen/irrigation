@@ -144,3 +144,137 @@ MP Rotator Nozzles shall be available in the following options:
  * **B.** MP Rotator Nozzles shall pop up at approximately 15 PSI (1.0\text{ bar}; 100\text{ kPa}).
 © 2024 Hunter Industries Inc. Hunter, the Hunter logo, and other marks are trademarks of Hunter Industries Inc., registered in the U.S. and certain other countries.
 
+
+Hunter Product Written Specification Template (Pro-Spray)  
+
+Part 1 – General
+1.1	General Description of Product and Function
+The Hunter Pro-Spray is a sprinkler pop-up designed for residential and commercial applications in both pressure-regulated and non-pressure-regulated models. Standard Pro-Spray models shall be available with a 2, 3, 4, 6, and 12 inch (5, 7, 10, 15, and 30 cm) pop-up stroke as well as an aboveground shrub head. Pressure-regulated PRS30 and PRS40 models shall be available in a shrub model and a 4, 6, and 12 inch (10, 15, and 30 cm) pop-up stroke. Standard and PRS30 models in 6 and 12 inch (15 and 30 cm) shall have a side inlet option. Pop-up models shall have the option of a factory or field-installed drain check valve and a reclaimed water purple body cap. Pressure-regulated models shall have the option of the drain check valve and FloGuardTM technology to reduce the flow through the riser in the event of a missing nozzle. Factory-installed features shall be designated on the top of the Pro-Spray cap for easy identification. 
+Part 2 – Parts and Material
+2.1	The Hunter Pro-Spray shall be available in the following options
+Pro-Spray	Pro-Spray PRS30	Pro-Spray PRS40
+PROS-00	PROS-00-PRS30	PROS-00-PRS40
+PROS-00-R	PROS-00-PRS30-R	PROS-00-PRS40-R
+PROS-02	PROS-04-PRS30	PROS-04-PRS40-CV
+PROS-03	PROS-04-PRS30-CV	PROS-04-PRS40-CV-R
+PROS-04	PROS-04-PRS30-CV-R	PROS-04-PRS40-CV-F
+PROS-04-CV	PROS-04-PRS30-CV-F	PROS-04-PRS40-CV-F-R
+PROS-04-CV-R	PROS-04-PRS30-CV-F-R	PROS-06-PRS40-CV
+PROS-06	PROS-06-PRS30	PROS-06-PRS40-CV-R
+PROS-06-CV	PROS-06-PRS30-CV	PROS-06-PRS40-CV-F
+PROS-06-CV-R	PROS-06-PRS30-CV-R	PROS-06-PRS40-CV-F-R
+PROS-12	PROS-06-PRS30-CV-F	PROS-12-PRS40-CV
+PROS-12-CV	PROS-06-PRS30-CV-F-R	PROS-12-PRS40-CV-R
+PROS-12-CV-R	PROS-12-PRS30	PROS-12-PRS40-CV-F
+PROS-06-SI	PROS-12-PRS30-CV	PROS-12-PRS40-CV-F-R
+PROS-12-SI	PROS-12-PRS30-CV-R	
+	PROS-12-PRS30-CV-F	
+	PROS-12-PRS30-CV-F-R	
+	PROS-06-SI-PRS30	
+	PROS-12-SI-PRS30	
+
+ 
+A.	Specification Descriptions
+i.	PROS-00 = shrub
+ii.	PROS-02 = 2in (5 cm) pop-up
+iii.	PROS-03 = 3in (7.5 cm) pop-up
+iv.	PROS-04 = 4in (10 cm) pop-up
+v.	PROS-06 = 6in (15 cm) pop-up
+vi.	PROS-12 = 12in (30 cm) pop-up
+vii.	-SI = side inlet model for 6in and 12in (15 cm and 30 cm)
+viii.	-CV = includes factory-installed check valve, “CHECK VALVE” designated on body cap
+ix.	-PRS30 = pressure-regulated to 30 psi (2.1 bar; 210 kPa), brown body cap
+x.	-PRS40 = pressure-regulated to 40 psi (2.8 bar; 280 kPa), gray body cap
+xi.	-F = includes factory-installed FloGuardTM technology, “FLOGUARD” designated on body cap
+xii.	-R = includes factory-installed reclaimed water purple cap
+B.	Cap Description
+i.	The Pro-Spray cap shall be made of a UV resistant ABS material.
+ii.	Standard and pressure-regulated models shall be color-coded for field identification.
+a.	The standard Pro-Spray shall have a black cap.
+b.	Pro-Spray PRS30 model shall have a brown cap with “PRS30” marked on the top. 
+c.	Pro-Spray PRS40 model shall have a gray cap with “PRS40” marked on the top.
+iii.	When specified for reclaimed water applications, the cap will be molded in purple.
+iv.	An optional snap-on cap molded in UV resistant purple acetal shall be available to indicate the use of reclaimed water. 
+v.	When specified as factory-installed check valve, the cap shall have “CHECK VALVE” marked on the top. 
+vi.	When specified with the FloGuard feature, the cap shall have “FLOGUARD” marked on the top. 
+C.	Seal Description
+i.	The Pro-Spray shall have a pressure-activated, chemical and chlorine resistant, UV stable wiper seal that cleans debris from the riser while it retracts. 
+ii.	The seal shall be molded around a rigid plastic ring to prevent seal deformation. 
+iii.	The seal shall prevent the pop-up from sticking in the up position.
+iv.	The seal shall seal the riser stem to the cap under normal operating pressures.
+v.	The seal shall be removable from the cap for easy service and be replaceable.   	
+D.	Body
+i.	The body of the Pro-Spray shall be constructed of corrosion and UV-resistant ABS. 
+ii.	Standard Pro-Spray and PRS30 models in 6 and 12 in (15 and 30 cm) shall be available with a ½-inch FNPT side inlet option. 
+iii.	The inlet size shall be ½” thread. 
+E.	Riser Description
+i.	The riser of the sprinkler shall be constructed of abrasion and UV-resistant ABS. 
+ii.	The riser shall be adjustable for pattern alignment using a two-piece ratchet mechanism.
+iii.	The riser shall be compatible with female-threaded nozzles.
+iv.	A stainless steel spring shall be assembled with the riser for positive retraction when the irrigation cycle is complete. 
+F.	Flush Plug Description
+i.	The Pro-Spray shall have a factory-installed, removable flush plug with a pull-up tab that shall prevent debris from entering the sprinkler during installation.
+ii.	Material: polyethylene.
+G.	Check Valve Description
+i.	The Pro-Spray shall have the option of including either a factory-installed or field-installed drain check valve. 
+ii.	The standard Pro-Spray models with check valve shall check up to 10 ft (3 m) in elevation change.
+iii.	The pressure-regulated Pro-Spray models with check valve shall check up to 14 ft (4.3 m) in elevation change.
+iv.	When specified with the check valve, the cap shall have “CHECK VALVE” marked on the top. 
+H.	FloGuardTM Technology Description
+i.	Pressure-regulated Pro-Spray models with check valve shall include the option of a factory-installed FloGuardTM feature installed in the riser to reduce flow in the event of a missing nozzle.  
+2.2	Pro-Spray Dimensions
+A.	Shrub models
+i.	PROS-00
+ii.	 Height = 1.5 in (4 cm)
+iii.	 Inlet size = ½ in 
+B.	PROS00PRS30 and PROS00PRS40
+i.	Height = 4.5 in (11 cm)
+ii.	Inlet size = ½ in
+C.	PROS-02
+i.	Retracted height = 4 in (10 cm)
+ii.	Pop-up height = 2 in (5 cm)
+iii.	Exposed diameter = 2.25 in (5.7 cm)
+iv.	Inlet size = ½ in
+D.	PROS-03
+i.	Retracted height = 5 in (12.5 cm)
+ii.	Pop-up height = 3 in (7.5 cm)
+iii.	Exposed diameter = 2.25 in (5.7 cm)
+iv.	Inlet size = ½ in
+E.	PROS-04 models
+i.	Retracted height = 5.875 in (15.5 cm)
+ii.	Pop-up height = 4 in (10 cm)
+iii.	Exposed diameter = 2.25 in (5.7 cm)
+iv.	Inlet size = ½ in
+F.	PROS-06 models
+i.	Retracted height = 8.75 in (22.5 cm)
+ii.	Pop-up height = 6 in (15 cm)
+iii.	Exposed diameter = 2.25 in (5.7 cm)
+iv.	Inlet size = ½ in
+G.	PROS-12 models
+i.	Retracted height = 16.125 in (41 cm)
+ii.	Pop-up height = 12 in (30 cm)
+iii.	Exposed diameter = 2.25 in (5.7 cm)
+iv.	Inlet size = ½ in
+2.3	Warranty
+A.	5 year warranty period
+Part 3 – Function and Operation
+3.1	Operating Pressure 
+A.	The Pro-Spray shall operate from 15 to 100 psi (1.0 to 7.0 bar; 100 to 700 kPa)
+B.	To activate the pressure-regulator in PRS30 and PRS40 models, a minimum of 10 psi differential is required to achieve the desired output pressure. 
+3.2	Pressure Regulation
+A.	When specified as PRS30 or PRS40, the sprinkler shall have a pressure-regulating device as an integral part of the pop-up riser. 
+B.	The PRS30 models will prevent fogging or misting of the nozzle spray pattern by maintaining a constant outlet pressure of 30 PSI (2.1 bar; 210 kPa) with inlet pressures of up to 100 PSI (7.0 bar; 700 kPa), regardless of the nozzle installed. 
+C.	The PRS40 models will provide optimal distribution uniformity of the MP Rotator by maintaining a constant outlet pressure of 40 PSI (2.8 ba;, 280 kPa) with inlet pressures of up to 100 PSI (7.0 bar; 700 kPa), regardless of the rotator installed.
+3.3	System Flushing
+A.	The flush plug shall allow the system to be flushed before installing the nozzle. 
+B.	The flush plug shall open as the stem extends and close when the stem is in the retracted position, prevent debris from entering the riser. 
+C.	The flush plug shall have directional flushing action that allows the water to escape in only one direction. 
+D.	When specified with the FloGuardTM feature, the flush plug shall include a spacer to keep the FloGuardTM feature deactivated for a complete system flush.
+3.4	Drain Check Valve
+A.	For standard Pro-Spray models, the check valve will hold up to 10 ft (3 m) of elevation.
+B.	For pressure-regulated models, the check valve will hold up to 14 ft (4.3 m) of elevation.
+C.	The check valve can be factory or field-installed in pop-up models. 
+3.5	FloGuardTM Technology
+A.	In the event of a missing nozzle, the FloGuard feature shall reduce the flow from the riser to a low-flow 10 ft (3 m) tall stream indicating the need for maintenance. 
+
+
