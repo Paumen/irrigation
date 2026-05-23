@@ -248,3 +248,155 @@ images:
     causes: [F9, F9.1.1, F9.3, F9.1.2]
     relates: rotor install/replacement; setting height to grade; reducing lateral stress
     used_in: [heads.md]
+
+  # --------------------------------------------------------------------------
+  # Added for the `irrigation` umbrella skill (explain / identify / howto /
+  # capacity / upgrades / maintenance playbooks). Not yet embedded in any
+  # knowledge/ doc — `used_in: []` reflects manifest-only registration.
+  # --------------------------------------------------------------------------
+
+  IMG.multimeter-illustrated:
+    file: media/multimeter-illustrated.jpg
+    caption: Multimeter with red and black probes — illustration for voltage and resistance checks.
+    subjects: [wiring, valve-solenoid, controller]
+    relates: friendlier explainer alternative to the homeowner's real meter photos; use in explain.md when the homeowner has not yet picked up the meter
+    used_in: []
+
+  IMG.multimeter-stanley-front:
+    file: media/multimeter-stanley-fmht82563-front.jpg
+    caption: Stanley FATMAX FMHT82563-0 (the homeowner's meter) — front view, rotary selector OFF; V≈ for AC volts, Ω for resistance.
+    subjects: [wiring, valve-solenoid, controller]
+    questions: [Q13]
+    relates: which dial position for controller voltage (V≈) vs solenoid resistance (Ω)
+    used_in: []
+
+  IMG.multimeter-stanley-leads:
+    file: media/multimeter-stanley-fmht82563-with-leads.jpg
+    caption: Stanley FATMAX FMHT82563-0 with test leads attached — black to COM, red to VΩ port.
+    subjects: [wiring, valve-solenoid, controller]
+    questions: [Q13]
+    relates: lead placement before any voltage or resistance check
+    used_in: []
+
+  IMG.controller-et-scheduling-illustrated:
+    file: media/controller-et-scheduling-illustrated.jpg
+    caption: Illustrated weather-aware controller — sun/cloud/rain icons drive a daily run-length bar chart; terminals P, C, 1–4, C, R below.
+    subjects: [controller]
+    relates: ET-based scheduling and rain-skip behaviour; useful when explaining what the RainMachine does automatically
+    used_in: []
+
+  IMG.rainmachine-similar-model:
+    file: media/rainmachine-similar-model.jpg
+    caption: A similar RainMachine model (Mini-12, 12 zone terminals) — illustrative only; the homeowner's actual controller is the HD-16 TOUCH, which has the same touchscreen-and-terminal layout with 16 zone outputs.
+    subjects: [controller]
+    relates: illustrative stand-in; not the homeowner's exact model — caption must say "similar" not "your controller"
+    used_in: []
+
+  IMG.relay-controller-wiring-diagram:
+    file: media/relay-controller-wiring-diagram.webp
+    caption: Controller-to-pump-start-relay wiring — common wire, master-valve / pump-start wire, and the 4.5 m minimum separation from the relay's high-voltage side.
+    subjects: [relay, wiring]
+    causes: [F4]
+    relates: PSR-52 install layout; clearance rule; controller terminals to relay leads
+    used_in: []
+
+  IMG.pgv-valve-product:
+    file: media/pgv-valve-product.png
+    caption: Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: product view for identify.md; matches the homeowner's PGV-101G profile
+    used_in: []
+
+  IMG.pgv-valve-solenoid-label:
+    file: media/pgv-valve-solenoid-label.jpg
+    caption: PGV-100 solenoid close-up — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.
+    subjects: [valve-solenoid, valve]
+    causes: [F7]
+    questions: [Q12]
+    relates: identify the solenoid by stamped text; ¼-turn manual operation reference
+    used_in: []
+
+  IMG.pgv-valve-lineup:
+    file: media/pgv-valve-lineup.jpg
+    caption: Hunter PGV-100 family lineup — four bodies showing slip vs threaded ends and minor body variations.
+    subjects: [valve]
+    causes: [F7]
+    relates: identify which PGV variant the homeowner has (slip-FIP, threaded-MM, etc.)
+    used_in: []
+
+  IMG.pgv-valve-dc-variant:
+    file: media/pgv-valve-dc-variant.jpg
+    caption: PGV with DC latching solenoid variant — silver "DC LATCHING SOLENOID" label and two-wire lead. NOT the homeowner's setup; this homeowner's PGV-101G uses a 24 VAC solenoid.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: exclusion image — use to confirm the homeowner does NOT have the DC-latching version
+    used_in: []
+
+  IMG.pgv-valve-dc-labelled:
+    file: media/pgv-valve-dc-labelled.jpg
+    caption: Hunter PGV-101-MM-DC labelled — male-male threaded body with DC latching solenoid (p/n 458200). NOT the homeowner's model; included for identify-mismatch context.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: exclusion image with explicit part number; pair with IMG.pgv-valve-product to contrast AC vs DC variants
+    used_in: []
+
+  IMG.valve-solenoid-probe-illustrated:
+    file: media/valve-solenoid-probe-illustrated.png
+    caption: Illustrated probe placement on the valve solenoid — red and black leads on the two solenoid wires for voltage (V≈) during a call or resistance (Ω) with the controller off.
+    subjects: [valve-solenoid, wiring]
+    causes: [F7, F3]
+    questions: [Q13]
+    relates: alt-style explainer for solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your meter looks like" + "where to put the probes"
+    used_in: []
+
+  IMG.controller-probe-illustrated:
+    file: media/controller-probe-illustrated.png
+    caption: Illustrated probe placement at the controller terminals — red lead on the station terminal, black lead on C / COM, ET bar chart visible above.
+    subjects: [controller, wiring]
+    causes: [F2]
+    questions: [Q13]
+    relates: alt-style explainer for controller voltage check; pair with the real Stanley FATMAX photo
+    used_in: []
+
+  IMG.rotor-i20-product:
+    file: media/rotor-i20-product.png
+    caption: Hunter I-20 rotor — single product view showing stainless riser, nozzle turret, and pop-up body.
+    subjects: [heads]
+    relates: canonical product photo for identify.md and explain.md
+    used_in: []
+
+  IMG.rotor-i20-product-alt:
+    file: media/rotor-i20-product-alt.jpg
+    caption: Hunter I-20 — alternate product view with the riser fully extended above the pop-up cap.
+    subjects: [heads]
+    relates: cleaner riser-extended angle; second-choice if rotor-i20-product.png does not suit the context
+    used_in: []
+
+  IMG.rotor-i20-spraying-close:
+    file: media/rotor-i20-spraying-close.jpg
+    caption: I-20 rotor in action — stainless riser fully extended, fan of water from the nozzle.
+    subjects: [heads]
+    relates: dynamic / "rotor working" shot for explainers and verification steps
+    used_in: []
+
+  IMG.rotor-i20-nozzle-selector-close:
+    file: media/rotor-i20-nozzle-selector-close.jpg
+    caption: I-20 nozzle selector close-up — number visible on the blue cap (here "3.0") shows the installed nozzle's flow rating.
+    subjects: [heads]
+    relates: nozzle identification by selector number; nozzle change procedure
+    used_in: []
+
+  IMG.rotor-i20-garden-scene:
+    file: media/rotor-i20-garden-scene.jpg
+    caption: I-20 rotor in a garden setting — typical pop-up height and spray pattern.
+    subjects: [heads]
+    relates: context shot for "what one head looks like in a flower bed" — usable in explain.md or upgrades.md (drip-vs-rotor discussion)
+    used_in: []
+
+  IMG.rotor-i20-family-heights:
+    file: media/rotor-i20-family-heights.jpg
+    caption: Hunter I-20 family — three pop-up riser heights side by side (short, medium, tall body).
+    subjects: [heads]
+    relates: identify which I-20 variant the homeowner has by riser length (this homeowner has I-20-04-SS, the 4-inch)
+    used_in: []
