@@ -33,12 +33,14 @@ This is a read-and-summarise playbook. Most answers already exist in `knowledge/
 
    For explaining a **measurement** (voltage at controller, coil resistance, etc.) when the user hasn't picked up the meter yet, use the illustrated explainers — `IMG.multimeter-illustrated`, `IMG.controller-probe-illustrated`, `IMG.valve-solenoid-probe-illustrated`. Once they're actually testing, switch to the real Stanley FATMAX FMHT82563-0 photos (`IMG.multimeter-stanley-front` and `IMG.multimeter-stanley-leads`) — that's the homeowner's actual meter.
 
-   Use the manifest's `caption:` verbatim (or close). Reference the image by its `media/<file>` path — never by the `IMG.*` id.
+   Use the manifest's `caption:` verbatim (or close).
+
+   **Deliver images with `SendUserFile`, not inline markdown.** Markdown `![](media/...)` paths do **not** render in the user's chat UI. Pass the absolute file path to `SendUserFile` and put the caption in the tool's `caption` field. Batch multiple images for one answer into a single call.
 
 5. **Compose the answer.** Three parts, in this order:
 
    - **One-paragraph explanation in the homeowner's terms.** Start from the doc, strip the vendor jargon, keep European units. Don't restate the whole doc — answer the actual question.
-   - **The image**, inline, with the caption.
+   - **The image**, sent via `SendUserFile` alongside the prose, with the caption attached.
    - **A short "in your system" note** when the homeowner's specific model adds context worth mentioning: install location, install year, what's downstream, what's wired to it. Skip this if it doesn't add anything.
 
 6. **Offer the natural follow-up.** End with one short prompt: "want me to walk through how to operate it manually / where it sits in your setup / how to clean it?" — phrased so the user can pivot to the `howto.md` or `identify.md` playbook without having to know the playbook exists.
@@ -49,7 +51,7 @@ This is a read-and-summarise playbook. Most answers already exist in `knowledge/
 >
 > Water comes in from the main line and pushes against a thick rubber disc inside the valve called the diaphragm. A tiny hole in the diaphragm lets a trickle of water up into a small space above it. Because there's more surface area on top of the diaphragm than below, the water above is what holds the valve closed — counter-intuitive, but it's the trick that lets a tiny 24 V solenoid switch a full zone's worth of flow. When the controller energises the solenoid, it lifts a little plunger and lets that water above the diaphragm escape sideways out of the valve. With the pressure above gone, the incoming water wins, lifts the diaphragm, and the valve opens.
 >
-> ![Valve parts callout — 1 body, 2 flow control, 3 bleed screw, 4 solenoid.](../../media/valves-work_0.gif)
+> *(image: `media/valves-work_0.gif` — sent via `SendUserFile` with caption "Valve parts callout — 1 body, 2 flow control, 3 bleed screw, 4 solenoid.")*
 >
 > In your setup, this is the Hunter PGV-101G — four of them in the outdoor valve box, fitted in 2026. Each one is the gatekeeper for one zone of rotors.
 >
@@ -59,4 +61,4 @@ This is a read-and-summarise playbook. Most answers already exist in `knowledge/
 - Don't restate the whole `knowledge/` doc. The doc exists; cite the file at most once at the end if the user asks for "more detail".
 - Don't make up part numbers, valve sizes, pressures, or coil resistances from memory. Numbers come from the doc or the vendor PDF.
 - Don't drift into diagnosis. If the user follows up with "and that's why mine isn't working, right?" — switch them to `irrigation-troubleshoot`.
-- Don't show internal IDs (`IMG.parts-callout`, `F7`, `Q12`). Captions and file paths only.
+- Don't show internal IDs (`IMG.parts-callout`, `F7`, `Q12`) or raw `media/<file>` paths to the user. Captions only — files go via `SendUserFile`.
