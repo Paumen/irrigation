@@ -400,3 +400,126 @@ images:
     subjects: [heads]
     relates: identify which I-20 variant the homeowner has by riser length (this homeowner has I-20-04-SS, the 4-inch)
     used_in: []
+
+  # --------------------------------------------------------------------------
+  # Second batch for the `irrigation` umbrella skill — adds sensors (WM-CLIK,
+  # Solar Sync, Wind-Clik, Wireless WSS), drip line, swing-joint product +
+  # install cross-section, MP Rotator wrench, pressure gauge, replacement
+  # solenoid, additional DC-variant PGV, and an illustrated relay enclosure.
+  # Two entries flagged TO IDENTIFY where the model is not yet confirmed.
+  # --------------------------------------------------------------------------
+
+  IMG.relay-enclosure-cutaway-illustrated:
+    file: media/relay-enclosure-cutaway-illustrated.png
+    caption: Illustrated relay enclosure cutaway — contactor at the top with high-voltage leads (black), low-voltage terminals below with green / blue / yellow conductors, and two waterproof gel-cap connectors at the bottom.
+    subjects: [relay, wiring]
+    causes: [F4]
+    relates: top-down PSR-style enclosure interior; explainer alternative to the PSR-52 PDF cutaway
+    used_in: []
+
+  IMG.sensor-wm-clik-side:
+    file: media/sensor-wm-clik-side.jpg
+    caption: Hunter WM-CLIK rain sensor — side view; threshold-disc canister on top, calibration cap (1/8"–3/4" / 3–19 mm), spring-loaded vent post, swing bracket on the right.
+    subjects: [controller]
+    relates: rain-skip upgrade candidate (note this homeowner's HD-16 TOUCH already gets rain-skip via Wi-Fi / cloud); pair with the open and internals shots to explain how it works
+    used_in: []
+
+  IMG.sensor-wm-clik-open:
+    file: media/sensor-wm-clik-open.jpg
+    caption: WM-CLIK with calibration cap removed — exposes the hygroscopic-disc stack inside the metal cup and the switch arm; rainfall-threshold markings on the housing.
+    subjects: [controller]
+    relates: explainer image — how the rain sensor decides "wet enough to skip" (disc stack swells until the arm trips)
+    used_in: []
+
+  IMG.sensor-wm-clik-internals:
+    file: media/sensor-wm-clik-internals.jpg
+    caption: WM-CLIK internal switch module — threshold scale showing 3 mm / 6 mm rain calibration steps; UL-listed Class 2 dry-contact output to the dual-conductor blue lead.
+    subjects: [controller]
+    relates: EU-metric calibration markings; dry-contact wiring to the controller's SEN / COMMON terminals
+    used_in: []
+
+  IMG.sensor-solar-sync:
+    file: media/sensor-solar-sync.jpg
+    caption: Hunter Solar Sync — combined rain + solar / ET sensor; cup on the left catches rain, ribbed module behind it carries the solar sensor; "DRYOUT TIME" knob sets how long the system stays paused after a rain event.
+    subjects: [controller]
+    relates: ET + rain-skip in one wired sensor; mostly relevant to non-RainMachine controllers — the homeowner's HD-16 TOUCH already does ET natively over Wi-Fi
+    used_in: []
+
+  IMG.sensor-wind-clik:
+    file: media/sensor-wind-clik.jpg
+    caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
+    subjects: [controller]
+    relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted throw on windy days
+    used_in: []
+
+  IMG.sensor-wss-wireless:
+    file: media/sensor-wss-wireless.jpg
+    caption: Hunter WSS (Wireless Solar Sync) sensor — UV dome on top, rain canister below, on a swing bracket; transmits to a controller-side receiver instead of wired SEN terminals.
+    subjects: [controller]
+    relates: wireless variant of Solar Sync; useful where running a sensor cable to an indoor controller is impractical
+    used_in: []
+
+  IMG.drip-line-inline-emitter:
+    file: media/drip-line-inline-emitter.jpg
+    caption: Inline-emitter dripline — brown 16 mm tubing with built-in pressure-compensating emitters at fixed spacing; coiled.
+    subjects: [laterals, heads]
+    relates: drip-conversion upgrade for flower-bed zones (the upgrades playbook flags this homeowner's Z1 and Z4 as candidates)
+    used_in: []
+
+  IMG.swing-joint-product:
+    file: media/swing-joint-product.jpg
+    caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the lateral.
+    subjects: [heads, laterals]
+    relates: rotor install / replacement; reduces lateral stress when a head is kicked or stepped on
+    used_in: []
+
+  IMG.rotor-install-swing-joint-illustrated:
+    file: media/rotor-install-swing-joint-illustrated.jpg
+    caption: Cross-section illustration — pop-up rotor installed via a swing joint onto a buried lateral; head sits flush with grade, swing joint hidden in the soil.
+    subjects: [heads, laterals]
+    relates: rotor install reference for howto.md; pair with swing-joint-product for "what it is" + "how it sits in the soil"
+    used_in: []
+
+  IMG.mp-rotator-wrench:
+    file: media/mp-rotator-wrench.jpg
+    caption: Hunter "MP ROTATOR" wrench — orange plastic key with a ringed grip for the nozzle and a pointed end for cutting around the surrounding turf.
+    subjects: [heads]
+    relates: MP Rotator nozzle install / removal / arc-adjust; this homeowner's Z1 and Z4 use MP Rotators on Pro-Spray PRS40 bodies
+    used_in: []
+
+  IMG.head-component-to-identify:
+    file: media/head-component-to-identify.jpg
+    caption: TO IDENTIFY — small white plastic part with a curved seat and side loop; possibly a riser-pull tool, cap retainer, or accessory clip. Caption stub only; verify before surfacing to a user.
+    subjects: [heads]
+    relates: TO IDENTIFY — model and use not yet confirmed; do not surface in playbooks until captioned properly
+    used_in: []
+
+  IMG.rain-sensor-internal-component:
+    file: media/rain-sensor-internal-component.jpg
+    caption: TO IDENTIFY (likely) — small white plastic component with a central stake and two retaining rings; appears to be the internal disc-stack / switch-arm assembly from a Mini-Clik or WM-CLIK rain sensor, but identification is not fully confirmed.
+    subjects: [controller]
+    relates: TO IDENTIFY — provisional ID based on batch context (3 WM-CLIK photos in the same batch); verify before surfacing
+    used_in: []
+
+  IMG.pressure-gauge-test-on-riser:
+    file: media/pressure-gauge-test-on-riser.jpg
+    caption: Hunter pressure-test gauge attached to a Pro-Spray pop-up riser (in place of the nozzle) — reads in psi and bar; verifies head operating pressure (~2.8 bar / 40 psi for a PRS40 body).
+    subjects: [heads]
+    relates: pressure check during capacity diagnosis or verification; confirms the PRS40 regulation is doing its job
+    used_in: []
+
+  IMG.valve-solenoid-replacement-product:
+    file: media/valve-solenoid-replacement-product.jpg
+    caption: Replacement valve solenoid — black cylindrical body with looped 24 V leads and threaded base with O-ring (purple). Form factor matches the Hunter PGV solenoid; verify exact model and coil resistance (20–60 Ω per the homeowner's setup) against the seller listing before fitting.
+    subjects: [valve-solenoid, valve]
+    causes: [F7]
+    relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; pair with pgv-valve-solenoid-label to compare with the installed unit before ordering
+    used_in: []
+
+  IMG.pgv-valve-dc-variant-installed:
+    file: media/pgv-valve-dc-variant-installed.png
+    caption: Hunter PGV with DC latching solenoid — "DC LATCHING" stamped on the solenoid body, FIP threaded ports. NOT the homeowner's variant (homeowner has the 24 VAC AC solenoid); shown for exclusion / contrast.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: alternate angle of the DC variant from the previous batch; pair with pgv-valve-dc-variant and pgv-valve-dc-labelled for identify.md "what you DO have vs DON'T have" contrast
+    used_in: []
