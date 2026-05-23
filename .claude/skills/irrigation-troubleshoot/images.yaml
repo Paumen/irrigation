@@ -111,6 +111,7 @@ images:
     caption: Solenoid wiring — common and station power leads to the field wires.
     subjects: [valve-solenoid, wiring]
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
+    questions: [Q15]
     used_in: [valve-solenoid.md]
 
   IMG.solenoid-voltage-reading:
@@ -118,7 +119,7 @@ images:
     caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
     subjects: [valve-solenoid]
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
-    questions: [Q13]
+    questions: [Q13, Q15]
     used_in: [valve-solenoid.md]
 
   IMG.controller-voltage-reading:
@@ -126,7 +127,7 @@ images:
     caption: Multimeter at the controller terminals reading ~26 VAC with the station active.
     subjects: [controller]
     causes: [F2, F2.1, F2.8, F2.5, F2.6]
-    questions: [Q13]
+    questions: [Q13, Q14]
     used_in: [controller.md]
 
   IMG.controller-probe-diagram:
@@ -134,7 +135,7 @@ images:
     caption: Probe placement at the controller — one on the station terminal, one on C/COM.
     subjects: [controller]
     causes: [F2, F2.1, F2.8, F2.5, F2.6]
-    questions: [Q13]
+    questions: [Q13, Q14]
     used_in: [controller.md]
 
   IMG.i20-callouts:
@@ -242,15 +243,15 @@ images:
     file: media/multimeter-stanley-fmht82563-front.jpg
     caption: Stanley FATMAX FMHT82563-0 (the homeowner's meter) — front view, rotary selector OFF; V≈ for AC volts, Ω for resistance.
     subjects: [wiring, valve-solenoid, controller]
-    questions: [Q13]
-    relates: which dial position for controller voltage (V≈) vs solenoid resistance (Ω)
+    questions: [Q13, Q14, Q15]
+    relates: which dial position for controller voltage (V≈) vs field-wire / solenoid coil resistance (Ω)
     used_in: [controller.md, valve-solenoid.md, playbooks/howto.md, playbooks/explain.md]
 
   IMG.multimeter-stanley-leads:
     file: media/multimeter-stanley-fmht82563-with-leads.jpg
     caption: Stanley FATMAX FMHT82563-0 with test leads attached — black to COM, red to VΩ port.
     subjects: [wiring, valve-solenoid, controller]
-    questions: [Q13]
+    questions: [Q13, Q14, Q15]
     relates: lead placement before any voltage or resistance check
     used_in: [controller.md, valve-solenoid.md, playbooks/howto.md, playbooks/explain.md]
 
@@ -273,7 +274,8 @@ images:
     caption: Controller-to-pump-start-relay wiring — common wire, master-valve / pump-start wire, and the 4.5 m minimum separation from the relay's high-voltage side.
     subjects: [relay, wiring]
     causes: [F4]
-    relates: PSR-52 install layout; clearance rule; controller terminals to relay leads
+    questions: [Q20]
+    relates: PSR-52 install layout; clearance rule; controller terminals to relay leads; locating the relay when checking whether it switches
     used_in: [relay.md, playbooks/explain.md, playbooks/identify.md]
 
   IMG.pgv-valve-product:
@@ -322,7 +324,7 @@ images:
     caption: Illustrated probe placement on the valve solenoid — red and black leads on the two solenoid wires for voltage (V≈) during a call or resistance (Ω) with the controller off.
     subjects: [valve-solenoid, wiring]
     causes: [F7, F3]
-    questions: [Q13]
+    questions: [Q13, Q15]
     relates: alt-style explainer for solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your meter looks like" + "where to put the probes"
     used_in: [playbooks/explain.md]
 
@@ -331,8 +333,8 @@ images:
     caption: Illustrated probe placement at the controller terminals — red lead on the station terminal, black lead on C / COM, ET bar chart visible above.
     subjects: [controller, wiring]
     causes: [F2]
-    questions: [Q13]
-    relates: alt-style explainer for controller voltage check; pair with the real Stanley FATMAX photo
+    questions: [Q13, Q14]
+    relates: alt-style explainer for controller voltage / field-wire resistance check; pair with the real Stanley FATMAX photo
     used_in: [playbooks/explain.md]
 
   IMG.rotor-i20-product:
@@ -390,7 +392,8 @@ images:
     caption: Illustrated relay enclosure cutaway — contactor at the top with high-voltage leads (black), low-voltage terminals below with green / blue / yellow conductors, and two waterproof gel-cap connectors at the bottom.
     subjects: [relay, wiring]
     causes: [F4]
-    relates: top-down PSR-style enclosure interior; explainer alternative to the PSR-52 PDF cutaway
+    questions: [Q20]
+    relates: top-down PSR-style enclosure interior; explainer alternative to the PSR-52 PDF cutaway; orients the user to what's inside before they check whether the contactor switches
     used_in: []
 
   IMG.sensor-wm-clik-side:
