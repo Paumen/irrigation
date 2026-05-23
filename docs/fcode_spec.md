@@ -178,6 +178,17 @@ instance, to avoid double-counting.
 aggregates `R11` (straight move) plus the `R23` settings share. The old `F1.6` no longer
 exists.
 
+**Parent linkage in `data.json`.** Every F-code cause row carries
+`parent: 'F<component>'` — flat at the component level — regardless of whether the
+code itself is at mode level (e.g., `F7.4`) or instance level (e.g., `F7.1.1`). The
+mode digit is structural in the F-code *name* but not in the parent chain: no
+intermediate `F7.1` / `F7.3` / `F7.4` cause rows exist. This keeps the existing
+engine's flat `parent`-field broadcast logic unchanged — `F7:x` lifts every cause
+with `parent: 'F7'` (all F7.1.x, F7.3.x leaves plus the mode-level `F7.4` row).
+Mode-level broadcasts (e.g., `F7.1:x` to all valve defects) are **not** supported by
+this convention; if ever needed, add them as additional explicit effects rather than
+as broadcasts.
+
 ---
 
 ## 4. Machine-readable migration map
@@ -312,12 +323,21 @@ duplicates as-is.
 
 ### Cross-family move (R11 → F2.6) — parent-broadcast compensation
 
-The R11 move out of the R1 family means F1 parent broadcasts no longer reach
-F2.6. Restore the lost signal with an explicit hit:
+The R11 move out of the R1 family means `F1` parent broadcasts no longer
+reach F2.6. Where a question option carries **both** an `R1:x` and an `R2:y`
+broadcast, the lost R1 signal is automatically restored via the `R2→F2`
+broadcast (which now lifts F2.6 as an F2 child). Compensation is only needed
+when `R1` broadcasts **solo**:
 
-| Question / option | Action |
-|---|---|
-| Q1 "All 4 zones fail" | add explicit `F2.6: 0.2` |
+| Question / option | Current R1 broadcast | Compensating hit |
+|---|---|---|
+| Q2q "Normal and steady" | R1: 0.6 (no R2) | add explicit `F2.6: 0.6` |
+| Q2q "Erratic" | R1: 0.4 (no R2) | add explicit `F2.6: 0.4` |
+
+(Q1 "All 4 zones fail" `R1: 0.2 / R2: 0.2` and Q2 "No water anywhere"
+`R1: 0.6 / R2: 0.6` both pair their R1 broadcasts with R2 broadcasts of equal
+weight; the R2→F2 broadcast carries the lost share to F2.6 automatically — no
+explicit hit needed there.)
 
 ### Downstream cleanup
 
