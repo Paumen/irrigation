@@ -36,6 +36,7 @@ const CASES = [
   { Q1: 0, Q2: 3, Q3: 1, Q4: 0 },
   { Q5: 2, Q6: 3 },
   { Q10: { pump: 'right', valves: 'days' } },
+  { Q10b: { ctrl: 'right', wiring: 'days' } },
   { Q11: { storm: 'right', freeze: 'worse' } },
   { Q11b: { pests: 'right', dig: 'days' } },
   { Q9: { pump: 4, valves: 1, relay: 4, ctrl: 4, rotor: 4, mainHose: 4, hose: 4 } },

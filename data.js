@@ -367,15 +367,25 @@ window.DATA = {
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
-      text: 'Recent service or work — how does it relate to the issue? (leave blank if not applicable)',
+      text: 'Recent hydraulic work — how does it relate to the issue? (leave blank if not applicable)',
       columns: TIMELINE_COLS,
       rows: [
         { id: 'pump', label: 'Pump', effects: { R41: 0.4, R42: 1.0 } },
-        { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
-        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.6} },
         { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.6 } },
         { id: 'rotor', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
         { id: 'hose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
+      ],
+    },
+    {
+      id: 'Q10b',
+      effort: 4,
+      stage: 2,
+      type: 'matrix',
+      text: 'Recent electrical/control work — how does it relate to the issue? (leave blank if not applicable)',
+      columns: TIMELINE_COLS,
+      rows: [
+        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.6 } },
+        { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
         { id: 'wiring', label: 'Wiring', effects: { R6: 1 } },
       ],
     },
