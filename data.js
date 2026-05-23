@@ -384,13 +384,23 @@ window.DATA = {
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
-      text: 'External events — how do they relate to the issue? (leave blank if not applicable)',
+      text: 'Weather events — how do they relate to the issue? (leave blank if not applicable)',
       columns: timelineColsWithDays(0.6),
       rows: [
         { id: 'storm', label: 'Storm or lightning', effects: { R22: 1, R6: 1, R13: 1 } },
         { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
         { id: 'heat', label: 'Heatwave or drought', effects: { R41: 1 } },
         { id: 'outage', label: 'Power outage', effects: { R13: 1, R23: 1 } },
+      ],
+    },
+    {
+      id: 'Q11b',
+      effort: 4,
+      stage: 2,
+      type: 'matrix',
+      text: 'Other external events — how do they relate to the issue? (leave blank if not applicable)',
+      columns: timelineColsWithDays(0.6),
+      rows: [
         { id: 'pests', label: 'Pests or rodents', effects: { R51: 1, R81: 1, R6: 1 } },
         { id: 'dig', label: 'Digging or vehicle', effects: { R51: 1, R61: 1, R62: 1, R81: 1 } },
       ],
