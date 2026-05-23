@@ -1,6 +1,6 @@
-# Irrigation Diagnostic — F-Code Specification
+# F-Code Specification
 
-**Version:** 1.0 (final)
+**Version:** 1.0 
 **Status:** canonical
 **Format:** dotted (`F<component>.<mode>.<instance>`)
 **Source of truth for migration:** the live `data.js` cause taxonomy
