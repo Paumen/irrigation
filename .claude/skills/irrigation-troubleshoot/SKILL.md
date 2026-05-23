@@ -106,15 +106,13 @@ Treat the top entries of `next` as the engine's recommended next questions. Trea
 
 ## Protocol
 
-1. **Open with intent.** If the user's first message doesn't make the problem clear, ask **one** open-ended text question to understand what they're seeing. Don't fire up the question loop yet.
+1. **Read `setup.yaml`.** It contains the homeowner's actual equipment models, install dates, zone count, pipe sizes, and wiring. Use it as the source of truth for anything physical about this specific system.
 
-2. **Read `setup.yaml`.** It contains the homeowner's actual equipment models, install dates, zone count, pipe sizes, and wiring. Use it as the source of truth for anything physical about this specific system.
+2. **Bootstrap the engine.** Call the engine tool with empty `answers` to get the initial ranking and recommended first question.
 
-3. **Bootstrap the engine.** Call the engine tool with empty `answers` to get the initial ranking and recommended first question.
-
-4. **Loop.** Each round:
+3. **Loop.** Each round:
    - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below). For low-effort questions, you can ask 2–4 at once, especially in the first round(s) and if question relevance is high.
-   - If `relevancy` is `low`, `mid` or `null` and at least 5 questions have been answered, **exit the loop** and continue at step 5.
+   - If `relevancy` is `low`, `mid` or `null` and at least 4 questions have been answered, **exit the loop** and continue at step 5.
    - Map the user's pick back to the answer shape (see *Answer shapes*), add it to `answers`, and call the tool again.
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.
    - Between rounds, if more than 3 questions are answered, surface a short list of the current top three causes so the user sees the hypothesis narrowing.
