@@ -487,18 +487,46 @@ images:
     relates: MP Rotator nozzle install / removal / arc-adjust; this homeowner's Z1 and Z4 use MP Rotators on Pro-Spray PRS40 bodies
     used_in: []
 
-  IMG.head-component-to-identify:
-    file: media/head-component-to-identify.jpg
-    caption: TO IDENTIFY — small white plastic part with a curved seat and side loop; possibly a riser-pull tool, cap retainer, or accessory clip. Caption stub only; verify before surfacing to a user.
+  IMG.rotor-nozzle-insertion-collar:
+    file: media/rotor-nozzle-insertion-collar.jpg
+    caption: Hunter nozzle insertion collar (P/N 123200) — white plastic sleeve that clips around the riser body to hold the rotor cap accessible while installing or swapping a nozzle.
     subjects: [heads]
-    relates: TO IDENTIFY — model and use not yet confirmed; do not surface in playbooks until captioned properly
+    relates: rotor nozzle install procedure (3 steps); pair with rotor-nozzle-install-step-1/2/3 and rotor-adjustment-key-plastic
     used_in: []
 
-  IMG.rain-sensor-internal-component:
-    file: media/rain-sensor-internal-component.jpg
-    caption: TO IDENTIFY (likely) — small white plastic component with a central stake and two retaining rings; appears to be the internal disc-stack / switch-arm assembly from a Mini-Clik or WM-CLIK rain sensor, but identification is not fully confirmed.
-    subjects: [controller]
-    relates: TO IDENTIFY — provisional ID based on batch context (3 WM-CLIK photos in the same batch); verify before surfacing
+  IMG.rotor-nozzle-install-step-1:
+    file: media/rotor-nozzle-install-step-1.jpg
+    caption: Rotor nozzle install — step 1 — insert the plastic end of the Hunter adjustment wrench into the lifting socket on the rotor cap and turn 90°. Pulling up on the riser then opens access to the nozzle port.
+    subjects: [heads]
+    relates: rotor nozzle install procedure; uses rotor-adjustment-key-plastic and rotor-nozzle-insertion-collar
+    used_in: []
+
+  IMG.rotor-nozzle-install-step-2:
+    file: media/rotor-nozzle-install-step-2.jpg
+    caption: Rotor nozzle install — step 2 — first check the nozzle screw isn't blocking the socket, then slip the (blue) nozzle into the nozzle socket; the socket is angled up 25°. The white nozzle insertion collar holds the riser open.
+    subjects: [heads]
+    relates: rotor nozzle install procedure; nozzle socket angle (25°); the triangle on the rubber cover marks the direction of water flow when the rotor is retracted
+    used_in: []
+
+  IMG.rotor-nozzle-install-step-3:
+    file: media/rotor-nozzle-install-step-3.jpg
+    caption: Rotor nozzle install — step 3 — turn the radius reduction / nozzle adjustment screw a quarter turn clockwise to lock the nozzle in place. More than a quarter turn reduces the radius.
+    subjects: [heads]
+    relates: rotor nozzle install procedure; do not over-turn the radius reduction screw (limits throw)
+    used_in: []
+
+  IMG.rotor-adjustment-key-plastic:
+    file: media/rotor-adjustment-key-plastic.jpg
+    caption: Hunter rotor adjustment key (plastic variant) — engages the lifting socket and the arc / flow-stop / radius sockets on PGP and I-20 rotor caps; same function as the metal Hunter wrench shown elsewhere.
+    subjects: [heads]
+    relates: rotor arc / radius / flow-stop adjustment; the metal-wrench equivalent is depicted in rotor-arc-wrench.png, rotor-adjustment-arrows.png, and rotor-lifting-socket.png — pair with pgp-rotor-cap-callouts for "what each slot does"; this homeowner's I-20-04-SS uses the same key pattern as the PGP
+    used_in: []
+
+  IMG.pgp-rotor-cap-callouts:
+    file: media/pgp-rotor-cap-callouts.png
+    caption: Hunter PGP rotor top callouts — Lifting Socket (centre top), Adjustment Socket with +/- (left), Nozzle / Range Adjustment Screw (top right), Model Identification (right). Same slot layout as the I-20.
+    subjects: [heads]
+    relates: identify where the adjustment key engages on the rotor cap; pair with rotor-adjustment-key-plastic; applies to this homeowner's I-20-04-SS as well as the PGP shown
     used_in: []
 
   IMG.pressure-gauge-test-on-riser:
