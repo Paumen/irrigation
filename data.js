@@ -201,7 +201,7 @@ window.DATA = {
 
     {
       id: 'Q5',
-      effort: 3, // open the manual hose at the pump and look
+      effort: 4, // open the manual hose at the pump and look
       stage: 1,
       text: 'Open the manual hose — how is the flow?',
       highlight: ['pump'],
@@ -521,7 +521,7 @@ window.DATA = {
       ],
     },
     {
-  "id": "Q20", "effort": 2, "stage": 3,
+  "id": "Q20", "effort": 2, "stage": 1,
   "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
   "highlight": ["relay", "pump"],
   "options": [
@@ -532,7 +532,7 @@ window.DATA = {
   ]
     },
     {
-  "id": "Q21", "effort": 2, "stage": 3,
+  "id": "Q21", "effort": 2, "stage": 1,
   "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
   "highlight": ["valves"],
   "options": [
