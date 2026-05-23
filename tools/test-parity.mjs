@@ -43,6 +43,10 @@ const CASES = [
   { Q2: 2 }, // multiple zones
   { Q2: 1 }, // different zone
   { Q18: 1 }, // around valves or drips at heads when off (merged)
+  { Q22: [0] }, // multi: rogue / wrong-zone observation alone
+  { Q22: [0, 2] }, // multi: rogue zone + activated zone running (rules out swap)
+  { Q22: [1, 2] }, // multi: valve leak + activated zone running
+  { Q22: [] }, // multi: empty array (treated as unanswered)
 ];
 
 const EPS = 1e-9;

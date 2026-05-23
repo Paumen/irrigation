@@ -328,7 +328,29 @@
           </div>
         </template>
 
-        <template x-if="activeQuestion.type === 'matrix'">
+        <template x-if="activeQuestion.type === 'multi'">
+          <div data-q="options">
+            <template x-for="(opt, i) in activeQuestion.options" :key="i">
+              <label class="option">
+                <input
+                  type="checkbox"
+                  :checked="isSelectedMulti(i)"
+                  @click="handleAnswerMulti(i)"
+                />
+                <template x-if="opt.icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    x-html="OPT_ICONS[opt.icon] || ''"
+                  ></svg>
+                </template>
+                <span x-text="opt.label"></span>
+              </label>
+            </template>
+          </div>
+        </template>
+
+        <template x-if="activeQuestion.type === 'matrix' || activeQuestion.type === 'multi'">
           <footer>
             <button
               type="button"

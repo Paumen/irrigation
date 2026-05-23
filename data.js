@@ -545,7 +545,7 @@ window.DATA = {
   id: 'Q22', effort: 5, stage: 1,
   text: 'Run a zone, open valve box, look at valves and heads?',
   multiselect: true,
-  highlight: ['valves', 'rotors'],
+  highlight: ['valves', 'rotor'],
   options: [
     { label: "water coming out of a zone you didn't activate", effects: { R61: 1.0, R63: 0.4, R74: 1.0, R72: 0.6, R73: 0.4, R4: -0.2, R5: -0.2 } },
     { label: 'water coming out of valve', effects: { R73: 1.0, R71: 0.4, R72: 0.2 } },

@@ -75,7 +75,8 @@ class Engine:
     def _build_questions(self) -> list[dict]:
         result = []
         for q in self._data["questions"]:
-            nxt = {**q, "type": q.get("type", "options")}
+            base_type = q.get("type") or ("multi" if q.get("multiselect") else "options")
+            nxt = {**q, "type": base_type}
             if nxt["type"] == "matrix":
                 nxt["colMul"] = {c["id"]: c["mult"] for c in nxt["columns"]}
                 nxt["rows"] = [
@@ -104,10 +105,18 @@ class Engine:
     def _score(self, q: dict, ans: Any, s: dict[str, float]) -> None:
         t = q["type"]
         if t == "options":
-            if not isinstance(ans, int) or ans < 0 or ans >= len(q["options"]):
+            if not isinstance(ans, int) or isinstance(ans, bool) or ans < 0 or ans >= len(q["options"]):
                 return
             for cid, delta in q["options"][ans]["effects"].items():
                 s[cid] = s.get(cid, 0) + delta
+        elif t == "multi":
+            if not isinstance(ans, list):
+                return
+            for i in ans:
+                if not isinstance(i, int) or isinstance(i, bool) or i < 0 or i >= len(q["options"]):
+                    continue
+                for cid, delta in q["options"][i]["effects"].items():
+                    s[cid] = s.get(cid, 0) + delta
         elif t == "matrix":
             if not isinstance(ans, dict):
                 return
@@ -139,6 +148,15 @@ class Engine:
                 if spread > 0:
                     breadth += 1
                 D += spread
+            return D + BREADTH_WEIGHT * breadth
+        if t == "multi":
+            D = 0.0
+            breadth = 0
+            for cause_id in ids:
+                sum_abs = sum(abs(o["effects"].get(cause_id, 0)) for o in q["options"])
+                if sum_abs > 0:
+                    breadth += 1
+                D += sum_abs
             return D + BREADTH_WEIGHT * breadth
         if t == "matrix":
             mults = [c["mult"] for c in q["columns"]]
@@ -172,6 +190,8 @@ class Engine:
         t = q["type"]
         if t == "options":
             return True
+        if t == "multi":
+            return isinstance(ans, list) and len(ans) > 0
         if t == "matrix":
             return isinstance(ans, dict)
         if t == "ages":

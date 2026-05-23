@@ -69,7 +69,8 @@
 
     const QUESTIONS = DATA.questions
       .map((q) => {
-        const next = { ...q, type: q.type || 'options' };
+        const baseType = q.type || (q.multiselect ? 'multi' : 'options');
+        const next = { ...q, type: baseType };
         if (next.type === 'matrix') {
           next.colMul = Object.fromEntries(next.columns.map((c) => [c.id, c.mult]));
           next.rows = next.rows.map((r) => ({ ...r, effects: expandEffects(r.effects) }));
@@ -79,6 +80,7 @@
             steps: r.steps.map((s) => ({ ...s, effects: expandEffects(s.effects) })),
           }));
         } else {
+          // 'options' and 'multi' share the same option shape
           next.options = next.options.map((o) => ({ ...o, effects: expandEffects(o.effects) }));
         }
         return next;
@@ -112,6 +114,34 @@
         },
         isAnswered() {
           return true;
+        },
+      },
+      multi: {
+        score(q, ans, s) {
+          if (!Array.isArray(ans)) return;
+          for (const i of ans) {
+            const opt = q.options[i];
+            if (!opt) continue;
+            for (const [id, delta] of Object.entries(opt.effects)) {
+              s[id] = (s[id] || 0) + delta;
+            }
+          }
+        },
+        // Multiselect spread = sum of |effects| across options (max subset
+        // sum minus min subset sum = sum of positives + |sum of negatives|).
+        discriminator(q, ids) {
+          let D = 0;
+          let breadth = 0;
+          for (const causeId of ids) {
+            let sumAbs = 0;
+            for (const opt of q.options) sumAbs += Math.abs(opt.effects[causeId] || 0);
+            if (sumAbs > 0) breadth++;
+            D += sumAbs;
+          }
+          return D + BREADTH_WEIGHT * breadth;
+        },
+        isAnswered(_q, ans) {
+          return Array.isArray(ans) && ans.length > 0;
         },
       },
       matrix: {

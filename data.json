@@ -1221,7 +1221,7 @@
       "multiselect": true,
       "highlight": [
         "valves",
-        "rotors"
+        "rotor"
       ],
       "options": [
         {
