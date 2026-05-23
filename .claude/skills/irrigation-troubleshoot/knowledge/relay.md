@@ -1,6 +1,6 @@
 ---
 subject: Pump start relay (Hunter PSR-52)
-root_cause_area: R3
+root_cause_area: F4
 serves: [troubleshooting, install, maintain]
 system_note: >
   Hunter PSR 52, indoor shed, installed 2020-08. 24 V coil driven from the controller P/MV
@@ -9,7 +9,7 @@ system_note: >
 coverage: power/controller wiring, distance, and chattering are well covered; deeper
   relay-internal failure modes beyond chattering/contactor fouling are not.
 summary: Pump start relay reference — what it does, power and controller wiring, distance limits, and the chattering fault.
-read_when: engine points at the relay (R3); pump won't start while the controller calls; relay chatters/buzzes; installing or rewiring the relay.
+read_when: engine points at the relay (F4); pump won't start while the controller calls; relay chatters/buzzes; installing or rewiring the relay.
 contents:
   - what the relay does (24 V coil switches 230 V to the pump)
   - safety (mains-side work is electrician-only)

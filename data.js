@@ -48,28 +48,47 @@ window.DATA = {
   // the maximum breadth term (21 causes * 1.5).
   effortWeight: 5.0,
 
+  // Cause taxonomy: dotted F-codes per docs/fcode_spec.md.
+  // F<component>.<mode>[.<instance>]. Parent is always flat at the
+  // component level (e.g. parent: 'F7' for both F7.1.1 and F7.4).
   causes: [
-    { id: 'R11', parent: 'R1', baseline: 1.2, label: 'Misconfiguration' },
-    { id: 'R12', parent: 'R1', baseline: 1.2, label: 'App failure (bug, etc)' },
-    { id: 'R13', parent: 'R1', baseline: 1.2, label: 'Cloud / connectivity' },
-    { id: 'R22', parent: 'R2', baseline: 1.2, label: 'Controller hardware or power failure' },
-    { id: 'R23', parent: 'R2', baseline: 1.2, label: 'Controller firmware / config' },
-    { id: 'R31', parent: 'R3', baseline: 1.2, label: 'Relay fault' },
-    { id: 'R41', parent: 'R4', baseline: 1.2, label: 'Pump suction-side fault' },
-    { id: 'R42', parent: 'R4', baseline: 1.0, label: 'Pump hardware failure' },
-    { id: 'R51', parent: 'R5', baseline: 0.8, label: 'Main hose 32mm leak / break' },
-    { id: 'R52', parent: 'R5', baseline: 1.0, label: 'Main hose 32mm air / debris clog' },
-    { id: 'R61', parent: 'R6', baseline: 1.0, label: 'Per-zone hot conductor fault / miswire' },
-    { id: 'R62', parent: 'R6', baseline: 0.8, label: 'Common wire fault' },
-    { id: 'R63', parent: 'R6', baseline: 0.8, label: 'Connection / splice fault (corrosion, loose)' },
-    { id: 'R71', parent: 'R7', baseline: 1.0, label: 'Solenoid failure' },
-    { id: 'R72', parent: 'R7', baseline: 1.2, label: 'Diaphragm failure' },
-    { id: 'R73', parent: 'R7', baseline: 0.8, label: 'Valve body / seal failure' },
-    { id: 'R74', parent: 'R7', baseline: 1.0, label: 'Valve / manual-bleed misconfiguration' },
-    { id: 'R81', parent: 'R8', baseline: 0.8, label: 'Hoses 25mm / fitting damage' },
-    { id: 'R82', parent: 'R8', baseline: 0.8, label: 'Hoses 25mm air / debris clog' },
-    { id: 'R91', parent: 'R9', baseline: 1.2, label: 'Rotor debris, nozzle, or pressure regulator' },
-    { id: 'R92', parent: 'R9', baseline: 1.2, label: 'Rotor stuck / misconfigured' },
+    { id: 'F1.5',   parent: 'F1', baseline: 1.2, label: 'App software error (bug)' },
+    { id: 'F1.8',   parent: 'F1', baseline: 1.2, label: 'App external fault (no wifi / cloud connectivity)' },
+
+    { id: 'F2.1',   parent: 'F2', baseline: 0.8, label: 'Controller physical defect (unit, incl. touchscreen)' },
+    { id: 'F2.5',   parent: 'F2', baseline: 0.6, label: 'Controller software error (firmware)' },
+    { id: 'F2.6',   parent: 'F2', baseline: 1.8, label: 'Controller settings (schedule, zone map, master-valve / pump-start)' },
+    { id: 'F2.8',   parent: 'F2', baseline: 0.4, label: 'Controller external fault (no supply power — socket / plug / breaker)' },
+
+    { id: 'F3.1.1', parent: 'F3', baseline: 1.0, label: 'Wiring zone conductor (break / cut)' },
+    { id: 'F3.1.2', parent: 'F3', baseline: 0.8, label: 'Wiring common wire (break / cut)' },
+    { id: 'F3.1.3', parent: 'F3', baseline: 0.8, label: 'Wiring splice (corroded → open / intermittent)' },
+    { id: 'F3.4',   parent: 'F3', baseline: 0,   label: 'Wiring install error (loose / not isolated)' },
+
+    { id: 'F4.1',   parent: 'F4', baseline: 1.2, label: 'Relay physical defect' },
+    { id: 'F4.4',   parent: 'F4', baseline: 0,   label: 'Relay install error' },
+
+    { id: 'F5.1',   parent: 'F5', baseline: 1.0, label: 'Pump physical defect (motor, cap, impeller)' },
+    { id: 'F5.3',   parent: 'F5', baseline: 1.2, label: 'Pump suction-side obstruction (lost prime / foot-valve clog)' },
+    { id: 'F5.8',   parent: 'F5', baseline: 0,   label: 'Pump external fault (low well level)' },
+
+    { id: 'F6.1',   parent: 'F6', baseline: 0.8, label: 'Main hose 32mm physical defect (leak / break)' },
+    { id: 'F6.3',   parent: 'F6', baseline: 1.0, label: 'Main hose 32mm obstruction (air / debris)' },
+
+    { id: 'F7.1.1', parent: 'F7', baseline: 0.5, label: 'Solenoid coil (open / shorted)' },
+    { id: 'F7.1.2', parent: 'F7', baseline: 0.7, label: 'Valve diaphragm (tear / perished)' },
+    { id: 'F7.1.3', parent: 'F7', baseline: 0.8, label: 'Valve body / seat damage' },
+    { id: 'F7.3.1', parent: 'F7', baseline: 0.5, label: 'Solenoid plunger stuck / port clog' },
+    { id: 'F7.3.2', parent: 'F7', baseline: 0.5, label: 'Diaphragm metering port / screen debris' },
+    { id: 'F7.4',   parent: 'F7', baseline: 1.0, label: 'Valve install error (mis-set / assembly fault)' },
+
+    { id: 'F8.1',   parent: 'F8', baseline: 0.8, label: 'Zone hose 25mm physical defect (leak / break)' },
+    { id: 'F8.3',   parent: 'F8', baseline: 0.8, label: 'Zone hose 25mm obstruction (air / debris)' },
+
+    { id: 'F9.1.1', parent: 'F9', baseline: 0.6, label: 'Head pressure regulator (PRS40)' },
+    { id: 'F9.1.2', parent: 'F9', baseline: 0.4, label: 'Head gear-drive seized (rotor stuck; weak spring)' },
+    { id: 'F9.3',   parent: 'F9', baseline: 0.6, label: 'Head obstruction (debris / filter / nozzle clog)' },
+    { id: 'F9.4',   parent: 'F9', baseline: 0.8, label: 'Head install error (arc / range mis-set, nozzle mismatch)' },
   ],
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
@@ -83,22 +102,22 @@ window.DATA = {
         {
           label: 'All 4 zones fail',
           icon: 'scope-all',
-          effects: { R1: 0.2, R2: 0.2, R31: 0.2, R4: 0.4, R5: 0.4, R62: 0.2 },
+          effects: { 'F1': 0.2, 'F2': 0.2, 'F4.1': 0.2, 'F5': 0.4, 'F6': 0.4, 'F3.1.2': 0.2 },
         },
         {
           label: '2–3 zones fail',
           icon: 'scope-multi',
-          effects: { R4: 0.2, R5: 0.2, R62: 0.2 },
+          effects: { 'F5': 0.2, 'F6': 0.2, 'F3.1.2': 0.2 },
         },
         {
           label: 'One zone fails',
           icon: 'scope-single',
-          effects: { R61: 0.2, R62: -2.0, R63: 0.2, R7: 0.2, R8: 0.2 },
+          effects: { 'F3.1.1': 0.2, 'F3.1.2': -2.0, 'F3.1.3': 0.2, 'F7': 0.2, 'F8': 0.2 },
         },
         {
           label: 'One rotor fails',
           icon: 'scope-one',
-          effects: { R62: -2.0, R9: 1.6 },
+          effects: { 'F3.1.2': -2.0, 'F9': 1.6 },
         },
       ],
     },
@@ -112,22 +131,22 @@ window.DATA = {
         {
           label: 'At the selected zone (correct)',
           icon: 'flow-normal',
-          effects: { R6: -0.4, R74: -0.4, R11: -0.2, R23: -0.2, R71: -0.2, R63: -0.2 },
+          effects: { 'F3': -0.4, 'F7.4': -0.4, 'F2.6': -0.4, 'F2.5': -0.2, 'F7.1.1': -0.2, 'F7.3.1': -0.2, 'F3.1.3': -0.2 },
         },
         {
           label: 'At a different zone',
           icon: 'scope-one',
-          effects: { R61: 0.6, R63: 0.4, R74: 0.4, R11: 0.4, R72: 0.2 },
+          effects: { 'F3.1.1': 0.6, 'F3.1.3': 0.4, 'F7.4': 0.4, 'F2.6': 0.4, 'F7.1.2': 0.2, 'F7.3.2': 0.2 },
         },
         {
           label: 'At several zones at once',
           icon: 'scope-multi',
-          effects: { R72: 0.6, R62: 0.4, R74: 0.4, R23: 0.4, R6: 0.4, R4: 0.2 },
+          effects: { 'F7.1.2': 0.6, 'F7.3.2': 0.6, 'F3.1.2': 0.4, 'F7.4': 0.4, 'F2.5': 0.2, 'F2.6': 0.4, 'F3': 0.4, 'F5': 0.2 },
         },
         {
           label: 'No water anywhere',
           icon: 'flow-none',
-          effects: { R1: 0.6, R2: 0.6, R31: 0.6, R41: 0.4, R42: 0.6, R5: 0.4, R6: 0.4, R71: 0.4 },
+          effects: { 'F1': 0.6, 'F2': 0.6, 'F4.1': 0.6, 'F5.3': 0.4, 'F5.1': 0.6, 'F6': 0.4, 'F3': 0.4, 'F7.1.1': 0.4, 'F7.3.1': 0.4 },
         },
       ],
     },
@@ -142,22 +161,22 @@ window.DATA = {
         {
           label: 'Normal and steady',
           icon: 'flow-normal',
-          effects: { R1: 0.6, R4: -0.4, R5: -0.4, R6: -0.4, R7: -0.4, R8: -0.4, R9: -0.4 },
+          effects: { 'F1': 0.6, 'F5': -0.4, 'F6': -0.4, 'F3': -0.4, 'F7': -0.4, 'F8': -0.4, 'F9': -0.4, 'F2.6': 0.6 },
         },
         {
           label: 'Weak throughout',
           icon: 'flow-weak',
-          effects: { R4: 0.2, R52: 0.2, R6: 0.2, R72: 0.2, R74: 0.2, R8: 0.2, R9: 0.4 },
+          effects: { 'F5': 0.2, 'F6.3': 0.2, 'F3': 0.2, 'F7.1.2': 0.2, 'F7.3.2': 0.2, 'F7.4': 0.2, 'F8': 0.2, 'F9': 0.4 },
         },
         {
           label: 'Ramps up or down during the run',
           icon: 'flow-decline',
-          effects: { R4: 0.6, R41: 0.4, R52: 0.4, R82: 0.4 },
+          effects: { 'F5': 0.6, 'F5.3': 0.4, 'F6.3': 0.4, 'F8.3': 0.4 },
         },
         {
           label: 'Erratic — random surges or drops',
           icon: 'pat-noise',
-          effects: { R1: 0.4, R23: 0.4, R4: 0.4, R51: 0.4, R52: 0.2, R6: 0.4, R71: 0.2, R81: 0.4, R91: 0.6 },
+          effects: { 'F1': 0.4, 'F2.5': 0.4, 'F2.6': 0.6, 'F5': 0.4, 'F6.1': 0.4, 'F6.3': 0.2, 'F3': 0.4, 'F7.1.1': 0.2, 'F7.3.1': 0.2, 'F8.1': 0.4, 'F9.1.1': 0.2, 'F9.3': 0.6 },
         },
       ],
     },
@@ -171,32 +190,33 @@ window.DATA = {
       options: [
         {
           label: 'Runs smoothly',
-          effects: { R4: -0.4, R5: 0.2, R6: 0.2, R7: 0.2, R8: 0.2, R9: 0.4 },
+          effects: { 'F5': -0.4, 'F6': 0.2, 'F3': 0.2, 'F7': 0.2, 'F8': 0.2, 'F9': 0.4 },
         },
         {
           label: 'Hums and trips the breaker',
-          effects: { R31: 1.0, R42: 1.0 },
+          effects: { 'F4.1': 1.0, 'F5.1': 1.0 },
         },
         {
           label: 'Stays silent',
-          effects: { R1: 0.4, R2: 1.0, R31: 0.6, R42: 0.6 },
+          // §5.5 parent-broadcast asymmetry: drop F2 broadcast, hit F2.1/F2.8 only.
+          effects: { 'F1': 0.4, 'F2.1': 1.0, 'F2.8': 1.0, 'F4.1': 0.6, 'F5.1': 0.6 },
         },
         {
           label: 'Short-cycles or makes no pressure',
-          effects: { R4: 0.6, R51: 0.4 },
+          effects: { 'F5': 0.6, 'F6.1': 0.4 },
         },
       ],
     },
     {
-  "id": "Q4", "effort": 3, "stage": 1,
-  "text": "Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?",
-  "highlight": ["sw", "ctrl"],
-  "options": [
-    { "label": "All three behave the same", "effects": { "R11": -0.2, "R12": -0.6, "R13": -0.6 } },
-    { "label": "Touchscreen OK, app fails both networks", "effects": { "R12": 1.0, "R13": 0.4 } },
-    { "label": "App OK on Wi-Fi, fails on cellular", "effects": { "R13": 1.6, "R12": -0.4 } },
-    { "label": "Nothing works on any path", "effects": { "R2": 0.4, "R11": 0.2, "R12": -0.4, "R13": -0.4 } }
-  ]
+      id: 'Q4', effort: 3, stage: 1,
+      text: 'Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?',
+      highlight: ['sw', 'ctrl'],
+      options: [
+        { label: 'All three behave the same', effects: { 'F2.6': -0.2, 'F1.5': -0.6, 'F1.8': -0.6 } },
+        { label: 'Touchscreen OK, app fails both networks', effects: { 'F1.5': 1.0, 'F1.8': 0.4 } },
+        { label: 'App OK on Wi-Fi, fails on cellular', effects: { 'F1.8': 1.6, 'F1.5': -0.4 } },
+        { label: 'Nothing works on any path', effects: { 'F2': 0.4, 'F2.6': 0.2, 'F1.5': -0.4, 'F1.8': -0.4 } },
+      ],
     },
 
     {
@@ -208,15 +228,15 @@ window.DATA = {
       options: [
         {
           label: 'Strong and steady',
-          effects: { R4: -0.6, R5: -1, R6: 0.2, R7: 0.4, R8: 0.4, R9: 0.4 },
+          effects: { 'F5': -0.6, 'F6': -1, 'F3': 0.2, 'F7': 0.4, 'F8': 0.4, 'F9': 0.4 },
         },
         {
           label: 'Weak or sputtering',
-          effects: { R41: 0.6, R42: 0.4, R5: 0.6 },
+          effects: { 'F5.3': 0.6, 'F5.1': 0.4, 'F6': 0.6 },
         },
         {
           label: 'None at all',
-          effects: { R4: 1.0, R5: 0.4 },
+          effects: { 'F5': 1.0, 'F6': 0.4 },
         },
       ],
     },
@@ -230,19 +250,19 @@ window.DATA = {
       options: [
         {
           label: 'Clear click',
-          effects: { R71: -0.6, R72: 0.4, R73: 0.4, R8: 0.4, R9: 0.6 },
+          effects: { 'F7.1.1': -0.6, 'F7.3.1': -0.6, 'F7.1.2': 0.4, 'F7.3.2': 0.4, 'F7.1.3': 0.4, 'F8': 0.4, 'F9': 0.6 },
         },
         {
           label: 'Buzz or hum',
-          effects: { R6: 1, R71: 0.4 },
+          effects: { 'F3': 1, 'F7.3.1': 0.4 },
         },
         {
           label: 'Weak click',
-          effects: { R6: 0.2, R71: 0.2 },
+          effects: { 'F3': 0.2, 'F7.1.1': 0.2, 'F7.3.1': 0.2 },
         },
         {
           label: 'Silent — no click',
-          effects: { R6: 0.4, R71: 0.6 },
+          effects: { 'F3': 0.4, 'F7.1.1': 0.6, 'F7.3.1': 0.2 },
         },
       ],
     },
@@ -255,11 +275,11 @@ window.DATA = {
       options: [
         {
           label: 'Controller restart briefly fixed it',
-          effects: { R12: 0.6, R13: 0.6, R23: 1.0 },
+          effects: { 'F1.5': 0.6, 'F1.8': 0.6, 'F2.5': 1.0 },
         },
         {
           label: 'Pump restart briefly fixed it',
-          effects: { R31: 0.4, R42: 0.4 },
+          effects: { 'F4.1': 0.4, 'F5.1': 0.4 },
         },
         {
           label: 'Tried — no effect',
@@ -282,22 +302,22 @@ window.DATA = {
         {
           label: 'Sudden',
           icon: 'pat-sudden',
-          effects: { R22: 0.4, R31: 0.2, R51: 0.2, R63: 0.2, R71: 0.2, R9: 0.4 },
+          effects: { 'F2.1': 0.4, 'F2.8': 0.4, 'F4.1': 0.2, 'F6.1': 0.2, 'F3.1.3': 0.2, 'F7.1.1': 0.2, 'F7.3.1': 0.2, 'F9': 0.4 },
         },
         {
           label: 'Gradual',
           icon: 'pat-gradual-all',
-          effects: { R4: 0.4, R52: 0.4, R72: 0.4, R73: 0.4, R91: 0.4 },
+          effects: { 'F5': 0.4, 'F6.3': 0.4, 'F7.1.2': 0.2, 'F7.3.2': 0.4, 'F7.1.3': 0.4, 'F9.1.1': 0.4, 'F9.3': 0.4 },
         },
         {
           label: 'Intermittent',
           icon: 'pat-gradual-int',
-          effects: { R11: 0.2, R13: 0.2, R4: 0.2, R6: 0.2, R7: 0.2 },
+          effects: { 'F2.6': 0.2, 'F1.8': 0.2, 'F5': 0.2, 'F3': 0.2, 'F7': 0.2 },
         },
         {
           label: 'No clear pattern',
           icon: 'pat-noise',
-          effects: { R13: 0.2, R42: 0.2, R61: 0.4, R62: 0.4 },
+          effects: { 'F1.8': 0.2, 'F5.1': 0.2, 'F3.1.1': 0.4, 'F3.1.2': 0.4 },
         },
       ],
     },
@@ -316,49 +336,50 @@ window.DATA = {
           label: 'Pump',
           model: 'Well pump',
           curve: 'standard',
-          causes: ['R41', 'R42'],
+          causes: ['F5.3', 'F5.1'],
         },
         {
           id: 'valves',
           label: 'Valves',
           model: 'Hunter PGV-101G',
           curve: 'fast',
-          causes: ['R71', 'R72', 'R73'],
+          causes: ['F7.1.1', 'F7.3.1', 'F7.1.2', 'F7.3.2', 'F7.1.3'],
         },
         {
           id: 'relay',
           label: 'Start-Relay',
           model: 'Hunter',
           curve: 'standard',
-          causes: ['R31'],
+          causes: ['F4.1'],
         },
         {
           id: 'ctrl',
           label: 'Controller',
           model: 'RainMachine HD-16 Touch',
           curve: 'standard',
-          causes: ['R12', 'R22', 'R23'],
+          causes: ['F2.1', 'F2.5'],
         },
         {
           id: 'rotor',
           label: 'Rotors',
           model: 'Hunter I-20 + MP rotators',
           curve: 'standard',
-          causes: ['R91'],
+          // §5.5 downstream cleanup: drop F9.3 — debris not age-correlated.
+          causes: ['F9.1.1'],
         },
         {
           id: 'mainHose',
           label: 'Main hose',
           model: 'PE 32 mm (pump → valve box)',
           curve: 'standard',
-          causes: ['R51'],
+          causes: ['F6.1'],
         },
         {
           id: 'hose',
           label: 'Zone hose',
           model: 'PE 25 mm (zones)',
           curve: 'standard',
-          causes: ['R81'],
+          causes: ['F8.1'],
         },
       ],
     },
@@ -370,10 +391,10 @@ window.DATA = {
       text: 'Recent hydraulic work — how does it relate to the issue? (leave blank if not applicable)',
       columns: TIMELINE_COLS,
       rows: [
-        { id: 'pump', label: 'Pump', effects: { R41: 0.4, R42: 1.0 } },
-        { id: 'valves', label: 'Valves', effects: { R7: 1, R6: 0.6 } },
-        { id: 'rotor', label: 'Rotors', effects: { R91: 0.6, R92: 1.0 } },
-        { id: 'hose', label: 'Hoses', effects: { R8: 1, R5: 1 } },
+        { id: 'pump', label: 'Pump', effects: { 'F5.3': 0.4, 'F5.1': 1.0 } },
+        { id: 'valves', label: 'Valves', effects: { 'F7': 1, 'F3': 0.6 } },
+        { id: 'rotor', label: 'Rotors', effects: { 'F9.1.1': 0.4, 'F9.3': 0.6, 'F9.1.2': 0.2, 'F9.4': 1.0 } },
+        { id: 'hose', label: 'Hoses', effects: { 'F8': 1, 'F6': 1 } },
       ],
     },
     {
@@ -384,9 +405,9 @@ window.DATA = {
       text: 'Recent electrical/control work — how does it relate to the issue? (leave blank if not applicable)',
       columns: TIMELINE_COLS,
       rows: [
-        { id: 'ctrl', label: 'Controller', effects: { R11: 1, R22: 1, R6: 0.6 } },
-        { id: 'relay', label: 'Start-Relay', effects: { R31: 1, R6: 0.6 } },
-        { id: 'wiring', label: 'Wiring', effects: { R6: 1 } },
+        { id: 'ctrl', label: 'Controller', effects: { 'F2.6': 1, 'F2.1': 1.0, 'F2.8': 0.4, 'F3': 0.6 } },
+        { id: 'relay', label: 'Start-Relay', effects: { 'F4.1': 1, 'F3': 0.6 } },
+        { id: 'wiring', label: 'Wiring', effects: { 'F3': 1 } },
       ],
     },
     {
@@ -397,9 +418,9 @@ window.DATA = {
       text: 'Weather events — how do they relate to the issue? (leave blank if not applicable)',
       columns: timelineColsWithDays(0.6),
       rows: [
-        { id: 'storm', label: 'Storm or lightning', effects: { R22: 1, R6: 1, R13: 1 } },
-        { id: 'freeze', label: 'Freeze', effects: { R51: 1, R73: 1, R81: 1 } },
-        { id: 'heat', label: 'Heatwave or drought', effects: { R41: 1 } },
+        { id: 'storm', label: 'Storm or lightning', effects: { 'F2.1': 0.2, 'F2.8': 1.0, 'F3': 1, 'F1.8': 1 } },
+        { id: 'freeze', label: 'Freeze', effects: { 'F6.1': 1, 'F7.1.3': 1, 'F8.1': 1 } },
+        { id: 'heat', label: 'Heatwave or drought', effects: { 'F5.3': 1 } },
       ],
     },
     {
@@ -410,9 +431,9 @@ window.DATA = {
       text: 'Other external events — how do they relate to the issue? (leave blank if not applicable)',
       columns: timelineColsWithDays(0.6),
       rows: [
-        { id: 'outage', label: 'Power outage', effects: { R13: 1, R23: 1 } },
-        { id: 'pests', label: 'Pests or rodents', effects: { R51: 1, R81: 1, R6: 1 } },
-        { id: 'dig', label: 'Digging or vehicle', effects: { R51: 1, R61: 1, R62: 1, R81: 1 } },
+        { id: 'outage', label: 'Power outage', effects: { 'F1.8': 1, 'F2.5': 1.0, 'F2.6': 0.2 } },
+        { id: 'pests', label: 'Pests or rodents', effects: { 'F6.1': 1, 'F8.1': 1, 'F3': 1 } },
+        { id: 'dig', label: 'Digging or vehicle', effects: { 'F6.1': 1, 'F3.1.1': 1, 'F3.1.2': 1, 'F8.1': 1 } },
       ],
     },
 
@@ -426,15 +447,16 @@ window.DATA = {
       options: [
         {
           label: 'Yes — zone runs',
-          effects: { R6: 0.6, R71: 0.6, R7: -1.4, R8: -1.8, R9: -1.8 },
+          // §5.5 parent-broadcast asymmetry: drop F7 broadcast, hit hydraulic faults only.
+          effects: { 'F3': 0.6, 'F7.1.1': 0.6, 'F7.3.1': 0.6, 'F7.1.2': -1.4, 'F7.1.3': -1.4, 'F7.3.2': -1.4, 'F7.4': -1.4, 'F8': -1.8, 'F9': -1.8 },
         },
         {
           label: 'Partial — weak flow',
-          effects: { R6: 0.2, R71: 0.2, R72: 0.6, R73: 0.4, R4: 0.4, R52: 0.4, R82: 0.4, R9: 0.4 },
+          effects: { 'F3': 0.2, 'F7.1.1': 0.2, 'F7.3.1': 0.2, 'F7.1.2': 0.6, 'F7.3.2': 0.6, 'F7.1.3': 0.4, 'F5': 0.4, 'F6.3': 0.4, 'F8.3': 0.4, 'F9': 0.4 },
         },
         {
           label: 'No — nothing happens',
-          effects: { R5: 1.0, R72: 1.0, R73: 1.0, R8: 1.0 },
+          effects: { 'F6': 1.0, 'F7.1.2': 1.0, 'F7.3.2': 1.0, 'F7.1.3': 1.0, 'F8': 1.0 },
         },
       ],
     },
@@ -447,10 +469,13 @@ window.DATA = {
       options: [
         {
           label: '~24 VAC present',
-          effects: { R11: -0.4, R12: -0.4, R22: -0.2, R63: -0.4, R71: 0.4 },
+          effects: { 'F2.6': -0.4, 'F1.5': -0.4, 'F2.1': -0.2, 'F2.8': -0.2, 'F3.1.3': -0.4, 'F7.1.1': 0.2, 'F7.3.1': 0.4 },
         },
-        { label: '0 V', effects: { R11: 0.6, R22: 1.6, R63: 0.6, R7: -0.4 } },
-        { label: 'Low or fluctuating', effects: { R61: 0.6, R62: 0.6 } },
+        {
+          label: '0 V',
+          effects: { 'F2.6': 0.6, 'F2.1': 1.6, 'F3.1.3': 0.6, 'F7': -0.4 },
+        },
+        { label: 'Low or fluctuating', effects: { 'F3.1.1': 0.6, 'F3.1.2': 0.6 } },
       ],
     },
     {
@@ -460,9 +485,9 @@ window.DATA = {
       text: 'Field-wire resistance at the controller terminals?',
       highlight: ['ctrl', 'valves'],
       options: [
-        { label: 'Low and continuous', effects: { R6: -0.4 } },
-        { label: 'Open or high', effects: { R6: 1.6 } },
-        { label: 'Intermittent when wiggled', effects: { R6: 0.6 } },
+        { label: 'Low and continuous', effects: { 'F3': -0.4 } },
+        { label: 'Open or high', effects: { 'F3': 1.6 } },
+        { label: 'Intermittent when wiggled', effects: { 'F3': 0.6 } },
       ],
     },
     {
@@ -472,10 +497,10 @@ window.DATA = {
       text: 'Solenoid coil resistance (typically 20–60 Ω)?',
       highlight: ['valves'],
       options: [
-        { label: 'In range', effects: { R71: -1.0 } },
-        { label: 'Open or infinite', effects: { R71: 1.6, R62: 0.6 } },
-        { label: 'Near zero / very low', effects: { R71: 1.6 } },
-        { label: 'OK at coil, bad at controller', effects: { R61: 1.6 } },
+        { label: 'In range', effects: { 'F7.1.1': -1.0 } },
+        { label: 'Open or infinite', effects: { 'F7.1.1': 1.6, 'F3.1.2': 0.6 } },
+        { label: 'Near zero / very low', effects: { 'F7.1.1': 1.6 } },
+        { label: 'OK at coil, bad at controller', effects: { 'F3.1.1': 1.6 } },
       ],
     },
     {
@@ -487,9 +512,9 @@ window.DATA = {
       options: [
         {
           label: 'Yes — stays with the zone',
-          effects: { R6: 0.6, R7: -0.6, R8: 0.6 },
+          effects: { 'F3': 0.6, 'F7': -0.6, 'F8': 0.6 },
         },
-        { label: 'No — follows the valve', effects: { R7: 1.6 } },
+        { label: 'No — follows the valve', effects: { 'F7': 1.6 } },
       ],
     },
     {
@@ -499,8 +524,8 @@ window.DATA = {
       text: 'Open each valve and inspect the internals — what do you find?',
       highlight: ['valves'],
       options: [
-        { label: 'Intact, no debris', effects: { R72: -0.4, R73: -0.4 } },
-        { label: 'Damage or debris present', effects: { R72: 1, R73: 0.6 } },
+        { label: 'Intact, no debris', effects: { 'F7.1.2': -0.4, 'F7.3.2': -0.4, 'F7.1.3': -0.4 } },
+        { label: 'Damage or debris present', effects: { 'F7.1.2': 0.6, 'F7.3.2': 0.4, 'F7.1.3': 0.6 } },
       ],
     },
     {
@@ -512,23 +537,23 @@ window.DATA = {
       options: [
         {
           label: 'Along the main-line route',
-          effects: { R51: 1.6 },
+          effects: { 'F6.1': 1.6 },
         },
         {
           label: 'At the valve box, or drips from the heads when off',
-          effects: { R72: 0.4, R73: 1.6, R74: 1.6 },
+          effects: { 'F7.1.2': 0.4, 'F7.3.2': 0.2, 'F7.1.3': 1.6, 'F7.4': 1.6 },
         },
         {
           label: 'Along the zone lines',
-          effects: { R81: 1.6 },
+          effects: { 'F8.1': 1.6 },
         },
         {
           label: 'Nothing visible',
-          effects: { R51: -0.2, R72: -0.2, R73: -0.2, R74: -0.2, R81: -0.2 },
+          effects: { 'F6.1': -0.2, 'F7.1.2': -0.2, 'F7.3.2': -0.2, 'F7.1.3': -0.2, 'F7.4': -0.2, 'F8.1': -0.2 },
         },
       ],
     },
-    
+
     {
       id: 'Q19',
       effort: 1, // no flow meter installed; would need to install one
@@ -536,41 +561,41 @@ window.DATA = {
       text: 'Install flow meter, run a zone, does the flow meter read 1.0–3.0 m³/h?',
       highlight: ['pump'],
       options: [
-        { label: 'Yes — in range', effects: { R4: -0.4, R5: -0.4 } },
-        { label: 'No — out of range', effects: { R4: 0.4, R5: 0.6 } },
+        { label: 'Yes — in range', effects: { 'F5': -0.4, 'F6': -0.4 } },
+        { label: 'No — out of range', effects: { 'F5': 0.4, 'F6': 0.6 } },
       ],
     },
     {
-  "id": "Q20", "effort": 2, "stage": 1,
-  "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
-  "highlight": ["relay", "pump"],
-  "options": [
-    { "label": "Clicks, 230 V at output", "effects": { "R31": -1.2, "R42": 0.6, "R41": 0.4, "R63": -0.4, "R22": -0.2 } },
-    { "label": "Clicks, but no 230 V out", "effects": { "R31": 1.6, "R42": -0.4 } },
-    { "label": "Clicks, but breaker trips", "effects": { "R31": 1.0, "R42": 1.0 } },
-    { "label": "Silent — no click", "effects": { "R31": 0.6, "R22": 0.6, "R63": 0.6, "R23": 0.4 } }
-  ]
+      id: 'Q20', effort: 2, stage: 1,
+      text: 'Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?',
+      highlight: ['relay', 'pump'],
+      options: [
+        { label: 'Clicks, 230 V at output', effects: { 'F4.1': -1.2, 'F5.1': 0.6, 'F5.3': 0.4, 'F3.1.3': -0.4, 'F2.1': -0.2, 'F2.8': -0.4 } },
+        { label: 'Clicks, but no 230 V out', effects: { 'F4.1': 1.6, 'F5.1': -0.4 } },
+        { label: 'Clicks, but breaker trips', effects: { 'F4.1': 1.0, 'F5.1': 1.0 } },
+        { label: 'Silent — no click', effects: { 'F4.1': 0.6, 'F2.1': 0.4, 'F2.8': 0.6, 'F3.1.3': 0.6, 'F2.5': 0.4, 'F2.6': 0.4 } },
+      ],
     },
     {
-  "id": "Q21", "effort": 2, "stage": 1,
-  "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
-  "highlight": ["valves"],
-  "options": [
-    { "label": "Clean, dry, sealed connectors", "effects": { "R63": -0.2 } },
-    { "label": "Corroded, green, or wet", "effects": { "R63": 1.6, "R62": 0.4 } },
-    { "label": "Loose, backed-out, or twisted bare", "effects": { "R63": 1.0, "R61": 0.4 } }
-  ]
+      id: 'Q21', effort: 2, stage: 1,
+      text: 'Open the valve box and inspect the wire splices to each solenoid. What do they look like?',
+      highlight: ['valves'],
+      options: [
+        { label: 'Clean, dry, sealed connectors', effects: { 'F3.1.3': -0.2 } },
+        { label: 'Corroded, green, or wet', effects: { 'F3.1.3': 1.6, 'F3.1.2': 0.4 } },
+        { label: 'Loose, backed-out, or twisted bare', effects: { 'F3.1.3': 1.0, 'F3.1.1': 0.4 } },
+      ],
     },
     {
-  id: 'Q22', effort: 5, stage: 1,
-  text: 'Run a zone, open valve box, look at valves and heads?',
-  multiselect: true,
-  highlight: ['valves', 'rotor'],
-  options: [
-    { label: "water coming out of a zone you didn't activate", effects: { R61: 1.0, R63: 0.4, R74: 1.0, R72: 0.6, R73: 0.4, R4: -0.2, R5: -0.2 } },
-    { label: 'water coming out of valve', effects: { R73: 1.0, R71: 0.4, R72: 0.2 } },
-    { label: 'water coming out of activated zone', effects: { R31: -0.2, R22: -0.2, R61: -0.2, R63: -0.2, R71: -0.2, R4: -0.2, R5: -0.2 } },
-  ],
+      id: 'Q22', effort: 5, stage: 1,
+      text: 'Run a zone, open valve box, look at valves and heads?',
+      multiselect: true,
+      highlight: ['valves', 'rotor'],
+      options: [
+        { label: "water coming out of a zone you didn't activate", effects: { 'F3.1.1': 1.0, 'F3.1.3': 0.4, 'F7.4': 1.0, 'F7.1.2': 0.6, 'F7.3.2': 0.6, 'F7.1.3': 0.4, 'F5': -0.2, 'F6': -0.2 } },
+        { label: 'water coming out of valve', effects: { 'F7.1.3': 1.0, 'F7.1.2': 0.2, 'F7.3.2': 0.2 } },
+        { label: 'water coming out of activated zone', effects: { 'F4.1': -0.2, 'F2.1': -0.2, 'F2.8': -0.2, 'F3.1.1': -0.2, 'F3.1.3': -0.2, 'F7.1.1': -0.2, 'F7.3.1': -0.2, 'F5': -0.2, 'F6': -0.2 } },
+      ],
     }
   ]
-}; 
+};

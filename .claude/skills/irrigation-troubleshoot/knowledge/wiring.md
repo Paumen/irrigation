@@ -1,6 +1,6 @@
 ---
 subject: Field wiring (24 V low-voltage)
-root_cause_area: R6
+root_cause_area: F3
 serves: [troubleshooting, test, install]
 coverage: partial
 summary: Partial — wire-distance table, waterproof-connector rule, and the isolation tests; no deeper splice or common-wire fault detail yet.

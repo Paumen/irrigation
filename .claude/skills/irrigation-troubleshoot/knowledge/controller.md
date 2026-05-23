@@ -1,6 +1,6 @@
 ---
 subject: Controller (RainMachine HD-16 TOUCH)
-root_cause_area: R2
+root_cause_area: F2
 serves: [troubleshooting, test]
 coverage: partial
 summary: Partial — only the voltage-at-terminals test so far; no local RainMachine HD-16 detail yet.

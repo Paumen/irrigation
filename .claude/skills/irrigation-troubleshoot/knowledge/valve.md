@@ -1,11 +1,11 @@
 ---
 subject: Zone valve (Hunter PGV-101G)
-root_cause_area: R7
+root_cause_area: F7
 serves: [troubleshooting, install, replace, maintain, how-it-works]
 deeper: [valve-internals, valve-solenoid]
 system_note: 4 valves, globe type, outdoor valve box, installed 2026-05, bleed screw + flow control, 24 V from controller.
 summary: Whole-valve reference for the PGV-101G — how it works, install and damage-avoidance, manual operation, leak modes, specs, filter.
-read_when: engine points at the valve area (R7); homeowner installing/replacing a valve or asking how it works; any valve symptom not clearly localised to the solenoid or the diaphragm.
+read_when: engine points at the valve area (F7); homeowner installing/replacing a valve or asking how it works; any valve symptom not clearly localised to the solenoid or the diaphragm.
 contents:
   - operation / hydraulics (pressure balance, metering orifice)
   - external parts (bonnet, flow control, bleed screw, solenoid)
@@ -106,7 +106,7 @@ form a tier:
    simple — every zone sees the same regulated pressure, and you lose the ability to
    tune individual zones. Useful when supply pressure is wildly higher than every zone
    needs and design varies little between zones. Not fitted on this system; covered as
-   R5 context in `sources.md`.
+   F6 context in `sources.md`.
 2. **Per-valve pressure regulator (Hunter Accusync).** Sits on each individual valve
    and holds its downstream pressure at a per-zone setpoint regardless of upstream
    variation. The right answer when zones have **elevation changes** or **long lateral

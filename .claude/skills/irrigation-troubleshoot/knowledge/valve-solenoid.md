@@ -1,6 +1,6 @@
 ---
 subject: Valve solenoid
-root_cause_area: R7
+root_cause_area: F7
 serves: [troubleshooting, test, replace, clean, how-it-works]
 parent: valve
 summary: The solenoid actuator — coil, plunger, entry/exhaust ports, plus the voltage and resistance tests and replacement.
