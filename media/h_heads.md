@@ -1,4 +1,4 @@
-Hunter Built on Innovation  
+
 ​1-20
 ​The 1-20 is loaded with upgraded features such as FloStop® control, check valves, and efficient nozzles that make it the perfect choice in a range of applications.  
 ​KEY BENEFITS
@@ -27,3 +27,30 @@ Hunter Built on Innovation
 ​Blue 1.5-4.0 nozzles  
 ​User-Installed Options
 ​HSJ-0 prefabricated 3/4" PVC Swing Joint  
+
+## Pro-Spray® PRS40
+To optimize MP Rotator® performance, the Pro-Spray PRS40 is pressure-regulated to 40 PSI.
+### KEY BENEFITS
+ * Industry's strongest spray body for years of reliable performance
+ * Pressure-regulated to 40 PSI for the MP Rotator
+ * Gray cap for easy field identification
+ * Co-molded wiper seal made from chemical- and chlorine-resistant materials
+ * Innovative seal design prevents cap-to-body leaks, even with a loose cap
+ * Heavy-duty spring for consistent riser retraction
+ * Check valve option eliminates low-head drainage
+ * FloGuard™ Technology option eliminates water waste in the event of a missing nozzle
+ * Interchangeable components for easier servicing, retrofits, and upgrades
+### Operating Specifications
+ * Recommended pressure range: 15 to 100 PSI
+ * Warranty period: 5 years
+### Factory-Installed Options
+ * Check valve available for 4", 6", and 12" models (up to 14' of elevation)
+ * Reclaimed water identification
+ * FloGuard Technology available for check valve models
+### User-Installed Options
+ * Drain Check Valve P/N: 437400SP (Up to 14' of elevation for 4", 6", and 12" models; Up to 10' of elevation for 3" model)
+ * Reclaimed water ID cap P/N: 458562SP
+ * Snap-on reclaimed cover P/N: PROS-RC-CAP-SP
+ * Shutoff cap P/N: 213600SP
+ * Shutoff nozzle P/N: 916400SP
+
