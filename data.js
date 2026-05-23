@@ -547,11 +547,10 @@ window.DATA = {
   multiselect: true,
   highlight: ['valves', 'rotors'],
   options: [
-    { label: 'water coming out of wrong zone',         effects: { } },
-    { label: 'water coming out of valve',       effects: {  } },
-    { label: 'water coming out of activated zone',  effects: {  } },
-    { label: 'water coming out of non-activated zone',  effects: {  } },
+    { label: "water coming out of a zone you didn't activate", effects: { R61: 1.0, R63: 0.4, R74: 1.0, R72: 0.6, R73: 0.4, R4: -0.2, R5: -0.2 } },
+    { label: 'water coming out of valve', effects: { R73: 1.0, R71: 0.4, R72: 0.2 } },
+    { label: 'water coming out of activated zone', effects: { R31: -0.2, R22: -0.2, R61: -0.2, R63: -0.2, R71: -0.2, R4: -0.2, R5: -0.2 } },
   ],
-    } 
+    }
   ]
 }; 
