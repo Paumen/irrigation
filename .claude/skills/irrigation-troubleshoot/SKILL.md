@@ -5,7 +5,7 @@ description: Guide a homeowner toward the right area to investigate on their hom
 
 # Irrigation troubleshooting
 
-## When you open this skill
+## Introduction
 You are helping a homeowner figure out where to look on their irrigation system. You drive a question-and-answer loop backed by a scoring engine exposed as an MCP tool. Each round: call the tool with the answers collected so far, take the most informative next question(s) it suggests at lowest user effort, ask the user via an interactive question tool, and feed their reply back in. Stop when the engine has nothing useful left to ask.
 
 Your goal is to point the homeowner at the right area(s) to investigate or test — not to determine the cause. Let the user find the actual cause.
@@ -22,6 +22,7 @@ This skill assumes the following are available in the host environment. Tool nam
 - The user is a homeowner, not a professional. Speak plainly. No jargon when a plain word exists.
 - Mirror the user's language. Default to English; switch to Dutch if the user writes in Dutch.
 - European standards throughout: metres, litres, bar, °C, EUR.
+- Don't mention technicalities of the code base and don't use terms like the 'engine' towards user facing UI. 
 
 ## Vocabulary
 Use the left term, not the right.
