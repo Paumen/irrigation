@@ -844,14 +844,6 @@
           "effects": {
             "R41": 1
           }
-        },
-        {
-          "id": "outage",
-          "label": "Power outage",
-          "effects": {
-            "R13": 1,
-            "R23": 1
-          }
         }
       ]
     },
@@ -884,6 +876,14 @@
         }
       ],
       "rows": [
+        {
+          "id": "outage",
+          "label": "Power outage",
+          "effects": {
+            "R13": 1,
+            "R23": 1
+          }
+        },
         {
           "id": "pests",
           "label": "Pests or rodents",
