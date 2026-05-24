@@ -43,7 +43,7 @@ Shared with `irrigation-troubleshoot`. Same content, same conventions — read d
 - `setup.yaml` (project root) — the homeowner's actual equipment, install dates, zones, pipe sizes, wiring. **Read this first on every turn** that touches a physical part. It is the source of truth for which models the homeowner owns.
 - `../irrigation-troubleshoot/knowledge/<subject>.md` — homeowner-grade reference per area, with `contents:` and `coverage:` front-matter. Present: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`. Search front-matter first; full read when the question needs depth.
 - `../irrigation-troubleshoot/images.yaml` — image manifest. Lookup keys: `subjects:` (which area), `causes:` (F-codes, not normally relevant here), `questions:` (engine questions, not relevant here). For this skill the practical lookup is `subjects:` and free-text in `caption:` / `relates:`.
-- `../irrigation-troubleshoot/sources.md` — fallback ladder per area when the local `knowledge/` doc is partial or absent. F1 (app), F5 (pump), F6 (main line) have no local doc; F3 (wiring) and F8 (laterals) are partial.
+- `../irrigation-troubleshoot/sources.md` — fallback ladder per area, and the source of truth for which areas have no local doc or only a partial one. Read it when the local `knowledge/` doc is partial or absent rather than assuming coverage from memory.
 - `media/` (project root) — raw vendor PDFs and photos referenced from `images.yaml`.
 
 Path conventions: `media/` and `setup.yaml` are project-root-relative. The `knowledge/`, `images.yaml`, `sources.md` files live alongside the `irrigation-troubleshoot` skill — reuse them from there.
@@ -81,7 +81,7 @@ All six playbooks (`explain`, `identify`, `howto`, `capacity`, `upgrades`, `main
 - If no manifest image fits the question, check `media/` for an obvious match (filenames are descriptive) before falling back to a vendor PDF.
 
 ## Safety rules (apply across every playbook)
-- Mains power (230 V) work: refuse, and recommend a professional. This includes anything on the input side of the PSR-52 pump start relay, or anything on the pump itself.
+- Mains power (230 V) work: refuse, and recommend a professional. This includes the 230 V / mains side of the PSR-52 pump start relay — its mains supply and its switched output to the pump — and anything on the pump itself. (The relay's 24 V control input from the controller is low-voltage and fine to check; the 230 V side is not.)
 - 24 V controller work: fine to walk through, with the controller in OFF mode.
 - Pressurised water work (opening a valve, removing a rotor cap, swapping a head): pump off **and** the system depressurised by running a zone manually first. State this every time, briefly.
 - Chemicals/sealants: only what the vendor PDF for that part allows. The PGV-101G PDF and `knowledge/valve.md` are explicit about thread sealant — follow them, don't improvise.
