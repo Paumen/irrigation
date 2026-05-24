@@ -11,6 +11,7 @@ contents:
   - external parts (bonnet, flow control, bleed screw, solenoid)
   - manual operation (turn solenoid / open bleed screw)
   - flow control adjustment
+  - bonnet air relief (water-hammer burp via the flow-control stem)
   - per-valve pressure regulation (Accusync) — system-wide vs per-valve vs at-the-head tiers
   - installation (placement, arrow orientation, cut threads, teflon paste-or-tape rule, waterproof connectors)
   - external leak checklist
@@ -18,6 +19,7 @@ contents:
   - slow-closing valve (metering ports)
   - specifications (operating + solenoid summary)
   - filter / mesh (PGV 1")
+  - replacement parts (catalog numbers for the PGV-101G)
 ---
 
 # Zone valve — Hunter PGV-101G
@@ -95,6 +97,14 @@ A fully open valve (4–5 full turns counter-clockwise) can pass ~5 bar, which i
 some heads such as pop-up sprays. Throttling the flow control brings pressure down to a workable
 level. On this system the PRS40 spray bodies are already pressure-regulated to ~2.8 bar, so flow
 control is mostly relevant to balancing zones, not protecting heads.
+
+## Bonnet air relief (water hammer)
+
+The PGV bonnet has an air-relief feature worked through the flow-control stem: pushing the stem
+**down** vents any air trapped under the top of the bonnet, then water pressure pushes the stem
+back up and re-seals without leaking. Burping that trapped air is the cheap first move when a
+zone starts up with a bang (water hammer) on the first cycle of the season or after the valve
+has been serviced. Do this before chasing water hammer further upstream.
 
 ## Per-valve pressure regulation (Accusync) — when flow control isn't enough
 
@@ -205,6 +215,8 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 Operating:
 - Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
 - Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
+- Maximum rated pressure: 10.3 bar (150 psi) — the ABS skirted bonnet holds this without softening
+  in hot weather (a known weakness of all-PVC valve bodies). Well within reach of this system's pump.
 - Temperature rating: 66 °C
 - Warranty: 2 years
 
@@ -242,6 +254,27 @@ only (mesh number = openings per 25.4 mm; higher number = finer screen). Use the
 | PGV 1" (and ASV ¾"/1") | 0.254 mm × 0.482 mm rectangular | 484 | 36 | on diaphragm |
 
 When servicing, this is the screen to clean of grit; well water makes this routine.
+
+## Replacement parts (PGV-101G — 1" globe, NPT, with flow control)
+
+The parts the homeowner can actually swap, with Hunter catalog numbers:
+
+| Part | Catalog No. |
+|---|---|
+| Solenoid assembly — AC (incl. O-ring + seal) | 434100 |
+| Solenoid assembly — DC latching (factory option, not this system) | 458200 |
+| Solenoid O-ring | 262600 |
+| Solenoid seal | 364400 |
+| Bonnet screw | 427300 |
+| Bonnet — with flow control | 435005 |
+| Diaphragm spring | 266000 |
+| Diaphragm assembly | 332100 |
+| Diaphragm support ring | 331300 |
+| Body — female, NPT thread | 457700 |
+| Flow control handle — black | 269200 |
+
+The solenoid (434100) and the diaphragm assembly (332100) are the two parts that actually fail in
+service — see `valve-solenoid.md` and `valve-internals.md` for when to replace each.
 
 ## See also
 - `valve-internals.md` — diaphragm, spring, seat, support ring, metering ports, disassembly.

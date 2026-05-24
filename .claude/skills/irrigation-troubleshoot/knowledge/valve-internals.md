@@ -27,7 +27,11 @@ and the hydraulics together often shift the reasoning more than any single fact.
 
 ![Internal components — support ring, diaphragm, spring](media/valves-internal-components_0.gif)
 
-- **Diaphragm support ring** — seats and aligns the diaphragm in the body.
+- **Diaphragm support ring** — seats and aligns the diaphragm and prevents premature stress
+  failure. It carries small vent holes that let a little water keep the diaphragm from sticking to
+  the ring after long idle periods (winter shutdown, a new install before landscaping). Relevant
+  here: this system is winterized, so a diaphragm that is slow to release on the first spring run
+  is usually just stuck to the ring, not damaged — cycle it before condemning anything.
 - **Diaphragm** — the flexible rubber disc with a plastic centre. The plastic centre carries
   the **metering port(s)**: small holes that restrict (meter) how much water reaches the upper
   chamber above the diaphragm.
@@ -52,14 +56,21 @@ balance can no longer hold it on the seat. Inspect for:
 - wrinkles or distortion
 - a clogged metering port in the plastic centre (debris, Teflon shreds, grit) → slow close / stays open
 
-Fix: replace the diaphragm assembly if there is any visible damage or a metering-port clog that
-will not rinse clean.
+Fix: replace the diaphragm assembly (P/N **332100**; spring **266000**, support ring **331300** if
+those are damaged too) if there is any visible damage or a metering-port clog that will not rinse
+clean.
 
 ## Seat and seal
 
 The seal seat (in the body, under the diaphragm) must be clean and free of nicks, grooves, or
 abrasions. A damaged seat lets water past even with a good diaphragm. Inspect whenever the valve
 is open.
+
+The PGV body seat is **"crowned"** and the diaphragm seat uses a resilient polymer: debris is less
+likely to catch during closing, and if a particle does embed, the polymer returns to shape once the
+grit is flushed through. Practical consequence on this well-fed system — a valve that weeps once and
+then re-seats after a flush is usually debris, not a wrecked seat. Replace only if the seat is
+visibly scored or the weeping persists after cleaning.
 
 ## Debris in the body
 
