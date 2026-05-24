@@ -319,6 +319,86 @@ images:
     relates: exclusion image with explicit part number; pair with IMG.pgv-valve-product to contrast AC vs DC variants
     used_in: [playbooks/identify.md]
 
+  IMG.pgv-valve-cutaway:
+    file: media/pgv-valve-cutaway.jpg
+    caption: PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.
+    subjects: [valve, valve-internals, valve-solenoid]
+    causes: [F7]
+    relates: best single illustration of valve hydraulics — pressure balance above/below the diaphragm and the solenoid port
+    used_in: [valve.md]
+
+  IMG.pgv-valve-cutaway-internals:
+    file: media/pgv-valve-cutaway-internals.jpg
+    caption: PGV cutaway (tighter view) — the solenoid threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm.
+    subjects: [valve-solenoid, valve-internals, valve]
+    causes: [F7]
+    relates: shows the solenoid entry/exhaust port path through the bonnet; reverse-flow surge-relief context
+    used_in: [valve-solenoid.md]
+
+  IMG.pgv-install-valve-box:
+    file: media/pgv-install-valve-box.png
+    caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; lateral line to the sprinklers downstream.
+    subjects: [valve]
+    causes: [F7]
+    relates: install placement and valve-box context; coiled control-wire slack
+    used_in: [valve.md]
+
+  IMG.pgv-replacement-parts:
+    file: media/pgv-replacement-parts-diagram.png
+    caption: PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly (434100 AC / 458200 DC), bonnet, diaphragm assembly (332100), spring (266000), support ring (331300), body, flow control handle.
+    subjects: [valve, valve-internals, valve-solenoid]
+    causes: [F7]
+    relates: source for the replacement-part catalog numbers; identify which part to order
+    used_in: [valve.md]
+
+  IMG.pgv-valve-globe-101g:
+    file: media/pgv-valve-globe-101g.jpg
+    caption: Hunter PGV 1" globe with flow control (PGV-101G) — this system's body style; flow control knob on top, solenoid with looped lead, inline ports.
+    subjects: [valve]
+    causes: [F7]
+    relates: matches the homeowner's PGV-101G; body-style identification (globe vs angle vs barb)
+    used_in: [valve.md]
+
+  IMG.pgv-valve-globe-101g-alt:
+    file: media/pgv-valve-globe-101g-alt.jpg
+    caption: Hunter PGV 1" globe with flow control (PGV-101G) — alternate product view.
+    subjects: [valve]
+    causes: [F7]
+    relates: alternate view of IMG.pgv-valve-globe-101g
+    used_in: []
+
+  IMG.pgv-valve-angle:
+    file: media/pgv-valve-angle.jpg
+    caption: Hunter PGV angle body (PGV-100A/101A) — outlet turns down 90° from the bottom; flow-direction arrow on the body. NOT this system (which is globe).
+    subjects: [valve]
+    causes: [F7]
+    relates: body-style exclusion image — confirm the homeowner does NOT have the angle body
+    used_in: [valve.md]
+
+  IMG.pgv-valve-barb:
+    file: media/pgv-valve-barb.jpg
+    caption: Hunter PGV 1" male-thread × barb (PGV-100MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe laterals. NOT this system.
+    subjects: [valve]
+    causes: [F7]
+    relates: body-style exclusion image — barbed poly-pipe outlet variant
+    used_in: [valve.md]
+
+  IMG.pgv-valve-globe-large:
+    file: media/pgv-valve-globe-large.jpg
+    caption: Hunter PGV 1½"/2" globe/angle body (PGV-151/201) — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes; NOT this system.
+    subjects: [valve]
+    causes: [F7]
+    relates: body-style exclusion image — the sizes that accept the Accu-Set regulator
+    used_in: [valve.md]
+
+  IMG.pgv-valve-globe-large-alt:
+    file: media/pgv-valve-globe-large-alt.jpg
+    caption: Hunter PGV 1½"/2" globe/angle body (PGV-151/201) — alternate product view.
+    subjects: [valve]
+    causes: [F7]
+    relates: alternate view of IMG.pgv-valve-globe-large
+    used_in: []
+
   IMG.valve-solenoid-probe-illustrated:
     file: media/valve-solenoid-probe-illustrated.jpg
     caption: Illustrated probe placement on the valve solenoid — red and black leads on the two solenoid wires for voltage (V≈) during a call or resistance (Ω) with the controller off.
