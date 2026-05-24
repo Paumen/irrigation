@@ -107,8 +107,9 @@ zones:
   # hoses; a hose ends in a head or in the next tee. Each head sits on its own swing
   # joint, dead-ended. Leaf = {head, arc_deg, height_m, length_m}: head is an I-20
   # rotor (-> 3/4" SJ) or a Hunter MP Rotator nozzle MP2000/MP3000 (-> 3/4"-1/2" SJ);
-  # arc_deg is the set arc; height_m is elevation vs the valve box (+ above / - below);
-  # length_m is hose run length from the valve box to the head.
+  # nozzle (I-20 only) is the fitted I-20 nozzle (number + colour); arc_deg is the set
+  # arc; height_m is elevation vs the valve box (+ above / - below); length_m is hose
+  # run length from the valve box to the head.
   - id: 1
     heads:
       i20_rotors: 1
@@ -121,7 +122,7 @@ zones:
         hose_a: {head: MP3000, arc_deg: 270, height_m: -2, length_m: 15}
         hose_b:
           tee_2:
-            hose_a: {head: I-20, arc_deg: 180, height_m: 1, length_m: 10}
+            hose_a: {head: I-20, nozzle: "3.0 blue", arc_deg: 180, height_m: 1, length_m: 10}
             hose_b: {head: MP2000, arc_deg: 180, height_m: 3, length_m: 15}
 
   - id: 2
@@ -131,8 +132,8 @@ zones:
       flow_rating_m3h: 2.0
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: {head: I-20, arc_deg: 160, height_m: 0, length_m: 5}
-        hose_b: {head: I-20, arc_deg: 270, height_m: 0, length_m: 10}
+        hose_a: {head: I-20, nozzle: "4.0 blue", arc_deg: 160, height_m: 0, length_m: 5}
+        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 0, length_m: 10}
 
   - id: 3
     heads:
@@ -141,8 +142,8 @@ zones:
       flow_rating_m3h: 2.0
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: {head: I-20, arc_deg: 270, height_m: -3, length_m: 25}
-        hose_b: {head: I-20, arc_deg: 180, height_m: -2, length_m: 35}
+        hose_a: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: -3, length_m: 25}
+        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 180, height_m: -2, length_m: 35}
 
   - id: 4
     heads:
