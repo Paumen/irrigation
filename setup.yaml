@@ -103,6 +103,9 @@ equipment:
 # Zones (automated)
 # ---------------------------
 zones:
+  # lateral_layout: branch tree from the valve outlet. Each tee (T-split) feeds two
+  # hoses; a hose ends in a head (on its own swing joint, dead-ended) or in the next
+  # tee. Head label implies the swing-joint type (I-20 -> 3/4" SJ, MP -> 3/4"-1/2" SJ).
   - id: 1
     heads:
       i20_rotors: 1
@@ -110,28 +113,46 @@ zones:
       flow_rating_m3h: 2.2
       notes: |
         mixing heads is deliberate for different precipitation needs for lawn vs flower beds.
-    t_splits: 2
+    lateral_layout:
+      tee_1:                # at valve outlet
+        hose_a: MP
+        hose_b:
+          tee_2:
+            hose_a: I-20
+            hose_b: MP
 
   - id: 2
     heads:
       i20_rotors: 2
       mp_rotators: 0
       flow_rating_m3h: 2.0
-    t_splits: 1
+    lateral_layout:
+      tee_1:                # at valve outlet
+        hose_a: I-20
+        hose_b: I-20
 
   - id: 3
     heads:
       i20_rotors: 2
       mp_rotators: 0
       flow_rating_m3h: 2.0
-    t_splits: 1
+    lateral_layout:
+      tee_1:                # at valve outlet
+        hose_a: I-20
+        hose_b: I-20
 
   - id: 4
     heads:
       i20_rotors: 0
       mp_rotators: 3
       flow_rating_m3h: 1.5
-    t_splits: 2
+    lateral_layout:
+      tee_1:                # at valve outlet
+        hose_a: MP
+        hose_b:
+          tee_2:
+            hose_a: MP
+            hose_b: MP
 
 # ---------------------------
 # Piping (hydraulic)
@@ -161,6 +182,7 @@ piping:
     fittings:
       - 25 mm to 25 mm connection, 4x             # manifold outlet to valve inlet
       - PE 10 bar, 1" male thread to 25 mm, 4x    # valve outlet to zone hose
+      - 25 mm tee, 6x                             # T-splits; per-zone arrangement in zones[].lateral_layout
       - PE 10 bar, 25 mm to 3/4" fitting          # zone hose to swing joint (one per head)
     notes: |
       zero freeze damage historically
