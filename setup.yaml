@@ -104,8 +104,9 @@ equipment:
 # ---------------------------
 zones:
   # lateral_layout: branch tree from the valve outlet. Each tee (T-split) feeds two
-  # hoses; a hose ends in a head (on its own swing joint, dead-ended) or in the next
-  # tee. Head label implies the swing-joint type (I-20 -> 3/4" SJ, MP -> 3/4"-1/2" SJ).
+  # hoses; a hose ends in a head or in the next tee. Each head sits on its own swing
+  # joint, dead-ended. Leaf = {head, arc_deg}: head is an I-20 rotor (-> 3/4" SJ) or a
+  # Hunter MP Rotator nozzle MP2000/MP3000 (-> 3/4"-1/2" SJ); arc_deg is the set arc.
   - id: 1
     heads:
       i20_rotors: 1
@@ -115,11 +116,11 @@ zones:
         mixing heads is deliberate for different precipitation needs for lawn vs flower beds.
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: MP
+        hose_a: {head: MP3000, arc_deg: 270}
         hose_b:
           tee_2:
-            hose_a: I-20
-            hose_b: MP
+            hose_a: {head: I-20, arc_deg: 180}
+            hose_b: {head: MP2000, arc_deg: 180}
 
   - id: 2
     heads:
@@ -128,8 +129,8 @@ zones:
       flow_rating_m3h: 2.0
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: I-20
-        hose_b: I-20
+        hose_a: {head: I-20, arc_deg: 160}
+        hose_b: {head: I-20, arc_deg: 270}
 
   - id: 3
     heads:
@@ -138,8 +139,8 @@ zones:
       flow_rating_m3h: 2.0
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: I-20
-        hose_b: I-20
+        hose_a: {head: I-20, arc_deg: 270}
+        hose_b: {head: I-20, arc_deg: 180}
 
   - id: 4
     heads:
@@ -148,11 +149,11 @@ zones:
       flow_rating_m3h: 1.5
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: MP
+        hose_a: {head: MP3000, arc_deg: 270}
         hose_b:
           tee_2:
-            hose_a: MP
-            hose_b: MP
+            hose_a: {head: MP2000, arc_deg: 180}
+            hose_b: {head: MP2000, arc_deg: 180}
 
 # ---------------------------
 # Piping (hydraulic)
