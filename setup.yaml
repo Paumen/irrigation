@@ -60,21 +60,41 @@ equipment:
     input: 24V from controller
     count: 4
     type: globe
+    min_pressure_bar: 1.5
+    max_pressure_bar: 10.3
+    min_flow_m3h: 0.1
+    max_flow_m3h: 9.0
     features: [bleed_screw, flow_control]
     notes: |
       Solenoid resistance spec: 20-60 ohm
+
+  swing_joints_rotor:
+    model: Hunter SJ swing joint, 3/4" male both ends
+    location: outdoor in-ground
+    connects: zone hose to I-20 rotor inlet
+    flow_rating_m3h: 2.3
+    pressure_rating_bar: 10.2
+
+  swing_joints_mp:
+    model: Hunter SJ swing joint, 3/4" to 1/2" male both ends
+    location: outdoor in-ground
+    connects: zone hose to MP rotator spray-body inlet
+    flow_rating_m3h: 1.8
+    pressure_rating_bar: 10.2
 
   heads_rotors:
     model: Hunter I-20-04-SS
     installed_yyyy_mm: 2020-08
     location: outdoor in-ground
+    inlet: 3/4"
     features: [Radius setscrew, FloStop, Stainless steel riser]
     type: pop-up
 
   heads_spray_bodies_mp:
-    model: Hunter Pro-Spray PRS40 
+    model: Hunter Pro-Spray PRS40
     installed_yyyy_mm: 2020-08
     location: outdoor in-ground
+    inlet: 1/2"
     features: [40 PSI pressure-regulated]  # Optimal for MP Rotator
     type: pop-up
   
@@ -89,24 +109,28 @@ zones:
       flow_rating_m3h: 2.2
       notes: |
         mixing heads is deliberate for different precipitation needs for lawn vs flower beds.
+    t_splits: 2
 
   - id: 2
     heads:
       i20_rotors: 2
       mp_rotators: 0
       flow_rating_m3h: 2.0
+    t_splits: 1
 
   - id: 3
     heads:
       i20_rotors: 2
       mp_rotators: 0
       flow_rating_m3h: 2.0
+    t_splits: 1
 
   - id: 4
     heads:
       i20_rotors: 0
       mp_rotators: 3
       flow_rating_m3h: 1.5
+    t_splits: 2
 
 # ---------------------------
 # Piping (hydraulic)
@@ -121,16 +145,22 @@ piping:
     pressure_rating_bar: 6.3
     installed_yyyy_mm: 2020-08
     length_m: 20
+    fittings:
+      - PE 10 bar, 32 mm to 1" male thread    # main line into manifold inlet
     notes: |
       zero freeze damage historically
-  
+
   zone_laterals:
     from: valve_box
     to: zone_heads
     size_mm: 25
-    material: Polyethylene LDPE 3mm 
+    material: Polyethylene LDPE 3mm
     pressure_rating_bar: 6.3
     installed_yyyy_mm: 2020-08
+    fittings:
+      - 25 mm to 25 mm connection, 4x             # manifold outlet to valve inlet
+      - PE 10 bar, 1" male thread to 25 mm, 4x    # valve outlet to zone hose
+      - PE 10 bar, 25 mm to 3/4" fitting          # zone hose to swing joint (one per head)
     notes: |
       zero freeze damage historically
 
@@ -141,6 +171,8 @@ piping:
     material: Polyethylene LDPE 3mm
     pressure_rating_bar: 6.3
     installed_yyyy_mm: 2020-08
+    fittings:
+      - PE 10 bar, 1" male thread to 16 mm    # manifold outlet to manual line
     notes: |
       To use the manual valve the pump is started via the controller. Assuming all solenoid valves are shut, the manual hose fills with water, and can be opened and hose end.
       
