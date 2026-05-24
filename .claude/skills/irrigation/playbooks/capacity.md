@@ -37,17 +37,6 @@ This playbook has actual numbers in it. They come from `setup.yaml` (this homeow
 
 7. **Offer the follow-up.** "Want me to look at whether adding a flow sensor would be worth it for your setup?" — pivots to `upgrades.md`.
 
-## Reference numbers (cache from `setup.yaml`)
-
-Read the file for live values, but for fast reasoning:
-
-- Pump (DAB Jet, 2023-06): **3.8 m³/h, 4.8 bar.**
-- Main line: **32 mm LDPE**, 20 m, 6.3 bar rating.
-- Zone laterals: **25 mm LDPE**, 6.3 bar rating.
-- 4 zones, flows estimated: **Z1 2.2**, Z2 2.0, Z3 2.0, **Z4 1.5 m³/h.**
-- Sequential operation; no master valve; no flow sensor; no pressure sensor (intentional design — see `setup.yaml` *system_design_choices*).
-- PRS40 spray bodies regulate to **2.8 bar (40 PSI)** at the head.
-
 ## What you do not do
 - Don't invent precipitation rates, ET values, or pressure losses. Either pull from the PDF or label the answer as a coarse estimate.
 - Don't recommend running multiple zones at once on this system. The design assumes sequential; changing that means revisiting pump sizing, flow-sensor strategy, and the master-valve decision — that's an upgrade conversation, not a capacity answer.
