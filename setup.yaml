@@ -122,7 +122,7 @@ zones:
         hose_b:
           tee_2:
             hose_a: {head: I-20, arc_deg: 180, height_m: 1, length_m: 10}
-            hose_b: {head: MP2000, arc_deg: 180, height_m: null, length_m: 15}   # height missing in source ("H: M") - please confirm
+            hose_b: {head: MP2000, arc_deg: 180, height_m: 3, length_m: 15}
 
   - id: 2
     heads:
