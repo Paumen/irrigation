@@ -6,14 +6,14 @@ parent: valve
 summary: The solenoid actuator — coil, plunger, entry/exhaust ports, plus the voltage and resistance tests and replacement.
 read_when: valve is electrically suspect; homeowner taking a multimeter measurement and needing the exact method; coil, plunger, or port suspected; replacing the solenoid.
 contents:
-  - what it does (plunger, entry/exhaust ports)
+  - what it does (plunger, entry/exhaust ports, reverse-flow surge relief)
   - manual operation (turn solenoid)
   - specifications (24 VAC, inrush/holding, coil 20–60 Ω)
   - testing solenoid voltage (splice + leads, two-point)
   - testing coil resistance
   - plunger check
   - clogged exhaust/entry port flush (safety-gated)
-  - replacing the solenoid
+  - replacing the solenoid (P/N 434100 AC; DC latching 458200)
   - wiring to the solenoid
 ---
 
@@ -38,6 +38,16 @@ within ~15 seconds.
 There is an **entry port** from the valve upper chamber to the solenoid and an **exhaust port**
 from the solenoid to downstream in the valve. If either clogs with debris, the valve may not open,
 or not open fully.
+
+![PGV cutaway — the solenoid (right) threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm. Flow runs inlet → outlet, left to right.](media/pgv-valve-cutaway-internals.jpg)
+
+**Reverse-flow design (why it matters for surges).** The Hunter solenoid runs on a *reverse-flow*
+principle: the centre hole in the solenoid bowl is the inlet port, not the exhaust. One practical
+consequence is built-in surge relief — when a pressure spike hits the closed valve, the plunger
+lifts slightly to let the spike pass downstream and dissipate through the zone piping, then re-seats
+immediately so the zone does not actually run. So an occasional momentary "blip" at a head on a
+water-hammer event is expected behaviour, not a leaking/weeping solenoid. The design is also
+efficient on long wire runs under high pressure.
 
 ## Manual operation
 
@@ -122,6 +132,11 @@ If the valve turns on via the external bleed screw but not electrically, suspect
 If the controller delivers correct voltage (24–28 VAC) at the valve's wire connection and the valve
 still won't operate, replace the solenoid. Shut off, unscrew the old solenoid counter-clockwise,
 fit the new one clockwise until snug, and reconnect with **waterproof** connectors (`wiring.md`).
+
+Part number: **434100** (AC solenoid assembly, includes O-ring 262600 and seal 364400). A
+**DC latching** solenoid (P/N **458200**) is offered as a factory option for battery/DC controllers
+— this system runs the AC solenoid off the mains-powered controller, so any replacement is the AC
+434100. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
 

@@ -83,6 +83,9 @@ useful mainly to **exclude** wire length as a cause.
 
 ## Electrical specifications (PSR-52)
 
+Configuration: **double-pole/single-throw (DPST)** — the 24 V coil closes both legs of the supply
+together, so the relay switches a 120 VAC pump up to 3 hp or a 230 VAC pump up to 7.5 hp.
+
 Switching capacity:
 - Max full-load amps: 40 A
 - Max resistive amps: 50 A

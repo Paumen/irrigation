@@ -11,13 +11,16 @@ contents:
   - external parts (bonnet, flow control, bleed screw, solenoid)
   - manual operation (turn solenoid / open bleed screw)
   - flow control adjustment
+  - bonnet air relief (water-hammer burp via the flow-control stem)
   - per-valve pressure regulation (Accusync) — system-wide vs per-valve vs at-the-head tiers
   - installation (placement, arrow orientation, cut threads, teflon paste-or-tape rule, waterproof connectors)
   - external leak checklist
   - weeping when off (low-head drainage vs valve debris)
   - slow-closing valve (metering ports)
+  - PGV body styles (globe/angle/barb/large — identification)
   - specifications (operating + solenoid summary)
   - filter / mesh (PGV 1")
+  - replacement parts (catalog numbers for the PGV-101G)
 ---
 
 # Zone valve — Hunter PGV-101G
@@ -31,6 +34,8 @@ exhaust/entry ports). Much of what isolates or excludes a valve cause lives in t
 ![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](media/pgv-valve-product.png)
 
 ## How the valve works (operation / hydraulics)
+
+![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](media/pgv-valve-cutaway.jpg)
 
 Water enters from the system main line and pushes against the centre of the diaphragm.
 A small orifice in the diaphragm lets water bleed through into the upper chamber, between
@@ -96,6 +101,14 @@ some heads such as pop-up sprays. Throttling the flow control brings pressure do
 level. On this system the PRS40 spray bodies are already pressure-regulated to ~2.8 bar, so flow
 control is mostly relevant to balancing zones, not protecting heads.
 
+## Bonnet air relief (water hammer)
+
+The PGV bonnet has an air-relief feature worked through the flow-control stem: pushing the stem
+**down** vents any air trapped under the top of the bonnet, then water pressure pushes the stem
+back up and re-seals without leaking. Burping that trapped air is the cheap first move when a
+zone starts up with a bang (water hammer) on the first cycle of the season or after the valve
+has been serviced. Do this before chasing water hammer further upstream.
+
 ## Per-valve pressure regulation (Accusync) — when flow control isn't enough
 
 Flow control on the valve is a *throttle* — it bleeds pressure as a function of how
@@ -133,6 +146,8 @@ once the routine causes (filter, nozzle, riser seal, broken lateral) are ruled o
 ## Installation (and how to avoid causing damage)
 
 ![Flow direction — arrow toward the heads](media/valve_flow_direction_image.png)
+
+![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; lateral line runs out to the sprinklers downstream.](media/pgv-install-valve-box.png)
 
 **Placement.** Put the valve manifold somewhere accessible for maintenance, close to the
 area the valves serve, but positioned so you are not sprayed when you operate the system by hand.
@@ -200,11 +215,38 @@ always means a restriction in the diaphragm metering port(s) — debris clogging
 that meter water to the upper chamber, so the valve closes very slowly or stays open. Fix is to
 replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
+## PGV body styles (identification)
+
+The PGV family comes in several body styles. **This system uses the 1" globe with flow control
+(PGV-101G)** — the first one below. The others are shown so a body that doesn't match can be
+ruled out during identification; they are not fitted here.
+
+![PGV 1" globe with flow control (PGV-101G) — this system's body style: flow control knob on top, solenoid with looped lead, inline ports.](media/pgv-valve-globe-101g.jpg)
+
+- **1" globe, flow control (PGV-101G) — this system.** Inlet and outlet inline; flow control knob
+  and bleed on top. The whole-system reference above describes this body.
+- **Angle (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
+  deep main line; lower pressure loss than globe. Flow-direction arrow on the body.
+
+  ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Not this system.](media/pgv-valve-angle.jpg)
+
+- **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe laterals (common in cold-climate
+  installs) — saves threading an adapter. Not this system.
+
+  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Not this system.](media/pgv-valve-barb.jpg)
+
+- **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
+  non-rising flow control handle; these are the sizes that accept the Accu-Set regulator. Not this system.
+
+  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Not this system.](media/pgv-valve-globe-large.jpg)
+
 ## Specifications (PGV)
 
 Operating:
 - Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
 - Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
+- Maximum rated pressure: 10.3 bar (150 psi) — the ABS skirted bonnet holds this without softening
+  in hot weather (a known weakness of all-PVC valve bodies). Well within reach of this system's pump.
 - Temperature rating: 66 °C
 - Warranty: 2 years
 
@@ -242,6 +284,29 @@ only (mesh number = openings per 25.4 mm; higher number = finer screen). Use the
 | PGV 1" (and ASV ¾"/1") | 0.254 mm × 0.482 mm rectangular | 484 | 36 | on diaphragm |
 
 When servicing, this is the screen to clean of grit; well water makes this routine.
+
+## Replacement parts (PGV-101G — 1" globe, NPT, with flow control)
+
+![PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly, bonnet, diaphragm assembly, spring, support ring, body, flow control handle.](media/pgv-replacement-parts-diagram.png)
+
+The parts the homeowner can actually swap, with Hunter catalog numbers:
+
+| Part | Catalog No. |
+|---|---|
+| Solenoid assembly — AC (incl. O-ring + seal) | 434100 |
+| Solenoid assembly — DC latching (factory option, not this system) | 458200 |
+| Solenoid O-ring | 262600 |
+| Solenoid seal | 364400 |
+| Bonnet screw | 427300 |
+| Bonnet — with flow control | 435005 |
+| Diaphragm spring | 266000 |
+| Diaphragm assembly | 332100 |
+| Diaphragm support ring | 331300 |
+| Body — female, NPT thread | 457700 |
+| Flow control handle — black | 269200 |
+
+The solenoid (434100) and the diaphragm assembly (332100) are the two parts that actually fail in
+service — see `valve-solenoid.md` and `valve-internals.md` for when to replace each.
 
 ## See also
 - `valve-internals.md` — diaphragm, spring, seat, support ring, metering ports, disassembly.
