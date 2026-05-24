@@ -44,7 +44,7 @@ equipment:
     location: outdoor valvebox
     type: distributor
     inlets: 1                          # main line enters the end
-    outlets: 6                         # 4 zone valves + manual line on the sides (1 spare)
+    outlets: 6                         # 4 zone valves + manual line; 1 spare, capped
     connection: 1" swivel nut, female thread
     flow_rating_m3h: 7                 # max
     pressure_rating_bar: 10            # max working
@@ -52,6 +52,7 @@ equipment:
     notes: |
       Distribution block in the valve box. Main line connects to the single end inlet;
       the four zone valves and the manual line tee off the side outlets.
+      The unused sixth outlet is closed with a polyethylene end cap.
 
   zone_valves:
     model: Hunter PGV-101G
