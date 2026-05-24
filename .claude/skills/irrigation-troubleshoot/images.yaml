@@ -21,8 +21,9 @@ images:
 
   IMG.parts-callout:
     file: media/valves-work_0.gif
-    caption: Valve parts callout — 1 body, 2 flow control, 3 bleed screw, 4 solenoid.
+    caption: Valve parts callout
     subjects: [valve]
+    legend:  1 body, 2 flow control, 3 bleed screw, 4 solenoid
     causes: [F7, F7.1.1, F7.3.1, F7.1.2, F7.3.2, F7.1.3, F7.4]
     used_in: [valve.md]
 
