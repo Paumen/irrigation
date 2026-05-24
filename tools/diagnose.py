@@ -39,8 +39,10 @@ def _summarize_question(q: dict, relevancy: str | None, D: float) -> dict:
         "relevancy": relevancy,
         "D": round(D, 4),
     }
-    if q["type"] == "options":
+    if q["type"] in ("options", "multi"):
         out["options"] = [{"index": i, "label": o["label"]} for i, o in enumerate(q["options"])]
+        if q["type"] == "multi":
+            out["multiselect"] = True
     elif q["type"] == "matrix":
         out["columns"] = [{"id": c["id"], "label": c["label"]} for c in q["columns"]]
         out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]

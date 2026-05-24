@@ -26,7 +26,7 @@ This is the cousin of `howto.md`: it draws from the same `knowledge/` docs and v
 
 4. **Apply the safety gate (same as `howto.md`):**
 
-   - Mains (230 V): refuse. The PSR-52 input side and the pump itself are off-limits.
+   - Mains (230 V): refuse. The PSR-52's 230 V / mains side (mains supply and switched output to the pump) and the pump itself are off-limits; its 24 V control input is fine.
    - Pressurised water: pump OFF + run a zone manually to depressurise before opening anything.
    - 24 V: controller in OFF (not paused) before opening a valve solenoid.
 

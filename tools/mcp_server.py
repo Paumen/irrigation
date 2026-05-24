@@ -33,11 +33,13 @@ def diagnose_irrigation(
     `next[0].relevancy` is "low" or null.
 
     Args:
-        answers: Mapping of question id (Q1..Q19) to the user's answer.
-            - options-type questions: integer index into the question's options
-            - matrix-type questions: dict mapping row_id -> column_id
+        answers: Mapping of question id to the user's answer. The shape
+            depends on each question's returned `type`:
+            - options: integer index into the question's options
+            - multi (multiselect options): list of selected option indices
+            - matrix: dict mapping row_id -> column_id
               (omit a row to mean "no"; column ids come from the question)
-            - ages-type questions (Q9): dict mapping equipment row_id -> step index
+            - ages: dict mapping equipment row_id -> step index
               (0 = unknown, 1..4 = age bucket per stepLabels)
         skipped: Mapping of question id -> True for questions the user
             explicitly declined to answer. Skipped questions are excluded

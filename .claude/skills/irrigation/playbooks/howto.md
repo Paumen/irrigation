@@ -12,7 +12,7 @@ The risk profile is real here: water under pressure, 24 V control wiring, occasi
 
 3. **Apply the safety gate.** Before anything else in the answer:
 
-   - **Refuse mains (230 V) work outright.** That includes anything on the input side of the PSR-52 pump start relay and anything on the pump itself. Say so plainly and suggest a professional.
+   - **Refuse mains (230 V) work outright.** That includes the 230 V / mains side of the PSR-52 pump start relay — its mains supply and its switched output to the pump — and anything on the pump itself. (Its 24 V control input from the controller is low-voltage and fine.) Say so plainly and suggest a professional.
    - **For pressurised water work** (opening a valve, removing a rotor cap, swapping a head, opening the valve bonnet): state the pump-off-and-depressurise step at the top of the procedure, not buried in the middle. "Turn the pump off at the controller, then run a zone manually for 10 seconds to let the pressure out — only then start."
    - **For 24 V work** (rewiring a valve solenoid, swapping a solenoid, anything inside the valve box wiring): say "controller in OFF, not just paused" once at the top.
 

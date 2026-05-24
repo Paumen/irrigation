@@ -41,7 +41,7 @@ Use the left term, not the right.
 ## Reference content next to this skill
 - `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: F*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`. Read on the triggers in *When to read `knowledge/`* below.
 - `images.yaml` — image manifest. Lookup by engine question id (`questions:`), F-code at either area or specific level (`causes:`), or subject doc (`subjects:`). Each entry resolves to a `media/<file>` path with a normalized caption.
-- `sources.md` — F1–F9 routing ladder. Use as the next stop when `knowledge/` is partial or absent (F1, F5, F6 currently have no local doc; F3 / F8 are partial; F2, F4, F7, F9 are covered).
+- `sources.md` — F1–F9 routing ladder, and the source of truth for which areas have a full, partial, or no local `knowledge/` doc. Use as the next stop when a `knowledge/` doc is partial or absent. Don't restate its coverage matrix from memory — areas gain docs over time.
 - `setup.yaml` (project root) — the homeowner's actual equipment, install dates, zone count, pipe sizes, and wiring. Source of truth for anything physical about this specific system.
 
 Path conventions: `media/` and `setup.yaml` are project-root-relative. `knowledge/`, `images.yaml`, and `sources.md` live next to this `SKILL.md`.
@@ -55,7 +55,7 @@ Open the relevant `knowledge/<area>.md` (and its `parent:` / sibling docs) when 
 - The loop narrowed to one or two areas but you have no confident cause yet — read the area's doc end-to-end. `valve-internals.md` and `valve-solenoid.md` are deliberately split out from `valve.md` for exactly this case.
 - You suspect a cause that isn't in the engine catalogue. Read the doc to confirm whether it's a known mode for the specific hardware/model, then drop to `sources.md` for the vendor PDF or vendor support.
 
-When the area has no local `knowledge/` doc (F1, F5, F6), skip straight to `sources.md`.
+When an area has no local `knowledge/` doc, skip straight to `sources.md` — it records which areas those are.
 
 ## How you reason (your priors)
 Your own thinking is the first place certainty leaks in. Hold all of it loosely.
@@ -84,26 +84,27 @@ Your own thinking is the first place certainty leaks in. Hold all of it loosely.
     {
       "id": "Q13",
       "text": "Controller voltage during call (~24 VAC)?",
-      "type": "options" | "matrix" | "ages",
+      "type": "options" | "multi" | "matrix" | "ages",
       "stage": 1 | 2 | 3,
       "optional": false,
       "relevancy": "high" | "mid" | "low" | null,
       "D": 12.4,                                     // raw discriminator
       // shape-specific:
-      "options":    [{ "index": 0, "label": "..." }, ...],  // for "options"
-      "columns":    [{ "id": "...", "label": "..." }, ...], // for "matrix"
-      "rows":       [{ "id": "...", "label": "..." }, ...], // for "matrix" / "ages"
-      "stepLabels": ["—", "0–4 yrs", "4–8 yrs", "8–12 yrs", "12+ yrs"]  // for "ages"
+      "options":     [{ "index": 0, "label": "..." }, ...], // for "options" / "multi"
+      "multiselect": true,                                  // present (true) only for "multi"
+      "columns":     [{ "id": "...", "label": "..." }, ...],// for "matrix"
+      "rows":        [{ "id": "...", "label": "..." }, ...],// for "matrix" / "ages"
+      "stepLabels":  ["—", "0–4 yrs", "4–8 yrs", "8–12 yrs", "12+ yrs"]  // for "ages"
     },
     ...                                              // top 5 by D
   ],
   "answered_count": 0,
   "skipped_count": 0,
-  "total_questions": 17
+  "total_questions": 23   // live count of non-optional questions — read it, don't hard-code
 }
 ```
 
-Treat the top entries of `next` as the engine's recommended next questions. Treat `relevancy` as the agreed stop signal (see *Stopping the loop*). If keys are missing or shape drifts, fall back to step 7 (present findings with what you have).
+Every value above is illustrative — ids, counts, and labels come from the live call, not from this doc. Branch on the `type` field each question carries (don't memorise which id is which shape). Treat the top entries of `next` as the engine's recommended next questions, and `relevancy` as the agreed stop signal (see *Stopping the loop*). If keys are missing or shape drifts, fall back to the present-findings step (last in *Protocol*) with what you have.
 
 ## Protocol
 
@@ -113,26 +114,26 @@ Treat the top entries of `next` as the engine's recommended next questions. Trea
 
 3. **Loop.** Each round:
    - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below). For low-effort questions, you can ask 2–4 at once, especially in the first round(s) and if question relevance is high.
-   - If `relevancy` is `low`, `mid` or `null` and at least 4 questions have been answered, **exit the loop** and continue at step 5.
+   - If `relevancy` is `low` or `null`, apply the stop test in *Stopping the loop* below. If it's met, **exit the loop** and continue at step 4. If it isn't (too few answered yet), ask `next[0]` anyway to keep gathering signal.
    - Map the user's pick back to the answer shape (see *Answer shapes*), add it to `answers`, and call the tool again.
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.
    - Between rounds, if more than 3 questions are answered, surface a short list of the current top three causes so the user sees the hypothesis narrowing.
 
-5. **After the loop, branch on whether the top causes clearly lead**, i.e. the gap held across the last few rounds — not just the most recent answer. Two cases:
+4. **After the loop, branch on whether the top causes clearly lead**, i.e. the gap held across the last few rounds — not just the most recent answer. Two cases:
 
-   - **Clear leader(s) present →** open `knowledge/<area>.md` for the leading area if you haven't yet — that's the canonical source for the physical-test method and the linked images. Confirm with **two extra checks**: one low-/mid-effort question (e.g. "does the pump sound steady when it starts?") and one stronger physical test (e.g. "what's the solenoid coil resistance — should be 20–60 Ω"). Don't stack multiple physical-test questions in a row. The user might need time to do the test, get overwhelmed, or have clarification questions on how to do it. The engine's `D` and `relevancy` indicate diagnostic power but **not** effort — judging effort is your job. Then go to step 7.
+   - **Clear leader(s) present →** open `knowledge/<area>.md` for the leading area if you haven't yet — that's the canonical source for the physical-test method and the linked images. Confirm with **two extra checks**: one low-/mid-effort question (e.g. "does the pump sound steady when it starts?") and one stronger physical test (e.g. "what's the solenoid coil resistance — should be 20–60 Ω"). Don't stack multiple physical-test questions in a row. The user might need time to do the test, get overwhelmed, or have clarification questions on how to do it. The engine's `D` and `relevancy` indicate diagnostic power but **not** effort — judging effort is your job. Then go to step 6.
 
-   - **No clear leader (dead-ended) →** go to step 6.
+   - **No clear leader (dead-ended) →** go to step 5.
 
-6. **Dead-end recovery.**
-   - 6.1 Share your analysis so far, strictly split: what you know, what you interpreted from user feedback, what you inferred/assumed, and what you don't know. Read `setup.yaml` again and walk through the system and your understanding.
-   - 6.2 Let the user validate/confirm/review. Adapt/adjust/add based on user feedback if needed.
-   - 6.3 Evaluate if any questions with mid/high differentiators or relevancy are left.
-   - 6.4 If still dead-ended, determine whether the information you have is conflicting or insufficient.
+5. **Dead-end recovery.**
+   - 5.1 Share your analysis so far, strictly split: what you know, what you interpreted from user feedback, what you inferred/assumed, and what you don't know. Read `setup.yaml` again and walk through the system and your understanding.
+   - 5.2 Let the user validate/confirm/review. Adapt/adjust/add based on user feedback if needed.
+   - 5.3 Evaluate if any questions with mid/high differentiators or relevancy are left.
+   - 5.4 If still dead-ended, determine whether the information you have is conflicting or insufficient.
      - If conflicting, ask clarification questions.
      - If insufficient and no useful predefined questions remain (e.g. symptoms or cause direction appears to deviate from predefined question and/or cause buckets): read the narrowed area's `knowledge/<area>.md` end-to-end (especially the sibling internals/solenoid docs if narrowed to the valve), then fall back per `sources.md` to vendor PDFs and web. Use techniques like "five whys" silently. Based on your findings, check again if any relevant engine questions are left; if not, consider asking your own open- or closed-ended questions targeted at the off-engine angle.
 
-7. **Present findings.** State the area(s) to investigate, the cheapest next physical check, and recommendations. Also state how strong/weak the signals are overall based on what the tool says.
+6. **Present findings.** State the area(s) to investigate, the cheapest next physical check, and recommendations. Also state how strong/weak the signals are overall based on what the tool says.
 
 ## Stopping the loop
 
@@ -143,12 +144,12 @@ Stop rules:
 
 ## Asking questions
 
-The engine has three question shapes. The interactive question tool allows at most **4 options per call**.
+The engine has four question shapes, carried in each question's `type` field — branch on that, not on the question id. The interactive question tool allows at most **4 options per call**.
 
-- **`options` with ≤4 options**: pass `options[].label` straight through.
-- **`options` with >4 options** (e.g. Q2 has 8): bucket the labels into ≤4 plain-English groups first (e.g. "No water / weak / unusual pattern / normal"). On the user's pick, ask a follow-up question to pin down which specific option inside the bucket.
-- **`matrix` questions** (Q10, Q11): ask multiselect for all rows at once. Then for selected rows, ask the question's `columns` as its options (bucket if more than 4).
-- **`ages` question** (Q9): show the current ages for equipment as the information available to you says, and ask the user whether it's still up to date.
+- **`options`**: single choice. With ≤4 options, pass `options[].label` straight through. If a call ever returns >4, bucket the labels into ≤4 plain-English groups first (e.g. "No water / weak / unusual pattern / normal"); on the user's pick, ask a follow-up to pin down which specific option inside the bucket.
+- **`multi`** (`multiselect: true`): same `options[]` list, but the user may pick several. Ask multiselect; send back the **list** of chosen indices. Bucket if >4 options.
+- **`matrix`**: ask multiselect for all rows at once. Then for selected rows, ask the question's `columns` as its options (bucket if more than 4).
+- **`ages`** (the equipment-dates question): show the current ages for equipment as the information available to you says, and ask the user whether it's still up to date.
 
 For any shape, "I don't know" / "skip" maps to `skipped[qid] = true`, not to `answers`.
 
@@ -162,6 +163,7 @@ If the user asks to see something not tied to the current question, search `imag
 
 ## Answer shapes (what to send back to the tool)
 - `options`: integer — the chosen option's index in `options[]`.
+- `multi`: list of integers — the indices of every option the user picked (e.g. `[0, 2]`). Empty list counts as unanswered.
 - `matrix`: dict — `{ row_id: column_id, ... }`. Omit rows the user didn't address.
 - `ages`: dict — `{ row_id: step_index, ... }`. `step_index` 0 means unknown; 1–4 are the real age buckets.
 
