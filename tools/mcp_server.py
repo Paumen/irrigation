@@ -98,7 +98,7 @@ def irrigation_hydraulics(
           "concurrent": {zones_running, combined_flow_m3h, pump, manifold_inlet_bar,
                          shared_losses_bar},   # only present in concurrent mode
           "zones": [{id, flow_m3h, pump:{flow_m3h,head_m,head_bar},
-                     head_pressure_bar:{min,max},
+                     head_pressure_bar:{min,max}, pressure_spread_pct,
                      node_pressures_bar:{pump_discharge,manifold_inlet,after_valve},
                      loss_breakdown_bar:{static_lift,main_line_friction,suction,zone_valve},
                      heads:[{loc,kind,spec,arc_deg,elevation_m,lateral_m,flow_m3h,pressure_bar,
@@ -107,7 +107,9 @@ def irrigation_hydraulics(
           "weakest_links": {
              "pressure": {safe_window_bar, upper_bound_by, lower_bound_by,
                           observed_head_pressure_bar, ratings_bar, violations},
-             "flow": {items:[{component,rating_m3h,load_m3h,margin_m3h,scope}], tightest, violations}
+             "flow": {items:[{component,rating_m3h,load_m3h,margin_m3h,scope}], tightest, violations},
+             "velocity": {limit_ms, items:[{segment,size_mm,flow_m3h,velocity_ms,scope}],
+                          fastest, violations}
           }
         }
     """

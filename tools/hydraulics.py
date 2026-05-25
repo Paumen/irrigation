@@ -101,6 +101,10 @@ VALVE_CV = 7.0          # Hunter PGV-101G ~1" valve, approximate flow coefficien
 SJ_LOSS_BAR = 0.05      # swing joint + riser + adapter minor loss, per head
 SUCTION_EXTRA_LOSS_M = 1.0   # foot valve + suction-line friction allowance
 
+# Design rules-of-thumb used for advisory checks (not solve inputs).
+VELOCITY_LIMIT_MS = 1.5         # max pipe velocity before water-hammer/erosion risk
+PRESSURE_SPREAD_LIMIT_PCT = 20.0  # max in-zone pressure variation for even coverage
+
 
 # ---------------------------------------------------------------------------
 # Numerics
@@ -132,6 +136,14 @@ def valve_loss_bar(q_m3h: float, cv: float = VALVE_CV) -> float:
         return 0.0
     gpm = q_m3h / GPM_TO_M3H
     return ((gpm / cv) ** 2) / PSI_PER_BAR
+
+
+def velocity_ms(q_m3h: float, d_m: float) -> float:
+    """Flow velocity (m/s) for q_m3h through a pipe of inner diameter d_m."""
+    if d_m <= 0 or q_m3h <= 0:
+        return 0.0
+    area = math.pi * (d_m / 2.0) ** 2
+    return (q_m3h / 3600.0) / area
 
 
 def pump_head_m(model: str, q_m3h: float) -> float:
@@ -296,6 +308,25 @@ def _head_flow_at(h: dict, p_bar: float) -> float:
     return q_new
 
 
+def _pressure_uniformity(zone_id: int, heads: list[dict]) -> tuple[float | None, list[str]]:
+    """In-zone inlet-pressure spread (%) plus a coverage flag. Spread covers all
+    heads; the flag fires only on unregulated I-20 rotors, whose output tracks
+    pressure (regulated MP rotators hold flow regardless of inlet spread)."""
+    ps = [h["pressure_bar"] for h in heads if h.get("pressure_bar")]
+    if not ps or max(ps) <= 0:
+        return None, []
+    spread = round((max(ps) - min(ps)) / max(ps) * 100, 1)
+    flags: list[str] = []
+    i20 = [h["pressure_bar"] for h in heads if h["head"] == "I-20" and h.get("pressure_bar")]
+    if len(i20) >= 2 and max(i20) > 0:
+        i20_spread = (max(i20) - min(i20)) / max(i20) * 100
+        if i20_spread > PRESSURE_SPREAD_LIMIT_PCT:
+            flags.append(f"zone {zone_id} unregulated-head pressure spread "
+                         f"{i20_spread:.0f}% exceeds {PRESSURE_SPREAD_LIMIT_PCT:.0f}% "
+                         f"(uneven coverage)")
+    return spread, flags
+
+
 def _geometry(sys_data: dict, env: dict) -> dict:
     eq = sys_data["equipment"]
     z_well = env["well_water_level_m_asl"]
@@ -407,11 +438,14 @@ def solve_zone(zone: dict, sys_data: dict, env: dict) -> dict:
         head_out, flags = _build_head_output(heads, None, g, env)
 
     pressures = [h["pressure_bar"] for h in heads]
+    spread_pct, uniformity_flags = _pressure_uniformity(zone["id"], heads)
+    flags += uniformity_flags
     return {
         "id": zone["id"],
         "flow_m3h": round(q_zone, 3),
         "pump": pump_pt,
         "head_pressure_bar": {"min": min(pressures), "max": max(pressures)} if pressures else None,
+        "pressure_spread_pct": spread_pct,
         "node_pressures_bar": node_pressures,
         "loss_breakdown_bar": shared_losses,
         "heads": head_out,
@@ -470,11 +504,14 @@ def solve_concurrent(zones_in: list[dict], sys_data: dict, env: dict) -> dict:
         p_av = p_manifold - valve_bar * M_PER_BAR
         head_out, flags = _build_head_output(grp["heads"], p_av, g, env)
         pressures = [h["pressure_bar"] for h in grp["heads"]]
+        spread_pct, uniformity_flags = _pressure_uniformity(grp["id"], grp["heads"])
+        flags += uniformity_flags
         zones_out.append({
             "id": grp["id"],
             "flow_m3h": round(q_zone, 3),
             "pump": None,
             "head_pressure_bar": {"min": min(pressures), "max": max(pressures)} if pressures else None,
+            "pressure_spread_pct": spread_pct,
             "node_pressures_bar": {
                 "pump_discharge": round(head_pump / M_PER_BAR, 3),
                 "manifold_inlet": round(p_manifold / M_PER_BAR, 3),
@@ -573,6 +610,25 @@ def weakest_links(sys_data: dict, zones: list[dict], env: dict,
     flow_violations = [f"{it['component']} load {it['load_m3h']} > rating {it['rating_m3h']} m3/h"
                        for it in rated if it["margin_m3h"] < 0]
 
+    # --- flow velocity check (water hammer / erosion) ---
+    # Main line carries the full (pm) flow; each lateral carries only its own
+    # head's flow, so the busiest lateral is the single highest-flow head.
+    main_d = _pipe_id_m(pipe["main_line"]["size_mm"], pipe["main_line"]["material"])
+    lat_d = _pipe_id_m(pipe["zone_laterals"]["size_mm"], pipe["zone_laterals"]["material"])
+    lateral_peak = max(rotor_peak, mp_peak)
+    velocity_items = [
+        {"segment": "main_line", "size_mm": pipe["main_line"]["size_mm"],
+         "flow_m3h": round(pm_load, 3), "velocity_ms": round(velocity_ms(pm_load, main_d), 2),
+         "scope": pm_scope},
+        {"segment": "zone_laterals", "size_mm": pipe["zone_laterals"]["size_mm"],
+         "flow_m3h": round(lateral_peak, 3), "velocity_ms": round(velocity_ms(lateral_peak, lat_d), 2),
+         "scope": "busiest lateral (per head)"},
+    ]
+    velocity_items.sort(key=lambda it: it["velocity_ms"], reverse=True)
+    velocity_violations = [
+        f"{it['segment']} velocity {it['velocity_ms']} m/s exceeds {VELOCITY_LIMIT_MS} m/s"
+        for it in velocity_items if it["velocity_ms"] > VELOCITY_LIMIT_MS]
+
     return {
         "pressure": {
             "safe_window_bar": [round(max(min_ratings.values()), 2),
@@ -589,6 +645,12 @@ def weakest_links(sys_data: dict, zones: list[dict], env: dict,
             "items": flow_items,
             "tightest": rated[0] if rated else None,
             "violations": flow_violations,
+        },
+        "velocity": {
+            "limit_ms": VELOCITY_LIMIT_MS,
+            "items": velocity_items,
+            "fastest": velocity_items[0] if velocity_items else None,
+            "violations": velocity_violations,
         },
     }
 

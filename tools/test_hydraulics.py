@@ -7,7 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from hydraulics import GPM_TO_M3H, i20_flow_m3h, mp_flow_m3h, report
+from hydraulics import (GPM_TO_M3H, _pressure_uniformity, i20_flow_m3h,
+                        mp_flow_m3h, report)
 
 failures: list[str] = []
 
@@ -118,6 +119,45 @@ pump_item = next(it for it in con["weakest_links"]["flow"]["items"]
 check("concurrent pump load is combined flow",
       abs(pump_item["load_m3h"] - cc["combined_flow_m3h"]) < 1e-9
       and pump_item["scope"] == "all running zones", str(pump_item))
+
+# --- in-zone pressure spread (#1) ---
+z2 = base["zones"][1]
+check("zone reports pressure spread pct", isinstance(z2["pressure_spread_pct"], float),
+      str(z2.get("pressure_spread_pct")))
+exp_spread = round((z2["head_pressure_bar"]["max"] - z2["head_pressure_bar"]["min"])
+                   / z2["head_pressure_bar"]["max"] * 100, 1)
+check("pressure spread matches head min/max", abs(z2["pressure_spread_pct"] - exp_spread) < 0.05,
+      f"{z2['pressure_spread_pct']} vs {exp_spread}")
+check("balanced baseline raises no spread flag",
+      not any("pressure spread" in f for f in z2["flags"]), str(z2["flags"]))
+# flag logic: wide spread among unregulated I-20s trips; regulated MP does not
+_, wide = _pressure_uniformity(9, [{"head": "I-20", "pressure_bar": 3.0},
+                                    {"head": "I-20", "pressure_bar": 2.3}])  # 23% spread
+check("wide I-20 spread flags", any("pressure spread" in f for f in wide), str(wide))
+_, narrow = _pressure_uniformity(9, [{"head": "I-20", "pressure_bar": 3.0},
+                                     {"head": "I-20", "pressure_bar": 2.8}])  # 6.7%
+check("narrow I-20 spread does not flag", narrow == [], str(narrow))
+_, mp = _pressure_uniformity(9, [{"head": "MP3000", "pressure_bar": 3.5},
+                                 {"head": "MP2000", "pressure_bar": 2.5}])  # regulated
+check("regulated MP spread does not flag", mp == [], str(mp))
+
+# --- pipe velocity check (#2) ---
+vel = base["weakest_links"]["velocity"]
+check("velocity limit reported", vel["limit_ms"] == 1.5, str(vel["limit_ms"]))
+segs = {it["segment"]: it for it in vel["items"]}
+check("velocity has main + laterals", {"main_line", "zone_laterals"} <= set(segs), str(segs))
+check("baseline velocities computed positive",
+      segs["main_line"]["velocity_ms"] > 0 and segs["zone_laterals"]["velocity_ms"] > 0, str(segs))
+check("baseline within velocity limit", vel["violations"] == [], str(vel["violations"]))
+check("fastest is the highest-velocity segment",
+      vel["fastest"]["velocity_ms"] == max(it["velocity_ms"] for it in vel["items"]),
+      str(vel["fastest"]))
+# running two zones drives the shared main-line velocity up (combined flow)
+con_main = next(it for it in con["weakest_links"]["velocity"]["items"]
+                if it["segment"] == "main_line")
+check("concurrent raises main-line velocity",
+      con_main["velocity_ms"] > segs["main_line"]["velocity_ms"],
+      f"{con_main['velocity_ms']} vs {segs['main_line']['velocity_ms']}")
 
 if failures:
     print(f"FAIL ({len(failures)})")
