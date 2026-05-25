@@ -35,11 +35,11 @@ equipment:
     model: DAB Jet               
     installed_yyyy_mm: 2023-06         # original 2003 pump replaced
     location: well
-    height_m: 7.2
+    height_m: 7.2                      # 4 m below the valve box
     input: 230V from pump start relay
-    flow_rating_m3h: 3.8     
-    pressure_rating_bar: 4.8  
-    acts_as_shutoff: true  
+    flow_rating_m3h: 3.8
+    pressure_rating_bar: 4.8
+    acts_as_shutoff: true
 
   manifold:
     model: LEV 6-way manifold distributor
@@ -116,12 +116,28 @@ zones:
   # hoses; a hose ends in a head or in the next tee. Each head sits on its own swing
   # joint, dead-ended. Leaf = {head, arc_deg, height_m, length_m}: head is an I-20
   # rotor (-> 3/4" SJ) or a Hunter MP Rotator nozzle MP2000/MP3000 (-> 3/4"-1/2" SJ);
-  # nozzle (I-20 only) is the fitted I-20 nozzle (number + colour); 
+  # nozzle (I-20 only) is the fitted I-20 nozzle (number + colour); arc_deg is the set
+  # arc; height_m is the head's absolute elevation (m above sea level, same datum as the
+  # equipment height_m values); length_m is hose run length from the valve box to the
+  # head. The valve box sits at 11.2 m and the well/pump 4 m lower at 7.2 m, so the heads
+  # (10.2-12.0 m) are within ~1 m of the valve box and ~3-5 m above the pump.
+  #
+  # flow_rating_m3h: calculated, not measured. Sum of per-head manufacturer flows:
+  #   - MP Rotators sit on Pro-Spray PRS40 bodies (pressure-regulated to 40 PSI), so
+  #     flow is fixed by model + arc from the Hunter MP Rotator chart at 40 PSI
+  #     (matched precipitation => flow scales with arc): MP3000@270=0.62, MP2000@270=0.25,
+  #     MP2000@180=0.17, MP1000@210=0.10 m3/h. Independent of system pressure.
+  #   - I-20 rotors are NOT regulated; flow depends on head pressure and is taken from
+  #     the Hunter PGP/I-20 Blue Standard Nozzle metric chart at an assumed 3.0 bar
+  #     (~43 PSI) operating pressure (consistent with the DAB Jet 132 curve at these
+  #     flows and with feeding the 40 PSI MP regulators on the same line):
+  #     #2.5=0.54, #4.0=0.90, #5.0=1.14 m3/h. Rotor nozzle flow does not vary with arc.
+  #     Sensitivity: at 2.5/3.5 bar an I-20 shifts roughly -0.1/+0.1 m3/h per rotor.
   - id: 1
     heads:
       i20_rotors: 1
       mp_rotators: 2
-      flow_rating_m3h: 2.2
+      flow_rating_m3h: 1.69   # I-20 #4.0 @3.0bar 0.90 + MP3000@270 0.62 + MP2000@180 0.17
       notes: |
         mixing heads is deliberate for different precipitation needs for lawn vs flower beds.
     lateral_layout:
@@ -136,7 +152,7 @@ zones:
     heads:
       i20_rotors: 2
       mp_rotators: 0
-      flow_rating_m3h: 2.0
+      flow_rating_m3h: 1.68   # I-20 #2.5 @3.0bar 0.54 + I-20 #5.0 @3.0bar 1.14
     lateral_layout:
       tee_1:                # at valve outlet
         hose_a: {head: I-20, nozzle: "2.5 blue", arc_deg: 150, height_m: 11.1, length_m: 3}
@@ -146,7 +162,7 @@ zones:
     heads:
       i20_rotors: 2
       mp_rotators: 0
-      flow_rating_m3h: 2.0
+      flow_rating_m3h: 1.68   # I-20 #5.0 @3.0bar 1.14 + I-20 #2.5 @3.0bar 0.54
     lateral_layout:
       tee_1:                # at valve outlet
         hose_a: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 10.2, length_m: 23}
@@ -156,7 +172,7 @@ zones:
     heads:
       i20_rotors: 0
       mp_rotators: 3
-      flow_rating_m3h: 1.5
+      flow_rating_m3h: 0.97   # MP3000@270 0.62 + MP2000@270 0.25 + MP1000@210 0.10 (all 40 PSI regulated)
     lateral_layout:
       tee_1:                # at valve outlet
         hose_a: {head: MP3000, arc_deg: 270, height_m: 11.3, length_m: 11}

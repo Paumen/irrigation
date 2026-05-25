@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "export-data": "node tools/export-data.mjs",
-    "test:parity": "node tools/test-parity.mjs"
+    "test:parity": "node tools/test-parity.mjs",
+    "test:hydraulics": "python3 tools/test_hydraulics.py"
   },
   "devDependencies": {
     "eslint": "^9.0.0",

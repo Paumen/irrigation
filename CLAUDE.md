@@ -23,9 +23,11 @@ The DOM lives in `index.html` as declarative Alpine templates (`x-data="app"`, `
 
 - `tools/engine.py` — Python port of `engine.js`, stdlib only. Identical algorithm.
 - `tools/diagnose.py` — agent-facing wrapper: returns top causes + next questions with `D` and `relevancy`. Usable as a library or stdin/stdout CLI.
-- `tools/mcp_server.py` — FastMCP server exposing one tool, `diagnose_irrigation(answers, skipped)`. Registered in `.mcp.json`.
+- `tools/mcp_server.py` — FastMCP server exposing two tools, `diagnose_irrigation(answers, skipped)` and `irrigation_hydraulics(adjustments, zone)`. Registered in `.mcp.json`.
+- `tools/hydraulics.py` — hydraulic calculator. Reads `setup.yaml` and runs a full solve (DAB Jet pump curve → static lift from elevations → Hazen-Williams pipe friction → per-head pressure → per-head flow, iterated because unregulated I-20 flow depends on pressure; MP Rotators are 40 PSI regulated). Returns per-zone flow, head pressures, and a min/max pressure + flow weakest-link report. Supports what-if `adjustments` (swap a nozzle, change a pump, pin an operating pressure, move the water table). Embeds the Hunter I-20 Blue / MP Rotator charts and DAB Jet curves. Library or stdin/stdout CLI. Needs `pyyaml`.
 - `tools/export-data.mjs` — extracts `window.DATA` from `data.js` into `data.json` (the Python engine reads the JSON mirror). Run with `npm run export-data`.
 - `tools/test-parity.mjs` — runs 17 canned answer scenarios through both engines and asserts identical rankings within 1e-9. Also detects stale `data.json`. Run with `npm run test:parity`.
+- `tools/test_hydraulics.py` — sanity checks for the hydraulic calculator (chart lookups, baseline solve, weakest links, what-if behaviour). Run with `npm run test:hydraulics`.
 
 `data.js` is the single source of truth for questions/causes/weights. `data.json` is a generated mirror; never edit it by hand. After changing `data.js`, run `npm run export-data` and `npm run test:parity`.
 

@@ -12,4 +12,6 @@ Candidates to reason from (match to the actual ask):
 - **Drip on the flower-bed zone (Z1, Z4)** — the mixed-precipitation note flags this; separate drip-on-flowers from rotors-on-lawn. Real candidate.
 - **Valved tee on the manual line** — `setup.yaml` notes it has no shutoff at the manifold; small cost, better control.
 
+When a candidate changes flow or pressure — bigger/smaller nozzles, a pump swap, adding heads or a zone — quantify it with the `irrigation_hydraulics` tool (see `capacity.md`) instead of guessing. Run the change through `adjustments` and report the new zone flow, head pressure, and whether any weakest-link margin (pump headroom, swing-joint flow, the 2.9 bar MP-regulation floor) gets tight.
+
 One image at most, and only if the user digs into a candidate (e.g. the inline-emitter drip tubing). The Hunter sensor photos mostly show what duplicates the HD-16's built-in rain/ET — anchor "here's why it's redundant", not an endorsement. Then offer to walk through install (`howto.md`).

@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from mcp.server.fastmcp import FastMCP
 
 from diagnose import diagnose as _diagnose
+from hydraulics import report as _hydraulics
 
 mcp = FastMCP("irrigation-diagnostic")
 
@@ -57,6 +58,50 @@ def diagnose_irrigation(
         }
     """
     return _diagnose(answers or {}, skipped or {})
+
+
+@mcp.tool()
+def irrigation_hydraulics(
+    adjustments: dict[str, Any] | None = None,
+    zone: int | None = None,
+) -> dict:
+    """Compute flows, head pressures and weakest links for the system in setup.yaml.
+
+    Runs a full hydraulic solve: DAB Jet pump curve -> static lift (elevations)
+    -> pipe friction -> per-head pressure -> per-head flow, iterated because
+    unregulated I-20 rotor flow depends on pressure. MP Rotators are 40 PSI
+    regulated (fixed flow per model + arc). Use it to answer capacity and
+    what-if questions ("what's the flow if I change nozzle 2.5 to 4.0?",
+    "what if the pressure were 3.5 bar?") and to find binding constraints.
+
+    Args:
+        adjustments: optional what-if overrides (all optional):
+            heads: list of head edits, each {zone, set, and one of index|loc|match}.
+                e.g. swap a nozzle:
+                {"zone": 2, "match": {"nozzle": "2.5 blue"}, "set": {"nozzle": "4.0 blue"}}
+                or change an arc: {"zone": 1, "index": 0, "set": {"arc_deg": 180}}
+            global_operating_pressure_bar: pin every head to this pressure and skip
+                the pump/friction solve (answers "what if pressure were X bar?").
+            pump_model: swap the pump curve (e.g. "JET 112 M").
+            well_water_level_m_asl: water-table elevation (default = pump elevation).
+            valve_cv, sj_loss_bar, suction_extra_loss_m: tune the loss model.
+        zone: restrict to a single zone id.
+
+    Returns:
+        {
+          "assumptions": {mode, pump_model, well_water_level_m_asl, loss coefficients, ...},
+          "zones": [{id, flow_m3h, pump:{flow_m3h,head_m,head_bar},
+                     head_pressure_bar:{min,max},
+                     heads:[{loc,kind,spec,arc_deg,elevation_m,lateral_m,flow_m3h,pressure_bar}],
+                     flags, adjustments_applied}],
+          "weakest_links": {
+             "pressure": {safe_window_bar, upper_bound_by, lower_bound_by,
+                          observed_head_pressure_bar, ratings_bar, violations},
+             "flow": {items:[{component,rating_m3h,load_m3h,margin_m3h,scope}], tightest, violations}
+          }
+        }
+    """
+    return _hydraulics(adjustments or {}, zone)
 
 
 if __name__ == "__main__":
