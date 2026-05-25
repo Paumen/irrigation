@@ -20,8 +20,9 @@ equipment:
       Cloud-connected.
 
   pump_start_relay:
-    model: Hunter PSR 52
+    model: Hunter PSR-22 24V 1 fase 230V
     installed_yyyy_mm: 2020-08
+    price_eu: 100
     location: indoor shed
     input: 24V from controller
     output: 230V to pump
@@ -42,6 +43,8 @@ equipment:
   manifold:
     model: LEV 6-way manifold distributor
     location: outdoor valvebox
+    installed_yyyy_mm: 2020-08
+    price_eu: 150
     type: distributor
     inlets: 1                          # main line enters the end
     outlets: 6                         # 4 zone valves + manual line; 1 spare, capped
@@ -56,7 +59,8 @@ equipment:
 
   zone_valves:
     model: Hunter PGV-101G
-    installed_yyyy_mm: 2026-05         
+    installed_yyyy_mm: 2026-05
+    price_eu: 25
     location: outdoor valvebox
     input: 24V from controller
     count: 4
@@ -71,6 +75,7 @@ equipment:
 
   swing_joints_rotor:
     model: Hunter SJ swing joint, 3/4" male both ends
+    price_eu: 5
     location: outdoor in-ground
     connects: zone hose to I-20 rotor inlet
     flow_rating_m3h: 2.3
@@ -85,6 +90,7 @@ equipment:
 
   heads_rotors:
     model: Hunter I-20-04-SS
+    price_eu: 25
     installed_yyyy_mm: 2020-08
     location: outdoor in-ground
     inlet: 3/4"
@@ -93,6 +99,7 @@ equipment:
 
   heads_spray_bodies_mp:
     model: Hunter Pro-Spray PRS40
+    price_eu: 25
     installed_yyyy_mm: 2020-08
     location: outdoor in-ground
     inlet: 1/2"
@@ -119,12 +126,12 @@ zones:
         mixing heads is deliberate for different precipitation needs for lawn vs flower beds.
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: {head: MP3000, arc_deg: 270, height_m: -2, length_m: 15}
+        hose_a: {head: MP3000, arc_deg: 270, height_m: 10.5, length_m: 15}
         hose_b:
           tee_2:
-            hose_a: {head: I-20, nozzle: "3.0 blue", arc_deg: 180, height_m: 1, length_m: 10}
-            hose_b: {head: MP2000, arc_deg: 180, height_m: 3, length_m: 15}
-
+            hose_a: {head: I-20, nozzle: "4.0 blue", arc_deg: 170, height_m: 11.6, length_m: 12}
+            hose_b: {head: MP2000, arc_deg: 180, height_m: 11.4, length_m: 28}
+            
   - id: 2
     heads:
       i20_rotors: 2
@@ -132,8 +139,8 @@ zones:
       flow_rating_m3h: 2.0
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: {head: I-20, nozzle: "4.0 blue", arc_deg: 160, height_m: 0, length_m: 5}
-        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 0, length_m: 10}
+        hose_a: {head: I-20, nozzle: "2.5 blue", arc_deg: 150, height_m: 11.1, length_m: 3}
+        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 11.2, length_m: 11}
 
   - id: 3
     heads:
@@ -142,8 +149,8 @@ zones:
       flow_rating_m3h: 2.0
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: -3, length_m: 25}
-        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 180, height_m: -2, length_m: 35}
+        hose_a: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 10.2, length_m: 23}
+        hose_b: {head: I-20, nozzle: "2.5 blue", arc_deg: 180, height_m: 10.5, length_m: 32}
 
   - id: 4
     heads:
@@ -152,11 +159,11 @@ zones:
       flow_rating_m3h: 1.5
     lateral_layout:
       tee_1:                # at valve outlet
-        hose_a: {head: MP3000, arc_deg: 270, height_m: 1, length_m: 20}
+        hose_a: {head: MP3000, arc_deg: 270, height_m: 11.3, length_m: 11}
         hose_b:
           tee_2:
-            hose_a: {head: MP2000, arc_deg: 180, height_m: 2, length_m: 30}
-            hose_b: {head: MP2000, arc_deg: 180, height_m: 3, length_m: 40}
+            hose_a: {head: MP1000, arc_deg: 210, height_m: 12.0, length_m: 23}
+            hose_b: {head: MP2000, arc_deg: 270, height_m: 12.0, length_m: 36}
 
 # ---------------------------
 # Piping (hydraulic)
@@ -180,8 +187,8 @@ piping:
     from: valve_box
     to: zone_heads
     size_mm: 25
-    material: Polyethylene LDPE 3mm
-    pressure_rating_bar: 6.3
+    material: Polyethylene LDPE 2.7mm
+    pressure_rating_bar: 6
     installed_yyyy_mm: 2020-08
     fittings:
       - 25 mm to 25 mm connection, 4x             # manifold outlet to valve inlet
