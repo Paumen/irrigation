@@ -23,6 +23,7 @@ Usage as a library:
 Usage as a CLI:
     python tools/hydraulics.py                 # full report, default assumptions
     echo '{"zone": 2}' | python tools/hydraulics.py
+    echo '{"concurrent_zones": [2, 3]}' | python tools/hydraulics.py
     echo '{"adjustments": {"global_operating_pressure_bar": 3.5}}' | python tools/hydraulics.py
 """
 
@@ -100,6 +101,10 @@ VALVE_CV = 7.0          # Hunter PGV-101G ~1" valve, approximate flow coefficien
 SJ_LOSS_BAR = 0.05      # swing joint + riser + adapter minor loss, per head
 SUCTION_EXTRA_LOSS_M = 1.0   # foot valve + suction-line friction allowance
 
+# Design rules-of-thumb used for advisory checks (not solve inputs).
+VELOCITY_LIMIT_MS = 1.5         # max pipe velocity before water-hammer/erosion risk
+PRESSURE_SPREAD_LIMIT_PCT = 20.0  # max in-zone pressure variation for even coverage
+
 
 # ---------------------------------------------------------------------------
 # Numerics
@@ -131,6 +136,14 @@ def valve_loss_bar(q_m3h: float, cv: float = VALVE_CV) -> float:
         return 0.0
     gpm = q_m3h / GPM_TO_M3H
     return ((gpm / cv) ** 2) / PSI_PER_BAR
+
+
+def velocity_ms(q_m3h: float, d_m: float) -> float:
+    """Flow velocity (m/s) for q_m3h through a pipe of inner diameter d_m."""
+    if d_m <= 0 or q_m3h <= 0:
+        return 0.0
+    area = math.pi * (d_m / 2.0) ** 2
+    return (q_m3h / 3600.0) / area
 
 
 def pump_head_m(model: str, q_m3h: float) -> float:
@@ -272,64 +285,69 @@ def _nozzle_num(head: dict) -> str:
     return str(head.get("nozzle", "")).split()[0] if head.get("nozzle") else ""
 
 
-def solve_zone(zone: dict, sys_data: dict, env: dict) -> dict:
-    eq = sys_data["equipment"]
-    z_well = env["well_water_level_m_asl"]
-    z_manifold = eq["manifold"].get("height_m", eq["zone_valves"].get("height_m", z_well))
-    main = sys_data["piping"]["main_line"]
-    lat = sys_data["piping"]["zone_laterals"]
-    d_main = _pipe_id_m(main["size_mm"], main["material"])
-    len_main = main.get("length_m", 0.0)
-    d_lat = _pipe_id_m(lat["size_mm"], lat["material"])
-    pinned = env.get("global_operating_pressure_bar")
-
-    heads = deepcopy(_flatten_heads(zone.get("lateral_layout", {})))
-    notes = _apply_head_adjustments(zone["id"], heads, env["adjustments"])
-
-    # initial flow guess
+def _seed_flows(heads: list[dict]) -> None:
+    """Seed each head with a starting flow guess for the fixed-point iteration."""
     for h in heads:
         if h["head"] == "I-20":
             h["q"], _ = i20_flow_m3h(_nozzle_num(h), 3.0)
         else:
             h["q"], _ = mp_flow_m3h(h["head"], float(h.get("arc_deg", 180)), MP_REG_BAR)
 
-    pump = env["pump_model"]
-    pump_pt = None
-    for _ in range(200):
-        q_zone = sum(h["q"] for h in heads)
-        if pinned is None:
-            head_pump = pump_head_m(pump, q_zone)
-            p_manifold = head_pump - (z_manifold - z_well) - \
-                hazen_williams_m(q_zone, d_main, len_main) - env["suction_extra_loss_m"]
-            p_after_valve = p_manifold - valve_loss_bar(q_zone, env["valve_cv"]) * M_PER_BAR
-            pump_pt = {"flow_m3h": round(q_zone, 3),
-                       "head_m": round(head_pump, 2),
-                       "head_bar": round(head_pump / M_PER_BAR, 3)}
-        max_delta = 0.0
-        for h in heads:
-            if pinned is not None:
-                p_bar = pinned
-            else:
-                p_head_m = p_after_valve - (h.get("height_m", z_manifold) - z_manifold) \
-                    - hazen_williams_m(h["q"], d_lat, h.get("length_m", 0.0)) \
-                    - env["sj_loss_bar"] * M_PER_BAR
-                p_bar = max(p_head_m, 0.0) / M_PER_BAR
-            if h["head"] == "I-20":
-                q_new, in_range = i20_flow_m3h(_nozzle_num(h), p_bar)
-                h["regulated"] = None
-                h["in_range"] = in_range
-            else:
-                q_new, reg = mp_flow_m3h(h["head"], float(h.get("arc_deg", 180)), p_bar)
-                h["regulated"] = reg
-                h["in_range"] = True
-            h["pressure_bar"] = round(p_bar, 3)
-            relaxed = 0.5 * h["q"] + 0.5 * q_new
-            max_delta = max(max_delta, abs(relaxed - h["q"]))
-            h["q"] = relaxed
-        if pinned is not None or max_delta < 1e-6:
-            break
 
-    head_out = []
+def _head_flow_at(h: dict, p_bar: float) -> float:
+    """Record a head's pressure/regulation state at p_bar; return its flow (m3/h)."""
+    if h["head"] == "I-20":
+        q_new, in_range = i20_flow_m3h(_nozzle_num(h), p_bar)
+        h["regulated"] = None
+        h["in_range"] = in_range
+    else:
+        q_new, reg = mp_flow_m3h(h["head"], float(h.get("arc_deg", 180)), p_bar)
+        h["regulated"] = reg
+        h["in_range"] = True
+    h["pressure_bar"] = round(p_bar, 3)
+    return q_new
+
+
+def _pressure_uniformity(zone_id: int, heads: list[dict]) -> tuple[float | None, list[str]]:
+    """In-zone inlet-pressure spread (%) plus a coverage flag. Spread covers all
+    heads; the flag fires only on unregulated I-20 rotors, whose output tracks
+    pressure (regulated MP rotators hold flow regardless of inlet spread)."""
+    ps = [h["pressure_bar"] for h in heads if h.get("pressure_bar")]
+    if not ps or max(ps) <= 0:
+        return None, []
+    spread = round((max(ps) - min(ps)) / max(ps) * 100, 1)
+    flags: list[str] = []
+    i20 = [h["pressure_bar"] for h in heads if h["head"] == "I-20" and h.get("pressure_bar")]
+    if len(i20) >= 2 and max(i20) > 0:
+        i20_spread = (max(i20) - min(i20)) / max(i20) * 100
+        if i20_spread > PRESSURE_SPREAD_LIMIT_PCT:
+            flags.append(f"zone {zone_id} unregulated-head pressure spread "
+                         f"{i20_spread:.0f}% exceeds {PRESSURE_SPREAD_LIMIT_PCT:.0f}% "
+                         f"(uneven coverage)")
+    return spread, flags
+
+
+def _geometry(sys_data: dict, env: dict) -> dict:
+    eq = sys_data["equipment"]
+    z_well = env["well_water_level_m_asl"]
+    main = sys_data["piping"]["main_line"]
+    lat = sys_data["piping"]["zone_laterals"]
+    return {
+        "z_well": z_well,
+        "z_manifold": eq["manifold"].get("height_m", eq["zone_valves"].get("height_m", z_well)),
+        "d_main": _pipe_id_m(main["size_mm"], main["material"]),
+        "len_main": main.get("length_m", 0.0),
+        "d_lat": _pipe_id_m(lat["size_mm"], lat["material"]),
+    }
+
+
+def _build_head_output(heads: list[dict], p_after_valve_m: float | None,
+                       g: dict, env: dict) -> tuple[list[dict], list[str]]:
+    """Render heads to output dicts plus flags. When an after-valve pressure is
+    known (full solve, not pinned mode) each head also gets a pressure-loss
+    breakdown that reconciles head pressure = after_valve - the listed losses."""
+    z_manifold = g["z_manifold"]
+    head_out: list[dict] = []
     flags: list[str] = []
     for h in heads:
         spec = h.get("nozzle") if h["head"] == "I-20" else f"{h['head']}@{h.get('arc_deg')}"
@@ -343,32 +361,195 @@ def solve_zone(zone: dict, sys_data: dict, env: dict) -> dict:
             "flow_m3h": round(h["q"], 3),
             "pressure_bar": h.get("pressure_bar"),
         }
+        if p_after_valve_m is not None:
+            rise_m = h.get("height_m", z_manifold) - z_manifold
+            fric_m = hazen_williams_m(h["q"], g["d_lat"], h.get("length_m", 0.0))
+            item["loss_breakdown_bar"] = {
+                "elevation_rise": round(rise_m / M_PER_BAR, 3),
+                "lateral_friction": round(fric_m / M_PER_BAR, 3),
+                "swing_joint": round(env["sj_loss_bar"], 3),
+            }
         if h["head"] == "I-20" and not h.get("in_range", True):
             flags.append(f"{h['loc']} I-20 pressure {h.get('pressure_bar')} bar outside 1.7-4.5 bar")
         if h["head"] != "I-20" and h.get("regulated") is False:
             flags.append(f"{h['loc']} {h['head']} under-regulated "
                          f"(inlet {h.get('pressure_bar')} bar < {MP_REG_MIN_INLET_BAR} bar)")
         head_out.append(item)
+    return head_out, flags
+
+
+def solve_zone(zone: dict, sys_data: dict, env: dict) -> dict:
+    g = _geometry(sys_data, env)
+    z_well, z_manifold = g["z_well"], g["z_manifold"]
+    pinned = env.get("global_operating_pressure_bar")
+    pump = env["pump_model"]
+
+    heads = deepcopy(_flatten_heads(zone.get("lateral_layout", {})))
+    notes = _apply_head_adjustments(zone["id"], heads, env["adjustments"])
+    _seed_flows(heads)
+
+    p_after_valve = 0.0
+    for _ in range(200):
+        q_zone = sum(h["q"] for h in heads)
+        if pinned is None:
+            head_pump = pump_head_m(pump, q_zone)
+            p_manifold = head_pump - (z_manifold - z_well) \
+                - hazen_williams_m(q_zone, g["d_main"], g["len_main"]) - env["suction_extra_loss_m"]
+            p_after_valve = p_manifold - valve_loss_bar(q_zone, env["valve_cv"]) * M_PER_BAR
+        max_delta = 0.0
+        for h in heads:
+            if pinned is not None:
+                p_bar = pinned
+            else:
+                p_head_m = p_after_valve - (h.get("height_m", z_manifold) - z_manifold) \
+                    - hazen_williams_m(h["q"], g["d_lat"], h.get("length_m", 0.0)) \
+                    - env["sj_loss_bar"] * M_PER_BAR
+                p_bar = max(p_head_m, 0.0) / M_PER_BAR
+            q_new = _head_flow_at(h, p_bar)
+            relaxed = 0.5 * h["q"] + 0.5 * q_new
+            max_delta = max(max_delta, abs(relaxed - h["q"]))
+            h["q"] = relaxed
+        if pinned is not None or max_delta < 1e-6:
+            break
+
+    q_zone = sum(h["q"] for h in heads)
+    if pinned is None:
+        head_pump = pump_head_m(pump, q_zone)
+        main_fric_m = hazen_williams_m(q_zone, g["d_main"], g["len_main"])
+        p_manifold = head_pump - (z_manifold - z_well) - main_fric_m - env["suction_extra_loss_m"]
+        valve_bar = valve_loss_bar(q_zone, env["valve_cv"])
+        p_after_valve = p_manifold - valve_bar * M_PER_BAR
+        pump_pt = {"flow_m3h": round(q_zone, 3), "head_m": round(head_pump, 2),
+                   "head_bar": round(head_pump / M_PER_BAR, 3)}
+        node_pressures = {
+            "pump_discharge": round(head_pump / M_PER_BAR, 3),
+            "manifold_inlet": round(p_manifold / M_PER_BAR, 3),
+            "after_valve": round(p_after_valve / M_PER_BAR, 3),
+        }
+        shared_losses = {
+            "static_lift": round((z_manifold - z_well) / M_PER_BAR, 3),
+            "main_line_friction": round(main_fric_m / M_PER_BAR, 3),
+            "suction": round(env["suction_extra_loss_m"] / M_PER_BAR, 3),
+            "zone_valve": round(valve_bar, 3),
+        }
+        head_out, flags = _build_head_output(heads, p_after_valve, g, env)
+    else:
+        pump_pt = node_pressures = shared_losses = None
+        head_out, flags = _build_head_output(heads, None, g, env)
 
     pressures = [h["pressure_bar"] for h in heads]
+    spread_pct, uniformity_flags = _pressure_uniformity(zone["id"], heads)
+    flags += uniformity_flags
     return {
         "id": zone["id"],
-        "flow_m3h": round(sum(h["q"] for h in heads), 3),
+        "flow_m3h": round(q_zone, 3),
         "pump": pump_pt,
         "head_pressure_bar": {"min": min(pressures), "max": max(pressures)} if pressures else None,
+        "pressure_spread_pct": spread_pct,
+        "node_pressures_bar": node_pressures,
+        "loss_breakdown_bar": shared_losses,
         "heads": head_out,
         "flags": flags,
         "adjustments_applied": notes,
     }
 
 
+def solve_concurrent(zones_in: list[dict], sys_data: dict, env: dict) -> dict:
+    """Solve several zones running simultaneously. The pump and main line carry
+    the combined flow (shared); each zone's valve and laterals carry only its
+    own share. Coupled because every head's flow depends on the shared manifold
+    pressure, which depends on the combined flow. Pinned-pressure mode does not
+    apply here and is ignored."""
+    g = _geometry(sys_data, env)
+    z_well, z_manifold = g["z_well"], g["z_manifold"]
+    pump = env["pump_model"]
+
+    groups = []
+    for z in zones_in:
+        heads = deepcopy(_flatten_heads(z.get("lateral_layout", {})))
+        notes = _apply_head_adjustments(z["id"], heads, env["adjustments"])
+        _seed_flows(heads)
+        groups.append({"id": z["id"], "heads": heads, "notes": notes})
+
+    head_pump = p_manifold = 0.0
+    for _ in range(500):
+        q_total = sum(h["q"] for grp in groups for h in grp["heads"])
+        head_pump = pump_head_m(pump, q_total)
+        p_manifold = head_pump - (z_manifold - z_well) \
+            - hazen_williams_m(q_total, g["d_main"], g["len_main"]) - env["suction_extra_loss_m"]
+        max_delta = 0.0
+        for grp in groups:
+            q_zone = sum(h["q"] for h in grp["heads"])
+            p_av = p_manifold - valve_loss_bar(q_zone, env["valve_cv"]) * M_PER_BAR
+            for h in grp["heads"]:
+                p_head_m = p_av - (h.get("height_m", z_manifold) - z_manifold) \
+                    - hazen_williams_m(h["q"], g["d_lat"], h.get("length_m", 0.0)) \
+                    - env["sj_loss_bar"] * M_PER_BAR
+                q_new = _head_flow_at(h, max(p_head_m, 0.0) / M_PER_BAR)
+                relaxed = 0.5 * h["q"] + 0.5 * q_new
+                max_delta = max(max_delta, abs(relaxed - h["q"]))
+                h["q"] = relaxed
+        if max_delta < 1e-6:
+            break
+
+    q_total = sum(h["q"] for grp in groups for h in grp["heads"])
+    head_pump = pump_head_m(pump, q_total)
+    main_fric_m = hazen_williams_m(q_total, g["d_main"], g["len_main"])
+    p_manifold = head_pump - (z_manifold - z_well) - main_fric_m - env["suction_extra_loss_m"]
+
+    zones_out = []
+    for grp in groups:
+        q_zone = sum(h["q"] for h in grp["heads"])
+        valve_bar = valve_loss_bar(q_zone, env["valve_cv"])
+        p_av = p_manifold - valve_bar * M_PER_BAR
+        head_out, flags = _build_head_output(grp["heads"], p_av, g, env)
+        pressures = [h["pressure_bar"] for h in grp["heads"]]
+        spread_pct, uniformity_flags = _pressure_uniformity(grp["id"], grp["heads"])
+        flags += uniformity_flags
+        zones_out.append({
+            "id": grp["id"],
+            "flow_m3h": round(q_zone, 3),
+            "pump": None,
+            "head_pressure_bar": {"min": min(pressures), "max": max(pressures)} if pressures else None,
+            "pressure_spread_pct": spread_pct,
+            "node_pressures_bar": {
+                "pump_discharge": round(head_pump / M_PER_BAR, 3),
+                "manifold_inlet": round(p_manifold / M_PER_BAR, 3),
+                "after_valve": round(p_av / M_PER_BAR, 3),
+            },
+            "loss_breakdown_bar": {"zone_valve": round(valve_bar, 3)},
+            "heads": head_out,
+            "flags": flags,
+            "adjustments_applied": grp["notes"],
+        })
+
+    return {
+        "zones_running": [grp["id"] for grp in groups],
+        "combined_flow_m3h": round(q_total, 3),
+        "pump": {"flow_m3h": round(q_total, 3), "head_m": round(head_pump, 2),
+                 "head_bar": round(head_pump / M_PER_BAR, 3)},
+        "manifold_inlet_bar": round(p_manifold / M_PER_BAR, 3),
+        "shared_losses_bar": {
+            "static_lift": round((z_manifold - z_well) / M_PER_BAR, 3),
+            "main_line_friction": round(main_fric_m / M_PER_BAR, 3),
+            "suction": round(env["suction_extra_loss_m"] / M_PER_BAR, 3),
+        },
+        "zones": zones_out,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Ratings / weakest links
 # ---------------------------------------------------------------------------
-def weakest_links(sys_data: dict, zones: list[dict], env: dict) -> dict:
+def weakest_links(sys_data: dict, zones: list[dict], env: dict,
+                  pump_manifold_load: float | None = None) -> dict:
     eq = sys_data["equipment"]
     pipe = sys_data["piping"]
     max_zone_flow = max((z["flow_m3h"] for z in zones), default=0.0)
+    # The pump and main line carry the combined flow when zones run together;
+    # otherwise (one zone at a time) the heaviest single zone is the load.
+    pm_load = pump_manifold_load if pump_manifold_load is not None else max_zone_flow
+    pm_scope = "all running zones" if pump_manifold_load is not None else "per zone"
     # peak flow per swing-joint type (one head per joint)
     rotor_peak = max((h["flow_m3h"] for z in zones for h in z["heads"] if h["kind"] == "I-20"),
                      default=0.0)
@@ -411,9 +592,9 @@ def weakest_links(sys_data: dict, zones: list[dict], env: dict) -> dict:
     # --- flow series path ---
     flow_items = [
         {"component": "pump", "rating_m3h": eq["pump"].get("flow_rating_m3h"),
-         "load_m3h": round(max_zone_flow, 3), "scope": "per zone"},
+         "load_m3h": round(pm_load, 3), "scope": pm_scope},
         {"component": "manifold", "rating_m3h": eq["manifold"].get("flow_rating_m3h"),
-         "load_m3h": round(max_zone_flow, 3), "scope": "per zone"},
+         "load_m3h": round(pm_load, 3), "scope": pm_scope},
         {"component": "zone_valves", "rating_m3h": eq["zone_valves"].get("max_flow_m3h"),
          "load_m3h": round(max_zone_flow, 3), "scope": "per zone"},
         {"component": "swing_joints_rotor", "rating_m3h": eq["swing_joints_rotor"].get("flow_rating_m3h"),
@@ -428,6 +609,25 @@ def weakest_links(sys_data: dict, zones: list[dict], env: dict) -> dict:
     rated.sort(key=lambda it: it["margin_m3h"])
     flow_violations = [f"{it['component']} load {it['load_m3h']} > rating {it['rating_m3h']} m3/h"
                        for it in rated if it["margin_m3h"] < 0]
+
+    # --- flow velocity check (water hammer / erosion) ---
+    # Main line carries the full (pm) flow; each lateral carries only its own
+    # head's flow, so the busiest lateral is the single highest-flow head.
+    main_d = _pipe_id_m(pipe["main_line"]["size_mm"], pipe["main_line"]["material"])
+    lat_d = _pipe_id_m(pipe["zone_laterals"]["size_mm"], pipe["zone_laterals"]["material"])
+    lateral_peak = max(rotor_peak, mp_peak)
+    velocity_items = [
+        {"segment": "main_line", "size_mm": pipe["main_line"]["size_mm"],
+         "flow_m3h": round(pm_load, 3), "velocity_ms": round(velocity_ms(pm_load, main_d), 2),
+         "scope": pm_scope},
+        {"segment": "zone_laterals", "size_mm": pipe["zone_laterals"]["size_mm"],
+         "flow_m3h": round(lateral_peak, 3), "velocity_ms": round(velocity_ms(lateral_peak, lat_d), 2),
+         "scope": "busiest lateral (per head)"},
+    ]
+    velocity_items.sort(key=lambda it: it["velocity_ms"], reverse=True)
+    velocity_violations = [
+        f"{it['segment']} velocity {it['velocity_ms']} m/s exceeds {VELOCITY_LIMIT_MS} m/s"
+        for it in velocity_items if it["velocity_ms"] > VELOCITY_LIMIT_MS]
 
     return {
         "pressure": {
@@ -446,14 +646,179 @@ def weakest_links(sys_data: dict, zones: list[dict], env: dict) -> dict:
             "tightest": rated[0] if rated else None,
             "violations": flow_violations,
         },
+        "velocity": {
+            "limit_ms": VELOCITY_LIMIT_MS,
+            "items": velocity_items,
+            "fastest": velocity_items[0] if velocity_items else None,
+            "violations": velocity_violations,
+        },
     }
 
 
 # ---------------------------------------------------------------------------
 # Top-level report
 # ---------------------------------------------------------------------------
+def _assumptions(pump_model: str, env: dict, mode: str, extra: dict | None = None) -> dict:
+    a = {
+        "mode": mode,
+        "pump_model": pump_model,
+        "well_water_level_m_asl": env["well_water_level_m_asl"],
+        "valve_cv": env["valve_cv"],
+        "sj_loss_bar": env["sj_loss_bar"],
+        "suction_extra_loss_m": env["suction_extra_loss_m"],
+        "hazen_williams_C": HW_C,
+        "mp_regulated_bar": round(MP_REG_BAR, 3),
+        "note": ("I-20 flow tracks head pressure (Hunter Blue nozzle chart); "
+                 "MP Rotators are 40 PSI regulated (Hunter MP chart). Loss "
+                 "coefficients are approximate and overridable."),
+    }
+    if extra:
+        a.update(extra)
+    return a
+
+
+_SEVERITY = {"ok": 0, "warning": 1, "violation": 2}
+
+_FRIENDLY = {
+    "pump": "Pump capacity",
+    "manifold": "Manifold",
+    "zone_valves": "Zone valves",
+    "swing_joints_rotor": "Rotor swing joints",
+    "swing_joints_mp": "MP swing joints",
+    "main_line": "Main line",
+    "zone_laterals": "Zone laterals",
+}
+
+
+def _health(zones: list[dict], wl: dict) -> dict:
+    """Roll the pressure / flow / velocity / uniformity analysis up into an
+    at-a-glance status card. Pure synthesis of values already in `zones` and
+    `weakest_links` (`wl`); adds no new physics. Each check carries gauge data
+    (value, scale min/max, kind) so it can be rendered as a band/bar, and
+    summary numbers are rounded to 1 decimal."""
+    def r1(x):
+        return round(x, 1) if x is not None else None
+
+    checks: dict[str, dict] = {}
+
+    # pressure -- a band gauge: heads should sit inside the safe window
+    pv = wl["pressure"]["violations"]
+    obs = wl["pressure"]["observed_head_pressure_bar"]
+    win = wl["pressure"]["safe_window_bar"]
+    if obs:
+        headroom = min(obs[0] - win[0], win[1] - obs[1])
+        near_lower = (obs[0] - win[0]) <= (win[1] - obs[1])
+        bound = wl["pressure"]["lower_bound_by"] if near_lower else wl["pressure"]["upper_bound_by"]
+        if pv:
+            status = "violation"
+        elif headroom < 0.1 * (win[1] - win[0]):
+            status = "warning"
+        else:
+            status = "ok"
+        checks["pressure"] = {
+            "label": "Head pressure", "status": status, "unit": "bar", "kind": "band",
+            "value": [r1(obs[0]), r1(obs[1])], "min": r1(win[0]), "max": r1(win[1]),
+            "note": f"{r1(headroom)} bar headroom (nearest: {bound})",
+        }
+    else:
+        checks["pressure"] = {"label": "Head pressure", "status": "ok", "unit": "bar",
+                              "kind": "band", "value": None, "min": r1(win[0]), "max": r1(win[1]),
+                              "note": "no head pressures"}
+
+    # flow -- a fill gauge on the tightest (binding) component
+    fv = wl["flow"]["violations"]
+    tight = wl["flow"]["tightest"]
+    if tight and tight.get("rating_m3h"):
+        frac = tight["margin_m3h"] / tight["rating_m3h"]
+        status = "violation" if fv else ("warning" if frac < 0.1 else "ok")
+        checks["flow"] = {
+            "label": _FRIENDLY.get(tight["component"], tight["component"]),
+            "status": status, "unit": "m3/h", "kind": "fill",
+            "value": r1(tight["load_m3h"]), "min": 0.0, "max": r1(tight["rating_m3h"]),
+            "note": f"{r1(tight['margin_m3h'])} m3/h spare ({tight['scope']})",
+        }
+    else:
+        checks["flow"] = {"label": "Flow", "status": "ok", "unit": "m3/h", "kind": "fill",
+                          "value": None, "min": 0.0, "max": None, "note": "—"}
+
+    # velocity -- a ceiling gauge: must stay under the limit
+    vv = wl["velocity"]["violations"]
+    fast = wl["velocity"]["fastest"]
+    limit = wl["velocity"]["limit_ms"]
+    if fast:
+        status = "violation" if vv else ("warning" if fast["velocity_ms"] >= 0.8 * limit else "ok")
+        checks["velocity"] = {
+            "label": "Pipe velocity", "status": status, "unit": "m/s", "kind": "ceiling",
+            "value": r1(fast["velocity_ms"]), "min": 0.0, "max": r1(limit),
+            "note": f"fastest: {_FRIENDLY.get(fast['segment'], fast['segment'])}",
+        }
+    else:
+        checks["velocity"] = {"label": "Pipe velocity", "status": "ok", "unit": "m/s",
+                              "kind": "ceiling", "value": None, "min": 0.0, "max": r1(limit),
+                              "note": "—"}
+
+    # uniformity -- a ceiling gauge on the worst in-zone pressure spread
+    spread_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" in f]
+    worst_spread = max((z.get("pressure_spread_pct") or 0.0 for z in zones), default=0.0)
+    checks["uniformity"] = {
+        "label": "Coverage evenness", "status": "warning" if spread_flags else "ok",
+        "unit": "%", "kind": "ceiling", "value": r1(worst_spread), "min": 0.0,
+        "max": PRESSURE_SPREAD_LIMIT_PCT,
+        "note": "lower is better" + ("; " + "; ".join(spread_flags) if spread_flags else ""),
+    }
+
+    head_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" not in f]
+
+    pump_item = next((it for it in wl["flow"]["items"] if it["component"] == "pump"), None)
+    capacity = None
+    if pump_item and pump_item.get("rating_m3h"):
+        capacity = {
+            "pump_load_m3h": r1(pump_item["load_m3h"]),
+            "pump_rating_m3h": r1(pump_item["rating_m3h"]),
+            "pump_load_pct": round(pump_item["load_m3h"] / pump_item["rating_m3h"] * 100),
+            "spare_flow_m3h": r1(pump_item["margin_m3h"]),
+        }
+
+    statuses = [c["status"] for c in checks.values()] + (["warning"] if head_flags else [])
+    overall = max(statuses, key=lambda s: _SEVERITY[s]) if statuses else "ok"
+
+    all_violations = pv + fv + vv
+    all_flags = [f for z in zones for f in z.get("flags", [])]
+    if overall == "violation":
+        headline = f"{len(all_violations)} limit violation(s): " + "; ".join(all_violations)
+    elif overall == "warning":
+        cautions = [c["label"] for c in checks.values() if c["status"] == "warning"]
+        if head_flags:
+            cautions.append("head flags")
+        headline = "Within limits, watch: " + ", ".join(cautions)
+    else:
+        headline = f"Healthy — all {len(zones)} zone(s) within pressure, flow, velocity and coverage limits"
+
+    zone_cards = []
+    for z in zones:
+        hp = z.get("head_pressure_bar")
+        zone_cards.append({
+            "id": z["id"],
+            "status": "warning" if z.get("flags") else "ok",
+            "flow_m3h": r1(z["flow_m3h"]),
+            "head_pressure_bar": [r1(hp["min"]), r1(hp["max"])] if hp else None,
+            "spread_pct": r1(z.get("pressure_spread_pct")),
+            "flags": z.get("flags", []),
+        })
+
+    return {
+        "status": overall,
+        "headline": headline,
+        "checks": checks,
+        "capacity": capacity,
+        "zones": zone_cards,
+        "flags": all_flags,
+        "violations": all_violations,
+    }
+
+
 def report(adjustments: dict | None = None, zone: int | None = None,
-           path: Path = SETUP_PATH) -> dict:
+           concurrent_zones: list[int] | None = None, path: Path = SETUP_PATH) -> dict:
     """Run the full hydraulic solve and weakest-link analysis.
 
     Args:
@@ -466,9 +831,17 @@ def report(adjustments: dict | None = None, zone: int | None = None,
             valve_cv, sj_loss_bar, suction_extra_loss_m: tune the loss model
             heads: list of head edits, each {zone, (index|loc|match), set}, e.g.
                 {"zone": 2, "match": {"nozzle": "2.5 blue"}, "set": {"nozzle": "4.0 blue"}}
-        zone: restrict the solve to one zone id.
+        zone: restrict the solve to one zone id (one zone at a time).
+        concurrent_zones: list of zone ids to run simultaneously. The pump and
+            main line then carry the combined flow while each zone keeps its own
+            valve and laterals. Takes precedence over `zone`; ignores pinned mode.
 
-    Returns a dict with assumptions, per-zone results, and weakest_links.
+    Returns a dict whose first key is `health`: an at-a-glance status card
+    (status ok/warning/violation, headline, per-category checks, pump capacity,
+    per-zone lines) synthesised from the detail that follows. Then assumptions,
+    per-zone results (each with a node_pressures_bar profile and per-head
+    loss_breakdown_bar), and weakest_links. In concurrent mode a top-level
+    `concurrent` block reports the shared operating point.
     """
     adjustments = adjustments or {}
     sys_data = load_system(path)
@@ -484,32 +857,43 @@ def report(adjustments: dict | None = None, zone: int | None = None,
         "global_operating_pressure_bar": adjustments.get("global_operating_pressure_bar"),
     }
 
+    if concurrent_zones:
+        known = {z["id"] for z in sys_data["zones"]}
+        unknown = [i for i in concurrent_zones if i not in known]
+        if unknown:
+            raise ValueError(f"unknown zone id(s) {unknown}; known: {sorted(known)}")
+        zones_in = [z for z in sys_data["zones"] if z["id"] in concurrent_zones]
+        con = solve_concurrent(zones_in, sys_data, env)
+        wl = weakest_links(sys_data, con["zones"], env,
+                           pump_manifold_load=con["combined_flow_m3h"])
+        return {
+            "health": _health(con["zones"], wl),
+            "assumptions": _assumptions(pump_model, env, "concurrent",
+                                        {"concurrent_zones": con["zones_running"]}),
+            "concurrent": {k: con[k] for k in
+                           ("zones_running", "combined_flow_m3h", "pump",
+                            "manifold_inlet_bar", "shared_losses_bar")},
+            "zones": con["zones"],
+            "weakest_links": wl,
+        }
+
+    mode = "pinned-pressure" if env["global_operating_pressure_bar"] else "full-solve"
     zones_in = [z for z in sys_data["zones"] if zone is None or z["id"] == zone]
     zones = [solve_zone(z, sys_data, env) for z in zones_in]
-
+    wl = weakest_links(sys_data, zones, env)
     return {
-        "assumptions": {
-            "mode": "pinned-pressure" if env["global_operating_pressure_bar"] else "full-solve",
-            "pump_model": pump_model,
-            "well_water_level_m_asl": env["well_water_level_m_asl"],
-            "valve_cv": env["valve_cv"],
-            "sj_loss_bar": env["sj_loss_bar"],
-            "suction_extra_loss_m": env["suction_extra_loss_m"],
-            "hazen_williams_C": HW_C,
-            "mp_regulated_bar": round(MP_REG_BAR, 3),
-            "note": ("I-20 flow tracks head pressure (Hunter Blue nozzle chart); "
-                     "MP Rotators are 40 PSI regulated (Hunter MP chart). Loss "
-                     "coefficients are approximate and overridable."),
-        },
+        "health": _health(zones, wl),
+        "assumptions": _assumptions(pump_model, env, mode),
         "zones": zones,
-        "weakest_links": weakest_links(sys_data, zones, env),
+        "weakest_links": wl,
     }
 
 
 def main() -> None:
     raw = sys.stdin.read().strip() if not sys.stdin.isatty() else ""
     payload = json.loads(raw) if raw else {}
-    result = report(payload.get("adjustments"), payload.get("zone"))
+    result = report(payload.get("adjustments"), payload.get("zone"),
+                    payload.get("concurrent_zones"))
     json.dump(result, sys.stdout, indent=2)
     sys.stdout.write("\n")
 
