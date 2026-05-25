@@ -159,6 +159,24 @@ check("concurrent raises main-line velocity",
       con_main["velocity_ms"] > segs["main_line"]["velocity_ms"],
       f"{con_main['velocity_ms']} vs {segs['main_line']['velocity_ms']}")
 
+# --- system health card ---
+h = base["health"]
+check("health is first key of report", list(base)[0] == "health", str(list(base)[:1]))
+check("baseline health is ok", h["status"] == "ok", f"{h['status']}: {h['headline']}")
+check("health checks cover all categories",
+      {"pressure", "flow", "velocity", "uniformity"} == set(h["checks"]), str(list(h["checks"])))
+check("health has a zone line per zone", len(h["zones"]) == len(base["zones"]),
+      f"{len(h['zones'])} vs {len(base['zones'])}")
+check("health capacity reports pump load pct",
+      h["capacity"] is not None and 0 < h["capacity"]["pump_load_pct"] < 100,
+      str(h["capacity"]))
+check("baseline health has no violations", h["violations"] == [], str(h["violations"]))
+# an overloaded concurrent run should surface a violation status
+over = report(concurrent_zones=[1, 2, 3])["health"]
+check("overload health is violation", over["status"] == "violation",
+      f"{over['status']}: {over['headline']}")
+check("overload health lists violations", len(over["violations"]) >= 1, str(over["violations"]))
+
 if failures:
     print(f"FAIL ({len(failures)})")
     for f in failures:

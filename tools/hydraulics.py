@@ -677,6 +677,116 @@ def _assumptions(pump_model: str, env: dict, mode: str, extra: dict | None = Non
     return a
 
 
+_SEVERITY = {"ok": 0, "warning": 1, "violation": 2}
+
+
+def _health(zones: list[dict], wl: dict) -> dict:
+    """Roll the pressure / flow / velocity / uniformity analysis up into an
+    at-a-glance status card. Pure synthesis of values already in `zones` and
+    `weakest_links` (`wl`); adds no new physics."""
+    checks: dict[str, dict] = {}
+
+    # pressure: violation if any; else warning if observed window is tight
+    pv = wl["pressure"]["violations"]
+    obs = wl["pressure"]["observed_head_pressure_bar"]
+    win = wl["pressure"]["safe_window_bar"]
+    if pv:
+        checks["pressure"] = {"status": "violation", "detail": "; ".join(pv)}
+    elif obs:
+        headroom = min(obs[0] - win[0], win[1] - obs[1])
+        near_lower = (obs[0] - win[0]) <= (win[1] - obs[1])
+        bound = wl["pressure"]["lower_bound_by"] if near_lower else wl["pressure"]["upper_bound_by"]
+        status = "warning" if headroom < 0.1 * (win[1] - win[0]) else "ok"
+        checks["pressure"] = {"status": status,
+                              "detail": f"heads {obs[0]}-{obs[1]} bar within {win[0]}-{win[1]}; "
+                                        f"{round(headroom, 2)} bar to {bound}"}
+    else:
+        checks["pressure"] = {"status": "ok", "detail": "no head pressures"}
+
+    # flow: violation if any; else warning if tightest margin < 10% of its rating
+    fv = wl["flow"]["violations"]
+    tight = wl["flow"]["tightest"]
+    if fv:
+        checks["flow"] = {"status": "violation", "detail": "; ".join(fv)}
+    elif tight and tight.get("rating_m3h"):
+        frac = tight["margin_m3h"] / tight["rating_m3h"]
+        checks["flow"] = {"status": "warning" if frac < 0.1 else "ok",
+                          "detail": f"tightest {tight['component']} {tight['margin_m3h']} m3/h spare "
+                                    f"({tight['load_m3h']}/{tight['rating_m3h']})"}
+    else:
+        checks["flow"] = {"status": "ok", "detail": "—"}
+
+    # velocity: violation if any; else warning if fastest segment >= 80% of limit
+    vv = wl["velocity"]["violations"]
+    fast = wl["velocity"]["fastest"]
+    limit = wl["velocity"]["limit_ms"]
+    if vv:
+        checks["velocity"] = {"status": "violation", "detail": "; ".join(vv)}
+    elif fast:
+        checks["velocity"] = {"status": "warning" if fast["velocity_ms"] >= 0.8 * limit else "ok",
+                              "detail": f"fastest {fast['segment']} {fast['velocity_ms']} m/s "
+                                        f"(limit {limit})"}
+    else:
+        checks["velocity"] = {"status": "ok", "detail": "—"}
+
+    # uniformity: warning if any in-zone spread flag fired
+    spread_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" in f]
+    worst_spread = max((z.get("pressure_spread_pct") or 0.0 for z in zones), default=0.0)
+    checks["uniformity"] = ({"status": "warning", "detail": "; ".join(spread_flags)}
+                            if spread_flags else
+                            {"status": "ok", "detail": f"worst zone spread {worst_spread}%"})
+
+    # any remaining head flags (under-regulation, out-of-range) raise a warning
+    head_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" not in f]
+
+    pump_item = next((it for it in wl["flow"]["items"] if it["component"] == "pump"), None)
+    capacity = None
+    if pump_item and pump_item.get("rating_m3h"):
+        capacity = {
+            "pump_load_m3h": pump_item["load_m3h"],
+            "pump_rating_m3h": pump_item["rating_m3h"],
+            "pump_load_pct": round(pump_item["load_m3h"] / pump_item["rating_m3h"] * 100),
+            "spare_flow_m3h": pump_item["margin_m3h"],
+        }
+
+    statuses = [c["status"] for c in checks.values()] + (["warning"] if head_flags else [])
+    overall = max(statuses, key=lambda s: _SEVERITY[s]) if statuses else "ok"
+
+    all_violations = pv + fv + vv
+    all_flags = [f for z in zones for f in z.get("flags", [])]
+    if overall == "violation":
+        headline = (f"{len(all_violations)} limit violation(s): " + "; ".join(all_violations))
+    elif overall == "warning":
+        cautions = [name for name, c in checks.items() if c["status"] == "warning"]
+        if head_flags:
+            cautions.append("head flags")
+        headline = f"Within limits, watch: {', '.join(cautions)}"
+    else:
+        headline = f"Healthy — all {len(zones)} zone(s) within pressure, flow, velocity and uniformity limits"
+
+    zone_cards = []
+    for z in zones:
+        hp = z.get("head_pressure_bar")
+        zone_cards.append({
+            "id": z["id"],
+            "status": "warning" if z.get("flags") else "ok",
+            "flow_m3h": z["flow_m3h"],
+            "head_pressure_bar": [hp["min"], hp["max"]] if hp else None,
+            "spread_pct": z.get("pressure_spread_pct"),
+            "flags": z.get("flags", []),
+        })
+
+    return {
+        "status": overall,
+        "headline": headline,
+        "checks": checks,
+        "capacity": capacity,
+        "zones": zone_cards,
+        "flags": all_flags,
+        "violations": all_violations,
+    }
+
+
 def report(adjustments: dict | None = None, zone: int | None = None,
            concurrent_zones: list[int] | None = None, path: Path = SETUP_PATH) -> dict:
     """Run the full hydraulic solve and weakest-link analysis.
@@ -696,10 +806,12 @@ def report(adjustments: dict | None = None, zone: int | None = None,
             main line then carry the combined flow while each zone keeps its own
             valve and laterals. Takes precedence over `zone`; ignores pinned mode.
 
-    Returns a dict with assumptions, per-zone results, and weakest_links. Each
-    zone carries a node_pressures_bar profile (pump -> manifold -> after valve)
-    and per-head loss_breakdown_bar. In concurrent mode a top-level `concurrent`
-    block reports the shared operating point.
+    Returns a dict whose first key is `health`: an at-a-glance status card
+    (status ok/warning/violation, headline, per-category checks, pump capacity,
+    per-zone lines) synthesised from the detail that follows. Then assumptions,
+    per-zone results (each with a node_pressures_bar profile and per-head
+    loss_breakdown_bar), and weakest_links. In concurrent mode a top-level
+    `concurrent` block reports the shared operating point.
     """
     adjustments = adjustments or {}
     sys_data = load_system(path)
@@ -722,24 +834,28 @@ def report(adjustments: dict | None = None, zone: int | None = None,
             raise ValueError(f"unknown zone id(s) {unknown}; known: {sorted(known)}")
         zones_in = [z for z in sys_data["zones"] if z["id"] in concurrent_zones]
         con = solve_concurrent(zones_in, sys_data, env)
+        wl = weakest_links(sys_data, con["zones"], env,
+                           pump_manifold_load=con["combined_flow_m3h"])
         return {
+            "health": _health(con["zones"], wl),
             "assumptions": _assumptions(pump_model, env, "concurrent",
                                         {"concurrent_zones": con["zones_running"]}),
             "concurrent": {k: con[k] for k in
                            ("zones_running", "combined_flow_m3h", "pump",
                             "manifold_inlet_bar", "shared_losses_bar")},
             "zones": con["zones"],
-            "weakest_links": weakest_links(sys_data, con["zones"], env,
-                                           pump_manifold_load=con["combined_flow_m3h"]),
+            "weakest_links": wl,
         }
 
     mode = "pinned-pressure" if env["global_operating_pressure_bar"] else "full-solve"
     zones_in = [z for z in sys_data["zones"] if zone is None or z["id"] == zone]
     zones = [solve_zone(z, sys_data, env) for z in zones_in]
+    wl = weakest_links(sys_data, zones, env)
     return {
+        "health": _health(zones, wl),
         "assumptions": _assumptions(pump_model, env, mode),
         "zones": zones,
-        "weakest_links": weakest_links(sys_data, zones, env),
+        "weakest_links": wl,
     }
 
 

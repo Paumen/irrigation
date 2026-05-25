@@ -94,6 +94,11 @@ def irrigation_hydraulics(
 
     Returns:
         {
+          "health": {status: ok|warning|violation, headline,
+                     checks:{pressure,flow,velocity,uniformity:{status,detail}},
+                     capacity:{pump_load_m3h,pump_rating_m3h,pump_load_pct,spare_flow_m3h},
+                     zones:[{id,status,flow_m3h,head_pressure_bar,spread_pct,flags}],
+                     flags, violations},   # at-a-glance summary of everything below
           "assumptions": {mode, pump_model, well_water_level_m_asl, loss coefficients, ...},
           "concurrent": {zones_running, combined_flow_m3h, pump, manifold_inlet_bar,
                          shared_losses_bar},   # only present in concurrent mode
