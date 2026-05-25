@@ -95,7 +95,8 @@ def irrigation_hydraulics(
     Returns:
         {
           "health": {status: ok|warning|violation, headline,
-                     checks:{pressure,flow,velocity,uniformity:{status,detail}},
+                     checks:{pressure,flow,velocity,uniformity:
+                             {label,status,unit,kind,value,min,max,note}},  # gauge bands
                      capacity:{pump_load_m3h,pump_rating_m3h,pump_load_pct,spare_flow_m3h},
                      zones:[{id,status,flow_m3h,head_pressure_bar,spread_pct,flags}],
                      flags, violations},   # at-a-glance summary of everything below

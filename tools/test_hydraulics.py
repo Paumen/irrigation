@@ -165,6 +165,12 @@ check("health is first key of report", list(base)[0] == "health", str(list(base)
 check("baseline health is ok", h["status"] == "ok", f"{h['status']}: {h['headline']}")
 check("health checks cover all categories",
       {"pressure", "flow", "velocity", "uniformity"} == set(h["checks"]), str(list(h["checks"])))
+check("each check carries gauge band data",
+      all({"label", "status", "unit", "kind", "value", "min", "max"} <= set(c)
+          for c in h["checks"].values()), str(h["checks"]))
+check("velocity gauge band is 0..limit",
+      h["checks"]["velocity"]["min"] == 0.0 and h["checks"]["velocity"]["max"] == 1.5,
+      str(h["checks"]["velocity"]))
 check("health has a zone line per zone", len(h["zones"]) == len(base["zones"]),
       f"{len(h['zones'])} vs {len(base['zones'])}")
 check("health capacity reports pump load pct",

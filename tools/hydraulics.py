@@ -679,74 +679,104 @@ def _assumptions(pump_model: str, env: dict, mode: str, extra: dict | None = Non
 
 _SEVERITY = {"ok": 0, "warning": 1, "violation": 2}
 
+_FRIENDLY = {
+    "pump": "Pump capacity",
+    "manifold": "Manifold",
+    "zone_valves": "Zone valves",
+    "swing_joints_rotor": "Rotor swing joints",
+    "swing_joints_mp": "MP swing joints",
+    "main_line": "Main line",
+    "zone_laterals": "Zone laterals",
+}
+
 
 def _health(zones: list[dict], wl: dict) -> dict:
     """Roll the pressure / flow / velocity / uniformity analysis up into an
     at-a-glance status card. Pure synthesis of values already in `zones` and
-    `weakest_links` (`wl`); adds no new physics."""
+    `weakest_links` (`wl`); adds no new physics. Each check carries gauge data
+    (value, scale min/max, kind) so it can be rendered as a band/bar, and
+    summary numbers are rounded to 1 decimal."""
+    def r1(x):
+        return round(x, 1) if x is not None else None
+
     checks: dict[str, dict] = {}
 
-    # pressure: violation if any; else warning if observed window is tight
+    # pressure -- a band gauge: heads should sit inside the safe window
     pv = wl["pressure"]["violations"]
     obs = wl["pressure"]["observed_head_pressure_bar"]
     win = wl["pressure"]["safe_window_bar"]
-    if pv:
-        checks["pressure"] = {"status": "violation", "detail": "; ".join(pv)}
-    elif obs:
+    if obs:
         headroom = min(obs[0] - win[0], win[1] - obs[1])
         near_lower = (obs[0] - win[0]) <= (win[1] - obs[1])
         bound = wl["pressure"]["lower_bound_by"] if near_lower else wl["pressure"]["upper_bound_by"]
-        status = "warning" if headroom < 0.1 * (win[1] - win[0]) else "ok"
-        checks["pressure"] = {"status": status,
-                              "detail": f"heads {obs[0]}-{obs[1]} bar within {win[0]}-{win[1]}; "
-                                        f"{round(headroom, 2)} bar to {bound}"}
+        if pv:
+            status = "violation"
+        elif headroom < 0.1 * (win[1] - win[0]):
+            status = "warning"
+        else:
+            status = "ok"
+        checks["pressure"] = {
+            "label": "Head pressure", "status": status, "unit": "bar", "kind": "band",
+            "value": [r1(obs[0]), r1(obs[1])], "min": r1(win[0]), "max": r1(win[1]),
+            "note": f"{r1(headroom)} bar headroom (nearest: {bound})",
+        }
     else:
-        checks["pressure"] = {"status": "ok", "detail": "no head pressures"}
+        checks["pressure"] = {"label": "Head pressure", "status": "ok", "unit": "bar",
+                              "kind": "band", "value": None, "min": r1(win[0]), "max": r1(win[1]),
+                              "note": "no head pressures"}
 
-    # flow: violation if any; else warning if tightest margin < 10% of its rating
+    # flow -- a fill gauge on the tightest (binding) component
     fv = wl["flow"]["violations"]
     tight = wl["flow"]["tightest"]
-    if fv:
-        checks["flow"] = {"status": "violation", "detail": "; ".join(fv)}
-    elif tight and tight.get("rating_m3h"):
+    if tight and tight.get("rating_m3h"):
         frac = tight["margin_m3h"] / tight["rating_m3h"]
-        checks["flow"] = {"status": "warning" if frac < 0.1 else "ok",
-                          "detail": f"tightest {tight['component']} {tight['margin_m3h']} m3/h spare "
-                                    f"({tight['load_m3h']}/{tight['rating_m3h']})"}
+        status = "violation" if fv else ("warning" if frac < 0.1 else "ok")
+        checks["flow"] = {
+            "label": _FRIENDLY.get(tight["component"], tight["component"]),
+            "status": status, "unit": "m3/h", "kind": "fill",
+            "value": r1(tight["load_m3h"]), "min": 0.0, "max": r1(tight["rating_m3h"]),
+            "note": f"{r1(tight['margin_m3h'])} m3/h spare ({tight['scope']})",
+        }
     else:
-        checks["flow"] = {"status": "ok", "detail": "—"}
+        checks["flow"] = {"label": "Flow", "status": "ok", "unit": "m3/h", "kind": "fill",
+                          "value": None, "min": 0.0, "max": None, "note": "—"}
 
-    # velocity: violation if any; else warning if fastest segment >= 80% of limit
+    # velocity -- a ceiling gauge: must stay under the limit
     vv = wl["velocity"]["violations"]
     fast = wl["velocity"]["fastest"]
     limit = wl["velocity"]["limit_ms"]
-    if vv:
-        checks["velocity"] = {"status": "violation", "detail": "; ".join(vv)}
-    elif fast:
-        checks["velocity"] = {"status": "warning" if fast["velocity_ms"] >= 0.8 * limit else "ok",
-                              "detail": f"fastest {fast['segment']} {fast['velocity_ms']} m/s "
-                                        f"(limit {limit})"}
+    if fast:
+        status = "violation" if vv else ("warning" if fast["velocity_ms"] >= 0.8 * limit else "ok")
+        checks["velocity"] = {
+            "label": "Pipe velocity", "status": status, "unit": "m/s", "kind": "ceiling",
+            "value": r1(fast["velocity_ms"]), "min": 0.0, "max": r1(limit),
+            "note": f"fastest: {_FRIENDLY.get(fast['segment'], fast['segment'])}",
+        }
     else:
-        checks["velocity"] = {"status": "ok", "detail": "—"}
+        checks["velocity"] = {"label": "Pipe velocity", "status": "ok", "unit": "m/s",
+                              "kind": "ceiling", "value": None, "min": 0.0, "max": r1(limit),
+                              "note": "—"}
 
-    # uniformity: warning if any in-zone spread flag fired
+    # uniformity -- a ceiling gauge on the worst in-zone pressure spread
     spread_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" in f]
     worst_spread = max((z.get("pressure_spread_pct") or 0.0 for z in zones), default=0.0)
-    checks["uniformity"] = ({"status": "warning", "detail": "; ".join(spread_flags)}
-                            if spread_flags else
-                            {"status": "ok", "detail": f"worst zone spread {worst_spread}%"})
+    checks["uniformity"] = {
+        "label": "Coverage evenness", "status": "warning" if spread_flags else "ok",
+        "unit": "%", "kind": "ceiling", "value": r1(worst_spread), "min": 0.0,
+        "max": PRESSURE_SPREAD_LIMIT_PCT,
+        "note": "lower is better" + ("; " + "; ".join(spread_flags) if spread_flags else ""),
+    }
 
-    # any remaining head flags (under-regulation, out-of-range) raise a warning
     head_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" not in f]
 
     pump_item = next((it for it in wl["flow"]["items"] if it["component"] == "pump"), None)
     capacity = None
     if pump_item and pump_item.get("rating_m3h"):
         capacity = {
-            "pump_load_m3h": pump_item["load_m3h"],
-            "pump_rating_m3h": pump_item["rating_m3h"],
+            "pump_load_m3h": r1(pump_item["load_m3h"]),
+            "pump_rating_m3h": r1(pump_item["rating_m3h"]),
             "pump_load_pct": round(pump_item["load_m3h"] / pump_item["rating_m3h"] * 100),
-            "spare_flow_m3h": pump_item["margin_m3h"],
+            "spare_flow_m3h": r1(pump_item["margin_m3h"]),
         }
 
     statuses = [c["status"] for c in checks.values()] + (["warning"] if head_flags else [])
@@ -755,14 +785,14 @@ def _health(zones: list[dict], wl: dict) -> dict:
     all_violations = pv + fv + vv
     all_flags = [f for z in zones for f in z.get("flags", [])]
     if overall == "violation":
-        headline = (f"{len(all_violations)} limit violation(s): " + "; ".join(all_violations))
+        headline = f"{len(all_violations)} limit violation(s): " + "; ".join(all_violations)
     elif overall == "warning":
-        cautions = [name for name, c in checks.items() if c["status"] == "warning"]
+        cautions = [c["label"] for c in checks.values() if c["status"] == "warning"]
         if head_flags:
             cautions.append("head flags")
-        headline = f"Within limits, watch: {', '.join(cautions)}"
+        headline = "Within limits, watch: " + ", ".join(cautions)
     else:
-        headline = f"Healthy — all {len(zones)} zone(s) within pressure, flow, velocity and uniformity limits"
+        headline = f"Healthy — all {len(zones)} zone(s) within pressure, flow, velocity and coverage limits"
 
     zone_cards = []
     for z in zones:
@@ -770,9 +800,9 @@ def _health(zones: list[dict], wl: dict) -> dict:
         zone_cards.append({
             "id": z["id"],
             "status": "warning" if z.get("flags") else "ok",
-            "flow_m3h": z["flow_m3h"],
-            "head_pressure_bar": [hp["min"], hp["max"]] if hp else None,
-            "spread_pct": z.get("pressure_spread_pct"),
+            "flow_m3h": r1(z["flow_m3h"]),
+            "head_pressure_bar": [r1(hp["min"]), r1(hp["max"])] if hp else None,
+            "spread_pct": r1(z.get("pressure_spread_pct")),
             "flags": z.get("flags", []),
         })
 
