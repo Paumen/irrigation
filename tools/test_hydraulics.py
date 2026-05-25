@@ -74,6 +74,51 @@ check("smaller pump lowers head pressure",
       f"{weak_pump['zones'][0]['head_pressure_bar']['max']} vs "
       f"{base['zones'][1]['head_pressure_bar']['max']}")
 
+# --- node pressure profile (#1) ---
+z3 = report(zone=3)["zones"][0]
+np3 = z3["node_pressures_bar"]
+check("node profile descends pump>manifold>after_valve",
+      np3 is not None and np3["pump_discharge"] > np3["manifold_inlet"] > np3["after_valve"],
+      str(np3))
+check("node profile pump matches pump.head_bar",
+      abs(np3["pump_discharge"] - z3["pump"]["head_bar"]) < 1e-9, str(np3))
+for h in z3["heads"]:
+    lb = h["loss_breakdown_bar"]
+    recon = (np3["after_valve"] - lb["elevation_rise"]
+             - lb["lateral_friction"] - lb["swing_joint"])
+    check(f"head {h['loc']} pressure reconciles from breakdown",
+          abs(recon - h["pressure_bar"]) < 0.01, f"{recon:.3f} vs {h['pressure_bar']}")
+# pinned mode exposes no node profile (no pump/friction solve happened)
+pin_np = report({"global_operating_pressure_bar": 3.5}, zone=2)["zones"][0]
+check("pinned mode has no node profile", pin_np["node_pressures_bar"] is None,
+      str(pin_np["node_pressures_bar"]))
+
+# --- concurrent zones (#2) ---
+con = report(concurrent_zones=[2, 3])
+check("concurrent mode flagged", con["assumptions"]["mode"] == "concurrent",
+      con["assumptions"]["mode"])
+cc = con["concurrent"]
+check("concurrent reports both zones", cc["zones_running"] == [2, 3], str(cc["zones_running"]))
+# the pump rides higher flow -> lower head than either zone alone
+check("concurrent pump head below single-zone",
+      cc["pump"]["head_bar"] < base["zones"][2]["pump"]["head_bar"],
+      f"{cc['pump']['head_bar']} vs {base['zones'][2]['pump']['head_bar']}")
+# unregulated rotors deliver less than the naive sum of the two solo zone flows
+check("concurrent flow below naive sum of solo flows",
+      cc["combined_flow_m3h"] < flows[2] + flows[3],
+      f"{cc['combined_flow_m3h']} vs {flows[2] + flows[3]}")
+# every head drops below its solo pressure
+con_max_p = max(h["pressure_bar"] for z in con["zones"] for h in z["heads"])
+check("concurrent head pressures below solo zone 3 min",
+      con_max_p < base["zones"][2]["head_pressure_bar"]["min"],
+      f"{con_max_p} vs {base['zones'][2]['head_pressure_bar']['min']}")
+# weakest-link pump/manifold load is the combined flow, scoped accordingly
+pump_item = next(it for it in con["weakest_links"]["flow"]["items"]
+                 if it["component"] == "pump")
+check("concurrent pump load is combined flow",
+      abs(pump_item["load_m3h"] - cc["combined_flow_m3h"]) < 1e-9
+      and pump_item["scope"] == "all running zones", str(pump_item))
+
 if failures:
     print(f"FAIL ({len(failures)})")
     for f in failures:

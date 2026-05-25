@@ -64,6 +64,7 @@ def diagnose_irrigation(
 def irrigation_hydraulics(
     adjustments: dict[str, Any] | None = None,
     zone: int | None = None,
+    concurrent_zones: list[int] | None = None,
 ) -> dict:
     """Compute flows, head pressures and weakest links for the system in setup.yaml.
 
@@ -85,14 +86,23 @@ def irrigation_hydraulics(
             pump_model: swap the pump curve (e.g. "JET 112 M").
             well_water_level_m_asl: water-table elevation (default = pump elevation).
             valve_cv, sj_loss_bar, suction_extra_loss_m: tune the loss model.
-        zone: restrict to a single zone id.
+        zone: restrict to a single zone id (one zone at a time).
+        concurrent_zones: zone ids to run simultaneously (e.g. [2, 3]). The pump
+            and main line carry the combined flow; each zone keeps its own valve
+            and laterals. Answers "what if two zones run at once?". Takes
+            precedence over `zone` and ignores global_operating_pressure_bar.
 
     Returns:
         {
           "assumptions": {mode, pump_model, well_water_level_m_asl, loss coefficients, ...},
+          "concurrent": {zones_running, combined_flow_m3h, pump, manifold_inlet_bar,
+                         shared_losses_bar},   # only present in concurrent mode
           "zones": [{id, flow_m3h, pump:{flow_m3h,head_m,head_bar},
                      head_pressure_bar:{min,max},
-                     heads:[{loc,kind,spec,arc_deg,elevation_m,lateral_m,flow_m3h,pressure_bar}],
+                     node_pressures_bar:{pump_discharge,manifold_inlet,after_valve},
+                     loss_breakdown_bar:{static_lift,main_line_friction,suction,zone_valve},
+                     heads:[{loc,kind,spec,arc_deg,elevation_m,lateral_m,flow_m3h,pressure_bar,
+                             loss_breakdown_bar:{elevation_rise,lateral_friction,swing_joint}}],
                      flags, adjustments_applied}],
           "weakest_links": {
              "pressure": {safe_window_bar, upper_bound_by, lower_bound_by,
@@ -101,7 +111,7 @@ def irrigation_hydraulics(
           }
         }
     """
-    return _hydraulics(adjustments or {}, zone)
+    return _hydraulics(adjustments or {}, zone, concurrent_zones)
 
 
 if __name__ == "__main__":
