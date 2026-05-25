@@ -183,6 +183,20 @@ check("overload health is violation", over["status"] == "violation",
       f"{over['status']}: {over['headline']}")
 check("overload health lists violations", len(over["violations"]) >= 1, str(over["violations"]))
 
+# --- rendered text dashboard ---
+dash = base["dashboard"]
+check("report carries a string dashboard", isinstance(dash, str) and len(dash) > 0,
+      type(dash).__name__)
+check("health stays first key after adding dashboard", list(base)[0] == "health",
+      str(list(base)[:2]))
+check("dashboard headlines healthy status", "IRRIGATION SYSTEM HEALTH" in dash and "OK" in dash,
+      dash.splitlines()[0] if dash else "")
+check("dashboard lists every zone", all(f"Z{z['id']}" in dash for z in base["zones"]),
+      str([z["id"] for z in base["zones"]]))
+over_dash = report(concurrent_zones=[1, 2, 3])["dashboard"]
+check("overload dashboard flags violation", "VIOLATION" in over_dash,
+      over_dash.splitlines()[0] if over_dash else "")
+
 if failures:
     print(f"FAIL ({len(failures)})")
     for f in failures:

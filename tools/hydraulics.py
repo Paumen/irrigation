@@ -817,6 +817,147 @@ def _health(zones: list[dict], wl: dict) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# Text dashboard
+# ---------------------------------------------------------------------------
+_STATUS_GLYPH = {"ok": "●", "warning": "▲", "violation": "✖"}
+_STATUS_WORD = {"ok": "OK", "warning": "WARNING", "violation": "VIOLATION"}
+_DASH_BAR_W = 24
+_DASH_RULE_W = 72
+_CHECK_ORDER = ("pressure", "flow", "velocity", "uniformity")
+
+
+def _g(x: Any, default: str = "—") -> str:
+    if x is None:
+        return default
+    if isinstance(x, bool):
+        return str(x)
+    if isinstance(x, int):
+        return str(x)
+    return f"{x:.1f}"
+
+
+def _unit(u: str | None) -> str:
+    return {"m3/h": "m³/h"}.get(u or "", u or "")
+
+
+def _gauge(value: Any, lo: float | None, hi: float | None,
+           kind: str | None, width: int = _DASH_BAR_W) -> str:
+    fill, empty = "█", "·"
+    if value is None or lo is None or hi is None or hi == lo:
+        return empty * width
+
+    def pos(x: float) -> int:
+        return max(0, min(width, round((x - lo) / (hi - lo) * width)))
+
+    if kind == "band" and isinstance(value, (list, tuple)):
+        a, b = pos(value[0]), pos(value[1])
+        if b <= a:
+            b = min(width, a + 1)
+        return empty * a + fill * (b - a) + empty * (width - b)
+    n = pos(value)
+    return fill * n + empty * (width - n)
+
+
+def _val_text(c: dict) -> str:
+    u = _unit(c.get("unit"))
+    v = c.get("value")
+    if v is None:
+        return "—"
+    if c.get("kind") == "band" and isinstance(v, (list, tuple)):
+        return f"{_g(v[0])}–{_g(v[1])} {u}".strip()
+    return f"{_g(v)} {u}".strip()
+
+
+def render_health_dashboard(rep: dict) -> str:
+    """Render a report() result as a fixed-width monospace gauge dashboard.
+
+    Pure formatter: reads only `health`, `assumptions` and `weakest_links`
+    already in the report and adds no physics, so the health check renders
+    identically for every caller."""
+    h = rep.get("health") or {}
+    a = rep.get("assumptions") or {}
+    wl = rep.get("weakest_links") or {}
+    status = h.get("status", "ok")
+    glyph = _STATUS_GLYPH.get(status, "●")
+
+    out: list[str] = []
+    title = "IRRIGATION SYSTEM HEALTH"
+    tag = f"[ {glyph} {_STATUS_WORD.get(status, status.upper())} ]"
+    out.append(title + " " * max(1, _DASH_RULE_W - len(title) - len(tag)) + tag)
+    out.append("─" * _DASH_RULE_W)
+    if h.get("headline"):
+        out.append(h["headline"])
+    meta = [str(a.get("pump_model", "")), str(a.get("mode", ""))]
+    if a.get("well_water_level_m_asl") is not None:
+        meta.append(f"well {_g(a['well_water_level_m_asl'])} m asl")
+    if a.get("concurrent_zones"):
+        meta.append("zones " + "+".join(str(z) for z in a["concurrent_zones"]))
+    out.append("Pump " + " · ".join(m for m in meta if m))
+
+    cap = h.get("capacity")
+    if cap:
+        pct = cap.get("pump_load_pct", 0)
+        n = max(0, min(_DASH_BAR_W, round(pct / 100 * _DASH_BAR_W)))
+        cstat = "ok" if pct < 85 else ("warning" if pct < 100 else "violation")
+        out += ["", "PUMP CAPACITY",
+                f"  {_STATUS_GLYPH[cstat]} {pct}% load   "
+                f"[{'█' * n + '·' * (_DASH_BAR_W - n)}]  "
+                f"{_g(cap.get('pump_load_m3h'))} / {_g(cap.get('pump_rating_m3h'))} m³/h"
+                f" · {_g(cap.get('spare_flow_m3h'))} spare"]
+
+    checks = h.get("checks") or {}
+    ordered = [(k, checks[k]) for k in _CHECK_ORDER if k in checks]
+    ordered += [(k, v) for k, v in checks.items() if k not in _CHECK_ORDER]
+    if ordered:
+        lw = max(len(c.get("label", k)) for k, c in ordered)
+        vw = max(len(_val_text(c)) for _, c in ordered)
+        out += ["", "CHECKS"]
+        for k, c in ordered:
+            g = _STATUS_GLYPH.get(c.get("status", "ok"), "●")
+            bar = _gauge(c.get("value"), c.get("min"), c.get("max"), c.get("kind"))
+            line = (f"  {g} {c.get('label', k).ljust(lw)} [{bar}] "
+                    f"{_val_text(c).ljust(vw)}  {c.get('note', '')}")
+            out.append(line.rstrip())
+
+    zones = h.get("zones") or []
+    if zones:
+        out += ["", "ZONES"]
+        for z in zones:
+            g = _STATUS_GLYPH.get(z.get("status", "ok"), "●")
+            hp = z.get("head_pressure_bar")
+            ptxt = f"{_g(hp[0])}–{_g(hp[1])} bar" if hp else "—"
+            tail = "; ".join(z.get("flags") or []) or "ok"
+            out.append(f"  {g} Z{z.get('id')}  {_g(z.get('flow_m3h'))} m³/h  "
+                       f"{ptxt}  spread {_g(z.get('spread_pct'))}%   {tail}")
+
+    pr, fl, ve = wl.get("pressure") or {}, wl.get("flow") or {}, wl.get("velocity") or {}
+    margins: list[str] = []
+    win, obs = pr.get("safe_window_bar"), pr.get("observed_head_pressure_bar")
+    if win:
+        s = f"pressure  safe {_g(win[0])}–{_g(win[1])} bar"
+        if obs:
+            s += f" · observed {_g(obs[0])}–{_g(obs[1])}"
+        if pr.get("lower_bound_by"):
+            s += f" · floor {pr['lower_bound_by']}"
+        margins.append(s)
+    t = fl.get("tightest")
+    if t:
+        margins.append(f"flow      tightest {_FRIENDLY.get(t['component'], t['component'])} "
+                       f"{_g(t.get('load_m3h'))} / {_g(t.get('rating_m3h'))} m³/h ({t.get('scope')})")
+    fast = ve.get("fastest")
+    if fast:
+        margins.append(f"velocity  fastest {_FRIENDLY.get(fast['segment'], fast['segment'])} "
+                       f"{_g(fast.get('velocity_ms'))} m/s (limit {_g(ve.get('limit_ms'))})")
+    if margins:
+        out += ["", "MARGINS"] + [f"  {m}" for m in margins]
+
+    if h.get("violations"):
+        out += ["", "VIOLATIONS"] + [f"  ✖ {v}" for v in h["violations"]]
+
+    return "\n".join(out)
+
+
 def report(adjustments: dict | None = None, zone: int | None = None,
            concurrent_zones: list[int] | None = None, path: Path = SETUP_PATH) -> dict:
     """Run the full hydraulic solve and weakest-link analysis.
@@ -841,7 +982,10 @@ def report(adjustments: dict | None = None, zone: int | None = None,
     per-zone lines) synthesised from the detail that follows. Then assumptions,
     per-zone results (each with a node_pressures_bar profile and per-head
     loss_breakdown_bar), and weakest_links. In concurrent mode a top-level
-    `concurrent` block reports the shared operating point.
+    `concurrent` block reports the shared operating point. A final `dashboard`
+    key holds `health` pre-rendered as a fixed-width monospace gauge dashboard
+    (see render_health_dashboard) so the health check displays identically for
+    every caller.
     """
     adjustments = adjustments or {}
     sys_data = load_system(path)
@@ -866,7 +1010,7 @@ def report(adjustments: dict | None = None, zone: int | None = None,
         con = solve_concurrent(zones_in, sys_data, env)
         wl = weakest_links(sys_data, con["zones"], env,
                            pump_manifold_load=con["combined_flow_m3h"])
-        return {
+        result = {
             "health": _health(con["zones"], wl),
             "assumptions": _assumptions(pump_model, env, "concurrent",
                                         {"concurrent_zones": con["zones_running"]}),
@@ -876,17 +1020,21 @@ def report(adjustments: dict | None = None, zone: int | None = None,
             "zones": con["zones"],
             "weakest_links": wl,
         }
+        result["dashboard"] = render_health_dashboard(result)
+        return result
 
     mode = "pinned-pressure" if env["global_operating_pressure_bar"] else "full-solve"
     zones_in = [z for z in sys_data["zones"] if zone is None or z["id"] == zone]
     zones = [solve_zone(z, sys_data, env) for z in zones_in]
     wl = weakest_links(sys_data, zones, env)
-    return {
+    result = {
         "health": _health(zones, wl),
         "assumptions": _assumptions(pump_model, env, mode),
         "zones": zones,
         "weakest_links": wl,
     }
+    result["dashboard"] = render_health_dashboard(result)
+    return result
 
 
 def main() -> None:

@@ -116,7 +116,9 @@ def irrigation_hydraulics(
              "flow": {items:[{component,rating_m3h,load_m3h,margin_m3h,scope}], tightest, violations},
              "velocity": {limit_ms, items:[{segment,size_mm,flow_m3h,velocity_ms,scope}],
                           fastest, violations}
-          }
+          },
+          "dashboard": "<pre-rendered fixed-width gauge dashboard of `health` as
+                        monospace text; relay verbatim to show the health check>"
         }
     """
     return _hydraulics(adjustments or {}, zone, concurrent_zones)
