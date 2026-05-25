@@ -820,14 +820,16 @@ def _health(zones: list[dict], wl: dict) -> dict:
 # ---------------------------------------------------------------------------
 # Text dashboard
 # ---------------------------------------------------------------------------
-_STATUS_GLYPH = {"ok": "●", "warning": "▲", "violation": "✖"}
+_STATUS_TAG = {"ok": "[ok]", "warning": "[!!]", "violation": "[XX]"}
 _STATUS_WORD = {"ok": "OK", "warning": "WARNING", "violation": "VIOLATION"}
 _DASH_BAR_W = 24
 _DASH_RULE_W = 72
+_BAR_FILL = "#"
+_BAR_EMPTY = "-"
 _CHECK_ORDER = ("pressure", "flow", "velocity", "uniformity")
 
 
-def _g(x: Any, default: str = "—") -> str:
+def _g(x: Any, default: str = "n/a") -> str:
     if x is None:
         return default
     if isinstance(x, bool):
@@ -837,15 +839,10 @@ def _g(x: Any, default: str = "—") -> str:
     return f"{x:.1f}"
 
 
-def _unit(u: str | None) -> str:
-    return {"m3/h": "m³/h"}.get(u or "", u or "")
-
-
 def _gauge(value: Any, lo: float | None, hi: float | None,
            kind: str | None, width: int = _DASH_BAR_W) -> str:
-    fill, empty = "█", "·"
     if value is None or lo is None or hi is None or hi == lo:
-        return empty * width
+        return _BAR_EMPTY * width
 
     def pos(x: float) -> int:
         return max(0, min(width, round((x - lo) / (hi - lo) * width)))
@@ -854,46 +851,47 @@ def _gauge(value: Any, lo: float | None, hi: float | None,
         a, b = pos(value[0]), pos(value[1])
         if b <= a:
             b = min(width, a + 1)
-        return empty * a + fill * (b - a) + empty * (width - b)
+        return _BAR_EMPTY * a + _BAR_FILL * (b - a) + _BAR_EMPTY * (width - b)
     n = pos(value)
-    return fill * n + empty * (width - n)
+    return _BAR_FILL * n + _BAR_EMPTY * (width - n)
 
 
 def _val_text(c: dict) -> str:
-    u = _unit(c.get("unit"))
+    u = c.get("unit") or ""
     v = c.get("value")
     if v is None:
-        return "—"
+        return "n/a"
     if c.get("kind") == "band" and isinstance(v, (list, tuple)):
-        return f"{_g(v[0])}–{_g(v[1])} {u}".strip()
+        return f"{_g(v[0])}-{_g(v[1])} {u}".strip()
     return f"{_g(v)} {u}".strip()
 
 
 def render_health_dashboard(rep: dict) -> str:
-    """Render a report() result as a fixed-width monospace gauge dashboard.
+    """Render a report() result as a fixed-width gauge dashboard.
 
     Pure formatter: reads only `health`, `assumptions` and `weakest_links`
     already in the report and adds no physics, so the health check renders
-    identically for every caller."""
+    identically for every caller. ASCII-only (one monospace cell per glyph) so
+    the gauge columns line up in any renderer, including mobile fonts that give
+    block/box-drawing characters a different advance width."""
     h = rep.get("health") or {}
     a = rep.get("assumptions") or {}
     wl = rep.get("weakest_links") or {}
     status = h.get("status", "ok")
-    glyph = _STATUS_GLYPH.get(status, "●")
 
     out: list[str] = []
     title = "IRRIGATION SYSTEM HEALTH"
-    tag = f"[ {glyph} {_STATUS_WORD.get(status, status.upper())} ]"
+    tag = f"[ {_STATUS_WORD.get(status, status.upper())} ]"
     out.append(title + " " * max(1, _DASH_RULE_W - len(title) - len(tag)) + tag)
-    out.append("─" * _DASH_RULE_W)
+    out.append("=" * _DASH_RULE_W)
     if h.get("headline"):
-        out.append(h["headline"])
+        out.append(h["headline"].replace("—", "-"))
     meta = [str(a.get("pump_model", "")), str(a.get("mode", ""))]
     if a.get("well_water_level_m_asl") is not None:
         meta.append(f"well {_g(a['well_water_level_m_asl'])} m asl")
     if a.get("concurrent_zones"):
         meta.append("zones " + "+".join(str(z) for z in a["concurrent_zones"]))
-    out.append("Pump " + " · ".join(m for m in meta if m))
+    out.append("Pump " + " | ".join(m for m in meta if m))
 
     cap = h.get("capacity")
     if cap:
@@ -901,10 +899,10 @@ def render_health_dashboard(rep: dict) -> str:
         n = max(0, min(_DASH_BAR_W, round(pct / 100 * _DASH_BAR_W)))
         cstat = "ok" if pct < 85 else ("warning" if pct < 100 else "violation")
         out += ["", "PUMP CAPACITY",
-                f"  {_STATUS_GLYPH[cstat]} {pct}% load   "
-                f"[{'█' * n + '·' * (_DASH_BAR_W - n)}]  "
-                f"{_g(cap.get('pump_load_m3h'))} / {_g(cap.get('pump_rating_m3h'))} m³/h"
-                f" · {_g(cap.get('spare_flow_m3h'))} spare"]
+                f"  {_STATUS_TAG[cstat]} {pct}% load   "
+                f"[{_BAR_FILL * n + _BAR_EMPTY * (_DASH_BAR_W - n)}]  "
+                f"{_g(cap.get('pump_load_m3h'))} / {_g(cap.get('pump_rating_m3h'))} m3/h"
+                f" | {_g(cap.get('spare_flow_m3h'))} spare"]
 
     checks = h.get("checks") or {}
     ordered = [(k, checks[k]) for k in _CHECK_ORDER if k in checks]
@@ -914,9 +912,9 @@ def render_health_dashboard(rep: dict) -> str:
         vw = max(len(_val_text(c)) for _, c in ordered)
         out += ["", "CHECKS"]
         for k, c in ordered:
-            g = _STATUS_GLYPH.get(c.get("status", "ok"), "●")
+            tag = _STATUS_TAG.get(c.get("status", "ok"), "[ok]")
             bar = _gauge(c.get("value"), c.get("min"), c.get("max"), c.get("kind"))
-            line = (f"  {g} {c.get('label', k).ljust(lw)} [{bar}] "
+            line = (f"  {tag} {c.get('label', k).ljust(lw)} [{bar}] "
                     f"{_val_text(c).ljust(vw)}  {c.get('note', '')}")
             out.append(line.rstrip())
 
@@ -924,27 +922,27 @@ def render_health_dashboard(rep: dict) -> str:
     if zones:
         out += ["", "ZONES"]
         for z in zones:
-            g = _STATUS_GLYPH.get(z.get("status", "ok"), "●")
+            tag = _STATUS_TAG.get(z.get("status", "ok"), "[ok]")
             hp = z.get("head_pressure_bar")
-            ptxt = f"{_g(hp[0])}–{_g(hp[1])} bar" if hp else "—"
+            ptxt = f"{_g(hp[0])}-{_g(hp[1])} bar" if hp else "n/a"
             tail = "; ".join(z.get("flags") or []) or "ok"
-            out.append(f"  {g} Z{z.get('id')}  {_g(z.get('flow_m3h'))} m³/h  "
+            out.append(f"  {tag} Z{z.get('id')}  {_g(z.get('flow_m3h'))} m3/h  "
                        f"{ptxt}  spread {_g(z.get('spread_pct'))}%   {tail}")
 
     pr, fl, ve = wl.get("pressure") or {}, wl.get("flow") or {}, wl.get("velocity") or {}
     margins: list[str] = []
     win, obs = pr.get("safe_window_bar"), pr.get("observed_head_pressure_bar")
     if win:
-        s = f"pressure  safe {_g(win[0])}–{_g(win[1])} bar"
+        s = f"pressure  safe {_g(win[0])}-{_g(win[1])} bar"
         if obs:
-            s += f" · observed {_g(obs[0])}–{_g(obs[1])}"
+            s += f" | observed {_g(obs[0])}-{_g(obs[1])}"
         if pr.get("lower_bound_by"):
-            s += f" · floor {pr['lower_bound_by']}"
+            s += f" | floor {pr['lower_bound_by']}"
         margins.append(s)
     t = fl.get("tightest")
     if t:
         margins.append(f"flow      tightest {_FRIENDLY.get(t['component'], t['component'])} "
-                       f"{_g(t.get('load_m3h'))} / {_g(t.get('rating_m3h'))} m³/h ({t.get('scope')})")
+                       f"{_g(t.get('load_m3h'))} / {_g(t.get('rating_m3h'))} m3/h ({t.get('scope')})")
     fast = ve.get("fastest")
     if fast:
         margins.append(f"velocity  fastest {_FRIENDLY.get(fast['segment'], fast['segment'])} "
@@ -953,7 +951,7 @@ def render_health_dashboard(rep: dict) -> str:
         out += ["", "MARGINS"] + [f"  {m}" for m in margins]
 
     if h.get("violations"):
-        out += ["", "VIOLATIONS"] + [f"  ✖ {v}" for v in h["violations"]]
+        out += ["", "VIOLATIONS"] + [f"  {_STATUS_TAG['violation']} {v}" for v in h["violations"]]
 
     return "\n".join(out)
 
