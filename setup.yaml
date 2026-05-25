@@ -35,6 +35,7 @@ equipment:
     model: DAB Jet               
     installed_yyyy_mm: 2023-06         # original 2003 pump replaced
     location: well
+    height_m: 7.2
     input: 230V from pump start relay
     flow_rating_m3h: 3.8     
     pressure_rating_bar: 4.8  
@@ -62,6 +63,7 @@ equipment:
     installed_yyyy_mm: 2026-05
     price_eu: 25
     location: outdoor valvebox
+    height_m: 11.2
     input: 24V from controller
     count: 4
     type: globe
@@ -114,9 +116,7 @@ zones:
   # hoses; a hose ends in a head or in the next tee. Each head sits on its own swing
   # joint, dead-ended. Leaf = {head, arc_deg, height_m, length_m}: head is an I-20
   # rotor (-> 3/4" SJ) or a Hunter MP Rotator nozzle MP2000/MP3000 (-> 3/4"-1/2" SJ);
-  # nozzle (I-20 only) is the fitted I-20 nozzle (number + colour); arc_deg is the set
-  # arc; height_m is elevation vs the valve box (+ above / - below); length_m is hose
-  # run length from the valve box to the head.
+  # nozzle (I-20 only) is the fitted I-20 nozzle (number + colour); 
   - id: 1
     heads:
       i20_rotors: 1
