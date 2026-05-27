@@ -137,6 +137,7 @@ window.DATA = {
         },
       ],
     },
+
         {
       id: 'Q2',
       context: CONTEXT.APP_RUN,
@@ -173,7 +174,7 @@ window.DATA = {
       effort: 5, // continue walk-observe at the working zone
       stage: 1,
       requires: { Q2: [0] },
-      text: 'With the pump up to pressure, how does the flow at that zone look?',
+      text: 'With the pump on, how does the water at the zone behave?',
       highlight: ['rotor'],
       options: [
         {
@@ -240,8 +241,8 @@ window.DATA = {
 
     {
       id: 'Q5',
-      context: CONTEXT.PUMP,
-      effort: 4, // open the manual hose at the pump and look
+      context: CONTEXT.VALVE_BOX,
+      effort: 4, 
       stage: 1,
       text: 'Open the manual hose — how is the flow?',
       highlight: ['pump'],
@@ -318,7 +319,7 @@ window.DATA = {
     {
       id: 'Q8',
       context: CONTEXT.RECALL,
-      effort: 6, // recall how the issue started
+      effort: 5, // recall how the issue started
       stage: 2,
       text: 'How did the problem progress?',
       options: [
@@ -553,7 +554,7 @@ window.DATA = {
     {
       id: 'Q17',
       context: CONTEXT.VALVE_BOX,
-      effort: 2, // disassembly, no plumbing change
+      effort: 1, // disassembly, no plumbing change
       stage: 3,
       text: 'Open each valve and inspect the internals — what do you find?',
       highlight: ['valves'],
@@ -602,7 +603,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q20', context: CONTEXT.METER, effort: 2, stage: 1,
+      id: 'Q20', context: CONTEXT.PUMP, effort: 2, stage: 1,
       text: 'Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?',
       highlight: ['relay', 'pump'],
       options: [
