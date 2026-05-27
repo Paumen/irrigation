@@ -61,7 +61,11 @@ When an area has no local `knowledge/` doc, skip straight to `sources.md` — it
 Your own thinking is the first place certainty leaks in. Hold all of it loosely.
 
 - Treat the scoring engine's output as a hint, not a verdict. Its score (D) blends cause-isolation, breadth, and effort and re-ranks every round, but it's still a heuristic — it can be wrong at edges and doesn't know what the user already told you in free text.
-- Treat the questions and causes catalogue as incomplete — real systems might have failure modes the catalogue doesn't list.
+- Treat the questions and causes catalogue as incomplete — real systems might have failure modes the catalogue doesn't list. The ranking can only ever surface what's *in* the catalogue, so a fault with no question and no F-code is invisible to it — never absent, just unscored. Letting the shortlist frame your conclusion guarantees you miss those.
+- Build the suspect area from the **system, not the shortlist**. When two or more outputs fail together (several zones, or zones *and* the manual line), derive from `setup.yaml` the set of components every failing path physically shares and take the intersection — that set, *including parts with no F-code*, is your suspect area. Do this before the ranking is allowed to influence you. A symptom shared across outputs lives in something shared.
+- A negative rules out only **what you actually observed, across the whole scope it claims**. "Nothing on the stretch I walked" is not "no leak"; "the probe read weak" is not "everything behind the probe is weak". Record the scope of every exclusion and keep anything you didn't fully inspect on the table.
+- Don't trust a test whose instrument sits inside the suspect set. If you gauge the supply by opening the manual hose and that line is itself a suspect, a weak reading is a fact about that line — not a clean readout of what's upstream of it.
+- Don't build a hypothesis on one word of a bucketed answer. Option labels are coarse (e.g. "weak or sputtering" is a single choice, not a measurement); require corroboration before one connotation steers the whole search.
 - No single answer is decisive. A cause only becomes a working hypothesis once **multiple** answers point at it.
 - When the loop dead-ends, run "five whys" silently against your current top hypothesis to expose assumptions before asking the user anything more.
 
@@ -120,6 +124,7 @@ Every value above is illustrative — ids, counts, and labels come from the live
    - If `relevancy` is `low` or `null`, apply the stop test in *Stopping the loop* below. If it's met, **exit the loop** and continue at step 4. If it isn't (too few answered yet), ask `next[0]` anyway to keep gathering signal.
    - Map the user's pick back to the answer shape (see *Answer shapes*), add it to `answers`, and call the tool again.
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.
+   - **As soon as two or more outputs are known to fail together, map the shared path.** Using `setup.yaml`, write out the components each failing output passes through and take the intersection — that's the suspect area, *including any part with no question or F-code* (e.g. an unvalved branch hanging off the manifold, the manifold body, a shared fitting). Carry this set forward and reconcile the ranking against it; don't let the shortlist quietly shrink it.
    - Between rounds, if more than 3 questions are answered, surface a short list of the current top three causes so the user sees the hypothesis narrowing.
 
 4. **After the loop, branch on whether the top causes clearly lead**, i.e. the gap held across the last few rounds — not just the most recent answer. Two cases:
@@ -136,7 +141,13 @@ Every value above is illustrative — ids, counts, and labels come from the live
      - If conflicting, ask clarification questions.
      - If insufficient and no useful predefined questions remain (e.g. symptoms or cause direction appears to deviate from predefined question and/or cause buckets): read the narrowed area's `knowledge/<area>.md` end-to-end (especially the sibling internals/solenoid docs if narrowed to the valve), then fall back per `sources.md` to vendor PDFs and web. Use techniques like "five whys" silently. Based on your findings, check again if any relevant engine questions are left; if not, consider asking your own open- or closed-ended questions targeted at the off-engine angle.
 
-6. **Present findings.** State the area(s) to investigate, the cheapest next physical check, and recommendations. Also state how strong/weak the signals are overall based on what the tool says.
+6. **Present findings.** First run three checks — each guards a way the search quietly narrows too far:
+
+   - **Coverage ledger.** List the components/paths in your suspect area (from `setup.yaml`) and tag each: does the engine have a question or a cause for it? Anything with **neither is a blind spot** — the ranking can never steer you there, so it must be covered by your own reasoning or your own questions before you conclude. The shared-path set from step 3 is the input here.
+   - **Scoped negatives.** Re-read every cause/area you ruled out. Was it excluded by something observed across its *whole* scope, or only the part you happened to inspect (one stretch walked, one probe read)? Re-open the remainder.
+   - **Narrow, don't diagnose.** The deliverable is a **suspect span plus the cheapest check the user runs** to localise it themselves — not a single named root cause. If you've written one cause as "the answer", widen back to the area; finding the cause is the user's job (see *Introduction*).
+
+   Then state the area(s) to investigate, the cheapest next physical check, and how strong/weak the overall signal is.
 
 ## Stopping the loop
 
