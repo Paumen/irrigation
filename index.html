@@ -135,6 +135,9 @@
             </template>
           </ol>
         </template>
+        <template x-if="recommendations.length === 0">
+          <p class="muted">No further questions would help narrow this down — review the likely causes.</p>
+        </template>
         <template x-if="hasMore(recommendations.length)">
           <button
             type="button"

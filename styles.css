@@ -603,6 +603,11 @@ input[type='text'] {
   padding: var(--sp-s) var(--sp-l) var(--sp-l);
 }
 
+.muted {
+  font-size: var(--text-sm);
+  color: var(--c-fg-strong);
+}
+
 .tab-panel[data-panel='equipment'] {
   display: grid;
   gap: var(--sp-l);
