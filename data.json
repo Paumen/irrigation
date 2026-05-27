@@ -349,7 +349,7 @@
           0
         ]
       },
-      "text": "With the pump up to pressure, how does the flow at that zone look?",
+      "text": "With the pump on, how does the water at the zone behave?",
       "highlight": [
         "rotor"
       ],
@@ -505,7 +505,7 @@
     },
     {
       "id": "Q5",
-      "context": "pump",
+      "context": "valve-box",
       "effort": 4,
       "stage": 1,
       "text": "Open the manual hose — how is the flow?",
@@ -630,7 +630,7 @@
     {
       "id": "Q8",
       "context": "recall",
-      "effort": 6,
+      "effort": 5,
       "stage": 2,
       "text": "How did the problem progress?",
       "options": [
@@ -1212,7 +1212,7 @@
     {
       "id": "Q17",
       "context": "valve-box",
-      "effort": 2,
+      "effort": 1,
       "stage": 3,
       "text": "Open each valve and inspect the internals — what do you find?",
       "highlight": [
@@ -1309,7 +1309,7 @@
     },
     {
       "id": "Q20",
-      "context": "meter",
+      "context": "pump",
       "effort": 2,
       "stage": 1,
       "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
@@ -1433,6 +1433,62 @@
             "F7.3.1": -0.2,
             "F5": -0.2,
             "F6": -0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q23",
+      "context": "valve-box",
+      "effort": 5,
+      "stage": 1,
+      "text": "Start the pump only (don't start a zone). With all valves closed, where does water come out?",
+      "highlight": [
+        "pump",
+        "valves",
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "No water — nothing at heads or valves",
+          "icon": "flow-none",
+          "effects": {
+            "F7.1.2": -0.2,
+            "F7.1.3": -0.4,
+            "F7.3.2": -0.2,
+            "F7.4": -0.2,
+            "F6.1": -0.2
+          }
+        },
+        {
+          "label": "Water out of the heads",
+          "effects": {
+            "F7.1.2": 0.4,
+            "F7.1.3": 0.4,
+            "F7.3.2": 0.4,
+            "F7.3.1": 0.2,
+            "F7.4": 0.4,
+            "F3.4": 0.2,
+            "F2.6": 0.2
+          }
+        },
+        {
+          "label": "Water out of the valves",
+          "effects": {
+            "F7.1.3": 0.4,
+            "F7.4": 0.4,
+            "F7.1.2": 0.2,
+            "F6.1": 0.2
+          }
+        },
+        {
+          "label": "Water out of both heads and valves",
+          "effects": {
+            "F7.1.2": 0.4,
+            "F7.1.3": 0.4,
+            "F7.3.2": 0.4,
+            "F7.4": 0.4,
+            "F3.4": 0.2
           }
         }
       ]

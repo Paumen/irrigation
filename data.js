@@ -633,6 +633,38 @@ window.DATA = {
         { label: 'water coming out of valve', effects: { 'F7.1.3': 1.0, 'F7.1.2': 0.2, 'F7.3.2': 0.2 } },
         { label: 'water coming out of activated zone', effects: { 'F4.1': -0.2, 'F2.1': -0.2, 'F2.8': -0.2, 'F3.1.1': -0.2, 'F3.1.3': -0.2, 'F7.1.1': -0.2, 'F7.3.1': -0.2, 'F5': -0.2, 'F6': -0.2 } },
       ],
+    },
+    {
+      id: 'Q23',
+      context: CONTEXT.VALVE_BOX,
+      effort: 5, // start pump-only, open box, look at valves and heads
+      stage: 1,
+      text: "Start the pump only (don't start a zone). With all valves closed, where does water come out?",
+      highlight: ['pump', 'valves', 'rotor'],
+      options: [
+        {
+          label: 'No water — nothing at heads or valves',
+          icon: 'flow-none',
+          // Closed valves hold the pressurised main: rules out leak-by / external
+          // valve weep. Modest because the pump may simply not be building pressure.
+          effects: { 'F7.1.2': -0.2, 'F7.1.3': -0.4, 'F7.3.2': -0.2, 'F7.4': -0.2, 'F6.1': -0.2 },
+        },
+        {
+          label: 'Water out of the heads',
+          // A de-energised valve passes flow to its zone: internal leak-by, or it is
+          // being energised uncommanded (wire not isolated / stray program).
+          effects: { 'F7.1.2': 0.4, 'F7.1.3': 0.4, 'F7.3.2': 0.4, 'F7.3.1': 0.2, 'F7.4': 0.4, 'F3.4': 0.2, 'F2.6': 0.2 },
+        },
+        {
+          label: 'Water out of the valves',
+          // External leak at the valve assembly: cracked body/seat or assembly fault.
+          effects: { 'F7.1.3': 0.4, 'F7.4': 0.4, 'F7.1.2': 0.2, 'F6.1': 0.2 },
+        },
+        {
+          label: 'Water out of both heads and valves',
+          effects: { 'F7.1.2': 0.4, 'F7.1.3': 0.4, 'F7.3.2': 0.4, 'F7.4': 0.4, 'F3.4': 0.2 },
+        },
+      ],
     }
   ]
 };
