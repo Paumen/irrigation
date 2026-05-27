@@ -105,6 +105,21 @@ window.DATA = {
     { id: 'F9.3',   parent: 'F9', baseline: 0.6, label: 'Head obstruction (debris / filter / nozzle clog)' },
     { id: 'F9.4',   parent: 'F9', baseline: 0.8, label: 'Head install error (arc / range mis-set, nozzle mismatch)' },
   ],
+
+  // Effect weights (the values in each answer's `effects`): how far an answer
+  // shifts a cause's running score, on a symmetric discrete scale —
+  //   ±0.2 faint · ±0.4 mild · ±0.6 moderate · ±1.0 strong · ±1.6 decisive (rule in/out).
+  // Author on these steps so weights stay comparable across questions; positive
+  // raises a cause, negative rules it out.
+  //
+  // Parent vs child keys: an `effects` key is either a leaf cause ('F7.1.2') or a
+  // component parent ('F7' — the `parent` field shared by the F7.* causes). A
+  // parent key is shorthand: at load time the engine broadcasts its value to
+  // every child not named explicitly in the same `effects` object, and an
+  // explicit child overrides the broadcast. The parent itself is never scored —
+  // only its children. So { 'F7': 0.2, 'F7.1.2': -1.6 } gives every F7.* cause
+  // +0.2 except F7.1.2, which gets -1.6. To hit only specific failure modes, list
+  // leaf codes and omit the parent (see the §5.5 "parent-broadcast asymmetry" answers).
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
     {
