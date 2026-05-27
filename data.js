@@ -105,6 +105,21 @@ window.DATA = {
     { id: 'F9.3',   parent: 'F9', baseline: 0.6, label: 'Head obstruction (debris / filter / nozzle clog)' },
     { id: 'F9.4',   parent: 'F9', baseline: 0.8, label: 'Head install error (arc / range mis-set, nozzle mismatch)' },
   ],
+
+  // Effect weights (the values in each answer's `effects`): how far an answer
+  // shifts a cause's running score, on a symmetric discrete scale —
+  //   ±0.2 faint · ±0.4 mild · ±0.6 moderate · ±1.0 strong · ±1.6 decisive (rule in/out).
+  // Author on these steps so weights stay comparable across questions; positive
+  // raises a cause, negative rules it out.
+  //
+  // Parent vs child keys: an `effects` key is either a leaf cause ('F7.1.2') or a
+  // component parent ('F7' — the `parent` field shared by the F7.* causes). A
+  // parent key is shorthand: at load time the engine broadcasts its value to
+  // every child not named explicitly in the same `effects` object, and an
+  // explicit child overrides the broadcast. The parent itself is never scored —
+  // only its children. So { 'F7': 0.2, 'F7.1.2': -1.6 } gives every F7.* cause
+  // +0.2 except F7.1.2, which gets -1.6. To hit only specific failure modes, list
+  // leaf codes and omit the parent (see the §5.5 "parent-broadcast asymmetry" answers).
   questions: [
     /* --- STAGE 1: SYMPTOMS --- */
     {
@@ -128,12 +143,12 @@ window.DATA = {
         {
           label: 'One zone fails',
           icon: 'scope-single',
-          effects: { 'F3.1.1': 0.2, 'F3.1.2': -2.0, 'F3.1.3': 0.2, 'F7': 0.2, 'F8': 0.2 },
+          effects: { 'F3.1.1': 0.2, 'F3.1.2': -1.6, 'F3.1.3': 0.2, 'F7': 0.2, 'F8': 0.2 },
         },
         {
           label: 'One rotor fails',
           icon: 'scope-one',
-          effects: { 'F3.1.2': -2.0, 'F9': 1.6 },
+          effects: { 'F3.1.2': -1.6, 'F9': 1.6 },
         },
       ],
     },
@@ -478,7 +493,7 @@ window.DATA = {
         {
           label: 'Yes — zone runs',
           // §5.5 parent-broadcast asymmetry: drop F7 broadcast, hit hydraulic faults only.
-          effects: { 'F3': 0.6, 'F7.1.1': 0.6, 'F7.3.1': 0.6, 'F7.1.2': -1.4, 'F7.1.3': -1.4, 'F7.3.2': -1.4, 'F7.4': -1.4, 'F8': -1.8, 'F9': -1.8 },
+          effects: { 'F3': 0.6, 'F7.1.1': 0.6, 'F7.3.1': 0.6, 'F7.1.2': -1.6, 'F7.1.3': -1.6, 'F7.3.2': -1.6, 'F7.4': -1.6, 'F8': -1.6, 'F9': -1.6 },
         },
         {
           label: 'Partial — weak flow',
@@ -607,7 +622,7 @@ window.DATA = {
       text: 'Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?',
       highlight: ['relay', 'pump'],
       options: [
-        { label: 'Clicks, 230 V at output', effects: { 'F4.1': -1.2, 'F5.1': 0.6, 'F5.3': 0.4, 'F3.1.3': -0.4, 'F2.1': -0.2, 'F2.8': -0.4 } },
+        { label: 'Clicks, 230 V at output', effects: { 'F4.1': -1.6, 'F5.1': 0.6, 'F5.3': 0.4, 'F3.1.3': -0.4, 'F2.1': -0.2, 'F2.8': -0.4 } },
         { label: 'Clicks, but no 230 V out', effects: { 'F4.1': 1.6, 'F5.1': -0.4 } },
         { label: 'Clicks, but breaker trips', effects: { 'F4.1': 1.0, 'F5.1': 1.0 } },
         { label: 'Silent — no click', effects: { 'F4.1': 0.6, 'F2.1': 0.4, 'F2.8': 0.6, 'F3.1.3': 0.6, 'F2.5': 0.4, 'F2.6': 0.4 } },
@@ -632,6 +647,38 @@ window.DATA = {
         { label: "water coming out of a zone you didn't activate", effects: { 'F3.1.1': 1.0, 'F3.1.3': 0.4, 'F7.4': 1.0, 'F7.1.2': 0.6, 'F7.3.2': 0.6, 'F7.1.3': 0.4, 'F5': -0.2, 'F6': -0.2 } },
         { label: 'water coming out of valve', effects: { 'F7.1.3': 1.0, 'F7.1.2': 0.2, 'F7.3.2': 0.2 } },
         { label: 'water coming out of activated zone', effects: { 'F4.1': -0.2, 'F2.1': -0.2, 'F2.8': -0.2, 'F3.1.1': -0.2, 'F3.1.3': -0.2, 'F7.1.1': -0.2, 'F7.3.1': -0.2, 'F5': -0.2, 'F6': -0.2 } },
+      ],
+    },
+    {
+      id: 'Q23',
+      context: CONTEXT.VALVE_BOX,
+      effort: 5, // start pump-only, open box, look at valves and heads
+      stage: 1,
+      text: "Start the pump only (don't start a zone). With all valves closed, where does water come out?",
+      highlight: ['pump', 'valves', 'rotor'],
+      options: [
+        {
+          label: 'No water — nothing at heads or valves',
+          icon: 'flow-none',
+          // Closed valves hold the pressurised main: rules out leak-by / external
+          // valve weep. Modest because the pump may simply not be building pressure.
+          effects: { 'F7.1.2': -0.2, 'F7.1.3': -0.4, 'F7.3.2': -0.2, 'F7.4': -0.2, 'F6.1': -0.2 },
+        },
+        {
+          label: 'Water out of the heads',
+          // A de-energised valve passes flow to its zone: internal leak-by, or it is
+          // being energised uncommanded (wire not isolated / stray program).
+          effects: { 'F7.1.2': 0.4, 'F7.1.3': 0.4, 'F7.3.2': 0.4, 'F7.3.1': 0.2, 'F7.4': 0.4, 'F3.4': 0.2, 'F2.6': 0.2 },
+        },
+        {
+          label: 'Water out of the valves',
+          // External leak at the valve assembly: cracked body/seat or assembly fault.
+          effects: { 'F7.1.3': 0.4, 'F7.4': 0.4, 'F7.1.2': 0.2, 'F6.1': 0.2 },
+        },
+        {
+          label: 'Water out of both heads and valves',
+          effects: { 'F7.1.2': 0.4, 'F7.1.3': 0.4, 'F7.3.2': 0.4, 'F7.4': 0.4, 'F3.4': 0.2 },
+        },
       ],
     }
   ]
