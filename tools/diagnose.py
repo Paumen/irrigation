@@ -37,6 +37,7 @@ def _summarize_question(
         "text": q["text"],
         "type": q["type"],
         "stage": q.get("stage"),
+        "context": q.get("context"),
         "optional": bool(q.get("optional")),
         "relevancy": relevancy,
         "D": round(D, 4),

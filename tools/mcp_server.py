@@ -50,13 +50,16 @@ def diagnose_irrigation(
         {
           "ranked": top 5 causes [{id, label, pct, score}, ...] sorted by score,
           "next": top 5 recommended questions [
-            {id, text, type, stage, optional, relevancy, D,
+            {id, text, type, stage, context, optional, relevancy, D,
              factors:{isolation, breadth, effort},  # the 3 terms that sum to D
              options|rows|columns|stepLabels}, ...
           ] sorted by discriminator D (highest first),
             # factors.isolation = how sharply answers separate specific causes
             # factors.breadth   = how many causes the question moves at all
             # factors.effort    = ease of answering (higher = less homeowner work)
+            # context = shared physical setup (app-run, recall, valve-box,
+            #   meter, pump, controller, walk, install); questions in the same
+            #   context can be batched into one prompt and answered together
           "answered_count": number of answered questions,
           "skipped_count": number of skipped questions,
           "total_questions": total main questions in the flow,

@@ -60,7 +60,7 @@ When an area has no local `knowledge/` doc, skip straight to `sources.md` — it
 ## How you reason (your priors)
 Your own thinking is the first place certainty leaks in. Hold all of it loosely.
 
-- Treat the scoring engine's output as a hint, not a verdict. Its ranking heuristic ignores effort, doesn't model isolation between causes, and can be wrong at edges.
+- Treat the scoring engine's output as a hint, not a verdict. Its score (D) blends cause-isolation, breadth, and effort and re-ranks every round, but it's still a heuristic — it can be wrong at edges and doesn't know what the user already told you in free text.
 - Treat the questions and causes catalogue as incomplete — real systems might have failure modes the catalogue doesn't list.
 - No single answer is decisive. A cause only becomes a working hypothesis once **multiple** answers point at it.
 - When the loop dead-ends, run "five whys" silently against your current top hypothesis to expose assumptions before asking the user anything more.
@@ -86,9 +86,11 @@ Your own thinking is the first place certainty leaks in. Hold all of it loosely.
       "text": "Controller voltage during call (~24 VAC)?",
       "type": "options" | "multi" | "matrix" | "ages",
       "stage": 1 | 2 | 3,
+      "context": "app-run",                          // shared setup — batch same-context questions
       "optional": false,
       "relevancy": "high" | "mid" | "low" | null,
-      "D": 12.4,                                     // raw discriminator
+      "D": 12.4,                                     // total score
+      "factors": { "isolation": 6.6, "breadth": 3.0, "effort": 6.0 }, // the 3 terms summing to D
       // shape-specific:
       "options":     [{ "index": 0, "label": "..." }, ...], // for "options" / "multi"
       "multiselect": true,                                  // present (true) only for "multi"
@@ -113,7 +115,8 @@ Every value above is illustrative — ids, counts, and labels come from the live
 2. **Bootstrap the engine.** Call the engine tool with empty `answers` to get the initial ranking and recommended first question.
 
 3. **Loop.** Each round:
-   - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below). For low-effort questions, you can ask 2–4 at once, especially in the first round(s) and if question relevance is high.
+   - **First round — always open with Q1, Q2 and Q3 together.** Ask them as a single batch (one multi-question prompt) before anything else. They're the lowest-effort `app-run` questions — run a zone and observe the heads, where water comes out, and the pump sound — so they share one trip outside and together pin down scope, routing, and source. Feed all three answers back before continuing the loop.
+   - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below). For low-effort questions, you can ask 2–4 at once — and prefer to batch questions that share the same `context` (e.g. several `recall` or `valve-box` questions), since the user answers them in one go.
    - If `relevancy` is `low` or `null`, apply the stop test in *Stopping the loop* below. If it's met, **exit the loop** and continue at step 4. If it isn't (too few answered yet), ask `next[0]` anyway to keep gathering signal.
    - Map the user's pick back to the answer shape (see *Answer shapes*), add it to `answers`, and call the tool again.
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.

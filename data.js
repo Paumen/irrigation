@@ -44,10 +44,11 @@ window.DATA = {
   //   2 tools-or-disassembly — multimeter, valve internals
   //   1 significant-labor    — install missing hardware, swap parts, dig
   //
-  // The discriminator has three terms — spread, breadth (BREADTH_WEIGHT 1.0),
-  // and effort (level * effortWeight) — tuned so each contributes roughly
-  // equally on average across the question set.
-  effortWeight: 2.0,
+  // The score D has three terms — spread, breadth (BREADTH_WEIGHT 1.0), and
+  // effort (level * effortWeight). effortWeight 3.0 weights effort above the
+  // two cause terms, so the engine leans toward quick, low-effort questions
+  // (and questions in the same `context` can be batched and answered together).
+  effortWeight: 3.0,
 
   // Cause taxonomy: dotted F-codes per docs/fcode_spec.md.
   // F<component>.<mode>[.<instance>]. Parent is always flat at the
@@ -95,6 +96,7 @@ window.DATA = {
     /* --- STAGE 1: SYMPTOMS --- */
     {
       id: 'Q1',
+      context: 'app-run',
       effort: 6, // they already know which zones fail
       stage: 1,
       text: 'Run the system from the app and watch the heads. What happens?',
@@ -124,6 +126,7 @@ window.DATA = {
     },
         {
       id: 'Q2',
+      context: 'app-run',
       effort: 5, // walk-observe: start a zone and look around at the heads
       stage: 1,
       text: 'Start one zone from the app and walk the yard. Where does water actually come out?',
@@ -153,6 +156,7 @@ window.DATA = {
     },
     {
       id: 'Q2q',
+      context: 'app-run',
       effort: 5, // continue walk-observe at the working zone
       stage: 1,
       requires: { Q2: [0] },
@@ -184,6 +188,7 @@ window.DATA = {
 
     {
       id: 'Q3',
+      context: 'app-run',
       effort: 5, // listen at the pump while running
       stage: 1,
       text: 'Start a zone from the app and listen at the pump. What does it do?',
@@ -209,7 +214,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q4', effort: 3, stage: 1,
+      id: 'Q4', context: 'controller', effort: 3, stage: 1,
       text: 'Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?',
       highlight: ['sw', 'ctrl'],
       options: [
@@ -222,6 +227,7 @@ window.DATA = {
 
     {
       id: 'Q5',
+      context: 'pump',
       effort: 4, // open the manual hose at the pump and look
       stage: 1,
       text: 'Open the manual hose — how is the flow?',
@@ -244,6 +250,7 @@ window.DATA = {
 
     {
       id: 'Q6',
+      context: 'valve-box',
       effort: 4, // stand at the valve box during a cycle
       stage: 1,
       text: 'Start a zone from the app and stand at the valve box. What do you hear?',
@@ -269,6 +276,7 @@ window.DATA = {
     },
     {
       id: 'Q7',
+      context: 'controller',
       effort: 3, // if not tried, requires power-cycling and a test run
       stage: 1,
       text: 'Did a restart help?',
@@ -296,6 +304,7 @@ window.DATA = {
     /* --- STAGE 2: TIMELINE --- */
     {
       id: 'Q8',
+      context: 'recall',
       effort: 6, // recall how the issue started
       stage: 2,
       text: 'How did the problem progress?',
@@ -324,6 +333,7 @@ window.DATA = {
     },
     {
       id: 'Q9',
+      context: 'recall',
       effort: 6, // install dates already in setup.yaml; confirm from memory
       stage: 2,
       type: 'ages',
@@ -386,6 +396,7 @@ window.DATA = {
     },
     {
       id: 'Q10',
+      context: 'recall',
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
@@ -400,6 +411,7 @@ window.DATA = {
     },
     {
       id: 'Q10b',
+      context: 'recall',
       effort: 4,
       stage: 2,
       type: 'matrix',
@@ -413,6 +425,7 @@ window.DATA = {
     },
     {
       id: 'Q11',
+      context: 'recall',
       effort: 4, // recall a distant one-off; reason before vs after
       stage: 2,
       type: 'matrix',
@@ -426,6 +439,7 @@ window.DATA = {
     },
     {
       id: 'Q11b',
+      context: 'recall',
       effort: 4,
       stage: 2,
       type: 'matrix',
@@ -441,6 +455,7 @@ window.DATA = {
     /* --- STAGE 3: TESTS --- */
     {
       id: 'Q12',
+      context: 'valve-box',
       effort: 3, // open valve box, turn the solenoid
       stage: 3,
       text: 'Open the valve manually with the bleed screw — does the zone run?',
@@ -463,6 +478,7 @@ window.DATA = {
     },
     {
       id: 'Q13',
+      context: 'meter',
       effort: 2, // multimeter at terminals
       stage: 3,
       text: 'Press "start zone" on the controller itself. At the zone terminal with a multimeter, what do you read?',
@@ -481,6 +497,7 @@ window.DATA = {
     },
     {
       id: 'Q14',
+      context: 'meter',
       effort: 2, // multimeter at terminals
       stage: 3,
       text: 'Field-wire resistance at the controller terminals?',
@@ -493,6 +510,7 @@ window.DATA = {
     },
     {
       id: 'Q15',
+      context: 'meter',
       effort: 2, // multimeter at the solenoid
       stage: 3,
       text: 'Solenoid coil resistance (typically 20–60 Ω)?',
@@ -506,6 +524,7 @@ window.DATA = {
     },
     {
       id: 'Q16',
+      context: 'valve-box',
       effort: 1, // requires a spare valve and plumbing
       stage: 3,
       text: 'Swap in a known-good valve — does the issue stay with the zone?',
@@ -520,6 +539,7 @@ window.DATA = {
     },
     {
       id: 'Q17',
+      context: 'valve-box',
       effort: 2, // disassembly, no plumbing change
       stage: 3,
       text: 'Open each valve and inspect the internals — what do you find?',
@@ -531,6 +551,7 @@ window.DATA = {
     },
     {
       id: 'Q18',
+      context: 'walk',
       effort: 5, // walk the route and look
       optional: true,
       text: 'Walk the system — do you see water or wet ground?',
@@ -557,6 +578,7 @@ window.DATA = {
 
     {
       id: 'Q19',
+      context: 'install',
       effort: 1, // no flow meter installed; would need to install one
       optional: true,
       text: 'Install flow meter, run a zone, does the flow meter read 1.0–3.0 m³/h?',
@@ -567,7 +589,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q20', effort: 2, stage: 1,
+      id: 'Q20', context: 'meter', effort: 2, stage: 1,
       text: 'Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?',
       highlight: ['relay', 'pump'],
       options: [
@@ -578,7 +600,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q21', effort: 2, stage: 1,
+      id: 'Q21', context: 'valve-box', effort: 2, stage: 1,
       text: 'Open the valve box and inspect the wire splices to each solenoid. What do they look like?',
       highlight: ['valves'],
       options: [
@@ -588,7 +610,7 @@ window.DATA = {
       ],
     },
     {
-      id: 'Q22', effort: 5, stage: 1,
+      id: 'Q22', context: 'valve-box', effort: 5, stage: 1,
       text: 'Run a zone, open valve box, look at valves and heads?',
       multiselect: true,
       highlight: ['valves', 'rotor'],
