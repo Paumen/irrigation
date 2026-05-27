@@ -137,54 +137,68 @@ class Engine:
                 for cid, delta in row["steps"][idx]["effects"].items():
                     s[cid] = s.get(cid, 0) + delta
 
-    def _disc(self, q: dict, ids: list[str]) -> float:
+    def _disc_parts(self, q: dict, ids: list[str]) -> tuple[float, float]:
+        """The two cause-based terms of the discriminator, before effort:
+        isolation (how sharply answers separate specific causes) and the
+        weighted breadth (how many causes the question moves at all)."""
         t = q["type"]
         if t == "options":
-            D = 0.0
+            iso = 0.0
             breadth = 0
             for cause_id in ids:
                 deltas = [o["effects"].get(cause_id, 0) for o in q["options"]]
                 spread = max(deltas) - min(deltas)
                 if spread > 0:
                     breadth += 1
-                D += spread
-            return D + BREADTH_WEIGHT * breadth
+                iso += spread
+            return iso, BREADTH_WEIGHT * breadth
         if t == "multi":
-            D = 0.0
+            iso = 0.0
             breadth = 0
             for cause_id in ids:
                 sum_abs = sum(abs(o["effects"].get(cause_id, 0)) for o in q["options"])
                 if sum_abs > 0:
                     breadth += 1
-                D += sum_abs
-            return D + BREADTH_WEIGHT * breadth
+                iso += sum_abs
+            return iso, BREADTH_WEIGHT * breadth
         if t == "matrix":
             mults = [c["mult"] for c in q["columns"]]
             mult_spread = max(mults) - min(mults)
             n_rows = len(q["rows"])
             p = (MATRIX_EXPECTED_FILLED / n_rows) if n_rows > 0 else 0
-            D = 0.0
+            iso = 0.0
             rows_affecting: dict[str, int] = {}
             for row in q["rows"]:
                 for cause_id in ids:
                     e = abs(row["effects"].get(cause_id, 0))
                     if e > 0:
-                        D += e * mult_spread * p
+                        iso += e * mult_spread * p
                         rows_affecting[cause_id] = rows_affecting.get(cause_id, 0) + 1
             breadth = sum(1 - (1 - p) ** k for k in rows_affecting.values())
-            return D + BREADTH_WEIGHT * breadth
+            return iso, BREADTH_WEIGHT * breadth
         if t == "ages":
-            D = 0.0
+            iso = 0.0
             affected = set()
             for row in q["rows"]:
                 for cause_id in ids:
                     deltas = [st["effects"].get(cause_id, 0) for st in row["steps"]]
                     spread = max(deltas) - min(deltas)
                     if spread > 0:
-                        D += spread
+                        iso += spread
                         affected.add(cause_id)
-            return D + BREADTH_WEIGHT * len(affected)
-        return 0.0
+            return iso, BREADTH_WEIGHT * len(affected)
+        return 0.0, 0.0
+
+    def _disc(self, q: dict, ids: list[str]) -> float:
+        iso, breadth = self._disc_parts(q, ids)
+        return iso + breadth
+
+    def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
+        """The three additive factors that make up D for question q:
+        isolation, breadth and effort. They sum to the total D."""
+        iso, breadth = self._disc_parts(q, ids)
+        effort = self._effort_term(q)
+        return {"isolation": iso, "breadth": breadth, "effort": effort}
 
     def _ans_is_present(self, q: dict, ans: Any) -> bool:
         t = q["type"]
