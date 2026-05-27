@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any
 
 BREADTH_WEIGHT = 1.0
+EASE_WEIGHT = 0.5
 MATRIX_EXPECTED_FILLED = 1
 
 
@@ -190,8 +191,10 @@ class Engine:
         return 0.0, 0.0
 
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
-        """The three additive factors that make up the score D for question q:
-        isolation, breadth and effort. They sum to D."""
+        """The three factors behind question q's score: isolation and breadth
+        (how sharply / how broadly it separates the live causes) and effort
+        (ease of answering). The score ranks on isolation+breadth, with effort
+        as a bounded tie-breaker; see discriminators()."""
         iso, breadth = self._cause_terms(q, ids)
         effort = self._effort_term(q)
         return {"isolation": iso, "breadth": breadth, "effort": effort}
@@ -270,23 +273,32 @@ class Engine:
 
     def discriminators(self, answers: dict | None = None, skipped: dict | None = None) -> dict:
         ids = self.contending_ids(answers)
-        m: dict[str, float] = {}
-        mx = 0.0
+        cands: list[tuple[str, float, float]] = []
+        max_effort = 0.0
         for q in self.questions:
             if self.is_completed(q["id"], answers, skipped):
                 continue
             if not self._requires_met(q, answers):
                 continue
             t = self.discriminator_terms(q, ids)
-            # Gate: only surface a question that actually discriminates a
-            # contending cause. Without this, the constant effort term keeps
-            # every unanswered question on the list, so a cheap-but-irrelevant
-            # question can outrank a costly one that is the only thing bearing
-            # on the remaining causes.
-            if t["isolation"] + t["breadth"] <= 0:
+            # Gate: only surface a question that actually separates a contending
+            # cause, so a cheap-but-uninformative question can't ride onto the list.
+            info = t["isolation"] + t["breadth"]
+            if info <= 0:
                 continue
-            D = t["isolation"] + t["breadth"] + t["effort"]
-            m[q["id"]] = D
+            effort = t["effort"]
+            if effort > max_effort:
+                max_effort = effort
+            cands.append((q["id"], info, effort))
+        m: dict[str, float] = {}
+        mx = 0.0
+        for qid, info, effort in cands:
+            # Rank by how sharply a question separates the live causes; ease only
+            # nudges within a bounded band (EASE_WEIGHT), breaking ties between
+            # comparably-informative questions without ever outweighing separation.
+            ease = (effort / max_effort) if max_effort > 0 else 0.0
+            D = info * (1 + EASE_WEIGHT * ease)
+            m[qid] = D
             if D > mx:
                 mx = D
         return {"map": m, "max": mx}

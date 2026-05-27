@@ -51,7 +51,7 @@ def diagnose_irrigation(
           "ranked": top 5 causes [{id, label, pct, score}, ...] sorted by score,
           "next": top 5 recommended questions [
             {id, text, type, stage, context, optional, relevancy, D,
-             factors:{isolation, breadth, effort},  # the 3 terms that sum to D
+             factors:{isolation, breadth, effort},  # isolation+breadth drive D; effort only tie-breaks
              options|rows|columns|stepLabels}, ...
           ] sorted by discriminator D (highest first),
             # factors.isolation = how sharply answers separate specific causes
