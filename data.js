@@ -128,12 +128,12 @@ window.DATA = {
         {
           label: 'One zone fails',
           icon: 'scope-single',
-          effects: { 'F3.1.1': 0.2, 'F3.1.2': -2.0, 'F3.1.3': 0.2, 'F7': 0.2, 'F8': 0.2 },
+          effects: { 'F3.1.1': 0.2, 'F3.1.2': -1.6, 'F3.1.3': 0.2, 'F7': 0.2, 'F8': 0.2 },
         },
         {
           label: 'One rotor fails',
           icon: 'scope-one',
-          effects: { 'F3.1.2': -2.0, 'F9': 1.6 },
+          effects: { 'F3.1.2': -1.6, 'F9': 1.6 },
         },
       ],
     },
@@ -478,7 +478,7 @@ window.DATA = {
         {
           label: 'Yes — zone runs',
           // §5.5 parent-broadcast asymmetry: drop F7 broadcast, hit hydraulic faults only.
-          effects: { 'F3': 0.6, 'F7.1.1': 0.6, 'F7.3.1': 0.6, 'F7.1.2': -1.4, 'F7.1.3': -1.4, 'F7.3.2': -1.4, 'F7.4': -1.4, 'F8': -1.8, 'F9': -1.8 },
+          effects: { 'F3': 0.6, 'F7.1.1': 0.6, 'F7.3.1': 0.6, 'F7.1.2': -1.6, 'F7.1.3': -1.6, 'F7.3.2': -1.6, 'F7.4': -1.6, 'F8': -1.6, 'F9': -1.6 },
         },
         {
           label: 'Partial — weak flow',
@@ -607,7 +607,7 @@ window.DATA = {
       text: 'Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?',
       highlight: ['relay', 'pump'],
       options: [
-        { label: 'Clicks, 230 V at output', effects: { 'F4.1': -1.2, 'F5.1': 0.6, 'F5.3': 0.4, 'F3.1.3': -0.4, 'F2.1': -0.2, 'F2.8': -0.4 } },
+        { label: 'Clicks, 230 V at output', effects: { 'F4.1': -1.6, 'F5.1': 0.6, 'F5.3': 0.4, 'F3.1.3': -0.4, 'F2.1': -0.2, 'F2.8': -0.4 } },
         { label: 'Clicks, but no 230 V out', effects: { 'F4.1': 1.6, 'F5.1': -0.4 } },
         { label: 'Clicks, but breaker trips', effects: { 'F4.1': 1.0, 'F5.1': 1.0 } },
         { label: 'Silent — no click', effects: { 'F4.1': 0.6, 'F2.1': 0.4, 'F2.8': 0.6, 'F3.1.3': 0.6, 'F2.5': 0.4, 'F2.6': 0.4 } },
