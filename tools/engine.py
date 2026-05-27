@@ -137,10 +137,10 @@ class Engine:
                 for cid, delta in row["steps"][idx]["effects"].items():
                     s[cid] = s.get(cid, 0) + delta
 
-    def _disc_parts(self, q: dict, ids: list[str]) -> tuple[float, float]:
-        """The two cause-based terms of the discriminator, before effort:
-        isolation (how sharply answers separate specific causes) and the
-        weighted breadth (how many causes the question moves at all)."""
+    def _cause_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
+        """The two cause-based factors of the score: isolation (how sharply
+        answers separate specific causes) and the weighted breadth (how many
+        causes the question moves at all). Computed per question type."""
         t = q["type"]
         if t == "options":
             iso = 0.0
@@ -189,14 +189,10 @@ class Engine:
             return iso, BREADTH_WEIGHT * len(affected)
         return 0.0, 0.0
 
-    def _disc(self, q: dict, ids: list[str]) -> float:
-        iso, breadth = self._disc_parts(q, ids)
-        return iso + breadth
-
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
-        """The three additive factors that make up D for question q:
-        isolation, breadth and effort. They sum to the total D."""
-        iso, breadth = self._disc_parts(q, ids)
+        """The three additive factors that make up the score D for question q:
+        isolation, breadth and effort. They sum to D."""
+        iso, breadth = self._cause_terms(q, ids)
         effort = self._effort_term(q)
         return {"isolation": iso, "breadth": breadth, "effort": effort}
 
@@ -281,7 +277,8 @@ class Engine:
                 continue
             if not self._requires_met(q, answers):
                 continue
-            D = self._disc(q, ids) + self._effort_term(q)
+            t = self.discriminator_terms(q, ids)
+            D = t["isolation"] + t["breadth"] + t["effort"]
             m[q["id"]] = D
             if D > mx:
                 mx = D

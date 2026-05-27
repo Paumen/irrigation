@@ -101,16 +101,16 @@
             s[id] = (s[id] || 0) + delta;
           }
         },
-        discriminator(q, ids) {
-          let D = 0;
+        causeTerms(q, ids) {
+          let isolation = 0;
           let breadth = 0;
           for (const causeId of ids) {
             const deltas = q.options.map((o) => o.effects[causeId] || 0);
             const spread = Math.max(...deltas) - Math.min(...deltas);
             if (spread > 0) breadth++;
-            D += spread;
+            isolation += spread;
           }
-          return D + BREADTH_WEIGHT * breadth;
+          return { isolation, breadth: BREADTH_WEIGHT * breadth };
         },
         isAnswered() {
           return true;
@@ -127,18 +127,18 @@
             }
           }
         },
-        // Multiselect spread = sum of |effects| across options (max subset
+        // Multiselect isolation = sum of |effects| across options (max subset
         // sum minus min subset sum = sum of positives + |sum of negatives|).
-        discriminator(q, ids) {
-          let D = 0;
+        causeTerms(q, ids) {
+          let isolation = 0;
           let breadth = 0;
           for (const causeId of ids) {
             let sumAbs = 0;
             for (const opt of q.options) sumAbs += Math.abs(opt.effects[causeId] || 0);
             if (sumAbs > 0) breadth++;
-            D += sumAbs;
+            isolation += sumAbs;
           }
-          return D + BREADTH_WEIGHT * breadth;
+          return { isolation, breadth: BREADTH_WEIGHT * breadth };
         },
         isAnswered(_q, ans) {
           return Array.isArray(ans) && ans.length > 0;
@@ -155,17 +155,17 @@
             }
           }
         },
-        discriminator(q, ids) {
+        causeTerms(q, ids) {
           const mults = q.columns.map((c) => c.mult);
           const multSpread = Math.max(...mults) - Math.min(...mults);
           const p = q.rows.length > 0 ? MATRIX_EXPECTED_FILLED / q.rows.length : 0;
-          let D = 0;
+          let isolation = 0;
           const rowsAffecting = {};
           for (const row of q.rows) {
             for (const causeId of ids) {
               const e = Math.abs(row.effects[causeId] || 0);
               if (e > 0) {
-                D += e * multSpread * p;
+                isolation += e * multSpread * p;
                 rowsAffecting[causeId] = (rowsAffecting[causeId] || 0) + 1;
               }
             }
@@ -174,7 +174,7 @@
           for (const k of Object.values(rowsAffecting)) {
             breadth += 1 - Math.pow(1 - p, k);
           }
-          return D + BREADTH_WEIGHT * breadth;
+          return { isolation, breadth: BREADTH_WEIGHT * breadth };
         },
         isAnswered(_q, ans) {
           return !!ans && typeof ans === 'object';
@@ -192,20 +192,20 @@
             }
           }
         },
-        discriminator(q, ids) {
-          let D = 0;
+        causeTerms(q, ids) {
+          let isolation = 0;
           const affected = new Set();
           for (const row of q.rows) {
             for (const causeId of ids) {
               const deltas = row.steps.map((st) => st.effects[causeId] || 0);
               const spread = Math.max(...deltas) - Math.min(...deltas);
               if (spread > 0) {
-                D += spread;
+                isolation += spread;
                 affected.add(causeId);
               }
             }
           }
-          return D + BREADTH_WEIGHT * affected.size;
+          return { isolation, breadth: BREADTH_WEIGHT * affected.size };
         },
         isAnswered(_q, ans) {
           return !!ans && typeof ans === 'object';
@@ -273,7 +273,8 @@
       for (const q of QUESTIONS) {
         if (isCompleted(q.id, answers, skipped)) continue;
         if (!requiresMet(q, answers)) continue;
-        const D = TYPE_HANDLERS[q.type].discriminator(q, ids) + effortTerm(q);
+        const { isolation, breadth } = TYPE_HANDLERS[q.type].causeTerms(q, ids);
+        const D = isolation + breadth + effortTerm(q);
         map[q.id] = D;
         if (D > max) max = D;
       }
