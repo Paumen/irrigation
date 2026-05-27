@@ -2,6 +2,7 @@
   'use strict';
 
   const BREADTH_WEIGHT = 1.0;
+  const EASE_WEIGHT = 0.5;
   const MATRIX_EXPECTED_FILLED = 1;
   const MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
 
@@ -268,19 +269,29 @@
 
     function discriminators(answers, skipped) {
       const ids = contendingIds(answers);
-      const map = {};
-      let max = 0;
+      const cands = [];
+      let maxEffort = 0;
       for (const q of QUESTIONS) {
         if (isCompleted(q.id, answers, skipped)) continue;
         if (!requiresMet(q, answers)) continue;
         const { isolation, breadth } = TYPE_HANDLERS[q.type].causeTerms(q, ids);
-        // Gate: only surface a question that actually discriminates a contending
-        // cause. Without this, the constant effort term keeps every unanswered
-        // question on the list, so a cheap-but-irrelevant question can outrank a
-        // costly one that is the only thing bearing on the remaining causes.
-        if (isolation + breadth <= 0) continue;
-        const D = isolation + breadth + effortTerm(q);
-        map[q.id] = D;
+        // Gate: only surface a question that actually separates a contending
+        // cause, so a cheap-but-uninformative question can't ride onto the list.
+        const info = isolation + breadth;
+        if (info <= 0) continue;
+        const effort = effortTerm(q);
+        if (effort > maxEffort) maxEffort = effort;
+        cands.push({ id: q.id, info, effort });
+      }
+      const map = {};
+      let max = 0;
+      for (const c of cands) {
+        // Rank by how sharply a question separates the live causes; ease only
+        // nudges within a bounded band (EASE_WEIGHT), breaking ties between
+        // comparably-informative questions without ever outweighing separation.
+        const ease = maxEffort > 0 ? c.effort / maxEffort : 0;
+        const D = c.info * (1 + EASE_WEIGHT * ease);
+        map[c.id] = D;
         if (D > max) max = D;
       }
       return { map, max };

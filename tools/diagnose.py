@@ -73,8 +73,9 @@ def diagnose(
     Returns:
         ranked: top-N causes with id, label, pct, score
         next: top-N recommended questions with id, text, type, options,
-            relevancy, total score D, and the three factors that make up D
-            (isolation, breadth, effort)
+            relevancy, score D, and the three factors behind it (isolation,
+            breadth, effort); D ranks on isolation+breadth with effort as a
+            bounded tie-breaker
         answered_count: how many questions have been answered (excludes skipped)
     """
     engine = _engine()
