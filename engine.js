@@ -274,6 +274,11 @@
         if (isCompleted(q.id, answers, skipped)) continue;
         if (!requiresMet(q, answers)) continue;
         const { isolation, breadth } = TYPE_HANDLERS[q.type].causeTerms(q, ids);
+        // Gate: only surface a question that actually discriminates a contending
+        // cause. Without this, the constant effort term keeps every unanswered
+        // question on the list, so a cheap-but-irrelevant question can outrank a
+        // costly one that is the only thing bearing on the remaining causes.
+        if (isolation + breadth <= 0) continue;
         const D = isolation + breadth + effortTerm(q);
         map[q.id] = D;
         if (D > max) max = D;

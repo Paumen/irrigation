@@ -278,6 +278,13 @@ class Engine:
             if not self._requires_met(q, answers):
                 continue
             t = self.discriminator_terms(q, ids)
+            # Gate: only surface a question that actually discriminates a
+            # contending cause. Without this, the constant effort term keeps
+            # every unanswered question on the list, so a cheap-but-irrelevant
+            # question can outrank a costly one that is the only thing bearing
+            # on the remaining causes.
+            if t["isolation"] + t["breadth"] <= 0:
+                continue
             D = t["isolation"] + t["breadth"] + t["effort"]
             m[q["id"]] = D
             if D > mx:
