@@ -44,9 +44,10 @@ window.DATA = {
   //   2 tools-or-disassembly — multimeter, valve internals
   //   1 significant-labor    — install missing hardware, swap parts, dig
   //
-  // Weight 5.0 puts a level-6 question's effort term (30) on par with
-  // the maximum breadth term (21 causes * 1.5).
-  effortWeight: 5.0,
+  // The discriminator has three terms — spread, breadth (BREADTH_WEIGHT 1.0),
+  // and effort (level * effortWeight) — tuned so each contributes roughly
+  // equally on average across the question set.
+  effortWeight: 2.0,
 
   // Cause taxonomy: dotted F-codes per docs/fcode_spec.md.
   // F<component>.<mode>[.<instance>]. Parent is always flat at the

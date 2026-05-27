@@ -1,7 +1,7 @@
 (function (global) {
   'use strict';
 
-  const BREADTH_WEIGHT = 1.5;
+  const BREADTH_WEIGHT = 1.0;
   const MATRIX_EXPECTED_FILLED = 1;
   const MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
 

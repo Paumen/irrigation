@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-BREADTH_WEIGHT = 1.5
+BREADTH_WEIGHT = 1.0
 MATRIX_EXPECTED_FILLED = 1
 
 
