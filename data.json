@@ -40,7 +40,7 @@
       0.4
     ]
   },
-  "effortWeight": 5,
+  "effortWeight": 3,
   "causes": [
     {
       "id": "F1.5",
@@ -220,6 +220,7 @@
   "questions": [
     {
       "id": "Q1",
+      "context": "app-run",
       "effort": 6,
       "stage": 1,
       "text": "Run the system from the app and watch the heads. What happens?",
@@ -272,6 +273,7 @@
     },
     {
       "id": "Q2",
+      "context": "app-run",
       "effort": 5,
       "stage": 1,
       "text": "Start one zone from the app and walk the yard. Where does water actually come out?",
@@ -339,6 +341,7 @@
     },
     {
       "id": "Q2q",
+      "context": "app-run",
       "effort": 5,
       "stage": 1,
       "requires": {
@@ -411,6 +414,7 @@
     },
     {
       "id": "Q3",
+      "context": "app-run",
       "effort": 5,
       "stage": 1,
       "text": "Start a zone from the app and listen at the pump. What does it do?",
@@ -457,6 +461,7 @@
     },
     {
       "id": "Q4",
+      "context": "controller",
       "effort": 3,
       "stage": 1,
       "text": "Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?",
@@ -500,6 +505,7 @@
     },
     {
       "id": "Q5",
+      "context": "pump",
       "effort": 4,
       "stage": 1,
       "text": "Open the manual hose — how is the flow?",
@@ -537,6 +543,7 @@
     },
     {
       "id": "Q6",
+      "context": "valve-box",
       "effort": 4,
       "stage": 1,
       "text": "Start a zone from the app and stand at the valve box. What do you hear?",
@@ -584,6 +591,7 @@
     },
     {
       "id": "Q7",
+      "context": "controller",
       "effort": 3,
       "stage": 1,
       "text": "Did a restart help?",
@@ -621,6 +629,7 @@
     },
     {
       "id": "Q8",
+      "context": "recall",
       "effort": 6,
       "stage": 2,
       "text": "How did the problem progress?",
@@ -677,6 +686,7 @@
     },
     {
       "id": "Q9",
+      "context": "recall",
       "effort": 6,
       "stage": 2,
       "type": "ages",
@@ -774,6 +784,7 @@
     },
     {
       "id": "Q10",
+      "context": "recall",
       "effort": 4,
       "stage": 2,
       "type": "matrix",
@@ -839,6 +850,7 @@
     },
     {
       "id": "Q10b",
+      "context": "recall",
       "effort": 4,
       "stage": 2,
       "type": "matrix",
@@ -895,6 +907,7 @@
     },
     {
       "id": "Q11",
+      "context": "recall",
       "effort": 4,
       "stage": 2,
       "type": "matrix",
@@ -952,6 +965,7 @@
     },
     {
       "id": "Q11b",
+      "context": "recall",
       "effort": 4,
       "stage": 2,
       "type": "matrix",
@@ -1011,6 +1025,7 @@
     },
     {
       "id": "Q12",
+      "context": "valve-box",
       "effort": 3,
       "stage": 3,
       "text": "Open the valve manually with the bleed screw — does the zone run?",
@@ -1061,6 +1076,7 @@
     },
     {
       "id": "Q13",
+      "context": "meter",
       "effort": 2,
       "stage": 3,
       "text": "Press \"start zone\" on the controller itself. At the zone terminal with a multimeter, what do you read?",
@@ -1101,6 +1117,7 @@
     },
     {
       "id": "Q14",
+      "context": "meter",
       "effort": 2,
       "stage": 3,
       "text": "Field-wire resistance at the controller terminals?",
@@ -1131,6 +1148,7 @@
     },
     {
       "id": "Q15",
+      "context": "meter",
       "effort": 2,
       "stage": 3,
       "text": "Solenoid coil resistance (typically 20–60 Ω)?",
@@ -1167,6 +1185,7 @@
     },
     {
       "id": "Q16",
+      "context": "valve-box",
       "effort": 1,
       "stage": 3,
       "text": "Swap in a known-good valve — does the issue stay with the zone?",
@@ -1192,6 +1211,7 @@
     },
     {
       "id": "Q17",
+      "context": "valve-box",
       "effort": 2,
       "stage": 3,
       "text": "Open each valve and inspect the internals — what do you find?",
@@ -1219,6 +1239,7 @@
     },
     {
       "id": "Q18",
+      "context": "walk",
       "effort": 5,
       "optional": true,
       "text": "Walk the system — do you see water or wet ground?",
@@ -1262,6 +1283,7 @@
     },
     {
       "id": "Q19",
+      "context": "install",
       "effort": 1,
       "optional": true,
       "text": "Install flow meter, run a zone, does the flow meter read 1.0–3.0 m³/h?",
@@ -1287,6 +1309,7 @@
     },
     {
       "id": "Q20",
+      "context": "meter",
       "effort": 2,
       "stage": 1,
       "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
@@ -1335,6 +1358,7 @@
     },
     {
       "id": "Q21",
+      "context": "valve-box",
       "effort": 2,
       "stage": 1,
       "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
@@ -1366,6 +1390,7 @@
     },
     {
       "id": "Q22",
+      "context": "valve-box",
       "effort": 5,
       "stage": 1,
       "text": "Run a zone, open valve box, look at valves and heads?",

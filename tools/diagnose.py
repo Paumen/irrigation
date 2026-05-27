@@ -29,15 +29,23 @@ def _engine() -> Engine:
         return Engine(json.load(f))
 
 
-def _summarize_question(q: dict, relevancy: str | None, D: float) -> dict:
+def _summarize_question(
+    q: dict, relevancy: str | None, D: float, terms: dict[str, float]
+) -> dict:
     out = {
         "id": q["id"],
         "text": q["text"],
         "type": q["type"],
         "stage": q.get("stage"),
+        "context": q.get("context"),
         "optional": bool(q.get("optional")),
         "relevancy": relevancy,
         "D": round(D, 4),
+        "factors": {
+            "isolation": round(terms["isolation"], 4),
+            "breadth": round(terms["breadth"], 4),
+            "effort": round(terms["effort"], 4),
+        },
     }
     if q["type"] in ("options", "multi"):
         out["options"] = [{"index": i, "label": o["label"]} for i, o in enumerate(q["options"])]
@@ -64,7 +72,9 @@ def diagnose(
 
     Returns:
         ranked: top-N causes with id, label, pct, score
-        next: top-N recommended questions with id, text, type, options, relevancy
+        next: top-N recommended questions with id, text, type, options,
+            relevancy, total score D, and the three factors that make up D
+            (isolation, breadth, effort)
         answered_count: how many questions have been answered (excludes skipped)
     """
     engine = _engine()
@@ -73,6 +83,7 @@ def diagnose(
 
     ranked = engine.rank(answers)
     recs = engine.recommendations(answers, skipped)
+    ids = engine.contending_ids(answers)
 
     return {
         "ranked": [
@@ -89,6 +100,7 @@ def diagnose(
                 rec["q"],
                 engine.relevancy_level(rec["q"]["id"], answers, skipped),
                 rec["D"],
+                engine.discriminator_terms(rec["q"], ids),
             )
             for rec in recs[:top_n_next]
         ],

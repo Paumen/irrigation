@@ -146,10 +146,6 @@ function app() {
       return ENGINE.rank(this.answers);
     },
 
-    get _disc() {
-      return ENGINE.discriminators(this.answers, this.skipped);
-    },
-
     relevancyLevel(qid) {
       return ENGINE.relevancyLevel(qid, this.answers, this.skipped);
     },
