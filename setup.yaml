@@ -1,70 +1,87 @@
-# ==============================
-# Irrigation System Setup
-# Format:  YAML 1.2
-# ==============================
+# Irrigation System Specification
+# Wijchen, Netherlands — installed 2020-08
+# Describes equipment, topology, wiring, control paths, and design choices.
+
+conventions:
+  units:
+    height_m:               meters above sea level (NAP — Dutch ordnance datum)
+    flow_rating_m3h:        cubic meters per hour (equipment capacity)
+    flow_demand_m3h:        cubic meters per hour (theoretical demand, sum of nozzle ratings)
+    expected_flow_m3h:      cubic meters per hour (per-head computed from flow_model)
+    pressure_rating_bar:    bar (equipment capacity)
+    length_m:               meters
+    installed_yyyy_mm:      ISO 8601 year-month
+    price_eu:               euros (reference/replacement cost)
+  identifiers:
+    zone_id:     integer; 1..4 are automatic, 5 is manual
+    head_naming: model (e.g. "I-20") or model+series (e.g. "MP3000")
+
+locations:
+  house:      indoor — main residence
+  shed:       indoor — outbuilding housing the pump start relay
+  well:       outdoor — underground water source housing the pump
+  valve_box:  outdoor — in-ground enclosure containing the manifold and 4 zone solenoid valves
+  in_ground:  outdoor — buried in lawn/garden
+
 system:
   type: in-ground
-  area: Netherlands, Wijchen          # for climate/seasonal context
+  area: Netherlands, Wijchen
+  zones_automatic: 4
+  zones_manual: 1
+  water_source: well_pump
 
-# ---------------------------
-# Equipment
-# ---------------------------
+flow_model:
+  assumed_system_pressure_bar: 3.0
+  mp_rotator_regulated_pressure_psi: 40
+
 equipment:
 
   controller:
     model: RainMachine HD-16 TOUCH
     installed_yyyy_mm: 2020-08
-    location: indoor house
-    interfaces: [touchscreen, wifi, mobile_app, remote_via_wifi]
-    notes: |
-      Cloud-connected.
+    location: house
+    interfaces: [touchscreen, wifi, mobile_app]
 
   pump_start_relay:
-    model: Hunter PSR-22 24V 1 fase 230V
+    model: Hunter PSR-22 (24V to 1-phase 230V)
     installed_yyyy_mm: 2020-08
     price_eu: 100
-    location: indoor shed
-    input: 24V from controller
-    output: 230V to pump
-    notes: |
-      Switches power to well pump before any zone activation.
-      Different location than valve box.
+    location: shed
 
   pump:
     type: well_pump
-    model: DAB Jet               
-    installed_yyyy_mm: 2023-06         # original 2003 pump replaced
+    model: DAB Jet
+    installed_yyyy_mm: 2023-06
     location: well
-    height_m: 7.2                      # 4 m below the valve box
-    input: 230V from pump start relay
+    height_m: 7.2
     flow_rating_m3h: 3.8
     pressure_rating_bar: 4.8
-    acts_as_shutoff: true
 
   manifold:
-    model: LEV 6-way manifold distributor
-    location: outdoor valvebox
+    model: LEV 6-way distributor
     installed_yyyy_mm: 2020-08
     price_eu: 150
-    type: distributor
-    inlets: 1                          # main line enters the end
-    outlets: 6                         # 4 zone valves + manual line; 1 spare, capped
+    location: valve_box
+    inlets: 1
+    outlets: 6
+    outlet_usage:
+      zone_1_valve: 1
+      zone_2_valve: 1
+      zone_3_valve: 1
+      zone_4_valve: 1
+      manual_line:  1
+      capped:       1
     connection: 1" swivel nut, female thread
-    flow_rating_m3h: 7                 # max
-    pressure_rating_bar: 10            # max working
+    flow_rating_m3h: 7
+    pressure_rating_bar: 10
     material: hard plastic
-    notes: |
-      Distribution block in the valve box. Main line connects to the single end inlet;
-      the four zone valves and the manual line tee off the side outlets.
-      The unused sixth outlet is closed with a polyethylene end cap.
 
   zone_valves:
     model: Hunter PGV-101G
-    installed_yyyy_mm: 2026-05
+    installed_yyyy_mm: 2020-08
     price_eu: 25
-    location: outdoor valvebox
+    location: valve_box
     height_m: 11.2
-    input: 24V from controller
     count: 4
     type: globe
     min_pressure_bar: 1.5
@@ -72,21 +89,20 @@ equipment:
     min_flow_m3h: 0.1
     max_flow_m3h: 9.0
     features: [bleed_screw, flow_control]
-    notes: |
-      Solenoid resistance spec: 20-60 ohm
+    solenoid_resistance_ohm: {min: 20, max: 60}
 
   swing_joints_rotor:
     model: Hunter SJ swing joint, 3/4" male both ends
     price_eu: 5
-    location: outdoor in-ground
-    connects: zone hose to I-20 rotor inlet
+    location: in_ground
+    connects: zone lateral to I-20 rotor inlet
     flow_rating_m3h: 2.3
     pressure_rating_bar: 10.2
 
   swing_joints_mp:
     model: Hunter SJ swing joint, 3/4" to 1/2" male both ends
-    location: outdoor in-ground
-    connects: zone hose to MP rotator spray-body inlet
+    location: in_ground
+    connects: zone lateral to MP rotator spray-body inlet
     flow_rating_m3h: 1.8
     pressure_rating_bar: 10.2
 
@@ -94,191 +110,158 @@ equipment:
     model: Hunter I-20-04-SS
     price_eu: 25
     installed_yyyy_mm: 2020-08
-    location: outdoor in-ground
+    location: in_ground
     inlet: 3/4"
-    features: [Radius setscrew, FloStop, Stainless steel riser]
     type: pop-up
+    features: [radius_setscrew, FloStop, stainless_steel_riser]
 
   heads_spray_bodies_mp:
     model: Hunter Pro-Spray PRS40
     price_eu: 25
     installed_yyyy_mm: 2020-08
-    location: outdoor in-ground
+    location: in_ground
     inlet: 1/2"
-    features: [40 PSI pressure-regulated]  # Optimal for MP Rotator
     type: pop-up
-  
-# ---------------------------
-# Zones (automated)
-# ---------------------------
+    features: [pressure_regulated_40psi]
+
 zones:
-  # lateral_layout: branch tree from the valve outlet. Each tee (T-split) feeds two
-  # hoses; a hose ends in a head or in the next tee. Each head sits on its own swing
-  # joint, dead-ended. Leaf = {head, arc_deg, height_m, length_m}: head is an I-20
-  # rotor (-> 3/4" SJ) or a Hunter MP Rotator nozzle MP2000/MP3000 (-> 3/4"-1/2" SJ);
-  # nozzle (I-20 only) is the fitted I-20 nozzle (number + colour); arc_deg is the set
-  # arc; height_m is the head's absolute elevation (m above sea level, same datum as the
-  # equipment height_m values); length_m is hose run length from the valve box to the
-  # head. The valve box sits at 11.2 m and the well/pump 4 m lower at 7.2 m, so the heads
-  # (10.2-12.0 m) are within ~1 m of the valve box and ~3-5 m above the pump.
-  #
-  # flow_rating_m3h: calculated, not measured. Sum of per-head manufacturer flows:
-  #   - MP Rotators sit on Pro-Spray PRS40 bodies (pressure-regulated to 40 PSI), so
-  #     flow is fixed by model + arc from the Hunter MP Rotator chart at 40 PSI
-  #     (matched precipitation => flow scales with arc): MP3000@270=0.62, MP2000@270=0.25,
-  #     MP2000@180=0.17, MP1000@210=0.10 m3/h. Independent of system pressure.
-  #   - I-20 rotors are NOT regulated; flow depends on head pressure and is taken from
-  #     the Hunter PGP/I-20 Blue Standard Nozzle metric chart at an assumed 3.0 bar
-  #     (~43 PSI) operating pressure (consistent with the DAB Jet 132 curve at these
-  #     flows and with feeding the 40 PSI MP regulators on the same line):
-  #     #2.5=0.54, #4.0=0.90, #5.0=1.14 m3/h. Rotor nozzle flow does not vary with arc.
-  #     Sensitivity: at 2.5/3.5 bar an I-20 shifts roughly -0.1/+0.1 m3/h per rotor.
+
   - id: 1
+    type: automatic
+    flow_demand_m3h: 1.69
     heads:
-      i20_rotors: 1
+      i20_rotors:  1
       mp_rotators: 2
-      flow_rating_m3h: 1.69   # I-20 #4.0 @3.0bar 0.90 + MP3000@270 0.62 + MP2000@180 0.17
-      notes: |
-        mixing heads is deliberate for different precipitation needs for lawn vs flower beds.
+    head_mix_rationale: rotor for lawn, MP rotators for flower beds (different precipitation rates)
     lateral_layout:
-      tee_1:                # at valve outlet
-        hose_a: {head: MP3000, arc_deg: 270, height_m: 10.5, length_m: 15}
+      tee_1:
+        hose_a: {head: MP3000, arc_deg: 270, height_m: 10.5, length_m: 15, expected_flow_m3h: 0.62}
         hose_b:
           tee_2:
-            hose_a: {head: I-20, nozzle: "4.0 blue", arc_deg: 170, height_m: 11.6, length_m: 12}
-            hose_b: {head: MP2000, arc_deg: 180, height_m: 11.4, length_m: 28}
-            
+            hose_a: {head: I-20,   nozzle: "4.0 blue", arc_deg: 170, height_m: 11.6, length_m: 12, expected_flow_m3h: 0.90}
+            hose_b: {head: MP2000, arc_deg: 180,                     height_m: 11.4, length_m: 28, expected_flow_m3h: 0.17}
+
   - id: 2
+    type: automatic
+    flow_demand_m3h: 1.68
     heads:
-      i20_rotors: 2
+      i20_rotors:  2
       mp_rotators: 0
-      flow_rating_m3h: 1.68   # I-20 #2.5 @3.0bar 0.54 + I-20 #5.0 @3.0bar 1.14
     lateral_layout:
-      tee_1:                # at valve outlet
-        hose_a: {head: I-20, nozzle: "2.5 blue", arc_deg: 150, height_m: 11.1, length_m: 3}
-        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 11.2, length_m: 11}
+      tee_1:
+        hose_a: {head: I-20, nozzle: "2.5 blue", arc_deg: 150, height_m: 11.1, length_m: 3,  expected_flow_m3h: 0.54}
+        hose_b: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 11.2, length_m: 11, expected_flow_m3h: 1.14}
 
   - id: 3
+    type: automatic
+    flow_demand_m3h: 1.68
     heads:
-      i20_rotors: 2
+      i20_rotors:  2
       mp_rotators: 0
-      flow_rating_m3h: 1.68   # I-20 #5.0 @3.0bar 1.14 + I-20 #2.5 @3.0bar 0.54
     lateral_layout:
-      tee_1:                # at valve outlet
-        hose_a: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 10.2, length_m: 23}
-        hose_b: {head: I-20, nozzle: "2.5 blue", arc_deg: 180, height_m: 10.5, length_m: 32}
+      tee_1:
+        hose_a: {head: I-20, nozzle: "5.0 blue", arc_deg: 270, height_m: 10.2, length_m: 23, expected_flow_m3h: 1.14}
+        hose_b: {head: I-20, nozzle: "2.5 blue", arc_deg: 180, height_m: 10.5, length_m: 32, expected_flow_m3h: 0.54}
 
   - id: 4
+    type: automatic
+    flow_demand_m3h: 0.97
     heads:
-      i20_rotors: 0
+      i20_rotors:  0
       mp_rotators: 3
-      flow_rating_m3h: 0.97   # MP3000@270 0.62 + MP2000@270 0.25 + MP1000@210 0.10 (all 40 PSI regulated)
     lateral_layout:
-      tee_1:                # at valve outlet
-        hose_a: {head: MP3000, arc_deg: 270, height_m: 11.3, length_m: 11}
+      tee_1:
+        hose_a: {head: MP3000, arc_deg: 270, height_m: 11.3, length_m: 11, expected_flow_m3h: 0.62}
         hose_b:
           tee_2:
-            hose_a: {head: MP1000, arc_deg: 210, height_m: 12.0, length_m: 23}
-            hose_b: {head: MP2000, arc_deg: 270, height_m: 12.0, length_m: 36}
+            hose_a: {head: MP1000, arc_deg: 210, height_m: 12.0, length_m: 23, expected_flow_m3h: 0.10}
+            hose_b: {head: MP2000, arc_deg: 270, height_m: 12.0, length_m: 36, expected_flow_m3h: 0.25}
 
-# ---------------------------
-# Piping (hydraulic)
-# ---------------------------
+  - id: 5
+    type: manual
+    terminates_at: manual_valve
+
 piping:
 
   main_line:
     from: pump
     to: valve_box
     size_mm: 32
-    material: Polyethylene LDPE 3mm
+    material: polyethylene LDPE, 3mm wall
     pressure_rating_bar: 6.3
     installed_yyyy_mm: 2020-08
     length_m: 20
     fittings:
-      - PE 10 bar, 32 mm to 1" male thread    # main line into manifold inlet
-    notes: |
-      zero freeze damage historically
+      - 32mm PE 10bar to 1" male thread
 
   zone_laterals:
     from: valve_box
-    to: zone_heads
+    to: heads (per zone)
     size_mm: 25
-    material: Polyethylene LDPE 2.7mm
+    material: polyethylene LDPE, 2.7mm wall
     pressure_rating_bar: 6
     installed_yyyy_mm: 2020-08
     fittings:
-      - 25 mm to 25 mm connection, 4x             # manifold outlet to valve inlet
-      - PE 10 bar, 1" male thread to 25 mm, 4x    # valve outlet to zone hose
-      - 25 mm tee, 6x                             # T-splits; per-zone arrangement in zones[].lateral_layout
-      - PE 10 bar, 25 mm to 3/4" fitting          # zone hose to swing joint (one per head)
-    notes: |
-      zero freeze damage historically
+      - 25mm to 25mm connection (x4)
+      - 1" male thread to 25mm PE 10bar (x4)
+      - 25mm tee (x6)
+      - 25mm to 3/4" PE 10bar fitting
 
   manual_line:
-    from: valve_box           # unvalved tee off the manifold (no shutoff at the tee)
-    to: manual_valve          # ball valve at the hose outlet end
+    from: valve_box
+    to: manual_valve
     size_mm: 16
-    material: Polyethylene LDPE 3mm
+    material: polyethylene LDPE, 3mm wall
     pressure_rating_bar: 6.3
     installed_yyyy_mm: 2020-08
     fittings:
-      - PE 10 bar, 1" male thread to 16 mm    # manifold outlet to manual line
-    notes: |
-      To use the manual valve the pump is started via the controller. Assuming all solenoid valves are shut, the manual hose fills with water, and can be opened and hose end.
-      
-# ---------------------------
-# Wiring
-# ---------------------------
+      - 1" male thread to 16mm PE 10bar
+
 wiring:
 
   high_voltage_230v:
-    - {from: mains, to: controller}
-    - {from: mains, to: pump_start_relay}
+    - {from: mains,            to: controller}
+    - {from: mains,            to: pump_start_relay}
     - {from: pump_start_relay, to: pump}
 
   low_voltage_24v:
     - {from: controller, to: pump_start_relay, signal: pump_start}
-    - {from: controller, to: pump_start_relay, signal: common_psr}
+    - {from: controller, to: pump_start_relay, signal: common_psr,    role: shared neutral return for pump_start_relay}
     - {from: controller, to: valve_box,        signal: zone_1}
     - {from: controller, to: valve_box,        signal: zone_2}
     - {from: controller, to: valve_box,        signal: zone_3}
     - {from: controller, to: valve_box,        signal: zone_4}
-    - {from: controller, to: valve_box,        signal: common_zones}
+    - {from: controller, to: valve_box,        signal: common_zones,  role: shared neutral return for all 4 zone solenoids}
 
   cable_runs:
     controller_to_valve_box_m: 10
-    controller_to_psr_m: 10
+    controller_to_pump_start_relay_m: 10
 
-# ---------------------------
-# Control paths (signal flow from user to system)
-# ---------------------------
 control_paths:
-  - source: user
-    via: [touchscreen]
-    target: controller
-  - source: user
-    via: [phone_app, home_wifi]
-    target: controller
-  - source: user
-    via: [phone_app, rainmachine_cloud, home_wifi]
-    target: controller
+  - {source: user, via: [touchscreen],                             target: controller}
+  - {source: user, via: [phone_app, home_wifi],                    target: controller}
+  - {source: user, via: [phone_app, rainmachine_cloud, home_wifi], target: controller}
 
-# ---------------------------
-# Settings
-# ---------------------------
 settings:
-
-  programs: [run all zones sequentially, run each zone individually, pump start only]
+  programs:
+    - {name: all_zones_sequential, scope: all automatic zones}
+    - {name: single_zone,          scope: one automatic zone}
+    - {name: pump_start_only,      scope: pump_start_relay only (used for zone 5)}
   pump_start_to_valve_start_delay_s: 5
 
-# ---------------------------
-# System Design Choices
-# ---------------------------
 system_design_choices:
-
-  - back_flow_preventer_installed: false # well is completely isolated from drinking water.
-  - master_valve_installed: false # pump is purely controller-triggered, and provides the leak-limiting shutoff a master valve would add. 
-  - flow_meter_installed: false # max one zone runs at a time, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
-  - pressure_meter_installed: false # max one zone runs at a time, pump is purely controller-triggered, sensor itself adds failure mode(s), diagnostic value inferable elsewhere.
-
-
+  back_flow_preventer:
+    installed: false
+    rationale: well is isolated from drinking water
+  master_valve:
+    installed: false
+    rationale: pump is controller-triggered and provides the leak-limiting shutoff a master valve would add
+  flow_meter:
+    installed: false
+    rationale: programs run one zone at a time; sensor adds failure modes; diagnostic value can be inferred from other observations
+  pressure_meter:
+    installed: false
+    rationale: programs run one zone at a time; sensor adds failure modes; diagnostic value can be inferred from other observations
+  manual_shutoff_valve:
+    installed: false
+    rationale: pump on/off serves as the primary shutoff
