@@ -66,7 +66,10 @@ MP_FLOW_40PSI_GPM: dict[str, dict[int, float]] = {
     "MP3000": {90: 0.86, 180: 1.82, 210: 2.12, 270: 2.73, 360: 3.64},
 }
 MP_REG_BAR = 40.0 / PSI_PER_BAR          # 40 PSI -> ~2.76 bar regulated nozzle pressure
-MP_REG_MIN_INLET_BAR = 2.9               # inlet needed for the regulator to hold 40 PSI
+# The PRS40 regulator needs a 0.7 bar (10 PSI) differential above its 2.76 bar
+# setpoint to engage, so inlet must be >= ~3.5 bar or the MP sees inlet pressure
+# directly and mists (see knowledge/heads.md).
+MP_REG_MIN_INLET_BAR = 3.5               # inlet needed for the regulator to hold 40 PSI
 
 # Hunter PGP / I-20 Blue Standard Nozzle, metric performance chart, flow in
 # m3/h at the listed nozzle pressure (bar). I-20 rotors are NOT regulated, so
@@ -711,6 +714,9 @@ def _zone_dict(scope: str, nodes: dict[str, Node], state: dict,
     pressures = [h["pressure_bar"] for h in head_out]
     spread_pct, uflags = _pressure_uniformity(zone_id, head_out)
     flags = flags + uflags
+    if state.get("converged") is False:
+        flags = flags + [f"zone {zone_id} solve did not converge in "
+                         f"{MAX_ITERS} iterations (pressures/flows approximate)"]
 
     pump_pt = node_pressures = loss_breakdown = None
     if p_head is not None:

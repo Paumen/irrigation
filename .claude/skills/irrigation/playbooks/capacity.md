@@ -12,8 +12,8 @@ What-if questions go straight to the tool's `adjustments`:
 - **"what if the pump/water table changed?"** → `{"pump_model":"JET 112 M"}` / `{"well_water_level_m_asl": 9.0}`
 
 Common shapes:
-- **How many zones at once?** One. Settings run zones sequentially and the no-flow-sensor / no-master-valve design assumes it. Confirm each zone's `flow_rating_m3h` sits under the pump's 3.8 m³/h.
-- **Flow budget per zone?** Pump 3.8 m³/h (≈63 L/min) minus a ~10–15% margin as the ceiling; compare each zone's listed flow and state headroom.
+- **How many zones at once?** One. Settings run zones sequentially and the no-flow-sensor / no-master-valve design assumes it. Confirm each zone's computed flow (the tool's per-zone `flow_m3h` — zone flows aren't stored in `setup.yaml`, they're solved) sits under the pump's 3.8 m³/h.
+- **Flow budget per zone?** Pump 3.8 m³/h (≈63 L/min) minus a ~10–15% margin as the ceiling; compare each zone's computed `flow_m3h` from the tool and state headroom.
 - **Add a fifth zone?** The controller has spare stations (HD-16); the real limit is pump headroom and the 32 mm main line. State both.
 - **Run time for zone X?** A precipitation question, not a flow one: nozzle precip rate (I-20 / MP Rotator / PRS40 PDFs) + soil/root assumption + Wijchen ET → minutes. Label it an estimate to refine from observed runoff.
 - **Pump big enough?** Zone peak flow vs 3.8 m³/h, and required head (~2.8 bar at the PRS40 heads + elevation + pipe friction) vs the pump's 4.8 bar. State the margins.

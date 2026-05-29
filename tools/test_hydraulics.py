@@ -27,7 +27,7 @@ check("i20 #5.0 @4.5bar", abs(q - 1.41) < 1e-9, f"got {q}")
 q, _ = i20_flow_m3h("4.0", 1.0)  # below range -> sqrt extrapolation, flagged
 check("i20 below-range flagged", not _, "expected in_range False")
 
-q, reg = mp_flow_m3h("MP3000", 270, 3.2)
+q, reg = mp_flow_m3h("MP3000", 270, 3.6)  # above the 3.5 bar regulation floor
 check("mp MP3000@270 regulated", abs(q - round(2.73 * GPM_TO_M3H, 6)) < 1e-6 and reg, f"got {q}")
 q, reg = mp_flow_m3h("MP3000", 270, 2.0)  # below regulation threshold
 check("mp under-regulated flag", not reg and q < 2.73 * GPM_TO_M3H, f"got {q}, reg={reg}")
@@ -49,7 +49,7 @@ for zid in (1, 2, 3):
     check(f"baseline zone {zid} plausible", 1.4 < flows[zid] < 2.1, f"got {flows[zid]}")
 
 wl = base["weakest_links"]
-check("pressure window", wl["pressure"]["safe_window_bar"] == [2.9, 4.8],
+check("pressure window", wl["pressure"]["safe_window_bar"] == [3.5, 4.8],
       str(wl["pressure"]["safe_window_bar"]))
 check("no baseline pressure violations", wl["pressure"]["violations"] == [],
       str(wl["pressure"]["violations"]))

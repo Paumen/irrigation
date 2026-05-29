@@ -54,7 +54,7 @@ Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-
 
 - **Radius adjustment setscrew** — Hunter wrench or flat-blade screwdriver; turn down to reduce radius up to ~25%.
 - **Patented automatic arc return** — if the turret gets vandalized or kicked, it returns to the original arc the next time the valve calls.
-- **Arc adjustable 50°–360°** in a single model (part- and full-circle in one).
+- **Arc adjustable 40°–360°** in a single model (part- and full-circle in one).
 - **QuickCheck arc mechanism** — through-the-top arc adjustment for fast tweaks without pulling the rotor.
 - **FloStop** — closes the flow at this individual head so you can change a nozzle or do a repair without shutting the zone.
 - **Stainless steel riser** (the `-SS` designator).

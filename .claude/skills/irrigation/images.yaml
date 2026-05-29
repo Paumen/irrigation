@@ -6,12 +6,15 @@
 #
 # Conventions:
 #   subjects  -> which knowledge/ docs the image belongs to
-#   failures  -> failure codes (F-codes) the image helps with; carries BOTH the area code (e.g. F7)
+#   causes    -> failure codes (F-codes) the image helps with; carries BOTH the area code (e.g. F7)
 #                and the specific-cause codes under it (e.g. F7.1.1, F7.1.2) so lookups by
 #                either level work without a separate area↔cause mapping.
 #   questions -> engine question ids (Q*) the image supports, where applicable
+#   legend    -> short part-callout key for the image (e.g. "1 body, 2 solenoid"), when useful
 #   relates   -> free-text note about the install/operation context, when useful
-#   used_in   -> docs that currently embed it (empty = available but not yet embedded)
+#   used_in   -> docs that use the image in service of their topic — whether embedded with
+#                markdown or surfaced by the agent from this manifest (empty = registered but
+#                not yet referenced anywhere)
 
 images:
 

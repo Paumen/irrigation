@@ -49,7 +49,7 @@ The interactive question tool holds up to four questions per call, each with ≤
 - **`options`** — single choice; pass `options[].label` through unchanged.
 - **`multi`** (`multiselect: true`) — same list, several picks; send back the list of chosen indices.
 - **`matrix`** — multiselect the rows, then ask `columns` as options for each selected row.
-- **`ages`** — show the current equipment ages you have and ask whether they're still right.
+- **`ages`** — for each row, read the equipment's model and `installed` date from `setup.yaml` (the canonical source — the tool no longer stores them), convert the install date to the matching age bucket using today's date, show that as the current value, and ask whether it's still right.
 
 "I don't know" / "skip" → `skipped[qid] = true`, never `answers`.
 
