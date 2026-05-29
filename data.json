@@ -17,15 +17,6 @@
     "zoneFlow": "~2 m³/h",
     "waterSource": "Well pump"
   },
-  "equipmentDefaults": {
-    "pump": "2023-01-01",
-    "valves": "2026-05-01",
-    "relay": "2020-08-01",
-    "ctrl": "2020-08-01",
-    "rotor": "2020-08-01",
-    "mainHose": "2020-08-01",
-    "hose": "2020-08-01"
-  },
   "sliderCurves": {
     "standard": [
       -0.2,
@@ -40,7 +31,12 @@
       0.4
     ]
   },
-  "effortWeight": 3,
+  "weights": {
+    "effort": 3,
+    "breadth": 1.0,
+    "ease": 0.5,
+    "matrixExpectedFilled": 1
+  },
   "causes": [
     {
       "id": "F1.5",
@@ -714,7 +710,6 @@
         {
           "id": "pump",
           "label": "Pump",
-          "model": "Well pump",
           "curve": "standard",
           "causes": [
             "F5.3",
@@ -724,7 +719,6 @@
         {
           "id": "valves",
           "label": "Valves",
-          "model": "Hunter PGV-101G",
           "curve": "fast",
           "causes": [
             "F7.1.1",
@@ -737,7 +731,6 @@
         {
           "id": "relay",
           "label": "Start-Relay",
-          "model": "Hunter PSR-22",
           "curve": "standard",
           "causes": [
             "F4.1"
@@ -746,7 +739,6 @@
         {
           "id": "ctrl",
           "label": "Controller",
-          "model": "RainMachine HD-16 TOUCH",
           "curve": "standard",
           "causes": [
             "F2.1",
@@ -756,7 +748,6 @@
         {
           "id": "rotor",
           "label": "Rotors",
-          "model": "Hunter I-20 + MP rotators",
           "curve": "standard",
           "causes": [
             "F9.1.1"
@@ -765,7 +756,6 @@
         {
           "id": "mainHose",
           "label": "Main hose",
-          "model": "PE 32 mm (pump → valve box)",
           "curve": "standard",
           "causes": [
             "F6.1"
@@ -774,7 +764,6 @@
         {
           "id": "hose",
           "label": "Zone hose",
-          "model": "PE 25 mm (zones)",
           "curve": "standard",
           "causes": [
             "F8.1"

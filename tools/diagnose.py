@@ -54,9 +54,9 @@ def _summarize_question(
         out["columns"] = [{"id": c["id"], "label": c["label"]} for c in q["columns"]]
         out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]
     elif q["type"] == "ages":
-        out["rows"] = [
-            {"id": r["id"], "label": r["label"], "model": r.get("model", "")} for r in q["rows"]
-        ]
+        # Equipment model + install date are not stored here; the agent reads
+        # them from setup.yaml (the canonical equipment source) per row id.
+        out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]
         out["stepLabels"] = q.get("stepLabels", [])
     return out
 

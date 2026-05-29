@@ -12,4 +12,4 @@ Candidates to reason from (match to the actual ask):
 - **Drip on the flower-bed zone (Z1, Z4)** — the mixed-precipitation note flags this; separate drip-on-flowers from rotors-on-lawn. Real candidate.
 - **Valved tee on the manual line** — `setup.yaml` notes it has no shutoff at the manifold; small cost, better control.
 
-When a candidate changes flow or pressure — bigger/smaller nozzles, a pump swap, adding heads or a zone — quantify it with the `irrigation_hydraulics` tool (see `capacity.md`) instead of guessing: run the change through `adjustments` and report the new zone flow, head pressure, and whether any weakest-link margin (pump headroom, swing-joint flow, the 2.9 bar MP-regulation floor) gets tight.
+When a candidate changes flow or pressure — bigger/smaller nozzles, a pump swap, adding heads or a zone — quantify it with the `irrigation_hydraulics` tool (see `capacity.md`) instead of guessing: run the change through `adjustments` and report the new zone flow, head pressure, and whether any weakest-link margin (pump headroom, swing-joint flow, the 3.5 bar MP-regulation floor) gets tight.

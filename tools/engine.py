@@ -9,16 +9,17 @@ from __future__ import annotations
 
 from typing import Any
 
-BREADTH_WEIGHT = 1.0
-EASE_WEIGHT = 0.5
-MATRIX_EXPECTED_FILLED = 1
-
 
 class Engine:
     def __init__(self, data: dict[str, Any]):
         self._data = data
-        w = data.get("effortWeight")
-        self._effort_weight: float = float(w) if isinstance(w, (int, float)) else 0.0
+        # Scoring tunables live together in data.json's `weights` block (the
+        # single home for the questionnaire's tuning knobs).
+        w = data.get("weights", {})
+        self._effort_weight: float = float(w.get("effort", 0.0))
+        self._breadth_weight: float = float(w.get("breadth", 1.0))
+        self._ease_weight: float = float(w.get("ease", 0.5))
+        self._matrix_expected_filled: float = float(w.get("matrixExpectedFilled", 1))
         self.causes: dict[str, dict] = {c["id"]: c for c in data["causes"]}
         self.all_ids: list[str] = list(self.causes.keys())
 
@@ -152,7 +153,7 @@ class Engine:
                 if spread > 0:
                     breadth += 1
                 iso += spread
-            return iso, BREADTH_WEIGHT * breadth
+            return iso, self._breadth_weight * breadth
         if t == "multi":
             iso = 0.0
             breadth = 0
@@ -161,12 +162,12 @@ class Engine:
                 if sum_abs > 0:
                     breadth += 1
                 iso += sum_abs
-            return iso, BREADTH_WEIGHT * breadth
+            return iso, self._breadth_weight * breadth
         if t == "matrix":
             mults = [c["mult"] for c in q["columns"]]
             mult_spread = max(mults) - min(mults)
             n_rows = len(q["rows"])
-            p = (MATRIX_EXPECTED_FILLED / n_rows) if n_rows > 0 else 0
+            p = (self._matrix_expected_filled / n_rows) if n_rows > 0 else 0
             iso = 0.0
             rows_affecting: dict[str, int] = {}
             for row in q["rows"]:
@@ -176,7 +177,7 @@ class Engine:
                         iso += e * mult_spread * p
                         rows_affecting[cause_id] = rows_affecting.get(cause_id, 0) + 1
             breadth = sum(1 - (1 - p) ** k for k in rows_affecting.values())
-            return iso, BREADTH_WEIGHT * breadth
+            return iso, self._breadth_weight * breadth
         if t == "ages":
             iso = 0.0
             affected = set()
@@ -187,7 +188,7 @@ class Engine:
                     if spread > 0:
                         iso += spread
                         affected.add(cause_id)
-            return iso, BREADTH_WEIGHT * len(affected)
+            return iso, self._breadth_weight * len(affected)
         return 0.0, 0.0
 
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
@@ -294,10 +295,11 @@ class Engine:
         mx = 0.0
         for qid, info, effort in cands:
             # Rank by how sharply a question separates the live causes; ease only
-            # nudges within a bounded band (EASE_WEIGHT), breaking ties between
-            # comparably-informative questions without ever outweighing separation.
+            # nudges within a bounded band (the `ease` weight), breaking ties
+            # between comparably-informative questions without ever outweighing
+            # separation.
             ease = (effort / max_effort) if max_effort > 0 else 0.0
-            D = info * (1 + EASE_WEIGHT * ease)
+            D = info * (1 + self._ease_weight * ease)
             m[qid] = D
             if D > mx:
                 mx = D
