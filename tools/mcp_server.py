@@ -76,17 +76,24 @@ def irrigation_hydraulics(
 ) -> dict:
     """Compute flows, head pressures and weakest links for the system in setup.yaml.
 
-    Runs a full hydraulic solve: DAB Jet pump curve -> static lift (elevations)
-    -> pipe friction -> per-head pressure -> per-head flow, iterated because
-    unregulated I-20 rotor flow depends on pressure. MP Rotators are 40 PSI
-    regulated (fixed flow per model + arc). Use it to answer capacity and
-    what-if questions ("what's the flow if I change nozzle 2.5 to 4.0?",
-    "what if the pressure were 3.5 bar?") and to find binding constraints.
+    Walks the setup.yaml node graph and runs a full hydraulic solve: DAB Jet
+    pump curve -> static lift (per-node elevations) -> pipe friction summed per
+    segment (each segment carries the combined flow of the heads below it) ->
+    per-head pressure -> per-head flow, iterated because unregulated I-20 rotor
+    flow depends on pressure. MP Rotators are 40 PSI regulated (fixed flow per
+    model + arc); the Z5 manual line ends in an open stream nozzle, modelled as
+    free discharge from the 16 mm bore. Zones Z1-Z4 are automatic, Z5 is the
+    manual line (estimated), Z6 is capped and excluded. Use it to answer
+    capacity and what-if questions ("what's the flow if I change nozzle 2.5 to
+    4.0?", "what if the pressure were 3.5 bar?") and to find binding
+    constraints. Pipe velocity over the 1.5 m/s guideline is advisory (warning),
+    not a hard violation.
 
     Args:
         adjustments: optional what-if overrides (all optional):
             heads: list of head edits, each {zone, set, and one of index|loc|match}.
-                e.g. swap a nozzle:
+                `loc` is a node id ("Z1.nozzle.rotor.01"); `match` matches nozzle-leaf
+                fields; `index` indexes the zone's heads in physical order. e.g.:
                 {"zone": 2, "match": {"nozzle": "2.5 blue"}, "set": {"nozzle": "4.0 blue"}}
                 or change an arc: {"zone": 1, "index": 0, "set": {"arc_deg": 180}}
             global_operating_pressure_bar: pin every head to this pressure and skip
