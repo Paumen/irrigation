@@ -88,7 +88,7 @@ to its closed position.
 
 ## Flow control adjustment
 
-![Flow control cutaway](media/icv_cutaway.jpg)
+![Flow control cutaway](media/valve_icv_cutaway.jpg)
 
 The flow control knob behaves like a tap/gate — its job is to allow or restrict the water
 passing through the valve. Mechanically it limits the diaphragm's stroke: the control rests
@@ -147,7 +147,7 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ![Flow direction — arrow toward the heads](media/valve_flow_direction_image.png)
 
-![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](media/pgv-install-valve-box.png)
+![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](media/valve_pgv-install-box.png)
 
 **Placement.** Put the valve manifold somewhere accessible for maintenance, close to the
 area the valves serve, but positioned so you are not sprayed when you operate the system by hand.

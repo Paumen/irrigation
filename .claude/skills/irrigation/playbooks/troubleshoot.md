@@ -19,15 +19,15 @@ The question text and every answer label come from the tool already phrased in t
 ## The loop
 1. **Read `setup.yaml`** for this system's actual models, zones, pipe sizes, wiring.
 2. **Bootstrap** — call the tool with empty `answers` for the initial ranking and first questions.
-3. **Open with Q1, Q2, Q3 together — always.** They're the lowest-effort openers (run a zone and watch the heads, walk the yard, listen at the pump) — one trip outside that pins scope, routing, and source. Batch them as one prompt and feed all three back before continuing.
-4. **Second round: three more low-effort questions.** Pick the three low-effort questions most worth asking given the first three answers. Lean on the engine's `next` order as advice for *which* are most informative — but you choose, and keep all three low-effort.
+3. **Open with four of the lowest-effort questions — always.** Three are the one-trip-outside observers (run a zone and watch the heads, walk the yard, listen at the pump) that pin scope, routing, and source; the fourth is a no-cost recall question (e.g. how the problem progressed) that needs no trip. The picker holds four — fill it. Batch them as one prompt and feed all four back before continuing.
+4. **Second round: four more low-effort questions.** Pick the four lowest-effort questions most worth asking given the openers. Lean on the engine's `next` order as advice for *which* are most informative — but you choose, and keep all four low-effort.
 5. **After that, you steer.** Decide which questions to ask yourself, using the engine's `next` / `D` order as advice, not orders:
    - **Same bucket, batch it.** Combine questions that share a `context` (the bucket — e.g. `valve-box`, `meter`, `app-run`) when they're all relevant, so the user does one trip / one location at a time.
    - **One high-effort question at a time.** Don't ask more than one high-effort question (the hands-on tests above) in a round — unless gathering the answers is essentially the same action (same setup, same trip).
    - **Always pair a high-effort question with an easier one.** Whenever a round includes a high-effort question, include at least one low/mid-effort question too — so if the user can't manage the hard step yet, you still get a useful answer and keep moving smoothly.
    - Once more than three questions are answered, surface the current top three causes so the user sees it narrowing.
 6. **Map the reply** to the answer shape, add it to `answers` (or add the id to `skipped` on "I don't know"), and call again.
-7. **When `next` is empty (or the stop test is met), present findings:** the area(s) to investigate, the cheapest next physical check, and how strong/weak the signals are. Before confirming a clear leader, read its `knowledge/<area>.md` and confirm with two checks — one low/mid-effort, one stronger physical test.
+7. **When `next` is empty (or the stop test is met), present findings tightly:** the leading area, the cheapest next physical check, and the confidence — in a few lines. Don't replay the user's own answers back to them as an evidence list (they just gave you those), don't narrate your steps, and don't spell out every check in full — name the first one and offer the rest on pull. Before confirming a clear leader, read its `knowledge/<area>.md` and confirm with two checks — one low/mid-effort, one stronger physical test.
 
 If the loop dead-ends with no clear leader: share what you *know* vs *interpreted* vs *assumed* vs *don't know*, re-read `setup.yaml`, and let the user correct you. If the signal's conflicting, re-ask to resolve it; if it's just thin and no useful engine questions remain, read the narrowed area's `knowledge/` doc end-to-end, fall back per `sources.md`, then ask your own targeted question.
 
@@ -44,7 +44,7 @@ If the loop dead-ends with no clear leader: share what you *know* vs *interprete
 `D` measures diagnostic power, not effort — it's advice on what's informative. Choosing the effort level, the batching, and the pacing is your job. Values are illustrative — ids, counts, and labels come from the live call. An empty `next` is the stop signal. If keys are missing or the shape drifts, present findings with what you have.
 
 ## Asking questions
-The interactive question tool allows ≤4 options per call. Look up the question id in `images.yaml` (`questions:`) and send any matching image alongside (probe placement, parts, expected appearance) via `SendUserFile`. Present the question text and labels verbatim (see *Present questions and answers as written*).
+The interactive question tool holds up to four questions per call, each with ≤4 options. **Never send a lone question when a cheap companion exists — fill the picker** (up to four), so the user does one batch instead of a slow back-and-forth. **Front-load the cheap recall questions** (progression, onset, recent changes, ages): they cost nothing, need no trip outside, counter tunnel vision, and the user can always skip — so ask them alongside the observation questions rather than holding them for later or bundling them into a yard trip. Look up the question id in `images.yaml` (`questions:`) and send any matching image alongside (probe placement, parts, expected appearance) via `SendUserFile`. Present the question text and labels verbatim (see *Present questions and answers as written*).
 
 - **`options`** — single choice; pass `options[].label` through unchanged.
 - **`multi`** (`multiselect: true`) — same list, several picks; send back the list of chosen indices.

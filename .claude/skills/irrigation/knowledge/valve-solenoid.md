@@ -27,7 +27,7 @@ clogged port reads a perfectly normal coil resistance.
 
 ## What it does
 
-![Solenoid and manual operation](media/manual_solenoid_0.png)
+![Solenoid and manual operation](media/valve_manual_solenoid_0.png)
 
 The solenoid is the cylinder with two wires on top of the valve. Inside is a light, spring-loaded
 metal piston (plunger) that, with the valve closed, covers the inlet port hole into the upper
@@ -69,7 +69,7 @@ calls it, the fault is electrical (wiring, controller, or solenoid coil) rather 
 
 ## Testing solenoid voltage
 
-![Testing solenoid voltage with a multimeter](media/Testing Solenoid Voltage_0.png)
+![Testing solenoid voltage with a multimeter](media/valve_solonoid_V24_test.png)
 
 ![Stanley FATMAX FMHT82563-0 — the homeowner's meter; rotary selector OFF (V≈ for AC volts, Ω for resistance).](media/multimeter-stanley-fmht82563-front.jpg)
 
