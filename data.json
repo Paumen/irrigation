@@ -223,7 +223,7 @@
       "context": "app-run",
       "effort": 6,
       "stage": 1,
-      "text": "Run all 4 automated zones from the app and watch the heads. Where is water missing or clearly too weak?",
+      "text": "Run all 4 automated zones from the app and watch the heads. Where's water missing or too weak?",
       "highlight": [
         "rotor",
         "valves"
@@ -451,7 +451,7 @@
           }
         },
         {
-          "label": "Keeps starting and stopping, or makes no pressure",
+          "label": "Keeps starting/stopping, or no pressure",
           "effects": {
             "F5": 0.6,
             "F6.1": 0.4
@@ -464,7 +464,7 @@
       "context": "controller",
       "effort": 3,
       "stage": 1,
-      "text": "Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?",
+      "text": "Start a zone three ways — touchscreen, app on Wi-Fi, app on cellular. What works?",
       "highlight": [
         "sw",
         "ctrl"
@@ -788,7 +788,7 @@
       "effort": 4,
       "stage": 2,
       "type": "matrix",
-      "text": "Recent work on the water side (pump, valves, hoses, heads) — how does it relate to the issue? (leave blank if not applicable)",
+      "text": "Recent work on the water side — how does it relate to the issue? (leave blank if not applicable)",
       "columns": [
         {
           "id": "right",
@@ -1079,7 +1079,7 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Press \"start zone\" on the controller itself. At the zone terminal with a multimeter, what do you read?",
+      "text": "Press \"start zone\" on the controller. At the zone terminal, what does a multimeter read?",
       "highlight": [
         "ctrl",
         "valves"
@@ -1120,7 +1120,7 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Measure the resistance of the wires running to the valves, at the controller terminals. What do you get?",
+      "text": "Measure the resistance of the wires to the valves, at the controller terminals. What do you get?",
       "highlight": [
         "ctrl",
         "valves"
@@ -1151,7 +1151,7 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Measure the solenoid coil's resistance (normally 20–60 Ω) — at the coil, and from the controller end. What do you find?",
+      "text": "Measure the solenoid coil's resistance (20–60 Ω) — at the coil, then from the controller end.",
       "highlight": [
         "valves"
       ],
@@ -1176,7 +1176,7 @@
           }
         },
         {
-          "label": "Fine at the coil, but bad from the controller end",
+          "label": "Fine at the coil, bad from the controller",
           "effects": {
             "F3.1.1": 1.6
           }
@@ -1254,7 +1254,7 @@
           }
         },
         {
-          "label": "At the valve box, or drips from the heads when off",
+          "label": "At the valve box, or heads drip when off",
           "effects": {
             "F7.1.2": 0.4,
             "F7.3.2": 0.2,
@@ -1312,7 +1312,7 @@
       "context": "pump",
       "effort": 2,
       "stage": 1,
-      "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
+      "text": "Start a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
       "highlight": [
         "relay",
         "pump"
@@ -1393,7 +1393,7 @@
       "context": "valve-box",
       "effort": 5,
       "stage": 1,
-      "text": "Run a zone, then open the valve box and look at the valves and heads. What do you see? (tick all that apply)",
+      "text": "Run a zone, open the valve box and look at the valves and heads. What do you see? (tick all)",
       "multiselect": true,
       "highlight": [
         "valves",
