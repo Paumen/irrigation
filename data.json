@@ -1248,7 +1248,7 @@
       ],
       "options": [
         {
-          "label": "Along the main-line route",
+          "label": "Along the main hose route",
           "effects": {
             "F6.1": 1.6
           }
@@ -1263,7 +1263,7 @@
           }
         },
         {
-          "label": "Along the zone lines",
+          "label": "Along the zone hoses",
           "effects": {
             "F8.1": 1.6
           }
