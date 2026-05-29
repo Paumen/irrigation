@@ -223,14 +223,14 @@
       "context": "app-run",
       "effort": 6,
       "stage": 1,
-      "text": "Run the system from the app and watch the heads. What happens?",
+      "text": "Run all 4 automated zones from the app and watch the heads. Where's water missing or too weak?",
       "highlight": [
         "rotor",
         "valves"
       ],
       "options": [
         {
-          "label": "All 4 zones fail",
+          "label": "All 4 zones — none run properly",
           "icon": "scope-all",
           "effects": {
             "F1": 0.2,
@@ -242,7 +242,7 @@
           }
         },
         {
-          "label": "2–3 zones fail",
+          "label": "2–3 zones don't run properly",
           "icon": "scope-multi",
           "effects": {
             "F5": 0.2,
@@ -251,7 +251,7 @@
           }
         },
         {
-          "label": "One zone fails",
+          "label": "Just one zone doesn't run properly",
           "icon": "scope-single",
           "effects": {
             "F3.1.1": 0.2,
@@ -262,7 +262,7 @@
           }
         },
         {
-          "label": "One rotor fails",
+          "label": "Just one rotor (the rest of its zone is fine)",
           "icon": "scope-one",
           "effects": {
             "F3.1.2": -1.6,
@@ -451,7 +451,7 @@
           }
         },
         {
-          "label": "Short-cycles or makes no pressure",
+          "label": "Keeps starting/stopping, or no pressure",
           "effects": {
             "F5": 0.6,
             "F6.1": 0.4
@@ -464,14 +464,14 @@
       "context": "controller",
       "effort": 3,
       "stage": 1,
-      "text": "Try starting a zone three ways: the touchscreen, the app on home Wi-Fi, and the app on cellular only. What works?",
+      "text": "Start a zone three ways — touchscreen, app on Wi-Fi, app on cellular. What works?",
       "highlight": [
         "sw",
         "ctrl"
       ],
       "options": [
         {
-          "label": "All three behave the same",
+          "label": "No difference between the three",
           "effects": {
             "F2.6": -0.2,
             "F1.5": -0.6,
@@ -508,7 +508,7 @@
       "context": "valve-box",
       "effort": 4,
       "stage": 1,
-      "text": "Open the manual hose — how is the flow?",
+      "text": "Open the manual valve on Zone 5 by hand — how is the flow from its hose?",
       "highlight": [
         "pump"
       ],
@@ -594,7 +594,7 @@
       "context": "controller",
       "effort": 3,
       "stage": 1,
-      "text": "Did a restart help?",
+      "text": "Switch the controller off and on, then the pump. Did either help, even briefly?",
       "highlight": [
         "ctrl",
         "sw",
@@ -788,7 +788,7 @@
       "effort": 4,
       "stage": 2,
       "type": "matrix",
-      "text": "Recent hydraulic work — how does it relate to the issue? (leave blank if not applicable)",
+      "text": "Recent work on the water side — how does it relate to the issue? (leave blank if not applicable)",
       "columns": [
         {
           "id": "right",
@@ -1079,7 +1079,7 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Press \"start zone\" on the controller itself. At the zone terminal with a multimeter, what do you read?",
+      "text": "Press \"start zone\" on the controller. At the zone terminal, what does a multimeter read?",
       "highlight": [
         "ctrl",
         "valves"
@@ -1120,26 +1120,26 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Field-wire resistance at the controller terminals?",
+      "text": "Measure the resistance of the wires to the valves, at the controller terminals. What do you get?",
       "highlight": [
         "ctrl",
         "valves"
       ],
       "options": [
         {
-          "label": "Low and continuous",
+          "label": "Low and steady",
           "effects": {
             "F3": -0.4
           }
         },
         {
-          "label": "Open or high",
+          "label": "Very high, or no reading at all",
           "effects": {
             "F3": 1.6
           }
         },
         {
-          "label": "Intermittent when wiggled",
+          "label": "Jumps around when you wiggle the wires",
           "effects": {
             "F3": 0.6
           }
@@ -1151,7 +1151,7 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Solenoid coil resistance (typically 20–60 Ω)?",
+      "text": "Measure the solenoid coil's resistance (20–60 Ω) — at the coil, then from the controller end.",
       "highlight": [
         "valves"
       ],
@@ -1176,7 +1176,7 @@
           }
         },
         {
-          "label": "OK at coil, bad at controller",
+          "label": "Fine at the coil, bad from the controller",
           "effects": {
             "F3.1.1": 1.6
           }
@@ -1248,13 +1248,13 @@
       ],
       "options": [
         {
-          "label": "Along the main-line route",
+          "label": "Along the main hose route",
           "effects": {
             "F6.1": 1.6
           }
         },
         {
-          "label": "At the valve box, or drips from the heads when off",
+          "label": "At the valve box, or heads drip when off",
           "effects": {
             "F7.1.2": 0.4,
             "F7.3.2": 0.2,
@@ -1263,7 +1263,7 @@
           }
         },
         {
-          "label": "Along the zone lines",
+          "label": "Along the zone hoses",
           "effects": {
             "F8.1": 1.6
           }
@@ -1286,7 +1286,7 @@
       "context": "install",
       "effort": 1,
       "optional": true,
-      "text": "Install flow meter, run a zone, does the flow meter read 1.0–3.0 m³/h?",
+      "text": "Fit a flow meter and run a zone — does it read between 1.0 and 3.0 m³/h?",
       "highlight": [
         "pump"
       ],
@@ -1312,7 +1312,7 @@
       "context": "pump",
       "effort": 2,
       "stage": 1,
-      "text": "Press start on a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
+      "text": "Start a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
       "highlight": [
         "relay",
         "pump"
@@ -1393,7 +1393,7 @@
       "context": "valve-box",
       "effort": 5,
       "stage": 1,
-      "text": "Run a zone, open valve box, look at valves and heads?",
+      "text": "Run a zone, open the valve box and look at the valves and heads. What do you see? (tick all)",
       "multiselect": true,
       "highlight": [
         "valves",
@@ -1401,7 +1401,7 @@
       ],
       "options": [
         {
-          "label": "water coming out of a zone you didn't activate",
+          "label": "Water at a zone you didn't switch on",
           "effects": {
             "F3.1.1": 1,
             "F3.1.3": 0.4,
@@ -1414,7 +1414,7 @@
           }
         },
         {
-          "label": "water coming out of valve",
+          "label": "Water leaking from a valve",
           "effects": {
             "F7.1.3": 1,
             "F7.1.2": 0.2,
@@ -1422,7 +1422,7 @@
           }
         },
         {
-          "label": "water coming out of activated zone",
+          "label": "Water at the zone you switched on",
           "effects": {
             "F4.1": -0.2,
             "F2.1": -0.2,

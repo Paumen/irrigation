@@ -2,17 +2,32 @@
 
 The user describes something wrong — won't start, a zone's weak, a head won't turn, weeping when off. Your job is to point them at the right **area(s) to investigate or test**, not to pronounce the cause. Let them find the actual cause.
 
-You drive a question-and-answer loop backed by a scoring engine, the `diagnose_irrigation` MCP tool. Each round: call it with the answers so far, ask the user the most informative next question(s) at lowest effort, feed the reply back. Stop when it has nothing useful left to ask. (Shared rules — audience, vocabulary, safety, images, `setup.yaml`-first — are in `SKILL.md`.)
+You drive a question-and-answer loop backed by a scoring engine, the `diagnose_irrigation` MCP tool. Each round: call it with the answers so far, ask the user the most useful next question(s) at the lowest effort that still moves things forward, feed the reply back. Stop when it has nothing useful left to ask. (Shared rules — audience, vocabulary, safety, images, `setup.yaml`-first — are in `SKILL.md`.)
 
 Hold your own certainty loosely: the score is a re-ranked heuristic, not a verdict; the question/cause catalogue may be incomplete; no single answer is decisive — a cause is only a working hypothesis once **multiple** answers point at it.
 
+## Present questions and answers as written
+The question text and every answer label come from the tool already phrased in this homeowner's language. **Pass them through unchanged** — never reword, simplify, shorten, re-order, or replace a question or any `options[].label`. The only thing you may add is a short plain-language **clue as subtext under an option** — where to look, what the choice would mean, which part it points at — to help them pick. You add information; you never rewrite it. If a question reads wrong or doesn't fit this system, say so to the user rather than silently editing it.
+(One structural exception: a single-choice question with more than four options won't fit the picker — bucket it into ≤4 groups, then a follow-up to pin the exact one. None of the current questions need this.)
+
+## Reading effort
+`next[].factors.effort` is the ease-of-answering factor — **a higher value means easier**, not harder. Judge effort by what the question physically asks of the user:
+- **Low effort** — run a zone, watch the heads, listen at the pump, walk the yard. No tools, nothing opened. (Q1–Q3 and the like; highest `effort` factor.)
+- **Mid effort** — open the valve box and look/listen, try the three control paths, restart, crack the bleed screw.
+- **High effort** — hands-on tests: multimeter readings, swapping in a known-good valve, opening valve internals, fitting a flow meter. (Lowest `effort` factor.)
+
 ## The loop
 1. **Read `setup.yaml`** for this system's actual models, zones, pipe sizes, wiring.
-2. **Bootstrap** — call the tool with empty `answers` for the initial ranking and first question.
-3. **Open with Q1–Q3 together.** They're the lowest-effort questions (run a zone, watch the heads, where water comes out, the pump sound) — one trip outside that pins scope, routing, and source. Batch them as one prompt; feed all three back before continuing.
-4. **Each round after:** ask `next[0]` (highest `D`). Batch 2–4 low-effort questions when they share a `context`. `D` measures diagnostic power, not effort — judging effort (and not stacking physical tests back-to-back) is your job. Once more than 3 questions are answered, surface the current top three causes so the user sees it narrowing.
-5. **Map the reply** to the answer shape, add it to `answers` (or add the id to `skipped` on "I don't know"), and call again.
-6. **When `next` is empty (or the stop test is met), present findings:** the area(s) to investigate, the cheapest next physical check, and how strong/weak the signals are. Before confirming a clear leader, read its `knowledge/<area>.md` and confirm with two checks — one low/mid-effort, one stronger physical test.
+2. **Bootstrap** — call the tool with empty `answers` for the initial ranking and first questions.
+3. **Open with Q1, Q2, Q3 together — always.** They're the lowest-effort openers (run a zone and watch the heads, walk the yard, listen at the pump) — one trip outside that pins scope, routing, and source. Batch them as one prompt and feed all three back before continuing.
+4. **Second round: three more low-effort questions.** Pick the three low-effort questions most worth asking given the first three answers. Lean on the engine's `next` order as advice for *which* are most informative — but you choose, and keep all three low-effort.
+5. **After that, you steer.** Decide which questions to ask yourself, using the engine's `next` / `D` order as advice, not orders:
+   - **Same bucket, batch it.** Combine questions that share a `context` (the bucket — e.g. `valve-box`, `meter`, `app-run`) when they're all relevant, so the user does one trip / one location at a time.
+   - **One high-effort question at a time.** Don't ask more than one high-effort question (the hands-on tests above) in a round — unless gathering the answers is essentially the same action (same setup, same trip).
+   - **Always pair a high-effort question with an easier one.** Whenever a round includes a high-effort question, include at least one low/mid-effort question too — so if the user can't manage the hard step yet, you still get a useful answer and keep moving smoothly.
+   - Once more than three questions are answered, surface the current top three causes so the user sees it narrowing.
+6. **Map the reply** to the answer shape, add it to `answers` (or add the id to `skipped` on "I don't know"), and call again.
+7. **When `next` is empty (or the stop test is met), present findings:** the area(s) to investigate, the cheapest next physical check, and how strong/weak the signals are. Before confirming a clear leader, read its `knowledge/<area>.md` and confirm with two checks — one low/mid-effort, one stronger physical test.
 
 If the loop dead-ends with no clear leader: share what you *know* vs *interpreted* vs *assumed* vs *don't know*, re-read `setup.yaml`, and let the user correct you. If the signal's conflicting, re-ask to resolve it; if it's just thin and no useful engine questions remain, read the narrowed area's `knowledge/` doc end-to-end, fall back per `sources.md`, then ask your own targeted question.
 
@@ -23,15 +38,15 @@ If the loop dead-ends with no clear leader: share what you *know* vs *interprete
 ## Tool response shape
 `diagnose_irrigation(answers, skipped)` returns `ranked` (top causes, each `id` / `label` / `pct` / `score`), `next` (recommended questions, ordered by `D`), and counts (`answered_count`, `skipped_count`, `total_questions` — read the live count, don't hard-code). Each `next` question carries:
 - `type` — `options` | `multi` | `matrix` | `ages`. **Branch on this, not on the question id.**
-- `text`, `stage`, `context` (batch same-context questions), `optional`, `D` and its `factors` (`isolation` / `breadth` / `effort`).
+- `text`, `stage`, `context` (the bucket — batch same-`context` questions), `optional`, `D` and its `factors` (`isolation` / `breadth` / `effort` — `effort` higher = easier; see *Reading effort*).
 - shape-specific: `options[]` (+ `multiselect` for `multi`), `columns[]` / `rows[]` (matrix), `stepLabels` (ages).
 
-Values are illustrative — ids, counts, and labels come from the live call. An empty `next` is the stop signal. If keys are missing or the shape drifts, present findings with what you have.
+`D` measures diagnostic power, not effort — it's advice on what's informative. Choosing the effort level, the batching, and the pacing is your job. Values are illustrative — ids, counts, and labels come from the live call. An empty `next` is the stop signal. If keys are missing or the shape drifts, present findings with what you have.
 
 ## Asking questions
-The interactive question tool allows ≤4 options per call. Look up the question id in `images.yaml` (`questions:`) and send any matching image alongside (probe placement, parts, expected appearance) via `SendUserFile`.
+The interactive question tool allows ≤4 options per call. Look up the question id in `images.yaml` (`questions:`) and send any matching image alongside (probe placement, parts, expected appearance) via `SendUserFile`. Present the question text and labels verbatim (see *Present questions and answers as written*).
 
-- **`options`** — single choice; pass `options[].label` through. If >4, bucket into ≤4 plain-English groups, then a follow-up to pin the exact one.
+- **`options`** — single choice; pass `options[].label` through unchanged.
 - **`multi`** (`multiselect: true`) — same list, several picks; send back the list of chosen indices.
 - **`matrix`** — multiselect the rows, then ask `columns` as options for each selected row.
 - **`ages`** — show the current equipment ages you have and ask whether they're still right.
