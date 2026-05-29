@@ -223,7 +223,7 @@
       "context": "app-run",
       "effort": 6,
       "stage": 1,
-      "text": "Run all four zones from the app and watch the heads. Where is water missing or clearly too weak?",
+      "text": "Run all 4 automated zones from the app and watch the heads. Where is water missing or clearly too weak?",
       "highlight": [
         "rotor",
         "valves"
