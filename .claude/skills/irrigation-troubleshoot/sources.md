@@ -15,11 +15,11 @@ runtime.
 
 ## Routing by root-cause area
 
-### F1 — App / control (schedule, cloud, app)
+### F1 — App / control
 - Local doc: none yet.
 - Fallback: RainMachine app + support (https://support.rainmachine.com/), then web.
 
-### F2 — Controller (RainMachine HD-16 TOUCH)
+### F2 — Controller 
 - Local doc: `knowledge/controller.md` — **partial** (voltage-at-terminals test only).
 - Read when: checking the controller outputs 24–28 VAC on a station; isolating controller vs downstream.
 - Fallback: RainMachine support (https://support.rainmachine.com/), then web. No local PDF.
@@ -29,16 +29,16 @@ runtime.
 - Read when: a conductor/splice/common is suspected; excluding wire length; isolating wiring vs valve vs controller.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
-### F4 — Pump start relay (Hunter PSR-52)
+### F4 — Pump start relay 
 - Local doc: `knowledge/relay.md`.
 - Read when: pump won't start while the controller calls; relay chatters/buzzes; rewiring the relay.
 - Fallback: `media/PSR52.pdf`, then Hunter support (https://www.hunterindustries.com/support).
 
-### F5 — Pump (DAB well pump)
+### F5 — Pump 
 - Local doc: none yet.
 - Fallback: DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
-### F6 — Main line (32 mm, pump → valve box)
+### F6 — Main line 
 - Local doc: none yet.
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
 - Design context: Hunter's "Controlling High Pressure" article (residential rotors) describes
@@ -47,12 +47,12 @@ runtime.
   PRS40 bodies. See `knowledge/valve.md` *Per-valve pressure regulation (Accusync)* for the
   tier comparison.
 
-### F7 — Zone valve (Hunter PGV-101G)
+### F7 — Zone valve
 - Local docs: `knowledge/valve.md` (whole-valve, entry point) → deeper: `knowledge/valve-internals.md`, `knowledge/valve-solenoid.md`.
 - Read when: engine points at the valve area; install/replace; "how does it work"; any valve symptom — then go deeper to internals (diaphragm/spring/seat/metering) or solenoid (coil/plunger/ports) as the symptom narrows.
 - Fallback: `media/PGV101G.pdf`, then Hunter support (https://www.hunterindustries.com/support).
 
-### F8 — Zone laterals (25 mm)
+### F8 — Zone laterals 
 - Local doc: `knowledge/laterals.md` — **partial** (broken-lateral signature, field-diagnosis
   steps, dead-end winterization rule, cap-off/shorten-lateral procedure).
 - Read when: a whole zone is weak with no fault visible at the heads; one or more heads on a
@@ -63,7 +63,7 @@ runtime.
   has the textbook broken-lateral signature ("look for new trees and shrub plantings, new or
   repaired fences"); that material is already folded into `laterals.md`.
 
-### F9 — Heads (Hunter I-20 rotors, Pro-Spray PRS40, MP Rotator nozzles)
+### F9 — Heads 
 - Local doc: `knowledge/heads.md` — entry point covering all three head-side components for this system
   (rotors, regulated bodies, MP nozzles), with the MP ↔ PRS40 pairing and low-head drainage diagnosis.
 - Read when: engine points at the heads area (F9); rotor won't pop up / won't rotate / wrong arc; misting at
@@ -74,7 +74,7 @@ runtime.
   than the current `.pdf` spec sheets (regulator-activation differential, FloGuard diagnostic, full body
   dimensions, cap markings) — worth reading when the PDFs don't answer.
 
-## Web sources (use when the area's local doc and PDF don't cover the symptom)
+## Web sources 
 
 - **RainMachine HD-16 TOUCH controller** — https://support.rainmachine.com/
 - **Hunter Industries support** — https://www.hunterindustries.com/support — vendor-authored
