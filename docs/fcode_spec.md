@@ -3,7 +3,7 @@
 **Version:** 1.0 
 **Status:** canonical
 **Format:** dotted (`F<component>.<mode>.<instance>`)
-**Source of truth for migration:** the live `data.js` cause taxonomy
+**Source of truth for migration:** the live `data.json` cause taxonomy
 
 ---
 
@@ -142,13 +142,13 @@ instance, to avoid double-counting.
 **Forward-looking codes (no historical cause, absent from migration):**
 `F3.4`, `F4.4`, `F5.8`. (`F2.8` is sourced from the R22 split.)
 
-**Stale code (images.yaml only, never in `data.js`):** `R93` — used in
+**Stale code (images.yaml only, never in `data.json`):** `R93` — used in
 `.claude/skills/irrigation-troubleshoot/images.yaml` for arc/range/nozzle rotor
 images. Resolves to **`F9.4`** in the new taxonomy. Rekey at migration time.
 
 ---
 
-## 3. Migration table (live `data.js` → F)
+## 3. Migration table (live `data.json` → F)
 
 **Six 1→2 splits** (⮌ = one live code maps to two F-codes). Parent broadcasts:
 `R1→F1, R2→F2, R3→F4, R4→F5, R5→F6, R6→F3, R7→F7, R8→F8, R9→F9`.
@@ -233,7 +233,7 @@ String = rename/move. Array = 1→many split (manual apportioning required, §5)
 
 ---
 
-## 5. Split apportioning (required before data.js migration)
+## 5. Split apportioning (required before data.json migration)
 
 Each split source's `baseline` and every per-question `effects` entry divides between
 its two targets.
@@ -283,7 +283,7 @@ Hits: Q10 rotor row (1.0). Lean F9.4, small weight on F9.1.2.
 
 ## 5.5 Per-question recalibration
 
-Effects in `data.js` that need adjustment beyond §5's default rule — cases where a
+Effects in `data.json` that need adjustment beyond §5's default rule — cases where a
 split-source effect should be **moved**, **dropped on one side**, or
 **asymmetrically weighted** rather than duplicated. Anything not listed below
 duplicates as-is.

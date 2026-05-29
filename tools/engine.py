@@ -1,8 +1,8 @@
 """Pure scoring engine for the irrigation diagnostic.
 
-Port of engine.js. Both files share the same algorithm and read the same
-data shape (data.js / data.json). A parity test (tools/test-parity.mjs)
-exercises both against identical inputs to catch drift.
+Source of truth for the questionnaire scoring algorithm. Reads the catalogue
+(causes, questions, weights, stages, slider curves) from data.json via
+tools/diagnose.py. No I/O of its own.
 """
 
 from __future__ import annotations

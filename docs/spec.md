@@ -1,26 +1,20 @@
-# High level spec
+# Diagnostic engine spec
 
 ## Goal
 
-Guide homeowners through fixing their irrigation system by asking step-by-step questions. Use their answers to build a live, ranked list of the most likely broken parts, and show this on an easy-to-understand system map.
+Guide a homeowner toward the broken part of their irrigation system by asking step-by-step questions and using the answers to maintain a live, ranked list of the most likely causes. Delivered to the user through the `irrigation-troubleshoot` skill, which drives the engine over the `diagnose_irrigation` MCP tool.
 
-## Core Objectives
+## Core behaviour
 
-- **Questionnaire:** A flexible questionnaire where users can forward, change, or answer questions in any order.
-- **Ranking:** Real-time percentages showing the most likely causes, sorted from highest to lowest.
-- **Map:** An interactive map of the irrigation system.
-- **Look and Feel:** Designed to look like an "engineering worksheet" / "diagnostics tool" / "system status dashboard".
+- **Questionnaire:** Questions can be answered, changed, or skipped in any order. Each question has a shape (`options`, `multi`, `matrix`, `ages`), an effort cost, and a stage (Symptoms, Timeline, Tests).
+- **Ranking:** Every answer adds to or subtracts from each candidate cause; the engine recomputes scores and percentages after each answer, sorted most- to least-likely.
+- **Recommendations:** The engine scores the unanswered questions by how sharply they separate the contending causes (isolation + breadth, with effort as a tie-breaker) and surfaces the most informative next questions, each with a discriminator `D` and a `relevancy` band used as the loop's stop signal.
 
-## Information Tracking
+## State
 
-We save user answers. Progress bars and cause rankings are calculated from those answers.
+The engine is pure and stateless; the caller owns the conversation state:
 
-- `answers` (stores the user's choice)
-- `activeQuestion` (the question currently on the screen)
-- `stageProgress` (questions answered divided by total questions in that stage)
-- **Starting Information:** The list of possible causes, the layout of the system map, the questions (split into stages: Symptoms, Timeline, Tests), and how much each answer changes the likelihood of a cause.
+- `answers` — question id → answer (shape depends on the question `type`).
+- `skipped` — question id → true for "I don't know" / skip.
 
-## Rules & Mechanics
-
-- **Scoring System:** Every answer adds or subtracts points from the possible causes. The system instantly recalculates the percentages to show the most likely issues.
-- **Recommendations:** Suggests the next most helpful questions to answer.
+Cause baselines, question effects, slider curves, and stage definitions live in `data.json` (the source of truth, scored by `tools/engine.py`). The cause taxonomy is documented in `fcode_spec.md`.
