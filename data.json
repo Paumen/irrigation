@@ -1,22 +1,4 @@
 {
-  "stages": [
-    {
-      "id": 1,
-      "label": "Symptoms"
-    },
-    {
-      "id": 2,
-      "label": "Timeline"
-    },
-    {
-      "id": 3,
-      "label": "Tests"
-    }
-  ],
-  "system": {
-    "zoneFlow": "~2 m³/h",
-    "waterSource": "Well pump"
-  },
   "sliderCurves": {
     "standard": [
       -0.2,
@@ -216,9 +198,8 @@
   "questions": [
     {
       "id": "Q1",
-      "context": "app-run",
+      "context": "app-run, recall, run_zone",
       "effort": 6,
-      "stage": 1,
       "text": "Run all 4 automated zones from the app and watch the heads. Where's water missing or too weak?",
       "highlight": [
         "rotor",
@@ -275,9 +256,8 @@
     },
     {
       "id": "Q2",
-      "context": "app-run",
+      "context": "app-run, recall, run_zone",
       "effort": 5,
-      "stage": 1,
       "text": "Start one zone from the app and walk the yard. Where does water actually come out?",
       "highlight": [
         "rotor",
@@ -345,9 +325,8 @@
     },
     {
       "id": "Q2q",
-      "context": "app-run",
+      "context": "app-run, recall, run_zone",
       "effort": 5,
-      "stage": 1,
       "requires": {
         "Q2": [
           0
@@ -418,9 +397,8 @@
     },
     {
       "id": "Q3",
-      "context": "app-run",
+      "context": "app-run, recall, run_zone",
       "effort": 5,
-      "stage": 1,
       "text": "Start a zone from the app and listen at the pump. What does it do?",
       "highlight": [
         "pump"
@@ -468,9 +446,8 @@
     },
     {
       "id": "Q4",
-      "context": "controller",
+      "context": "controller, recall, run_zone",
       "effort": 3,
-      "stage": 1,
       "text": "Start a zone three ways — touchscreen, app on Wi-Fi, app on cellular. What works?",
       "highlight": [
         "sw",
@@ -515,9 +492,8 @@
     },
     {
       "id": "Q5",
-      "context": "valve-box",
+      "context": "valve-box, recall, run_pump",
       "effort": 4,
-      "stage": 1,
       "text": "Open the manual valve on Zone 5 by hand — how is the flow from its hose?",
       "highlight": [
         "pump"
@@ -556,9 +532,8 @@
     },
     {
       "id": "Q6",
-      "context": "valve-box",
+      "context": "valve-box, run_zone",
       "effort": 4,
-      "stage": 1,
       "text": "Start a zone from the app and stand at the valve box. What do you hear?",
       "highlight": [
         "valves",
@@ -606,9 +581,8 @@
     },
     {
       "id": "Q7",
-      "context": "controller",
+      "context": "controller, recall",
       "effort": 3,
-      "stage": 1,
       "text": "Switch the controller off and on, then the pump. Did either help, even briefly?",
       "highlight": [
         "ctrl",
@@ -645,9 +619,8 @@
     },
     {
       "id": "Q8",
-      "context": "recall",
+      "context": "recall_harder",
       "effort": 5,
-      "stage": 2,
       "text": "How did the problem progress?",
       "options": [
         {
@@ -704,9 +677,8 @@
     },
     {
       "id": "Q9",
-      "context": "recall",
-      "effort": 6,
-      "stage": 2,
+      "context": "recall_harder",
+      "effort": 4,
       "type": "ages",
       "text": "Do these dates still reflect your latest replacements?",
       "highlight": [
@@ -795,9 +767,8 @@
     },
     {
       "id": "Q10",
-      "context": "recall",
+      "context": "recall_harder",
       "effort": 4,
-      "stage": 2,
       "type": "matrix",
       "text": "Recent work on the water side — how does it relate to the issue? (leave blank if not applicable)",
       "columns": [
@@ -861,9 +832,8 @@
     },
     {
       "id": "Q10b",
-      "context": "recall",
+      "context": "recall_harder",
       "effort": 4,
-      "stage": 2,
       "type": "matrix",
       "text": "Recent electrical/control work — how does it relate to the issue? (leave blank if not applicable)",
       "columns": [
@@ -919,9 +889,8 @@
     },
     {
       "id": "Q11",
-      "context": "recall",
+      "context": "recall_harder",
       "effort": 4,
-      "stage": 2,
       "type": "matrix",
       "text": "Weather events — how do they relate to the issue? (leave blank if not applicable)",
       "columns": [
@@ -979,9 +948,8 @@
     },
     {
       "id": "Q11b",
-      "context": "recall",
+      "context": "recall_harder",
       "effort": 4,
-      "stage": 2,
       "type": "matrix",
       "text": "Other external events — how do they relate to the issue? (leave blank if not applicable)",
       "columns": [
@@ -1041,9 +1009,8 @@
     },
     {
       "id": "Q12",
-      "context": "valve-box",
+      "context": "valve-box, run_pump",
       "effort": 3,
-      "stage": 3,
       "text": "Open the valve manually with the bleed screw — does the zone run?",
       "highlight": [
         "valves"
@@ -1093,9 +1060,8 @@
     },
     {
       "id": "Q13",
-      "context": "meter",
+      "context": "multimeter",
       "effort": 2,
-      "stage": 3,
       "text": "Press \"start zone\" on the controller. At the zone terminal, what does a multimeter read?",
       "highlight": [
         "ctrl",
@@ -1135,9 +1101,8 @@
     },
     {
       "id": "Q14",
-      "context": "meter",
+      "context": "multimeter",
       "effort": 2,
-      "stage": 3,
       "text": "Measure the resistance of the wires to the valves, at the controller terminals. What do you get?",
       "highlight": [
         "ctrl",
@@ -1166,9 +1131,8 @@
     },
     {
       "id": "Q15",
-      "context": "meter",
+      "context": "multimeter",
       "effort": 2,
-      "stage": 3,
       "text": "Measure the solenoid coil's resistance (20–60 Ω) — at the coil, then from the controller end.",
       "highlight": [
         "valves"
@@ -1206,9 +1170,8 @@
     },
     {
       "id": "Q16",
-      "context": "valve-box",
+      "context": "valve-box, disassembly",
       "effort": 1,
-      "stage": 3,
       "text": "Swap in a known-good valve — does the issue stay with the zone?",
       "highlight": [
         "valves"
@@ -1233,9 +1196,8 @@
     },
     {
       "id": "Q17",
-      "context": "valve-box",
+      "context": "valve-box., disassembly",
       "effort": 1,
-      "stage": 3,
       "text": "Open each valve and inspect the internals — what do you find?",
       "highlight": [
         "valves"
@@ -1264,9 +1226,8 @@
     },
     {
       "id": "Q18",
-      "context": "walk",
+      "context": "walk, run_zone",
       "effort": 5,
-      "optional": true,
       "text": "Walk the system — do you see water or wet ground?",
       "highlight": [
         "valves"
@@ -1310,7 +1271,6 @@
       "id": "Q19",
       "context": "install",
       "effort": 1,
-      "optional": true,
       "text": "Fit a flow meter and run a zone — does it read between 1.0 and 3.0 m³/h?",
       "highlight": [
         "pump"
@@ -1336,9 +1296,8 @@
     },
     {
       "id": "Q20",
-      "context": "pump",
+      "context": "pump, relay, run_zone",
       "effort": 2,
-      "stage": 1,
       "text": "Start a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
       "highlight": [
         "relay",
@@ -1388,9 +1347,8 @@
     },
     {
       "id": "Q21",
-      "context": "valve-box",
+      "context": "valve-box, visual_inspection",
       "effort": 2,
-      "stage": 1,
       "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
       "highlight": [
         "valves"
@@ -1422,9 +1380,8 @@
     },
     {
       "id": "Q22",
-      "context": "valve-box",
+      "context": "valve-box, run_zone",
       "effort": 5,
-      "stage": 1,
       "text": "Run a zone, open the valve box and look at the valves and heads. What do you see? (tick all)",
       "multiselect": true,
       "highlight": [
@@ -1472,9 +1429,8 @@
     },
     {
       "id": "Q23",
-      "context": "valve-box",
+      "context": "valve-box, run_pump",
       "effort": 5,
-      "stage": 1,
       "text": "Start the pump only (don't start a zone). With all valves closed, where does water come out?",
       "highlight": [
         "pump",
