@@ -41,8 +41,8 @@ def _summarize_question(
         "optional": bool(q.get("optional")),
         "D": round(D, 4),
         "factors": {
-            "isolation": round(terms["isolation"], 4),
             "breadth": round(terms["breadth"], 4),
+            "spread": round(terms["spread"], 4),
             "effort": round(terms["effort"], 4),
         },
     }
@@ -72,8 +72,8 @@ def diagnose(
     Returns:
         ranked: top-N causes with id, label, pct, score
         next: top-N recommended questions with id, text, type, options,
-            score D, and the three factors behind it (isolation,
-            breadth, effort); D ranks on isolation+breadth with effort as a
+            score D, and the three factors behind it (breadth, spread,
+            effort); D ranks on spread+breadth with effort as a
             bounded tie-breaker
         answered_count: how many questions have been answered (excludes skipped)
     """

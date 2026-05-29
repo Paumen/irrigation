@@ -20,6 +20,7 @@ The question text and every answer label come from the tool already phrased in t
 1. **Read `setup.yaml`** for this system's actual models, zones, pipe sizes, wiring.
 2. **Bootstrap** — call the tool with empty `answers` for the initial ranking and first questions.
 3. **Open with four of the lowest-effort questions — always.** Three are the one-trip-outside observers (run a zone and watch the heads, walk the yard, listen at the pump) that pin scope, routing, and source; the fourth is a no-cost recall question (e.g. how the problem progressed) that needs no trip. The picker holds four — fill it. Batch them as one prompt and feed all four back before continuing.
+   - **Show the metrics for each opening question.** At the start — alongside this first batch — surface a compact line per question with its four engine numbers: **breadth** (`factors.breadth`), **spread** (`factors.spread`), **effort** (`factors.effort`), and **discriminator** (`D`). One row per question, e.g. `Q1 — breadth 3.0 · spread 1.4 · effort 0.9 · D 4.6`, so the user can see why each made the opening cut. This metrics view is for the opening round only; later rounds present questions normally.
 4. **Second round: four more low-effort questions.** Pick the four lowest-effort questions most worth asking given the openers. Lean on the engine's `next` order as advice for *which* are most informative — but you choose, and keep all four low-effort.
 5. **After that, you steer.** Decide which questions to ask yourself, using the engine's `next` / `D` order as advice, not orders:
    - **Same bucket, batch it.** Combine questions that share a `context` (the bucket — e.g. `valve-box`, `meter`, `app-run`) when they're all relevant, so the user does one trip / one location at a time.
@@ -38,7 +39,7 @@ If the loop dead-ends with no clear leader: share what you *know* vs *interprete
 ## Tool response shape
 `diagnose_irrigation(answers, skipped)` returns `ranked` (top causes, each `id` / `label` / `pct` / `score`), `next` (recommended questions, ordered by `D`), and counts (`answered_count`, `skipped_count`, `total_questions` — read the live count, don't hard-code). Each `next` question carries:
 - `type` — `options` | `multi` | `matrix` | `ages`. **Branch on this, not on the question id.**
-- `text`, `stage`, `context` (the bucket — batch same-`context` questions), `optional`, `D` and its `factors` (`isolation` / `breadth` / `effort` — `effort` higher = easier; see *Reading effort*).
+- `text`, `stage`, `context` (the bucket — batch same-`context` questions), `optional`, `D` and its `factors` (`breadth` / `spread` / `effort` — `breadth` = how many causes it moves, `spread` = how sharply it separates them, `effort` higher = easier; see *Reading effort*).
 - shape-specific: `options[]` (+ `multiselect` for `multi`), `columns[]` / `rows[]` (matrix), `stepLabels` (ages).
 
 `D` measures diagnostic power, not effort — it's advice on what's informative. Choosing the effort level, the batching, and the pacing is your job. Values are illustrative — ids, counts, and labels come from the live call. An empty `next` is the stop signal. If keys are missing or the shape drifts, present findings with what you have.

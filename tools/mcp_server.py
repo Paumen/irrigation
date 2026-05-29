@@ -51,12 +51,12 @@ def diagnose_irrigation(
           "ranked": top 5 causes [{id, label, pct, score}, ...] sorted by score,
           "next": top 7 recommended questions [
             {id, text, type, stage, context, optional, D,
-             factors:{isolation, breadth, effort},  # isolation+breadth drive D; effort only tie-breaks
+             factors:{breadth, spread, effort},  # breadth+spread drive D; effort only tie-breaks
              options|rows|columns|stepLabels}, ...
           ] sorted by discriminator D (highest first),
-            # factors.isolation = how sharply answers separate specific causes
-            # factors.breadth   = how many causes the question moves at all
-            # factors.effort    = ease of answering (higher = less homeowner work)
+            # factors.breadth = how many causes the question moves at all
+            # factors.spread  = how sharply answers separate specific causes
+            # factors.effort  = ease of answering (higher = less homeowner work)
             # context = shared physical setup (app-run, recall, valve-box,
             #   meter, pump, controller, walk, install); questions in the same
             #   context can be batched into one prompt and answered together

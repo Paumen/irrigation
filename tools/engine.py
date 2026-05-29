@@ -140,7 +140,7 @@ class Engine:
                     s[cid] = s.get(cid, 0) + delta
 
     def _cause_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
-        """The two cause-based factors of the score: isolation (how sharply
+        """The two cause-based factors of the score: spread (how sharply
         answers separate specific causes) and the weighted breadth (how many
         causes the question moves at all). Computed per question type."""
         t = q["type"]
@@ -192,13 +192,13 @@ class Engine:
         return 0.0, 0.0
 
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
-        """The three factors behind question q's score: isolation and breadth
+        """The three factors behind question q's score: spread and breadth
         (how sharply / how broadly it separates the live causes) and effort
-        (ease of answering). The score ranks on isolation+breadth, with effort
+        (ease of answering). The score ranks on spread+breadth, with effort
         as a bounded tie-breaker; see discriminators()."""
-        iso, breadth = self._cause_terms(q, ids)
+        spread, breadth = self._cause_terms(q, ids)
         effort = self._effort_term(q)
-        return {"isolation": iso, "breadth": breadth, "effort": effort}
+        return {"spread": spread, "breadth": breadth, "effort": effort}
 
     def _ans_is_present(self, q: dict, ans: Any) -> bool:
         t = q["type"]
@@ -284,7 +284,7 @@ class Engine:
             t = self.discriminator_terms(q, ids)
             # Gate: only surface a question that actually separates a contending
             # cause, so a cheap-but-uninformative question can't ride onto the list.
-            info = t["isolation"] + t["breadth"]
+            info = t["spread"] + t["breadth"]
             if info <= 0:
                 continue
             effort = t["effort"]
