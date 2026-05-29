@@ -66,7 +66,7 @@ def diagnose(
     answers: dict[str, Any] | None = None,
     skipped: dict[str, bool] | None = None,
     top_n_causes: int = 5,
-    top_n_next: int = 5,
+    top_n_next: int = 7,
 ) -> dict:
     """Run scoring and recommend the next question(s).
 

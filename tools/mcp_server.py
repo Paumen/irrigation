@@ -49,7 +49,7 @@ def diagnose_irrigation(
     Returns:
         {
           "ranked": top 5 causes [{id, label, pct, score}, ...] sorted by score,
-          "next": top 5 recommended questions [
+          "next": top 7 recommended questions [
             {id, text, type, stage, context, optional, relevancy, D,
              factors:{isolation, breadth, effort},  # isolation+breadth drive D; effort only tie-breaks
              options|rows|columns|stepLabels}, ...
