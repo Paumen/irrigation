@@ -1,5 +1,5 @@
 ---
-subject: Controller (RainMachine HD-16 TOUCH)
+subject: Controller 
 root_cause_area: F2
 serves: [troubleshooting, test]
 coverage: partial
