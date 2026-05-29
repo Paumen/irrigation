@@ -2,7 +2,7 @@
 
 "How does a valve work / what's the diaphragm for / why a bleed screw / how does the pump start relay decide to switch on."
 
-Find the part's `knowledge/<area>.md` and read its operation section. Internals have their own sibling docs — `valve-internals.md` (diaphragm, seat, metering ports), `valve-solenoid.md` (coil, plunger). Answer in the homeowner's terms: strip the vendor jargon, keep European units. Pin which model they actually own from `setup.yaml` so the answer is about their PGV-101G / I-20 / PSR-52, not a generic part.
+Find the part's `knowledge/<area>.md` and read its operation section. Internals have their own sibling docs — `valve-internals.md` (diaphragm, seat, metering ports), `valve-solenoid.md` (coil, plunger). Answer in the homeowner's terms: strip the vendor jargon, keep European units. Pin which model they actually own from `setup.yaml` so the answer is about their PGV-101G / I-20 / PSR-22, not a generic part.
 
 Surface one orienting image from `images.yaml` (the cutaway/parts-callout shots work best for "how it works"). For a measurement the user hasn't taken yet, the illustrated explainers read better; once they're actually testing, switch to the photos of their real Stanley meter.
 

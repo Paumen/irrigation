@@ -272,7 +272,7 @@ images:
     subjects: [relay, wiring]
     causes: [F4]
     questions: [Q20]
-    relates: PSR-52 install layout; clearance rule; controller terminals to relay leads; locating the relay when checking whether it switches
+    relates: PSR-22 install layout; clearance rule; controller terminals to relay leads; locating the relay when checking whether it switches
     used_in: [relay.md, playbooks/explain.md, playbooks/identify.md]
 
   IMG.pgv-valve-product:

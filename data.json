@@ -737,7 +737,7 @@
         {
           "id": "relay",
           "label": "Start-Relay",
-          "model": "Hunter",
+          "model": "Hunter PSR-22",
           "curve": "standard",
           "causes": [
             "F4.1"
@@ -746,7 +746,7 @@
         {
           "id": "ctrl",
           "label": "Controller",
-          "model": "RainMachine HD-16 Touch",
+          "model": "RainMachine HD-16 TOUCH",
           "curve": "standard",
           "causes": [
             "F2.1",
