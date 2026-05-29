@@ -1,5 +1,5 @@
 ---
-subject: Pump start relay (Hunter PSR-22)
+subject: relay 
 root_cause_area: F4
 serves: [troubleshooting, install, maintain]
 coverage: power/controller wiring, distance, and chattering are well covered; deeper
