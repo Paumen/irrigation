@@ -217,7 +217,7 @@ images:
 
   IMG.rotor-swing-joint:
     file: media/rotor-swing-joint.png
-    caption: Hunter swing joint between the lateral and the rotor — flexes to absorb shock and lets you set final head height to grade after install.
+    caption: Hunter swing joint between the hose and the rotor — flexes to absorb shock and lets you set final head height to grade after install.
     subjects: [heads]
     causes: [F9, F9.1.1, F9.3, F9.1.2]
     relates: rotor install/replacement; setting height to grade; reducing lateral stress
@@ -334,7 +334,7 @@ images:
 
   IMG.pgv-install-valve-box:
     file: media/pgv-install-valve-box.png
-    caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; lateral line to the sprinklers downstream.
+    caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; hose to the heads downstream.
     subjects: [valve]
     causes: [F7]
     relates: install placement and valve-box context; coiled control-wire slack
@@ -374,7 +374,7 @@ images:
 
   IMG.pgv-valve-barb:
     file: media/pgv-valve-barb.jpg
-    caption: Hunter PGV 1" male-thread × barb (PGV-100MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe laterals. NOT this system.
+    caption: Hunter PGV 1" male-thread × barb (PGV-100MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe hoses. NOT this system.
     subjects: [valve]
     causes: [F7]
     relates: body-style exclusion image — barbed poly-pipe outlet variant
@@ -518,21 +518,21 @@ images:
   IMG.drip-line-inline-emitter:
     file: media/drip-line-inline-emitter.jpg
     caption: Inline-emitter dripline — brown 16 mm tubing with built-in pressure-compensating emitters at fixed spacing; coiled.
-    subjects: [laterals, heads]
+    subjects: [hoses, heads]
     relates: drip-conversion upgrade for flower-bed zones (the upgrades playbook flags this homeowner's Z1 and Z4 as candidates)
     used_in: [playbooks/upgrades.md]
 
   IMG.swing-joint-product:
     file: media/swing-joint-product.jpg
-    caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the lateral.
-    subjects: [heads, laterals]
+    caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the hose.
+    subjects: [heads, hoses]
     relates: rotor install / replacement; reduces lateral stress when a head is kicked or stepped on
     used_in: [playbooks/howto.md]
 
   IMG.rotor-install-swing-joint-illustrated:
     file: media/rotor-install-swing-joint-illustrated.jpg
-    caption: Cross-section illustration — pop-up rotor installed via a swing joint onto a buried lateral; head sits flush with grade, swing joint hidden in the soil.
-    subjects: [heads, laterals]
+    caption: Cross-section illustration — pop-up rotor installed via a swing joint onto a buried hose; head sits flush with grade, swing joint hidden in the soil.
+    subjects: [heads, hoses]
     relates: rotor install reference for howto.md; pair with swing-joint-product for "what it is" + "how it sits in the soil"
     used_in: [playbooks/howto.md]
 

@@ -73,7 +73,7 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 
 ### Common faults
 
-- **Won't pop up.** Debris in the well, weak riser seal, body cracked. Most often: a pebble or twig in the well. Pull the cap and clear. Low system pressure is also a candidate — check pressure at the manifold while the zone runs. Note: a worn riser seal causes *flow-by* (water flushed out as the riser starts to rise) which bleeds the pressure needed to seat the riser; Hunter rotors are designed for zero flow-by, so visible flush during pop-up = replace the riser seal + spring seat. If the whole zone is weak (not just this head): a punctured lateral after recent garden / fence / driveway work is the textbook cause — see `laterals.md` *Broken-lateral signature*. Could also be a partly-stuck valve diaphragm restricting flow to the zone — see `valve-internals.md`.
+- **Won't pop up.** Debris in the well, weak riser seal, body cracked. Most often: a pebble or twig in the well. Pull the cap and clear. Low system pressure is also a candidate — check pressure at the manifold while the zone runs. Note: a worn riser seal causes *flow-by* (water flushed out as the riser starts to rise) which bleeds the pressure needed to seat the riser; Hunter rotors are designed for zero flow-by, so visible flush during pop-up = replace the riser seal + spring seat. If the whole zone is weak (not just this head): a punctured hose after recent garden / fence / driveway work is the textbook cause — see `hoses.md` *Broken-hose signature*. Could also be a partly-stuck valve diaphragm restricting flow to the zone — see `valve-internals.md`.
 - **Pops up but won't rotate.** Sand or grit in the drive, or the nozzle is too small for the available pressure (a gear-drive needs flow to drive). Pull the rotor, flush in clean water, reinstall. Persistent → replace the rotor. The bottom-of-internal-assembly **filter** is the most common culprit before the drive itself — pull it with needle-nose pliers and rinse before condemning the rotor (see *Adjustment & service procedures* below).
 - **Wrong arc / always 360°.** The FloStop or arc adjustment is at end-stop. Reset per the Hunter wrench instructions. Auto arc return will bring the original arc back the next time the valve calls. Don't step on or kick rotors during mowing — the impact drifts the right stop, and auto arc return is the recovery, not a license to abuse the head.
 
@@ -162,15 +162,15 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 
 **Drain check valve (low-head drainage at this rotor).** Hunter sells a screw-in check valve sub-assembly (P/N **142300**, Filter/Screen Check Valve combined). To fit: unthread the body cap, pull the internal assembly, flip upside-down, push the large irregular end of the check valve into the bottom of the riser (the small rubber tip stays outside the riser), refit the internal assembly.
 
-**Temporary shutoff of one rotor (without removing the head).** Use the blank nozzle from the I-20 Low-Angle Nozzle Set (P/N **356605SP**) — it pops up with the zone but throws no water. **Temporary use only**: the riser still pops up, so this is not a permanent cap, and the blank must be removed before winterization. For a true permanent cap, see *Capping off a head in-ground* below. Note: I-20s with Flo-Stop can simply use Flo-Stop for temporary shutoff — the blank nozzle is mostly useful for flushing a lateral during maintenance.
+**Temporary shutoff of one rotor (without removing the head).** Use the blank nozzle from the I-20 Low-Angle Nozzle Set (P/N **356605SP**) — it pops up with the zone but throws no water. **Temporary use only**: the riser still pops up, so this is not a permanent cap, and the blank must be removed before winterization. For a true permanent cap, see *Capping off a head in-ground* below. Note: I-20s with Flo-Stop can simply use Flo-Stop for temporary shutoff — the blank nozzle is mostly useful for flushing a hose during maintenance.
 
-**Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant wherever the system is winterized. The general dead-end-on-a-winterized-lateral rule that drives this is in `laterals.md` *Dead-end winterization rule*; the same procedure is mirrored there so either doc can be read standalone.
-- *Removing a head that is not at the end of its lateral:* dig down to expose the threaded fitting under the rotor, unscrew the rotor (plus any riser nipple), thread on a same-size cap or plug with Teflon tape, turn the zone on briefly to check for leaks, then backfill.
-- *Removing the last head on a lateral (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the lateral just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
+**Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant wherever the system is winterized. The general dead-end-on-a-winterized-hose rule that drives this is in `hoses.md` *Dead-end winterization rule*; the same procedure is mirrored there so either doc can be read standalone.
+- *Removing a head that is not at the end of its hose:* dig down to expose the threaded fitting under the rotor, unscrew the rotor (plus any riser nipple), thread on a same-size cap or plug with Teflon tape, turn the zone on briefly to check for leaks, then backfill.
+- *Removing the last head on a hose (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the hose just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
 
-**Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the lateral and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
+**Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the hose and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
 
-![Hunter swing joint between the lateral and the rotor inlet](media/rotor-swing-joint.png)
+![Hunter swing joint between the hose and the rotor inlet](media/rotor-swing-joint.png)
 
 ## Pro-Spray PRS40 spray body
 
@@ -297,8 +297,8 @@ Quick read: the canister colour tells you the line (black = standard 10 mm/hr; g
 
 Two distinct causes, with the same symptom:
 
-1. **Drain check valve missing or failed at the head.** The cheap, common fix. Both the I-20 and the PRS40 have factory or user-installable drain check valves, rated to ~3 m and ~4.3 m of head-to-lateral-high-point elevation respectively. If the lateral has more elevation than the check valve holds, the water above the valve will still drain. Upgrade to a stronger check valve or install in-line check valves on the lateral.
-2. **Water passing through the zone valve when shut.** The valve itself is letting water trickle through after closing — see `valve.md` *Weeping when off*. The tell: drainage doesn't stop after the lateral empties; it keeps going.
+1. **Drain check valve missing or failed at the head.** The cheap, common fix. Both the I-20 and the PRS40 have factory or user-installable drain check valves, rated to ~3 m and ~4.3 m of head-to-hose-high-point elevation respectively. If the hose has more elevation than the check valve holds, the water above the valve will still drain. Upgrade to a stronger check valve or install in-line check valves on the hose.
+2. **Water passing through the zone valve when shut.** The valve itself is letting water trickle through after closing — see `valve.md` *Weeping when off*. The tell: drainage doesn't stop after the hose empties; it keeps going.
 
 **Distinguishing test:** a check-valve issue **self-stops** once the pipe above empties (a finite puddle, then dry). A valve leak **does not self-stop** — it weeps continuously as long as the main line is pressurised. Do not assume the valve, and do not assume the head; let the symptom decide.
 
@@ -306,6 +306,6 @@ Two distinct causes, with the same symptom:
 
 - `valve.md` — *Weeping when off* for the valve-side cause of low-head drainage; also for valve-side regulation when PRS40 isn't enough (Accusync).
 - `valve-internals.md` — partly-stuck diaphragm restricting flow to a zone, an alternative cause when a whole zone is weak.
-- `laterals.md` — *Broken-lateral signature* and *Dead-end winterization rule* for the zone-wide-weakness case and for head removal/cap-off planning.
+- `hoses.md` — *Broken-hose signature* and *Dead-end winterization rule* for the zone-wide-weakness case and for head removal/cap-off planning.
 - `wiring.md` — heads are mechanical only; no wiring at the head.
 - `setup.yaml` — per-zone head counts and types for this system.

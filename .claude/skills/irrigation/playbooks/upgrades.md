@@ -7,7 +7,7 @@ Tie each candidate to something it actually changes for *this* homeowner — rel
 Candidates to reason from (match to the actual ask):
 - **ET / rain-skip scheduling** — already in the HD-16; a settings change, not a buy. Highest leverage if running fixed schedules.
 - **Soil-moisture sensor** — cheap, real savings, one more failure mode; worth it if they over- or under-water today.
-- **Flow sensor / master valve** — deliberately excluded; only revisit on a real trigger (a past lateral failure, long absences, or moving off pump-triggered supply).
+- **Flow sensor / master valve** — deliberately excluded; only revisit on a real trigger (a past hose failure, long absences, or moving off pump-triggered supply).
 - **Accusync per-valve regulation** — system already has tier-3 regulation at the PRS40 heads (`knowledge/valve.md`); redundant unless zones need wildly different pressures.
 - **Drip on the flower-bed zone (Z1, Z4)** — the mixed-precipitation note flags this; separate drip-on-flowers from rotors-on-lawn. Real candidate.
 - **Valved tee on the manual line** — `setup.yaml` notes it has no shutoff at the manifold; small cost, better control.
