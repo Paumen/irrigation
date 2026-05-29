@@ -32,7 +32,6 @@ feeds:
   MAIN.fitting.joint.02:    {to: [MAIN.fitting.manifold.01]}
   MAIN.fitting.manifold.01: {to: [Z1.fitting.joint.01, Z2.fitting.joint.01, Z3.fitting.joint.01, Z4.fitting.joint.01, Z5.fitting.joint.01, Z6.fitting.cap.01], height_m: 11.2}
 
-  # Zone 1 — mixed (rotor for lawn + MP rotators for flower beds); driven by signal_1
   Z1.fitting.joint.01:  {to: [Z1.valve.auto.01]}
   Z1.valve.auto.01:     {to: [Z1.fitting.joint.02], height_m: 11.2}
   Z1.fitting.joint.02:  {to: [Z1.hose.25.01]}
@@ -54,7 +53,6 @@ feeds:
   Z1.head.spray.02:     {to: [Z1.nozzle.rotator.02]}
   Z1.nozzle.rotator.02: {to: [], height_m: 11.4, nozzle: "MP2000", arc_deg: 180}
 
-  # Zone 2 — two rotors; driven by signal_2
   Z2.fitting.joint.01:  {to: [Z2.valve.auto.01]}
   Z2.valve.auto.01:     {to: [Z2.fitting.joint.02], height_m: 11.2}
   Z2.fitting.joint.02:  {to: [Z2.hose.25.01]}
