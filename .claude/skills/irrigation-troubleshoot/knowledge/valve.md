@@ -3,7 +3,6 @@ subject: Zone valve (Hunter PGV-101G)
 root_cause_area: F7
 serves: [troubleshooting, install, replace, maintain, how-it-works]
 deeper: [valve-internals, valve-solenoid]
-system_note: 4 valves, globe type, outdoor valve box, installed 2026-05, bleed screw + flow control, 24 V from controller.
 summary: Whole-valve reference for the PGV-101G — how it works, install and damage-avoidance, manual operation, leak modes, specs, filter.
 read_when: engine points at the valve area (F7); homeowner installing/replacing a valve or asking how it works; any valve symptom not clearly localised to the solenoid or the diaphragm.
 contents:
@@ -82,7 +81,7 @@ turn it clockwise until snug on the valve.
 Loosen the bleed screw just enough to release air — ¼ to ½ turn. Hand-tighten it to close
 the valve again. Some water trickling from the bleed screw is normal.
 
-On this system the manual hose is fed off the manifold: the pump is started from the
+Where a manual hose is fed off the manifold (see `setup.yaml`), the pump is started from the
 controller, and with all solenoids shut the manual hose fills and can be opened at the hose
 end. The valve closes within about 15 seconds after the solenoid or bleed screw is returned
 to its closed position.
@@ -98,8 +97,8 @@ fine-tune head performance.
 
 A fully open valve (4–5 full turns counter-clockwise) can pass ~5 bar, which is too much for
 some heads such as pop-up sprays. Throttling the flow control brings pressure down to a workable
-level. On this system the PRS40 spray bodies are already pressure-regulated to ~2.8 bar, so flow
-control is mostly relevant to balancing zones, not protecting heads.
+level. Where the spray bodies are pressure-regulated (e.g. PRS40 at ~2.8 bar), flow control is
+mostly relevant to balancing zones, not protecting heads.
 
 ## Bonnet air relief (water hammer)
 
@@ -120,7 +119,7 @@ form a tier:
 1. **System-wide pressure regulator** (upstream of the valve manifold). Coarse and
    simple — every zone sees the same regulated pressure, and you lose the ability to
    tune individual zones. Useful when supply pressure is wildly higher than every zone
-   needs and design varies little between zones. Not fitted on this system; covered as
+   needs and design varies little between zones. Not fitted in every system; covered as
    F6 context in `sources.md`.
 2. **Per-valve pressure regulator (Hunter Accusync).** Sits on each individual valve
    and holds its downstream pressure at a per-zone setpoint regardless of upstream
@@ -128,13 +127,14 @@ form a tier:
    runs** that make zone-by-zone pressure drop unequal. Each zone gets its own design
    pressure, which the rest of the system can't see.
 3. **Pressure-regulated body at the head** (PRS30, PRS40, PRB rotors). The finest level
-   of control — every head holds its nozzle pressure regardless of what arrives. This
-   system uses the PRS40 variant of Pro-Spray for the MP Rotators, which is why the
-   MP heads run consistently across zones.
+   of control — every head holds its nozzle pressure regardless of what arrives. The
+   PRS40 variant of Pro-Spray, used for MP Rotators, is why MP heads run consistently
+   across zones.
 
-**For this system.** The PGV-101G valves are **not** regulated, and there is no system-
-wide regulator. The PRS40 bodies handle the MP heads. The I-20 rotors are unregulated
-and rely on supply pressure landing in their 1.7–4.8 bar window (see `heads.md`).
+**Regulation tiers in practice.** The PGV-101G valve is **not** pressure-regulated, so where
+no system-wide regulator is fitted, regulation falls to the heads — PRS40 bodies hold the MP
+nozzles at setpoint, while unregulated I-20 rotors rely on supply pressure landing in their
+1.7–4.8 bar window (see `heads.md`, and `setup.yaml` for what is actually fitted).
 
 When to think about Accusync: if a zone is **consistently misty or over-radius** at
 the heads, the PRS40 isn't engaging (inlet too low — see `heads.md` *Misting from the
@@ -158,9 +158,9 @@ must point **toward the heads**. A valve plumbed backwards will not hold/seat co
 the valve sits vertical or horizontal does not matter hydraulically — that is only a maintenance
 convenience.
 
-> Note: these valves were installed 2026-05 (new). On a new install, backwards orientation,
-> unflushed construction debris, an unseated diaphragm, and loose bonnet screws are all live
-> possibilities even when nothing has "failed". Check the arrow first.
+> Note: on a recent install, backwards orientation, unflushed construction debris, an unseated
+> diaphragm, and loose bonnet screws are all live possibilities even when nothing has "failed".
+> Check the arrow first. (See `setup.yaml` for install dates.)
 
 **Use nipples with cut threads, not moulded threads.** Moulded thread sizes vary a lot
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
@@ -217,28 +217,28 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 ## PGV body styles (identification)
 
-The PGV family comes in several body styles. **This system uses the 1" globe with flow control
-(PGV-101G)** — the first one below. The others are shown so a body that doesn't match can be
-ruled out during identification; they are not fitted here.
+The PGV family comes in several body styles. This whole-valve reference documents the **1" globe
+with flow control (PGV-101G)** — the first one below. The others are shown so a body that doesn't
+match can be ruled out during identification. Confirm which body is installed from `setup.yaml`.
 
-![PGV 1" globe with flow control (PGV-101G) — this system's body style: flow control knob on top, solenoid with looped lead, inline ports.](media/pgv-valve-globe-101g.jpg)
+![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](media/pgv-valve-globe-101g.jpg)
 
-- **1" globe, flow control (PGV-101G) — this system.** Inlet and outlet inline; flow control knob
-  and bleed on top. The whole-system reference above describes this body.
+- **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
+  and bleed on top. The reference above describes this body.
 - **Angle (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
   deep main line; lower pressure loss than globe. Flow-direction arrow on the body.
 
-  ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Not this system.](media/pgv-valve-angle.jpg)
+  ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](media/pgv-valve-angle.jpg)
 
 - **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe laterals (common in cold-climate
-  installs) — saves threading an adapter. Not this system.
+  installs) — saves threading an adapter.
 
-  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Not this system.](media/pgv-valve-barb.jpg)
+  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Other body style, for identification.](media/pgv-valve-barb.jpg)
 
 - **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
-  non-rising flow control handle; these are the sizes that accept the Accu-Set regulator. Not this system.
+  non-rising flow control handle; these are the sizes that accept the Accu-Set regulator.
 
-  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Not this system.](media/pgv-valve-globe-large.jpg)
+  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](media/pgv-valve-globe-large.jpg)
 
 ## Specifications (PGV)
 
@@ -246,7 +246,7 @@ Operating:
 - Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
 - Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
 - Maximum rated pressure: 10.3 bar (150 psi) — the ABS skirted bonnet holds this without softening
-  in hot weather (a known weakness of all-PVC valve bodies). Well within reach of this system's pump.
+  in hot weather (a known weakness of all-PVC valve bodies). Well within reach of typical residential pump pressures.
 - Temperature rating: 66 °C
 - Warranty: 2 years
 
@@ -254,9 +254,9 @@ Solenoid (summary — full detail in `valve-solenoid.md`):
 - 24 VAC
 - 350 mA inrush / 190 mA holding at 60 Hz
 - 370 mA inrush / 210 mA holding at 50 Hz
-- Coil resistance spec for this system: 20–60 Ω
+- Coil resistance spec (Hunter PGV): 20–60 Ω
 
-Pressure loss across the 1" PGV (Globe — the body type on this system; converted from
+Pressure loss across the 1" PGV (Globe body; converted from
 Hunter's GPM/PSI source table):
 
 | Flow (m³/h) | Flow (l/min) | Loss (bar) |
@@ -270,8 +270,9 @@ Hunter's GPM/PSI source table):
 | 6.81 | 114 | 0.55 |
 | 9.08 | 151 | 0.97 |
 
-Per-zone flow on this system runs ~2.2 m³/h (≈37 l/min), so each zone valve costs ~0.28 bar of
-the available pump head — useful when budgeting pressure for the heads downstream.
+At a typical per-zone flow of ~2.2 m³/h (≈37 l/min), each zone valve costs ~0.28 bar of
+the available pump head — useful when budgeting pressure for the heads downstream. (See the
+hydraulics tool / `setup.yaml` for this system's actual per-zone flows.)
 
 ## Filter / mesh (PGV 1")
 
@@ -283,7 +284,7 @@ only (mesh number = openings per 25.4 mm; higher number = finer screen). Use the
 |---|---|---|---|---|
 | PGV 1" (and ASV ¾"/1") | 0.254 mm × 0.482 mm rectangular | 484 | 36 | on diaphragm |
 
-When servicing, this is the screen to clean of grit; well water makes this routine.
+When servicing, this is the screen to clean of grit; on well-fed systems this is routine.
 
 ## Replacement parts (PGV-101G — 1" globe, NPT, with flow control)
 
@@ -294,7 +295,7 @@ The parts the homeowner can actually swap, with Hunter catalog numbers:
 | Part | Catalog No. |
 |---|---|
 | Solenoid assembly — AC (incl. O-ring + seal) | 434100 |
-| Solenoid assembly — DC latching (factory option, not this system) | 458200 |
+| Solenoid assembly — DC latching (factory option) | 458200 |
 | Solenoid O-ring | 262600 |
 | Solenoid seal | 364400 |
 | Bonnet screw | 427300 |

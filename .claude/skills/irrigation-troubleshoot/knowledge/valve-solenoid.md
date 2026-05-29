@@ -65,7 +65,7 @@ calls it, the fault is electrical (wiring, controller, or solenoid coil) rather 
 - 24 VAC solenoid
 - 350 mA inrush / 190 mA holding at 60 Hz
 - 370 mA inrush / 210 mA holding at 50 Hz
-- Coil resistance (this system's spec): **20–60 Ω**
+- Coil resistance (Hunter PGV spec): **20–60 Ω**
 
 ## Testing solenoid voltage
 
@@ -134,9 +134,9 @@ still won't operate, replace the solenoid. Shut off, unscrew the old solenoid co
 fit the new one clockwise until snug, and reconnect with **waterproof** connectors (`wiring.md`).
 
 Part number: **434100** (AC solenoid assembly, includes O-ring 262600 and seal 364400). A
-**DC latching** solenoid (P/N **458200**) is offered as a factory option for battery/DC controllers
-— this system runs the AC solenoid off the mains-powered controller, so any replacement is the AC
-434100. The full PGV parts list is in `valve.md`.
+**DC latching** solenoid (P/N **458200**) is offered as a factory option for battery/DC controllers.
+For an AC solenoid running off a mains-powered controller, the replacement is the AC 434100; confirm
+which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
 

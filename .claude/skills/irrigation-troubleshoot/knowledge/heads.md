@@ -2,12 +2,7 @@
 subject: Heads (rotors, spray bodies, MP Rotator nozzles)
 root_cause_area: F9
 serves: [troubleshooting, replace, clean, maintain, how-it-works]
-system_note: >
-  Hunter I-20-04-SS rotors, Hunter Pro-Spray PRS40 spray bodies (regulated to
-  2.8 bar / 40 PSI for the MP nozzles), Hunter Standard MP Rotator nozzles.
-  All heads installed 2020-08, outdoor in-ground, pop-up. Zones mix rotors with
-  MP rotators deliberately for different precipitation needs (lawn vs flower beds).
-summary: Heads reference covering the three components on the head side of this system — I-20 rotors, Pro-Spray PRS40 bodies, MP Rotator nozzles. Pressure/flow envelopes, common faults, the MP ↔ PRS40 pairing, and low-head drainage.
+summary: Heads reference covering the three components on the head side — I-20 rotors, Pro-Spray PRS40 bodies, MP Rotator nozzles. Pressure/flow envelopes, common faults, the MP ↔ PRS40 pairing, and low-head drainage.
 read_when: engine points at the heads area (F9); rotor won't pop up / won't rotate / wrong arc / wrong coverage; misting at a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
 contents:
   - I-20 rotor — features, operating envelope, common faults, nozzle racks
@@ -20,7 +15,7 @@ contents:
 
 # Heads — rotors, spray bodies, MP Rotator nozzles
 
-The heads are the parts that actually throw water at the lawn. Three components on this system:
+The heads are the parts that actually throw water at the lawn. Three components (see `setup.yaml` for what is fitted per zone):
 
 - **I-20 rotors** — pop-up rotors for the large open areas (long throw, slow rotation).
 - **Pro-Spray PRS40 bodies** — pressure-regulated pop-up bodies (~2.8 bar / 40 PSI at the nozzle) that carry the MP nozzles.
@@ -32,7 +27,7 @@ Read this when the engine narrows to F9 (rotor debris / nozzle / pressure regula
 
 ![Hunter I-20 rotor — stainless riser, nozzle turret, and pop-up body.](media/rotor-i20-product.png)
 
-Hunter's mid-range gear-drive rotor. This system runs the **I-20-04-SS** variant: 4" pop-up height, stainless-steel riser, radius setscrew, FloStop. The rotor's drive is non-strippable, meaning turning the turret backwards by hand will not damage internals.
+Hunter's mid-range gear-drive rotor. The **I-20-04-SS** variant has a 4" pop-up height, stainless-steel riser, radius setscrew, and FloStop. The rotor's drive is non-strippable, meaning turning the turret backwards by hand will not damage internals.
 
 ### Operating envelope
 
@@ -52,10 +47,10 @@ Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-
 ### Construction and variants
 
 - Body and riser: corrosion- and impact-resistant ABS plastic; stainless-steel riser spring.
-- Variants exist as shrub head, 4" plastic, **4" stainless-steel (-SS — this system)**, 6" plastic, 6" SS, and 12" plastic. The number is the pop-up height in inches.
+- Variants exist as shrub head, 4" plastic, **4" stainless-steel (-SS)**, 6" plastic, 6" SS, and 12" plastic. The number is the pop-up height in inches.
 - Factory-installed rubber boot/cover protects the top of the body.
 
-### Features (this system)
+### Features
 
 - **Radius adjustment setscrew** — Hunter wrench or flat-blade screwdriver; turn down to reduce radius up to ~25%.
 - **Patented automatic arc return** — if the turret gets vandalized or kicked, it returns to the original arc the next time the valve calls.
@@ -167,11 +162,11 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 
 **Drain check valve (low-head drainage at this rotor).** Hunter sells a screw-in check valve sub-assembly (P/N **142300**, Filter/Screen Check Valve combined). To fit: unthread the body cap, pull the internal assembly, flip upside-down, push the large irregular end of the check valve into the bottom of the riser (the small rubber tip stays outside the riser), refit the internal assembly.
 
-**Temporary shutoff of one rotor (without removing the head).** Use the blank nozzle from the I-20 Low-Angle Nozzle Set (P/N **356605SP**) — it pops up with the zone but throws no water. **Temporary use only**: the riser still pops up, so this is not a permanent cap, and the blank must be removed before winterization. For a true permanent cap, see *Capping off a head in-ground* below. Note: this system's I-20s have Flo-Stop, so for temporary shutoff just use Flo-Stop — the blank nozzle is mostly useful for flushing a lateral during maintenance.
+**Temporary shutoff of one rotor (without removing the head).** Use the blank nozzle from the I-20 Low-Angle Nozzle Set (P/N **356605SP**) — it pops up with the zone but throws no water. **Temporary use only**: the riser still pops up, so this is not a permanent cap, and the blank must be removed before winterization. For a true permanent cap, see *Capping off a head in-ground* below. Note: I-20s with Flo-Stop can simply use Flo-Stop for temporary shutoff — the blank nozzle is mostly useful for flushing a lateral during maintenance.
 
-**Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant in this climate (Wijchen, NL — winterization required). The general dead-end-on-a-winterized-lateral rule that drives this is in `laterals.md` *Dead-end winterization rule*; the same procedure is mirrored there so either doc can be read standalone.
+**Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant wherever the system is winterized. The general dead-end-on-a-winterized-lateral rule that drives this is in `laterals.md` *Dead-end winterization rule*; the same procedure is mirrored there so either doc can be read standalone.
 - *Removing a head that is not at the end of its lateral:* dig down to expose the threaded fitting under the rotor, unscrew the rotor (plus any riser nipple), thread on a same-size cap or plug with Teflon tape, turn the zone on briefly to check for leaks, then backfill.
-- *Removing the last head on a lateral (this branch will get winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the lateral just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
+- *Removing the last head on a lateral (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the lateral just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
 
 **Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the lateral and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
 
@@ -179,7 +174,7 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 
 ## Pro-Spray PRS40 spray body
 
-The PRS40 is a pressure-regulated pop-up body — it delivers 2.8 bar (40 PSI) at the nozzle regardless of inlet pressure up to ~6.9 bar (100 PSI). Every MP Rotator nozzle on this system rides on a PRS40, which is why MP performance stays consistent across zones even when supply pressure drifts.
+The PRS40 is a pressure-regulated pop-up body — it delivers 2.8 bar (40 PSI) at the nozzle regardless of inlet pressure up to ~6.9 bar (100 PSI). When every MP Rotator nozzle rides on a PRS40, MP performance stays consistent across zones even when supply pressure drifts.
 
 ### Operating envelope
 
@@ -198,7 +193,7 @@ The PRS40 is a pressure-regulated pop-up body — it delivers 2.8 bar (40 PSI) a
 - **Cap colour and stencil identify what's fitted, without disassembly:**
   - **Black** = standard, non-regulated.
   - **Brown** = PRS30 (regulated to 2.1 bar / 30 PSI).
-  - **Gray** = **PRS40** (regulated to 2.8 bar / 40 PSI) — this system.
+  - **Gray** = **PRS40** (regulated to 2.8 bar / 40 PSI).
   - **Purple** = reclaimed-water identification.
   - "CHECK VALVE" stencilled on top → factory drain check valve is fitted.
   - "FLOGUARD" stencilled on top → factory FloGuard is fitted.
@@ -215,7 +210,7 @@ The PRS40 is a pressure-regulated pop-up body — it delivers 2.8 bar (40 PSI) a
 | PROS-06 | 22.5 cm | 15 cm | ½" |
 | PROS-12 | 41 cm | 30 cm | ½" |
 
-Exposed diameter (above ground) is 5.7 cm on all PROS-02 through PROS-12. A side-inlet `-SI` option exists on the 6" and 12" standard and PRS30 bodies — not on PRS40, and not used on this system.
+Exposed diameter (above ground) is 5.7 cm on all PROS-02 through PROS-12. A side-inlet `-SI` option exists on the 6" and 12" standard and PRS30 bodies — not on PRS40.
 
 ### Features
 
@@ -253,20 +248,20 @@ The MP Rotator is a multi-stream nozzle that screws into the top of the PRS40. I
 
 - Operating pressure: **2.1–3.8 bar** (30–55 PSI) at the nozzle; the PRS40 holds it at the recommended **2.8 bar** (40 PSI).
 - Pop-up trigger pressure: **~1.0 bar** (15 PSI) at the body inlet — the riser extends first, then the MP itself pops up (the "double-pop" feature).
-- Precipitation rate: **~10 mm/hr** (0.4 in/hr) for the standard line (black canister, on this system). The MP800 line (grey canister) is ~20 mm/hr — not fitted here.
+- Precipitation rate: **~10 mm/hr** (0.4 in/hr) for the standard line (black canister). The MP800 line (grey canister) is ~20 mm/hr.
 - Radius reduction screw: up to ~25%, stainless steel. The screw has a slip clutch that prevents internal damage if you keep turning past the end-stop.
 - Arc adjustment: only effective **while the nozzle is popped up** — adjusting a retracted nozzle does nothing. Ratchets at the limits.
 - Filter screen: detachable polypropylene. Mesh size depends on the model — see below.
 - Warranty: 3 years
 
-### Filter screens (well water matters here)
+### Filter screens (well water)
 
 | Model | Mesh | Opening |
 |---|---|---|
 | MP-1000, MP-2000, MP-CORNER, MP-Strips | 40 | 420 µm |
 | MP-3000, MP-3500 | 20 | 840 µm |
 
-This system runs on a well, so grit is a normal seasonal nuisance. The MP-3000/3500 use a coarser screen because the larger orifices tolerate (and pass) more debris, but a finer-screened MP-1000/2000 on a well will clog earlier — pull and rinse the screen first when the symptom is "MP not rotating".
+On well-fed systems, grit is a normal seasonal nuisance. The MP-3000/3500 use a coarser screen because the larger orifices tolerate (and pass) more debris, but a finer-screened MP-1000/2000 on a well will clog earlier — pull and rinse the screen first when the symptom is "MP not rotating".
 
 ### Model and colour map (standard models, black canister)
 
@@ -294,8 +289,8 @@ Quick read: the canister colour tells you the line (black = standard 10 mm/hr; g
 
 ## Pairing MP ↔ PRS40
 
-- **PRS40** (2.8 bar / 40 PSI) — for **nominal** radius. This system's setup.
-- **PRS30** (2.1 bar / 30 PSI) — for **minimum** radius settings only. Not fitted here.
+- **PRS40** (2.8 bar / 40 PSI) — for **nominal** radius.
+- **PRS30** (2.1 bar / 30 PSI) — for **minimum** radius settings only.
 - **Unregulated body** (regular Pro-Spray, Rain Bird 1800-series without regulator, etc.) — will mist at typical pump pressure because the MP's misting threshold is ~3.8 bar (55 PSI). Always pair an MP with a regulated body.
 
 ## Low-head drainage (wet patch at the lowest head when the system is off)

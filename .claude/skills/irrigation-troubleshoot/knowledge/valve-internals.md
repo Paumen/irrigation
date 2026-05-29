@@ -30,8 +30,8 @@ and the hydraulics together often shift the reasoning more than any single fact.
 - **Diaphragm support ring** — seats and aligns the diaphragm and prevents premature stress
   failure. It carries small vent holes that let a little water keep the diaphragm from sticking to
   the ring after long idle periods (winter shutdown, a new install before landscaping). Relevant
-  here: this system is winterized, so a diaphragm that is slow to release on the first spring run
-  is usually just stuck to the ring, not damaged — cycle it before condemning anything.
+  for winterized systems: a diaphragm slow to release on the first spring run is usually just
+  stuck to the ring, not damaged — cycle it before condemning anything.
 - **Diaphragm** — the flexible rubber disc with a plastic centre. The plastic centre carries
   the **metering port(s)**: small holes that restrict (meter) how much water reaches the upper
   chamber above the diaphragm.
@@ -76,7 +76,7 @@ visibly scored or the weeping persists after cleaning.
 
 Examine the valve body and remove any debris, pebbles, or dirty water. New installations without
 proper flushing, recent main-line repair, or well water all push debris into the valve where it
-lodges between the diaphragm and the seat. This system runs on a well — treat debris as a
+lodges between the diaphragm and the seat. On well-fed systems, treat debris as a
 first-class suspect, not an edge case.
 
 ## Disassembly and inspection (procedure)

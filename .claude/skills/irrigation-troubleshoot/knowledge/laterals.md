@@ -3,15 +3,10 @@ subject: Zone laterals (25 mm PE, valve manifold → heads)
 root_cause_area: F8
 serves: [troubleshooting, maintain, install, how-it-works]
 coverage: partial
-system_note: >
-  Zone laterals are 25 mm polyethylene from the valve box manifold to the heads.
-  Outdoor, in-ground, Wijchen (NL) climate — system is winterized each autumn
-  because lateral water can freeze and split the pipe. Four zones, mixing I-20
-  rotors and MP-on-PRS40 heads per zone.
 summary: Partial — the broken-lateral signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a pipe, and basic field-diagnosis of a punctured lateral. No deep hydraulic-design content yet.
 read_when: a whole zone has gone weak with no visible head fault; one or more heads on a zone won't pop up while others on the same zone are normal; you find a persistent wet patch or soft ground along a known lateral run; you're removing a head or restructuring a zone and a stub will be left behind; you suspect recent garden/fence/driveway work damaged a pipe.
 contents:
-  - this system's laterals
+  - what the laterals are
   - broken-lateral signature (recent landscaping work)
   - field-diagnosing a broken lateral
   - dead-end winterization rule
@@ -22,9 +17,8 @@ contents:
 # Zone laterals — 25 mm PE, valve manifold to heads
 
 This is the **F8** neighbourhood: the polyethylene pipes that carry water from
-the valve manifold out to the heads on each zone. On this system there are
-four such laterals (one per zone), 25 mm PE, buried, mixing I-20 rotors and
-MP-on-PRS40 spray bodies per zone.
+the valve manifold out to the heads on each zone. Each zone has its own buried
+lateral (see `setup.yaml` for pipe sizes, lateral count, and the per-zone head mix).
 
 Read this when the engine narrows to F8, or when a head-side symptom (won't
 pop up, weak throw, brown spots on the far end of a zone) doesn't match
@@ -41,7 +35,7 @@ explicitly: **look for new trees and shrub plantings, new or repaired
 fences, and recently dug ground** — these are the most common causes of a
 broken pipe.
 
-On this system the tells are:
+The tells are:
 
 - **Onset is sharp**, not gradual. Last week the zone worked; this week
   one or more heads on the zone are weak or won't pop up.
@@ -63,7 +57,7 @@ digging.
 
 Cheapest-first checks before digging up the lawn:
 
-1. **Compare zones.** Run each of the four zones in turn at the controller.
+1. **Compare zones.** Run each zone in turn at the controller.
    If only the suspect zone is weak, the fault is downstream of *that*
    zone's valve — i.e. its lateral or its heads. If multiple zones are
    weak, look upstream (main line F6, pump F5, controller call F2).
@@ -90,8 +84,8 @@ clears, then dig only the short section that's left.
 
 ## Dead-end winterization rule
 
-This system is winterized every autumn (Wijchen, NL — sustained sub-zero in
-winter). **Water trapped in a pipe with no outlet will freeze, expand, and
+In winterized regions (sustained sub-zero winters), the system is drained
+every autumn. **Water trapped in a pipe with no outlet will freeze, expand, and
 split the pipe.** That's why every lateral has to end at a head (or a
 valved drain), not at an outlet-less stub.
 
