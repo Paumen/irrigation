@@ -1,5 +1,5 @@
 ---
-subject: Valve internals (diaphragm assembly)
+subject: Valve internals 
 root_cause_area: F7
 serves: [troubleshooting, replace, clean, maintain, how-it-works]
 parent: valve
