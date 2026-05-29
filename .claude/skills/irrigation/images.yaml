@@ -24,7 +24,7 @@ images:
     used_in: [valve.md]
 
   IMG.flow-control-cutaway:
-    file: media/icv_cutaway.jpg
+    file: media/valve_icv_cutaway.jpg
     caption: Cutaway of the flow control resting on the diaphragm, limiting its stroke.
     subjects: [valve]
     causes: [F7, F7.4]
@@ -72,7 +72,7 @@ images:
     used_in: [valve.md, valve-solenoid.md]
 
   IMG.manual-solenoid-inbox:
-    file: media/manual_solenoid_0.png
+    file: media/valve_manual_solenoid_0.png
     caption: Valve in the box; turning the solenoid by hand for manual operation.
     subjects: [valve-solenoid, valve]
     causes: [F7, F7.1.1, F7.3.1]
@@ -112,7 +112,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.solenoid-voltage-reading:
-    file: media/Testing Solenoid Voltage_0.png
+    file: media/valve_solonoid_V24_test.png
     caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
     subjects: [valve-solenoid]
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
@@ -120,7 +120,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.controller-voltage-reading:
-    file: media/24 VAC_Showing 26VAC.png
+    file: media/controller_24VAC.png
     caption: Multimeter at the controller terminals reading ~26 VAC with the station active.
     subjects: [controller]
     causes: [F2, F2.1, F2.8, F2.5, F2.6]
@@ -136,7 +136,7 @@ images:
     used_in: [controller.md]
 
   IMG.i20-callouts:
-    file: media/i20-callouts.png
+    file: media/heads_i20-callouts.png
     caption: I-20 top callouts — Lifting Socket, Arc Adjustment (left dial), Nozzle / Radius Adjustment Screw (centre), Flo-Stop (right dial).
     subjects: [heads]
     causes: [F9, F9.1.1, F9.3, F9.1.2, F9.4]
@@ -260,7 +260,7 @@ images:
     used_in: [playbooks/parts.md, playbooks/upgrades.md]
 
   IMG.rainmachine-similar-model:
-    file: media/rainmachine-similar-model.jpg
+    file: media/controller_rainmachine-similar-model.jpg
     caption: A similar RainMachine model (Mini-12, 12 zone terminals) — illustrative only; the homeowner's actual controller is the HD-16 TOUCH, which has the same touchscreen-and-terminal layout with 16 zone outputs.
     subjects: [controller]
     relates: illustrative stand-in; not the homeowner's exact model — caption must say "similar" not "your controller"
@@ -333,7 +333,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.pgv-install-valve-box:
-    file: media/pgv-install-valve-box.png
+    file: media/valve_pgv-install-box.png
     caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; hose to the heads downstream.
     subjects: [valve]
     causes: [F7]
@@ -523,7 +523,7 @@ images:
     used_in: [playbooks/upgrades.md]
 
   IMG.swing-joint-product:
-    file: media/swing-joint-product.jpg
+    file: media/fitting_swing-joint-product.jpg
     caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the hose.
     subjects: [heads, hoses]
     relates: rotor install / replacement; reduces lateral stress when a head is kicked or stepped on
@@ -537,7 +537,7 @@ images:
     used_in: [playbooks/parts.md]
 
   IMG.mp-rotator-wrench:
-    file: media/mp-rotator-wrench.jpg
+    file: media/nozzle_mp-rotator-wrench.jpg
     caption: Hunter "MP ROTATOR" wrench — orange plastic key with a ringed grip for the nozzle and a pointed end for cutting around the surrounding turf.
     subjects: [heads]
     relates: MP Rotator nozzle install / removal / arc-adjust; this homeowner's Z1 and Z4 use MP Rotators on Pro-Spray PRS40 bodies
@@ -579,7 +579,7 @@ images:
     used_in: [heads.md, playbooks/parts.md]
 
   IMG.pgp-rotor-cap-callouts:
-    file: media/pgp-rotor-cap-callouts.png
+    file: media/heads_pgp-rotor-cap-callouts.png
     caption: Hunter PGP rotor top callouts — Lifting Socket (centre top), Adjustment Socket with +/- (left), Nozzle / Range Adjustment Screw (top right), Model Identification (right). Same slot layout as the I-20.
     subjects: [heads]
     relates: identify where the adjustment key engages on the rotor cap; pair with rotor-adjustment-key-plastic; applies to this homeowner's I-20-04-SS as well as the PGP shown

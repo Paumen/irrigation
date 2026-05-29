@@ -88,7 +88,7 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 
 The I-20 carries four top callouts (visible after pulling the riser up by its lifting socket): **Lifting Socket**, **Arc Adjustment** (left dial), **Nozzle / Radius Adjustment Screw** (top centre), **Flo-Stop** (right dial). Adjustments may be made with water on or off; factory preset is ≈180°.
 
-![I-20 top callouts — Lifting Socket, Arc Adjustment, Nozzle/Radius Adjustment Screw, Flo-Stop](media/i20-callouts.png)
+![I-20 top callouts — Lifting Socket, Arc Adjustment, Nozzle/Radius Adjustment Screw, Flo-Stop](media/heads_i20-callouts.png)
 
 ![Riser pulled up by the lifting socket to access the nozzle and dials in-place](media/rotor-lifting-socket.png)
 
@@ -115,7 +115,7 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
 ![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](media/rotor-nozzle-insertion-collar.jpg)
 
-![Hunter PGP rotor top callouts — same slot layout as the I-20: Lifting Socket (centre top), Adjustment Socket with +/− (left), Nozzle/Range Adjustment Screw (top right), Model Identification (right).](media/pgp-rotor-cap-callouts.png)
+![Hunter PGP rotor top callouts — same slot layout as the I-20: Lifting Socket (centre top), Adjustment Socket with +/− (left), Nozzle/Range Adjustment Screw (top right), Model Identification (right).](media/heads_pgp-rotor-cap-callouts.png)
 
 1. Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
 

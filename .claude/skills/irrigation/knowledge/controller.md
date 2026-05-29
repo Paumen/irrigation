@@ -22,7 +22,7 @@ that will grow when those sources are ingested.
 
 ## Testing voltage at the controller terminals
 
-![Multimeter at controller reading ~26 VAC](media/24 VAC_Showing 26VAC.png)
+![Multimeter at controller reading ~26 VAC](media/controller_24VAC.png)
 
 ![Probes on the C and station terminals at the controller](media/pgv_not_opening_2.png)
 
