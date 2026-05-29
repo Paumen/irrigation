@@ -1,9 +1,9 @@
 # irrigation
 
-An agent-facing diagnostic toolkit for a homeowner's irrigation system, delivered as Claude skills backed by MCP tools (no web app).
+An agent-facing diagnostic toolkit for a homeowner's irrigation system, delivered as a single Claude skill backed by MCP tools (no web app).
 
-- **Troubleshooting** — the `irrigation-troubleshoot` skill drives a question-and-answer loop over a scoring engine (`diagnose_irrigation` MCP tool) that re-ranks the most likely root causes each round.
-- **Hydraulics & general help** — the `irrigation` skill explains parts, identifies models, and plans capacity/upgrades, backed by a full hydraulic solve (`irrigation_hydraulics` MCP tool).
+- **Troubleshooting** — the `irrigation` skill's `troubleshoot` playbook drives a question-and-answer loop over a scoring engine (`diagnose_irrigation` MCP tool) that re-ranks the most likely root causes each round.
+- **Hydraulics & general help** — the same skill explains parts, identifies models, and plans capacity/upgrades, backed by a full hydraulic solve (`irrigation_hydraulics` MCP tool).
 
 Everything is Python. The MCP server is `tools/mcp_server.py` (registered in `.mcp.json`); each tool also runs as a CLI:
 

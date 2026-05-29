@@ -143,7 +143,7 @@ instance, to avoid double-counting.
 `F3.4`, `F4.4`, `F5.8`. (`F2.8` is sourced from the R22 split.)
 
 **Stale code (images.yaml only, never in `data.json`):** `R93` — used in
-`.claude/skills/irrigation-troubleshoot/images.yaml` for arc/range/nozzle rotor
+`.claude/skills/irrigation/images.yaml` for arc/range/nozzle rotor
 images. Resolves to **`F9.4`** in the new taxonomy. Rekey at migration time.
 
 ---

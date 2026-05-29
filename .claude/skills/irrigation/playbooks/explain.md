@@ -8,4 +8,4 @@ Surface one orienting image from `images.yaml` (the cutaway/parts-callout shots 
 
 Add a one-line "in your system" note when their model adds context (where it sits, install year, what's downstream). End by offering the natural pivot — "want to know how to operate it manually, or where it sits in your setup?"
 
-Don't restate the whole doc, don't invent numbers, and if the user turns to "...and that's why mine's broken?" hand off to `irrigation-troubleshoot`.
+Don't restate the whole doc, don't invent numbers, and if the user turns to "...and that's why mine's broken?" switch to `playbooks/troubleshoot.md`.

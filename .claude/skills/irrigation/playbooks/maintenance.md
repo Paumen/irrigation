@@ -10,4 +10,4 @@ Cheat-sheet (a starting point, refine to the ask):
 - **Winterize (late Oct / early Nov, before hard frost):** follow the `knowledge/hoses.md` dead-end rule; pump off, drain via the manual valve, bleed each zone valve to drain the manifold; re-check any newly exposed sections from this season's work.
 - **Annual / multi-year:** clean the filter mesh at spring start-up (replace if torn); inspect the diaphragm every ~5 yr, or sooner if a zone weeps; solenoid o-ring on symptom, not schedule; rotor riser seal if it weeps when off.
 
-Surface images at the steps that need them (filter mesh, bleed screw, leak-inspection points, rotor cap). Route any "...and it was weak last year" toward `irrigation-troubleshoot`.
+Surface images at the steps that need them (filter mesh, bleed screw, leak-inspection points, rotor cap). Route any "...and it was weak last year" toward `playbooks/troubleshoot.md`.

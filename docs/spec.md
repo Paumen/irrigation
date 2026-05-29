@@ -2,7 +2,7 @@
 
 ## Goal
 
-Guide a homeowner toward the broken part of their irrigation system by asking step-by-step questions and using the answers to maintain a live, ranked list of the most likely causes. Delivered to the user through the `irrigation-troubleshoot` skill, which drives the engine over the `diagnose_irrigation` MCP tool.
+Guide a homeowner toward the broken part of their irrigation system by asking step-by-step questions and using the answers to maintain a live, ranked list of the most likely causes. Delivered to the user through the `irrigation` skill's `troubleshoot` playbook, which drives the engine over the `diagnose_irrigation` MCP tool.
 
 ## Core behaviour
 

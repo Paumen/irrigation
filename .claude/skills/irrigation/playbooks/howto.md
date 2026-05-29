@@ -12,4 +12,4 @@ Read the matching `knowledge/` doc section for the steps and numbers; if it's pa
 
 Surface procedure images from `images.yaml` at the beats they help (bleed screw, flow-direction arrow, solenoid ¼-turn, rotor cap callouts, swing-joint cross-section, the homeowner's Stanley meter for voltage checks) — one orienting picture up front is plenty; don't dump a gallery.
 
-If "install a new valve" turns into "mine weeps when off, why?" — hand off to `irrigation-troubleshoot`.
+If "install a new valve" turns into "mine weeps when off, why?" — switch to `playbooks/troubleshoot.md`.
