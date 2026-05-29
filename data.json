@@ -223,14 +223,14 @@
       "context": "app-run",
       "effort": 6,
       "stage": 1,
-      "text": "Run the system from the app and watch the heads. What happens?",
+      "text": "Run all four zones from the app and watch the heads. Where is water missing or clearly too weak?",
       "highlight": [
         "rotor",
         "valves"
       ],
       "options": [
         {
-          "label": "All 4 zones fail",
+          "label": "All 4 zones — none run properly",
           "icon": "scope-all",
           "effects": {
             "F1": 0.2,
@@ -242,7 +242,7 @@
           }
         },
         {
-          "label": "2–3 zones fail",
+          "label": "2–3 zones don't run properly",
           "icon": "scope-multi",
           "effects": {
             "F5": 0.2,
@@ -251,7 +251,7 @@
           }
         },
         {
-          "label": "One zone fails",
+          "label": "Just one zone doesn't run properly",
           "icon": "scope-single",
           "effects": {
             "F3.1.1": 0.2,
@@ -262,7 +262,7 @@
           }
         },
         {
-          "label": "One rotor fails",
+          "label": "Just one rotor (the rest of its zone is fine)",
           "icon": "scope-one",
           "effects": {
             "F3.1.2": -1.6,
@@ -471,7 +471,7 @@
       ],
       "options": [
         {
-          "label": "All three behave the same",
+          "label": "No difference between the three",
           "effects": {
             "F2.6": -0.2,
             "F1.5": -0.6,
@@ -508,7 +508,7 @@
       "context": "valve-box",
       "effort": 4,
       "stage": 1,
-      "text": "Open the manual hose — how is the flow?",
+      "text": "Open the manual valve on Zone 5 by hand — how is the flow from its hose?",
       "highlight": [
         "pump"
       ],
@@ -594,7 +594,7 @@
       "context": "controller",
       "effort": 3,
       "stage": 1,
-      "text": "Did a restart help?",
+      "text": "Switch the controller off and on, then the pump. Did either help, even briefly?",
       "highlight": [
         "ctrl",
         "sw",
@@ -1151,7 +1151,7 @@
       "context": "meter",
       "effort": 2,
       "stage": 3,
-      "text": "Measure the solenoid coil's resistance (normally 20–60 Ω). What do you read?",
+      "text": "Measure the solenoid coil's resistance (normally 20–60 Ω) — at the coil, and from the controller end. What do you find?",
       "highlight": [
         "valves"
       ],
@@ -1176,7 +1176,7 @@
           }
         },
         {
-          "label": "OK at coil, bad at controller",
+          "label": "Fine at the coil, but bad from the controller end",
           "effects": {
             "F3.1.1": 1.6
           }
