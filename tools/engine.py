@@ -313,20 +313,6 @@ class Engine:
         items.sort(key=lambda x: -x["D"])
         return items
 
-    def relevancy_level(
-        self, qid: str, answers: dict | None = None, skipped: dict | None = None
-    ) -> str | None:
-        d = self.discriminators(answers, skipped)
-        D = d["map"].get(qid)
-        if D is None or D <= 0 or d["max"] <= 0:
-            return None
-        ratio = D / d["max"]
-        if ratio >= 2 / 3:
-            return "high"
-        if ratio >= 1 / 3:
-            return "mid"
-        return "low"
-
     def stage_progress(
         self, answers: dict | None = None, skipped: dict | None = None
     ) -> dict[int, dict]:

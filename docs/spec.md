@@ -8,7 +8,7 @@ Guide a homeowner toward the broken part of their irrigation system by asking st
 
 - **Questionnaire:** Questions can be answered, changed, or skipped in any order. Each question has a shape (`options`, `multi`, `matrix`, `ages`), an effort cost, and a stage (Symptoms, Timeline, Tests).
 - **Ranking:** Every answer adds to or subtracts from each candidate cause; the engine recomputes scores and percentages after each answer, sorted most- to least-likely.
-- **Recommendations:** The engine scores the unanswered questions by how sharply they separate the contending causes (isolation + breadth, with effort as a tie-breaker) and surfaces the most informative next questions, each with a discriminator `D` and a `relevancy` band used as the loop's stop signal.
+- **Recommendations:** The engine scores the unanswered questions by how sharply they separate the contending causes (isolation + breadth, with effort as a tie-breaker) and surfaces the most informative next questions, each with a discriminator `D`; the loop's stop signal is an empty `next` (no question still separates the contending causes).
 
 ## State
 
