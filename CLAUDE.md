@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-An agent-facing diagnostic toolkit for one homeowner's irrigation/rotor system. Two capabilities, both delivered as **Claude skills backed by MCP tools** (there is no web app):
+An agent-facing diagnostic toolkit for one homeowner's irrigation/rotor system. One **Claude skill backed by MCP tools** (there is no web app), covering two capabilities:
 
-- **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root causes. Driven by the `irrigation-troubleshoot` skill via the `diagnose_irrigation` MCP tool.
-- **Hydraulics & general assistance** — a full hydraulic solve plus how-it-works / identify / capacity / upgrade / maintenance playbooks. Driven by the `irrigation` skill via the `irrigation_hydraulics` MCP tool.
+- **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root causes. Driven by the `playbooks/troubleshoot.md` playbook via the `diagnose_irrigation` MCP tool.
+- **Hydraulics & general assistance** — a full hydraulic solve plus how-it-works / identify / capacity / upgrade / maintenance playbooks. Driven by the `irrigation_hydraulics` MCP tool.
 
-See `.claude/skills/irrigation-troubleshoot/SKILL.md` and `.claude/skills/irrigation/SKILL.md` for how the agent loops run, and `docs/spec.md` for the diagnostic-engine spec.
+Both live in the single `irrigation` skill. See `.claude/skills/irrigation/SKILL.md` (shared preamble + intent → playbook router) and `.claude/skills/irrigation/playbooks/` for how the agent loops run, and `docs/spec.md` for the diagnostic-engine spec.
 
 ## Build / run
 

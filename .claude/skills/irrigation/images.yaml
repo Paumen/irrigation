@@ -233,8 +233,8 @@ images:
     file: media/multimeter-illustrated.jpg
     caption: Multimeter with red and black probes — illustration for voltage and resistance checks.
     subjects: [wiring, valve-solenoid, controller]
-    relates: friendlier explainer alternative to the homeowner's real meter photos; use in explain.md when the homeowner has not yet picked up the meter
-    used_in: [playbooks/explain.md]
+    relates: friendlier explainer alternative to the homeowner's real meter photos; use in parts.md when the homeowner has not yet picked up the meter
+    used_in: [playbooks/parts.md]
 
   IMG.multimeter-stanley-front:
     file: media/multimeter-stanley-fmht82563-front.jpg
@@ -242,7 +242,7 @@ images:
     subjects: [wiring, valve-solenoid, controller]
     questions: [Q13, Q14, Q15]
     relates: which dial position for controller voltage (V≈) vs field-wire / solenoid coil resistance (Ω)
-    used_in: [controller.md, valve-solenoid.md, playbooks/howto.md, playbooks/explain.md]
+    used_in: [controller.md, valve-solenoid.md, playbooks/parts.md]
 
   IMG.multimeter-stanley-leads:
     file: media/multimeter-stanley-fmht82563-with-leads.jpg
@@ -250,14 +250,14 @@ images:
     subjects: [wiring, valve-solenoid, controller]
     questions: [Q13, Q14, Q15]
     relates: lead placement before any voltage or resistance check
-    used_in: [controller.md, valve-solenoid.md, playbooks/howto.md, playbooks/explain.md]
+    used_in: [controller.md, valve-solenoid.md, playbooks/parts.md]
 
   IMG.controller-et-scheduling-illustrated:
     file: media/controller-et-scheduling-illustrated.jpg
     caption: Illustrated weather-aware controller — sun/cloud/rain icons drive a daily run-length bar chart; terminals P, C, 1–4, C, R below.
     subjects: [controller]
     relates: ET-based scheduling and rain-skip behaviour; useful when explaining what the RainMachine does automatically
-    used_in: [playbooks/explain.md, playbooks/upgrades.md]
+    used_in: [playbooks/parts.md, playbooks/upgrades.md]
 
   IMG.rainmachine-similar-model:
     file: media/rainmachine-similar-model.jpg
@@ -273,7 +273,7 @@ images:
     causes: [F4]
     questions: [Q20]
     relates: PSR-22 install layout; clearance rule; controller terminals to relay leads; locating the relay when checking whether it switches
-    used_in: [relay.md, playbooks/explain.md, playbooks/identify.md]
+    used_in: [relay.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-product:
     file: media/pgv-valve-product.png
@@ -281,7 +281,7 @@ images:
     subjects: [valve, valve-solenoid]
     causes: [F7]
     relates: product view for identify.md; matches the homeowner's PGV-101G profile
-    used_in: [valve.md, playbooks/explain.md, playbooks/identify.md]
+    used_in: [valve.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-solenoid-label:
     file: media/pgv-valve-solenoid-label.jpg
@@ -290,7 +290,7 @@ images:
     causes: [F7]
     questions: [Q12]
     relates: identify the solenoid by stamped text; ¼-turn manual operation reference
-    used_in: [valve-solenoid.md, playbooks/explain.md, playbooks/identify.md, playbooks/howto.md]
+    used_in: [valve-solenoid.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-lineup:
     file: media/pgv-valve-lineup.jpg
@@ -403,7 +403,7 @@ images:
     causes: [F7, F3]
     questions: [Q13, Q15]
     relates: alt-style explainer for solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your meter looks like" + "where to put the probes"
-    used_in: [playbooks/explain.md]
+    used_in: [playbooks/parts.md]
 
   IMG.controller-probe-illustrated:
     file: media/controller-probe-illustrated.jpg
@@ -412,14 +412,14 @@ images:
     causes: [F2]
     questions: [Q13, Q14]
     relates: alt-style explainer for controller voltage / field-wire resistance check; pair with the real Stanley FATMAX photo
-    used_in: [playbooks/explain.md]
+    used_in: [playbooks/parts.md]
 
   IMG.rotor-i20-product:
     file: media/rotor-i20-product.png
     caption: Hunter I-20 rotor — single product view showing stainless riser, nozzle turret, and pop-up body.
     subjects: [heads]
-    relates: canonical product photo for identify.md and explain.md
-    used_in: [heads.md, playbooks/explain.md, playbooks/identify.md]
+    relates: canonical product photo for identify.md and parts.md
+    used_in: [heads.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.rotor-i20-product-alt:
     file: media/rotor-i20-product-alt.jpg
@@ -446,7 +446,7 @@ images:
     file: media/rotor-i20-garden-scene.jpg
     caption: I-20 rotor in a garden setting — typical pop-up height and spray pattern.
     subjects: [heads]
-    relates: context shot for "what one head looks like in a flower bed" — usable in explain.md or upgrades.md (drip-vs-rotor discussion)
+    relates: context shot for "what one head looks like in a flower bed" — usable in parts.md or upgrades.md (drip-vs-rotor discussion)
     used_in: []
 
   IMG.rotor-i20-family-heights:
@@ -527,21 +527,21 @@ images:
     caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the hose.
     subjects: [heads, hoses]
     relates: rotor install / replacement; reduces lateral stress when a head is kicked or stepped on
-    used_in: [playbooks/howto.md]
+    used_in: [playbooks/parts.md]
 
   IMG.rotor-install-swing-joint-illustrated:
     file: media/rotor-install-swing-joint-illustrated.jpg
     caption: Cross-section illustration — pop-up rotor installed via a swing joint onto a buried hose; head sits flush with grade, swing joint hidden in the soil.
     subjects: [heads, hoses]
-    relates: rotor install reference for howto.md; pair with swing-joint-product for "what it is" + "how it sits in the soil"
-    used_in: [playbooks/howto.md]
+    relates: rotor install reference for parts.md; pair with swing-joint-product for "what it is" + "how it sits in the soil"
+    used_in: [playbooks/parts.md]
 
   IMG.mp-rotator-wrench:
     file: media/mp-rotator-wrench.jpg
     caption: Hunter "MP ROTATOR" wrench — orange plastic key with a ringed grip for the nozzle and a pointed end for cutting around the surrounding turf.
     subjects: [heads]
     relates: MP Rotator nozzle install / removal / arc-adjust; this homeowner's Z1 and Z4 use MP Rotators on Pro-Spray PRS40 bodies
-    used_in: [playbooks/howto.md]
+    used_in: [playbooks/parts.md]
 
   IMG.rotor-nozzle-insertion-collar:
     file: media/rotor-nozzle-insertion-collar.jpg
@@ -576,7 +576,7 @@ images:
     caption: Hunter rotor adjustment key (plastic variant) — engages the lifting socket and the arc / flow-stop / radius sockets on PGP and I-20 rotor caps; same function as the metal Hunter wrench shown elsewhere.
     subjects: [heads]
     relates: rotor arc / radius / flow-stop adjustment; the metal-wrench equivalent is depicted in rotor-arc-wrench.png, rotor-adjustment-arrows.png, and rotor-lifting-socket.png — pair with pgp-rotor-cap-callouts for "what each slot does"; this homeowner's I-20-04-SS uses the same key pattern as the PGP
-    used_in: [heads.md, playbooks/howto.md]
+    used_in: [heads.md, playbooks/parts.md]
 
   IMG.pgp-rotor-cap-callouts:
     file: media/pgp-rotor-cap-callouts.png
@@ -590,7 +590,7 @@ images:
     caption: Hunter pressure-test gauge attached to a Pro-Spray pop-up riser (in place of the nozzle) — reads in psi and bar; verifies head operating pressure (~2.8 bar / 40 psi for a PRS40 body).
     subjects: [heads]
     relates: pressure check during capacity diagnosis or verification; confirms the PRS40 regulation is doing its job
-    used_in: [playbooks/howto.md]
+    used_in: [playbooks/parts.md]
 
   IMG.valve-solenoid-replacement-product:
     file: media/valve-solenoid-replacement-product.jpg
@@ -598,7 +598,7 @@ images:
     subjects: [valve-solenoid, valve]
     causes: [F7]
     relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; pair with pgv-valve-solenoid-label to compare with the installed unit before ordering
-    used_in: [valve-solenoid.md, playbooks/howto.md]
+    used_in: [valve-solenoid.md, playbooks/parts.md]
 
   IMG.pgv-valve-dc-variant-installed:
     file: media/pgv-valve-dc-variant-installed.png
