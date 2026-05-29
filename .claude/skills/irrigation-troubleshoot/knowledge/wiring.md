@@ -18,9 +18,9 @@ contents:
 
 **Coverage note.** Sourced so far: the wire-distance table, the waterproof-connector rule, and the
 basic continuity/swap tests (carried in from the valve material). No deeper splice-level or
-common-wire fault detail yet. This system's runs are short (controller→valve box 10 m,
-controller→PSR 10 m), so wire length is almost certainly *not* a cause here — useful mainly to
-positively exclude it.
+common-wire fault detail yet. On short residential runs, wire length is almost certainly *not* a
+cause — the table is useful mainly to positively exclude it. (Check the actual run lengths in
+`setup.yaml`.)
 
 ## Waterproof connectors (install + corrosion fault)
 
@@ -36,7 +36,7 @@ simultaneously on the same wires, **halve** these distances.
 
 > **Unit caveat:** the source table is metric by gauge (mm²) but its caption reads "distance in
 > feet". The figures below are reproduced as given — confirm feet vs. metres against the Hunter PGV
-> document in `media/` before relying on a value near the limit. Academic for this system's 10 m runs.
+> document in `media/` before relying on a value near the limit. Academic for short residential runs.
 
 Distance by ground (C) wire (rows) × control/hot wire (columns), in the source's units:
 
@@ -57,7 +57,7 @@ it is the controller.
 
 ## Swap-valve test (valve-box end)
 
-This system has all four valves in one box, so use them against each other. At the valve manifold,
+Where the zone valves share one box, use them against each other. At the valve manifold,
 swap the suspect station's field wires onto a valve you know works (or move the known-good valve's
 wires onto the suspect run). Then:
 - **Fault follows the valve** → the valve/solenoid is bad, not the wiring.

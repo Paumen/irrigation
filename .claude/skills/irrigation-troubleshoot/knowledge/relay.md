@@ -1,11 +1,7 @@
 ---
-subject: Pump start relay (Hunter PSR-52)
+subject: Pump start relay (Hunter PSR-22)
 root_cause_area: F4
 serves: [troubleshooting, install, maintain]
-system_note: >
-  Hunter PSR 52, indoor shed, installed 2020-08. 24 V coil driven from the controller P/MV
-  terminal with a DEDICATED common (separate from the zone-valve common); switches 230 V to the
-  well pump. Different location from the valve box.
 coverage: power/controller wiring, distance, and chattering are well covered; deeper
   relay-internal failure modes beyond chattering/contactor fouling are not.
 summary: Pump start relay reference — what it does, power and controller wiring, distance limits, and the chattering fault.
@@ -19,12 +15,12 @@ contents:
   - chattering (new-install wire size vs. existing-install contactor fouling)
 ---
 
-# Pump start relay — Hunter PSR-52
+# Pump start relay — Hunter PSR-22
 
 The relay sits between the controller and the well pump: the controller sends a 24 V signal to
-the relay coil, and the relay switches 230 V power through to the pump. On this system it lives in
-the indoor shed, separate from the valve box, and is driven from the controller's P/MV (pump) output
-on a **dedicated** common.
+the relay coil, and the relay switches 230 V power through to the pump. It is driven from the
+controller's P/MV (pump) output, ideally on a **dedicated** common separate from the zone-valve
+common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
 > **Safety — read first.** Everything on the power-supply side of the relay is mains-voltage work
 > (120/230 V). Connecting or opening the relay should be done by a licensed electrician following
@@ -78,10 +74,16 @@ from the source's feet/AWG values; mm² are nearest-standard equivalents):
 | PSR-52 / PSR-53 | 41 m | 65 m | 104 m | 165 m | 262 m | 416 m |
 | PSR-22 | 74 m | 118 m | 188 m | 298 m | 473 m | 751 m |
 
-This system's controller→relay run is 10 m, so length is comfortably within range on any sane gauge —
-useful mainly to **exclude** wire length as a cause.
+Typical residential controller→relay runs sit comfortably within range on any sane gauge, so the
+table is useful mainly to **exclude** wire length as a cause. (Check the actual run length in
+`setup.yaml`.)
 
-## Electrical specifications (PSR-52)
+## Electrical specifications
+
+> **Re-verify before relying on these numbers.** The figures in this section were sourced for the
+> **PSR-52** and have **not** yet been confirmed against the **PSR-22** that `setup.yaml` records as
+> the installed unit. The PSR-22 is a different (smaller) relay; treat the HP/amp/coil values below
+> as PSR-52 placeholders until checked against Hunter's PSR-22 data.
 
 Configuration: **double-pole/single-throw (DPST)** — the 24 V coil closes both legs of the supply
 together, so the relay switches a 120 VAC pump up to 3 hp or a 230 VAC pump up to 7.5 hp.
@@ -90,7 +92,7 @@ Switching capacity:
 - Max full-load amps: 40 A
 - Max resistive amps: 50 A
 - HP at 120 VAC: 3 hp
-- HP at 230 VAC: **7.5 hp** — comfortably above the DAB Jet well pump on this system.
+- HP at 230 VAC: **7.5 hp**.
 
 Coil (the 24 V side the controller drives):
 - Inrush: 60 VA / **2.5 A**
@@ -98,8 +100,8 @@ Coil (the 24 V side the controller drives):
 
 The inrush is what determines wire sizing on the controller→relay run: the coil draws 2.5 A
 *momentarily* every time the controller calls a zone, which is why undersized wire makes a relay
-chatter on a new install. On this system the dedicated common from the controller and the 10 m
-run sit comfortably inside the gauge table above.
+chatter on a new install. A dedicated common from the controller and a short run sit comfortably
+inside the gauge table above.
 
 ## Chattering / buzzing relay
 
@@ -110,10 +112,10 @@ installation or one that has worked for years?
 **New installation** → suspect undersized wire from controller to relay. Use a **separate common
 wire** from the controller to the relay; **never share the relay's common with the zone solenoids**.
 Clean every connection and follow the distance/gauge table above.
-> On this system the relay already has a dedicated common (per the wiring plan), and the run is short
-> — so the new-install wire-size cause is effectively ruled out here.
+> If the install already uses a dedicated common and a short run (check `setup.yaml`), the
+> new-install wire-size cause is effectively ruled out.
 
-**Existing installation** (this system — relay in service since 2020-08) → suspect dirt or insects
+**Existing installation** (a relay in service for years) → suspect dirt or insects
 inside the relay contactor. Isolate the relay from the incoming power supply and open the contactor
 to clean it (electrician if you are not comfortable with electricity). You can disconnect the
 120/240 V supply while leaving the relay-to-pump wiring in place and check the relay's performance.
