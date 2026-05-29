@@ -1,8 +1,8 @@
 # Recommend upgrades
 
-"What upgrades do you recommend / should I add a flow sensor / is Accusync worth it / a master valve?" High risk of generic-Internet advice — anchor everything in `setup.yaml` and its `system_design_choices`, which already document *why* things were left out: no back-flow preventer (well isolated from drinking water), no master valve (the pump is the shutoff), no flow/pressure meter (sequential operation). Any recommendation that ignores those reasons is a bad one.
+"What upgrades do you recommend / should I add a flow sensor / is Accusync worth it / a master valve?" High risk of generic-Internet advice — anchor everything in `setup.yaml`'s `system_design_choices`, which already document *why* things were left out: no back-flow preventer (well isolated from drinking water), no master valve (the pump is the shutoff), no flow/pressure meter (sequential operation). Any recommendation that ignores those reasons is a bad one.
 
-Tie each candidate to something it actually changes for *this* homeowner — reliability/failure mode, convenience, water/energy cost, plant health, or safety/code — and give a short trade-off: what it does, rough EUR + install effort (DIY / electrician / plumber), which design-choice line it would overturn, and the new failure mode it adds. Rank, don't dump: three max, highest-leverage first. If nothing's worth it, say so plainly.
+Tie each candidate to something it actually changes for *this* homeowner — reliability/failure mode, convenience, water/energy cost, plant health, or safety/code — with a short trade-off: what it does, rough EUR + install effort (DIY / electrician / plumber), which design-choice line it overturns, and the new failure mode it adds. Rank, don't dump: three max, highest-leverage first. If nothing's worth it, say so plainly.
 
 Candidates to reason from (match to the actual ask):
 - **ET / rain-skip scheduling** — already in the HD-16; a settings change, not a buy. Highest leverage if running fixed schedules.
@@ -12,6 +12,4 @@ Candidates to reason from (match to the actual ask):
 - **Drip on the flower-bed zone (Z1, Z4)** — the mixed-precipitation note flags this; separate drip-on-flowers from rotors-on-lawn. Real candidate.
 - **Valved tee on the manual line** — `setup.yaml` notes it has no shutoff at the manifold; small cost, better control.
 
-When a candidate changes flow or pressure — bigger/smaller nozzles, a pump swap, adding heads or a zone — quantify it with the `irrigation_hydraulics` tool (see `capacity.md`) instead of guessing. Run the change through `adjustments` and report the new zone flow, head pressure, and whether any weakest-link margin (pump headroom, swing-joint flow, the 2.9 bar MP-regulation floor) gets tight.
-
-One image at most, and only if the user digs into a candidate (e.g. the inline-emitter drip tubing). The Hunter sensor photos mostly show what duplicates the HD-16's built-in rain/ET — anchor "here's why it's redundant", not an endorsement. Then offer to walk through install (`howto.md`).
+When a candidate changes flow or pressure — bigger/smaller nozzles, a pump swap, adding heads or a zone — quantify it with the `irrigation_hydraulics` tool (see `capacity.md`) instead of guessing: run the change through `adjustments` and report the new zone flow, head pressure, and whether any weakest-link margin (pump headroom, swing-joint flow, the 2.9 bar MP-regulation floor) gets tight.

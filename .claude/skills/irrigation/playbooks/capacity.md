@@ -1,10 +1,8 @@
 # Capacity and hydraulics
 
-Limits questions: "how many zones at once / can I add a fifth / what's my flow budget / how long to run zone 3 / is my pump big enough?" These need real numbers — from `setup.yaml` (pump rating, per-zone flow, pipe sizes) and the `media/` PDFs (precipitation rates, head pressure). Don't invent them.
+Limits questions: "how many zones at once / can I add a fifth / what's my flow budget / how long to run zone 3 / is my pump big enough?" These need real numbers — read `setup.yaml` end to end (capacity touches most of it, including `system_design_choices`).
 
-Read `setup.yaml` end to end; capacity touches most of it, including `system_design_choices`.
-
-## Use the hydraulics calculator for the numbers
+## Use the hydraulics tool for the numbers
 
 Don't hand-derive flows or pressures — call the `irrigation_hydraulics` tool (MCP), or `python tools/hydraulics.py` for a JSON report. It runs a full solve (pump curve → elevation lift → pipe friction → per-head pressure → per-head flow; I-20 rotors track pressure, MP Rotators are 40 PSI regulated) and returns each zone's flow, each head's flow and pressure, the pump operating point, and a **weakest-link** report (the safe pressure window and the tightest flow margin, with the binding component named).
 
@@ -13,12 +11,10 @@ What-if questions go straight to the tool's `adjustments`:
 - **"flow at a different pressure?"** → `{"global_operating_pressure_bar": 3.5}` (pins every head, skips the pump solve)
 - **"what if the pump/water table changed?"** → `{"pump_model":"JET 112 M"}` / `{"well_water_level_m_asl": 9.0}`
 
-Quote the tool's numbers; present them in plain homeowner language (never the tool name, field names, or `loc` paths).
-
 Common shapes:
 - **How many zones at once?** One. Settings run zones sequentially and the no-flow-sensor / no-master-valve design assumes it. Confirm each zone's `flow_rating_m3h` sits under the pump's 3.8 m³/h.
 - **Flow budget per zone?** Pump 3.8 m³/h (≈63 L/min) minus a ~10–15% margin as the ceiling; compare each zone's listed flow and state headroom.
-- **Add a fifth zone?** The controller has spare stations (HD-16); the real limit is pump headroom and the 32 mm main line. State both checks.
+- **Add a fifth zone?** The controller has spare stations (HD-16); the real limit is pump headroom and the 32 mm main line. State both.
 - **Run time for zone X?** A precipitation question, not a flow one: nozzle precip rate (I-20 / MP Rotator / PRS40 PDFs) + soil/root assumption + Wijchen ET → minutes. Label it an estimate to refine from observed runoff.
 - **Pump big enough?** Zone peak flow vs 3.8 m³/h, and required head (~2.8 bar at the PRS40 heads + elevation + pipe friction) vs the pump's 4.8 bar. State the margins.
 
