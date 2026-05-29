@@ -400,12 +400,13 @@ def _resolve_pump(sys_data: dict, adj: dict) -> str:
 def _apply_head_adjustments(nodes: dict[str, Node], adj: dict) -> dict[str, list[str]]:
     """Mutate matched nozzle leaves per the adjustments list (by node-id `loc`,
     `match` on leaf fields, `index` into the zone's ordered leaves, or the whole
-    zone). Returns per-scope human-readable notes."""
+    zone). `zone` is optional: without it, `loc`/`match` resolve across every
+    zone (node ids are unique). Returns per-scope human-readable notes."""
     notes: dict[str, list[str]] = {}
+    all_leaves = [n for n in nodes.values() if n.is_leaf]
     for rule in adj.get("heads", []):
         zid = rule.get("zone")
-        scope = id_to_scope(zid) if zid is not None else None
-        leaves = ordered_leaves(nodes, scope) if scope else []
+        leaves = ordered_leaves(nodes, id_to_scope(zid)) if zid is not None else all_leaves
         if "index" in rule:
             i = rule["index"]
             targets = [leaves[i]] if 0 <= i < len(leaves) else []
@@ -420,8 +421,9 @@ def _apply_head_adjustments(nodes: dict[str, Node], adj: dict) -> dict[str, list
             before = dict(lf.fields)
             lf.fields.update(rule.get("set", {}))
             changed = {k: (before.get(k), lf.fields.get(k)) for k in rule.get("set", {})}
-            notes.setdefault(scope, []).append(
-                f"zone {zid} {lf.id}: " +
+            lf_zid = scope_to_id(lf.scope) if lf.scope.startswith("Z") else zid
+            notes.setdefault(lf.scope, []).append(
+                f"zone {lf_zid} {lf.id}: " +
                 ", ".join(f"{k} {a}->{b}" for k, (a, b) in changed.items()))
     return notes
 
@@ -1142,6 +1144,10 @@ def report(adjustments: dict | None = None, zone: int | None = None,
             n.fields["_feed_d_m"] = hose_inner_d_m(nodes[n.parent].dtype)
 
     pump_node = _find_one(nodes, "pump.well")
+    if pump_node is None or _find_one(nodes, "fitting.manifold") is None:
+        raise ValueError("setup.yaml must define a pump.well node and a "
+                         "fitting.manifold node (the pump and the fan-out point "
+                         "the solve and node-pressure profile are built around)")
     z_pump = heights[pump_node.id]
     env = {
         "pump_model": pump_model,
