@@ -4,37 +4,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Single-page diagnostic web app that walks a homeowner through an irrigation/rotor troubleshooting questionnaire and continually re-ranks the most likely root causes, visualised on a system schematic. Live at https://paumen.github.io/irrigation/. See `docs/spec.md` for the product spec.
+An agent-facing diagnostic toolkit for one homeowner's irrigation/rotor system. Two capabilities, both delivered as **Claude skills backed by MCP tools** (there is no web app):
 
-The same scoring engine is also exposed as an MCP tool so agents can drive the question-and-answer loop programmatically. See `.claude/skills/irrigation-troubleshoot/SKILL.md` for how the agent loop is meant to run.
+- **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root causes. Driven by the `irrigation-troubleshoot` skill via the `diagnose_irrigation` MCP tool.
+- **Hydraulics & general assistance** — a full hydraulic solve plus how-it-works / identify / capacity / upgrade / maintenance playbooks. Driven by the `irrigation` skill via the `irrigation_hydraulics` MCP tool.
+
+See `.claude/skills/irrigation-troubleshoot/SKILL.md` and `.claude/skills/irrigation/SKILL.md` for how the agent loops run, and `docs/spec.md` for the diagnostic-engine spec.
 
 ## Build / run
 
-There is no build step, no dev server, and no test runner. To iterate locally, edit files and open `index.html` directly (or serve the directory with any static server). Alpine.js 3 is loaded as a global from a CDN by `index.html`; `data.js`, `icons.js`, `engine.js`, and `app.js` populate `window.DATA`, `window.ICONS`, `window.createEngine`, and register the Alpine `app` factory respectively.
+Python only — no build step and no JS/Node toolchain. The MCP server is `tools/mcp_server.py` (registered in `.mcp.json`, FastMCP, needs `requirements.txt`). Every tool also works as a library and as a stdin/stdout CLI:
 
-The DOM lives in `index.html` as declarative Alpine templates (`x-data="app"`, `x-for`, `x-if`, `x-text`, `:attr`, `@event`). State, watchers, and UI methods live in `app.js`; pure scoring/recommendation logic lives in `engine.js`.
+- `python3 tools/diagnose.py` — questionnaire scoring (reads `data.json`).
+- `python3 tools/hydraulics.py` — hydraulic solve (reads `setup.yaml`, needs `pyyaml`).
+- `python3 tools/test_hydraulics.py` — hydraulics regression tests.
 
-## Engine vs app
+## Diagnostic engine
 
-- `engine.js` — pure functions: `rank(answers)`, `recommendations(answers, skipped)`, `relevancyLevel(qid, answers, skipped)`, `discriminators`, `stageProgress`, `isAnswered`, `isCompleted`. No DOM, no Alpine, no `localStorage`. Imported by `app.js` (browser) and `tools/engine.py` (mirror). Edit weights, question shapes, and scoring rules here.
-- `app.js` — Alpine factory, persistence, navigation, animations, equipment-date UI, SVG rendering. Delegates all scoring to `ENGINE.*`.
+`tools/engine.py` + `data.json` are the **single source of truth** for the troubleshooting questionnaire — questions, causes, weights, stages, slider curves. `data.json` is hand-maintained; edit it directly. `tools/engine.py` holds the pure scoring algorithm (`rank`, `recommendations`, `relevancy_level`, discriminators, stage progress) — no I/O of its own; `tools/diagnose.py` loads `data.json` and wraps it. Edit weights, question shapes, and scoring rules in these two files. `docs/fcode_spec.md` documents the `F<component>.<mode>.<instance>` cause taxonomy used in `data.json`.
 
 ## Agent tooling (`tools/`)
 
-- `tools/engine.py` — Python port of `engine.js`, stdlib only. Identical algorithm.
-- `tools/diagnose.py` — agent-facing wrapper: returns top causes + next questions with `D` and `relevancy`. Usable as a library or stdin/stdout CLI.
+- `tools/engine.py` — pure scoring engine, stdlib only.
+- `tools/diagnose.py` — agent-facing wrapper: returns top causes + next questions with `D` and `relevancy`. Library or stdin/stdout CLI.
 - `tools/mcp_server.py` — FastMCP server exposing two tools, `diagnose_irrigation(answers, skipped)` and `irrigation_hydraulics(adjustments, zone, concurrent_zones)`. Registered in `.mcp.json`.
-- `tools/hydraulics.py` — hydraulic calculator. Reads `setup.yaml` and runs a full solve (DAB Jet pump curve → static lift from elevations → Hazen-Williams pipe friction → per-head pressure → per-head flow, iterated because unregulated I-20 flow depends on pressure; MP Rotators are 40 PSI regulated). The report leads with a `health` status card (ok/warning/violation, headline, pump capacity, per-zone lines) synthesised from the detail below it; each per-category check carries gauge data (`value`, `min`, `max`, `kind` of band/fill/ceiling, rounded to 1 dp) so it renders as a dashboard. Returns per-zone flow, head pressures, per-zone `pressure_spread_pct`, and a pressure + flow + velocity weakest-link report (velocity vs a 1.5 m/s limit). Each zone also carries a `node_pressures_bar` profile (pump discharge → manifold → after-valve) and per-head `loss_breakdown_bar`. Supports what-if `adjustments` (swap a nozzle, change a pump, pin an operating pressure, move the water table) and `concurrent_zones=[2,3]` to model several zones running at once (shared pump/main carrying the combined flow, per-zone valves and laterals). Embeds the Hunter I-20 Blue / MP Rotator charts and DAB Jet curves. Library or stdin/stdout CLI. Needs `pyyaml`.
-- `tools/export-data.mjs` — extracts `window.DATA` from `data.js` into `data.json` (the Python engine reads the JSON mirror). Run with `npm run export-data`.
-- `tools/test-parity.mjs` — runs 17 canned answer scenarios through both engines and asserts identical rankings within 1e-9. Also detects stale `data.json`. Run with `npm run test:parity`.
-- `tools/test_hydraulics.py` — sanity checks for the hydraulic calculator (chart lookups, baseline solve, weakest links, what-if behaviour). Run with `npm run test:hydraulics`.
+- `tools/hydraulics.py` — hydraulic calculator. Parses `setup.yaml` into a node graph and runs a full solve (DAB Jet pump curve → static lift from per-node elevations → Hazen-Williams friction summed per pipe segment, where each segment carries the combined flow of the heads below it → per-head pressure → per-head flow, iterated because unregulated I-20 flow depends on pressure; MP Rotators on PRS40 bodies are 40 PSI regulated). The report leads with a `health` status card (ok/warning/violation, headline, pump capacity, per-zone lines) synthesised from the detail below it; each per-category check carries gauge data (`value`, `min`, `max`, `kind` of band/fill/ceiling, rounded to 1 dp). Returns per-zone flow, head pressures, per-zone `pressure_spread_pct`, a `node_pressures_bar` profile (pump discharge → manifold → after-valve) and per-head `loss_breakdown_bar`, plus a pressure + flow + velocity weakest-link report (velocity vs a 1.5 m/s limit). Supports what-if `adjustments` (swap a nozzle, change a pump, pin an operating pressure, move the water table) and `concurrent_zones=[2,3]` (shared pump/main carrying the combined flow, per-zone valves and laterals). Embeds the Hunter I-20 Blue / MP Rotator charts and DAB Jet curves. Library or stdin/stdout CLI. Needs `pyyaml`.
+- `tools/test_hydraulics.py` — sanity checks for the hydraulic calculator (chart lookups, baseline solve, weakest links, what-if behaviour). Run with `python3 tools/test_hydraulics.py`.
 
-`data.js` is the single source of truth for questions/causes/weights. `data.json` is a generated mirror; never edit it by hand. After changing `data.js`, run `npm run export-data` and `npm run test:parity`.
+## setup.yaml schema
 
-## Engine changes
+`setup.yaml` is the single source of truth for the homeowner's equipment, topology, wiring, and design choices. It is a **graph**:
 
-When tuning the scoring math, edit `engine.js` **and** `tools/engine.py` together. The parity test catches drift but doesn't fix it. If you can only edit one, edit `engine.js` first — it's the browser source of truth — then mirror to Python.
+- `types` — a catalog mapping a dotted type (`pump.well`, `hose.32`/`.25`/`.16`, `fitting.manifold`/`.tee`/`.swing`/`.joint`/`.cap`, `valve.auto`/`.manual`, `head.rotor` (I-20) / `head.spray` (PRS40, `regulated_bar`), `nozzle.rotor`/`.rotator`/`.stream`, `controller`, `relay`) to default fields (`model`, `max_bar`, `max_flow_m3h`, `min_bar`/`min_flow_m3h`, `location`, …). `fitting.swing` carries per-downstream ratings under `by_feeds`.
+- `feeds` — the topology. Each key is a node id `SCOPE.type.NN` (`MAIN.pump.well.01`, `Z1.head.rotor.01`, `Z1.nozzle.rotor.01`); each value is `{to: [downstream ids], …per-node fields}` (`height_m`, `length_m`, `nozzle`, `arc_deg`). The trunk is `MAIN.source.well → pump → … → fitting.manifold`, which fans out to `Z1…Z5` and a capped `Z6`. Zones are derived from the scope prefix; a solvable zone has ≥1 nozzle leaf (Z1–Z5; Z6 is a capped no-flow stub). Z1–Z4 are automatic (`valve.auto`); Z5 is manual (`valve.manual` → 16 mm line → `nozzle.stream`, modelled as free discharge from an open hose); Z6 is capped.
+- `wires`, `cable_runs`, `location_descriptions`, `system_metadata`, `control_paths`, `settings`, `system_design_choices` — metadata read by the skills, not by the hydraulic solve.
+
+When editing `setup.yaml`, keep `tools/hydraulics.py`'s graph parsing in sync and re-run `python3 tools/test_hydraulics.py`.
 
 ## Session setup
 
-`.claude/hooks/session-start.sh` (registered via `.claude/settings.json`) runs at the start of every Claude Code on the web session: `pip install -r requirements.txt` for the MCP SDK, `npm install` for the JS dev deps. Synchronous so the session is ready when it opens.
+`.claude/hooks/session-start.sh` (registered via `.claude/settings.json`) runs at the start of every Claude Code on the web session: `pip install -r requirements.txt` for the MCP SDK and `pyyaml`. Synchronous so the session is ready when it opens.
