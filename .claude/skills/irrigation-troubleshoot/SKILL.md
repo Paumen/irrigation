@@ -81,7 +81,6 @@ Your own thinking is the first place certainty leaks in. Hold all of it loosely.
       "stage": 1 | 2 | 3,
       "context": "app-run",                          // shared setup — batch same-context questions
       "optional": false,
-      "relevancy": "high" | "mid" | "low" | null,
       "D": 12.4,                                     // total score
       "factors": { "isolation": 6.6, "breadth": 3.0, "effort": 6.0 }, // the 3 terms summing to D
       // shape-specific:
@@ -91,7 +90,7 @@ Your own thinking is the first place certainty leaks in. Hold all of it loosely.
       "rows":        [{ "id": "...", "label": "..." }, ...],// for "matrix" / "ages"
       "stepLabels":  ["—", "0–4 yrs", "4–8 yrs", "8–12 yrs", "12+ yrs"]  // for "ages"
     },
-    ...                                              // top 5 by D
+    ...                                              // top 7 by D
   ],
   "answered_count": 0,
   "skipped_count": 0,
@@ -99,7 +98,7 @@ Your own thinking is the first place certainty leaks in. Hold all of it loosely.
 }
 ```
 
-Every value above is illustrative — ids, counts, and labels come from the live call, not from this doc. Branch on the `type` field each question carries (don't memorise which id is which shape). Treat the top entries of `next` as the engine's recommended next questions, and `relevancy` as the agreed stop signal (see *Stopping the loop*). If keys are missing or shape drifts, fall back to the present-findings step (last in *Protocol*) with what you have.
+Every value above is illustrative — ids, counts, and labels come from the live call, not from this doc. Branch on the `type` field each question carries (don't memorise which id is which shape). Treat the top entries of `next` as the engine's recommended next questions, ordered by `D`; an empty `next` is the agreed stop signal (see *Stopping the loop*). If keys are missing or shape drifts, fall back to the present-findings step (last in *Protocol*) with what you have.
 
 ## Protocol
 
@@ -109,22 +108,22 @@ Every value above is illustrative — ids, counts, and labels come from the live
 
 3. **Loop.** Each round:
    - **First round — always open with Q1, Q2 and Q3 together.** Ask them as a single batch (one multi-question prompt) before anything else. They're the lowest-effort `app-run` questions — run a zone and observe the heads, where water comes out, and the pump sound — so they share one trip outside and together pin down scope, routing, and source. Feed all three answers back before continuing the loop.
-   - Inspect `next[0]`. If `relevancy` is `high` or `mid`, ask it (see *Asking questions* below). For low-effort questions, you can ask 2–4 at once — and prefer to batch questions that share the same `context` (e.g. several `recall` or `valve-box` questions), since the user answers them in one go.
-   - If `relevancy` is `low` or `null`, apply the stop test in *Stopping the loop* below. If it's met, **exit the loop** and continue at step 4. If it isn't (too few answered yet), ask `next[0]` anyway to keep gathering signal.
+   - Inspect `next[0]` — the highest-`D` question. If `next` is non-empty, ask it (see *Asking questions* below); for low-effort questions you can ask 2–4 at once — and prefer to batch questions that share the same `context` (e.g. several `recall` or `valve-box` questions), since the user answers them in one go. The further a question's `D` sits below `next[0].D`, the less it separates the live causes.
+   - If `next` is empty (no question still separates the live causes), apply the stop test in *Stopping the loop* below. If it's met, **exit the loop** and continue at step 4. If it isn't (too few answered yet), present findings with what you have.
    - Map the user's pick back to the answer shape (see *Answer shapes*), add it to `answers`, and call the tool again.
    - If the user says "I don't know" / "skip", add the question id to `skipped` (not `answers`) before the next call.
    - Between rounds, if more than 3 questions are answered, surface a short list of the current top three causes so the user sees the hypothesis narrowing.
 
 4. **After the loop, branch on whether the top causes clearly lead**, i.e. the gap held across the last few rounds — not just the most recent answer. Two cases:
 
-   - **Clear leader(s) present →** open `knowledge/<area>.md` for the leading area if you haven't yet — that's the canonical source for the physical-test method and the linked images. Confirm with **two extra checks**: one low-/mid-effort question (e.g. "does the pump sound steady when it starts?") and one stronger physical test (e.g. "what's the solenoid coil resistance — should be 20–60 Ω"). Don't stack multiple physical-test questions in a row. The user might need time to do the test, get overwhelmed, or have clarification questions on how to do it. The engine's `D` and `relevancy` indicate diagnostic power but **not** effort — judging effort is your job. Then go to step 6.
+   - **Clear leader(s) present →** open `knowledge/<area>.md` for the leading area if you haven't yet — that's the canonical source for the physical-test method and the linked images. Confirm with **two extra checks**: one low-/mid-effort question (e.g. "does the pump sound steady when it starts?") and one stronger physical test (e.g. "what's the solenoid coil resistance — should be 20–60 Ω"). Don't stack multiple physical-test questions in a row. The user might need time to do the test, get overwhelmed, or have clarification questions on how to do it. The engine's `D` indicates diagnostic power but **not** effort — judging effort is your job. Then go to step 6.
 
    - **No clear leader (dead-ended) →** go to step 5.
 
 5. **Dead-end recovery.**
    - 5.1 Share your analysis so far, strictly split: what you know, what you interpreted from user feedback, what you inferred/assumed, and what you don't know. Read `setup.yaml` again and walk through the system and your understanding.
    - 5.2 Let the user validate/confirm/review. Adapt/adjust/add based on user feedback if needed.
-   - 5.3 Evaluate if any questions with mid/high differentiators or relevancy are left.
+   - 5.3 Evaluate if any questions with mid/high differentiators (`D`) are left.
    - 5.4 If still dead-ended, determine whether the information you have is conflicting or insufficient.
      - If conflicting, ask clarification questions.
      - If insufficient and no useful predefined questions remain (e.g. symptoms or cause direction appears to deviate from predefined question and/or cause buckets): read the narrowed area's `knowledge/<area>.md` end-to-end (especially the sibling internals/solenoid docs if narrowed to the valve), then fall back per `sources.md` to vendor PDFs and web. Use techniques like "five whys" silently. Based on your findings, check again if any relevant engine questions are left; if not, consider asking your own open- or closed-ended questions targeted at the off-engine angle.
@@ -134,7 +133,7 @@ Every value above is illustrative — ids, counts, and labels come from the live
 ## Stopping the loop
 
 Stop rules:
-- `next[0].relevancy` is `low` or `null` **and** at least 5 questions have been answered.
+- `next` is empty (no question still separates the contending causes) **and** at least 5 questions have been answered.
 - User explicitly tells you they have found the actual cause, or the issue is fixed.
 - User explicitly tells you they will stop troubleshooting, or you investigating, for now.
 

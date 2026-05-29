@@ -30,7 +30,7 @@ def _engine() -> Engine:
 
 
 def _summarize_question(
-    q: dict, relevancy: str | None, D: float, terms: dict[str, float]
+    q: dict, D: float, terms: dict[str, float]
 ) -> dict:
     out = {
         "id": q["id"],
@@ -39,7 +39,6 @@ def _summarize_question(
         "stage": q.get("stage"),
         "context": q.get("context"),
         "optional": bool(q.get("optional")),
-        "relevancy": relevancy,
         "D": round(D, 4),
         "factors": {
             "isolation": round(terms["isolation"], 4),
@@ -73,7 +72,7 @@ def diagnose(
     Returns:
         ranked: top-N causes with id, label, pct, score
         next: top-N recommended questions with id, text, type, options,
-            relevancy, score D, and the three factors behind it (isolation,
+            score D, and the three factors behind it (isolation,
             breadth, effort); D ranks on isolation+breadth with effort as a
             bounded tie-breaker
         answered_count: how many questions have been answered (excludes skipped)
@@ -99,7 +98,6 @@ def diagnose(
         "next": [
             _summarize_question(
                 rec["q"],
-                engine.relevancy_level(rec["q"]["id"], answers, skipped),
                 rec["D"],
                 engine.discriminator_terms(rec["q"], ids),
             )

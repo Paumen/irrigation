@@ -30,8 +30,8 @@ def diagnose_irrigation(
     Call repeatedly to drive a question-and-answer loop with a homeowner:
     pass the answers collected so far, take the top entry from `next` as
     the next question to ask, render its options via AskUserQuestion,
-    add the user's pick to `answers`, and call again. Stop when
-    `next[0].relevancy` is "low" or null.
+    add the user's pick to `answers`, and call again. Stop when `next`
+    is empty (no question still separates the contending causes).
 
     Args:
         answers: Mapping of question id to the user's answer. The shape
@@ -50,7 +50,7 @@ def diagnose_irrigation(
         {
           "ranked": top 5 causes [{id, label, pct, score}, ...] sorted by score,
           "next": top 7 recommended questions [
-            {id, text, type, stage, context, optional, relevancy, D,
+            {id, text, type, stage, context, optional, D,
              factors:{isolation, breadth, effort},  # isolation+breadth drive D; effort only tie-breaks
              options|rows|columns|stepLabels}, ...
           ] sorted by discriminator D (highest first),
