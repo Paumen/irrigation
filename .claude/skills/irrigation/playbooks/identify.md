@@ -10,9 +10,9 @@ Shape tells when there's no label or photo:
 - **Valve**: globe body (inlet/outlet in line, bonnet on top) + bleed screw on top + black side solenoid → PGV-101G. Solenoid stamped "24VAC" (not "DC LATCHING") confirms the homeowner's AC variant.
 - **Rotor**: stainless riser, rubber cap, set-screw under a flap → I-20. Plastic cap, slot screw, no flap → MP Rotator on a Pro-Spray body.
 - **Spray body**: "PRS40" on the cap = pressure-regulated 2.8 bar Pro-Spray.
-- **Relay**: cream/grey box, hand-wide, "PSR-52" on the front.
+- **Relay**: cream/grey box, hand-wide, "PSR-22" on the front.
 - **Controller**: RainMachine HD-16 TOUCH — colour touchscreen, 16 zone terminals. (The only controller photo in the manifest is a similar model, not the HD-16 — caption it "similar layout", never "your controller".)
 
-This homeowner's kit (cache — read `setup.yaml` for live values): controller RainMachine HD-16 TOUCH, relay Hunter PSR-52, pump DAB Jet, four Hunter PGV-101G valves, Hunter I-20-04-SS rotors, Pro-Spray PRS40 bodies carrying MP Rotators.
+This homeowner's kit (cache — read `setup.yaml` for live values): controller RainMachine HD-16 TOUCH, relay Hunter PSR-22, pump DAB Jet, four Hunter PGV-101G valves, Hunter I-20-04-SS rotors, Pro-Spray PRS40 bodies carrying MP Rotators.
 
 If `setup.yaml` and what they see disagree, offer to update the file — don't argue. If you can't pin the model, say so and ask for the label or a photo rather than guessing. Then offer the pivot to `explain.md` or `howto.md`.

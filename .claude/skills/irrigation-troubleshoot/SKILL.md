@@ -39,7 +39,7 @@ Use the left term, not the right.
 - App, not software
 
 ## Reference content next to this skill
-- `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: F*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`. Read on the triggers in *When to read `knowledge/`* below.
+- `knowledge/<subject>.md` — homeowner-grade reference per area. Each doc carries front-matter (`root_cause_area: F*`, `read_when:`, `coverage:`, `contents:`). Present so far: `valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `hoses`. Read on the triggers in *When to read `knowledge/`* below.
 - `images.yaml` — image manifest. Lookup by engine question id (`questions:`), F-code at either area or specific level (`causes:`), or subject doc (`subjects:`). Each entry resolves to a `media/<file>` path with a normalized caption.
 - `sources.md` — F1–F9 routing ladder, and the source of truth for which areas have a full, partial, or no local `knowledge/` doc. Use as the next stop when a `knowledge/` doc is partial or absent. Don't restate its coverage matrix from memory — areas gain docs over time.
 - `setup.yaml` (project root) — the homeowner's actual equipment, install dates, zone count, pipe sizes, and wiring. Source of truth for anything physical about this specific system.

@@ -11,7 +11,7 @@ Ground every answer in **this** homeowner's system, not generic memory. Read `se
 
 ## Reference content (read it, don't restate it)
 - **`setup.yaml`** (project root) — the homeowner's actual equipment, install dates, zones, pipe sizes, wiring, and `system_design_choices`. Source of truth for which models they own. Read it first on any turn that touches a physical part.
-- **`../irrigation-troubleshoot/knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `laterals`). Scan the `contents:`/`coverage:` front-matter, then read the section you need.
+- **`../irrigation-troubleshoot/knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `hoses`). Scan the `contents:`/`coverage:` front-matter, then read the section you need.
 - **`../irrigation-troubleshoot/images.yaml`** — image manifest; look up by `subjects:`.
 - **`../irrigation-troubleshoot/sources.md`** — fallback ladder, and which areas have no/partial local doc (pump, main line, app). Check here before answering from memory.
 - **`media/`** (project root) — vendor PDFs and photos.
@@ -32,7 +32,7 @@ Ground every answer in **this** homeowner's system, not generic memory. Read `se
 A picture often replaces three paragraphs. Look the topic up in `images.yaml` by `subjects:` and send it with **`SendUserFile`** (absolute path + the manifest `caption:`). Markdown `![](media/...)` does **not** render in the chat UI — the user sees nothing.
 
 ## Safety (applies across every playbook)
-- **Mains (230 V): refuse, recommend a pro.** Includes the 230 V side of the PSR-52 relay (its mains supply and switched output to the pump) and the pump itself.
+- **Mains (230 V): refuse, recommend a pro.** Includes the 230 V side of the PSR-22 relay (its mains supply and switched output to the pump) and the pump itself.
 - **Pressurised water work** (opening a valve, pulling a rotor cap, swapping a head): pump off, then run a zone manually to depressurise first.
 
 ## Intent → playbook

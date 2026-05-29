@@ -123,7 +123,7 @@ form a tier:
    F6 context in `sources.md`.
 2. **Per-valve pressure regulator (Hunter Accusync).** Sits on each individual valve
    and holds its downstream pressure at a per-zone setpoint regardless of upstream
-   variation. The right answer when zones have **elevation changes** or **long lateral
+   variation. The right answer when zones have **elevation changes** or **long hose
    runs** that make zone-by-zone pressure drop unequal. Each zone gets its own design
    pressure, which the rest of the system can't see.
 3. **Pressure-regulated body at the head** (PRS30, PRS40, PRB rotors). The finest level
@@ -141,13 +141,13 @@ the heads, the PRS40 isn't engaging (inlet too low — see `heads.md` *Misting f
 MP on top*), and the cause is *not* a single head's regulator failing but the whole
 zone running too hot or too cold, then a per-valve regulator on *that* valve is the
 standard remedy. Treat it as a design fix, not a troubleshooting one — bring it up
-once the routine causes (filter, nozzle, riser seal, broken lateral) are ruled out.
+once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ## Installation (and how to avoid causing damage)
 
 ![Flow direction — arrow toward the heads](media/valve_flow_direction_image.png)
 
-![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; lateral line runs out to the sprinklers downstream.](media/pgv-install-valve-box.png)
+![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](media/pgv-install-valve-box.png)
 
 **Placement.** Put the valve manifold somewhere accessible for maintenance, close to the
 area the valves serve, but positioned so you are not sprayed when you operate the system by hand.
@@ -199,14 +199,14 @@ Run the checklist in cheapest-first order:
 There are two distinct causes, and the most common one is **not** the valve:
 
 - **Low-head drainage (most common).** The lowest head on a zone lets water drain out of the
-  lateral hose after the valve closes. The tell: residual water stops once the pipe has emptied,
-  then stays dry. This is a head/lateral issue, fixed with check valves (e.g. HCV) on heads or
-  laterals — a check valve in the head will *not* fix a valve leak, and vice versa. See `heads.md`.
+  hose after the valve closes. The tell: residual water stops once the pipe has emptied,
+  then stays dry. This is a head/hose issue, fixed with check valves (e.g. HCV) on heads or
+  hoses — a check valve in the head will *not* fix a valve leak, and vice versa. See `heads.md`.
 - **Water passing through the zone valve.** Usually debris holding the diaphragm off its seat,
   or a damaged diaphragm/seat. Disassemble, rinse all parts in clean water, reassemble; replace
   the diaphragm assembly if visibly damaged. See `valve-internals.md`.
 
-Do not assume the valve. Decide which by whether the leak self-stops after the lateral empties.
+Do not assume the valve. Decide which by whether the leak self-stops after the hose empties.
 
 ## Slow-closing valve
 
@@ -230,7 +230,7 @@ match can be ruled out during identification. Confirm which body is installed fr
 
   ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](media/pgv-valve-angle.jpg)
 
-- **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe laterals (common in cold-climate
+- **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe hoses (common in cold-climate
   installs) — saves threading an adapter.
 
   ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Other body style, for identification.](media/pgv-valve-barb.jpg)
@@ -314,5 +314,5 @@ service — see `valve-solenoid.md` and `valve-internals.md` for when to replace
 - `valve-solenoid.md` — coil, plunger, exhaust/entry ports, voltage and resistance tests.
 - `wiring.md` — wire gauge/run, waterproof connectors, swap-wire and continuity tests.
 - `controller.md` — voltage at controller terminals.
-- `laterals.md` — zone-wide weakness from a punctured lateral (the alternative cause to a partly-open valve diaphragm when one zone is weak).
+- `hoses.md` — zone-wide weakness from a punctured hose (the alternative cause to a partly-open valve diaphragm when one zone is weak).
 - `heads.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.

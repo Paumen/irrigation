@@ -52,16 +52,16 @@ runtime.
 - Read when: engine points at the valve area; install/replace; "how does it work"; any valve symptom — then go deeper to internals (diaphragm/spring/seat/metering) or solenoid (coil/plunger/ports) as the symptom narrows.
 - Fallback: `media/PGV101G.pdf`, then Hunter support (https://www.hunterindustries.com/support).
 
-### F8 — Zone laterals 
-- Local doc: `knowledge/laterals.md` — **partial** (broken-lateral signature, field-diagnosis
-  steps, dead-end winterization rule, cap-off/shorten-lateral procedure).
+### F8 — Zone hoses 
+- Local doc: `knowledge/hoses.md` — **partial** (broken-hose signature, field-diagnosis
+  steps, dead-end winterization rule, cap-off/shorten-hose procedure).
 - Read when: a whole zone is weak with no fault visible at the heads; one or more heads on a
   zone won't pop up while siblings on the same zone are fine; a persistent wet patch or soft
-  ground along a known lateral run; you're removing a head or restructuring a zone and a stub
+  ground along a known hose run; you're removing a head or restructuring a zone and a stub
   will be left behind; you suspect recent garden / fence / driveway work damaged a pipe.
 - Fallback: IrrigationTutorials.com, then web. Hunter's "Rotor Not Fully Popping Up" article
-  has the textbook broken-lateral signature ("look for new trees and shrub plantings, new or
-  repaired fences"); that material is already folded into `laterals.md`.
+  has the textbook broken-hose signature ("look for new trees and shrub plantings, new or
+  repaired fences"); that material is already folded into `hoses.md`.
 
 ### F9 — Heads 
 - Local doc: `knowledge/heads.md` — entry point covering all three head-side components for this system
