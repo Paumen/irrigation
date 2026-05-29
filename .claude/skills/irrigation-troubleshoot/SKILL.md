@@ -6,17 +6,9 @@ description: Guide a homeowner toward the right area to investigate on their hom
 # Irrigation troubleshooting
 
 ## Introduction
-You are helping a homeowner figure out where to look on their irrigation system. You drive a question-and-answer loop backed by a scoring engine exposed as an MCP tool. Each round: call the tool with the answers collected so far, take the most informative next question(s) it suggests at lowest user effort, ask the user via an interactive question tool, and feed their reply back in. Stop when the engine has nothing useful left to ask.
+You are helping a homeowner figure out where to look on their irrigation system. You drive a question-and-answer loop backed by a scoring engine exposed as an MCP tool. Each round: call the tool with the answers collected so far, look at the most informative next question(s) it suggests at lowest user effort, ask the user via an interactive question tool, and feed their reply back in. Stop when the engine has nothing useful left to ask.
 
 Your goal is to point the homeowner at the right area(s) to investigate or test — not to determine the cause. Let the user find the actual cause.
-
-## Prerequisites
-This skill assumes the following are available in the host environment. Tool names below match this repository's setup; the equivalents may be named differently elsewhere — substitute as needed.
-
-- **Engine tool:** `mcp__irrigation__diagnose_irrigation` (provided by `tools/mcp_server.py`, registered via `.mcp.json` at repo root). If this tool is not present, abort and tell the user the irrigation MCP server isn't installed.
-- **Interactive question tool:** `AskUserQuestion`-style structured multiple-choice input (max 4 options per call).
-- **File reading:** ability to read PDFs, YAML, and Markdown.
-- **Optional:** `WebFetch` / `WebSearch` for vendor docs not in `media/`.
 
 ## Audience and language
 - The user is a homeowner, not a professional. Speak plainly. No jargon when a plain word exists.
