@@ -25,7 +25,7 @@ Read this when the engine narrows to F9 (rotor debris / nozzle / pressure regula
 
 ## I-20 rotor
 
-![Hunter I-20 rotor — stainless riser, nozzle turret, and pop-up body.](media/rotor-i20-product.png)
+![Hunter I-20 rotor — stainless riser, nozzle turret, and pop-up body.](media/head-rotor-photo-i20-product.png)
 
 Hunter's mid-range gear-drive rotor. The **I-20-04-SS** variant has a 4" pop-up height, stainless-steel riser, radius setscrew, and FloStop. The rotor's drive is non-strippable, meaning turning the turret backwards by hand will not damage internals.
 
@@ -40,7 +40,7 @@ Hunter's mid-range gear-drive rotor. The **I-20-04-SS** variant has a 4" pop-up 
 - Drain check valve: holds back up to ~3 m (10 ft) of elevation
 - Warranty: 5 years
 
-![Trajectory geometry — A = angle, B = max height of spray, C = distance from head to max height](media/rotor-trajectory-chart.png)
+![Trajectory geometry — A = angle, B = max height of spray, C = distance from head to max height](media/head-rotor-diagram-trajectory-chart.png)
 
 Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-20 envelope peaks around 3–4 m above grade at 6–10 m out, so a 2 m hedge or fence within ~8 m of the head will clip the stream. Switch to the grey low-angle (13°) nozzle for those spots — peaks at ~1–1.5 m height.
 
@@ -77,7 +77,7 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 - **Pops up but won't rotate.** Sand or grit in the drive, or the nozzle is too small for the available pressure (a gear-drive needs flow to drive). Pull the rotor, flush in clean water, reinstall. Persistent → replace the rotor. The bottom-of-internal-assembly **filter** is the most common culprit before the drive itself — pull it with needle-nose pliers and rinse before condemning the rotor (see *Adjustment & service procedures* below).
 - **Wrong arc / always 360°.** The FloStop or arc adjustment is at end-stop. Reset per the Hunter wrench instructions. Auto arc return will bring the original arc back the next time the valve calls. Don't step on or kick rotors during mowing — the impact drifts the right stop, and auto arc return is the recovery, not a license to abuse the head.
 
-![Don't step on / kick the rotor — keep weight off the top](media/rotor-do-not-kick.png)
+![Don't step on / kick the rotor — keep weight off the top](media/head-rotor-diagram-do-not-kick.png)
 - **Right-side arc off (wet walkway / dry turf strip on one edge).** The fixed right stop has drifted. Reset by rotating the turret fully clockwise, then counterclockwise back to the right stop. If still misaligned, either rotate the whole body+fitting to the desired position, or unscrew the body cap, remove the internal assembly, rotate the turret to the right stop, and refit with the nozzle pointing at the start of the desired arc — then re-adjust the left arc. No need to dig the body out.
 - **Uneven coverage / brown spots.** Nozzle mismatch, wrong radius set, or a downstream head is starving this one of pressure. Check pressure at the head while running.
 - **Water draining from the lowest head when the system is off.** The drain check valve is missing or failed. See *Low-head drainage* below.
@@ -88,13 +88,13 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 
 The I-20 carries four top callouts (visible after pulling the riser up by its lifting socket): **Lifting Socket**, **Arc Adjustment** (left dial), **Nozzle / Radius Adjustment Screw** (top centre), **Flo-Stop** (right dial). Adjustments may be made with water on or off; factory preset is ≈180°.
 
-![I-20 top callouts — Lifting Socket, Arc Adjustment, Nozzle/Radius Adjustment Screw, Flo-Stop](media/heads_i20-callouts.png)
+![I-20 top callouts — Lifting Socket, Arc Adjustment, Nozzle/Radius Adjustment Screw, Flo-Stop](media/head-rotor-diagram-i20-callouts.png)
 
-![Riser pulled up by the lifting socket to access the nozzle and dials in-place](media/rotor-lifting-socket.png)
+![Riser pulled up by the lifting socket to access the nozzle and dials in-place](media/head-rotor-photo-lifting-socket.png)
 
 **Hunter adjustment wrench.** The right tool is a Hunter wrench: a 3/32" Allen key on one end, plastic arc-adjustment key on the other, with two finger loops. A bare 3/32" Allen key works for radius adjustment only. The plastic-only consumer key (no Allen end) engages the same lifting / arc / flow-stop sockets and is fine for arc and lift work, but won't drive the radius screw.
 
-![Plastic adjustment key — engages the lifting socket and the arc / flow-stop sockets; same slots as the metal Hunter wrench, consumer variant without the Allen end.](media/rotor-adjustment-key-plastic.jpg)
+![Plastic adjustment key — engages the lifting socket and the arc / flow-stop sockets; same slots as the metal Hunter wrench, consumer variant without the Allen end.](media/head-rotor-photo-adjustment-key.jpg)
 
 **Arc adjustment (40°–360°).**
 1. Insert the plastic key end into the arc adjustment socket.
@@ -102,32 +102,32 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 3. Each full 360° turn of the wrench = 90° of arc change. Clockwise increases the arc; counterclockwise decreases it.
 4. The wrench ratchets / stops at the 360° max and at the 40° min — don't force past either.
 
-![Hunter wrench inserted into the arc adjustment socket](media/rotor-arc-wrench.png)
+![Hunter wrench inserted into the arc adjustment socket](media/head-rotor-diagram-arc-wrench.png)
 
 **Radius adjustment (up to −25%).**
 1. Insert the 3/32" Allen end into the radius (retention) screw on top of the nozzle.
 2. Clockwise into the stream = shorter throw; counterclockwise = longer throw. Best done with water on so you can see the change.
 3. **Caution: more than five full clockwise turns can drop the screw out of the nozzle.** Replacement screw is sold separately if lost.
 
-![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](media/rotor-adjustment-arrows.png)
+![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](media/head-rotor-diagram-adjustment-arrows.png)
 
 **Nozzle install / replacement.** Use Hunter's nozzle insertion collar (P/N **123200**) — a white plastic sleeve that clips around the riser body to hold it up while you work — plus the adjustment wrench. The slot layout on the I-20 cap matches the PGP shown in the callout below.
 
-![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](media/rotor-nozzle-insertion-collar.jpg)
+![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](media/head-rotor-photo-nozzle-insertion-collar.jpg)
 
-![Hunter PGP rotor top callouts — same slot layout as the I-20: Lifting Socket (centre top), Adjustment Socket with +/− (left), Nozzle/Range Adjustment Screw (top right), Model Identification (right).](media/heads_pgp-rotor-cap-callouts.png)
+![Hunter PGP rotor top callouts — same slot layout as the I-20: Lifting Socket (centre top), Adjustment Socket with +/− (left), Nozzle/Range Adjustment Screw (top right), Model Identification (right).](media/head-rotor-diagram-pgp-cap-callouts.png)
 
 1. Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
 
-   ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](media/rotor-nozzle-install-step-1.jpg)
+   ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](media/head-rotor-instruction-nozzle-install-step-1.jpg)
 
 2. Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
 
-   ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](media/rotor-nozzle-install-step-2.jpg)
+   ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](media/head-rotor-instruction-nozzle-install-step-2.jpg)
 
 3. Turn the **nozzle / radius adjustment screw** a **quarter turn clockwise** to lock the nozzle in place. More than a quarter turn starts to reduce the radius — don't over-turn.
 
-   ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](media/rotor-nozzle-install-step-3.jpg)
+   ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](media/head-rotor-instruction-nozzle-install-step-3.jpg)
 
 After install: cycle the head a couple of times to confirm the nozzle is locked and the rotor returns to its arc. Use Flo-Stop (below) if you don't want to run the whole zone for that check.
 
@@ -141,11 +141,11 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 5. I-20 filter spec: **.050" (1.27 mm) square openings, ~14 mesh, ~1410 µm**. Replacement P/N **102600-SP** (same screen as PGP-ADJ / PGP Ultra).
 6. If clean filter doesn't restore rotation, the gear drive is gone — replace the rotor.
 
-![Lifting the internal assembly out of the rotor body once the cap is unscrewed](media/rotor-internal-assembly-removal.png)
+![Lifting the internal assembly out of the rotor body once the cap is unscrewed](media/head-rotor-diagram-internal-assembly-removal.png)
 
-![Body cap unscrewed and internal assembly fully separated from the body](media/rotor-cap-internals-separated.jpg)
+![Body cap unscrewed and internal assembly fully separated from the body](media/head-rotor-photo-cap-internals.jpg)
 
-![Internal assembly (1) with the cylindrical filter screen (2) at its base](media/rotor-filter-exploded.png)
+![Internal assembly (1) with the cylindrical filter screen (2) at its base](media/head-rotor-diagram-filter-exploded.png)
 
 **Riser seal replacement (P/N 181500; kit of 10 = 253400).** Worn seals show as water leaking around the riser stem during operation, or as flow-by that prevents pop-up.
 1. Unthread the body cap and remove the internal assembly.
@@ -158,7 +158,7 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 8. Screw the internal assembly back into the body — **hand-tight only, no threads visible under the cap**. If threads can be felt, the seal isn't seated; redo it.
 9. Re-check installation height (set to grade) before turning on for leak test.
 
-![Grip the spring and riser body firmly while lifting the old rubber seal off — the spring tension releases as the seal comes off](media/rotor-riser-seal-grip.jpg)
+![Grip the spring and riser body firmly while lifting the old rubber seal off — the spring tension releases as the seal comes off](media/head-rotor-photo-riser-seal-grip.jpg)
 
 **Drain check valve (low-head drainage at this rotor).** Hunter sells a screw-in check valve sub-assembly (P/N **142300**, Filter/Screen Check Valve combined). To fit: unthread the body cap, pull the internal assembly, flip upside-down, push the large irregular end of the check valve into the bottom of the riser (the small rubber tip stays outside the riser), refit the internal assembly.
 
@@ -170,7 +170,7 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 
 **Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the hose and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
 
-![Hunter swing joint between the hose and the rotor inlet](media/rotor-swing-joint.png)
+![Hunter swing joint between the hose and the rotor inlet](media/fitting-swing-diagram-rotor-connection.png)
 
 ## Pro-Spray PRS40 spray body
 
