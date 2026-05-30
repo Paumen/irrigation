@@ -8,6 +8,7 @@ read_when: a conductor, splice, or common is suspected; positively excluding wir
 contents:
   - coverage note (what's missing)
   - waterproof connectors (corrosion → resistance → blown fuses)
+  - the connector itself — 3M Scotchlok 314 (what it's called + how to buy more)
   - wire distance vs gauge table (feet/metres caveat)
   - swap-wire test (controller end)
   - swap-valve test (valve-box end, four-in-one-box)
@@ -27,6 +28,36 @@ cause — the table is useful mainly to positively exclude it. (Check the actual
 Use waterproof wire connectors for every solenoid-to-field-wire joint in the valve box.
 Non-waterproof connections corrode; corrosion raises electrical resistance; high resistance can blow
 fuses or trip the controller. A corroded splice is a classic intermittent/seasonal fault.
+
+## The connector itself — 3M Scotchlok 314 (what it's called, how to buy more)
+
+The little **blue-and-white** gel-filled connectors crimped onto the 24 V field wires are **3M
+Scotchlok 314** connectors (the blue cap is stamped "3M 314"). Clear/white silicone-gel-filled body,
+blue squeeze-down cap, two or three wire ports. They're *insulation-displacement* (IDC) connectors —
+you push the un-stripped wires in and crimp the cap flat with pliers; the metal element bites through
+the insulation and the gel seals out water. About **2.4 cm long × 1.7 cm wide × 1.7 cm tall**. Rated
+for low-voltage / 24 V irrigation control wire (also sold as a phone/alarm wire connector).
+
+This is the part to search for when re-ordering or buying spares. It goes by many names — surface this
+section whenever the homeowner describes *that blue/white thing on the wires* or asks what it's called:
+
+> **3M Scotchlok 314** · 3M 314 connector · gel connector / gel-filled connector · gel-cap ·
+> waterproof wire connector · waterproof splice connector · low-voltage / 24 V wire connector ·
+> sprinkler / irrigation wire connector · the blue/white connector · blue-white splice · cable
+> connector · wire splice
+>
+> **Dutch (NL):** afzetklem · waterdichte (kabel)verbinder · waterdichte lasdop / kabelverbinder ·
+> 3M verbinder · 24V kabelverbinder · gel(verbinder) · blauw/wit verbindertje · klem op het snoer /
+> op de snoeren · draadverbinder · verbinding voor draadjes / kabels
+>
+> Search terms (any language, for finding more to buy): *afzetklem · waterdicht · 3M · 314 ·
+> connection · connector · verbinder · 24v · kabel · stroom · gel · gell · blue · white · splice ·
+> blauw · wit · op snoer · snoer · snoeren · cable · cables · kabel · kabels · draad · draadjes ·
+> draden · lasdop*
+
+Images: `IMG.3m-connector-314` (the stamped blue cap), `IMG.3m-connector-dimensions` (size), and
+`IMG.3m-connector-product` (angled view) — surface one when showing the homeowner what to look for or
+order.
 
 ## Wire distance vs. gauge
 
