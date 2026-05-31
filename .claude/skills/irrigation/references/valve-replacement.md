@@ -62,7 +62,8 @@ Manifest images already on hand, mapped to the rows above (look the ID up in
 
 | Table row | `images.yaml` ID |
 |---|---|
-| PGV-101G (installed) / PGV-100G drop-in | `IMG.pgv-valve-globe-101g`, `IMG.pgv-valve-product`, `IMG.pgv-valve-cutaway`, `IMG.flow-control-cutaway` |
+| PGV-101G (installed) | `IMG.pgv-valve-globe-101g`, `IMG.pgv-valve-product`, `IMG.pgv-valve-cutaway`, `IMG.flow-control-cutaway` |
+| PGV-100G drop-in | *No dedicated image.* Same globe body, but **no flow-control knob on top** — so it does **not** look like the 101G shots above. Use the 101G image only to show the body/threads, and say the 100G top is bare (bleed screw only, no knob). |
 | what you actually swap (bonnet / diaphragm / solenoid) | `IMG.pgv-replacement-parts`, `IMG.bleed-screw`, `IMG.pgv-valve-solenoid-label` |
 | `-DC` controller caveat | `IMG.pgv-valve-dc-variant`, `IMG.pgv-valve-dc-labelled` (a PGV-101-**MM-DC**), `IMG.pgv-valve-dc-variant-installed` |
 | `-A` re-orient (angle body) | `IMG.pgv-valve-angle` |
