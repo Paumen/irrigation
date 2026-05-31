@@ -31,14 +31,6 @@ images:
     causes: [F7, F7.1.1, F7.3.1, F7.1.2, F7.3.2, F7.1.3, F7.4]
     used_in: [valve.md]
 
-  IMG.flow-control-cutaway:
-    file: media/valve-cutaway-flow-control.jpg
-    caption: Cutaway of the flow control resting on the diaphragm, limiting its stroke.
-    subjects: [valve]
-    causes: [F7, F7.4]
-    relates: flow control adjustment. Body model UNCONFIRMED (probably a larger PGV-201G); the flow-control mechanism shown is common to the 101G.
-    used_in: [valve.md]
-
   IMG.flow-direction:
     file: media/valve-diagram-flow-direction.png
     caption: Flow-direction arrow on the valve body; water must flow toward the heads.
@@ -79,13 +71,6 @@ images:
     questions: [Q12]
     used_in: [valve.md, valve-solenoid.md]
 
-  IMG.manual-solenoid-inbox:
-    file: media/valve-solenoid-photo-manual-turn.png
-    caption: Valve in the box; turning the solenoid by hand for manual operation.
-    subjects: [valve-solenoid, valve]
-    causes: [F7, F7.1.1, F7.3.1]
-    used_in: [valve-solenoid.md]
-
   IMG.internal-components:
     file: media/valve-diagram-internal-components.gif
     caption: Internal components exploded — 1 support ring, 2 diaphragm, 3 spring.
@@ -111,14 +96,6 @@ images:
     relates: exhaust/entry port flush; disassembly
     used_in: [valve-solenoid.md]
 
-  IMG.solenoid-wiring:
-    file: media/valve-solenoid-diagram-wiring.png
-    caption: Solenoid wiring — common and station power leads to the field wires.
-    subjects: [valve-solenoid, wiring]
-    causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
-    questions: [Q15]
-    used_in: [valve-solenoid.md]
-
   IMG.solenoid-voltage-reading:
     file: media/valve-solenoid-diagram-voltage-test.png
     caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
@@ -126,22 +103,6 @@ images:
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
     questions: [Q13, Q15]
     used_in: [valve-solenoid.md]
-
-  IMG.controller-voltage-reading:
-    file: media/controller-diagram-voltage-reading.png
-    caption: Multimeter at the controller terminals reading ~26 VAC with the station active.
-    subjects: [controller]
-    causes: [F2, F2.1, F2.8, F2.5, F2.6]
-    questions: [Q13, Q14]
-    used_in: [controller.md]
-
-  IMG.controller-probe-diagram:
-    file: media/controller-diagram-probe-placement.png
-    caption: Probe placement at the controller — one on the station terminal, one on C/COM.
-    subjects: [controller]
-    causes: [F2, F2.1, F2.8, F2.5, F2.6]
-    questions: [Q13, Q14]
-    used_in: [controller.md]
 
   IMG.i20-callouts:
     file: media/head-rotor-diagram-i20-callouts.png
@@ -175,14 +136,6 @@ images:
     relates: filter cleaning when rotor won't rotate
     used_in: [heads.md]
 
-  IMG.rotor-riser-seal-grip:
-    file: media/head-rotor-photo-riser-seal-grip.jpg
-    caption: Grip the spring and riser body firmly with one hand while removing the old rubber seal with the other — the spring tension releases when the seal lifts off.
-    subjects: [heads]
-    causes: [F9, F9.1.2, F9.4]
-    relates: riser-seal replacement; flow-by / stem leak
-    used_in: [heads.md]
-
   IMG.rotor-lifting-socket:
     file: media/head-rotor-photo-lifting-socket.png
     caption: Riser pulled up by the lifting socket — exposes the nozzle, arc dial, radius screw, and Flo-Stop for adjustment without removing the rotor.
@@ -213,14 +166,6 @@ images:
     subjects: [heads]
     causes: [F9, F9.4]
     relates: standard 25° vs low-angle 13° nozzles; spraying over fences/hedges
-    used_in: [heads.md]
-
-  IMG.rotor-do-not-kick:
-    file: media/head-rotor-diagram-do-not-kick.png
-    caption: Don't step on or kick the rotor — vandalism/impact can drift the right-stop arc. Patented auto arc return brings the original arc back the next time the zone calls.
-    subjects: [heads]
-    causes: [F9, F9.4]
-    relates: arc drift; "always full circle" symptom
     used_in: [heads.md]
 
   IMG.rotor-swing-joint:
@@ -274,15 +219,6 @@ images:
     relates: illustrative stand-in; not the homeowner's exact model — caption must say "similar" not "your controller"
     used_in: [playbooks/identify.md]
 
-  IMG.relay-controller-wiring-diagram:
-    file: media/relay-diagram-controller-wiring.webp
-    caption: Controller-to-pump-start-relay wiring — common wire, master-valve / pump-start wire, and the 4.5 m minimum separation from the relay's high-voltage side.
-    subjects: [relay, wiring]
-    causes: [F4]
-    questions: [Q20]
-    relates: PSR-22 install layout; clearance rule; controller terminals to relay leads; locating the relay when checking whether it switches
-    used_in: [relay.md, playbooks/parts.md, playbooks/identify.md]
-
   IMG.pgv-valve-product:
     file: media/valve-photo-pgv-product.png
     caption: Hunter PGV-100G — 1" globe body, 24 V solenoid on top with looped lead-out, bleed screw, no flow-control knob.
@@ -290,15 +226,6 @@ images:
     causes: [F7]
     relates: PGV-100G product view; the no-flow-control sibling of the homeowner's 101G
     used_in: [valve.md, playbooks/parts.md, playbooks/identify.md]
-
-  IMG.pgv-valve-solenoid-label:
-    file: media/valve-solenoid-photo-pgv-label.jpg
-    caption: PGV solenoid close-up (on a PGV-101MM male × male body) — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.
-    subjects: [valve-solenoid, valve]
-    causes: [F7]
-    questions: [Q12]
-    relates: identify the solenoid by stamped text; ¼-turn manual operation reference. Same 24 VAC solenoid the homeowner's 101G uses (shown here on a 101MM body).
-    used_in: [valve-solenoid.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-lineup:
     file: media/valve-photo-pgv-family-lineup.jpg
@@ -413,13 +340,6 @@ images:
     relates: canonical product photo for identify.md and parts.md
     used_in: [heads.md, playbooks/parts.md, playbooks/identify.md]
 
-  IMG.rotor-i20-product-alt:
-    file: media/head-rotor-photo-i20-product-alt.jpg
-    caption: Hunter I-20 — alternate product view with the riser fully extended above the pop-up cap.
-    subjects: [heads]
-    relates: cleaner riser-extended angle; second-choice if head-rotor-photo-i20-product.png does not suit the context
-    used_in: []
-
   IMG.rotor-i20-spraying-close:
     file: media/head-rotor-photo-i20-spraying.jpg
     caption: I-20 rotor in action — stainless riser fully extended, fan of water from the nozzle.
@@ -440,13 +360,6 @@ images:
     subjects: [heads]
     relates: context shot for "what one head looks like in a flower bed" — usable in parts.md or upgrades.md (drip-vs-rotor discussion)
     used_in: []
-
-  IMG.rotor-i20-family-heights:
-    file: media/head-rotor-photo-i20-family-heights.jpg
-    caption: Hunter I-20 family — three pop-up riser heights side by side (short, medium, tall body).
-    subjects: [heads]
-    relates: identify which I-20 variant the homeowner has by riser length (this homeowner has I-20-04-SS, the 4-inch)
-    used_in: [playbooks/identify.md]
 
   # --------------------------------------------------------------------------
   # Second batch for the `irrigation` umbrella skill — adds sensors (WM-CLIK,
@@ -589,7 +502,7 @@ images:
     caption: Replacement valve solenoid — black cylindrical body with looped 24 V leads and threaded base with O-ring (purple). Form factor matches the Hunter PGV solenoid; verify exact model and coil resistance (20–60 Ω per the homeowner's setup) against the seller listing before fitting.
     subjects: [valve-solenoid, valve]
     causes: [F7]
-    relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; pair with pgv-valve-solenoid-label to compare with the installed unit before ordering
+    relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; compare with the installed unit before ordering
     used_in: [valve-solenoid.md, playbooks/parts.md]
 
   # --------------------------------------------------------------------------
@@ -604,21 +517,5 @@ images:
     caption: 3M Scotchlok 314 gel-filled waterproof wire connector — blue cap stamped "3M 314"; the clear/white body holds the silicone gel and the metal IDC element. Crimp the cap down with pliers to splice 24 V irrigation wires; no stripping needed.
     subjects: [wiring]
     causes: [F3, F3.1.1, F3.1.2, F3.1.3]
-    relates: waterproof splice for the 24 V field wires; the part to re-order when adding/repairing a connection; pair with the dimensions shot to confirm size
+    relates: waterproof splice for the 24 V field wires; the part to re-order when adding/repairing a connection
     used_in: [knowledge/wiring.md, playbooks/parts.md, playbooks/identify.md]
-
-  IMG.3m-connector-dimensions:
-    file: media/wiring-photo-3m-connector-dimensions.jpg
-    caption: 3M Scotchlok 314 connector with dimensions — roughly 2.4 cm long × 1.7 cm wide × 1.7 cm tall; two wire entry ports in the clear base, blue crimp cap on top.
-    subjects: [wiring]
-    causes: [F3]
-    relates: size reference for the 3M 314 connector when buying replacements
-    used_in: [knowledge/wiring.md]
-
-  IMG.3m-connector-product:
-    file: media/wiring-photo-3m-connector-product.jpg
-    caption: 3M Scotchlok 314 connector — angled product view of the blue/white gel-filled splice used on 24 V irrigation cable.
-    subjects: [wiring]
-    causes: [F3]
-    relates: alternate product view of the 3M 314 connector
-    used_in: [knowledge/wiring.md]

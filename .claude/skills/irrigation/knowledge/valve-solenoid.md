@@ -27,8 +27,6 @@ clogged port reads a perfectly normal coil resistance.
 
 ## What it does
 
-![Solenoid and manual operation](../media/valve-solenoid-photo-manual-turn.png)
-
 The solenoid is the cylinder with two wires on top of the valve. Inside is a light, spring-loaded
 metal piston (plunger) that, with the valve closed, covers the inlet port hole into the upper
 chamber. Energising the coil (24 VAC) lifts the plunger, uncovers the port, the upper chamber
@@ -52,8 +50,6 @@ efficient on long wire runs under high pressure.
 ## Manual operation
 
 ![Turning the solenoid by hand](../media/valve-solenoid-instruction-manual-turn.gif)
-
-![PGV-100 solenoid close-up — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.](../media/valve-solenoid-photo-pgv-label.jpg)
 
 Turn the solenoid counter-clockwise ¼ to ½ turn to open the valve by hand; clockwise until snug to
 close. The arrows stamped on the solenoid body mark the ON / OFF direction. Useful as a first
@@ -139,8 +135,6 @@ For an AC solenoid running off a mains-powered controller, the replacement is th
 which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
-
-![Solenoid wiring](../media/valve-solenoid-diagram-wiring.png)
 
 Two leads: one to the shared common, one to the station's power wire. Use waterproof connectors —
 corroded joints raise resistance and can blow controller fuses.

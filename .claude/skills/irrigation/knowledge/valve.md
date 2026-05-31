@@ -88,8 +88,6 @@ to its closed position.
 
 ## Flow control adjustment
 
-![Flow control cutaway](../media/valve-cutaway-flow-control.jpg)
-
 The flow control knob behaves like a tap/gate — its job is to allow or restrict the water
 passing through the valve. Mechanically it limits the diaphragm's stroke: the control rests
 on top of the diaphragm and caps how far it can lift, which adds pressure loss and lets you
