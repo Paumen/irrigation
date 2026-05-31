@@ -22,8 +22,6 @@ that will grow when those sources are ingested.
 
 ## Testing voltage at the controller terminals
 
-![Stanley FATMAX FMHT82563-0 — the homeowner's meter; rotary selector OFF (V≈ for AC volts).](../media/multimeter-photo-stanley-fmht82563-front.jpg)
-
 ![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-photo-stanley-fmht82563-leads.jpg)
 
 Irrigation valves are driven by a 24 VAC signal from the controller. Although it is low voltage,

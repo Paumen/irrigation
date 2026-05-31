@@ -32,11 +32,11 @@ next to this file — matching how the agent resolves files at runtime.
 ### F4 — Pump start relay 
 - Local doc: `knowledge/relay.md`.
 - Read when: pump won't start while the controller calls; relay chatters/buzzes; rewiring the relay.
-- Fallback: `media/PSR52.pdf`, then Hunter support (https://www.hunterindustries.com/support).
+- Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ### F5 — Pump 
 - Local doc: none yet.
-- Fallback: DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
+- Fallback: `media/pump-datasheet-dab-jet-102m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
 ### F6 — Main line 
 - Local doc: none yet.
@@ -50,7 +50,7 @@ next to this file — matching how the agent resolves files at runtime.
 ### F7 — Zone valve
 - Local docs: `knowledge/valve.md` (whole-valve, entry point) → deeper: `knowledge/valve-internals.md`, `knowledge/valve-solenoid.md`.
 - Read when: engine points at the valve area; install/replace; "how does it work"; any valve symptom — then go deeper to internals (diaphragm/spring/seat/metering) or solenoid (coil/plunger/ports) as the symptom narrows.
-- Fallback: `media/PGV101G.pdf`, then Hunter support (https://www.hunterindustries.com/support).
+- Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ### F8 — Zone hoses 
 - Local doc: `knowledge/hoses.md` — **partial** (broken-hose signature, field-diagnosis
@@ -68,11 +68,7 @@ next to this file — matching how the agent resolves files at runtime.
   (rotors, regulated bodies, MP nozzles), with the MP ↔ PRS40 pairing and low-head drainage diagnosis.
 - Read when: engine points at the heads area (F9); rotor won't pop up / won't rotate / wrong arc; misting at
   a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
-- Fallback: `media/I20.pdf`, `media/ProSpraytm PRS40.pdf`, `media/Standard MP Rotator Nozzle.pdf`,
-  `media/RC-219-MP820-...pdf` (MP Rotator written specs — has the bar/kPa conversions, materials, mesh
-  sizes), then Hunter support. The `.doc` equivalents for I-20 and Pro-Spray are **older but richer**
-  than the current `.pdf` spec sheets (regulator-activation differential, FloGuard diagnostic, full body
-  dimensions, cap markings) — worth reading when the PDFs don't answer.
+- Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ## Web sources 
 

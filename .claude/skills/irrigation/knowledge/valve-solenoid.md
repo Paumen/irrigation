@@ -67,8 +67,6 @@ calls it, the fault is electrical (wiring, controller, or solenoid coil) rather 
 
 ![Testing solenoid voltage with a multimeter](../media/valve-solenoid-diagram-voltage-test.png)
 
-![Stanley FATMAX FMHT82563-0 — the homeowner's meter; rotary selector OFF (V≈ for AC volts, Ω for resistance).](../media/multimeter-photo-stanley-fmht82563-front.jpg)
-
 ![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-photo-stanley-fmht82563-leads.jpg)
 
 Use the AC-voltage setting. Solenoids have two wires — one common, one station power (commons are
@@ -135,6 +133,8 @@ For an AC solenoid running off a mains-powered controller, the replacement is th
 which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
+
+![The solenoid's two leads at the meter — one to the shared common, one to the station's power wire.](../media/valve-solenoid-diagram-voltage-test.png)
 
 Two leads: one to the shared common, one to the station's power wire. Use waterproof connectors —
 corroded joints raise resistance and can blow controller fuses.

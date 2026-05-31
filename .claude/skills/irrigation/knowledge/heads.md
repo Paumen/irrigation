@@ -109,11 +109,9 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
 ![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](../media/head-rotor-diagram-adjustment-arrows.png)
 
-**Nozzle install / replacement.** Use Hunter's nozzle insertion collar (P/N **123200**) — a white plastic sleeve that clips around the riser body to hold it up while you work — plus the adjustment wrench. The slot layout on the I-20 cap matches the PGP shown in the callout below.
+**Nozzle install / replacement.** Use Hunter's nozzle insertion collar (P/N **123200**) — a white plastic sleeve that clips around the riser body to hold it up while you work — plus the adjustment wrench. The slot layout on the I-20 cap is the same as on the PGP.
 
 ![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](../media/head-rotor-photo-nozzle-insertion-collar.jpg)
-
-![Hunter PGP rotor top callouts — same slot layout as the I-20: Lifting Socket (centre top), Adjustment Socket with +/− (left), Nozzle/Range Adjustment Screw (top right), Model Identification (right).](../media/head-rotor-diagram-pgp-cap-callouts.png)
 
 1. Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
 
@@ -165,8 +163,6 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 - *Removing the last head on a hose (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the hose just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
 
 **Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the hose and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
-
-![Hunter swing joint between the hose and the rotor inlet](../media/fitting-swing-diagram-rotor-connection.png)
 
 ## Pro-Spray PRS40 spray body
 
