@@ -14,7 +14,7 @@ Ground every answer in **this** homeowner's system, not generic memory. Read `se
 - **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
 - **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`causes:`).
 - **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main line, app). Check here before answering from memory.
-- **`media/`** (project root) — vendor PDFs and photos.
+- **`media/`** (inside this skill, next to `images.yaml`) — vendor PDFs and photos.
 
 ## Audience and language
 - Homeowner, not a pro — and not necessarily a developer either. Plain words, no jargon.
@@ -59,7 +59,7 @@ Plain words and European units inside the markers too; the icon points, it doesn
 - Offer the natural pivot when the conversation leans toward a neighbouring intent; route any symptom to `playbooks/troubleshoot.md`.
 
 ## Images
-A picture often replaces three paragraphs. Look the topic up in `images.yaml` and send it with **`SendUserFile`** (absolute path + the manifest `caption:`). Markdown `![](media/...)` does **not** render in the chat UI — the user sees nothing.
+A picture often replaces three paragraphs. Look the topic up in `images.yaml` and send it with **`SendUserFile`**, putting the manifest `caption:` in the tool's `caption`. The manifest's `file:` value (`media/…`) is relative to **this skill folder** (where `media/` and `images.yaml` live together) — prefix the skill's absolute path to send it, e.g. `…/.claude/skills/irrigation/media/…`. Pass a path that actually resolves; a non-existent path makes the send fail silently, which looks to the user like a missing/broken image. Markdown `![](media/...)` does **not** render in the chat UI — the user sees nothing.
 
 ## Safety (applies to every intent)
 Lead these with the **⚠️** marker (see *Reply formatting*) when they land on an action the user is about to take.

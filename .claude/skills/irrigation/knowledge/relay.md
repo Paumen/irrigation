@@ -47,7 +47,7 @@ common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
 ## Controller connection (P/MV + common)
 
-![Controller-to-pump-start-relay wiring — controller's P/MV terminal and common to the relay's yellow leads; 4.5 m minimum separation from the relay's high-voltage side.](media/relay-diagram-controller-wiring.webp)
+![Controller-to-pump-start-relay wiring — controller's P/MV terminal and common to the relay's yellow leads; 4.5 m minimum separation from the relay's high-voltage side.](../media/relay-diagram-controller-wiring.webp)
 
 1. Remove the relay cover plate (four Phillips screws).
 2. Run a single wire from the controller **common** terminal to one yellow relay wire.
