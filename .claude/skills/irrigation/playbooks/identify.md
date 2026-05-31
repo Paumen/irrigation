@@ -10,7 +10,7 @@ Shape tells when there's no label or photo:
 - **Spray body**: "PRS40" on the cap = pressure-regulated 2.8 bar Pro-Spray.
 - **Relay**: cream/grey box, hand-wide, "PSR-22" on the front.
 - **Controller**: RainMachine HD-16 TOUCH — colour touchscreen, 16 zone terminals. (The only controller photo is a similar model, not the HD-16 — caption it "similar layout", never "your controller".)
-- **Wire connector**: little blue/white gel-filled splice on the 24 V wires → 3M Scotchlok 314 (blue cap stamped "3M 314"). For naming/synonyms and buying spares, see `knowledge/wiring.md` → *The connector itself*; image `IMG.wiring-photo-3m-connector-314`.
+- **Wire connector**: little blue/white gel-filled splice on the 24 V wires → 3M Scotchlok 314 (blue cap stamped "3M 314"). For naming/synonyms and buying spares, see `knowledge/wiring.md` → *The connector itself*; image `IMG.wiring-3m-connector-314-photo`.
 
 This homeowner's kit (cache — read `setup.yaml` for live values): controller RainMachine HD-16 TOUCH, relay Hunter PSR-22, pump DAB Jet, four Hunter PGV-101G valves, Hunter I-20-04-SS rotors, Pro-Spray PRS40 bodies carrying MP Rotators.
 
