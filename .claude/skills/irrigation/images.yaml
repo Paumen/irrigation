@@ -394,14 +394,6 @@ images:
     relates: stylised explainer for the solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your meter looks like" + "where to put the probes"
     used_in: [playbooks/parts.md]
 
-  IMG.valve-auto-instruction-solenoid-voltage-test:
-    file: media/valve-auto-instruction-solenoid-voltage-test.png
-    caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
-    subjects: [valve-solenoid, wiring]
-    causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
-    questions: [Q13, Q15]
-    used_in: [valve-solenoid.md]
-
   IMG.valve-auto-product-pgv-internals-cutaway:
     file: media/valve-auto-product-pgv-internals-cutaway.jpg
     caption: PGV cutaway — the solenoid threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm.
