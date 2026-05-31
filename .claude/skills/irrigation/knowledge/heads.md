@@ -25,7 +25,7 @@ Read this when the engine narrows to F9 (rotor debris / nozzle / pressure regula
 
 ## I-20 rotor
 
-![Hunter I-20 rotor — stainless riser, nozzle turret, and pop-up body.](../media/head-rotor-i20-product-photo.png)
+![Hunter I-20 rotor — stainless riser, nozzle turret, and pop-up body.](../media/head_rotor_product_i20.png)
 
 Hunter's mid-range gear-drive rotor. The **I-20-04-SS** variant has a 4" pop-up height, stainless-steel riser, radius setscrew, and FloStop. The rotor's drive is non-strippable, meaning turning the turret backwards by hand will not damage internals.
 
@@ -40,7 +40,7 @@ Hunter's mid-range gear-drive rotor. The **I-20-04-SS** variant has a 4" pop-up 
 - Drain check valve: holds back up to ~3 m (10 ft) of elevation
 - Warranty: 5 years
 
-![Trajectory geometry — A = angle, B = max height of spray, C = distance from head to max height](../media/head-rotor-trajectory-chart-diagram.png)
+![Trajectory geometry — A = angle, B = max height of spray, C = distance from head to max height](../media/head_rotor_breakdown_trajectory_geometry.png)
 
 Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-20 envelope peaks around 3–4 m above grade at 6–10 m out, so a 2 m hedge or fence within ~8 m of the head will clip the stream. Switch to the grey low-angle (13°) nozzle for those spots — peaks at ~1–1.5 m height.
 
@@ -86,13 +86,13 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 
 The I-20 carries four top callouts (visible after pulling the riser up by its lifting socket): **Lifting Socket**, **Arc Adjustment** (left dial), **Nozzle / Radius Adjustment Screw** (top centre), **Flo-Stop** (right dial). Adjustments may be made with water on or off; factory preset is ≈180°.
 
-![I-20 top callouts — Lifting Socket, Arc Adjustment, Nozzle/Radius Adjustment Screw, Flo-Stop](../media/head-rotor-i20-callouts-diagram.png)
+![I-20 top callouts — Lifting Socket, Arc Adjustment, Nozzle/Radius Adjustment Screw, Flo-Stop](../media/head_rotor_breakdown_top_callouts.png)
 
-![Riser pulled up by the lifting socket to access the nozzle and dials in-place](../media/head-rotor-lifting-socket-photo.png)
+![Riser pulled up by the lifting socket to access the nozzle and dials in-place](../media/head_rotor_instruction_lifting_socket.png)
 
 **Hunter adjustment wrench.** The right tool is a Hunter wrench: a 3/32" Allen key on one end, plastic arc-adjustment key on the other, with two finger loops. A bare 3/32" Allen key works for radius adjustment only. The plastic-only consumer key (no Allen end) engages the same lifting / arc / flow-stop sockets and is fine for arc and lift work, but won't drive the radius screw.
 
-![Plastic adjustment key — engages the lifting socket and the arc / flow-stop sockets; same slots as the metal Hunter wrench, consumer variant without the Allen end.](../media/head-rotor-adjustment-key-photo.jpg)
+![Plastic adjustment key — engages the lifting socket and the arc / flow-stop sockets; same slots as the metal Hunter wrench, consumer variant without the Allen end.](../media/head_rotor_product_adjustment_key.jpg)
 
 **Arc adjustment (40°–360°).**
 1. Insert the plastic key end into the arc adjustment socket.
@@ -100,30 +100,30 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 3. Each full 360° turn of the wrench = 90° of arc change. Clockwise increases the arc; counterclockwise decreases it.
 4. The wrench ratchets / stops at the 360° max and at the 40° min — don't force past either.
 
-![Hunter wrench inserted into the arc adjustment socket](../media/head-rotor-arc-wrench-diagram.png)
+![Hunter wrench inserted into the arc adjustment socket](../media/head_rotor_instruction_arc_adjust.png)
 
 **Radius adjustment (up to −25%).**
 1. Insert the 3/32" Allen end into the radius (retention) screw on top of the nozzle.
 2. Clockwise into the stream = shorter throw; counterclockwise = longer throw. Best done with water on so you can see the change.
 3. **Caution: more than five full clockwise turns can drop the screw out of the nozzle.** Replacement screw is sold separately if lost.
 
-![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](../media/head-rotor-adjustment-arrows-diagram.png)
+![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](../media/head_rotor_instruction_arc_radius_adjust.png)
 
 **Nozzle install / replacement.** Use Hunter's nozzle insertion collar (P/N **123200**) — a white plastic sleeve that clips around the riser body to hold it up while you work — plus the adjustment wrench. The slot layout on the I-20 cap is the same as on the PGP.
 
-![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](../media/head-rotor-nozzle-insertion-collar-photo.jpg)
+![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](../media/head_rotor_product_nozzle_collar.jpg)
 
 1. Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
 
-   ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](../media/head-rotor-nozzle-install-step-1-instruction.jpg)
+   ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](../media/head_rotor_instruction_nozzle_install_step_1.jpg)
 
 2. Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
 
-   ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](../media/head-rotor-nozzle-install-step-2-instruction.jpg)
+   ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](../media/head_rotor_instruction_nozzle_install_step_2.jpg)
 
 3. Turn the **nozzle / radius adjustment screw** a **quarter turn clockwise** to lock the nozzle in place. More than a quarter turn starts to reduce the radius — don't over-turn.
 
-   ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](../media/head-rotor-nozzle-install-step-3-instruction.jpg)
+   ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](../media/head_rotor_instruction_nozzle_install_step_3.jpg)
 
 After install: cycle the head a couple of times to confirm the nozzle is locked and the rotor returns to its arc. Use Flo-Stop (below) if you don't want to run the whole zone for that check.
 
@@ -137,11 +137,11 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 5. I-20 filter spec: **.050" (1.27 mm) square openings, ~14 mesh, ~1410 µm**. Replacement P/N **102600-SP** (same screen as PGP-ADJ / PGP Ultra).
 6. If clean filter doesn't restore rotation, the gear drive is gone — replace the rotor.
 
-![Lifting the internal assembly out of the rotor body once the cap is unscrewed](../media/head-rotor-internal-assembly-removal-diagram.png)
+![Lifting the internal assembly out of the rotor body once the cap is unscrewed](../media/head_rotor_instruction_internal_assembly_removal.png)
 
-![Body cap unscrewed and internal assembly fully separated from the body](../media/head-rotor-cap-internals-photo.jpg)
+![Body cap unscrewed and internal assembly fully separated from the body](../media/head_rotor_instruction_cap_removal.jpg)
 
-![Internal assembly (1) with the cylindrical filter screen (2) at its base](../media/head-rotor-filter-exploded-diagram.png)
+![Internal assembly (1) with the cylindrical filter screen (2) at its base](../media/head_rotor_breakdown_filter_screen.png)
 
 **Riser seal replacement (P/N 181500; kit of 10 = 253400).** Worn seals show as water leaking around the riser stem during operation, or as flow-by that prevents pop-up.
 1. Unthread the body cap and remove the internal assembly.

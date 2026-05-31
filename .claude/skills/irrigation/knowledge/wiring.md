@@ -55,7 +55,7 @@ section whenever the homeowner describes *that blue/white thing on the wires* or
 > blauw · wit · op snoer · snoer · snoeren · cable · cables · kabel · kabels · draad · draadjes ·
 > draden · lasdop*
 
-Images: `IMG.wiring-3m-connector-314-photo` (the stamped blue cap) — surface it when showing the
+Images: `IMG.wiring_product_3m_connector_314` (the stamped blue cap) — surface it when showing the
 homeowner what to look for or order.
 
 ## Wire distance vs. gauge
