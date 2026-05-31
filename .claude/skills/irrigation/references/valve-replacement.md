@@ -38,8 +38,8 @@ still be confirmed with `irrigation_hydraulics`; the bigger risks here are
 ### Reading the verdicts
 
 - **✅ Direct drop-in** — unscrew old, thread new in same orientation (flow
-  arrow downstream), move the wires over. Follow the valve steps in
-  `install.md`.
+  arrow downstream), move the wires over. Follow the valve-replacement steps
+  in `../playbooks/parts.md`.
 - **⚠️ Caveat** — it will fit/run, but verify one thing first: **footprint**
   (does the wider/taller body clear the box and neighbouring valves?),
   **controller** (`-DC` needs DC latching; on 24 VAC swap the AC solenoid
@@ -50,37 +50,30 @@ still be confirmed with `irrigation_hydraulics`; the bigger risks here are
 - **❌ Not like-for-like** — wrong size or wrong class (anti-siphon).
   Repiping or a different install procedure; not a swap.
 
-## Related images (linking convention)
+## Related images
 
-There are no part images committed to the repo yet. Proposed convention so
-the agent can show the right picture when discussing a model:
+Use the skill's **existing** image system — don't add a parallel one. Valve
+photos already live in `media/` and are indexed in `images.yaml`; surface
+them with `SendUserFile`, passing the manifest `caption:` (see SKILL.md →
+*Images*). Markdown `![](…)` does not render in the chat UI.
 
-1. **Store images under** `references/images/` next to this file, named by
-   model in lowercase with the suffix preserved, e.g.
-   `references/images/pgv-101g.jpg`, `references/images/pgv-100jt-g.jpg`.
-2. **Keep a manifest** `references/images.yaml` mapping each model (and its
-   aliases) to `{ file, alt, source }` so a model with no local image can
-   still carry a manufacturer URL instead of a broken link:
+Images already on hand for this job (look them up in `images.yaml`, then
+send the `file:`):
+- the installed PGV globe valve — product shot, globe body, cutaway, and the
+  flow-control knob.
+- the PGV **replacement-parts / exploded diagram** — points at the bonnet,
+  diaphragm and solenoid you actually swap.
+- the **bleed screw** and the side **solenoid**, including the **DC-latching**
+  variant — show a homeowner what a `-DC` body looks like before they buy.
+- the **angle-body** PGV (`-A`) — shows the bottom-feed orientation a
+  re-orient would need.
 
-   ```yaml
-   PGV-101G:
-     file: images/pgv-101g.jpg
-     alt: "Hunter PGV-101G 1\" globe valve with flow control"
-     source: "https://www.hunterindustries.com/..."
-   PGV-100JT-G:
-     file: images/pgv-100jt-g.jpg
-     alt: "Hunter PGV-100JT-G jar-top globe valve"
-     source: "https://www.hunterindustries.com/..."
-   ```
-
-3. **Reference images** from Markdown with paths relative to this file:
-   `![Hunter PGV-101G](images/pgv-101g.jpg)`. When a model is only in the
-   manifest as a `source` URL, surface the link rather than embedding.
-4. **Agent behaviour:** when the answer centres on a specific model, look it
-   up in `images.yaml`; if a local `file` exists, embed it, otherwise offer
-   the `source` link. Prefer one image of the *currently installed* valve
-   (PGV-101G) plus, at most, the candidate being compared.
-
-This keeps the table the single source of truth for compatibility and the
-manifest the single source of truth for imagery, so neither has to be
-duplicated inline per row.
+Linking convention (matches the rest of the skill):
+1. One image index only — `images.yaml`. One compatibility index only — this
+   table. Neither duplicates the other.
+2. To cover a model that has no photo yet (jar-top `JT`, `ICV`, `MM`/`MB`/
+   slip, anti-siphon `ASV`), drop the picture in `media/` and add an entry
+   keyed by the model under `subjects:`, with `file:` (path under `media/`)
+   and a `caption:`. It then surfaces the same way as every other image.
+3. When the user is comparing, lead with the **currently installed** valve
+   (PGV-101G) and, at most, the one candidate being weighed — never a gallery.
