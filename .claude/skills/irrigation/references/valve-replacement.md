@@ -71,9 +71,9 @@ Manifest images already on hand, mapped to the rows above (look the ID up in
 | `MM` end type | `IMG.valve-auto-product-pgv-family` — 1" family: 101G, 100G, 101MM, 100MM side by side |
 | PGV-151 (1½") / PGV-201 (2") over-size | `IMG.valve-auto-product-pgv-151g`, `IMG.valve-auto-product-pgv-201g` |
 
-The two `…cutaway` images (`IMG.valve-auto-breakdown-pgv-cutaway`, `IMG.valve-auto-breakdown-pgv-internals-cutaway`)
-are probably a larger PGV-201G body, not the 101G — fine for illustrating how the
-valve works (the hydraulics are common to the family), but don't present them as
+The `…cutaway` image (`IMG.valve-auto-product-pgv-internals-cutaway`)
+is probably a larger PGV-201G body, not the 101G — fine for illustrating how the
+valve works (the hydraulics are common to the family), but don't present it as
 the homeowner's exact valve.
 
 No manifest image yet for: 1" **jar-top** (`…JT-G`), the **ICV** series, the

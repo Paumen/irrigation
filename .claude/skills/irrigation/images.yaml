@@ -42,7 +42,7 @@ images:
     file: media/controller-breakdown-et-schedule.jpg
     caption: Illustrated weather-aware controller — sun/cloud/rain icons drive a daily run-length bar chart; terminals P, C, 1–4, C, R below.
     subjects: [controller]
-    legend: {icons: "sun / cloud / rain — weather inputs that scale daily run length", P: pump / master-valve start, C: common, "1–4": zone station outputs, R: rain-sensor input}
+    legend: {icons: "sun / cloud / rain — weather inputs that scale daily run length", P: pump / master-valve start, C: common, "1–4": zone station outputs, R: relay}
     relates: ET-based scheduling and rain-skip behaviour; useful when explaining what the RainMachine does automatically
     used_in: [playbooks/parts.md, playbooks/upgrades.md]
 
@@ -158,11 +158,10 @@ images:
     relates: rotor nozzle install procedure; do not over-turn the radius reduction screw (limits throw)
     used_in: [heads.md]
 
-  IMG.head-rotor-breakdown-cap-internals:
-    file: media/head-rotor-breakdown-cap-internals.jpg
+  IMG.head-rotor-product-cap-internals:
+    file: media/head-rotor-product-cap-internals.jpg
     caption: Body cap unscrewed and internal assembly lifted out of the rotor body — the access step for filter cleaning, riser-seal replacement, and drain-check-valve install.
     subjects: [heads]
-    legend: {body cap: unscrews to open the rotor body, internal assembly: lifts out for filter / riser-seal / drain-check access}
     causes: [F9, F9.1.1, F9.3, F9.1.2, F9.4]
     relates: body-cap removal; internal-assembly access
     used_in: [heads.md]
@@ -243,11 +242,10 @@ images:
     relates: wireless variant of Solar Sync; useful where running a sensor cable to an indoor controller is impractical
     used_in: [playbooks/upgrades.md]
 
-  IMG.sensor-breakdown-wm-clik-internals:
-    file: media/sensor-breakdown-wm-clik-internals.jpg
+  IMG.sensor-product-wm-clik-internals:
+    file: media/sensor-product-wm-clik-internals.jpg
     caption: WM-CLIK internal switch module — threshold scale showing 3 mm / 6 mm rain calibration steps; UL-listed Class 2 dry-contact output to the dual-conductor blue lead.
     subjects: [controller]
-    legend: {threshold scale: 3 mm / 6 mm rain calibration steps, output: Class 2 dry-contact on the dual-conductor blue lead}
     relates: EU-metric calibration markings; dry-contact wiring to the controller's SEN / COMMON terminals
     used_in: [playbooks/upgrades.md]
 
@@ -404,22 +402,12 @@ images:
     questions: [Q13, Q15]
     used_in: [valve-solenoid.md]
 
-  IMG.valve-auto-breakdown-pgv-cutaway:
-    file: media/valve-auto-breakdown-pgv-cutaway.jpg
-    caption: PGV cutaway, full body — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.
-    subjects: [valve, valve-internals, valve-solenoid]
-    legend: {left: flow control + bleed screw, right: 24 V solenoid, mid-body: diaphragm + metering screen, arrow: inlet → outlet (left to right)}
-    causes: [F7, F7.4]
-    relates: best single illustration of valve hydraulics — pressure balance above/below the diaphragm and the solenoid port. Body model UNCONFIRMED (probably a larger PGV-201G); the hydraulics shown are common to the whole PGV globe family incl. the 101G.
-    used_in: [valve.md]
-
-  IMG.valve-auto-breakdown-pgv-internals-cutaway:
-    file: media/valve-auto-breakdown-pgv-internals-cutaway.jpg
-    caption: PGV cutaway, tighter view — the solenoid threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm.
+  IMG.valve-auto-product-pgv-internals-cutaway:
+    file: media/valve-auto-product-pgv-internals-cutaway.jpg
+    caption: PGV cutaway — the solenoid threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm.
     subjects: [valve-solenoid, valve-internals, valve]
-    legend: {solenoid: threads into the bonnet, plunger: covers the upper-chamber drain port, upper chamber: sits above the diaphragm}
     causes: [F7]
-    relates: closer companion to IMG.valve-auto-breakdown-pgv-cutaway; shows the solenoid entry/exhaust port path through the bonnet; reverse-flow surge-relief context. Body model UNCONFIRMED (probably a larger PGV-201G); the port path is common to the 101G.
+    relates: full-body PGV cutaway render; shows the solenoid entry/exhaust port path through the bonnet and the pressure balance above/below the diaphragm; reverse-flow surge-relief context. Body model UNCONFIRMED (probably a larger PGV-201G); the port path is common to the 101G.
     used_in: [valve-solenoid.md]
 
   IMG.valve-auto-breakdown-exhaust-port-exploded:
@@ -441,11 +429,10 @@ images:
     questions: [Q17]
     used_in: [valve-internals.md]
 
-  IMG.valve-auto-breakdown-diaphragm:
-    file: media/valve-auto-breakdown-diaphragm.jpg
+  IMG.valve-auto-product-diaphragm:
+    file: media/valve-auto-product-diaphragm.jpg
     caption: Diaphragm removed for inspection; check for tears, wrinkles, perforations, metering-port clog.
     subjects: [valve-internals]
-    legend: {inspect for: tears, wrinkles, perforations, metering-port clog}
     causes: [F7, F7.1.2, F7.3.2]
     questions: [Q17]
     used_in: [valve-internals.md]
@@ -463,7 +450,7 @@ images:
     file: media/valve-auto-breakdown-pgv-replacement-parts.png
     caption: PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly (434100 AC / 458200 DC), bonnet, diaphragm assembly (332100), spring (266000), support ring (331300), body, flow control handle.
     subjects: [valve, valve-internals, valve-solenoid]
-    legend: {solenoid assembly: 434100 AC / 458200 DC, diaphragm assembly: "332100", spring: "266000", support ring: "331300", unnumbered: bonnet / body / flow-control handle}
+    legend: {1: "Solenoid Assembly (incl. parts 2 & 3) — 434100 AC / 458200 DC", 2: "O-Ring — 262600", 3: "Solenoid Seal — 364400", 4: "Bonnet Screw — 427300", 5: "Bonnet without Flow Control — 458000", 6: "Bonnet with Flow Control — 435005", 7: "Diaphragm Spring — 266000", 8: "Diaphragm Assembly — 332100", 9: "Diaphragm Support Ring — 331300", 10: "Body — 457700 Fem-NPT / 457705 Fem-BSP / 457710 slip×slip / 433400 M×M NPT / 433405 M×M BSP / 460700 M×barb NPT / 460705 M×barb BSP", 11: "Flow Control Handle — 269200 black / 269205 purple"}
     causes: [F7]
     relates: source for the replacement-part catalog numbers; identify which part to order
     used_in: [valve.md]
