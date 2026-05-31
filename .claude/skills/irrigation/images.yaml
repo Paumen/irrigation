@@ -29,14 +29,6 @@ images:
     relates: illustrative stand-in; not the homeowner's exact model — caption must say "similar" not "your controller"
     used_in: [playbooks/identify.md]
 
-  IMG.fitting-swing-diagram-rotor-connection:
-    file: media/fitting-swing-diagram-rotor-connection.png
-    caption: Hunter swing joint between the hose and the rotor — flexes to absorb shock and lets you set final head height to grade after install.
-    subjects: [heads]
-    causes: [F9, F9.1.1, F9.3, F9.1.2]
-    relates: rotor install/replacement; setting height to grade; reducing lateral stress
-    used_in: [heads.md]
-
   IMG.fitting-swing-photo-product:
     file: media/fitting-swing-photo-product.jpg
     caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the hose.
@@ -98,13 +90,6 @@ images:
     relates: body-cap removal; access to internals
     used_in: [heads.md]
 
-  IMG.head-rotor-diagram-pgp-cap-callouts:
-    file: media/head-rotor-diagram-pgp-cap-callouts.png
-    caption: Hunter PGP rotor top callouts — Lifting Socket (centre top), Adjustment Socket with +/- (left), Nozzle / Range Adjustment Screw (top right), Model Identification (right). Same slot layout as the I-20.
-    subjects: [heads]
-    relates: identify where the adjustment key engages on the rotor cap; pair with IMG.head-rotor-photo-adjustment-key; applies to this homeowner's I-20-04-SS as well as the PGP shown
-    used_in: [heads.md]
-
   IMG.head-rotor-diagram-trajectory-chart:
     file: media/head-rotor-diagram-trajectory-chart.png
     caption: Trajectory geometry — A = degrees of trajectory, B = max height of spray, C = distance from head to maximum height. Use to check head-to-obstruction clearance.
@@ -138,7 +123,7 @@ images:
     file: media/head-rotor-photo-adjustment-key.jpg
     caption: Hunter rotor adjustment key (plastic variant) — engages the lifting socket and the arc / flow-stop / radius sockets on PGP and I-20 rotor caps; same function as the metal Hunter wrench shown elsewhere.
     subjects: [heads]
-    relates: rotor arc / radius / flow-stop adjustment; the metal-wrench equivalent is IMG.head-rotor-diagram-arc-wrench / -adjustment-arrows / IMG.head-rotor-photo-lifting-socket; pair with IMG.head-rotor-diagram-pgp-cap-callouts for "what each slot does"; this homeowner's I-20-04-SS uses the same key pattern as the PGP
+    relates: rotor arc / radius / flow-stop adjustment; the metal-wrench equivalent is IMG.head-rotor-diagram-arc-wrench / -adjustment-arrows / IMG.head-rotor-photo-lifting-socket; this homeowner's I-20-04-SS uses the same key pattern as the PGP
     used_in: [heads.md, playbooks/parts.md]
 
   IMG.head-rotor-photo-cap-internals:
