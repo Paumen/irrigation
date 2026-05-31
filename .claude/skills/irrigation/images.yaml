@@ -284,7 +284,7 @@ images:
     used_in: [relay.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-product:
-    file: media/valve-pgv-photo-product.png
+    file: media/valve-photo-pgv-product.png
     caption: Hunter PGV-100G — 1" globe body, 24 V solenoid on top with looped lead-out, bleed screw, no flow-control knob.
     subjects: [valve, valve-solenoid]
     causes: [F7]
@@ -301,7 +301,7 @@ images:
     used_in: [valve-solenoid.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-lineup:
-    file: media/valve-pgv-photo-family-lineup.jpg
+    file: media/valve-photo-pgv-family-lineup.jpg
     caption: Hunter PGV 1" family lineup — four bodies — PGV-101G (flow control), PGV-100G (no flow control), PGV-101MM and PGV-100MM (male × male thread) — showing threaded-end and flow-control variations.
     subjects: [valve]
     causes: [F7]
@@ -309,7 +309,7 @@ images:
     used_in: [playbooks/identify.md]
 
   IMG.pgv-valve-cutaway:
-    file: media/valve-pgv-cutaway.jpg
+    file: media/valve-cutaway-pgv.jpg
     caption: PGV cutaway (likely a larger PGV-201G body) — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.
     subjects: [valve, valve-internals, valve-solenoid]
     causes: [F7]
@@ -317,7 +317,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-valve-cutaway-internals:
-    file: media/valve-pgv-cutaway-internals.jpg
+    file: media/valve-cutaway-pgv-internals.jpg
     caption: PGV cutaway (tighter view) — the solenoid threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm.
     subjects: [valve-solenoid, valve-internals, valve]
     causes: [F7]
@@ -325,7 +325,7 @@ images:
     used_in: [valve-solenoid.md]
 
   IMG.pgv-install-valve-box:
-    file: media/valve-pgv-diagram-install-box.png
+    file: media/valve-diagram-pgv-install-box.png
     caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; hose to the heads downstream.
     subjects: [valve]
     causes: [F7]
@@ -333,7 +333,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-replacement-parts:
-    file: media/valve-pgv-diagram-replacement-parts.png
+    file: media/valve-diagram-pgv-replacement-parts.png
     caption: PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly (434100 AC / 458200 DC), bonnet, diaphragm assembly (332100), spring (266000), support ring (331300), body, flow control handle.
     subjects: [valve, valve-internals, valve-solenoid]
     causes: [F7]
@@ -341,7 +341,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-valve-globe-101g:
-    file: media/valve-pgv-photo-globe-101g.jpg
+    file: media/valve-photo-pgv-globe-101g.jpg
     caption: Hunter PGV 1" globe with flow control (PGV-101G) — this system's body style; flow control knob on top, solenoid with looped lead, inline ports.
     subjects: [valve]
     causes: [F7]
@@ -349,7 +349,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-valve-globe-100g:
-    file: media/valve-pgv-photo-globe-100g.jpg
+    file: media/valve-photo-pgv-globe-100g.jpg
     caption: Hunter PGV 1" globe, no flow control (PGV-100G) — bleed screw on top, no flow-control knob; solenoid with looped lead, inline ports.
     subjects: [valve]
     causes: [F7]
@@ -357,7 +357,7 @@ images:
     used_in: []
 
   IMG.pgv-valve-angle:
-    file: media/valve-pgv-photo-angle.jpg
+    file: media/valve-photo-pgv-angle.jpg
     caption: Hunter PGV-101A angle body — outlet turns down 90° from the bottom; flow-control knob + bleed screw on top, flow-direction arrow on the body. NOT this system (which is globe).
     subjects: [valve]
     causes: [F7]
@@ -365,7 +365,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-valve-barb:
-    file: media/valve-pgv-photo-barb.jpg
+    file: media/valve-photo-pgv-barb.jpg
     caption: Hunter PGV 1" male-thread × barb (PGV-101MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe hoses; flow-control knob on top. NOT this system.
     subjects: [valve]
     causes: [F7]
@@ -373,7 +373,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-valve-globe-large:
-    file: media/valve-pgv-photo-globe-large.jpg
+    file: media/valve-photo-pgv-globe-large.jpg
     caption: Hunter PGV 1½" globe body (likely PGV-151G) — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial size; NOT this system.
     subjects: [valve]
     causes: [F7]
@@ -381,7 +381,7 @@ images:
     used_in: [valve.md]
 
   IMG.pgv-valve-globe-large-alt:
-    file: media/valve-pgv-photo-globe-large-alt.jpg
+    file: media/valve-photo-pgv-globe-large-alt.jpg
     caption: Hunter PGV 2" globe body (likely PGV-201G) — large jar-top bonnet, non-rising flow control handle. Larger commercial size; NOT this system.
     subjects: [valve]
     causes: [F7]
