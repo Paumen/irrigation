@@ -139,7 +139,7 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 
 ![Lifting the internal assembly out of the rotor body once the cap is unscrewed](../media/head-rotor-instruction-assembly-removal.png)
 
-![Body cap unscrewed and internal assembly fully separated from the body](../media/head-rotor-breakdown-cap-internals.jpg)
+![Body cap unscrewed and internal assembly fully separated from the body](../media/head-rotor-product-cap-internals.jpg)
 
 ![Internal assembly (1) with the cylindrical filter screen (2) at its base](../media/head-rotor-breakdown-filter-exploded.png)
 

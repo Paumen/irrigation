@@ -48,7 +48,7 @@ slowly or stays open indefinitely.
 
 ## Diaphragm failure
 
-![Tear in the diaphragm](../media/valve-auto-breakdown-diaphragm.jpg)
+![Tear in the diaphragm](../media/valve-auto-product-diaphragm.jpg)
 
 A tear, wrinkle, or perforation in the diaphragm stops the valve from closing — the pressure
 balance can no longer hold it on the seat. Inspect for:

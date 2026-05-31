@@ -34,7 +34,7 @@ exhaust/entry ports). Much of what isolates or excludes a valve cause lives in t
 
 ## How the valve works (operation / hydraulics)
 
-![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](../media/valve-auto-breakdown-pgv-cutaway.jpg)
+![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](../media/valve-auto-product-pgv-internals-cutaway.jpg)
 
 Water enters from the system main line and pushes against the centre of the diaphragm.
 A small orifice in the diaphragm lets water bleed through into the upper chamber, between
@@ -88,7 +88,7 @@ to its closed position.
 
 ## Flow control adjustment
 
-![PGV cutaway — the flow control + bleed screw (left) bear on the diaphragm to cap its stroke.](../media/valve-auto-breakdown-pgv-cutaway.jpg)
+![PGV cutaway — the flow control + bleed screw (left) bear on the diaphragm to cap its stroke.](../media/valve-auto-product-pgv-internals-cutaway.jpg)
 
 The flow control knob behaves like a tap/gate — its job is to allow or restrict the water
 passing through the valve. Mechanically it limits the diaphragm's stroke: the control rests
