@@ -191,14 +191,6 @@ images:
     relates: friendlier explainer alternative to the homeowner's real meter photos; handy before the homeowner has the meter in hand
     used_in: [playbooks/parts.md]
 
-  IMG.multimeter-photo-stanley-fmht82563-front:
-    file: media/multimeter-photo-stanley-fmht82563-front.jpg
-    caption: Stanley FATMAX FMHT82563-0 (the homeowner's meter) — front view, rotary selector OFF; V≈ for AC volts, Ω for resistance.
-    subjects: [wiring, valve-solenoid, controller]
-    questions: [Q13, Q14, Q15]
-    relates: which dial position for controller voltage (V≈) vs field-wire / solenoid coil resistance (Ω)
-    used_in: [controller.md, valve-solenoid.md, playbooks/parts.md]
-
   IMG.multimeter-photo-stanley-fmht82563-leads:
     file: media/multimeter-photo-stanley-fmht82563-leads.jpg
     caption: Stanley FATMAX FMHT82563-0 with test leads attached — black to COM, red to VΩ port.
@@ -223,13 +215,6 @@ images:
     relates: top-down PSR-style enclosure interior; orients the user to what's inside before they check whether the contactor switches
     used_in: []
 
-  IMG.sensor-photo-solar-sync:
-    file: media/sensor-photo-solar-sync.jpg
-    caption: Hunter Solar Sync — combined rain + solar / ET sensor; cup on the left catches rain, ribbed module behind it carries the solar sensor; "DRYOUT TIME" knob sets how long the system stays paused after a rain event.
-    subjects: [controller]
-    relates: ET + rain-skip in one wired sensor; mostly relevant to non-RainMachine controllers — the homeowner's HD-16 TOUCH already does ET natively over Wi-Fi
-    used_in: [playbooks/upgrades.md]
-
   IMG.sensor-photo-wind-clik:
     file: media/sensor-photo-wind-clik.jpg
     caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
@@ -244,18 +229,11 @@ images:
     relates: EU-metric calibration markings; dry-contact wiring to the controller's SEN / COMMON terminals
     used_in: [playbooks/upgrades.md]
 
-  IMG.sensor-photo-wm-clik-open:
-    file: media/sensor-photo-wm-clik-open.jpg
-    caption: WM-CLIK with calibration cap removed — exposes the hygroscopic-disc stack inside the metal cup and the switch arm; rainfall-threshold markings on the housing.
-    subjects: [controller]
-    relates: explainer image — how the rain sensor decides "wet enough to skip" (disc stack swells until the arm trips)
-    used_in: [playbooks/upgrades.md]
-
   IMG.sensor-photo-wm-clik-side:
     file: media/sensor-photo-wm-clik-side.jpg
     caption: Hunter WM-CLIK rain sensor — side view; threshold-disc canister on top, calibration cap (1/8"–3/4" / 3–19 mm), spring-loaded vent post, swing bracket on the right.
     subjects: [controller]
-    relates: rain-skip upgrade candidate (note this homeowner's HD-16 TOUCH already gets rain-skip via Wi-Fi / cloud); pair with the open and internals shots to explain how it works
+    relates: rain-skip upgrade candidate (note this homeowner's HD-16 TOUCH already gets rain-skip via Wi-Fi / cloud); pair with the internals shot to explain how it works
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-photo-wss-wireless:

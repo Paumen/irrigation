@@ -67,8 +67,6 @@ calls it, the fault is electrical (wiring, controller, or solenoid coil) rather 
 
 ![Testing solenoid voltage with a multimeter](../media/valve-solenoid-diagram-voltage-test.png)
 
-![Stanley FATMAX FMHT82563-0 — the homeowner's meter; rotary selector OFF (V≈ for AC volts, Ω for resistance).](../media/multimeter-photo-stanley-fmht82563-front.jpg)
-
 ![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-photo-stanley-fmht82563-leads.jpg)
 
 Use the AC-voltage setting. Solenoids have two wires — one common, one station power (commons are
