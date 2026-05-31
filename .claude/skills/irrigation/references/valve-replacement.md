@@ -62,16 +62,16 @@ Manifest images already on hand, mapped to the rows above (look the ID up in
 
 | Table row | `images.yaml` ID |
 |---|---|
-| PGV-101G (installed) | `IMG.valve-pgv-globe-101g-photo` (the only clean standalone 101G shot) |
-| PGV-100G drop-in | `IMG.valve-pgv-globe-100g-photo`, `IMG.valve-pgv-product-photo` — the 100G has the same globe body/threads as your 101G but **no flow-control knob** (bleed screw only on top). |
-| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.valve-pgv-replacement-parts-diagram`, `IMG.valve-bleed-screw-photo` |
+| PGV-101G (installed) | `IMG.valve-auto-product-pgv-101g` (the only clean standalone 101G shot) |
+| PGV-100G drop-in | `IMG.valve-auto-product-pgv-100g-globe`, `IMG.valve-auto-product-pgv-100g` — the 100G has the same globe body/threads as your 101G but **no flow-control knob** (bleed screw only on top). |
+| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.valve-auto-breakdown-pgv-replacement-parts`, `IMG.valve-auto-instruction-bleed-screw-location` |
 | `-DC` controller caveat | *No image* (the DC photos were removed). Describe it: silver/labelled "DC LATCHING" solenoid instead of the "24VAC" one. |
-| `-A` re-orient (angle body) | `IMG.valve-pgv-angle-photo` (a PGV-101A) |
-| `-MB` re-plumb outlet (barb) | `IMG.valve-pgv-barb-photo` (a PGV-101MB) |
-| `MM` end type | `IMG.valve-pgv-family-lineup-photo` — 1" family: 101G, 100G, 101MM, 100MM side by side |
-| PGV-151 (1½") / PGV-201 (2") over-size | `IMG.valve-pgv-globe-151g-photo`, `IMG.valve-pgv-globe-201g-photo` |
+| `-A` re-orient (angle body) | `IMG.valve-auto-product-pgv-101a-angle` (a PGV-101A) |
+| `-MB` re-plumb outlet (barb) | `IMG.valve-auto-product-pgv-101mb-barb` (a PGV-101MB) |
+| `MM` end type | `IMG.valve-auto-product-pgv-family` — 1" family: 101G, 100G, 101MM, 100MM side by side |
+| PGV-151 (1½") / PGV-201 (2") over-size | `IMG.valve-auto-product-pgv-151g`, `IMG.valve-auto-product-pgv-201g` |
 
-The two `…cutaway` images (`IMG.valve-pgv-cutaway`, `IMG.valve-pgv-internals-cutaway`)
+The two `…cutaway` images (`IMG.valve-auto-breakdown-pgv-cutaway`, `IMG.valve-auto-breakdown-pgv-internals-cutaway`)
 are probably a larger PGV-201G body, not the 101G — fine for illustrating how the
 valve works (the hydraulics are common to the family), but don't present them as
 the homeowner's exact valve.

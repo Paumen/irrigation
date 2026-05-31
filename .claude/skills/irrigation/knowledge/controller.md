@@ -22,7 +22,7 @@ that will grow when those sources are ingested.
 
 ## Testing voltage at the controller terminals
 
-![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-stanley-fmht82563-leads-photo.jpg)
+![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/tool-product-multimeter-stanley-fmht82563.jpg)
 
 Irrigation valves are driven by a 24 VAC signal from the controller. Although it is low voltage,
 Hunter still recommends a trained person perform these tests.
