@@ -57,23 +57,26 @@ photos already live in `media/` and are indexed in `images.yaml`; surface
 them with `SendUserFile`, passing the manifest `caption:` (see SKILL.md →
 *Images*). Markdown `![](…)` does not render in the chat UI.
 
-Images already on hand for this job (look them up in `images.yaml`, then
-send the `file:`):
-- the installed PGV globe valve — product shot, globe body, cutaway, and the
-  flow-control knob.
-- the PGV **replacement-parts / exploded diagram** — points at the bonnet,
-  diaphragm and solenoid you actually swap.
-- the **bleed screw** and the side **solenoid**, including the **DC-latching**
-  variant — show a homeowner what a `-DC` body looks like before they buy.
-- the **angle-body** PGV (`-A`) — shows the bottom-feed orientation a
-  re-orient would need.
+Manifest images already on hand, mapped to the rows above (look the ID up in
+`images.yaml`, then send its `file:`):
+
+| Table row | `images.yaml` ID |
+|---|---|
+| PGV-101G (installed) / PGV-100G drop-in | `IMG.pgv-valve-globe-101g`, `IMG.pgv-valve-product`, `IMG.pgv-valve-cutaway`, `IMG.flow-control-cutaway` |
+| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.pgv-replacement-parts`, `IMG.bleed-screw`, `IMG.pgv-valve-solenoid-label` |
+| `-DC` controller caveat | `IMG.pgv-valve-dc-variant`, `IMG.pgv-valve-dc-labelled` (a PGV-101-**MM-DC**), `IMG.pgv-valve-dc-variant-installed` |
+| `-A` re-orient (angle body) | `IMG.pgv-valve-angle` |
+| `-MB` re-plumb outlet (barb) | `IMG.pgv-valve-barb` |
+| `MM` / slip end types | `IMG.pgv-valve-lineup` (family lineup, slip vs threaded ends) |
+| PGV-151 / -201 not-like-for-like size | `IMG.pgv-valve-globe-large` |
+
+No manifest image yet for: 1" **jar-top** (`…JT-G`), the **ICV** series, or
+the anti-siphon (`ASV`). To add one, drop the picture in `media/` and add an
+entry keyed by the model under `subjects:`, with `file:` (path under `media/`)
+and a `caption:` — it then surfaces the same way as every entry above.
 
 Linking convention (matches the rest of the skill):
 1. One image index only — `images.yaml`. One compatibility index only — this
    table. Neither duplicates the other.
-2. To cover a model that has no photo yet (jar-top `JT`, `ICV`, `MM`/`MB`/
-   slip, anti-siphon `ASV`), drop the picture in `media/` and add an entry
-   keyed by the model under `subjects:`, with `file:` (path under `media/`)
-   and a `caption:`. It then surfaces the same way as every other image.
-3. When the user is comparing, lead with the **currently installed** valve
+2. When the user is comparing, lead with the **currently installed** valve
    (PGV-101G) and, at most, the one candidate being weighed — never a gallery.
