@@ -54,8 +54,6 @@ debris causes outsized trouble — they govern the pressure balance, not the mai
 
 ## Parts (external)
 
-![Valve parts callout (1 body, 2 flow control, 3 bleed screw, 4 solenoid)](../media/valve-diagram-parts-callout.gif)
-
 - **Bonnet** — the top section, held by captive bonnet screws (jar-top on some models).
 - **Flow control handle** — limits the diaphragm's stroke to throttle flow/pressure.
 - **Bleed screw** — external manual bleed; releases upper-chamber pressure to open the valve by hand.
@@ -236,7 +234,7 @@ match can be ruled out during identification. Confirm which body is installed fr
 - **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
   non-rising flow control handle; these are the sizes that accept the Accu-Set regulator.
 
-  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](../media/valve-photo-pgv-globe-large.jpg)
+  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](../media/valve-photo-pgv-globe-151g.jpg)
 
 ## Specifications (PGV)
 

@@ -284,14 +284,6 @@ images:
     questions: [Q17]
     used_in: [valve-internals.md]
 
-  IMG.valve-diagram-parts-callout:
-    file: media/valve-diagram-parts-callout.gif
-    caption: External parts callout of the assembled valve — body, flow control, bleed screw and solenoid labelled.
-    subjects: [valve]
-    legend:  1 body, 2 flow control, 3 bleed screw, 4 solenoid
-    causes: [F7, F7.1.1, F7.3.1, F7.1.2, F7.3.2, F7.1.3, F7.4]
-    used_in: [valve.md]
-
   IMG.valve-diagram-pgv-install-box:
     file: media/valve-diagram-pgv-install-box.png
     caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; hose to the heads downstream.
@@ -380,20 +372,20 @@ images:
     relates: matches the homeowner's PGV-101G; body-style identification (globe vs angle vs barb)
     used_in: [valve.md]
 
-  IMG.valve-photo-pgv-globe-large:
-    file: media/valve-photo-pgv-globe-large.jpg
-    caption: Hunter PGV 1½" globe body (likely PGV-151G) — large jar-top bonnet, non-rising flow-control handle, ribbed base. One size up from the homeowner's 1" body; NOT this system.
+  IMG.valve-photo-pgv-globe-151g:
+    file: media/valve-photo-pgv-globe-151g.jpg
+    caption: Hunter PGV-151G — 1½" globe body; large jar-top bonnet, non-rising flow-control handle, ribbed base. One size up from the homeowner's 1" body; NOT this system.
     subjects: [valve]
     causes: [F7]
-    relates: body-style exclusion image — the larger sizes that accept the Accu-Set regulator. Exact size UNCONFIRMED (probably 1½" PGV-151G). The 2" sibling is IMG.valve-photo-pgv-globe-xlarge.
+    relates: body-style exclusion image — the larger sizes that accept the Accu-Set regulator. The 2" sibling is IMG.valve-photo-pgv-globe-201g.
     used_in: [valve.md]
 
-  IMG.valve-photo-pgv-globe-xlarge:
-    file: media/valve-photo-pgv-globe-xlarge.jpg
-    caption: Hunter PGV 2" globe body (likely PGV-201G) — large jar-top bonnet, non-rising flow-control handle. The bigger sibling of the 1½" IMG.valve-photo-pgv-globe-large; NOT this system.
+  IMG.valve-photo-pgv-globe-201g:
+    file: media/valve-photo-pgv-globe-201g.jpg
+    caption: Hunter PGV-201G — 2" globe body; large jar-top bonnet, non-rising flow-control handle. The bigger sibling of the 1½" IMG.valve-photo-pgv-globe-151g; NOT this system.
     subjects: [valve]
     causes: [F7]
-    relates: body-style exclusion image — largest globe body, one size up from IMG.valve-photo-pgv-globe-large. Exact size UNCONFIRMED (probably 2" PGV-201G).
+    relates: body-style exclusion image — largest globe body, one size up from IMG.valve-photo-pgv-globe-151g.
     used_in: []
 
   IMG.valve-photo-pgv-product:

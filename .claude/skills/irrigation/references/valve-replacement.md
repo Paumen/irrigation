@@ -69,7 +69,7 @@ Manifest images already on hand, mapped to the rows above (look the ID up in
 | `-A` re-orient (angle body) | `IMG.valve-photo-pgv-angle` (a PGV-101A) |
 | `-MB` re-plumb outlet (barb) | `IMG.valve-photo-pgv-barb` (a PGV-101MB) |
 | `MM` end type | `IMG.valve-photo-pgv-family-lineup` — 1" family: 101G, 100G, 101MM, 100MM side by side |
-| PGV-151 (1½") / PGV-201 (2") over-size | `IMG.valve-photo-pgv-globe-large` (likely 151G), `IMG.valve-photo-pgv-globe-xlarge` (likely 201G) — exact sizes unconfirmed |
+| PGV-151 (1½") / PGV-201 (2") over-size | `IMG.valve-photo-pgv-globe-151g`, `IMG.valve-photo-pgv-globe-201g` |
 
 The two `…cutaway` images (`IMG.valve-cutaway-pgv`, `IMG.valve-cutaway-pgv-internals`)
 are probably a larger PGV-201G body, not the 101G — fine for illustrating how the
