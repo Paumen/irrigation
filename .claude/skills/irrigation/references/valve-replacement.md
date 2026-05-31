@@ -62,9 +62,9 @@ Manifest images already on hand, mapped to the rows above (look the ID up in
 
 | Table row | `images.yaml` ID |
 |---|---|
-| PGV-101G (installed) | `IMG.pgv-valve-globe-101g` (the only clean standalone 101G shot), `IMG.flow-control-cutaway` (probably a larger body, but the flow-control mechanism is the same) |
+| PGV-101G (installed) | `IMG.pgv-valve-globe-101g` (the only clean standalone 101G shot) |
 | PGV-100G drop-in | `IMG.pgv-valve-globe-100g`, `IMG.pgv-valve-product` — the 100G has the same globe body/threads as your 101G but **no flow-control knob** (bleed screw only on top). |
-| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.pgv-replacement-parts`, `IMG.bleed-screw`, `IMG.pgv-valve-solenoid-label` (the 24 VAC solenoid, shown on a 101MM body — same solenoid as yours) |
+| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.pgv-replacement-parts`, `IMG.bleed-screw` |
 | `-DC` controller caveat | *No image* (the DC photos were removed). Describe it: silver/labelled "DC LATCHING" solenoid instead of the "24VAC" one. |
 | `-A` re-orient (angle body) | `IMG.pgv-valve-angle` (a PGV-101A) |
 | `-MB` re-plumb outlet (barb) | `IMG.pgv-valve-barb` (a PGV-101MB) |

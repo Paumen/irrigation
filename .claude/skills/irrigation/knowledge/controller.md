@@ -22,10 +22,6 @@ that will grow when those sources are ingested.
 
 ## Testing voltage at the controller terminals
 
-![Multimeter at controller reading ~26 VAC](../media/controller-diagram-voltage-reading.png)
-
-![Probes on the C and station terminals at the controller](../media/controller-diagram-probe-placement.png)
-
 ![Stanley FATMAX FMHT82563-0 — the homeowner's meter; rotary selector OFF (V≈ for AC volts).](../media/multimeter-photo-stanley-fmht82563-front.jpg)
 
 ![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-photo-stanley-fmht82563-leads.jpg)
