@@ -17,7 +17,7 @@ images:
     file: media/controller-diagram-probe-illustrated.jpg
     caption: Illustrated probe placement at the controller terminals — red lead on the station terminal, black lead on C / COM, ET bar chart visible above.
     subjects: [controller, wiring]
-    causes: [F2]
+    causes: [F2, F2.1, F2.8, F2.5, F2.6]
     questions: [Q13, Q14]
     relates: stylised explainer for the controller voltage / field-wire resistance check; pairs with the real Stanley FATMAX photo
     used_in: [playbooks/parts.md]
@@ -40,6 +40,7 @@ images:
     file: media/fitting-swing-photo-rotor-install.jpg
     caption: Cross-section illustration — pop-up rotor installed via a swing joint onto a buried hose; head sits flush with grade, swing joint hidden in the soil.
     subjects: [heads, hoses]
+    causes: [F9, F9.1.1, F9.3, F9.1.2]
     relates: rotor install reference; pair with IMG.fitting-swing-photo-product for "what it is" + "how it sits in the soil"
     used_in: [playbooks/parts.md]
 
@@ -247,7 +248,7 @@ images:
     file: media/valve-cutaway-pgv.jpg
     caption: PGV cutaway, full body — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.
     subjects: [valve, valve-internals, valve-solenoid]
-    causes: [F7]
+    causes: [F7, F7.4]
     relates: best single illustration of valve hydraulics — pressure balance above/below the diaphragm and the solenoid port. Body model UNCONFIRMED (probably a larger PGV-201G); the hydraulics shown are common to the whole PGV globe family incl. the 101G.
     used_in: [valve.md]
 
@@ -328,7 +329,7 @@ images:
     file: media/valve-photo-external-leak-points.png
     caption: External-leak inspection points — bonnet screws, bleed screw, solenoid, body.
     subjects: [valve]
-    causes: [F7, F7.1.3, F7.4]
+    causes: [F7, F7.1.1, F7.3.1, F7.1.2, F7.3.2, F7.1.3, F7.4]
     questions: [Q18]
     used_in: [valve.md]
 
@@ -408,7 +409,7 @@ images:
   IMG.valve-solenoid-diagram-voltage-test:
     file: media/valve-solenoid-diagram-voltage-test.png
     caption: Multimeter on AC volts at the solenoid leads, station active — expect 24–28 VAC.
-    subjects: [valve-solenoid]
+    subjects: [valve-solenoid, wiring]
     causes: [F3, F7, F3.1.1, F3.1.2, F3.1.3, F7.1.1, F7.3.1]
     questions: [Q13, Q15]
     used_in: [valve-solenoid.md]
