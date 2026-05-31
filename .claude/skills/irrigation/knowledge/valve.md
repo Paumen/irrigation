@@ -30,11 +30,11 @@ the valve works. The dense interior is split out: see `valve-internals.md` (diap
 spring, seat, support ring, metering ports) and `valve-solenoid.md` (coil, plunger,
 exhaust/entry ports). Much of what isolates or excludes a valve cause lives in those two.
 
-![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](../media/valve-pgv-photo-product.png)
+![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](../media/valve-photo-pgv-product.png)
 
 ## How the valve works (operation / hydraulics)
 
-![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](../media/valve-pgv-cutaway.jpg)
+![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](../media/valve-cutaway-pgv.jpg)
 
 Water enters from the system main line and pushes against the centre of the diaphragm.
 A small orifice in the diaphragm lets water bleed through into the upper chamber, between
@@ -147,7 +147,7 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ![Flow direction — arrow toward the heads](../media/valve-diagram-flow-direction.png)
 
-![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](../media/valve-pgv-diagram-install-box.png)
+![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](../media/valve-diagram-pgv-install-box.png)
 
 **Placement.** Put the valve manifold somewhere accessible for maintenance, close to the
 area the valves serve, but positioned so you are not sprayed when you operate the system by hand.
@@ -221,24 +221,24 @@ The PGV family comes in several body styles. This whole-valve reference document
 with flow control (PGV-101G)** — the first one below. The others are shown so a body that doesn't
 match can be ruled out during identification. Confirm which body is installed from `setup.yaml`.
 
-![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-pgv-photo-globe-101g.jpg)
+![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-photo-pgv-globe-101g.jpg)
 
 - **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
   and bleed on top. The reference above describes this body.
 - **Angle (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
   deep main line; lower pressure loss than globe. Flow-direction arrow on the body.
 
-  ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-pgv-photo-angle.jpg)
+  ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-photo-pgv-angle.jpg)
 
 - **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe hoses (common in cold-climate
   installs) — saves threading an adapter.
 
-  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Other body style, for identification.](../media/valve-pgv-photo-barb.jpg)
+  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Other body style, for identification.](../media/valve-photo-pgv-barb.jpg)
 
 - **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
   non-rising flow control handle; these are the sizes that accept the Accu-Set regulator.
 
-  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](../media/valve-pgv-photo-globe-large.jpg)
+  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](../media/valve-photo-pgv-globe-large.jpg)
 
 ## Specifications (PGV)
 
@@ -288,7 +288,7 @@ When servicing, this is the screen to clean of grit; on well-fed systems this is
 
 ## Replacement parts (PGV-101G — 1" globe, NPT, with flow control)
 
-![PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly, bonnet, diaphragm assembly, spring, support ring, body, flow control handle.](../media/valve-pgv-diagram-replacement-parts.png)
+![PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly, bonnet, diaphragm assembly, spring, support ring, body, flow control handle.](../media/valve-diagram-pgv-replacement-parts.png)
 
 The parts the homeowner can actually swap, with Hunter catalog numbers:
 

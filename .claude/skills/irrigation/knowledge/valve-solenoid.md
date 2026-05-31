@@ -39,7 +39,7 @@ There is an **entry port** from the valve upper chamber to the solenoid and an *
 from the solenoid to downstream in the valve. If either clogs with debris, the valve may not open,
 or not open fully.
 
-![PGV cutaway — the solenoid (right) threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm. Flow runs inlet → outlet, left to right.](../media/valve-pgv-cutaway-internals.jpg)
+![PGV cutaway — the solenoid (right) threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm. Flow runs inlet → outlet, left to right.](../media/valve-cutaway-pgv-internals.jpg)
 
 **Reverse-flow design (why it matters for surges).** The Hunter solenoid runs on a *reverse-flow*
 principle: the centre hole in the solenoid bowl is the inlet port, not the exhaust. One practical
