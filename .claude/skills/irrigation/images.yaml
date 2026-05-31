@@ -213,7 +213,7 @@ images:
     causes: [F4]
     questions: [Q20]
     relates: top-down PSR-style enclosure interior; orients the user to what's inside before they check whether the contactor switches
-    used_in: []
+    used_in: [relay.md]
 
   IMG.sensor-photo-wind-clik:
     file: media/sensor-photo-wind-clik.jpg

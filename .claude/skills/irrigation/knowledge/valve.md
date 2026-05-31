@@ -54,6 +54,8 @@ debris causes outsized trouble — they govern the pressure balance, not the mai
 
 ## Parts (external)
 
+![External parts of the valve — bonnet screws, bleed screw, solenoid, body.](../media/valve-photo-external-leak-points.png)
+
 - **Bonnet** — the top section, held by captive bonnet screws (jar-top on some models).
 - **Flow control handle** — limits the diaphragm's stroke to throttle flow/pressure.
 - **Bleed screw** — external manual bleed; releases upper-chamber pressure to open the valve by hand.
@@ -85,6 +87,8 @@ end. The valve closes within about 15 seconds after the solenoid or bleed screw 
 to its closed position.
 
 ## Flow control adjustment
+
+![PGV cutaway — the flow control + bleed screw (left) bear on the diaphragm to cap its stroke.](../media/valve-cutaway-pgv.jpg)
 
 The flow control knob behaves like a tap/gate — its job is to allow or restrict the water
 passing through the valve. Mechanically it limits the diaphragm's stroke: the control rests

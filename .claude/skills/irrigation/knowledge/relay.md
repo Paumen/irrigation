@@ -47,6 +47,8 @@ common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
 ## Controller connection (P/MV + common)
 
+![Relay enclosure cutaway — contactor with high-voltage leads up top, low-voltage terminals below, gel-cap connectors at the bottom.](../media/relay-cutaway-enclosure.png)
+
 1. Remove the relay cover plate (four Phillips screws).
 2. Run a single wire from the controller **common** terminal to one yellow relay wire.
 3. Run a single wire from the controller **MV/Pump** terminal to the other yellow relay wire.

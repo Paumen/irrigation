@@ -134,6 +134,8 @@ which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.m
 
 ## Wiring to the solenoid
 
+![The solenoid's two leads at the meter — one to the shared common, one to the station's power wire.](../media/valve-solenoid-diagram-voltage-test.png)
+
 Two leads: one to the shared common, one to the station's power wire. Use waterproof connectors —
 corroded joints raise resistance and can blow controller fuses.
 
