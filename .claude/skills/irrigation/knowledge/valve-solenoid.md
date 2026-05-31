@@ -37,7 +37,7 @@ There is an **entry port** from the valve upper chamber to the solenoid and an *
 from the solenoid to downstream in the valve. If either clogs with debris, the valve may not open,
 or not open fully.
 
-![PGV cutaway — the solenoid (right) threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm. Flow runs inlet → outlet, left to right.](../media/valve-cutaway-pgv-internals.jpg)
+![PGV cutaway — the solenoid (right) threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm. Flow runs inlet → outlet, left to right.](../media/valve-pgv-internals-cutaway.jpg)
 
 **Reverse-flow design (why it matters for surges).** The Hunter solenoid runs on a *reverse-flow*
 principle: the centre hole in the solenoid bowl is the inlet port, not the exhaust. One practical
@@ -49,7 +49,7 @@ efficient on long wire runs under high pressure.
 
 ## Manual operation
 
-![Turning the solenoid by hand](../media/valve-solenoid-instruction-manual-turn.gif)
+![Turning the solenoid by hand](../media/valve-solenoid-manual-turn-instruction.gif)
 
 Turn the solenoid counter-clockwise ¼ to ½ turn to open the valve by hand; clockwise until snug to
 close. The arrows stamped on the solenoid body mark the ON / OFF direction. Useful as a first
@@ -65,9 +65,9 @@ calls it, the fault is electrical (wiring, controller, or solenoid coil) rather 
 
 ## Testing solenoid voltage
 
-![Testing solenoid voltage with a multimeter](../media/valve-solenoid-diagram-voltage-test.png)
+![Testing solenoid voltage with a multimeter](../media/valve-solenoid-voltage-test-diagram.png)
 
-![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-photo-stanley-fmht82563-leads.jpg)
+![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/multimeter-stanley-fmht82563-leads-photo.jpg)
 
 Use the AC-voltage setting. Solenoids have two wires — one common, one station power (commons are
 usually shared across the system to save wire). With the station activated, place one probe on the
@@ -104,7 +104,7 @@ it still binds, replace the solenoid.
 
 ## Clogged exhaust / entry ports (flush procedure)
 
-![Bonnet, spring, diaphragm and support ring lifted out; exhaust port in the valve body](../media/valve-diagram-exhaust-port-exploded.png)
+![Bonnet, spring, diaphragm and support ring lifted out; exhaust port in the valve body](../media/valve-exhaust-port-exploded-diagram.png)
 
 If the valve turns on via the external bleed screw but not electrically, suspect a port clog.
 
@@ -121,7 +121,7 @@ If the valve turns on via the external bleed screw but not electrically, suspect
 
 ## Replacing the solenoid
 
-![Replacement valve solenoid — black cylindrical body, looped 24 V leads, threaded base with O-ring. Form factor matches the PGV; verify coil resistance (20–60 Ω) and thread before swapping.](../media/valve-solenoid-photo-replacement.jpg)
+![Replacement valve solenoid — black cylindrical body, looped 24 V leads, threaded base with O-ring. Form factor matches the PGV; verify coil resistance (20–60 Ω) and thread before swapping.](../media/valve-solenoid-replacement-photo.jpg)
 
 If the controller delivers correct voltage (24–28 VAC) at the valve's wire connection and the valve
 still won't operate, replace the solenoid. Shut off, unscrew the old solenoid counter-clockwise,
@@ -134,7 +134,7 @@ which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.m
 
 ## Wiring to the solenoid
 
-![The solenoid's two leads at the meter — one to the shared common, one to the station's power wire.](../media/valve-solenoid-diagram-voltage-test.png)
+![The solenoid's two leads at the meter — one to the shared common, one to the station's power wire.](../media/valve-solenoid-voltage-test-diagram.png)
 
 Two leads: one to the shared common, one to the station's power wire. Use waterproof connectors —
 corroded joints raise resistance and can blow controller fuses.
