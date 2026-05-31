@@ -10,8 +10,8 @@ Each subject doc carries its own `summary` / `read_when` / `contents` front-matt
 signal living with the file, so grep and retrieval-tool reads resolve without this table. This table
 is the explicit path map for whole-file / by-path reads.
 
-Paths are project-root-relative (`knowledge/…`, `media/…`), matching how the agent resolves files at
-runtime.
+Paths (`knowledge/…`, `media/…`) are relative to this skill folder — both directories live here,
+next to this file — matching how the agent resolves files at runtime.
 
 ## Routing by root-cause area
 

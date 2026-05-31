@@ -4,6 +4,11 @@
 # root-cause areas / engine questions it serves. Docs embed images by path (media/<file>);
 # this file is the lookup an agent uses to find the right image to surface to the homeowner.
 #
+# PATHS: every `file:` value (media/<file>) is relative to THIS skill folder — media/ lives
+# right here, next to images.yaml. To surface one with SendUserFile, prefix the skill's
+# absolute path: <…>/.claude/skills/irrigation/media/<file>. Always pass a path that
+# resolves; a non-existent path makes the send fail silently.
+#
 # Conventions:
 #   subjects  -> which knowledge/ docs the image belongs to
 #   causes    -> failure codes (F-codes) the image helps with; carries BOTH the area code (e.g. F7)
