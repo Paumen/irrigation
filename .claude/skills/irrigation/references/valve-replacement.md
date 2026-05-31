@@ -62,19 +62,25 @@ Manifest images already on hand, mapped to the rows above (look the ID up in
 
 | Table row | `images.yaml` ID |
 |---|---|
-| PGV-101G (installed) | `IMG.pgv-valve-globe-101g`, `IMG.pgv-valve-product`, `IMG.pgv-valve-cutaway`, `IMG.flow-control-cutaway` |
-| PGV-100G drop-in | *No dedicated image.* Same globe body, but **no flow-control knob on top** — so it does **not** look like the 101G shots above. Use the 101G image only to show the body/threads, and say the 100G top is bare (bleed screw only, no knob). |
-| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.pgv-replacement-parts`, `IMG.bleed-screw`, `IMG.pgv-valve-solenoid-label` |
-| `-DC` controller caveat | `IMG.pgv-valve-dc-variant`, `IMG.pgv-valve-dc-labelled` (a PGV-101-**MM-DC**), `IMG.pgv-valve-dc-variant-installed` |
-| `-A` re-orient (angle body) | `IMG.pgv-valve-angle` |
-| `-MB` re-plumb outlet (barb) | `IMG.pgv-valve-barb` |
-| `MM` / slip end types | `IMG.pgv-valve-lineup` (family lineup, slip vs threaded ends) |
-| PGV-151 / -201 not-like-for-like size | `IMG.pgv-valve-globe-large` |
+| PGV-101G (installed) | `IMG.pgv-valve-globe-101g` (the only clean standalone 101G shot), `IMG.flow-control-cutaway` (probably a larger body, but the flow-control mechanism is the same) |
+| PGV-100G drop-in | `IMG.pgv-valve-globe-100g`, `IMG.pgv-valve-product` — the 100G has the same globe body/threads as your 101G but **no flow-control knob** (bleed screw only on top). |
+| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.pgv-replacement-parts`, `IMG.bleed-screw`, `IMG.pgv-valve-solenoid-label` (the 24 VAC solenoid, shown on a 101MM body — same solenoid as yours) |
+| `-DC` controller caveat | *No image* (the DC photos were removed). Describe it: silver/labelled "DC LATCHING" solenoid instead of the "24VAC" one. |
+| `-A` re-orient (angle body) | `IMG.pgv-valve-angle` (a PGV-101A) |
+| `-MB` re-plumb outlet (barb) | `IMG.pgv-valve-barb` (a PGV-101MB) |
+| `MM` end type | `IMG.pgv-valve-lineup` — 1" family: 101G, 100G, 101MM, 100MM side by side |
+| PGV-151 (1½") / PGV-201 (2") over-size | `IMG.pgv-valve-globe-large` (likely 151G), `IMG.pgv-valve-globe-large-alt` (likely 201G) — exact sizes unconfirmed |
 
-No manifest image yet for: 1" **jar-top** (`…JT-G`), the **ICV** series, or
-the anti-siphon (`ASV`). To add one, drop the picture in `media/` and add an
-entry keyed by the model under `subjects:`, with `file:` (path under `media/`)
-and a `caption:` — it then surfaces the same way as every entry above.
+The two `…cutaway` images (`IMG.pgv-valve-cutaway`, `IMG.pgv-valve-cutaway-internals`)
+are probably a larger PGV-201G body, not the 101G — fine for illustrating how the
+valve works (the hydraulics are common to the family), but don't present them as
+the homeowner's exact valve.
+
+No manifest image yet for: 1" **jar-top** (`…JT-G`), the **ICV** series, the
+anti-siphon (`ASV`), or the **`-DC` solenoid** (those photos were removed). To
+add one, drop the picture in `media/` and add an entry keyed by the model under
+`subjects:`, with `file:` (path under `media/`) and a `caption:` — it then
+surfaces the same way as every entry above.
 
 Linking convention (matches the rest of the skill):
 1. One image index only — `images.yaml`. One compatibility index only — this

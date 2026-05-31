@@ -36,7 +36,7 @@ images:
     caption: Cutaway of the flow control resting on the diaphragm, limiting its stroke.
     subjects: [valve]
     causes: [F7, F7.4]
-    relates: flow control adjustment
+    relates: flow control adjustment. Body model UNCONFIRMED (probably a larger PGV-201G); the flow-control mechanism shown is common to the 101G.
     used_in: [valve.md]
 
   IMG.flow-direction:
@@ -285,51 +285,35 @@ images:
 
   IMG.pgv-valve-product:
     file: media/valve-pgv-photo-product.png
-    caption: Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.
+    caption: Hunter PGV-100G — 1" globe body, 24 V solenoid on top with looped lead-out, bleed screw, no flow-control knob.
     subjects: [valve, valve-solenoid]
     causes: [F7]
-    relates: product view for identify.md; matches the homeowner's PGV-101G profile
+    relates: PGV-100G product view; the no-flow-control sibling of the homeowner's 101G
     used_in: [valve.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-solenoid-label:
     file: media/valve-solenoid-photo-pgv-label.jpg
-    caption: PGV-100 solenoid close-up — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.
+    caption: PGV solenoid close-up (on a PGV-101MM male × male body) — "24VAC SOLENOID PAT. NO. 5979482" stamped on the body; ¼-turn ON/OFF arrows for manual operation.
     subjects: [valve-solenoid, valve]
     causes: [F7]
     questions: [Q12]
-    relates: identify the solenoid by stamped text; ¼-turn manual operation reference
+    relates: identify the solenoid by stamped text; ¼-turn manual operation reference. Same 24 VAC solenoid the homeowner's 101G uses (shown here on a 101MM body).
     used_in: [valve-solenoid.md, playbooks/parts.md, playbooks/identify.md]
 
   IMG.pgv-valve-lineup:
     file: media/valve-pgv-photo-family-lineup.jpg
-    caption: Hunter PGV-100 family lineup — four bodies showing slip vs threaded ends and minor body variations.
+    caption: Hunter PGV 1" family lineup — four bodies — PGV-101G (flow control), PGV-100G (no flow control), PGV-101MM and PGV-100MM (male × male thread) — showing threaded-end and flow-control variations.
     subjects: [valve]
     causes: [F7]
-    relates: identify which PGV variant the homeowner has (slip-FIP, threaded-MM, etc.)
-    used_in: [playbooks/identify.md]
-
-  IMG.pgv-valve-dc-variant:
-    file: media/valve-pgv-photo-dc-variant.jpg
-    caption: PGV with DC latching solenoid variant — silver "DC LATCHING SOLENOID" label and two-wire lead. NOT the homeowner's setup; this homeowner's PGV-101G uses a 24 VAC solenoid.
-    subjects: [valve, valve-solenoid]
-    causes: [F7]
-    relates: exclusion image — use to confirm the homeowner does NOT have the DC-latching version
-    used_in: [playbooks/identify.md]
-
-  IMG.pgv-valve-dc-labelled:
-    file: media/valve-pgv-photo-dc-labelled.jpg
-    caption: Hunter PGV-101-MM-DC labelled — male-male threaded body with DC latching solenoid (p/n 458200). NOT the homeowner's model; included for identify-mismatch context.
-    subjects: [valve, valve-solenoid]
-    causes: [F7]
-    relates: exclusion image with explicit part number; pair with IMG.pgv-valve-product to contrast AC vs DC variants
+    relates: identify which PGV variant the homeowner has (101G vs 100G vs MM); the homeowner's is the 101G (flow control, female thread)
     used_in: [playbooks/identify.md]
 
   IMG.pgv-valve-cutaway:
     file: media/valve-pgv-cutaway.jpg
-    caption: PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.
+    caption: PGV cutaway (likely a larger PGV-201G body) — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.
     subjects: [valve, valve-internals, valve-solenoid]
     causes: [F7]
-    relates: best single illustration of valve hydraulics — pressure balance above/below the diaphragm and the solenoid port
+    relates: best single illustration of valve hydraulics — pressure balance above/below the diaphragm and the solenoid port. Body model UNCONFIRMED (probably PGV-201G); the hydraulics it shows are common to the whole PGV globe family incl. the 101G.
     used_in: [valve.md]
 
   IMG.pgv-valve-cutaway-internals:
@@ -337,7 +321,7 @@ images:
     caption: PGV cutaway (tighter view) — the solenoid threads into the bonnet; its plunger covers the port that drains the upper chamber above the diaphragm.
     subjects: [valve-solenoid, valve-internals, valve]
     causes: [F7]
-    relates: shows the solenoid entry/exhaust port path through the bonnet; reverse-flow surge-relief context
+    relates: shows the solenoid entry/exhaust port path through the bonnet; reverse-flow surge-relief context. Body model UNCONFIRMED (probably a larger PGV-201G); the port path shown is common to the 101G.
     used_in: [valve-solenoid.md]
 
   IMG.pgv-install-valve-box:
@@ -364,17 +348,17 @@ images:
     relates: matches the homeowner's PGV-101G; body-style identification (globe vs angle vs barb)
     used_in: [valve.md]
 
-  IMG.pgv-valve-globe-101g-alt:
-    file: media/valve-pgv-photo-globe-101g-alt.jpg
-    caption: Hunter PGV 1" globe with flow control (PGV-101G) — alternate product view.
+  IMG.pgv-valve-globe-100g:
+    file: media/valve-pgv-photo-globe-100g.jpg
+    caption: Hunter PGV 1" globe, no flow control (PGV-100G) — bleed screw on top, no flow-control knob; solenoid with looped lead, inline ports.
     subjects: [valve]
     causes: [F7]
-    relates: alternate view of IMG.pgv-valve-globe-101g
+    relates: PGV-100G — the no-flow-control sibling of the homeowner's 101G; body/threads identical, top differs (no knob)
     used_in: []
 
   IMG.pgv-valve-angle:
     file: media/valve-pgv-photo-angle.jpg
-    caption: Hunter PGV angle body (PGV-100A/101A) — outlet turns down 90° from the bottom; flow-direction arrow on the body. NOT this system (which is globe).
+    caption: Hunter PGV-101A angle body — outlet turns down 90° from the bottom; flow-control knob + bleed screw on top, flow-direction arrow on the body. NOT this system (which is globe).
     subjects: [valve]
     causes: [F7]
     relates: body-style exclusion image — confirm the homeowner does NOT have the angle body
@@ -382,7 +366,7 @@ images:
 
   IMG.pgv-valve-barb:
     file: media/valve-pgv-photo-barb.jpg
-    caption: Hunter PGV 1" male-thread × barb (PGV-100MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe hoses. NOT this system.
+    caption: Hunter PGV 1" male-thread × barb (PGV-101MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe hoses; flow-control knob on top. NOT this system.
     subjects: [valve]
     causes: [F7]
     relates: body-style exclusion image — barbed poly-pipe outlet variant
@@ -390,18 +374,18 @@ images:
 
   IMG.pgv-valve-globe-large:
     file: media/valve-pgv-photo-globe-large.jpg
-    caption: Hunter PGV 1½"/2" globe/angle body (PGV-151/201) — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes; NOT this system.
+    caption: Hunter PGV 1½" globe body (likely PGV-151G) — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial size; NOT this system.
     subjects: [valve]
     causes: [F7]
-    relates: body-style exclusion image — the sizes that accept the Accu-Set regulator
+    relates: body-style exclusion image — the larger sizes that accept the Accu-Set regulator. Exact size UNCONFIRMED (probably 1½" PGV-151G).
     used_in: [valve.md]
 
   IMG.pgv-valve-globe-large-alt:
     file: media/valve-pgv-photo-globe-large-alt.jpg
-    caption: Hunter PGV 1½"/2" globe/angle body (PGV-151/201) — alternate product view.
+    caption: Hunter PGV 2" globe body (likely PGV-201G) — large jar-top bonnet, non-rising flow control handle. Larger commercial size; NOT this system.
     subjects: [valve]
     causes: [F7]
-    relates: alternate view of IMG.pgv-valve-globe-large
+    relates: larger PGV body, companion to IMG.pgv-valve-globe-large. Exact size UNCONFIRMED (probably 2" PGV-201G).
     used_in: []
 
   IMG.valve-solenoid-probe-illustrated:
@@ -607,14 +591,6 @@ images:
     causes: [F7]
     relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; pair with pgv-valve-solenoid-label to compare with the installed unit before ordering
     used_in: [valve-solenoid.md, playbooks/parts.md]
-
-  IMG.pgv-valve-dc-variant-installed:
-    file: media/valve-pgv-photo-dc-variant-installed.png
-    caption: Hunter PGV with DC latching solenoid — "DC LATCHING" stamped on the solenoid body, FIP threaded ports. NOT the homeowner's variant (homeowner has the 24 VAC AC solenoid); shown for exclusion / contrast.
-    subjects: [valve, valve-solenoid]
-    causes: [F7]
-    relates: alternate angle of the DC variant from the previous batch; pair with pgv-valve-dc-variant and pgv-valve-dc-labelled for identify.md "what you DO have vs DON'T have" contrast
-    used_in: [playbooks/identify.md]
 
   # --------------------------------------------------------------------------
   # 3M Scotchlok 314 gel-filled waterproof connector — the little blue/white
