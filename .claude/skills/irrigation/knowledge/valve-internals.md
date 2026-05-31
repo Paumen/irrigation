@@ -25,7 +25,7 @@ and the hydraulics together often shift the reasoning more than any single fact.
 
 ## Components
 
-![Internal components — support ring, diaphragm, spring](../media/valve-internal-components-diagram.gif)
+![Internal components — support ring, diaphragm, spring](../media/valve-auto-breakdown-internal-components.gif)
 
 - **Diaphragm support ring** — seats and aligns the diaphragm and prevents premature stress
   failure. It carries small vent holes that let a little water keep the diaphragm from sticking to
@@ -48,7 +48,7 @@ slowly or stays open indefinitely.
 
 ## Diaphragm failure
 
-![Tear in the diaphragm](../media/valve-diaphragm-tear-photo.jpg)
+![Tear in the diaphragm](../media/valve-auto-breakdown-diaphragm.jpg)
 
 A tear, wrinkle, or perforation in the diaphragm stops the valve from closing — the pressure
 balance can no longer hold it on the seat. Inspect for:
