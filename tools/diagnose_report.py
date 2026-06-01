@@ -78,16 +78,17 @@ def work_cell(m: float) -> str:
     return "🟩" if m >= 1.0 else "🟨" if m >= 0.1 else "🟥" if m < -0.05 else "⬜"
 
 
-def scope_label(n: int) -> str:
-    return "triage" if n >= 6 else "narrow" if n <= 2 else "mid"
+def heat(x: float) -> str:
+    """Quality cell, higher = better (recovery rates)."""
+    return "🟩" if x >= 0.8 else "🟨" if x >= 0.5 else "🟧" if x >= 0.3 else "🟥"
 
 
-def force_label(m: float) -> str:
-    return "hard" if m >= 1.5 else "firm" if m >= 0.9 else "nudge"
+_BLOCKS = "▁▂▃▄▅▆▇█"
 
 
-def shape_label(x: float) -> str:
-    return "decisive" if x >= 0.55 else "even" if x <= 0.40 else "graded"
+def spark(frac: float) -> str:
+    """One block glyph for a 0..1 magnitude — an in-cell micro-bar."""
+    return _BLOCKS[max(0, min(7, round(frac * 7)))]
 
 
 def sec_headline(g: dict) -> list[str]:
@@ -121,24 +122,28 @@ def sec_faults(g: dict) -> list[str]:
     locks = [r["lock_in"] for r in g["rows"] if r["lock_in"] is not None]
     order = sorted(rows, key=lambda f: (rob[f]["recovery"], -rows[f]["final_rank"]))
 
+    max_lock = max(locks)
     out = ["## Per-fault convergence",
            "",
-           "One row per fault. **ends** = clean final rank · **lock** = questions to "
-           "lock the top-3 and hold (— = never) · **top-3 / #1** = share of 50 noisy "
-           f"runs (1-in-5 answers wrong/skipped) ending top-3 / at #1 · **confused "
-           "by** = who outranks the true cause (⚠ = a different component, a triage "
-           "gap). Worst-first.",
+           "One row per fault, worst-first. **ends** = clean final rank (cell ✅ #1 · "
+           "🟩 #2–3 · 🟨 below) · **lock** = questions to lock the top-3 and hold, as "
+           "an in-cell bar ▁ fast → █ slow (— = never) · **top-3 / #1** = share of 50 "
+           "noisy runs (1-in-5 answers wrong/skipped) ending top-3 / at #1, top-3 "
+           "heat-coloured 🟩≥80 🟨≥50 🟧≥30 🟥 · **confused by** = who outranks the "
+           "true cause (⚠ = a different component — a triage gap).",
            "",
            "```",
-           f"{'fault':8s}{'ends':>5s}{'lock':>6s}{'top-3':>7s}{'#1':>6s}   confused by"]
+           f"{'fault':8s}{'ends':5s}{'lock':7s}{'top-3':8s}{'#1':7s}confused by"]
     for f in order:
         r, v = rows[f], rob[f]
-        lock = str(r["lock_in"]) if r["lock_in"] is not None else "—"
+        lock = f"{spark(r['lock_in'] / max_lock)} {r['lock_in']:>2}" if r["lock_in"] else "  —"
+        ends = f"{rank_cell(r['final_rank'])}#{r['final_rank']}"
+        top3 = f"{heat(v['recovery'])}{v['recovery']*100:3.0f}%"
+        at1 = f"{spark(v['at1'])}{v['at1']*100:3.0f}%"
         note = ", ".join(r["confusers"][:3]) + (" …" if len(r["confusers"]) > 3 else "")
         if r["cross"]:
-            note += "  ⚠"
-        out.append((f"{f:8s}{'#'+str(r['final_rank']):>5s}{lock:>6s}"
-                    f"{v['recovery']*100:6.0f}%{v['at1']*100:5.0f}%   {note}").rstrip())
+            note += " ⚠"
+        out.append((f"{f:8s}{ends:5s}{lock:7s}{top3:8s}{at1:7s}{note}").rstrip())
     out.append("```")
 
     within8 = sum(1 for v in locks if v <= 8)
@@ -170,24 +175,24 @@ def sec_questions(g: dict) -> list[str]:
     n_runs = len(g["rows"])
     out = ["## Per-question value",
            "",
-           "What each question delivered, next to its structural potential. "
-           "**work** = mean rank gain for the true fault (🟩 ≥1.0 · 🟨 ≥0.1 · ⬜ idle "
-           "· 🟥 hurts) · **when** = median position · **asked** = % of runs · "
-           "**scope** = families it can move · **force** = strongest push · "
-           "**rule** = weight spent exonerating · **shape** = decisive (one loud "
-           "answer) vs even. Sorted by work.",
+           "Sorted by **work** = mean rank gain it delivered for the true fault "
+           "(cell 🟩 ≥1.0 · 🟨 ≥0.1 · ⬜ idle · 🟥 hurts); **when** = median "
+           "position asked. The right block is the question's structural *potential* "
+           "as in-cell bars ▁ low → █ high — **scope** (families it can move), "
+           "**force** (strongest single push), **rule** (weight spent exonerating "
+           "rather than accusing), **shape** (decisive: one loud answer → even: "
+           "graded). **ask** = how often it actually got asked.",
            "",
            "```",
-           f"   {'q':5s}{'work':>5s}{'when':>5s}{'asked':>7s}   "
-           f"{'scope':10s}{'force':7s}{'rule':6s}shape"]
+           f"   {'q':6s}{'work':>5s}{'when':>5s}  {'ask':>3s} │ "
+           f"{'scope':>5s}{'force':>6s}{'rule':>5s}{'shape':>6s}"]
     for qid, d in sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"]):
         p = prof[qid]
-        scope = f"{p['families']:>2} {scope_label(p['families'])}"
-        rule = f"{p['ruleout']*100:.0f}%"
-        out.append(f"{work_cell(d['mean_work'])} {qid:5s}{d['mean_work']:+5.1f}"
-                   f"{d['med_pos']:5.0f}{d['asked']/n_runs*100:6.0f}%   "
-                   f"{scope:10s}{force_label(p['max_push']):7s}{rule:6s}"
-                   f"{shape_label(p['top_share'])}")
+        bars = (f"{spark(p['families'] / 9):>5s}{spark(p['max_push'] / 1.6):>6s}"
+                f"{spark(p['ruleout'] / 0.6):>5s}"
+                f"{spark((p['top_share'] - 0.3) / 0.4):>6s}")
+        out.append(f"{work_cell(d['mean_work'])} {qid:6s}{d['mean_work']:+5.1f}"
+                   f"{d['med_pos']:5.0f}  {spark(d['asked'] / n_runs):>3s} │ {bars}")
     out.append("```")
 
     neg = sorted((q for q, d in qs.items() if d["mean_work"] < -0.05),
