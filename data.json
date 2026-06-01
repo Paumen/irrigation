@@ -609,10 +609,7 @@
           "label": "Tried — no effect",
           "effects": {}
         },
-        {
-          "label": "Haven't tried",
-          "effects": {}
-        }
+      
       ]
     },
     {
