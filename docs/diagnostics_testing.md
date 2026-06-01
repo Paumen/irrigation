@@ -5,10 +5,10 @@ files, one shared harness:
 
 | file | role |
 |------|------|
-| `tools/diagnose_sim.py` | **harness** — per-fault answer key + the simulator that drives the engine through it, recording the full ranking trajectory. Imported by the other two. |
-| `tools/test_diagnose.py` | **gate** — pass/fail convergence regression. Thin layer over the harness. |
-| `tools/diagnose_report.py` | **microscope** — analysis report over the same simulations (trajectories, family confusion, lock-in buckets, question frequency / position / work). |
-| `tools/diagnose_baseline.json` | regenerable snapshot of observed lock-in numbers (the convergence-speed baseline). |
+| `tools/diagnose_sim.py` | **harness** — per-fault answer key + the simulator (truthful and noisy), question-scope and robustness helpers. Imported by the other two. |
+| `tools/test_diagnose.py` | **gate** — pass/fail convergence + robustness regression. Thin layer over the harness. |
+| `tools/diagnose_report.py` | **microscope** — analysis report over the same simulations (trajectory, family confusion, lock-in, question scorecard, robustness). |
+| `tools/diagnose_baseline.json` | regenerable snapshot of observed lock-in **and robustness** numbers. |
 
 All stdlib-only, matching `engine.py`.
 
@@ -50,27 +50,36 @@ python3 tools/diagnose_report.py --json           # raw metrics for tooling
 ```
 
 **Workflow after editing `data.json`:** run the gate. A FAILURE means a fault
-fell out of top-3 — fix the weights. WARNINGs about lock-in shifts are expected
-after intentional tuning: eyeball the report, then re-run `--update-baseline` to
-accept the new numbers. WARNINGs about a *preferred-rank* shift (e.g. F2.6
-slipping from #1 to #2) are real signal — investigate before accepting.
+fell out of top-3, or median error-recovery collapsed below the floor — fix the
+weights. WARNINGs about lock-in or robustness shifts are expected after
+intentional tuning: eyeball the report, then re-run `--update-baseline` to accept
+the new numbers. WARNINGs about a *preferred-rank* shift (e.g. F2.6 slipping from
+#1 to #2) are real signal — investigate before accepting.
+
+The gate's robustness check re-runs every fault `NOISE_TRIALS` times with
+`NOISE_RATE` of answers replaced by a random valid answer (seeded, deterministic),
+and asserts the overall median recovery clears `MIN_MEDIAN_RECOVERY`.
 
 ## What the report tells you
 
-- **Rank trajectory** — a row of coloured squares per fault (🟩 #1 · 🟨 #2–3 ·
-  🟧 #4–6 · 🟥 #7+), one per question asked, with an end badge (✅/🥈/❌). Spot
-  faults that lock early vs late, and faults that bounce.
-- **Family confusion** — the causes outranking each fault at the end, split into
-  🟨 **siblings** (same parent `F<n>`) and 🟥 **cross-family**. This is the key
-  design signal: sibling-only confusion is a *missing discriminator inside one
-  component*; cross-family confusion is a *triage* gap and usually worse. The four
-  documented degeneracies (F4.4, F5.8, F7.3.2, F7.4) are all sibling-only.
-- **Lock-in speed** — histogram of questions-to-lock-top-3. The right tail and
-  the `never` bucket are where to spend effort.
-- **Question scorecard** — one table per question: how often the adaptive engine
-  reaches it (`asked`), when in the funnel (`when`), and the mean rank-improvement
-  it gives the *true* fault, badged 🔥/🟢/⚪/🔻. Q1/Q3/Q2 carry the early triage;
-  🔻 questions (Q6, Q17, Q19) cost rank on average and are re-weight/cut candidates.
+- **Rank trajectory** — a row of rank cells per fault (✅ #1 · 🟩 #2–3 · 🟨 #4–6 ·
+  🟥 #7+), one per question asked, sorted by F-code. Spot faults that lock early vs
+  late, and faults that bounce.
+- **Family confusion** — the causes outranking each fault at the end. **Cross-family**
+  cases (a *different* component winning — a triage gap) are listed in full; the
+  **within-family** ones (a missing discriminator inside one component) are listed
+  lighter. The four documented degeneracies (F4.4, F5.8, F7.3.2, F7.4) are all
+  within-family.
+- **Lock-in speed** — histogram (buckets of 4) of questions-to-lock-top-3, with
+  median and mean. The right tail and the `never` bucket are where to spend effort.
+- **Question scorecard** — per question: how often the adaptive engine reaches it
+  (`asked`), its median position (`when`), the average rank-improvement it gives the
+  *true* fault (`work`), and `scope` = how many component families its answers can
+  move (triage ≥6 · narrow ≤2). Followed by which questions *don't* pull their weight
+  (Q6/Q17/Q19 cost rank on average) and the triage-vs-narrowing split.
+- **Robustness** — per-fault recovery under 1-in-5 random answers. The least-robust
+  faults are exactly the documented degeneracies (no unique fingerprint, so one
+  wrong answer tips them behind a sibling).
 
 ## Known degeneracies (documented caps)
 

@@ -34,9 +34,17 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from diagnose_sim import DEPTH, ENG, FAULTS, PARENT, simulate_all
+from diagnose_sim import DEPTH, ENG, FAULTS, PARENT, robustness_all, simulate_all
 
 BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
+
+# Robustness: re-run each fault with a fraction of answers replaced by random
+# valid ones (a homeowner misclicking / misreading). Deterministic (seeded).
+NOISE_RATE = 0.2
+NOISE_TRIALS = 50
+# Hard floor: overall median recovery must clear this (a catastrophic scoring
+# regression would drop it). The current build sits at ~0.86.
+MIN_MEDIAN_RECOVERY = 0.6
 
 # ---- author-owned intent (NOT auto-regenerated) -----------------------------
 # A true cause that ends beyond this rank is a FAILURE. Default is top-3; the
@@ -79,7 +87,7 @@ def cap_of(fault: str) -> int:
 
 
 def compute_metrics() -> dict:
-    """Observed convergence numbers — the regenerable baseline snapshot."""
+    """Observed convergence + robustness numbers — the regenerable snapshot."""
     trajs = simulate_all(DEPTH)
     lockins = {
         f: trajs[f].lock_in(DEFAULT_MAX)
@@ -87,10 +95,14 @@ def compute_metrics() -> dict:
         if cap_of(f) <= DEFAULT_MAX
     }
     locked = [v for v in lockins.values() if v is not None]
+    rob = robustness_all(NOISE_TRIALS, NOISE_RATE, seed=0)
+    recov = {f: round(v["recovery"], 3) for f, v in rob.items()}
     return {
         "depth": DEPTH,
         "lockin": lockins,
         "median_lockin": statistics.median(locked) if locked else None,
+        "robustness": recov,
+        "median_recovery": round(statistics.median(recov.values()), 3),
     }
 
 
@@ -153,9 +165,27 @@ def run_gate() -> int:
             direction = "slower" if (n_med or 0) > (b_med or 0) else "faster"
             warn(f"median lock-in shifted {direction}", f"{b_med} -> {n_med} questions")
 
+    # --- robustness to mis-answers (1-in-5 random) ---
+    med_recov = metrics["median_recovery"]
+    # FAILURE: a catastrophic collapse in how well the ranking survives errors
+    check("median recovery clears floor", med_recov >= MIN_MEDIAN_RECOVERY,
+          f"median recovery {med_recov} < floor {MIN_MEDIAN_RECOVERY}")
+    if baseline is not None:
+        b_recov = baseline.get("robustness", {})
+        for fault, now in metrics["robustness"].items():
+            base = b_recov.get(fault)
+            # a fault whose error-recovery drops materially is a WARNING
+            if base is not None and now < base - 0.1:
+                warn(f"{fault} robustness dropped", f"{base:.0%} -> {now:.0%} recovery")
+        b_med_r = baseline.get("median_recovery")
+        if b_med_r is not None and abs(b_med_r - med_recov) > 0.02:
+            direction = "down" if med_recov < b_med_r else "up"
+            warn(f"median recovery shifted {direction}", f"{b_med_r:.0%} -> {med_recov:.0%}")
+
     locked = [v for v in lockins.values() if v is not None]
     print(f"--- diagnose: {len(FAULTS)} faults | {len(locked)}/{len(FAULTS)} lock into "
-          f"top-3 | median lock-in {metrics['median_lockin']} questions | depth {DEPTH} ---")
+          f"top-3 | median lock-in {metrics['median_lockin']} questions | "
+          f"median recovery {med_recov:.0%} | depth {DEPTH} ---")
     if warnings:
         print(f"WARN ({len(warnings)}) — ranking/speed shifts, suite still passes:")
         for w in warnings:

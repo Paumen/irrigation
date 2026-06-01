@@ -19,6 +19,8 @@ F1.8, F2.6, F4.4, F5.3 — keep improving between Q15 and Q18).
 from __future__ import annotations
 
 import json
+import random
+import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -242,3 +244,103 @@ def simulate(fault: str, n: int = DEPTH) -> Trajectory:
 
 def simulate_all(n: int = DEPTH) -> dict[str, Trajectory]:
     return {f: simulate(f, n) for f in FAULTS}
+
+
+# ---------------------------------------------------------------------------
+# question scope — does a question separate many component families (triage)
+# or only causes inside one family (narrowing)?
+# ---------------------------------------------------------------------------
+def _effect_keys(q: dict) -> set[str]:
+    keys: set[str] = set()
+    t = q["type"]
+    if t in ("options", "multi"):
+        for o in q["options"]:
+            keys |= set(o["effects"])
+    elif t == "matrix":
+        for r in q["rows"]:
+            keys |= set(r["effects"])
+    elif t == "ages":
+        for r in q["rows"]:
+            for s in r["steps"]:
+                keys |= set(s["effects"])
+    return keys
+
+
+def question_families() -> dict[str, set[str]]:
+    """qid -> the set of parent families (F1, F2, …) its answers can move."""
+    return {
+        q["id"]: {PARENT[c] for c in _effect_keys(q) if c in PARENT}
+        for q in ENG.questions
+    }
+
+
+# ---------------------------------------------------------------------------
+# robustness — how well the ranking survives a homeowner mis-answering. With
+# probability `noise_rate` an answered question gets a random valid answer
+# (misclick / misread / misunderstood) instead of the truthful one.
+# ---------------------------------------------------------------------------
+def random_answer(q: dict, rng: random.Random):
+    t = q["type"]
+    if t == "options":
+        return rng.randrange(len(q["options"]))
+    if t == "multi":
+        n = len(q["options"])
+        return sorted(rng.sample(range(n), rng.randint(1, n)))
+    if t == "matrix":
+        cols = [c["id"] for c in q["columns"]]
+        return {r["id"]: rng.choice(cols) for r in q["rows"]}
+    if t == "ages":
+        return {r["id"]: rng.randrange(len(r["steps"])) for r in q["rows"]}
+    return None
+
+
+def simulate_noisy(fault: str, noise_rate: float, rng: random.Random,
+                   n: int = DEPTH) -> Trajectory:
+    """Like simulate(), but each answered question has `noise_rate` chance of
+    being replaced by a random valid answer."""
+    key = build_key(fault)
+    answers: dict = {}
+    skipped: dict = {}
+    base = ENG.rank(answers)
+    base_rank = next(i for i, r in enumerate(base, 1) if r["id"] == fault)
+    steps: list[Step] = []
+    asked_skips: list[str] = []
+    while len(steps) < n:
+        recs = ENG.recommendations(answers, skipped)
+        if not recs:
+            break
+        qid = recs[0]["q"]["id"]
+        if qid in key:
+            if rng.random() < noise_rate:
+                answers[qid] = random_answer(ENG.q_by_id[qid], rng)
+            else:
+                answers[qid] = key[qid]
+            ranked = ENG.rank(answers)
+            rank = next(i for i, r in enumerate(ranked, 1) if r["id"] == fault)
+            pct = next(r["pct"] for r in ranked if r["id"] == fault)
+            steps.append(Step(len(steps) + 1, qid, rank, [r["id"] for r in ranked[:3]], pct))
+        else:
+            skipped[qid] = True
+            asked_skips.append(qid)
+    return Trajectory(fault, steps, asked_skips, base_rank)
+
+
+def robustness(fault: str, trials: int = 50, noise_rate: float = 0.2,
+               seed: int = 0, top: int = 3) -> dict:
+    """Re-run a fault `trials` times with mis-answer noise. `recovery` is the
+    share of noisy runs whose true fault still ends within the top-`top`.
+    Deterministic for a given seed (seeded per fault index + trial)."""
+    fi = FAULTS.index(fault)
+    finals = []
+    for t in range(trials):
+        rng = random.Random(seed * 1_000_000 + fi * 1000 + t)
+        finals.append(simulate_noisy(fault, noise_rate, rng).final_rank)
+    return {
+        "recovery": sum(1 for r in finals if r <= top) / len(finals),
+        "median_final": statistics.median(finals),
+    }
+
+
+def robustness_all(trials: int = 50, noise_rate: float = 0.2,
+                   seed: int = 0) -> dict[str, dict]:
+    return {f: robustness(f, trials, noise_rate, seed) for f in FAULTS}
