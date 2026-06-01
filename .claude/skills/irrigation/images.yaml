@@ -262,6 +262,27 @@ images:
     relates: generic choose-your-nozzle visual; LOW CONFIDENCE — exact product set unconfirmed from the low-res thumbnail, treat as illustrative until the real part is identified
     used_in: []
 
+  IMG.nozzle-rotator-product-mp2000:
+    file: media/nozzle-rotator-product-mp2000.jpg
+    caption: Hunter MP Rotator MP2000 (360°) nozzle — red cap stamped "MP 2000 360°", stainless adjustment ring, red stem on a white inlet screen. Screws onto a Pro-Spray body and throws rotating multi-streams at ~2.8 bar; this is the MP2000 family the homeowner runs on Z1 and Z4 (at their own arcs).
+    subjects: [heads]
+    relates: canonical product photo of the homeowner's rotator nozzle (nozzle.rotator); install/remove with IMG.nozzle-rotator-product-mp-wrench. Rotor counterpart is IMG.head-rotor-product-i20.
+    used_in: [playbooks/identify.md, playbooks/parts.md]
+
+  IMG.nozzle-rotator-product-mp-garden-spraying:
+    file: media/nozzle-rotator-product-mp-garden-spraying.jpg
+    caption: MP Rotator running in a lawn — the distinct fan of slow, rotating multi-streams (gentler, more even than a fixed spray) reaching across the bed.
+    subjects: [heads]
+    relates: shows what an MP Rotator looks like working — context shot for explainers and the drip-vs-rotator / spray-vs-rotator discussion
+    used_in: []
+
+  IMG.nozzle-rotator-product-mp-streams-closeup:
+    file: media/nozzle-rotator-product-mp-streams-closeup.jpg
+    caption: MP Rotator close-up against a dark background — the orange nozzle and stainless ring throwing several individual rotating streams, the detail that distinguishes an MP Rotator from a solid-fan spray nozzle.
+    subjects: [heads]
+    relates: identify an MP Rotator by its multi-stream pattern (vs a fixed spray's solid sheet); pairs with IMG.nozzle-rotator-product-mp2000
+    used_in: [playbooks/identify.md]
+
   # ── relay ───────────────────────────────────────────────────────────────────
   IMG.relay-breakdown-enclosure-cutaway:
     file: media/relay-breakdown-enclosure-cutaway.png
@@ -273,12 +294,36 @@ images:
     relates: top-down PSR-style enclosure interior; orients the user to what's inside before they check whether the contactor switches
     used_in: [relay.md]
 
+  IMG.relay-product-psr-open:
+    file: media/relay-product-psr-open.jpg
+    caption: Hunter pump start relay with the lid open — the wiring diagram is printed inside the cover; matches the homeowner's PSR-22 enclosure. Power In (Line) and Power Out (Load) terminals across the top, Ground (Line / Load) below, and the 24 VAC P/MV (red) + Common (white) low-voltage pair underneath.
+    subjects: [relay, wiring]
+    legend: {top: "Power In (Line) / Power Out (Load) — mains terminals", middle: "Ground (Line) / Ground (Load)", bottom: "P/MV (red) + Common (white) — 24 VAC controller signal", "DANGER label": "mains-voltage side — electrician only"}
+    causes: [F4]
+    questions: [Q20]
+    relates: real photo of the PSR door wiring diagram; pair with IMG.relay-breakdown-enclosure-cutaway for the inside-the-box view. Model UNCONFIRMED against PSR-22 spec — the enclosure and diagram are the Hunter PSR family.
+    used_in: [relay.md]
+
   # ── sensor ──────────────────────────────────────────────────────────────────
   IMG.sensor-product-wind-clik:
     file: media/sensor-product-wind-clik.jpg
     caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
     subjects: [controller]
     relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted throw on windy days
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-product-wind-clik-bracket:
+    file: media/sensor-product-wind-clik-bracket.jpg
+    caption: Hunter Wind-Clik on its mounting bracket — three-cup anemometer head with the SWITCHING SPEED dial (mph / km/h), the swing-arm bracket below, and the wiring/connector module on the right. Mounted view of the same sensor as IMG.sensor-product-wind-clik.
+    subjects: [controller]
+    relates: wind-pause upgrade candidate; shows how it mounts and wires in, vs the head-only IMG.sensor-product-wind-clik
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-product-freeze-temp:
+    file: media/sensor-product-freeze-temp.jpg
+    caption: Wall-mounted freeze / temperature sensor — vented bulb housing the sensing element on a small screw-down back plate; cuts the system off when the air temperature drops toward freezing so heads don't ice up.
+    subjects: [controller]
+    relates: freeze-cutoff upgrade candidate alongside the rain/wind Cliks; exact model UNCONFIRMED — treat as illustrative for "a frost sensor looks like this"
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-wm-clik-side:
@@ -324,6 +369,13 @@ images:
     questions: [Q13, Q14, Q15]
     relates: lead placement before any voltage or resistance check
     used_in: [controller.md, valve-solenoid.md, playbooks/parts.md]
+
+  IMG.tool-product-water-meter:
+    file: media/tool-product-water-meter.jpg
+    caption: Inline multi-jet water meter — blue body with brass union tailpieces and a sealed register (m³); plumbed into a line, it totalises flow so you can read a zone's real throughput.
+    subjects: [hoses]
+    relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in setup.yaml — illustrative.
+    used_in: [playbooks/capacity.md]
 
   # ── valve · auto ─────────────────────────────────────────────────────────────
   IMG.valve-auto-product-pgv-101g:
