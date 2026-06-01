@@ -1,13 +1,5 @@
 """Agent-facing diagnose tool: takes answers, returns ranked causes and
-the next best question to ask.
-
-Usage as a library:
-    from tools.diagnose import diagnose
-    result = diagnose({"Q1": 0, "Q2": 1})
-
-Usage as a CLI:
-    echo '{"answers": {"Q1": 0}}' | python tools/diagnose.py
-"""
+the next best question to ask."""
 
 from __future__ import annotations
 
@@ -54,8 +46,8 @@ def _summarize_question(
         out["columns"] = [{"id": c["id"], "label": c["label"]} for c in q["columns"]]
         out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]
     elif q["type"] == "ages":
-        # Equipment model + install date are not stored here; the agent reads
-        # them from setup.yaml (the canonical equipment source) per row id.
+        # Model + install date intentionally not emitted here; agent reads them
+        # from setup.yaml per row id.
         out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]
         out["stepLabels"] = q.get("stepLabels", [])
     return out
@@ -69,13 +61,8 @@ def diagnose(
 ) -> dict:
     """Run scoring and recommend the next question(s).
 
-    Returns:
-        ranked: top-N causes with id, label, pct, score
-        next: top-N recommended questions with id, text, type, options,
-            score D, and the three factors behind it (isolation,
-            breadth, effort); D ranks on isolation+breadth with effort as a
-            bounded tie-breaker
-        answered_count: how many questions have been answered (excludes skipped)
+    D ranks on isolation+breadth with effort as a bounded tie-breaker.
+    answered_count excludes skipped.
     """
     engine = _engine()
     answers = answers or {}

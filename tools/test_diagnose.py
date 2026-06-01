@@ -1,29 +1,10 @@
 """Convergence regression gate for the diagnostic engine + data.json.
 
-Drives the engine exactly as the MCP `diagnose_irrigation` tool does — following
-the #1 recommended-next question each step — feeding each fault's representative
-homeowner answer key. The simulator and the answer key now live in
-`diagnose_sim.py`; this file is just the gate on top of them (and
-`diagnose_report.py` reuses the same harness for analysis).
-
-What it asserts, severity two-tier:
-
-- **FAILURE** (exit 1): a true cause that ends OUT of the top 3 (beyond its
-  documented `EXPECTED_MAX` cap), or a top-3-capable cause that never settles in
-  the top 3. These are the hard invariants — author-owned intent, kept in code.
-- **WARNING** (suite still passes): a cause that merely SHIFTS — a worse-but-
-  still-acceptable final rank (vs `PREFERRED_MAX`), or a lock-in / median lock-in
-  that moved versus the recorded baseline.
-
-The brittle part of the old design — ~28 hand-maintained per-fault lock-in
-constants that drifted on every weight tweak — is now a *regenerable snapshot*
-(`diagnose_baseline.json`): observed numbers live in the snapshot, authored
-intent (`EXPECTED_MAX`, `PREFERRED_MAX`) stays here. Regenerate the snapshot
-deliberately with:
+Observed numbers (lock-in, robustness) live in the regenerable snapshot
+`diagnose_baseline.json`; authored intent (`EXPECTED_MAX`, `PREFERRED_MAX`)
+stays here. Regenerate the snapshot with:
 
     python3 tools/test_diagnose.py --update-baseline
-
-Run the gate with: python3 tools/test_diagnose.py
 """
 
 from __future__ import annotations
@@ -38,34 +19,19 @@ from diagnose_sim import DEPTH, ENG, FAULTS, PARENT, robustness_all, simulate_al
 
 BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
 
-# Robustness: re-run each fault with a fraction of answers replaced by random
-# valid ones (a homeowner misclicking / misreading). Deterministic (seeded).
 NOISE_RATE = 0.2
 NOISE_TRIALS = 50
-# Hard floor: overall median recovery must clear this (a catastrophic scoring
-# regression would drop it). The current build sits at ~0.86.
 MIN_MEDIAN_RECOVERY = 0.6
 
-# ---- author-owned intent (NOT auto-regenerated) -----------------------------
-# A true cause that ends beyond this rank is a FAILURE. Default is top-3; the
-# entries below are documented near-degeneracies that can't reach top-3 with the
-# current question set — each needs a dedicated discriminator to split it from a
-# sibling. All four are *within-family* (same parent) confusions:
-#   F4.4   relay install is a strict shadow of F4.1 (every reached answer favours
-#          the physical defect). Needs a wiggle/loose-lug option.
-#   F5.8   low well shares the heatwave correlate with F5.3, weighted higher.
-#   F7.3.2 metering-port debris overlaps F7.3.1 / F7.1.2 almost exactly.
-#   F7.4   valve install error ends stuck behind three F7 siblings
-#          (F7.1.3 / F7.1.2 / F7.3.2); needs an assembly/mis-set discriminator.
+# Failure rank cap per fault. Elevated entries are intentional within-family
+# near-degeneracies that can't reach top-3 without a new discriminator; do not
+# tighten to DEFAULT_MAX without adding one.
 EXPECTED_MAX = {"F4.4": 25, "F5.8": 4, "F7.3.2": 4, "F7.4": 4}
-DEFAULT_MAX = 3  # top-3
+DEFAULT_MAX = 3
 
-# The preferred (ideal) rank each fault should hold. Ending worse than this but
-# still within the failure threshold is a WARNING, not a failure.
+# Preferred rank; ending worse but within EXPECTED_MAX is a WARNING.
 PREFERRED_MAX = {
-    # always-identifiable causes that should sit at #1
     "F3.1.1": 1, "F4.1": 1, "F5.1": 1, "F7.1.1": 1, "F9.4": 1, "F2.6": 1,
-    # the locked-in data.json fixes (2b / 3c / 4c)
     "F9.1.2": 2, "F7.3.2": 4, "F2.5": 2,
 }
 
@@ -87,7 +53,6 @@ def cap_of(fault: str) -> int:
 
 
 def compute_metrics() -> dict:
-    """Observed convergence + robustness numbers — the regenerable snapshot."""
     trajs = simulate_all(DEPTH)
     lockins = {
         f: trajs[f].lock_in(DEFAULT_MAX)
@@ -117,7 +82,6 @@ def save_baseline(metrics: dict) -> None:
 
 
 def run_gate() -> int:
-    # --- the engine starts every fault on the broad scope question ---
     recs0 = ENG.recommendations({}, {})
     check("empty state recommends Q1 first",
           bool(recs0) and recs0[0]["q"]["id"] == "Q1",
@@ -125,7 +89,6 @@ def run_gate() -> int:
 
     trajs = simulate_all(DEPTH)
 
-    # --- every fault converges to its documented bound within DEPTH questions ---
     for fault in FAULTS:
         traj = trajs[fault]
         check(f"{fault} ran the funnel", len(traj.steps) >= 3,
@@ -133,21 +96,17 @@ def run_gate() -> int:
         rN = traj.rank_at(DEPTH)
         cap = cap_of(fault)
         pref = PREFERRED_MAX.get(fault, cap)
-        # OUT of the top 3 (or beyond a documented degeneracy cap) -> FAILURE
         check(f"{fault} ends within top {cap}", rN <= cap,
               f"got rank {rN} (out of top {cap})")
-        # SHIFTED to a worse rank but still acceptable -> WARNING
         if rN <= cap and rN > pref:
             warn(f"{fault} shifted from preferred rank {pref} to {rN}",
                  f"still within top {cap}")
 
-    # --- convergence speed vs the recorded baseline snapshot ---
     metrics = compute_metrics()
     baseline = load_baseline()
     lockins = metrics["lockin"]
 
     for fault, now in lockins.items():
-        # a top-3-capable fault that never settles in the top 3 is a FAILURE
         check(f"{fault} settles in top-3", now is not None, "never stays in top-3")
 
     if baseline is None:
@@ -165,16 +124,13 @@ def run_gate() -> int:
             direction = "slower" if (n_med or 0) > (b_med or 0) else "faster"
             warn(f"median lock-in shifted {direction}", f"{b_med} -> {n_med} questions")
 
-    # --- robustness to mis-answers (1-in-5 random) ---
     med_recov = metrics["median_recovery"]
-    # FAILURE: a catastrophic collapse in how well the ranking survives errors
     check("median recovery clears floor", med_recov >= MIN_MEDIAN_RECOVERY,
           f"median recovery {med_recov} < floor {MIN_MEDIAN_RECOVERY}")
     if baseline is not None:
         b_recov = baseline.get("robustness", {})
         for fault, now in metrics["robustness"].items():
             base = b_recov.get(fault)
-            # a fault whose error-recovery drops materially is a WARNING
             if base is not None and now < base - 0.1:
                 warn(f"{fault} robustness dropped", f"{base:.0%} -> {now:.0%} recovery")
         b_med_r = baseline.get("median_recovery")

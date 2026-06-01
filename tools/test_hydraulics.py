@@ -1,5 +1,3 @@
-"""Sanity checks for the hydraulic calculator. Run: python tools/test_hydraulics.py"""
-
 from __future__ import annotations
 
 import sys
@@ -19,31 +17,27 @@ def check(name: str, cond: bool, detail: str = "") -> None:
         failures.append(f"{name}: {detail}")
 
 
-# --- manufacturer table lookups (schema-independent) ---
 q, in_range = i20_flow_m3h("2.5", 3.0)
 check("i20 #2.5 @3.0bar", abs(q - 0.54) < 1e-9 and in_range, f"got {q}")
 q, in_range = i20_flow_m3h("5.0", 4.5)
 check("i20 #5.0 @4.5bar", abs(q - 1.41) < 1e-9, f"got {q}")
-q, _ = i20_flow_m3h("4.0", 1.0)  # below range -> sqrt extrapolation, flagged
+q, _ = i20_flow_m3h("4.0", 1.0)
 check("i20 below-range flagged", not _, "expected in_range False")
 
-q, reg = mp_flow_m3h("MP3000", 270, 3.6)  # above the 3.5 bar regulation floor
+q, reg = mp_flow_m3h("MP3000", 270, 3.6)  # >3.5 bar regulation floor
 check("mp MP3000@270 regulated", abs(q - round(2.73 * GPM_TO_M3H, 6)) < 1e-6 and reg, f"got {q}")
-q, reg = mp_flow_m3h("MP3000", 270, 2.0)  # below regulation threshold
+q, reg = mp_flow_m3h("MP3000", 270, 2.0)  # <3.5 bar floor
 check("mp under-regulated flag", not reg and q < 2.73 * GPM_TO_M3H, f"got {q}, reg={reg}")
 q, _ = mp_flow_m3h("MP2000", 180, 3.0)
 check("mp arc interpolation present", q > 0, f"got {q}")
 
-# --- pipe inner diameters from the hose types ---
 check("hose.16 bore is 10 mm", abs(hose_inner_d_m("hose.16") - 0.010) < 1e-9, str(hose_inner_d_m("hose.16")))
 check("hose.25 bore is 19.6 mm", abs(hose_inner_d_m("hose.25") - 0.0196) < 1e-9, str(hose_inner_d_m("hose.25")))
 check("hose.32 bore is 26 mm", abs(hose_inner_d_m("hose.32") - 0.026) < 1e-9, str(hose_inner_d_m("hose.32")))
 
-# --- baseline full solve (Z1-Z4 automatic + Z5 manual; Z6 capped/excluded) ---
 base = report()
 flows = {z["id"]: z["flow_m3h"] for z in base["zones"]}
 check("zones are Z1..Z5 (Z6 capped, excluded)", set(flows) == {1, 2, 3, 4, 5}, str(set(flows)))
-# Z4 is all-MP: regulated flow is pressure-independent, so a tight deterministic anchor.
 check("baseline zone 4 all-MP", abs(flows[4] - 0.968) < 0.01, f"got {flows[4]}")
 for zid in (1, 2, 3):
     check(f"baseline zone {zid} plausible", 1.4 < flows[zid] < 2.1, f"got {flows[zid]}")
@@ -59,7 +53,6 @@ check("tightest flow link is a swing joint",
       "swing_joints" in wl["flow"]["tightest"]["component"],
       str(wl["flow"]["tightest"]))
 
-# --- Z5 manual open-end (stream nozzle modelled as free discharge) ---
 z5 = report(zone=5)["zones"][0]
 check("Z5 has one stream head", len(z5["heads"]) == 1 and z5["heads"][0]["kind"] == "stream",
       str(z5["heads"]))
@@ -74,7 +67,6 @@ check("Z5 less lift raises flow", q5_lesslift > q5, f"{q5} -> {q5_lesslift}")
 q5_weak = report(zone=5, adjustments={"pump_model": "JET 62 M"})["zones"][0]["flow_m3h"]
 check("Z5 weaker pump lowers flow", q5_weak < q5, f"{q5} -> {q5_weak}")
 
-# --- shared segment carries the combined flow of the heads below it (white-box) ---
 nodes = build_graph(load_system())
 z1 = report(zone=1)["zones"][0]
 lq = {h["loc"]: h["flow_m3h"] for h in z1["heads"]}
@@ -86,14 +78,12 @@ check("a single-head branch lateral carries less than the shared trunk",
       sub["Z1.hose.25.04"] < sub["Z1.hose.25.01"],
       f"{sub['Z1.hose.25.04']} vs {sub['Z1.hose.25.01']}")
 
-# --- what-if: nozzle swap raises flow (match on nozzle field) ---
 swapped = report({"heads": [
     {"zone": 2, "match": {"nozzle": "2.5 blue"}, "set": {"nozzle": "4.0 blue"}}]}, zone=2)
 z2_swapped = swapped["zones"][0]["flow_m3h"]
 check("nozzle swap increases zone 2 flow", z2_swapped > flows[2], f"{flows[2]} -> {z2_swapped}")
 check("swap recorded", swapped["zones"][0]["adjustments_applied"], "no note recorded")
 
-# --- what-if: adjustment targeted by node-id loc ---
 loc_adj = report({"heads": [
     {"zone": 1, "loc": "Z1.nozzle.rotor.01", "set": {"nozzle": "6.0 blue"}}]}, zone=1)
 check("node-id loc adjustment recorded", loc_adj["zones"][0]["adjustments_applied"], "no note")
@@ -102,7 +92,6 @@ old_rotor = next(h for h in report(zone=1)["zones"][0]["heads"] if h["loc"] == "
 check("bigger nozzle via loc raises that head's flow",
       new_rotor["flow_m3h"] > old_rotor["flow_m3h"], f"{old_rotor['flow_m3h']} -> {new_rotor['flow_m3h']}")
 
-# --- what-if: pinned pressure mode ---
 pinned = report({"global_operating_pressure_bar": 3.5}, zone=2)
 check("pinned mode flagged", pinned["assumptions"]["mode"] == "pinned-pressure",
       pinned["assumptions"]["mode"])
@@ -110,7 +99,6 @@ check("pinned head pressure honoured",
       all(h["pressure_bar"] == 3.5 for h in pinned["zones"][0]["heads"]),
       str(pinned["zones"][0]["heads"]))
 
-# --- what-if: a smaller pump lowers head pressure ---
 weak_pump = report({"pump_model": "JET 82 M"}, zone=2)
 check("smaller pump lowers head pressure",
       weak_pump["zones"][0]["head_pressure_bar"]["max"]
@@ -118,7 +106,6 @@ check("smaller pump lowers head pressure",
       f"{weak_pump['zones'][0]['head_pressure_bar']['max']} vs "
       f"{base['zones'][1]['head_pressure_bar']['max']}")
 
-# --- node pressure profile + per-head loss reconciliation ---
 z3 = report(zone=3)["zones"][0]
 np3 = z3["node_pressures_bar"]
 check("node profile descends pump>manifold>after_valve",
@@ -132,17 +119,14 @@ for h in z3["heads"]:
              - lb["lateral_friction"] - lb["swing_joint"])
     check(f"head {h['loc']} pressure reconciles from breakdown",
           abs(recon - h["pressure_bar"]) < 0.02, f"{recon:.3f} vs {h['pressure_bar']}")
-# more distant head on a branch sees lower pressure (per-segment friction drop)
 z3_heads = sorted(z3["heads"], key=lambda h: h["lateral_m"])
 check("nearer head holds higher pressure than the more distant one",
       z3_heads[0]["pressure_bar"] >= z3_heads[-1]["pressure_bar"],
       f"{z3_heads[0]['pressure_bar']} vs {z3_heads[-1]['pressure_bar']}")
-# pinned mode exposes no node profile (no pump/friction solve happened)
 pin_np = report({"global_operating_pressure_bar": 3.5}, zone=2)["zones"][0]
 check("pinned mode has no node profile", pin_np["node_pressures_bar"] is None,
       str(pin_np["node_pressures_bar"]))
 
-# --- concurrent zones ---
 con = report(concurrent_zones=[2, 3])
 check("concurrent mode flagged", con["assumptions"]["mode"] == "concurrent",
       con["assumptions"]["mode"])
@@ -165,12 +149,10 @@ pump_item = next(it for it in con["weakest_links"]["flow"]["items"]
 check("concurrent pump load is combined flow",
       abs(pump_item["load_m3h"] - cc["combined_flow_m3h"]) < 1e-9
       and pump_item["scope"] == "all running zones", str(pump_item))
-# the manual zone can join a concurrent run
 c25 = report(concurrent_zones=[2, 5])
 check("concurrent with Z5 runs", 5 in c25["concurrent"]["zones_running"]
       and c25["concurrent"]["combined_flow_m3h"] > 0, str(c25["concurrent"]["zones_running"]))
 
-# --- in-zone pressure spread ---
 z2 = base["zones"][1]
 check("zone reports pressure spread pct", isinstance(z2["pressure_spread_pct"], float),
       str(z2.get("pressure_spread_pct")))
@@ -180,18 +162,16 @@ check("pressure spread matches head min/max", abs(z2["pressure_spread_pct"] - ex
       f"{z2['pressure_spread_pct']} vs {exp_spread}")
 check("balanced baseline raises no spread flag",
       not any("pressure spread" in f for f in z2["flags"]), str(z2["flags"]))
-# flag logic: wide spread among unregulated I-20s trips; regulated MP does not
 _, wide = _pressure_uniformity(9, [{"kind": "I-20", "pressure_bar": 3.0},
                                     {"kind": "I-20", "pressure_bar": 2.3}])  # 23% spread
 check("wide I-20 spread flags", any("pressure spread" in f for f in wide), str(wide))
 _, narrow = _pressure_uniformity(9, [{"kind": "I-20", "pressure_bar": 3.0},
-                                     {"kind": "I-20", "pressure_bar": 2.8}])  # 6.7%
+                                     {"kind": "I-20", "pressure_bar": 2.8}])  # 6.7% spread
 check("narrow I-20 spread does not flag", narrow == [], str(narrow))
 _, mp = _pressure_uniformity(9, [{"kind": "MP3000", "pressure_bar": 3.5},
-                                 {"kind": "MP2000", "pressure_bar": 2.5}])  # regulated
+                                 {"kind": "MP2000", "pressure_bar": 2.5}])
 check("regulated MP spread does not flag", mp == [], str(mp))
 
-# --- pipe velocity check (per-segment, advisory) ---
 vel = base["weakest_links"]["velocity"]
 check("velocity limit reported", vel["limit_ms"] == 1.5, str(vel["limit_ms"]))
 segs = {it["segment"]: it for it in vel["items"]}
@@ -201,19 +181,15 @@ check("baseline velocities computed positive",
 check("fastest is the highest-velocity segment",
       vel["fastest"]["velocity_ms"] == max(it["velocity_ms"] for it in vel["items"]),
       str(vel["fastest"]))
-# velocity over the design limit is advisory: it never appears in the hard
-# health violations (pressure/flow do).
 check("velocity stays out of hard health violations",
       all("velocity" not in v for v in base["health"]["violations"]),
       str(base["health"]["violations"]))
-# running two zones drives the shared main-line velocity up (combined flow)
 con_main = next(it for it in con["weakest_links"]["velocity"]["items"]
                 if it["segment"] == "main_line")
 check("concurrent raises main-line velocity",
       con_main["velocity_ms"] > segs["main_line"]["velocity_ms"],
       f"{con_main['velocity_ms']} vs {segs['main_line']['velocity_ms']}")
 
-# --- system health card ---
 h = base["health"]
 check("health is first key of report", list(base)[0] == "health", str(list(base)[:1]))
 check("baseline health is not a hard violation", h["status"] in ("ok", "warning"),
@@ -232,13 +208,11 @@ check("health capacity reports pump load pct",
       h["capacity"] is not None and 0 < h["capacity"]["pump_load_pct"] < 100,
       str(h["capacity"]))
 check("baseline health has no hard violations", h["violations"] == [], str(h["violations"]))
-# an overloaded concurrent run should surface a violation status
 over = report(concurrent_zones=[1, 2, 3, 4])["health"]
 check("overload health is violation", over["status"] == "violation",
       f"{over['status']}: {over['headline']}")
 check("overload health lists violations", len(over["violations"]) >= 1, str(over["violations"]))
 
-# --- unknown zone ids are rejected ---
 try:
     report(zone=6)
     check("zone 6 rejected", False, "expected ValueError")

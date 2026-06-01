@@ -1,36 +1,7 @@
-"""Hydraulic calculator for the irrigation system described in setup.yaml.
+"""Hydraulic calculator for setup.yaml.
 
-setup.yaml is a node graph: a `types` catalog plus a `feeds` adjacency list of
-nodes named `SCOPE.type.NN` (e.g. `MAIN.pump.well.01`, `Z1.head.rotor.01`,
-`Z1.nozzle.rotor.01`). This module walks that graph and computes per-head flow,
-per-head operating pressure, per-zone flow, the pump operating point, and a
-min/max pressure + flow + velocity "weakest link" report. Supports what-if
-adjustments (swap a nozzle, change a pump, pin an operating pressure, move the
-water table).
-
-Model (full hydraulic solve):
-  pump curve  ->  static lift (per-node elevations)  ->  pipe friction
-  (Hazen-Williams, summed per segment, each segment carrying the combined flow
-  of the heads below it)  +  valve/swing minor losses  ->  pressure at each
-  head  ->  head flow.
-The head flow depends on head pressure (for unregulated I-20 rotors and the Z5
-open-end stream) which depends on total flow, so each solve is a fixed-point
-iteration on a tree. MP Rotators sit on PRS40 bodies (regulated to 40 PSI) so
-their flow is fixed by model + arc while inlet pressure stays above the
-regulation threshold. The manual zone (Z5) ends in an open stream nozzle, which
-is modelled as free discharge from the 16 mm bore.
-
-Usage as a library:
-    from tools.hydraulics import report
-    r = report(adjustments={"heads": [
-        {"zone": 2, "match": {"nozzle": "2.5 blue"}, "set": {"nozzle": "4.0 blue"}}
-    ]})
-
-Usage as a CLI:
-    python tools/hydraulics.py                 # full report, default assumptions
-    echo '{"zone": 5}' | python tools/hydraulics.py
-    echo '{"concurrent_zones": [2, 3]}' | python tools/hydraulics.py
-    echo '{"adjustments": {"global_operating_pressure_bar": 3.5}}' | python tools/hydraulics.py
+Head flow depends on head pressure which depends on total flow, so each solve is
+a fixed-point iteration on the node tree.
 """
 
 from __future__ import annotations
@@ -46,34 +17,21 @@ import yaml
 
 SETUP_PATH = Path(__file__).resolve().parent.parent / "setup.yaml"
 
-# ---------------------------------------------------------------------------
-# Unit conversions
-# ---------------------------------------------------------------------------
-GPM_TO_M3H = 0.2271247          # 1 US gal/min -> m3/h
-M_PER_BAR = 10.197              # metres of water column per bar
+GPM_TO_M3H = 0.2271247
+M_PER_BAR = 10.197
 PSI_PER_BAR = 14.5038
-G = 9.80665                     # gravitational acceleration, m/s^2
+G = 9.80665
 
-# ---------------------------------------------------------------------------
-# Manufacturer data
-# ---------------------------------------------------------------------------
-# Hunter MP Rotator flow at 40 PSI (the PRS40 body regulates to 40 PSI), GPM,
-# from the Hunter MP Rotator Performance Data chart. MP Rotators are matched
-# precipitation, so flow is ~linear in arc; intermediate arcs are interpolated.
 MP_FLOW_40PSI_GPM: dict[str, dict[int, float]] = {
     "MP1000": {90: 0.19, 180: 0.37, 210: 0.43, 360: 0.75},
     "MP2000": {90: 0.40, 180: 0.74, 210: 0.86, 270: 1.10, 360: 1.47},
     "MP3000": {90: 0.86, 180: 1.82, 210: 2.12, 270: 2.73, 360: 3.64},
 }
-MP_REG_BAR = 40.0 / PSI_PER_BAR          # 40 PSI -> ~2.76 bar regulated nozzle pressure
-# The PRS40 regulator needs a 0.7 bar (10 PSI) differential above its 2.76 bar
-# setpoint to engage, so inlet must be >= ~3.5 bar or the MP sees inlet pressure
-# directly and mists (see knowledge/heads.md).
-MP_REG_MIN_INLET_BAR = 3.5               # inlet needed for the regulator to hold 40 PSI
+MP_REG_BAR = 40.0 / PSI_PER_BAR
+# PRS40 needs inlet above its 2.76 bar setpoint to regulate; below this it
+# passes inlet pressure straight through. Not equal to MP_REG_BAR.
+MP_REG_MIN_INLET_BAR = 3.5
 
-# Hunter PGP / I-20 Blue Standard Nozzle, metric performance chart, flow in
-# m3/h at the listed nozzle pressure (bar). I-20 rotors are NOT regulated, so
-# flow tracks head pressure. Flow is independent of the set arc.
 I20_PRESSURES_BAR = [1.7, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5]
 I20_BLUE_M3H: dict[str, list[float]] = {
     "1.5": [0.27, 0.29, 0.32, 0.35, 0.38, 0.41, 0.43],
@@ -87,9 +45,6 @@ I20_BLUE_M3H: dict[str, list[float]] = {
 }
 I20_OP_RANGE_BAR = (1.7, 4.5)
 
-# DAB Jet single-phase pump curves: total head (m) vs flow (m3/h), from the DAB
-# Jet selection table. setup.yaml lists a generic "DAB Jet" at 4.8 bar shutoff,
-# which matches the JET 132 M (48.3 m shutoff); used as the default.
 PUMP_CURVES: dict[str, dict[str, list[float]]] = {
     "JET 62 M": {"q": [0, 0.6, 1.2, 1.8, 2.4, 3.0], "h": [42, 35, 29.2, 25.6, 22.9, 21.1]},
     "JET 82 M": {"q": [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6], "h": [47, 40, 34, 30, 26.2, 23.5, 20.3]},
@@ -102,35 +57,24 @@ PUMP_CURVES: dict[str, dict[str, list[float]]] = {
 }
 DEFAULT_PUMP = "JET 132 M"
 
-# Wall thickness (mm) per hose type, from the setup.yaml `desc` strings
-# ("32 mm, 3 mm wall" etc.). Nominal OD is the number in the type name.
+# nominal OD is the number in the type name; inner d = OD - 2*wall
 HOSE_WALL_MM: dict[str, float] = {"hose.32": 3.0, "hose.25": 2.7, "hose.16": 3.0}
-STREAM_CD = 0.97        # discharge coefficient for the open-end stream nozzle
+STREAM_CD = 0.97
 
-# ---------------------------------------------------------------------------
-# Loss model coefficients (approximate; override via adjustments). These are
-# the parts not pinned by published curves, so they are exposed as tunables.
-# ---------------------------------------------------------------------------
-HW_C = 150.0            # Hazen-Williams roughness, smooth PE pipe
-VALVE_CV = 7.0          # Hunter PGV-101G ~1" valve, approximate flow coefficient
-SJ_LOSS_BAR = 0.05      # swing joint + riser + adapter minor loss, per head
-SUCTION_EXTRA_LOSS_M = 1.0   # foot valve + suction-line friction allowance
+HW_C = 150.0
+VALVE_CV = 7.0
+SJ_LOSS_BAR = 0.05
+SUCTION_EXTRA_LOSS_M = 1.0
 
-# Design rules-of-thumb used for advisory checks (not solve inputs).
-VELOCITY_LIMIT_MS = 1.5         # max pipe velocity before water-hammer/erosion risk
-PRESSURE_SPREAD_LIMIT_PCT = 20.0  # max in-zone pressure variation for even coverage
+VELOCITY_LIMIT_MS = 1.5
+PRESSURE_SPREAD_LIMIT_PCT = 20.0
 
-# Fixed-point solver tuning.
 MAX_ITERS = 500
 SOLVE_TOL = 1e-7
-HEAD_RELAX = 0.5        # under-relaxation for chart heads (I-20 / MP)
+HEAD_RELAX = 0.5
 
 
-# ---------------------------------------------------------------------------
-# Numerics
-# ---------------------------------------------------------------------------
 def _interp(x: float, xs: list[float], ys: list[float]) -> float:
-    """Linear interpolation with flat clamping outside the table."""
     if x <= xs[0]:
         return ys[0]
     if x >= xs[-1]:
@@ -143,15 +87,13 @@ def _interp(x: float, xs: list[float], ys: list[float]) -> float:
 
 
 def hazen_williams_m(q_m3h: float, d_m: float, length_m: float, c: float = HW_C) -> float:
-    """Head loss (m) for flow q_m3h through a pipe of inner diameter d_m."""
     if q_m3h <= 0 or length_m <= 0 or d_m <= 0:
         return 0.0
-    q = q_m3h / 3600.0  # m3/s
+    q = q_m3h / 3600.0
     return 10.67 * length_m * (q ** 1.852) / ((c ** 1.852) * (d_m ** 4.87))
 
 
 def valve_loss_bar(q_m3h: float, cv: float = VALVE_CV) -> float:
-    """Minor pressure loss (bar) across the zone valve from its flow coefficient."""
     if q_m3h <= 0:
         return 0.0
     gpm = q_m3h / GPM_TO_M3H
@@ -159,7 +101,6 @@ def valve_loss_bar(q_m3h: float, cv: float = VALVE_CV) -> float:
 
 
 def velocity_ms(q_m3h: float, d_m: float) -> float:
-    """Flow velocity (m/s) for q_m3h through a pipe of inner diameter d_m."""
     if d_m <= 0 or q_m3h <= 0:
         return 0.0
     area = math.pi * (d_m / 2.0) ** 2
@@ -167,27 +108,18 @@ def velocity_ms(q_m3h: float, d_m: float) -> float:
 
 
 def pump_head_m(model: str, q_m3h: float) -> float:
-    """Pump total dynamic head (m) at flow q_m3h, linearly inter/extrapolated."""
     curve = PUMP_CURVES[model]
     qs, hs = curve["q"], curve["h"]
     if q_m3h <= qs[0]:
         return hs[0]
     if q_m3h >= qs[-1]:
-        # extrapolate along the last segment, never below zero
         slope = (hs[-1] - hs[-2]) / (qs[-1] - qs[-2])
         return max(0.0, hs[-1] + slope * (q_m3h - qs[-1]))
     return _interp(q_m3h, qs, hs)
 
 
-# ---------------------------------------------------------------------------
-# Head flow models
-# ---------------------------------------------------------------------------
 def i20_flow_m3h(nozzle_num: str, pressure_bar: float) -> tuple[float, bool]:
-    """I-20 flow (m3/h) for a blue nozzle number at the given head pressure.
-
-    Returns (flow, in_range). Outside the published 1.7-4.5 bar window the
-    flow is extrapolated with the orifice relation q ~ sqrt(P) and flagged.
-    """
+    """Returns (flow, in_range). Outside range, extrapolated as q ~ sqrt(P)."""
     if nozzle_num not in I20_BLUE_M3H:
         raise ValueError(f"unknown I-20 blue nozzle {nozzle_num!r}; "
                          f"known: {sorted(I20_BLUE_M3H)}")
@@ -206,12 +138,7 @@ def _mp_arc_flow_gpm(model: str, arc_deg: float) -> float:
 
 
 def mp_flow_m3h(model: str, arc_deg: float, inlet_bar: float) -> tuple[float, bool]:
-    """MP Rotator flow (m3/h). Regulated to the 40 PSI value while inlet is
-    above the regulation threshold; below it the regulator cannot hold and
-    flow falls off (orifice approximation), which is flagged.
-
-    Returns (flow, regulated).
-    """
+    """Returns (flow, regulated). Below MP_REG_MIN_INLET_BAR flow falls off."""
     if model not in MP_FLOW_40PSI_GPM:
         raise ValueError(f"unknown MP model {model!r}; known: {sorted(MP_FLOW_40PSI_GPM)}")
     base = _mp_arc_flow_gpm(model, arc_deg) * GPM_TO_M3H
@@ -222,26 +149,17 @@ def mp_flow_m3h(model: str, arc_deg: float, inlet_bar: float) -> tuple[float, bo
 
 
 def free_discharge_m3h(d_inner_m: float, pressure_bar: float, cd: float = STREAM_CD) -> float:
-    """Open-end (stream nozzle) flow (m3/h): a free jet from the pipe bore.
-
-    All remaining head converts to exit velocity, so q = Cd * A * sqrt(2 g h)
-    with A the pipe cross-section and h the terminal gauge pressure in metres.
-    This is what comes out of an open hose with no nozzle restriction.
-    """
     h = max(pressure_bar, 0.0) * M_PER_BAR
     area = math.pi * (d_inner_m / 2.0) ** 2
     return cd * area * math.sqrt(2.0 * G * h) * 3600.0
 
 
-# ---------------------------------------------------------------------------
-# Graph model
-# ---------------------------------------------------------------------------
 @dataclass
 class Node:
     id: str
-    scope: str               # "MAIN", "Z1" .. "Z6"
-    dtype: str               # "head.rotor", "hose.25", "valve.auto", ...
-    fields: dict             # type defaults overlaid with per-node fields
+    scope: str
+    dtype: str
+    fields: dict
     children: list[str] = field(default_factory=list)
     parent: str | None = None
 
@@ -261,12 +179,10 @@ def parse_id(node_id: str) -> tuple[str, str, str]:
 
 
 def hose_nominal_mm(dtype: str) -> float:
-    """`hose.25` -> 25.0."""
     return float(dtype.split(".", 1)[1])
 
 
 def hose_inner_d_m(dtype: str) -> float:
-    """Inner diameter (m) of a hose type, from its nominal OD and wall table."""
     nom = hose_nominal_mm(dtype)
     wall = HOSE_WALL_MM.get(dtype, 0.0)
     return (nom - 2 * wall) / 1000.0
@@ -278,11 +194,8 @@ def load_system(path: Path = SETUP_PATH) -> dict:
 
 
 def build_graph(sys_data: dict) -> dict[str, Node]:
-    """Build the node graph from `feeds`, merging in `types` defaults.
-
-    Asserts the graph is a tree (each node has at most one parent) so subtree
-    flows and root-to-leaf path walks are well defined.
-    """
+    """Builds the node graph; asserts a tree (one parent per node), required by
+    subtree-flow and path walks."""
     types = sys_data.get("types", {})
     feeds = sys_data["feeds"]
     nodes: dict[str, Node] = {}
@@ -305,8 +218,7 @@ def build_graph(sys_data: dict) -> dict[str, Node]:
 
 
 def _compute_heights(nodes: dict[str, Node]) -> dict[str, float]:
-    """Effective elevation (m) of every node: its own height_m, else inherited
-    from the nearest upstream ancestor that carries one."""
+    """Elevation per node: own height_m, else inherited from nearest ancestor."""
     h: dict[str, float] = {}
 
     def gh(nid: str) -> float:
@@ -342,7 +254,6 @@ def _zone_valve(nodes: dict[str, Node], scope: str) -> Node | None:
 
 
 def zone_entry(nodes: dict[str, Node], scope: str) -> Node | None:
-    """The entry node of a scope: the one whose parent is outside the scope."""
     for n in nodes.values():
         if n.scope == scope and (n.parent is None or nodes[n.parent].scope != scope):
             return n
@@ -350,7 +261,6 @@ def zone_entry(nodes: dict[str, Node], scope: str) -> Node | None:
 
 
 def ordered_leaves(nodes: dict[str, Node], scope: str) -> list[Node]:
-    """Nozzle leaves of a scope in physical (depth-first, child) order."""
     out: list[Node] = []
     entry = zone_entry(nodes, scope)
     if entry is None:
@@ -377,7 +287,6 @@ def scope_to_id(scope: str) -> int:
 
 
 def known_zone_ids(nodes: dict[str, Node]) -> set[int]:
-    """Zone ids that have at least one nozzle leaf (Z1..Z5; Z6 is capped)."""
     ids = set()
     for n in nodes.values():
         if n.is_leaf and n.scope.startswith("Z"):
@@ -385,9 +294,6 @@ def known_zone_ids(nodes: dict[str, Node]) -> set[int]:
     return ids
 
 
-# ---------------------------------------------------------------------------
-# Adjustments
-# ---------------------------------------------------------------------------
 def _resolve_pump(sys_data: dict, adj: dict) -> str:
     if adj.get("pump_model"):
         if adj["pump_model"] not in PUMP_CURVES:
@@ -401,10 +307,8 @@ def _resolve_pump(sys_data: dict, adj: dict) -> str:
 
 
 def _apply_head_adjustments(nodes: dict[str, Node], adj: dict) -> dict[str, list[str]]:
-    """Mutate matched nozzle leaves per the adjustments list (by node-id `loc`,
-    `match` on leaf fields, `index` into the zone's ordered leaves, or the whole
-    zone). `zone` is optional: without it, `loc`/`match` resolve across every
-    zone (node ids are unique). Returns per-scope human-readable notes."""
+    """Mutate matched nozzle leaves per the adjustments list. Without `zone`,
+    `loc`/`match` resolve across every zone (node ids are unique)."""
     notes: dict[str, list[str]] = {}
     all_leaves = [n for n in nodes.values() if n.is_leaf]
     for rule in adj.get("heads", []):
@@ -431,19 +335,11 @@ def _apply_head_adjustments(nodes: dict[str, Node], adj: dict) -> dict[str, list
     return notes
 
 
-# ---------------------------------------------------------------------------
-# Leaf (head) flow dispatch
-# ---------------------------------------------------------------------------
 def _nozzle_num(node: Node) -> str:
     return str(node.fields.get("nozzle", "")).split()[0] if node.fields.get("nozzle") else ""
 
 
 def leaf_flow_at(node: Node, p_bar: float) -> tuple[float, dict]:
-    """Flow (m3/h) and state for a nozzle leaf at inlet pressure p_bar.
-
-    State carries `kind` (for weakest-link grouping and output), `regulated`
-    (MP), and `in_range` (I-20).
-    """
     dt = node.dtype
     if dt == "nozzle.rotor":            # I-20 rotor, unregulated
         q, in_range = i20_flow_m3h(_nozzle_num(node), p_bar)
@@ -469,12 +365,9 @@ def _seed_flow(node: Node) -> float:
     return 0.0
 
 
-# ---------------------------------------------------------------------------
-# Tree flow + pressure propagation
-# ---------------------------------------------------------------------------
 def subtree_flows(nodes: dict[str, Node], leaf_q: dict[str, float]) -> dict[str, float]:
     """Flow through the edge feeding each node = sum of active leaf flows below
-    it. Inactive leaves are simply absent from leaf_q (treated as 0)."""
+    it. Inactive leaves are absent from leaf_q (treated as 0)."""
     memo: dict[str, float] = {}
 
     def f(nid: str) -> float:
@@ -507,7 +400,6 @@ def _edge_minor_m(child: Node, q_m3h: float, env: dict) -> float:
 
 def _propagate(nodes: dict[str, Node], start: str, p_head: dict[str, float],
                sub: dict[str, float], heights: dict[str, float], env: dict) -> None:
-    """Fill p_head (gauge head, m) for every node downstream of `start`."""
     stack = [start]
     while stack:
         nid = stack.pop()
@@ -523,10 +415,8 @@ def _propagate(nodes: dict[str, Node], start: str, p_head: dict[str, float],
 def _solve_stream_q(leaf: Node, leaf_q: dict[str, float], pressures, nodes: dict[str, Node]) -> float:
     """Exact open-end flow given every other leaf's current flow.
 
-    The free-discharge balance `available head at the leaf == head required to
-    push q out the open bore` is monotonic in q (available falls, required
-    rises), so a bisection is unconditionally stable — unlike the stiff
-    q = f(p) fixed-point, which oscillates. Returns q in m3/h.
+    The available-vs-required-head balance is monotonic in q, so bisection is
+    stable here; the q = f(p) fixed-point used for chart heads oscillates.
     """
     d = leaf.fields.get("_feed_d_m") or hose_inner_d_m("hose.16")
     area = math.pi * (d / 2.0) ** 2
@@ -559,10 +449,8 @@ def _solve_state(active_scopes: set[str], nodes: dict[str, Node],
                  heights: dict[str, float], env: dict) -> dict:
     """Fixed-point solve for a set of simultaneously-running zones.
 
-    Chart heads (I-20 / MP) use under-relaxed Picard iteration; the open-end
-    stream is solved exactly by bisection given the other flows. Returns the
-    converged leaf flows, the node pressure-head map (None in pinned mode), the
-    pump head, and the per-edge subtree flows.
+    Chart heads use under-relaxed Picard; the open-end stream uses bisection.
+    p_head and pump_head_m are None in pinned mode.
     """
     pump = env["pump_model"]
     z_well = env["well_water_level_m_asl"]
@@ -611,9 +499,6 @@ def _solve_state(active_scopes: set[str], nodes: dict[str, Node],
             "sub": sub, "converged": converged}
 
 
-# ---------------------------------------------------------------------------
-# Per-zone result assembly
-# ---------------------------------------------------------------------------
 def _path_to(nodes: dict[str, Node], leaf_id: str, stop_id: str):
     """Yield each node from leaf up to (excluding) stop_id."""
     nid = leaf_id
@@ -642,9 +527,9 @@ def _pressure_uniformity(zone_id: int, head_out: list[dict]) -> tuple[float | No
 
 def _head_output(scope: str, nodes: dict[str, Node], state: dict,
                  heights: dict[str, float], valve_id: str | None, env: dict) -> tuple[list[dict], list[str]]:
-    """Render a zone's nozzle leaves to output dicts plus flags. When pressures
-    are known (full solve) each head also carries a loss breakdown that
-    reconciles head pressure = after_valve - elevation - friction - swing."""
+    """Render a zone's nozzle leaves to output dicts plus flags. With pressures
+    known, each head carries a loss breakdown reconciling
+    head pressure = after_valve - elevation - friction - swing."""
     p_head = state["p_head"]
     sub = state["sub"]
     pinned = env.get("global_operating_pressure_bar")
@@ -700,7 +585,6 @@ def _head_output(scope: str, nodes: dict[str, Node], state: dict,
 def _zone_dict(scope: str, nodes: dict[str, Node], state: dict,
                heights: dict[str, float], env: dict, notes: list[str],
                with_pump: bool) -> dict:
-    """Assemble the per-zone result dict (contract shape)."""
     zone_id = scope_to_id(scope)
     p_head = state["p_head"]
     sub = state["sub"]
@@ -764,8 +648,6 @@ def solve_one(scope: str, nodes: dict[str, Node], heights: dict[str, float],
 
 def solve_concurrent(scopes: list[str], nodes: dict[str, Node], heights: dict[str, float],
                      env: dict, notes_by_scope: dict[str, list[str]]) -> dict:
-    """Several zones running at once: shared pump + main carry the combined
-    flow, each zone keeps its own valve and laterals."""
     state = _solve_state(set(scopes), nodes, heights, env)
     p_head = state["p_head"]
     manifold = _find_one(nodes, "fitting.manifold")
@@ -791,9 +673,6 @@ def solve_concurrent(scopes: list[str], nodes: dict[str, Node], heights: dict[st
     }
 
 
-# ---------------------------------------------------------------------------
-# Ratings / weakest links
-# ---------------------------------------------------------------------------
 def _ratings(sys_data: dict) -> dict:
     types = sys_data.get("types", {})
 
@@ -820,8 +699,8 @@ def _ratings(sys_data: dict) -> dict:
 
 
 def _busiest_lateral(nodes: dict[str, Node], zones: list[dict]) -> dict | None:
-    """Across the reported zones, the hose segment (not the main line) running
-    the highest velocity, using its segment flow (sum of the heads below it)."""
+    """The lateral hose segment (not the main line) running the highest
+    velocity, using its segment flow."""
     best = None
     for z in zones:
         lq = {h["loc"]: h["flow_m3h"] for h in z["heads"]}
@@ -848,7 +727,6 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
     mp_peak = max((h["flow_m3h"] for z in zones for h in z["heads"]
                    if str(h["kind"]).startswith("MP")), default=0.0)
 
-    # --- pressure window ---
     max_ratings = {
         "pump (max deliverable)": r["pump_max_bar"],
         "main_line": r["main_bar"],
@@ -868,9 +746,8 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
     upper_by = min(max_ratings, key=max_ratings.get)
     lower_by = max(min_ratings, key=min_ratings.get)
 
-    # The open-end stream (Z5) discharges to atmosphere, so its near-zero
-    # terminal pressure is by design — it has no minimum inlet requirement and
-    # is excluded from the pressure-window analysis.
+    # Stream heads discharge to atmosphere (no min inlet); excluded from the
+    # pressure window by design.
     all_head_pressures = [h["pressure_bar"] for z in zones for h in z["heads"]
                           if h["pressure_bar"] is not None and h["kind"] != "stream"]
     pressure_violations = []
@@ -886,7 +763,6 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
                         f"zone {z['id']} {h['loc']} {h['pressure_bar']} bar below valve min "
                         f"{r['valve_min_bar']} bar")
 
-    # --- flow series path ---
     flow_items = [
         {"component": "pump", "rating_m3h": r["pump_flow"],
          "load_m3h": round(pm_load, 3), "scope": pm_scope},
@@ -907,7 +783,6 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
     flow_violations = [f"{it['component']} load {it['load_m3h']} > rating {it['rating_m3h']} m3/h"
                        for it in rated if it["margin_m3h"] < 0]
 
-    # --- flow velocity check (water hammer / erosion) ---
     main_hose = next((n for n in nodes.values()
                       if n.scope == "MAIN" and n.dtype.startswith("hose.")), None)
     main_d = hose_inner_d_m(main_hose.dtype) if main_hose else 0.0
@@ -951,9 +826,6 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
     }
 
 
-# ---------------------------------------------------------------------------
-# Top-level report
-# ---------------------------------------------------------------------------
 def _assumptions(pump_model: str, env: dict, mode: str, extra: dict | None = None) -> dict:
     a = {
         "mode": mode,
@@ -988,15 +860,13 @@ _FRIENDLY = {
 
 
 def _health(zones: list[dict], wl: dict) -> dict:
-    """Roll the pressure / flow / velocity / uniformity analysis up into an
-    at-a-glance status card. Pure synthesis of values already in `zones` and
-    `weakest_links` (`wl`); adds no new physics."""
+    """Roll pressure/flow/velocity/uniformity up into a status card. Pure
+    synthesis of values in `zones` and `weakest_links` (`wl`); adds no physics."""
     def r1(x):
         return round(x, 1) if x is not None else None
 
     checks: dict[str, dict] = {}
 
-    # pressure -- a band gauge: heads should sit inside the safe window
     pv = wl["pressure"]["violations"]
     obs = wl["pressure"]["observed_head_pressure_bar"]
     win = wl["pressure"]["safe_window_bar"]
@@ -1020,7 +890,6 @@ def _health(zones: list[dict], wl: dict) -> dict:
                               "kind": "band", "value": None, "min": r1(win[0]), "max": r1(win[1]),
                               "note": "no head pressures"}
 
-    # flow -- a fill gauge on the tightest (binding) component
     fv = wl["flow"]["violations"]
     tight = wl["flow"]["tightest"]
     if tight and tight.get("rating_m3h"):
@@ -1036,10 +905,8 @@ def _health(zones: list[dict], wl: dict) -> dict:
         checks["flow"] = {"label": "Flow", "status": "ok", "unit": "m3/h", "kind": "fill",
                           "value": None, "min": 0.0, "max": None, "note": "—"}
 
-    # velocity -- a ceiling gauge. Pipe velocity over the limit is a design
-    # guideline (erosion / water-hammer risk), not a hard equipment-rating
-    # breach like pressure or flow, so it is advisory: it warns, never escalates
-    # the whole system to "violation".
+    # Velocity is advisory: it warns, never escalates overall status to
+    # "violation" (a design guideline, not an equipment-rating breach).
     vv = wl["velocity"]["violations"]
     fast = wl["velocity"]["fastest"]
     limit = wl["velocity"]["limit_ms"]
@@ -1055,7 +922,6 @@ def _health(zones: list[dict], wl: dict) -> dict:
                               "kind": "ceiling", "value": None, "min": 0.0, "max": r1(limit),
                               "note": "—"}
 
-    # uniformity -- a ceiling gauge on the worst in-zone pressure spread
     spread_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" in f]
     worst_spread = max((z.get("pressure_spread_pct") or 0.0 for z in zones), default=0.0)
     checks["uniformity"] = {
@@ -1080,7 +946,7 @@ def _health(zones: list[dict], wl: dict) -> dict:
     statuses = [c["status"] for c in checks.values()] + (["warning"] if head_flags else [])
     overall = max(statuses, key=lambda s: _SEVERITY[s]) if statuses else "ok"
 
-    all_violations = pv + fv  # velocity is advisory (see the velocity check above)
+    all_violations = pv + fv  # velocity excluded: advisory only
     all_flags = [f for z in zones for f in z.get("flags", [])]
     if overall == "violation":
         headline = f"{len(all_violations)} limit violation(s): " + "; ".join(all_violations)
@@ -1120,23 +986,13 @@ def report(adjustments: dict | None = None, zone: int | None = None,
     """Run the full hydraulic solve and weakest-link analysis.
 
     Args:
-        adjustments: optional what-if overrides:
-            pump_model: str                    swap the pump curve
-            well_water_level_m_asl: float      water table elevation (default = pump elevation)
-            global_operating_pressure_bar: float  pin every head to this pressure (skip the
-                                               pump/friction solve)
-            valve_cv, sj_loss_bar, suction_extra_loss_m: tune the loss model
-            heads: list of head edits, each {zone, (index|loc|match), set}, where `loc` is a
-                node id (e.g. "Z1.nozzle.rotor.01") and `match` matches nozzle-leaf fields, e.g.
-                {"zone": 2, "match": {"nozzle": "2.5 blue"}, "set": {"nozzle": "4.0 blue"}}
-        zone: restrict the solve to one zone id (one zone at a time).
-        concurrent_zones: list of zone ids to run simultaneously (shared pump + main).
-
-    Returns a dict whose first key is `health` (an at-a-glance status card),
-    then assumptions, per-zone results, and weakest_links. In concurrent mode a
-    top-level `concurrent` block reports the shared operating point. Zones Z1-Z4
-    are automatic; Z5 is the manual open-end line (estimated); Z6 is capped and
-    excluded.
+        adjustments: what-if overrides. `global_operating_pressure_bar` pins
+            every head and skips the pump/friction solve. `well_water_level_m_asl`
+            defaults to pump elevation. `heads` is a list of {zone, (index|loc|
+            match), set} edits, where `loc` is a node id and `match` matches
+            nozzle-leaf fields.
+        zone: restrict to one zone id.
+        concurrent_zones: zone ids to run simultaneously (shared pump + main).
     """
     adjustments = adjustments or {}
     sys_data = load_system(path)
@@ -1144,7 +1000,6 @@ def report(adjustments: dict | None = None, zone: int | None = None,
     heights = _compute_heights(nodes)
     pump_model = _resolve_pump(sys_data, adjustments)
 
-    # attach the feeding-hose bore to each stream leaf (for the free-discharge model)
     for n in nodes.values():
         if n.dtype == "nozzle.stream" and n.parent and nodes[n.parent].dtype.startswith("hose."):
             n.fields["_feed_d_m"] = hose_inner_d_m(nodes[n.parent].dtype)

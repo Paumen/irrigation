@@ -1,30 +1,3 @@
-"""Analysis report for the diagnostic questionnaire.
-
-Where `test_diagnose.py` is a pass/fail *gate*, this is the *microscope*: it
-runs the same per-fault simulations (shared `diagnose_sim` harness) but instead
-of asserting, it characterises the engine's behaviour so you can see *why* the
-numbers are what they are and where the questionnaire is weak.
-
-Sections:
-  1. Headline           — outcome / lock-in / confusion / robustness, at a glance.
-  2. Rank trajectory    — per-fault row of rank cells (one per question asked,
-                          ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+), with lock-in.
-  3. Family confusion   — faults still outranked at the end; cross-family cases
-                          (a different component winning) called out in full,
-                          within-family ones listed lighter.
-  4. Lock-in speed      — histogram (buckets of 4) of questions to lock & hold top-3.
-  5. Question scorecard — behavioural: how often each question is asked, its median
-                          position, and the rank-improvement (work) it delivered,
-                          plus which questions don't pull their weight.
-  6. Question character — structural: scope / force / rule-out / answer-shape of
-                          each question, read straight from its effect weights.
-  7. Robustness         — how well each fault survives 1-in-5 random answers.
-
-Run:   python3 tools/diagnose_report.py            # console
-       python3 tools/diagnose_report.py --md out.md  # also write a markdown file
-       python3 tools/diagnose_report.py --json       # raw metrics as JSON
-"""
-
 from __future__ import annotations
 
 import json
@@ -44,11 +17,7 @@ NOISE_RATE = 0.2
 NOISE_TRIALS = 50
 
 
-# ----------------------------------------------------------------------------
-# metric computation (engine-driven; no assertions)
-# ----------------------------------------------------------------------------
 def final_confusers(fault: str) -> list[str]:
-    """Cause ids ranked strictly above `fault` once its whole answer key is in."""
     ranked = ENG.rank(build_key(fault))
     above: list[str] = []
     for r in ranked:
@@ -79,7 +48,6 @@ def gather() -> dict:
             "confusers": confusers, "siblings": siblings, "cross": cross, "kind": kind,
         })
 
-    # question frequency / position / work (rank-improvement), across all runs
     qstats: dict[str, dict] = {}
     for f in FAULTS:
         t = trajs[f]
@@ -102,27 +70,20 @@ def gather() -> dict:
     }
 
 
-# ----------------------------------------------------------------------------
-# rendering helpers
-# ----------------------------------------------------------------------------
 def rank_cell(r: int) -> str:
-    """A rank as one square: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+."""
     return ("✅" if r == 1 else "🟩" if r <= 3 else "🟨" if r <= 6
             else "🟧" if r <= 9 else "🟥")
 
 
 def work_cell(m: float) -> str:
-    """A question's average work as one square: 🟩 strong · 🟨 helps · ⬜ idle · 🟥 hurts."""
     return "🟩" if m >= 1.0 else "🟨" if m >= 0.1 else "🟥" if m < -0.05 else "⬜"
 
 
 def recov_cell(x: float) -> str:
-    """Robustness as one square: 🟩 ≥80% · 🟨 ≥50% · 🟧 ≥30% · 🟥 worse."""
     return "🟩" if x >= 0.8 else "🟨" if x >= 0.5 else "🟧" if x >= 0.3 else "🟥"
 
 
 def fcode_key(f: str) -> list[int]:
-    """Natural sort key for an F-code: F3.1.1 -> [3, 1, 1]."""
     return [int(x) for x in re.findall(r"\d+", f)]
 
 
@@ -131,7 +92,6 @@ def hbar(n: float, scale: float, width: int = 12) -> str:
 
 
 def minibar(frac: float, width: int = 5) -> str:
-    """Filled/empty proportion bar for scanning a 0..1 magnitude."""
     f = max(0, min(width, round(frac * width)))
     return "█" * f + "·" * (width - f)
 
@@ -152,9 +112,6 @@ def shape_label(x: float) -> str:
     return "decisive" if x >= 0.55 else "even" if x <= 0.40 else "graded"
 
 
-# ----------------------------------------------------------------------------
-# section renderers -> list[str] lines
-# ----------------------------------------------------------------------------
 def sec_headline(g: dict) -> list[str]:
     rows = g["rows"]
     n = len(rows)
@@ -163,7 +120,6 @@ def sec_headline(g: dict) -> list[str]:
     at1 = sum(1 for r in rows if r["final_rank"] == 1)
     recov = [v["recovery"] for v in g["robustness"].values()]
     robust = sum(1 for x in recov if x >= 0.8)
-    # one capability per line: what it does, the score, and how fast/well
     return [
         "# Diagnostic questionnaire — analysis report",
         "",
@@ -245,7 +201,7 @@ def sec_lockin(g: dict) -> list[str]:
     edges = [(1, 4), (5, 8), (9, 12), (13, 16), (17, DEPTH)]
     counts = [sum(1 for v in locks if lo <= v <= hi) for lo, hi in edges]
     scale = max([*counts, never, 1])
-    tiers = ["🟩", "🟨", "🟧", "🟥", "🟥"]  # fast → slow, one per bucket
+    tiers = ["🟩", "🟨", "🟧", "🟥", "🟥"]
     out = ["## Lock-in speed",
            "",
            f"Questions needed to lock a fault into the top-3 and hold it "
@@ -261,7 +217,6 @@ def sec_lockin(g: dict) -> list[str]:
 
 
 def sec_scorecard(g: dict) -> list[str]:
-    """Behavioural: what each question *did* across the simulated runs."""
     qs = g["qstats"]
     n_runs = len(g["rows"])
     out = ["## Question scorecard",
@@ -284,7 +239,7 @@ def sec_scorecard(g: dict) -> list[str]:
                    f"{d['med_pos']:5.0f}{d['mean_work']:+6.1f}")
     out.append("```")
 
-    # thresholds match work_cell exactly: 🟥 hurts (< -0.05), ⬜ idle ([-0.05, 0.1))
+    # thresholds must match work_cell
     neg = sorted((q for q, d in qs.items() if d["mean_work"] < -0.05),
                  key=lambda q: qs[q]["mean_work"])
     idle = sorted((q for q, d in qs.items() if -0.05 <= d["mean_work"] < 0.1),
@@ -304,8 +259,6 @@ def sec_scorecard(g: dict) -> list[str]:
 
 
 def sec_character(g: dict) -> list[str]:
-    """Structural: what each question *is*, from its effect weights — several
-    independent axes, of which triage-vs-narrow is only one."""
     prof = g["profile"]
     pos = {q: d["med_pos"] for q, d in g["qstats"].items()}
     out = ["## Question character",
