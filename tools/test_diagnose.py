@@ -75,8 +75,8 @@ T2 = {
     "F2.5":   "c b a a a a d b d a - a",
     "F2.6":   "a b a a a a d a d a a a",
     "F2.8":   "c b a a a a d b d a - a",
-    "F3.1.1": "a a b d a a d b a a - a",
-    "F3.1.2": "a a b d a a d b a a - a",
+    "F3.1.1": "a c b d a a d b a a - a",  # Q13c: high-resistance break reads low/fluctuating
+    "F3.1.2": "a c b d a a d b a a - a",  # Q13c: high-resistance break reads low/fluctuating
     "F3.1.3": "a a c d a a d b a b - a",
     "F3.4":   "a a c d a a d b a c a a",
     "F4.1":   "c a a a a a d b b a - a",
