@@ -71,16 +71,12 @@ def gather() -> dict:
 
 
 def rank_cell(r: int) -> str:
-    return ("✅" if r == 1 else "🟩" if r <= 3 else "🟨" if r <= 6
-            else "🟧" if r <= 9 else "🟥")
+    return ("✅" if r == 1 else "🟩" if r <= 3 else "🟨" if r <= 5
+            else "🟧" if r <= 7 else "🟥")
 
 
 def work_cell(m: float) -> str:
     return "🟩" if m >= 1.0 else "🟨" if m >= 0.1 else "🟥" if m < -0.05 else "⬜"
-
-
-def recov_cell(x: float) -> str:
-    return "🟩" if x >= 0.8 else "🟨" if x >= 0.5 else "🟧" if x >= 0.3 else "🟥"
 
 
 def fcode_key(f: str) -> list[int]:
@@ -91,21 +87,12 @@ def hbar(n: float, scale: float, width: int = 12) -> str:
     return "█" * max(0, round(n / scale * width)) if scale else ""
 
 
-def minibar(frac: float, width: int = 5) -> str:
-    f = max(0, min(width, round(frac * width)))
-    return "█" * f + "·" * (width - f)
-
-
 def scope_label(n: int) -> str:
     return "triage" if n >= 6 else "narrow" if n <= 2 else "mid"
 
 
 def force_label(m: float) -> str:
     return "hard" if m >= 1.5 else "firm" if m >= 0.9 else "nudge"
-
-
-def ruleout_label(x: float) -> str:
-    return "rules-out" if x >= 0.35 else "rules-in" if x <= 0.10 else "mixed"
 
 
 def shape_label(x: float) -> str:
@@ -126,14 +113,13 @@ def sec_headline(g: dict) -> list[str]:
         f"{n} fault modes · {DEPTH} questions deep",
         "",
         "```",
-        f"{'Finds the right component':33s}{len(plocks):>2}/{n}   "
-        f"median {statistics.median(plocks):g} questions to lead & hold",
-        f"{'Locks the sub-cause into top-3':33s}{len(locks):>2}/{n}   "
-        f"median {statistics.median(locks):g}, range {min(locks)}–{max(locks)} "
-        f"(3 documented misses)",
-        f"{'Lands it at #1 outright':33s}{at1:>2}/{n}",
-        f"{'Recovers from a user error':33s}{robust:>2}/{n}   "
-        f"≥80% of the time under 1-in-5 errors (wrong answer / skip; median {statistics.median(recov)*100:.0f}%)",
+        f"{'Right component leads & holds':31s}{len(plocks):>2}/{n}   "
+        f"median {statistics.median(plocks):g} q",
+        f"{'Sub-cause into top-3':31s}{len(locks):>2}/{n}   "
+        f"median {statistics.median(locks):g} q (range {min(locks)}–{max(locks)}, 3 known misses)",
+        f"{'Lands at #1 outright':31s}{at1:>2}/{n}",
+        f"{'Survives 1-in-5 user errors':31s}{robust:>2}/{n}   "
+        f"stays top-3 ≥80% of trials (median {statistics.median(recov)*100:.0f}%)",
         "```",
     ]
 
@@ -141,14 +127,12 @@ def sec_headline(g: dict) -> list[str]:
 def sec_trajectory(g: dict) -> list[str]:
     out = ["## Rank trajectory",
            "",
-           "One square per question the engine *asks*: the true fault's rank after "
-           "an answer — ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+ — or ⬜ when this "
-           "fault's profile leaves it unanswered (a skip; rank unchanged). "
-           "**fam** / **top3** count *answered* questions: until the right *component* "
-           "leads (#1) and stays / until the exact cause locks into the top-3.",
-           "",
-           "A run ends at 18 answers, or when no remaining question separates the "
-           "contending causes (the engine's done signal) — whichever comes first.",
+           "One square per question asked — the true fault's rank after that "
+           "answer: ✅ #1 · 🟩 #2–3 · 🟨 #4–5 · 🟧 #6–7 · 🟥 #8+ · ⬜ skip (rank "
+           "unchanged). **fam** / **top3** = answered questions until the right "
+           "*component* leads and holds / the exact cause locks into the top-3. A "
+           "run stops at 18 answers, or earlier when no question still separates "
+           "the leaders.",
            "",
            "```",
            f"{'fault':7s}{'fam':5s}{'top3':6s}trajectory →"]
@@ -188,10 +172,6 @@ def sec_family(g: dict) -> list[str]:
         for r in sib_out:
             out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['siblings'])}")
         out.append("```")
-    if sib_in:
-        out += ["",
-                f"🟦 **Within-family, still top-3** — true cause at #2–3, a sibling "
-                f"merely leads · {len(sib_in)}: {', '.join(r['fault'] for r in sib_in)}"]
     return out
 
 
@@ -201,17 +181,16 @@ def sec_lockin(g: dict) -> list[str]:
     edges = [(1, 4), (5, 8), (9, 12), (13, 16), (17, DEPTH)]
     counts = [sum(1 for v in locks if lo <= v <= hi) for lo, hi in edges]
     scale = max([*counts, never, 1])
-    tiers = ["🟩", "🟨", "🟧", "🟥", "🟥"]
     out = ["## Lock-in speed",
            "",
-           f"Questions needed to lock a fault into the top-3 and hold it "
-           f"(🟩 fast → 🟥 slow · ⬛ never). median **{statistics.median(locks):g}** · "
+           f"Questions needed to lock a fault into the top-3 and hold it. "
+           f"median **{statistics.median(locks):g}** · "
            f"mean **{statistics.fmean(locks):.1f}**.",
            "",
            "```"]
-    for tier, (lo, hi), n in zip(tiers, edges, counts):
-        out.append(f"{tier} {f'{lo}–{hi}':>6} {hbar(n, scale)} {n}")
-    out.append(f"⬛ {'never':>6} {hbar(never, scale)} {never}")
+    for (lo, hi), n in zip(edges, counts):
+        out.append(f"{f'{lo:02d}–{hi:02d}':>5} {hbar(n, scale)} {n}")
+    out.append(f"{'never':>5} {hbar(never, scale)} {never}")
     out.append("```")
     return out
 
@@ -221,14 +200,10 @@ def sec_scorecard(g: dict) -> list[str]:
     n_runs = len(g["rows"])
     out = ["## Question scorecard",
            "",
-           "What each question *did* across the 29 runs. **work** = average "
-           "rank-improvement it gives the true fault (+ = toward #1; the median is 0 "
-           "for most, since rank rarely moves on a single step) — "
-           "🟩 ≥1.0 strong · 🟨 ≥0.1 helps · ⬜ idle · 🟥 hurts. **when** = median "
-           "position. _Caveat: Q1 always goes first, so its work also credits "
-           "unwinding the no-answer prior (an a-priori-unlikely fault jumps a long "
-           "way on Q1); read early-position work as partly triage, not pure "
-           "discrimination._",
+           f"What each question *did* across the {n_runs} runs. **work** = mean "
+           "rank gain for the true fault (🟩 ≥1.0 · 🟨 ≥0.1 · ⬜ idle · 🟥 hurts) · "
+           "**when** = median position asked. _Q1 always leads, so its work partly "
+           "credits unwinding the cold-start prior, not pure discrimination._",
            "",
            "```",
            f"   {'q':5s}{'asked':18s}{'when':>5s}{'work':>6s}"]
@@ -245,16 +220,15 @@ def sec_scorecard(g: dict) -> list[str]:
     idle = sorted((q for q, d in qs.items() if -0.05 <= d["mean_work"] < 0.1),
                   key=lambda q: qs[q]["med_pos"], reverse=True)
     out.append("")
-    out.append("**Questions that don't pull their weight**")
+    parts = []
     if neg:
         late = statistics.fmean(qs[q]["med_pos"] for q in neg)
-        out.append(f"- 🟥 _cost rank on average_ — {', '.join(neg)}: asked ~pos "
-                   f"{late:.0f}, after the ranking has usually settled, so a stray "
-                   "answer here mostly reshuffles ties the wrong way.")
+        parts.append(f"🟥 _cost rank_ (land ~pos {late:.0f}, after the ranking has "
+                     f"settled): {', '.join(neg)}")
     if idle:
-        out.append(f"- ⬜ _≈ no movement_ — {', '.join(idle)}: their answer rarely "
-                   "separates the causes still live at that point (redundant with "
-                   "earlier questions, or too narrow to matter).")
+        parts.append(f"⬜ _≈ idle_ (redundant or too narrow): {', '.join(idle)}")
+    if parts:
+        out.append("**Low-yield questions** — " + " · ".join(parts) + ".")
     return out
 
 
@@ -263,49 +237,39 @@ def sec_character(g: dict) -> list[str]:
     pos = {q: d["med_pos"] for q, d in g["qstats"].items()}
     out = ["## Question character",
            "",
-           "A structural read of each question from its effect weights (no "
-           "simulation). **scope** = families it can move · **force** = strongest "
-           "single push (hard ≥1.5 · firm ≥0.9 · nudge else) · **rule-out** = share "
-           "of evidence that *subtracts* to exonerate a cause vs only adds · "
-           "**shape** = how its weight spreads across answers (decisive = one loud "
-           "answer · even = graded across all).",
-           "",
-           "Bars scale each axis for scanning (more filled = broader / harder / "
-           "more rule-out / more decisive).",
+           "A structural read from each question's effect weights (no simulation). "
+           "**scope** = families it can move · **force** = strongest single push "
+           "(hard ≥1.5 · firm ≥0.9 · else nudge) · **rule-out** = share of weight "
+           "that *subtracts* to exonerate a cause · **shape** = how the weight "
+           "spreads across answers (decisive = one loud answer · even = graded). "
+           "Sorted broad-to-narrow.",
            "",
            "```",
-           f"{'q':5s}{'scope':>9s} {'force':>10s} {'rule-out':>10s} {'shape':>11s}"]
+           f"{'q':6s}{'scope':12s}{'force':8s}{'rule-out':10s}shape"]
     for qid, p in sorted(prof.items(), key=lambda kv: (-kv[1]["families"], -kv[1]["max_push"])):
-        scope = f"{minibar(p['families'] / 9)} {p['families']}"
-        force = f"{minibar(p['max_push'] / 1.6)} {force_label(p['max_push'])}"
-        rout = f"{minibar(p['ruleout'] / 0.5)} {p['ruleout']*100:.0f}%"
-        shape = f"{minibar((p['top_share'] - 0.3) / 0.55)} {shape_label(p['top_share'])}"
-        out.append(f"{qid:5s}{scope:>9s} {force:>10s} {rout:>10s} {shape:>11s}")
+        scope = f"{p['families']:>2}  {scope_label(p['families'])}"
+        rout = f"{p['ruleout']*100:.0f}%"
+        out.append(f"{qid:6s}{scope:12s}{force_label(p['max_push']):8s}"
+                   f"{rout:10s}{shape_label(p['top_share'])}")
     out.append("```")
 
-    def names(pred, by=None, rev=False, cap=8):
+    def names(pred, by=None, cap=6):
         sel = [q for q, p in prof.items() if pred(p)]
-        sel.sort(key=(by or (lambda q: q)), reverse=rev)
+        sel.sort(key=(by or (lambda q: q)))
         return ", ".join(sel[:cap]) + (" …" if len(sel) > cap else "")
 
+    pos_of = lambda q: pos.get(q, 99)
     out += ["",
-            "Several independent axes — examples, not an exhaustive taxonomy:",
-            f"- **scope** — triage across families (≥6): {names(lambda p: p['families'] >= 6, lambda q: pos.get(q, 99))}; "
-            f"narrows within one (≤2): {names(lambda p: p['families'] <= 2, lambda q: pos.get(q, 99))}",
-            f"- **force** — pushes hard (±1.5+): {names(lambda p: p['max_push'] >= 1.5)}; "
-            f"only nudges (≤±0.6): {names(lambda p: p['max_push'] <= 0.6)}",
-            f"- **direction** — pure rule-in / only adds: {names(lambda p: p['ruleout'] <= 0.05)}; "
-            f"also punishes / rules-out (≥35%): {names(lambda p: p['ruleout'] >= 0.35, lambda q: prof[q]['ruleout'], rev=True)}",
-            f"- **shape** — decisive, one loud answer (≥55%): {names(lambda p: p['top_share'] >= 0.55, lambda q: prof[q]['top_share'], rev=True)}; "
-            f"even / graded across answers (≤40%): {names(lambda p: p['top_share'] <= 0.40)}",
+            f"High-scope questions triage across families and sit early in the "
+            f"funnel ({names(lambda p: p['families'] >= 6, pos_of)}); low-scope "
+            f"confirmers settle a single family and land last "
+            f"({names(lambda p: p['families'] <= 2, pos_of)}) — the intended "
+            "broad-to-narrow shape.",
             "",
-            "Triage questions sit early in the funnel and the single-family "
-            "confirmers come last — the intended broad-to-narrow shape.",
-            "",
-            "_Note: scope/force/shape describe a question's **potential**; the "
-            "scorecard's `work` is what it **actually** delivered in the sims. A "
-            "high-force question that lands late (e.g. Q15, Q16, Q20) shows little "
-            "work simply because the ranking has usually settled before it._"]
+            "_scope/force/shape are a question's **potential**; the scorecard's "
+            "`work` is what it **delivered**. A high-force question that lands late "
+            "(Q15, Q16, Q20) shows little work because the ranking has usually "
+            "settled before it._"]
     return out
 
 
@@ -314,36 +278,59 @@ def sec_robustness(g: dict) -> list[str]:
     clean = {r["fault"]: r for r in g["rows"]}
     recov = [v["recovery"] for v in rob.values()]
     strong = sum(1 for x in recov if x >= 0.8)
+    order = sorted(rob, key=lambda k: rob[k]["recovery"])
+
+    def noise_ranks(f: str) -> list[int]:
+        return [round(x) for x in rob[f]["median_ranks"]]
+
+    def diverges(f: str) -> bool:
+        cr, nr = clean[f]["ranks"], noise_ranks(f)
+        m = min(len(cr), len(nr))
+        return any(rank_cell(cr[i]) != rank_cell(nr[i]) for i in range(m))
+
     out = ["## Robustness to answer errors",
            "",
-           "Each fault's **clean** rank path vs its path under **1-in-5 user "
-           "errors** — a wrong answer, or occasionally an accidental skip / a "
-           "guessed answer where they'd normally skip — "
-           f"the **noise** row is the median rank at each answered step over "
-           f"{NOISE_TRIALS} trials (same scale: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · "
-           "🟥 #10+). The header gives how often the noisy run still ends in the top-3 "
-           "/ at #1, and the lock-in clean→noisy.",
+           f"Each fault re-run {NOISE_TRIALS}× with **1 answer in 5 wrong or "
+           "mis-skipped**. This is the noise view of §Rank trajectory: *recover* = "
+           "trials still ending in the top-3, *#1* = trials ending at #1, *lock* = "
+           "questions to lock the top-3 (clean → noisy median; · = never under "
+           "noise).",
            "",
-           f"**{strong}/{len(rob)}** faults recover to the top-3 ≥80% of the time "
-           f"(median recovery {statistics.median(recov)*100:.0f}%). Sorted worst-first.",
+           f"**{strong}/{len(rob)}** faults stay top-3 ≥80% of the time "
+           f"(median {statistics.median(recov)*100:.0f}%). Worst-first:",
            "",
-           "```"]
-    for f in sorted(rob, key=lambda k: rob[k]["recovery"]):
+           "```",
+           f"{'fault':8s}{'recover':>8s}{'#1':>6s}   lock"]
+    for f in order:
         v = rob[f]
         cl = clean[f]["lock_in"]
         nz = round(v["med_lockin"]) if v["med_lockin"] is not None else None
         cl_s = str(cl) if cl is not None else "—"
         nz_s = str(nz) if v["lock_rate"] >= 0.5 and nz is not None else "·"
-        out.append(f"{recov_cell(v['recovery'])} {f:7s} top-3 {v['recovery']*100:3.0f}%  "
-                   f"#1 {v['at1']*100:3.0f}%  lock {cl_s}→{nz_s}")
-        out.append("   clean " + "".join(rank_cell(x) for x in clean[f]["ranks"]))
-        out.append("   noise " + "".join(rank_cell(round(x)) for x in v["median_ranks"]))
+        out.append(f"{f:8s}{v['recovery']*100:7.0f}%{v['at1']*100:5.0f}%   "
+                   f"{cl_s} → {nz_s}")
     out.append("```")
-    out.append("")
-    out.append("_Read the **noise** row against **clean**: robust faults (🟩) track "
-               "their clean path and end green; the degeneracies (F7.3.2 / F4.4 / "
-               "F7.4 / F2.5) stay orange/red throughout — a single wrong answer is "
-               "enough to keep them behind a sibling._")
+
+    shifted = [f for f in order if diverges(f)]
+    steady = [f for f in order if not diverges(f)]
+    if shifted:
+        out += ["",
+                "**Where the errors bite** — noise median rank vs the clean path, "
+                "for the faults whose path actually shifts (rank scale as above):",
+                "",
+                "```"]
+        for f in shifted:
+            out.append(f"{f:7s} clean " + "".join(rank_cell(x) for x in clean[f]["ranks"]))
+            out.append(f"{'':7s} noise " + "".join(rank_cell(x) for x in noise_ranks(f)))
+        out.append("```")
+    if steady:
+        out += ["",
+                f"_The remaining {len(steady)} track their clean path under noise: "
+                f"{', '.join(sorted(steady, key=fcode_key))}._"]
+    out += ["",
+            f"_The hardest cases ({', '.join(order[:4])}) most often end outside "
+            "the top-3 — one wrong answer is enough to keep them behind a sibling; "
+            "the rest re-converge._"]
     return out
 
 
