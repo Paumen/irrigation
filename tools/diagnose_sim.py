@@ -63,17 +63,17 @@ T2 = {
     "F3.4":   "a a c d a a d b a c a a",
     "F4.1":   "a a a a a a d b b a - a",
     "F4.4":   "a a a a a a d b b a - a",
-    "F5.1":   "b a a a a a d b c a - a",
-    "F5.3":   "b a a a a a d b a a - a",
-    "F5.8":   "- a a a a a d b a a - a",
+    "F5.1":   "b a a a a a d b c a d a",
+    "F5.3":   "b a a a a a d b a a d a",
+    "F5.8":   "- a a a a a d b a a d a",
     "F6.1":   "b a a a a a a b a a c a",
     "F6.3":   "b a a a a a d b a a c a",
-    "F7.1.1": "a a b b b a d b a a - a",
+    "F7.1.1": "a a b b b a d b a a d a",
     "F7.1.2": "b a a a b b b b a a b b",
     "F7.1.3": "b a a a b b b b a a b c",
-    "F7.3.1": "b a a a b b d b a a - a",
-    "F7.3.2": "b a a a b b d b a a - a",
-    "F7.4":   "b a a a b b b b a a b a",
+    "F7.3.1": "b a a a b b d b a a d a",
+    "F7.3.2": "b a a a b b d b a a a b",
+    "F7.4":   "b a a a b b b b a a b c",
     "F8.1":   "b a a a a a c b a a c a",
     "F8.3":   "b a a a a a d b a a c a",
     "F9.1.1": "a a a a a a d b a a c a",
@@ -137,11 +137,15 @@ CTX = {
 
 LET = {"a": 0, "b": 1, "c": 2, "d": 3}
 
-# letter -> ticked option indices. None = skipped, not an empty selection.
+# letter -> ticked option indices. The "neither" code (Q18 'd', Q22 'd', Q23 'a')
+# now ticks the explicit "None of the above" option each question carries, so a
+# negative confirmation ("I looked, it's none of these") is scored as a small
+# rule-out instead of being dropped as a skip. A '-' cell is still a true skip —
+# the homeowner couldn't run the test (e.g. no zone energises for Q22).
 MULTI = {
-    "Q18": {"a": [0], "b": [1], "c": [2], "d": None},
-    "Q22": {"a": [0], "b": [1], "c": [2]},
-    "Q23": {"a": None, "b": [0], "c": [1], "d": [0, 1]},
+    "Q18": {"a": [0], "b": [1], "c": [2], "d": [3]},
+    "Q22": {"a": [0], "b": [1], "c": [2], "d": [3]},
+    "Q23": {"a": [2], "b": [0], "c": [1], "d": [0, 1]},
 }
 
 FAULTS = list(T1)
@@ -297,8 +301,18 @@ def random_answer(q: dict, rng: random.Random):
     return None
 
 
+# Fraction of errors on an answerable question that manifest as an accidental
+# skip rather than a wrong/random answer (the rest are wrong answers). Human
+# error is mostly a misread/misclick on the value; giving up is rarer.
+SKIP_ERROR_SHARE = 0.2
+
+
 def simulate_noisy(fault: str, noise_rate: float, rng: random.Random,
-                   n: int = DEPTH) -> Trajectory:
+                   n: int = DEPTH, skip_error_share: float = SKIP_ERROR_SHARE) -> Trajectory:
+    """Noise models user error on *every* recommended question, in both
+    directions: a question the user could answer may be mis-answered or
+    accidentally skipped, and a question they'd genuinely skip (don't-know /
+    not-applicable) may be answered with a guess instead."""
     key = build_key(fault)
     answers: dict = {}
     skipped: dict = {}
@@ -311,18 +325,23 @@ def simulate_noisy(fault: str, noise_rate: float, rng: random.Random,
         if not recs:
             break
         qid = recs[0]["q"]["id"]
+        err = rng.random() < noise_rate
         if qid in key:
-            if rng.random() < noise_rate:
-                answers[qid] = random_answer(ENG.q_by_id[qid], rng)
-            else:
-                answers[qid] = key[qid]
-            ranked = ENG.rank(answers)
-            rank = next(i for i, r in enumerate(ranked, 1) if r["id"] == fault)
-            pct = next(r["pct"] for r in ranked if r["id"] == fault)
-            steps.append(Step(len(steps) + 1, qid, rank, [r["id"] for r in ranked[:3]], pct))
+            if err and rng.random() < skip_error_share:
+                skipped[qid] = True       # accidental skip of an answerable question
+                asked_skips.append(qid)
+                continue
+            answers[qid] = random_answer(ENG.q_by_id[qid], rng) if err else key[qid]
         else:
-            skipped[qid] = True
-            asked_skips.append(qid)
+            if not err:
+                skipped[qid] = True        # genuine don't-know / not-applicable skip
+                asked_skips.append(qid)
+                continue
+            answers[qid] = random_answer(ENG.q_by_id[qid], rng)  # guessed instead of skipping
+        ranked = ENG.rank(answers)
+        rank = next(i for i, r in enumerate(ranked, 1) if r["id"] == fault)
+        pct = next(r["pct"] for r in ranked if r["id"] == fault)
+        steps.append(Step(len(steps) + 1, qid, rank, [r["id"] for r in ranked[:3]], pct))
     return Trajectory(fault, steps, asked_skips, base_rank)
 
 
