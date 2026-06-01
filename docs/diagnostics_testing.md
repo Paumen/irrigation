@@ -72,11 +72,15 @@ and asserts the overall median recovery clears `MIN_MEDIAN_RECOVERY`.
   within-family.
 - **Lock-in speed** — histogram (buckets of 4) of questions-to-lock-top-3, with
   median and mean. The right tail and the `never` bucket are where to spend effort.
-- **Question scorecard** — per question: how often the adaptive engine reaches it
-  (`asked`), its median position (`when`), the average rank-improvement it gives the
-  *true* fault (`work`), and `scope` = how many component families its answers can
-  move (triage ≥6 · narrow ≤2). Followed by which questions *don't* pull their weight
-  (Q6/Q17/Q19 cost rank on average) and the triage-vs-narrowing split.
+- **Question scorecard** (behavioural) — per question: how often the adaptive engine
+  reaches it (`asked`), its median position (`when`), and the average rank-improvement
+  it gave the *true* fault (`work`). Followed by which questions *don't* pull their
+  weight (Q6/Q17/Q19 cost rank on average).
+- **Question character** (structural) — read straight from each question's effect
+  weights, independent of the sims: `scope` (families it can move — triage vs narrow),
+  `force` (strongest push — hard/firm/nudge), `rule-out` (share of evidence that
+  *subtracts* to exonerate vs only adds), and `shape` (one decisive answer vs graded
+  across all). These are independent axes; triage-vs-narrow is only one of them.
 - **Robustness** — per-fault recovery under 1-in-5 random answers. The least-robust
   faults are exactly the documented degeneracies (no unique fingerprint, so one
   wrong answer tips them behind a sibling).

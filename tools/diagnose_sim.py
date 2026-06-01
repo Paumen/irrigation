@@ -247,31 +247,52 @@ def simulate_all(n: int = DEPTH) -> dict[str, Trajectory]:
 
 
 # ---------------------------------------------------------------------------
-# question scope — does a question separate many component families (triage)
-# or only causes inside one family (narrowing)?
+# question character — a structural read of each question from its effect
+# weights (independent of any simulation): how broad it is, how hard it pushes,
+# whether it adds or also subtracts evidence, and how its weight spreads across
+# the answers.
 # ---------------------------------------------------------------------------
-def _effect_keys(q: dict) -> set[str]:
-    keys: set[str] = set()
+def _question_choices(q: dict) -> list[dict[str, float]]:
+    """The effect dict applied by each selectable choice of a question.
+    For a matrix, each row at its strongest (max) column; for ages, each
+    non-empty age step."""
     t = q["type"]
     if t in ("options", "multi"):
-        for o in q["options"]:
-            keys |= set(o["effects"])
-    elif t == "matrix":
-        for r in q["rows"]:
-            keys |= set(r["effects"])
-    elif t == "ages":
-        for r in q["rows"]:
-            for s in r["steps"]:
-                keys |= set(s["effects"])
-    return keys
+        return [dict(o["effects"]) for o in q["options"]]
+    if t == "matrix":
+        mx = max(c["mult"] for c in q["columns"])
+        return [{c: v * mx for c, v in r["effects"].items()} for r in q["rows"]]
+    if t == "ages":
+        return [dict(s["effects"]) for r in q["rows"] for s in r["steps"] if s["effects"]]
+    return []
 
 
-def question_families() -> dict[str, set[str]]:
-    """qid -> the set of parent families (F1, F2, …) its answers can move."""
-    return {
-        q["id"]: {PARENT[c] for c in _effect_keys(q) if c in PARENT}
-        for q in ENG.questions
-    }
+def question_profile() -> dict[str, dict]:
+    """qid -> structural attributes:
+        families   distinct parent families its answers can move (breadth)
+        causes     distinct causes it touches
+        max_push   strongest single effect magnitude (budge vs push hard)
+        ruleout    share of total effect mass that is negative (rules a cause
+                   *out* / punishes, vs purely adding evidence)
+        top_share  share of effect mass carried by its single loudest answer
+                   (decisive one-answer vs graded across answers)
+    """
+    prof: dict[str, dict] = {}
+    for q in ENG.questions:
+        chs = _question_choices(q)
+        alld = [v for ch in chs for v in ch.values()]
+        absall = [abs(v) for v in alld]
+        masses = [sum(abs(v) for v in ch.values()) for ch in chs]
+        tot = sum(absall)
+        prof[q["id"]] = {
+            "type": q["type"],
+            "families": len({PARENT[c] for ch in chs for c in ch if c in PARENT}),
+            "causes": len({c for ch in chs for c in ch}),
+            "max_push": max(absall) if absall else 0.0,
+            "ruleout": (sum(-v for v in alld if v < 0) / tot) if tot else 0.0,
+            "top_share": (max(masses) / sum(masses)) if sum(masses) else 0.0,
+        }
+    return prof
 
 
 # ---------------------------------------------------------------------------

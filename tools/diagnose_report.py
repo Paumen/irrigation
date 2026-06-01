@@ -13,11 +13,12 @@ Sections:
                           (a different component winning) called out in full,
                           within-family ones listed lighter.
   4. Lock-in speed      — histogram (buckets of 4) of questions to lock & hold top-3.
-  5. Question scorecard — per question: how often asked, median position, median
-                          rank-improvement (work), and scope (families it touches).
-                          Plus which questions don't pull their weight, and the
-                          triage-vs-narrowing split.
-  6. Robustness         — how well each fault survives 1-in-5 random answers.
+  5. Question scorecard — behavioural: how often each question is asked, its median
+                          position, and the rank-improvement (work) it delivered,
+                          plus which questions don't pull their weight.
+  6. Question character — structural: scope / force / rule-out / answer-shape of
+                          each question, read straight from its effect weights.
+  7. Robustness         — how well each fault survives 1-in-5 random answers.
 
 Run:   python3 tools/diagnose_report.py            # console
        python3 tools/diagnose_report.py --md out.md  # also write a markdown file
@@ -34,7 +35,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from diagnose_sim import (
-    DEPTH, ENG, FAULTS, PARENT, build_key, question_families,
+    DEPTH, ENG, FAULTS, PARENT, build_key, question_profile,
     robustness_all, simulate_all,
 )
 
@@ -89,15 +90,13 @@ def gather() -> dict:
             d["deltas"].append(prev - s.rank)
             prev = s.rank
 
-    fams = question_families()
     for qid, d in qstats.items():
-        d["families"] = len(fams.get(qid, set()))
         d["med_pos"] = statistics.median(d["positions"])
-        d["med_work"] = statistics.median(d["deltas"])
         d["mean_work"] = statistics.fmean(d["deltas"])
 
     return {
         "rows": rows, "family_mix": family_mix, "qstats": qstats,
+        "profile": question_profile(),
         "robustness": robustness_all(NOISE_TRIALS, NOISE_RATE, seed=0),
     }
 
@@ -121,6 +120,18 @@ def hbar(n: float, scale: float, width: int = 12) -> str:
 
 def scope_label(n: int) -> str:
     return "triage" if n >= 6 else "narrow" if n <= 2 else "mid"
+
+
+def force_label(m: float) -> str:
+    return "hard" if m >= 1.5 else "firm" if m >= 0.9 else "nudge"
+
+
+def ruleout_label(x: float) -> str:
+    return "rules-out" if x >= 0.35 else "rules-in" if x <= 0.10 else "mixed"
+
+
+def shape_label(x: float) -> str:
+    return "decisive" if x >= 0.55 else "even" if x <= 0.40 else "graded"
 
 
 # ----------------------------------------------------------------------------
@@ -214,27 +225,24 @@ def sec_lockin(g: dict) -> list[str]:
 
 
 def sec_scorecard(g: dict) -> list[str]:
+    """Behavioural: what each question *did* across the simulated runs."""
     qs = g["qstats"]
     n_runs = len(g["rows"])
     out = ["## Question scorecard",
            "",
-           "Per question across the 29 runs. **work** = average rank-improvement it "
-           "gives the true fault (+ = toward #1; the median is 0 for most, since "
-           "rank rarely moves on a single step). **when** = median position. "
-           "**scope** = component families its answers can move "
-           "(triage ≥6 · mid 3–5 · narrow ≤2).",
+           "What each question *did* across the 29 runs. **work** = average "
+           "rank-improvement it gives the true fault (+ = toward #1; the median is 0 "
+           "for most, since rank rarely moves on a single step). **when** = median "
+           "position it's asked.",
            "",
            "```",
-           f"{'q':5s}{'asked':18s}{'when':>5s}{'work':>6s}  scope"]
-    order = sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"])
-    for qid, d in order:
+           f"{'q':5s}{'asked':18s}{'when':>5s}{'work':>6s}"]
+    for qid, d in sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"]):
         pct = d["asked"] / n_runs * 100
         asked = f"{pct:3.0f}% {hbar(d['asked'], n_runs, 9)}"
-        out.append(f"{qid:5s}{asked:18s}{d['med_pos']:5.0f}{d['mean_work']:+6.1f}  "
-                   f"{d['families']} {scope_label(d['families'])}")
+        out.append(f"{qid:5s}{asked:18s}{d['med_pos']:5.0f}{d['mean_work']:+6.1f}")
     out.append("```")
 
-    # which questions don't pull their weight, and why
     neg = sorted((q for q, d in qs.items() if d["mean_work"] < 0), key=lambda q: qs[q]["mean_work"])
     idle = sorted((q for q, d in qs.items() if 0 <= d["mean_work"] <= 0.05),
                   key=lambda q: qs[q]["med_pos"], reverse=True)
@@ -249,18 +257,56 @@ def sec_scorecard(g: dict) -> list[str]:
         out.append(f"- _≈ no movement_ — {', '.join(idle)}: their answer rarely "
                    "separates the causes still live at that point (redundant with "
                    "earlier questions, or too narrow to matter).")
+    return out
 
-    # triage vs narrowing
-    triage = sorted((q for q, d in qs.items() if d["families"] >= 6),
-                    key=lambda q: qs[q]["med_pos"])
-    narrow = sorted((q for q, d in qs.items() if d["families"] <= 2),
-                    key=lambda q: qs[q]["med_pos"])
+
+def sec_character(g: dict) -> list[str]:
+    """Structural: what each question *is*, from its effect weights — several
+    independent axes, of which triage-vs-narrow is only one."""
+    prof = g["profile"]
+    pos = {q: d["med_pos"] for q, d in g["qstats"].items()}
+    out = ["## Question character",
+           "",
+           "A structural read of each question from its effect weights (no "
+           "simulation). **scope** = families it can move · **force** = strongest "
+           "single push (hard ≥1.5 · firm ≥0.9 · nudge else) · **rule-out** = share "
+           "of evidence that *subtracts* to exonerate a cause vs only adds · "
+           "**shape** = how its weight spreads across answers (decisive = one loud "
+           "answer · even = graded across all).",
+           "",
+           "```",
+           f"{'q':5s}{'scope':9s}{'force':7s}{'rule-out':10s}{'shape':9s}"]
+    short = {"rules-out": "out", "rules-in": "in", "mixed": "mix"}
+    for qid, p in sorted(prof.items(), key=lambda kv: (-kv[1]["families"], -kv[1]["max_push"])):
+        scope = f"{p['families']} {scope_label(p['families'])}"
+        rout = f"{p['ruleout']*100:.0f}% {short[ruleout_label(p['ruleout'])]}"
+        out.append(f"{qid:5s}{scope:9s}{force_label(p['max_push']):7s}"
+                   f"{rout:10s}{shape_label(p['top_share']):9s}")
+    out.append("```")
+
+    def names(pred, by=None, rev=False, cap=8):
+        sel = [q for q, p in prof.items() if pred(p)]
+        sel.sort(key=(by or (lambda q: q)), reverse=rev)
+        return ", ".join(sel[:cap]) + (" …" if len(sel) > cap else "")
+
     out += ["",
-            "**Triage vs narrowing**",
-            f"- _broad (≥6 families), asked early_ — {', '.join(triage)}",
-            f"- _narrow (≤2 families), asked late_ — {', '.join(narrow)}",
-            "  The engine front-loads cross-family triage and saves "
-            "single-family confirmers for last — exactly the intended funnel."]
+            "Several independent axes — examples, not an exhaustive taxonomy:",
+            f"- **scope** — triage across families (≥6): {names(lambda p: p['families'] >= 6, lambda q: pos.get(q, 99))}; "
+            f"narrows within one (≤2): {names(lambda p: p['families'] <= 2, lambda q: pos.get(q, 99))}",
+            f"- **force** — pushes hard (±1.5+): {names(lambda p: p['max_push'] >= 1.5)}; "
+            f"only nudges (≤±0.6): {names(lambda p: p['max_push'] <= 0.6)}",
+            f"- **direction** — pure rule-in / only adds: {names(lambda p: p['ruleout'] <= 0.05)}; "
+            f"also punishes / rules-out (≥35%): {names(lambda p: p['ruleout'] >= 0.35, lambda q: prof[q]['ruleout'], rev=True)}",
+            f"- **shape** — decisive, one loud answer (≥55%): {names(lambda p: p['top_share'] >= 0.55, lambda q: prof[q]['top_share'], rev=True)}; "
+            f"even / graded across answers (≤40%): {names(lambda p: p['top_share'] <= 0.40)}",
+            "",
+            "Triage questions sit early in the funnel and the single-family "
+            "confirmers come last — the intended broad-to-narrow shape.",
+            "",
+            "_Note: scope/force/shape describe a question's **potential**; the "
+            "scorecard's `work` is what it **actually** delivered in the sims. A "
+            "high-force question that lands late (e.g. Q15, Q16, Q20) shows little "
+            "work simply because the ranking has usually settled before it._"]
     return out
 
 
@@ -291,7 +337,8 @@ def sec_robustness(g: dict) -> list[str]:
 
 
 SECTIONS = [
-    sec_headline, sec_trajectory, sec_family, sec_lockin, sec_scorecard, sec_robustness,
+    sec_headline, sec_trajectory, sec_family, sec_lockin, sec_scorecard,
+    sec_character, sec_robustness,
 ]
 
 
@@ -311,9 +358,9 @@ def as_json(g: dict) -> str:
             qid: {
                 "asked": d["asked"],
                 "median_position": d["med_pos"],
-                "median_work": d["med_work"],
                 "mean_work": round(d["mean_work"], 3),
-                "families": d["families"],
+                **{k: round(v, 3) if isinstance(v, float) else v
+                   for k, v in g["profile"][qid].items()},
             }
             for qid, d in g["qstats"].items()
         },
