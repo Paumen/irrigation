@@ -132,8 +132,8 @@ def sec_headline(g: dict) -> list[str]:
         f"median {statistics.median(locks):g}, range {min(locks)}–{max(locks)} "
         f"(3 documented misses)",
         f"{'Lands it at #1 outright':33s}{at1:>2}/{n}",
-        f"{'Recovers from a wrong answer':33s}{robust:>2}/{n}   "
-        f"≥80% of the time under 1-in-5 random answers (median {statistics.median(recov)*100:.0f}%)",
+        f"{'Recovers from a user error':33s}{robust:>2}/{n}   "
+        f"≥80% of the time under 1-in-5 errors (wrong answer / skip; median {statistics.median(recov)*100:.0f}%)",
         "```",
     ]
 
@@ -316,8 +316,10 @@ def sec_robustness(g: dict) -> list[str]:
     strong = sum(1 for x in recov if x >= 0.8)
     out = ["## Robustness to answer errors",
            "",
-           "Each fault's **clean** rank path vs its path under **1 in 5** random "
-           f"answers — the **noise** row is the median rank at each answered step over "
+           "Each fault's **clean** rank path vs its path under **1-in-5 user "
+           "errors** — a wrong answer, or occasionally an accidental skip / a "
+           "guessed answer where they'd normally skip — "
+           f"the **noise** row is the median rank at each answered step over "
            f"{NOISE_TRIALS} trials (same scale: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · "
            "🟥 #10+). The header gives how often the noisy run still ends in the top-3 "
            "/ at #1, and the lock-in clean→noisy.",

@@ -6,7 +6,7 @@
 Finds the right component        28/29   median 6 questions to lead & hold
 Locks the sub-cause into top-3   29/29   median 6, range 1–17 (3 documented misses)
 Lands it at #1 outright          16/29
-Recovers from a wrong answer     20/29   ≥80% of the time under 1-in-5 random answers (median 88%)
+Recovers from a user error       18/29   ≥80% of the time under 1-in-5 errors (wrong answer / skip; median 84%)
 ```
 
 ## Rank trajectory
@@ -164,98 +164,98 @@ _Note: scope/force/shape describe a question's **potential**; the scorecard's `w
 
 ## Robustness to answer errors
 
-Each fault's **clean** rank path vs its path under **1 in 5** random answers — the **noise** row is the median rank at each answered step over 50 trials (same scale: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+). The header gives how often the noisy run still ends in the top-3 / at #1, and the lock-in clean→noisy.
+Each fault's **clean** rank path vs its path under **1-in-5 user errors** — a wrong answer, or occasionally an accidental skip / a guessed answer where they'd normally skip — the **noise** row is the median rank at each answered step over 50 trials (same scale: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+). The header gives how often the noisy run still ends in the top-3 / at #1, and the lock-in clean→noisy.
 
-**20/29** faults recover to the top-3 ≥80% of the time (median recovery 88%). Sorted worst-first.
+**18/29** faults recover to the top-3 ≥80% of the time (median recovery 84%). Sorted worst-first.
 
 ```
-🟧 F4.4    top-3  30%  #1   0%  lock 17→·
+🟥 F4.4    top-3  28%  #1   0%  lock 17→·
    clean 🟥🟥🟧🟧🟧🟨🟨🟨🟧🟧🟨🟨🟨🟨🟨🟨🟩🟩
-   noise 🟥🟥🟧🟧🟧🟨🟨🟨🟧🟧🟧🟧🟧🟨🟨🟨🟨🟨
-🟧 F5.8    top-3  42%  #1   0%  lock 13→·
+   noise 🟥🟥🟧🟧🟧🟧🟨🟨🟧🟧🟧🟧🟧🟨🟨🟨🟨🟨
+🟧 F5.8    top-3  32%  #1   0%  lock 13→·
    clean 🟥🟧🟩🟩🟩🟨🟩🟨🟨🟨🟨🟨🟩🟩
-   noise 🟥🟧🟩🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟧🟨
-🟨 F2.5    top-3  60%  #1   8%  lock 16→16
+   noise 🟥🟧🟩🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨
+🟨 F2.5    top-3  52%  #1  14%  lock 16→15
    clean 🟥🟥🟥🟥🟥🟥🟥🟧🟧🟧🟧🟨🟨🟨🟨🟩🟩🟩
-   noise 🟥🟥🟥🟥🟥🟥🟥🟧🟧🟧🟧🟨🟨🟨🟨🟩🟩🟩
-🟨 F2.8    top-3  62%  #1   4%  lock 8→8
-   clean 🟥🟥🟨🟩🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-   noise 🟥🟥🟨🟩🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟨 F9.3    top-3  62%  #1   0%  lock 12→16
+   noise 🟥🟥🟥🟥🟥🟥🟥🟧🟧🟥🟧🟨🟨🟨🟨🟨🟨🟩
+🟨 F9.3    top-3  54%  #1   4%  lock 12→13
    clean 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩
-   noise 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩
-🟨 F1.8    top-3  66%  #1   6%  lock 12→14
+   noise 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩
+🟨 F1.8    top-3  56%  #1   8%  lock 12→13
    clean 🟩🟩🟨🟩✅✅✅✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
-   noise 🟩🟩🟨🟩✅✅🟩🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩🟩
-🟨 F9.1.2  top-3  76%  #1   0%  lock 1→1
-   clean 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-   noise 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟨 F9.4    top-3  76%  #1  64%  lock 1→1
-   clean ✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-   noise ✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-🟨 F9.1.1  top-3  78%  #1  64%  lock 1→1
-   clean 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
-   noise 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅✅✅
-🟩 F6.3    top-3  84%  #1  58%  lock 3→10
-   clean 🟧🟨✅✅✅✅✅✅✅🟩✅✅✅✅✅✅✅✅
-   noise 🟧🟨✅✅✅✅🟩🟨🟨🟩🟩🟩🟩🟩🟩✅✅✅
-🟩 F7.3.2  top-3  84%  #1  58%  lock 8→12
-   clean 🟥🟥🟥🟥🟥🟨🟨🟩🟩🟩🟩✅✅✅✅✅✅✅
-   noise 🟥🟥🟥🟥🟥🟨🟨🟨🟨🟨🟨🟩🟩✅🟩🟩🟩✅
-🟩 F2.6    top-3  86%  #1  14%  lock 14→14
-   clean 🟨✅🟧🟧🟨🟧🟧🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
-   noise 🟨✅🟧🟧🟨🟧🟧🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
-🟩 F8.3    top-3  86%  #1  52%  lock 7→10
-   clean 🟥🟥🟧🟨🟧🟧🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
-   noise 🟥🟥🟧🟨🟧🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅
-🟩 F2.1    top-3  88%  #1  66%  lock 8→8
-   clean 🟧🟧✅🟩🟨🟨🟨🟩🟩✅✅✅✅✅✅✅✅✅
-   noise 🟧🟧✅🟩🟨🟨🟨🟩🟩🟩✅✅✅✅✅✅✅✅
-🟩 F3.4    top-3  88%  #1   0%  lock 6→6
-   clean 🟥🟥🟥🟥🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-   noise 🟥🟥🟥🟥🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟩 F1.5    top-3  92%  #1  48%  lock 11→11
+   noise 🟩🟩🟨🟩✅✅🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩
+🟨 F1.5    top-3  62%  #1  28%  lock 11→11
    clean 🟩✅🟨🟨🟩🟩🟩🟩🟨🟨✅✅✅✅✅✅✅✅
    noise 🟩✅🟨🟨🟩🟩🟩🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩
-🟩 F4.1    top-3  92%  #1  68%  lock 6→6
+🟨 F2.8    top-3  68%  #1  12%  lock 8→8
+   clean 🟥🟥🟨🟩🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+   noise 🟥🟥🟨🟩🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+🟨 F9.1.2  top-3  72%  #1   0%  lock 1→1
+   clean 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+   noise 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+🟨 F9.4    top-3  76%  #1  60%  lock 1→1
+   clean ✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+   noise ✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+🟨 F2.1    top-3  78%  #1  54%  lock 8→8
+   clean 🟧🟧✅🟩🟨🟨🟨🟩🟩✅✅✅✅✅✅✅✅✅
+   noise 🟧🟧✅🟩🟨🟨🟨🟩🟩🟩✅✅✅✅✅✅✅✅
+🟨 F9.1.1  top-3  78%  #1  46%  lock 1→1
+   clean 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
+   noise 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅🟩🟩🟩
+🟩 F8.3    top-3  80%  #1  54%  lock 7→8
+   clean 🟥🟥🟧🟨🟧🟧🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
+   noise 🟥🟥🟧🟨🟧🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅
+🟩 F2.6    top-3  82%  #1  14%  lock 14→14
+   clean 🟨✅🟧🟧🟨🟧🟧🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
+   noise 🟨✅🟧🟧🟨🟧🟧🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
+🟩 F4.1    top-3  84%  #1  70%  lock 6→6
    clean 🟨🟨🟩🟨🟨✅✅✅✅✅✅✅✅✅✅✅✅✅
    noise 🟨🟨🟩🟨🟨✅✅✅✅✅✅✅✅✅✅✅✅✅
-🟩 F7.1.1  top-3  92%  #1  84%  lock 5→6
-   clean 🟥🟥🟧🟧🟩✅✅✅✅✅✅✅✅✅✅✅✅✅
-   noise 🟥🟥🟧🟥🟧🟩✅✅✅✅✅✅✅✅✅✅✅✅
-🟩 F7.3.1  top-3  94%  #1  90%  lock 6→6
+🟩 F7.3.1  top-3  84%  #1  74%  lock 6→7
    clean 🟥🟥🟧🟥🟨🟩🟩✅✅✅✅✅✅✅✅✅✅✅
-   noise 🟥🟥🟧🟥🟨🟩🟩✅✅✅✅✅✅✅✅✅✅✅
-🟩 F7.4    top-3  96%  #1  14%  lock 11→11
-   clean 🟧🟩✅✅🟨🟩✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
-   noise 🟧🟩✅🟩🟨🟩✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
-🟩 F8.1    top-3  96%  #1  92%  lock 7→7
-   clean 🟥🟥🟧🟨🟧🟧🟩✅✅✅✅✅✅✅✅✅✅✅
-   noise 🟥🟥🟧🟨🟧🟧🟩🟩✅✅✅✅✅✅✅✅✅✅
-🟩 F3.1.2  top-3  98%  #1  16%  lock 6→6
+   noise 🟥🟥🟧🟥🟧🟨🟩✅✅✅✅✅✅✅✅✅✅✅
+🟩 F6.3    top-3  86%  #1  52%  lock 3→6
+   clean 🟧🟨✅✅✅✅✅✅✅🟩✅✅✅✅✅✅✅✅
+   noise 🟧🟨✅✅✅✅🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅
+🟩 F7.3.2  top-3  90%  #1  48%  lock 8→11
+   clean 🟥🟥🟥🟥🟥🟨🟨🟩🟩🟩🟩✅✅✅✅✅✅✅
+   noise 🟥🟥🟥🟥🟥🟨🟨🟨🟩🟨🟩🟩✅🟩✅✅✅🟩
+🟩 F3.1.2  top-3  94%  #1  10%  lock 6→6
    clean 🟥🟥🟥🟥🟧✅✅🟩🟩🟩✅🟩🟩🟩🟩🟩🟩
    noise 🟥🟥🟥🟥🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟩 F5.3    top-3  98%  #1  40%  lock 3→3
+🟩 F3.4    top-3  94%  #1   0%  lock 6→6
+   clean 🟥🟥🟥🟥🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+   noise 🟥🟥🟥🟥🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+🟩 F5.3    top-3  94%  #1  46%  lock 3→3
    clean ✅🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅
    noise ✅🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟩 F6.1    top-3  98%  #1  96%  lock 5→10
-   clean 🟧🟧🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅
-   noise 🟧🟧🟨🟨🟨🟨🟨🟨🟨🟩🟩🟩🟩✅✅✅✅✅
-🟩 F3.1.1  top-3 100%  #1  98%  lock 2→2
-   clean 🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-   noise 🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-🟩 F3.1.3  top-3 100%  #1  24%  lock 6→6
+🟩 F7.1.1  top-3  94%  #1  70%  lock 5→7
+   clean 🟥🟥🟧🟧🟩✅✅✅✅✅✅✅✅✅✅✅✅✅
+   noise 🟥🟥🟥🟧🟨🟩✅✅✅✅✅✅✅✅✅✅✅✅
+🟩 F7.1.2  top-3  96%  #1   4%  lock 6→6
+   clean 🟥🟧🟨🟨🟨✅✅🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+   noise 🟥🟧🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+🟩 F3.1.3  top-3  98%  #1  16%  lock 6→6
    clean 🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
    noise 🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟩 F5.1    top-3 100%  #1  94%  lock 3→3
+🟩 F6.1    top-3  98%  #1  96%  lock 5→9
+   clean 🟧🟧🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅
+   noise 🟧🟧🟨🟨🟩🟩🟩🟨🟩🟩🟩🟩🟩✅✅✅✅✅
+🟩 F3.1.1  top-3 100%  #1  98%  lock 2→2
+   clean 🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+   noise 🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+🟩 F5.1    top-3 100%  #1  98%  lock 3→3
    clean 🟨🟨🟩✅✅✅✅✅✅✅✅✅✅✅✅
    noise 🟨🟨🟩✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-🟩 F7.1.2  top-3 100%  #1   4%  lock 6→6
-   clean 🟥🟧🟨🟨🟨✅✅🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-   noise 🟥🟧🟨🟨🟨🟩✅🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-🟩 F7.1.3  top-3 100%  #1  96%  lock 5→6
+🟩 F7.1.3  top-3 100%  #1  98%  lock 5→5
    clean 🟥🟧🟨🟥🟩🟩🟩✅✅✅✅✅✅✅✅✅✅✅
    noise 🟥🟧🟨🟥🟩🟩🟩✅✅✅✅✅✅✅✅✅✅✅
+🟩 F7.4    top-3 100%  #1  20%  lock 11→11
+   clean 🟧🟩✅✅🟨🟩✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
+   noise 🟧🟩✅🟩🟨🟩🟩🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩
+🟩 F8.1    top-3 100%  #1  92%  lock 7→7
+   clean 🟥🟥🟧🟨🟧🟧🟩✅✅✅✅✅✅✅✅✅✅✅
+   noise 🟥🟥🟧🟨🟧🟧🟩✅✅✅✅✅✅✅✅✅✅✅
 ```
 
 _Read the **noise** row against **clean**: robust faults (🟩) track their clean path and end green; the degeneracies (F7.3.2 / F4.4 / F7.4 / F2.5) stay orange/red throughout — a single wrong answer is enough to keep them behind a sibling._
