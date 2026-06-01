@@ -39,6 +39,8 @@ and the hydraulics together often shift the reasoning more than any single fact.
 
 ## How the internals govern open/close
 
+Animation (video) — `IMG.valve-auto-breakdown-diaphragm-animation`: the diaphragm cycling open and shut. It's an mp4, so surface it with SendUserFile rather than a markdown embed (video won't inline-render).
+
 A small orifice/metering port in the diaphragm lets water bleed up into the upper chamber. Because
 the area above the diaphragm exceeds the area below, the chamber pressure holds the valve shut.
 Opening the valve (solenoid or bleed) releases that upper-chamber pressure faster than the metering

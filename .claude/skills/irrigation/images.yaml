@@ -11,7 +11,9 @@
 #                  instruction = an action to perform; descriptor is the action (+ -step-N).
 #                  breakdown   = internal anatomy (exploded / cutaway / callouts / part inspection);
 #                                descriptor is what's broken down, and the entry carries a legend:.
-#   (icons and the vendor datasheet PDF live in media/ but are not indexed here.)
+#   (icons and the vendor datasheet PDF live in media/ but are not indexed here.
+#    Animations ARE indexed — both .gif and .mp4 video. A video can't inline-render as
+#    markdown, so surface it with SendUserFile only; entries carry media: video to flag this.)
 #
 # Find one by subjects:, questions: (engine Q-ids) or causes: (F-codes), then surface it with
 # SendUserFile using the manifest caption:. file: is relative to this folder; pass an absolute path
@@ -61,6 +63,36 @@ images:
     causes: [F9, F9.1.1, F9.3, F9.1.2]
     relates: rotor install reference; pair with IMG.fitting-swing-product for "what it is" + "how it sits in the soil"
     used_in: [playbooks/parts.md]
+
+  IMG.fitting-swing-product-sj712:
+    file: media/fitting-swing-product-sj712.jpg
+    caption: Hunter SJ-712 swing joint (≈30 cm, male × male) — two pre-set 90° elbows on a straight riser; this is the swing-joint line the homeowner actually runs (setup.yaml "Hunter SJ"), 3/4×3/4 under rotors and 3/4×1/2 under spray bodies.
+    subjects: [heads, hoses]
+    relates: closer match to this homeowner's swing joints than the generic IMG.fitting-swing-product; sets head height to grade and absorbs side load. Source is a retailer listing screenshot (phone/browser chrome visible).
+    used_in: [playbooks/parts.md]
+
+  # ── fitting · joint (couplings / nipples / adapters) ─────────────────────────
+  IMG.fitting-joint-product-double-nipple:
+    file: media/fitting-joint-product-double-nipple.webp
+    caption: Black poly double nipple — male thread on both ends with a hex middle; screws two female-thread fittings together (e.g. a manifold swivel-nut outlet to a valve inlet). A plain fitting.joint coupling, rated to ~10 bar.
+    subjects: [hoses, valve]
+    relates: realises the many fitting.joint nodes in setup.yaml; spare for re-plumbing the valve box
+    used_in: [playbooks/parts.md]
+
+  IMG.fitting-joint-product-compression-male:
+    file: media/fitting-joint-product-compression-male.jpg
+    caption: PE-pipe compression × male-thread adapter — green compression nut grips the poly pipe (push in, hand-tighten the nut), tapered male thread on the other end. Joins buried 25/32 mm hose to a threaded fitting without glue or heat.
+    subjects: [hoses]
+    relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the pipe OD
+    used_in: [playbooks/parts.md]
+
+  # ── fitting · manifold ───────────────────────────────────────────────────────
+  IMG.fitting-manifold-product-lev-6way:
+    file: media/fitting-manifold-product-lev-6way.jpg
+    caption: LEV 6-way distributor manifold — a single barred header with six 1" swivel-nut female outlets (rubber sealing washers shown loose); the trunk feeds it and each outlet runs to one zone valve. This is the homeowner's manifold (setup.yaml fitting.manifold).
+    subjects: [valve, hoses]
+    relates: the MAIN → Z1…Z6 fan-out point in the valve box; swivel nuts let a single valve come off without disturbing the others
+    used_in: [playbooks/identify.md, playbooks/parts.md]
 
   # ── head · rotor ────────────────────────────────────────────────────────────
   IMG.head-rotor-product-i20:
@@ -193,6 +225,14 @@ images:
     relates: standard 25° vs low-angle 13° nozzles; spraying over fences/hedges
     used_in: [heads.md]
 
+  # ── head · spray ─────────────────────────────────────────────────────────────
+  IMG.head-spray-product-pro-spray-prs40:
+    file: media/head-spray-product-pro-spray-prs40.jpg
+    caption: Hunter Pro-Spray PRS40 pop-up body — 4" black riser with a grey pressure-regulating cap (holds 2.8 bar / 40 psi at the nozzle) and an adjustable blue-top nozzle. This is the spray body on the homeowner's Z1 and Z4, carrying MP Rotator nozzles.
+    subjects: [heads]
+    relates: the head.spray body in setup.yaml (takes nozzle.rotator); the PRS40 regulation is what keeps MP Rotators at their design pressure. Rotor sibling is IMG.head-rotor-product-i20.
+    used_in: [playbooks/identify.md, playbooks/parts.md]
+
   # ── hose ────────────────────────────────────────────────────────────────────
   IMG.hose-product-drip-inline-emitter:
     file: media/hose-product-drip-inline-emitter.jpg
@@ -209,6 +249,42 @@ images:
     relates: MP Rotator nozzle install / removal / arc-adjust; this homeowner's Z1 and Z4 use MP Rotators on Pro-Spray PRS40 bodies
     used_in: [playbooks/parts.md]
 
+  IMG.nozzle-rotator-instruction-radius-adjust:
+    file: media/nozzle-rotator-instruction-radius-adjust.jpg
+    caption: Setting throw with the ringed adjustment tool while the head runs — slip the ring over the nozzle and turn to cut back or extend the radius; the wetted arc shows the new reach right away. Adjust with the zone running so you can see where the water lands.
+    subjects: [heads]
+    causes: [F9, F9.3, F9.4]
+    relates: MP Rotator / spray radius set on the homeowner's Z1 and Z4; uses the same ringed key as IMG.nozzle-rotator-product-mp-wrench
+    used_in: [playbooks/parts.md]
+
+  IMG.nozzle-product-family-render:
+    file: media/nozzle-product-family-render.png
+    caption: Stylised lineup of sprinkler nozzle/part variants with one highlighted — a "pick the matching part" selector graphic.
+    subjects: [heads]
+    relates: generic choose-your-nozzle visual; LOW CONFIDENCE — exact product set unconfirmed from the low-res thumbnail, treat as illustrative until the real part is identified
+    used_in: []
+
+  IMG.nozzle-rotator-product-mp2000:
+    file: media/nozzle-rotator-product-mp2000.jpg
+    caption: Hunter MP Rotator MP2000 (360°) nozzle — red cap stamped "MP 2000 360°", stainless adjustment ring, red stem on a white inlet screen. Screws onto a Pro-Spray body and throws rotating multi-streams at ~2.8 bar; this is the MP2000 family the homeowner runs on Z1 and Z4 (at their own arcs).
+    subjects: [heads]
+    relates: canonical product photo of the homeowner's rotator nozzle (nozzle.rotator); install/remove with IMG.nozzle-rotator-product-mp-wrench. Rotor counterpart is IMG.head-rotor-product-i20.
+    used_in: [playbooks/identify.md, playbooks/parts.md]
+
+  IMG.nozzle-rotator-product-mp-garden-spraying:
+    file: media/nozzle-rotator-product-mp-garden-spraying.jpg
+    caption: MP Rotator running in a lawn — the distinct fan of slow, rotating multi-streams (gentler, more even than a fixed spray) reaching across the bed.
+    subjects: [heads]
+    relates: shows what an MP Rotator looks like working — context shot for explainers and the drip-vs-rotator / spray-vs-rotator discussion
+    used_in: []
+
+  IMG.nozzle-rotator-product-mp-streams-closeup:
+    file: media/nozzle-rotator-product-mp-streams-closeup.jpg
+    caption: MP Rotator close-up against a dark background — the orange nozzle and stainless ring throwing several individual rotating streams, the detail that distinguishes an MP Rotator from a solid-fan spray nozzle.
+    subjects: [heads]
+    relates: identify an MP Rotator by its multi-stream pattern (vs a fixed spray's solid sheet); pairs with IMG.nozzle-rotator-product-mp2000
+    used_in: [playbooks/identify.md]
+
   # ── relay ───────────────────────────────────────────────────────────────────
   IMG.relay-breakdown-enclosure-cutaway:
     file: media/relay-breakdown-enclosure-cutaway.png
@@ -220,12 +296,36 @@ images:
     relates: top-down PSR-style enclosure interior; orients the user to what's inside before they check whether the contactor switches
     used_in: [relay.md]
 
+  IMG.relay-product-psr-open:
+    file: media/relay-product-psr-open.jpg
+    caption: Hunter pump start relay with the lid open — the wiring diagram is printed inside the cover; matches the homeowner's PSR-22 enclosure. Power In (Line) and Power Out (Load) terminals across the top, Ground (Line / Load) below, and the 24 VAC P/MV (red) + Common (white) low-voltage pair underneath.
+    subjects: [relay, wiring]
+    legend: {top: "Power In (Line) / Power Out (Load) — mains terminals", middle: "Ground (Line) / Ground (Load)", bottom: "P/MV (red) + Common (white) — 24 VAC controller signal", "DANGER label": "mains-voltage side — electrician only"}
+    causes: [F4]
+    questions: [Q20]
+    relates: real photo of the PSR door wiring diagram; pair with IMG.relay-breakdown-enclosure-cutaway for the inside-the-box view. Model UNCONFIRMED against PSR-22 spec — the enclosure and diagram are the Hunter PSR family.
+    used_in: [relay.md]
+
   # ── sensor ──────────────────────────────────────────────────────────────────
   IMG.sensor-product-wind-clik:
     file: media/sensor-product-wind-clik.jpg
     caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
     subjects: [controller]
     relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted throw on windy days
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-product-wind-clik-bracket:
+    file: media/sensor-product-wind-clik-bracket.jpg
+    caption: Hunter Wind-Clik on its mounting bracket — three-cup anemometer head with the SWITCHING SPEED dial (mph / km/h), the swing-arm bracket below, and the wiring/connector module on the right. Mounted view of the same sensor as IMG.sensor-product-wind-clik.
+    subjects: [controller]
+    relates: wind-pause upgrade candidate; shows how it mounts and wires in, vs the head-only IMG.sensor-product-wind-clik
+    used_in: [playbooks/upgrades.md]
+
+  IMG.sensor-product-freeze-temp:
+    file: media/sensor-product-freeze-temp.jpg
+    caption: Wall-mounted freeze / temperature sensor — vented bulb housing the sensing element on a small screw-down back plate; cuts the system off when the air temperature drops toward freezing so heads don't ice up.
+    subjects: [controller]
+    relates: freeze-cutoff upgrade candidate alongside the rain/wind Cliks; exact model UNCONFIRMED — treat as illustrative for "a frost sensor looks like this"
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-wm-clik-side:
@@ -272,6 +372,13 @@ images:
     relates: lead placement before any voltage or resistance check
     used_in: [controller.md, valve-solenoid.md, playbooks/parts.md]
 
+  IMG.tool-product-water-meter:
+    file: media/tool-product-water-meter.jpg
+    caption: Inline multi-jet water meter — blue body with brass union tailpieces and a sealed register (m³); plumbed into a line, it totalises flow so you can read a zone's real throughput.
+    subjects: [hoses]
+    relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in setup.yaml — illustrative.
+    used_in: [playbooks/capacity.md]
+
   # ── valve · auto ─────────────────────────────────────────────────────────────
   IMG.valve-auto-product-pgv-101g:
     file: media/valve-auto-product-pgv-101g.jpg
@@ -280,6 +387,22 @@ images:
     causes: [F7]
     relates: matches the homeowner's PGV-101G; body-style identification (globe vs angle vs barb)
     used_in: [valve.md]
+
+  IMG.valve-auto-product-pgv-101g-catalog:
+    file: media/valve-auto-product-pgv-101g-catalog.jpg
+    caption: Hunter PGV-101G — clean catalog front view; 1" globe body, flow-control knob and bleed on top, 24 VAC solenoid (right) with the looped lead. Matches the homeowner's four zone valves.
+    subjects: [valve]
+    causes: [F7]
+    relates: sharpest straight-on view for confirming the 101G against what's in the valve box; same valve as IMG.valve-auto-product-pgv-101g
+    used_in: [playbooks/identify.md]
+
+  IMG.valve-auto-product-pgv-101g-bleed:
+    file: media/valve-auto-product-pgv-101g-bleed.jpg
+    caption: Hunter PGV-101G, three-quarter view — flow-control knob and bleed on the bonnet, 24 VAC solenoid with looped lead at the side. Another angle on the homeowner's valve.
+    subjects: [valve, valve-solenoid]
+    causes: [F7]
+    relates: shows the bleed / flow-control side of the same 101G as IMG.valve-auto-product-pgv-101g and -catalog
+    used_in: []
 
   IMG.valve-auto-product-pgv-100g:
     file: media/valve-auto-product-pgv-100g.png
@@ -328,6 +451,14 @@ images:
     causes: [F7]
     relates: body-style exclusion image — largest globe body, one size up from IMG.valve-auto-product-pgv-151g.
     used_in: []
+
+  IMG.valve-auto-product-icv-101g:
+    file: media/valve-auto-product-icv-101g.jpg
+    caption: Hunter ICV-101G industrial control valve — heavy globe body with a four-bolt bonnet, a large cross-handle flow control, and the 24 VAC solenoid mounted at an angle. A commercial valve a tier above the PGV; NOT this system.
+    subjects: [valve]
+    causes: [F7]
+    relates: family exclusion image — confirm the homeowner has the lighter jar-top PGV, not the bolted-bonnet ICV
+    used_in: [playbooks/identify.md]
 
   IMG.valve-auto-product-pgv-family:
     file: media/valve-auto-product-pgv-family.jpg
@@ -419,6 +550,16 @@ images:
     legend: {1: support ring, 2: diaphragm, 3: spring}
     causes: [F7, F7.1.2, F7.3.2]
     questions: [Q17]
+    used_in: [valve-internals.md]
+
+  IMG.valve-auto-breakdown-diaphragm-animation:
+    file: media/valve-auto-breakdown-diaphragm-animation.mp4
+    media: video
+    caption: Animation of the diaphragm cycling — the metering port bleeds water into the upper chamber to hold the valve shut; releasing that pressure (solenoid or bleed) lets the diaphragm lift and water flow, then it reseats as the chamber refills.
+    subjects: [valve-internals, valve]
+    causes: [F7, F7.1.2, F7.3.2, F7.1.1, F7.3.1]
+    questions: [Q17]
+    relates: motion version of the open/close explanation in valve-internals.md; mp4 video — surface with SendUserFile, it will not inline-render as markdown
     used_in: [valve-internals.md]
 
   IMG.valve-auto-product-diaphragm:

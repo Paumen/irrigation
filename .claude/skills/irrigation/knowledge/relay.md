@@ -32,6 +32,8 @@ common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
 > Electrician-only. Turn the main breaker off before any connection.
 
+![Hunter pump start relay, lid open — the wiring diagram is printed inside the cover: Power In (Line) and Power Out (Load) across the top, Ground (Line/Load) below, and the 24 VAC P/MV (red) + Common (white) low-voltage pair.](../media/relay-product-psr-open.jpg)
+
 | Wire | Role | Connection |
 |---|---|---|
 | Black | Hot | Single hot for a 120 VAC connection |
