@@ -39,7 +39,6 @@ from diagnose_sim import (
 )
 
 DEFAULT_MAX = 3
-BARS = "▁▂▃▄▅▆▇█"
 
 
 # ----------------------------------------------------------------------------
@@ -99,19 +98,29 @@ def gather() -> dict:
 
 
 # ----------------------------------------------------------------------------
-# rendering helpers
+# rendering helpers — emoji cells carry the colour in both terminal & markdown
 # ----------------------------------------------------------------------------
-def spark(ranks: list[int], worst: int = 8) -> str:
-    """Sparkline where rank 1 is the tallest bar (best). Ranks >= worst floor out."""
-    out = []
-    for r in ranks:
-        r = min(r, worst)
-        idx = len(BARS) - 1 - int(round((r - 1) / (worst - 1) * (len(BARS) - 1)))
-        out.append(BARS[max(0, min(len(BARS) - 1, idx))])
-    return "".join(out)
+def rank_cell(r: int) -> str:
+    """One coloured square for a rank: green #1 → red out-of-the-running."""
+    return "🟩" if r == 1 else "🟨" if r <= 3 else "🟧" if r <= 6 else "🟥"
 
 
-def hbar(n: int, scale: int, width: int = 30) -> str:
+def end_badge(r: int) -> str:
+    return "✅" if r == 1 else "🥈" if r <= 3 else "❌"
+
+
+def work_badge(mean: float) -> str:
+    """How much a question moves the true fault's rank, at a glance."""
+    if mean >= 1.0:
+        return "🔥"
+    if mean >= 0.1:
+        return "🟢"
+    if mean >= -0.05:
+        return "⚪"
+    return "🔻"
+
+
+def hbar(n: int, scale: int, width: int = 12) -> str:
     return "█" * max(0, round(n / scale * width)) if scale else ""
 
 
@@ -123,68 +132,64 @@ def sec_headline(g: dict) -> list[str]:
     locks = [r["lock_in"] for r in rows if r["lock_in"] is not None]
     fm = g["family_mix"]
     at1 = sum(1 for r in rows if r["final_rank"] == 1)
-    top3 = sum(1 for r in rows if r["final_rank"] <= 3)
+    in23 = sum(1 for r in rows if 1 < r["final_rank"] <= 3)
+    out = len(rows) - at1 - in23
+    med = statistics.median(locks) if locks else None
     return [
-        "# Diagnostic questionnaire — analysis report",
+        "# 🌱 Diagnostic questionnaire — analysis report",
         "",
-        f"- Faults simulated: **{len(rows)}**  |  questions per run (depth): **{DEPTH}**",
-        f"- End at #1: **{at1}/{len(rows)}**  |  end in top-3: **{top3}/{len(rows)}**",
-        f"- Lock into top-3 & stay: **{len(locks)}/{len(rows)}**  "
-        f"|  median lock-in **{statistics.median(locks) if locks else None}** questions",
-        f"- Family confusion: clean **{fm['clean']}**, "
-        f"sibling-only **{fm['sibling-only']}**, cross-family **{fm['cross-family']}**",
+        f"**{len(rows)} faults · depth {DEPTH}**",
+        "",
+        f"- ✅ **{at1}** end at #1  ·  🥈 **{in23}** more in top-3  ·  ❌ **{out}** out of top-3",
+        f"- 🎯 lock-in: **{len(locks)}/{len(rows)}** settle & hold top-3 · median **{med}** questions",
+        f"- 🌳 confusion: ✅ **{fm['clean']}** clean · 🟨 **{fm['sibling-only']}** sibling-only · "
+        f"🟥 **{fm['cross-family']}** cross-family",
     ]
 
 
 def sec_trajectory(g: dict) -> list[str]:
-    out = ["## Ranking trajectory (per fault)",
+    out = ["## Rank trajectory",
            "",
-           "Sparkline: tall = rank 1 (best). `base→final` = rank before any "
-           "question → after the full run. `lock` = questions to settle in top-3.",
+           "Each square = the true fault's rank after one question. "
+           "🟩 #1 · 🟨 #2–3 · 🟧 #4–6 · 🟥 #7+ · ends ✅ #1 🥈 top-3 ❌ out.",
            "",
            "```",
-           f"{'fault':8s} {'parent':6s} trajectory (rank over questions)         "
-           f"base→final  lock",
-           f"{'-'*8} {'-'*6} {'-'*40} {'-'*10}  {'-'*4}"]
-    for r in sorted(g["rows"], key=lambda x: (x["final_rank"] == 1, -x["final_rank"])):
-        lock = r["lock_in"] if r["lock_in"] is not None else "—"
-        out.append(f"{r['fault']:8s} {r['parent']:6s} "
-                   f"{spark(r['ranks']):40s} "
-                   f"{r['base_rank']:2d}→{r['final_rank']:<2d}      {str(lock):>4}")
+           f"{'fault':7s}{'par':5s}{'base→fin':9s}{'lock':5s} end  trajectory →"]
+    for r in sorted(g["rows"], key=lambda x: (x["final_rank"], x["base_rank"])):
+        lock = str(r["lock_in"]) if r["lock_in"] is not None else "—"
+        cells = "".join(rank_cell(x) for x in r["ranks"])
+        out.append(f"{r['fault']:7s}{r['parent']:5s}"
+                   f"{r['base_rank']:>4}→{r['final_rank']:<4}{lock:5s}{end_badge(r['final_rank'])}   {cells}")
     out.append("```")
     return out
 
 
 def sec_family(g: dict) -> list[str]:
-    out = ["## Family confusion (do the confusers share a parent?)",
+    rows = [r for r in g["rows"] if r["kind"] != "clean"]
+    cross = [r for r in rows if r["kind"] == "cross-family"]
+    sibling = [r for r in rows if r["kind"] == "sibling-only"]
+    out = ["## 🌳 Family confusion",
            "",
-           "For each fault that does **not** end at #1, the causes outranking it "
-           "at the end — `S:` siblings (same parent), `X:` cross-family.",
-           "",
-           "```"]
-    for r in sorted(g["rows"], key=lambda x: (x["kind"], x["final_rank"]), reverse=True):
-        if r["kind"] == "clean":
-            continue
-        sib = ",".join(r["siblings"]) or "—"
-        crx = ",".join(r["cross"]) or "—"
-        flag = "SIBLING-ONLY" if r["kind"] == "sibling-only" else "CROSS-FAMILY"
-        out.append(f"{r['fault']:8s} (#{r['final_rank']}, {flag:12s})  "
-                   f"S:[{sib}]  X:[{crx}]")
-    out.append("```")
-    fm = g["family_mix"]
+           "Causes still outranking each fault at the end. "
+           "🟥 a *different* family is winning (triage gap) — 🟨 only its *own* "
+           "family (a discriminator gap inside one component).",
+           ""]
+    for r in sorted(cross, key=lambda x: -x["final_rank"]):
+        sib = f"  (+ own-family {', '.join(r['siblings'])})" if r["siblings"] else ""
+        out.append(f"🟥 `{r['fault']}` #{r['final_rank']} ← "
+                   f"{', '.join(r['cross'])}{sib}")
+    for r in sorted(sibling, key=lambda x: -x["final_rank"]):
+        out.append(f"🟨 `{r['fault']}` #{r['final_rank']} ← {', '.join(r['siblings'])}")
     out += ["",
-            f"- **{fm['clean']}** faults end clean at #1 (no confusers).",
-            f"- **{fm['sibling-only']}** are confused only by their *own family* — "
-            "these are discriminator gaps inside one component, not mix-ups across "
-            "the tree (the documented F4.4 / F5.8 / F7.3.2 / F7.4 degeneracies live here).",
-            f"- **{fm['cross-family']}** are still outranked by a *different* "
-            "component's cause at the end — the cases most worth a new question."]
+            f"_The {len(sibling)} 🟨 cases are missing within-component discriminators "
+            "(F4.4 / F5.8 / F7.3.2 / F7.4 are the documented ones); the "
+            f"{len(cross)} 🟥 case is the one most worth a new question._"]
     return out
 
 
 def sec_lockin_buckets(g: dict) -> list[str]:
-    buckets = [("1-3", 1, 3), ("4-6", 4, 6), ("7-9", 7, 9),
-               ("10-12", 10, 12), ("13-15", 13, 15), ("16-18", 16, 18)]
+    buckets = [("1–3", 1, 3, "🟩"), ("4–6", 4, 6, "🟩"), ("7–9", 7, 9, "🟨"),
+               ("10–12", 10, 12, "🟨"), ("13–15", 13, 15, "🟧"), ("16–18", 16, 18, "🟧")]
     counts = {b[0]: 0 for b in buckets}
     never = 0
     for r in g["rows"]:
@@ -192,86 +197,48 @@ def sec_lockin_buckets(g: dict) -> list[str]:
         if li is None:
             never += 1
             continue
-        for label, lo, hi in buckets:
+        for label, lo, hi, _ in buckets:
             if lo <= li <= hi:
                 counts[label] += 1
                 break
     scale = max([*counts.values(), never, 1])
-    out = ["## Lock-in buckets (questions to lock & hold top-3)",
+    out = ["## 🎯 Lock-in speed",
            "",
-           "```"]
-    for label, _, _ in buckets:
+           "Questions needed to lock a fault into the top-3 and keep it there.",
+           ""]
+    for label, _, _, emo in buckets:
         n = counts[label]
-        out.append(f"{label:>6} | {hbar(n, scale):30s} {n}")
-    out.append(f"{'never':>6} | {hbar(never, scale):30s} {never}")
-    out.append("```")
+        out.append(f"{emo} `{label:>5}` {hbar(n, scale)} {n}")
+    out.append(f"🟥 `{'never':>5}` {hbar(never, scale)} {never}")
     return out
 
 
-def sec_question_freq(g: dict) -> list[str]:
+def sec_question_scorecard(g: dict) -> list[str]:
     qs = g["qstats"]
     n_runs = len(g["rows"])
-    scale = max([d["asked"] for d in qs.values()] + [1])
-    out = ["## Question frequency (how often each question is asked)",
+    out = ["## ❓ Question scorecard",
            "",
-           f"Out of {n_runs} fault runs. The engine chooses adaptively, so a "
-           "question asked in every run is a universal triage step; a rare one is "
-           "a narrow confirmer.",
-           "",
-           "```"]
-    for qid, d in sorted(qs.items(), key=lambda kv: -kv[1]["asked"]):
-        pct = d["asked"] / n_runs * 100
-        out.append(f"{qid:5s} | {hbar(d['asked'], scale):28s} "
-                   f"{d['asked']:3d}/{n_runs} ({pct:3.0f}%)")
-    out.append("```")
-    return out
-
-
-def sec_question_position(g: dict) -> list[str]:
-    qs = g["qstats"]
-    out = ["## Question position in the trajectory (early vs late)",
-           "",
-           "Mean / median ordinal at which a question is asked, over the runs that "
-           "asked it. Low = early triage; high = late confirmation.",
+           "Sorted by **work** = mean rank-improvement the question gives the true "
+           "fault (🔥 big mover · 🟢 helps · ⚪ marginal · 🔻 hurts). "
+           "`asked` = share of runs that reach it; `when` = mean position (1 = first).",
            "",
            "```",
-           f"{'q':5s} {'mean':>5s} {'median':>7s} {'min':>4s} {'max':>4s}  asked",
-           f"{'-'*5} {'-'*5} {'-'*7} {'-'*4} {'-'*4}  {'-'*5}"]
-    for qid, d in sorted(qs.items(), key=lambda kv: statistics.fmean(kv[1]["positions"])):
-        p = d["positions"]
-        out.append(f"{qid:5s} {statistics.fmean(p):5.1f} {statistics.median(p):7.1f} "
-                   f"{min(p):4d} {max(p):4d}  {d['asked']:5d}")
-    out.append("```")
-    return out
-
-
-def sec_question_work(g: dict) -> list[str]:
-    qs = g["qstats"]
-    out = ["## Which questions do the most work (rank improvement)",
-           "",
-           "Mean change in the *true* fault's rank when a question is answered "
-           "(+ = pushed the true cause up toward #1). `net` sums it over all runs; "
-           "`up/flat/down` counts how often it helped / did nothing / hurt.",
-           "",
-           "```",
-           f"{'q':5s} {'mean Δ':>7s} {'net':>5s}  {'up/flat/down':>13s}  asked",
-           f"{'-'*5} {'-'*7} {'-'*5}  {'-'*13}  {'-'*5}"]
+           f"   {'q':5s}{'asked':14s}{'when':6s}{'meanΔ':>6s}"]
     def keyfn(kv):
         return -statistics.fmean(kv[1]["deltas"])
     for qid, d in sorted(qs.items(), key=keyfn):
-        deltas = d["deltas"]
-        up = sum(1 for x in deltas if x > 0)
-        flat = sum(1 for x in deltas if x == 0)
-        down = sum(1 for x in deltas if x < 0)
-        out.append(f"{qid:5s} {statistics.fmean(deltas):7.2f} {sum(deltas):5d}  "
-                   f"{up:3d}/{flat:3d}/{down:3d}    {d['asked']:5d}")
+        mean = statistics.fmean(d["deltas"])
+        pct = d["asked"] / n_runs * 100
+        asked = f"{pct:3.0f}% {hbar(d['asked'], n_runs, 8)}"
+        out.append(f"{work_badge(mean)} {qid:5s}{asked:14s}"
+                   f"{statistics.fmean(d['positions']):4.1f}  {mean:+6.2f}")
     out.append("```")
     return out
 
 
 SECTIONS = [
     sec_headline, sec_trajectory, sec_family, sec_lockin_buckets,
-    sec_question_freq, sec_question_position, sec_question_work,
+    sec_question_scorecard,
 ]
 
 

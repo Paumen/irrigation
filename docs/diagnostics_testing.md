@@ -57,19 +57,20 @@ slipping from #1 to #2) are real signal — investigate before accepting.
 
 ## What the report tells you
 
-- **Ranking trajectory** — a sparkline per fault (tall = rank 1). Spot faults
-  that lock early vs late, and faults that bounce.
+- **Rank trajectory** — a row of coloured squares per fault (🟩 #1 · 🟨 #2–3 ·
+  🟧 #4–6 · 🟥 #7+), one per question asked, with an end badge (✅/🥈/❌). Spot
+  faults that lock early vs late, and faults that bounce.
 - **Family confusion** — the causes outranking each fault at the end, split into
-  **siblings** (same parent `F<n>`) and **cross-family**. This is the key design
-  signal: sibling-only confusion is a *missing discriminator inside one
+  🟨 **siblings** (same parent `F<n>`) and 🟥 **cross-family**. This is the key
+  design signal: sibling-only confusion is a *missing discriminator inside one
   component*; cross-family confusion is a *triage* gap and usually worse. The four
   documented degeneracies (F4.4, F5.8, F7.3.2, F7.4) are all sibling-only.
-- **Lock-in buckets** — histogram of questions-to-lock-top-3. The right tail and
+- **Lock-in speed** — histogram of questions-to-lock-top-3. The right tail and
   the `never` bucket are where to spend effort.
-- **Question frequency / position / work** — which questions the adaptive engine
-  actually reaches, when in the funnel, and how much each moves the *true* fault's
-  rank. Low-work, low-frequency questions are candidates to cut or re-weight;
-  Q1/Q3/Q2 carry the early triage, late Q15-Q21 are confirmers.
+- **Question scorecard** — one table per question: how often the adaptive engine
+  reaches it (`asked`), when in the funnel (`when`), and the mean rank-improvement
+  it gives the *true* fault, badged 🔥/🟢/⚪/🔻. Q1/Q3/Q2 carry the early triage;
+  🔻 questions (Q6, Q17, Q19) cost rank on average and are re-weight/cut candidates.
 
 ## Known degeneracies (documented caps)
 
