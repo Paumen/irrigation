@@ -73,7 +73,7 @@ F5.3   🟢  94%  lock 3→3   Pump suction-side obstruction
 F5.8   🟠  32%  lock 13→·   Pump external fault
   clean 🟥🟥🟩🟩🟩🟨🟩🟨🟨🟨🟨🟨🟩🟩
   noisy 🟥🟥🟩🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟧
-F6.1   🟢  98%  lock 5→9   Main hose 32mm physical defect
+F6.1   🟢  98%  lock 5→9   Main hose 32mm defect
   clean 🟥🟧🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅
   noisy 🟥🟧🟨🟨🟩🟩🟩🟨🟩🟩🟩🟩🟩✅✅✅✅✅
 F6.3   🟢  86%  lock 3→6   Main hose 32mm obstruction
@@ -97,7 +97,7 @@ F7.3.2 🟢  90%  lock 8→11   Diaphragm metering port / screen debris
 F7.4   🟢 100%  lock 11→11   Valve install error
   clean 🟧🟩✅✅🟨🟩✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
   noisy 🟧🟩✅🟩🟨🟩🟩🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩
-F8.1   🟢 100%  lock 7→7   Zone hose 25mm physical defect
+F8.1   🟢 100%  lock 7→7   Zone hose 25mm defect
   clean 🟥🟥🟧🟨🟥🟥🟩✅✅✅✅✅✅✅✅✅✅✅
   noisy 🟥🟥🟧🟧🟥🟥🟩✅✅✅✅✅✅✅✅✅✅✅
 F8.3   🟢  80%  lock 7→8   Zone hose 25mm obstruction

@@ -25,9 +25,11 @@ BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
 ALLOWED_BASELINES = {0.6, 0.8, 1.0, 1.2}
 ALLOWED_EFFECTS = {-1.6, -1.0, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 1.0, 1.6}
 
-# Copy budgets: keep question prompts and answer labels terse enough to render.
+# Copy budgets: keep question prompts, answer labels, and cause names terse
+# enough to render (cause labels share a row with the F-code in the report).
 MAX_QUESTION_LEN = 100
 MAX_ANSWER_LEN = 45
+MAX_CAUSE_LEN = 45
 
 # parent -> direct child causes, derived from each cause's `parent` field.
 _CHILDREN: dict[str, list[str]] = {}
@@ -92,6 +94,9 @@ def validate_data() -> None:
     for c in DATA["causes"]:
         check(f"{c['id']} baseline on grid", c.get("baseline") in ALLOWED_BASELINES,
               f"baseline {c.get('baseline')} not in {sorted(ALLOWED_BASELINES)}")
+        lbl = c.get("label", "")
+        check(f"{c['id']} name under {MAX_CAUSE_LEN}", len(lbl) < MAX_CAUSE_LEN,
+              f"{len(lbl)} chars: {lbl!r}")
 
     for q in DATA["questions"]:
         text = q.get("text", "")
