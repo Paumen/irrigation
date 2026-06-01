@@ -365,19 +365,28 @@ def robustness(fault: str, trials: int = 50, noise_rate: float = 0.2,
     that still lock & hold the top-`top`, `med_lockin` = their median lock-in
     speed). Deterministic for a given seed (seeded per fault index + trial)."""
     fi = FAULTS.index(fault)
-    finals, lockins = [], []
+    finals, lockins, runs = [], [], []
     for t in range(trials):
         rng = random.Random(seed * 1_000_000 + fi * 1000 + t)
         traj = simulate_noisy(fault, noise_rate, rng)
         finals.append(traj.final_rank)
         lockins.append(traj.lock_in(top))
+        runs.append(traj.ranks)
     locked = [k for k in lockins if k is not None]
+    # median rank at each answered step, kept while a majority of trials reach it
+    med_ranks: list[float] = []
+    for i in range(max((len(r) for r in runs), default=0)):
+        col = [r[i] for r in runs if len(r) > i]
+        if len(col) < trials / 2:
+            break
+        med_ranks.append(statistics.median(col))
     return {
         "recovery": sum(1 for r in finals if r <= top) / len(finals),
         "at1": sum(1 for r in finals if r == 1) / len(finals),
         "lock_rate": len(locked) / len(lockins),
         "med_lockin": statistics.median(locked) if locked else None,
         "median_final": statistics.median(finals),
+        "median_ranks": med_ranks,
     }
 
 

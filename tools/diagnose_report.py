@@ -363,36 +363,32 @@ def sec_robustness(g: dict) -> list[str]:
     strong = sum(1 for x in recov if x >= 0.8)
     out = ["## Robustness to answer errors",
            "",
-           f"Each fault re-run **{NOISE_TRIALS}×** with **1 in 5** answers replaced by a "
-           "random valid one (misclick / misread), compared to its clean run. "
-           "**top-3 / #1** = share of noisy runs ending there · **lock** = median "
-           "questions to lock & hold the top-3, clean → noisy (how much errors slow "
-           "convergence; `·` = locks in under half the noisy runs).",
+           "Each fault's **clean** rank path vs its path under **1 in 5** random "
+           f"answers — the **noise** row is the median rank at each answered step over "
+           f"{NOISE_TRIALS} trials (same scale: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · "
+           "🟥 #10+). The header gives how often the noisy run still ends in the top-3 "
+           "/ at #1, and the lock-in clean→noisy.",
            "",
-           f"**{strong}/{len(rob)}** faults still recover to the top-3 ≥80% of the time "
-           f"(median recovery {statistics.median(recov)*100:.0f}%). "
-           "🟩 ≥80% · 🟨 ≥50% · 🟧 ≥30% · 🟥 worse.",
+           f"**{strong}/{len(rob)}** faults recover to the top-3 ≥80% of the time "
+           f"(median recovery {statistics.median(recov)*100:.0f}%). Sorted worst-first.",
            "",
-           "```",
-           f"  {'fault':7s}{'top-3':>6}{'#1':>5}   {'lock clean→noisy':17s}"]
+           "```"]
     for f in sorted(rob, key=lambda k: rob[k]["recovery"]):
         v = rob[f]
         cl = clean[f]["lock_in"]
         nz = round(v["med_lockin"]) if v["med_lockin"] is not None else None
         cl_s = str(cl) if cl is not None else "—"
         nz_s = str(nz) if v["lock_rate"] >= 0.5 and nz is not None else "·"
-        lock = f"{cl_s} → {nz_s}"
-        if cl is not None and v["lock_rate"] >= 0.5 and nz is not None:
-            lock += f"  ({nz - cl:+d})"
-        out.append(f"{recov_cell(v['recovery'])} {f:7s}"
-                   f"{v['recovery']*100:5.0f}%{v['at1']*100:4.0f}%   {lock}")
+        out.append(f"{recov_cell(v['recovery'])} {f:7s} top-3 {v['recovery']*100:3.0f}%  "
+                   f"#1 {v['at1']*100:3.0f}%  lock {cl_s}→{nz_s}")
+        out.append("   clean " + "".join(rank_cell(x) for x in clean[f]["ranks"]))
+        out.append("   noise " + "".join(rank_cell(round(x)) for x in v["median_ranks"]))
     out.append("```")
     out.append("")
-    out.append("_The least-robust faults are the documented degeneracies "
-               "(F7.3.2 / F4.4 / F7.4 / F2.5 / F5.8): with no unique fingerprint a "
-               "single wrong answer tips them behind a sibling — they barely lock even "
-               "clean, and rarely re-lock under noise. The robust faults (🟩) keep "
-               "locking at close to their clean speed._")
+    out.append("_Read the **noise** row against **clean**: robust faults (🟩) track "
+               "their clean path and end green; the degeneracies (F7.3.2 / F4.4 / "
+               "F7.4 / F2.5) stay orange/red throughout — a single wrong answer is "
+               "enough to keep them behind a sibling._")
     return out
 
 
