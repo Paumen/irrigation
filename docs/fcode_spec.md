@@ -129,11 +129,31 @@ touchscreen and stored schedule keep running.
 straddles both layers: its solenoid is **electrical** (24 V from the controller — coil
 faults at `F7.1.1`, plunger/port obstruction at `F7.3.1`), while the diaphragm, seat,
 and body are **hydraulic** (`F7.1.2`, `F7.1.3`, `F7.3.2`). The isolating test is
-**manual operation**: open the bleed screw or turn the solenoid by hand. If the zone
-then runs, the hydraulics are sound and the fault is electrical — solenoid coil, wiring
-(`F3`), or controller (`F2`). If it still won't run, the fault is hydraulic — diaphragm,
-seat, or obstruction. This is why an `F7` symptom on its own does not tell you which
-neighbour to suspect; the bleed test resolves the fork before any part is replaced.
+**manual operation**, and it resolves in two steps because the two manual paths differ:
+
+- **Internal bleed** — rotate the solenoid a quarter-turn. This lifts the plunger
+  mechanically *through* the solenoid's own exhaust port, so it exercises the
+  plunger/port path. If the zone runs, that path is clear and the activation fault is
+  upstream — coil (`F7.1.1`), wiring (`F3`), or controller (`F2`); the plunger
+  obstruction `F7.3.1` is ruled out. If it does not run, fall through to:
+- **External bleed** — loosen the bleed screw, venting the bonnet straight to
+  atmosphere and *bypassing* the plunger/port. If the zone now runs (where the internal
+  bleed failed), the difference is exactly the plunger/port → `F7.3.1`. If it sprays
+  hard from the valve but the heads stay dry, the bonnet is venting yet the diaphragm
+  still won't lift/seal → diaphragm `F7.1.2` / seat `F7.1.3`. If barely any water
+  appears even from the screw, the bonnet never pressurises → supply (`F6`/`F5`) or the
+  inlet/metering screen `F7.3.2`.
+
+So an `F7` symptom on its own does not tell you which neighbour to suspect; the internal
+→ external bleed ladder resolves the fork before any part is replaced. A second fork —
+*won't seal because the seal is bad* vs. *won't seal because something holds it open* —
+is split by the **flow control**: screwing it fully shut clamps the diaphragm onto the
+seat regardless of the solenoid. If a leak then stops, the surfaces can seal and the
+cause is upstream (controller `F2.6`, solenoid stuck open `F7.3.1`, cross-wire `F3.4`);
+if it still leaks, the diaphragm/seat is gone. Opening a throttled flow control on a
+weak zone is likewise the cleanest probe for a mis-set valve (`F7.4`). The live
+questionnaire implements these as `Q12`/`Q12b` (bleed ladder) and `Q24`/`Q25` (flow
+control).
 
 **Note (F7) — Teflon paste-and-tape.** Using both over-torques the joint and splits the
 valve body: an install act with a defect outcome. Score it as `F7.1.3`, not as an `F7.4`
@@ -354,6 +374,12 @@ a subset. Replace the broadcast with explicit per-child effects.
 |---|---|---|
 | Q3 "Stays silent" | R2: 1.0 | F2.1: 1.0, F2.8: 1.0 (skip F2.5, F2.6 — firmware/settings don't silence the controller) |
 | Q12 "Yes — zone runs" (bleed test) | R7: -1.4 | F7.1.2: -1.4, F7.1.3: -1.4, F7.3.2: -1.4, F7.4: -1.4 (skip F7.1.1, F7.3.1 — bleed-runs confirms hydraulics OK, so the electrical valve faults remain plausible per §2 F7 note) |
+
+> **Superseded post-migration.** `Q12` has since been rebuilt as an internal/external
+> bleed *ladder* (`Q12` rotate-solenoid + gated `Q12b` bleed-screw), so the live "Yes —
+> zone runs" no longer matches this migration-era row: the internal bleed exercises the
+> plunger, so it now drives `F7.3.1` **down** (−1.2) and `F7.1.1` **up** while ruling out
+> the hydraulic faults. See the updated §2 F7 note for the current mechanism.
 
 ### Cross-family move (R11 → F2.6) — parent-broadcast compensation
 
