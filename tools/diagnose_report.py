@@ -106,8 +106,24 @@ def gather() -> dict:
 # rendering helpers
 # ----------------------------------------------------------------------------
 def rank_cell(r: int) -> str:
-    """A rank as one square: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟥 #7+."""
-    return "✅" if r == 1 else "🟩" if r <= 3 else "🟨" if r <= 6 else "🟥"
+    """A rank as one square: ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+."""
+    return ("✅" if r == 1 else "🟩" if r <= 3 else "🟨" if r <= 6
+            else "🟧" if r <= 9 else "🟥")
+
+
+def work_cell(m: float) -> str:
+    """A question's average work as one square: 🟩 strong · 🟨 helps · ⬜ idle · 🟥 hurts."""
+    return "🟩" if m >= 1.0 else "🟨" if m >= 0.1 else "🟥" if m < -0.05 else "⬜"
+
+
+def recov_cell(x: float) -> str:
+    """Robustness as one square: 🟩 ≥80% · 🟨 ≥50% · 🟧 ≥30% · 🟥 worse."""
+    return "🟩" if x >= 0.8 else "🟨" if x >= 0.5 else "🟧" if x >= 0.3 else "🟥"
+
+
+def lock_cell(q: int) -> str:
+    """Lock-in speed as one square: 🟩 ≤8 · 🟨 ≤12 · 🟧 ≤16 · 🟥 slower."""
+    return "🟩" if q <= 8 else "🟨" if q <= 12 else "🟧" if q <= 16 else "🟥"
 
 
 def fcode_key(f: str) -> list[int]:
@@ -171,7 +187,7 @@ def sec_trajectory(g: dict) -> list[str]:
     out = ["## Rank trajectory",
            "",
            "Each square = the true fault's rank after one question. "
-           "✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟥 #7+. "
+           "✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+. "
            "**fam** = questions until the right *component* leads (#1) and stays; "
            "**top3** = until the exact cause locks into the top-3.",
            "",
@@ -188,27 +204,29 @@ def sec_trajectory(g: dict) -> list[str]:
 
 def sec_family(g: dict) -> list[str]:
     rows = [r for r in g["rows"] if r["kind"] != "clean"]
-    cross = [r for r in rows if r["kind"] == "cross-family"]
+    cross = sorted((r for r in rows if r["kind"] == "cross-family"),
+                   key=lambda x: -x["final_rank"])
     sib = sorted((r for r in rows if r["kind"] == "sibling-only"),
-                 key=lambda x: x["final_rank"], reverse=True)
+                 key=lambda x: -x["final_rank"])
     out = ["## Family confusion",
            "",
-           "Faults a competing cause still outranks at the end. "
-           "❌ = ended out of top-3 · ⚠️ = in top-3 but not #1.",
-           ""]
-    if cross:
-        out.append("**Cross-family — a *different* component is winning (a triage gap):**")
-        for r in sorted(cross, key=lambda x: -x["final_rank"]):
-            icon = "❌" if r["final_rank"] > 3 else "⚠️"
-            tail = f"  _(+ own family {', '.join(r['siblings'])})_" if r["siblings"] else ""
-            out.append(f"- {icon} `{r['fault']}` #{r['final_rank']} ← "
-                       f"**{', '.join(r['cross'])}**{tail}")
-        out.append("")
-    # within-family: listed lighter — just the fault + rank, no sibling ids
-    out.append("_Within-family only (a missing discriminator inside one component):_")
-    out.append("_" + " · ".join(
-        f"{'❌' if r['final_rank'] > 3 else '⚠️'} {r['fault']} #{r['final_rank']}"
-        for r in sib) + "_")
+           "Causes that still outrank the true fault once all its answers are in "
+           "(`#n` = where the true fault ends; `←` lists who beats it).",
+           "",
+           "🟥 **Cross-family** — a *different* component is winning (triage gap, the "
+           "kind most worth a new question):",
+           "```"]
+    for r in cross:
+        extra = f"   (+ own family: {', '.join(r['siblings'])})" if r["siblings"] else ""
+        out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['cross'])}{extra}")
+    out.append("```")
+    out += ["",
+            "🟦 **Within-family** — the right component leads, but a sibling sits "
+            "above the true sub-cause (a missing discriminator inside one component):",
+            "```"]
+    for r in sib:
+        out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['siblings'])}")
+    out.append("```")
     return out
 
 
@@ -220,13 +238,14 @@ def sec_lockin(g: dict) -> list[str]:
     scale = max([*counts, never, 1])
     out = ["## Lock-in speed",
            "",
-           f"Questions needed to lock a fault into the top-3 and hold it. "
-           f"median **{statistics.median(locks):g}** · mean **{statistics.fmean(locks):.1f}**.",
+           f"Questions needed to lock a fault into the top-3 and hold it "
+           f"(🟩 fast → 🟥 slow). median **{statistics.median(locks):g}** · "
+           f"mean **{statistics.fmean(locks):.1f}**.",
            "",
            "```"]
     for (lo, hi), n in zip(edges, counts):
-        out.append(f"{f'{lo}–{hi}':>6} {hbar(n, scale)} {n}")
-    out.append(f"{'never':>6} {hbar(never, scale)} {never}")
+        out.append(f"{lock_cell(lo)} {f'{lo}–{hi}':>6} {hbar(n, scale)} {n}")
+    out.append(f"🟥 {'never':>6} {hbar(never, scale)} {never}")
     out.append("```")
     return out
 
@@ -239,15 +258,16 @@ def sec_scorecard(g: dict) -> list[str]:
            "",
            "What each question *did* across the 29 runs. **work** = average "
            "rank-improvement it gives the true fault (+ = toward #1; the median is 0 "
-           "for most, since rank rarely moves on a single step). **when** = median "
-           "position it's asked.",
+           "for most, since rank rarely moves on a single step) — "
+           "🟩 strong · 🟨 helps · ⬜ idle · 🟥 hurts. **when** = median position.",
            "",
            "```",
-           f"{'q':5s}{'asked':18s}{'when':>5s}{'work':>6s}"]
+           f"   {'q':5s}{'asked':18s}{'when':>5s}{'work':>6s}"]
     for qid, d in sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"]):
         pct = d["asked"] / n_runs * 100
         asked = f"{pct:3.0f}% {hbar(d['asked'], n_runs, 9)}"
-        out.append(f"{qid:5s}{asked:18s}{d['med_pos']:5.0f}{d['mean_work']:+6.1f}")
+        out.append(f"{work_cell(d['mean_work'])} {qid:5s}{asked:18s}"
+                   f"{d['med_pos']:5.0f}{d['mean_work']:+6.1f}")
     out.append("```")
 
     neg = sorted((q for q, d in qs.items() if d["mean_work"] < 0), key=lambda q: qs[q]["mean_work"])
@@ -327,14 +347,15 @@ def sec_robustness(g: dict) -> list[str]:
            "**recovery** = share of noisy runs still ending in the top-3.",
            "",
            f"Overall median recovery **{statistics.median(recov)*100:.0f}%** · "
-           f"mean **{statistics.fmean(recov)*100:.0f}%**.",
+           f"mean **{statistics.fmean(recov)*100:.0f}%** "
+           f"(🟩 ≥80% · 🟨 ≥50% · 🟧 ≥30% · 🟥 worse).",
            "",
            "```",
-           f"{'fault':7s}recovery        median-final"]
+           f"  {'fault':7s}recovery        median-final"]
     for f in sorted(rob, key=lambda k: rob[k]["recovery"]):
         v = rob[f]
         bar = f"{v['recovery']*100:3.0f}% {hbar(v['recovery'], 1.0, 10)}"
-        out.append(f"{f:7s}{bar:16s}#{v['median_final']:g}")
+        out.append(f"{recov_cell(v['recovery'])} {f:7s}{bar:16s}#{v['median_final']:g}")
     out.append("```")
     out.append("")
     out.append("_The least-robust faults are the documented degeneracies "
