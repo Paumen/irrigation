@@ -138,6 +138,17 @@ CTX = {
 
 LET = {"a": 0, "b": 1, "c": 2, "d": 3}
 
+# Q18/Q22/Q23 are multiselect: a letter maps to the list of ticked option
+# indices (a survey can report several things at once). The "none ticked"
+# answers — Q18 "nothing visible", Q23 "no water" — carry no effects; like a
+# real survey where the user ticks nothing and moves on, they are left
+# unanswered for the simulator to skip (None below).
+MULTI = {
+    "Q18": {"a": [0], "b": [1], "c": [2], "d": None},
+    "Q22": {"a": [0], "b": [1], "c": [2]},
+    "Q23": {"a": None, "b": [0], "c": [1], "d": [0, 1]},
+}
+
 # A true cause that ends beyond this rank is a FAILURE. The default is top-3;
 # these documented near-degeneracies can't reach top-3 with the current question
 # set (each needs a dedicated discriminator to separate from a sibling — see the
@@ -191,8 +202,14 @@ def build_key(fault: str) -> dict:
         if let != "-":
             key[col] = LET[let]
     for col, let in zip(T2_COLS, T2[fault].split()):
-        if let != "-":
-            key[col] = [LET[let]] if col == "Q22" else LET[let]
+        if let == "-":
+            continue
+        if col in MULTI:
+            picks = MULTI[col][let]
+            if picks is not None:  # None = none ticked -> left unanswered (skipped)
+                key[col] = picks
+        else:
+            key[col] = LET[let]
     key.update(CTX[fault])
     return key
 
