@@ -63,17 +63,17 @@ T2 = {
     "F3.4":   "a a c d a a d b a c a a",
     "F4.1":   "a a a a a a d b b a - a",
     "F4.4":   "a a a a a a d b b a - a",
-    "F5.1":   "b a a a a a d b c a - a",
-    "F5.3":   "b a a a a a d b a a - a",
-    "F5.8":   "- a a a a a d b a a - a",
+    "F5.1":   "b a a a a a d b c a d a",
+    "F5.3":   "b a a a a a d b a a d a",
+    "F5.8":   "- a a a a a d b a a d a",
     "F6.1":   "b a a a a a a b a a c a",
     "F6.3":   "b a a a a a d b a a c a",
-    "F7.1.1": "a a b b b a d b a a - a",
+    "F7.1.1": "a a b b b a d b a a d a",
     "F7.1.2": "b a a a b b b b a a b b",
     "F7.1.3": "b a a a b b b b a a b c",
-    "F7.3.1": "b a a a b b d b a a - a",
-    "F7.3.2": "b a a a b b d b a a - a",
-    "F7.4":   "b a a a b b b b a a b a",
+    "F7.3.1": "b a a a b b d b a a d a",
+    "F7.3.2": "b a a a b b d b a a a b",
+    "F7.4":   "b a a a b b b b a a b c",
     "F8.1":   "b a a a a a c b a a c a",
     "F8.3":   "b a a a a a d b a a c a",
     "F9.1.1": "a a a a a a d b a a c a",
@@ -137,11 +137,15 @@ CTX = {
 
 LET = {"a": 0, "b": 1, "c": 2, "d": 3}
 
-# letter -> ticked option indices. None = skipped, not an empty selection.
+# letter -> ticked option indices. The "neither" code (Q18 'd', Q22 'd', Q23 'a')
+# now ticks the explicit "None of the above" option each question carries, so a
+# negative confirmation ("I looked, it's none of these") is scored as a small
+# rule-out instead of being dropped as a skip. A '-' cell is still a true skip —
+# the homeowner couldn't run the test (e.g. no zone energises for Q22).
 MULTI = {
-    "Q18": {"a": [0], "b": [1], "c": [2], "d": None},
-    "Q22": {"a": [0], "b": [1], "c": [2]},
-    "Q23": {"a": None, "b": [0], "c": [1], "d": [0, 1]},
+    "Q18": {"a": [0], "b": [1], "c": [2], "d": [3]},
+    "Q22": {"a": [0], "b": [1], "c": [2], "d": [3]},
+    "Q23": {"a": [2], "b": [0], "c": [1], "d": [0, 1]},
 }
 
 FAULTS = list(T1)

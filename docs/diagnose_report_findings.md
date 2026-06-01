@@ -197,11 +197,45 @@ The negative-confirmation skips are meaningful answers the engine actively seeks
 (53 discarded), but the current model extracts **no** information from them, and
 the path to fixing that is gated on two changes, in order:
 
-1. **Reconcile the 10 contradictions** (most are answer-key errors — the fault
+1. **Reconcile the contradictions** (most are answer-key errors — the fault
    does present at heads/valves and should tick a box).
-2. *Then* optionally let an empty multiselect apply a **small, targeted**
-   rule-out, so "I looked, it's none of these" demotes the absent-symptom causes
-   without destabilising the run.
+2. *Then* let "none of these" apply a **small, targeted** rule-out, so "I looked,
+   it's none of these" demotes the absent-symptom causes without destabilising
+   the run.
 
-Both touch `data.json`/the sim and must keep `tools/test_diagnose.py` green, so
-they are flagged here rather than applied as part of this investigation.
+## 4. What was applied
+
+Both steps above were implemented (suite stays green; baseline snapshot refreshed).
+
+**Step 1 — keys reconciled.** Each multiselect now carries an explicit **"None of
+the above"** option (Q23 "Nowhere — nothing comes out", Q18 "Nowhere — no water or
+wet ground", Q22 "None of these — nothing unusual"), so the homeowner can record a
+clean negative finding instead of leaving it blank. The two contradictions in the
+rule-out path were fixed in `tools/diagnose_sim.py`: **F7.3.2** now ticks *heads*
+on Q23 and *water-at-wrong-zone* on Q22 (its diaphragm screen does weep), and
+**F7.4** ticks *valves* on Q23 (a mis-set valve passes pump pressure). After the
+fix, no fault answers "none" on a question whose option boosts it.
+
+**Step 2 — small rule-out on "none".** Each "None of the above" option carries a
+**−0.2** effect on that question's strong (≥0.6) presence-causes only — e.g. Q23's
+"nowhere" gently demotes F7.1.2/F7.1.3/F7.3.2/F7.4. Magnitude is deliberately the
+grid floor: a full-magnitude negation was shown above to destabilise the run.
+
+**Which "none"s are scored vs left as skips** (the two-kinds distinction):
+- **Q18 (walk & look) and Q23 (pump-only)** are *always performable*, so an empty
+  answer is a genuine negative confirmation and is scored for every fault.
+- **Q22 (run a zone & look)** needs a zone to energise, so its empty answer is
+  scored **only** for faults where the zone runs (pump/valve faults: F5.1/F5.3/
+  F5.8/F7.1.1/F7.3.1); for controller/wiring/relay faults — where no zone runs —
+  it stays a true **skip** (don't-know), not a negative confirmation.
+
+**Effect on the metrics.** Q23's `asked` rose 7% → ~79% (Q18 ~69%, Q22 ~72%) —
+the engine's most-sought answer is no longer discarded. Median noise-recovery rose
+86% → 88%. The count of faults recovering ≥80% dipped 22 → 20: two *external*
+faults (F1.8 app-wifi, F5.8 low-well) now *answer* these once-skipped questions and
+so are exposed to the test's 1-in-5 random-answer model. This dip is from the
+questions being **answered at all**, not from the −0.2 rule-out — verified by
+zeroing the effect (the count drops further, to 19, with the effect removed), so
+the small rule-out is itself net-positive. F2.6 also shifts from a preferred #1 to
+#2 (still top-3, within its own family) — a logged WARNING, left visible rather
+than masked.
