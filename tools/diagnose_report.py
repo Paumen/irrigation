@@ -156,29 +156,27 @@ def shape_label(x: float) -> str:
 # ----------------------------------------------------------------------------
 def sec_headline(g: dict) -> list[str]:
     rows = g["rows"]
+    n = len(rows)
     locks = [r["lock_in"] for r in rows if r["lock_in"] is not None]
     plocks = [r["parent_lock"] for r in rows if r["parent_lock"] is not None]
-    fm = g["family_mix"]
     at1 = sum(1 for r in rows if r["final_rank"] == 1)
-    in23 = sum(1 for r in rows if 1 < r["final_rank"] <= 3)
-    out = len(rows) - at1 - in23
     recov = [v["recovery"] for v in g["robustness"].values()]
     still = sum(1 for x in recov if x >= 0.5)
+    # one capability per line: what it does, the score, and how fast/well
     return [
         "# Diagnostic questionnaire — analysis report",
         "",
-        f"{len(rows)} faults · {DEPTH} questions deep",
+        f"{n} fault modes · {DEPTH} questions deep",
         "",
         "```",
-        f"Outcome      {at1} reach #1 · {in23} settle in top-3 · {out} stay out",
-        f"Right family {len(plocks)}/{len(rows)} get the right component to #1 · "
+        f"{'Finds the right component':27s}{len(plocks):>2}/{n}   "
         f"median {statistics.median(plocks):g} questions to lead & hold",
-        f"Exact cause  {len(locks)}/{len(rows)} hold top-3 · "
-        f"median {statistics.median(locks):g} · range {min(locks)}–{max(locks)} questions",
-        f"Confusion    {fm['clean']} clean · {fm['sibling-only']} within-family · "
-        f"{fm['cross-family']} cross-family",
-        f"Robustness   1-in-5 answers random → median recovery "
-        f"{statistics.median(recov)*100:.0f}% · {still}/{len(rows)} faults usually recover",
+        f"{'Pins the exact sub-cause':27s}{len(locks):>2}/{n}   "
+        f"median {statistics.median(locks):g}, range {min(locks)}–{max(locks)} "
+        f"(the {n - len(locks)} misses are documented)",
+        f"{'Lands it at #1 outright':27s}{at1:>2}/{n}",
+        f"{'Survives a wrong answer':27s}{still:>2}/{n}   "
+        f"1-in-5 random → {statistics.median(recov)*100:.0f}% median recovery",
         "```",
     ]
 
@@ -204,29 +202,34 @@ def sec_trajectory(g: dict) -> list[str]:
 
 def sec_family(g: dict) -> list[str]:
     rows = [r for r in g["rows"] if r["kind"] != "clean"]
-    cross = sorted((r for r in rows if r["kind"] == "cross-family"),
-                   key=lambda x: -x["final_rank"])
-    sib = sorted((r for r in rows if r["kind"] == "sibling-only"),
-                 key=lambda x: -x["final_rank"])
+    cross = sorted((r for r in rows if r["kind"] == "cross-family"), key=lambda x: -x["final_rank"])
+    sib = [r for r in rows if r["kind"] == "sibling-only"]
+    sib_out = sorted((r for r in sib if r["final_rank"] > 3), key=lambda x: -x["final_rank"])
+    sib_in = sorted((r for r in sib if r["final_rank"] <= 3), key=lambda x: fcode_key(x["fault"]))
+    miss = len(cross) + len(sib_out)
     out = ["## Family confusion",
            "",
-           "Causes that still outrank the true fault once all its answers are in "
-           "(`#n` = where the true fault ends; `←` lists who beats it).",
-           "",
-           "🟥 **Cross-family** — a *different* component is winning (triage gap, the "
-           "kind most worth a new question):",
-           "```"]
-    for r in cross:
-        extra = f"   (+ own family: {', '.join(r['siblings'])})" if r["siblings"] else ""
-        out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['cross'])}{extra}")
-    out.append("```")
-    out += ["",
-            "🟦 **Within-family** — the right component leads, but a sibling sits "
-            "above the true sub-cause (a missing discriminator inside one component):",
-            "```"]
-    for r in sib:
-        out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['siblings'])}")
-    out.append("```")
+           f"Only the **{miss}** faults that miss the top-3 need attention; the other "
+           f"{len(sib_in)} reach the top-3 with the true cause at #2–3. "
+           "(`#n` = where the true fault ends · `←` = who outranks it.)",
+           ""]
+    if cross:
+        out += ["🟥 **Cross-family** — a *different* component wins (triage gap):", "```"]
+        for r in cross:
+            extra = f"   (+ sibling {', '.join(r['siblings'])})" if r["siblings"] else ""
+            out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['cross'])}{extra}")
+        out.append("```")
+    if sib_out:
+        out += ["",
+                "🟧 **Within-family, out of top-3** — right component, but siblings "
+                "mask the exact sub-cause:", "```"]
+        for r in sib_out:
+            out.append(f"{r['fault']:7s} #{r['final_rank']}  ←  {', '.join(r['siblings'])}")
+        out.append("```")
+    if sib_in:
+        out += ["",
+                f"🟦 **Within-family, still top-3** — true cause at #2–3, a sibling "
+                f"merely leads · {len(sib_in)}: {', '.join(r['fault'] for r in sib_in)}"]
     return out
 
 
