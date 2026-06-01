@@ -11,7 +11,9 @@
 #                  instruction = an action to perform; descriptor is the action (+ -step-N).
 #                  breakdown   = internal anatomy (exploded / cutaway / callouts / part inspection);
 #                                descriptor is what's broken down, and the entry carries a legend:.
-#   (icons and the vendor datasheet PDF live in media/ but are not indexed here.)
+#   (icons and the vendor datasheet PDF live in media/ but are not indexed here.
+#    Animations ARE indexed — both .gif and .mp4 video. A video can't inline-render as
+#    markdown, so surface it with SendUserFile only; entries carry media: video to flag this.)
 #
 # Find one by subjects:, questions: (engine Q-ids) or causes: (F-codes), then surface it with
 # SendUserFile using the manifest caption:. file: is relative to this folder; pass an absolute path
@@ -556,6 +558,16 @@ images:
     legend: {1: support ring, 2: diaphragm, 3: spring}
     causes: [F7, F7.1.2, F7.3.2]
     questions: [Q17]
+    used_in: [valve-internals.md]
+
+  IMG.valve-auto-breakdown-diaphragm-animation:
+    file: media/valve-auto-breakdown-diaphragm-animation.mp4
+    media: video
+    caption: Animation of the diaphragm cycling — the metering port bleeds water into the upper chamber to hold the valve shut; releasing that pressure (solenoid or bleed) lets the diaphragm lift and water flow, then it reseats as the chamber refills.
+    subjects: [valve-internals, valve]
+    causes: [F7, F7.1.2, F7.3.2, F7.1.1, F7.3.1]
+    questions: [Q17]
+    relates: motion version of the open/close explanation in valve-internals.md; mp4 video — surface with SendUserFile, it will not inline-render as markdown
     used_in: [valve-internals.md]
 
   IMG.valve-auto-product-diaphragm:
