@@ -53,26 +53,26 @@ T1 = {
 T2 = {
     "F1.5":   "a a a a a a d a a a c a",
     "F1.8":   "a a a a a a d a a a c a",
-    "F2.1":   "c b a a a a d b d a - a",
-    "F2.5":   "c b a a a a d b d a - a",
+    "F2.1":   "a b a a a a d b d a - a",
+    "F2.5":   "a b a a a a d b d a - a",
     "F2.6":   "a b a a a a d a d a a a",
-    "F2.8":   "c b a a a a d b d a - a",
+    "F2.8":   "a b a a a a d b d a - a",
     "F3.1.1": "a c b d a a d b a a - a",  # high-resistance break reads low/fluctuating
     "F3.1.2": "a c b d a a d b a a - a",  # high-resistance break reads low/fluctuating
     "F3.1.3": "a a c d a a d b a b - a",
     "F3.4":   "a a c d a a d b a c a a",
-    "F4.1":   "c a a a a a d b b a - a",
-    "F4.4":   "c a a a a a d b b a - a",
-    "F5.1":   "c a a a a a d b c a - a",
-    "F5.3":   "c a a a a a d b a a - a",
-    "F5.8":   "b a a a a a d b a a - a",
+    "F4.1":   "a a a a a a d b b a - a",
+    "F4.4":   "a a a a a a d b b a - a",
+    "F5.1":   "b a a a a a d b c a - a",
+    "F5.3":   "b a a a a a d b a a - a",
+    "F5.8":   "- a a a a a d b a a - a",
     "F6.1":   "b a a a a a a b a a c a",
     "F6.3":   "b a a a a a d b a a c a",
     "F7.1.1": "a a b b b a d b a a - a",
     "F7.1.2": "b a a a b b b b a a b b",
     "F7.1.3": "b a a a b b b b a a b c",
-    "F7.3.1": "a a a a b b d b a a - a",
-    "F7.3.2": "a a a a b b d b a a - a",
+    "F7.3.1": "b a a a b b d b a a - a",
+    "F7.3.2": "b a a a b b d b a a - a",
     "F7.4":   "b a a a b b b b a a b a",
     "F8.1":   "b a a a a a c b a a c a",
     "F8.3":   "b a a a a a d b a a c a",
@@ -80,6 +80,25 @@ T2 = {
     "F9.1.2": "a a a a a a d a a a c a",
     "F9.3":   "a a a a a a d a a a c a",
     "F9.4":   "a a a a a a d b a a c a",
+}
+
+# Tier-2 follow-ups added with the internal/external bleed ladder + flow-control
+# probes. Q12b only fires after Q12="No" (its `requires` gate); Q24/Q25 are the
+# weeping / weak-zone flow-control tests. '-' = no answer in the key (skipped).
+T3_COLS = ["Q12b", "Q24", "Q25"]
+T3 = {
+    "F2.6":   "- a -",   # held-open weep: flow-control shut stops it
+    "F5.1":   "c - -",   # external bleed: little/no water (pump dead)
+    "F5.3":   "c - -",
+    "F6.1":   "c - -",   # supply starved upstream of the valve
+    "F6.3":   "c - b",
+    "F7.1.2": "b b -",   # sprays from valve / still leaks shut -> diaphragm
+    "F7.1.3": "b b -",
+    "F7.3.1": "a - -",   # external bleed runs where internal failed -> plunger
+    "F7.3.2": "c - b",   # barely sprays -> metering screen
+    "F7.4":   "- - a",   # flow improves once flow-control opened -> mis-set
+    "F8.1":   "b - -",   # valve passes water; heads dry from the zone-hose fault
+    "F8.3":   "b - -",
 }
 
 # Age step 4 = 12+ yrs; "right" = "started right after". Cells with no effect on
@@ -141,6 +160,9 @@ def build_key(fault: str) -> dict:
             if picks is not None:
                 key[col] = picks
         else:
+            key[col] = LET[let]
+    for col, let in zip(T3_COLS, T3.get(fault, "").split()):
+        if let != "-":
             key[col] = LET[let]
     key.update(CTX[fault])
     return key

@@ -1005,7 +1005,7 @@
       "id": "Q12",
       "context": "valve-box, run_pump",
       "effort": 3,
-      "text": "Open the valve manually with the bleed screw — does the zone run?",
+      "text": "Rotate the solenoid a quarter-turn open (internal bleed — box stays dry). Does the zone run at the heads?",
       "highlight": [
         "valves"
       ],
@@ -1013,41 +1013,68 @@
         {
           "label": "Yes — zone runs",
           "effects": {
-            "F3": 0.6,
-            "F7.1.1": 0.6,
-            "F7.3.1": 0.6,
-            "F7.1.2": -0.4,
+            "F7.3.1": -1.2,
+            "F7.1.2": -0.6,
             "F7.1.3": -0.4,
             "F7.3.2": -0.4,
-            "F7.4": -0.4,
             "F8": -0.4,
-            "F9": -0.4
+            "F9": -0.4,
+            "F6": -0.2,
+            "F7.1.1": 0.6,
+            "F3": 0.6,
+            "F2": 0.2
           }
         },
         {
-          "label": "Partial — weak flow",
+          "label": "No — nothing at the heads",
           "effects": {
-            "F3": 0.2,
-            "F7.1.1": 0.2,
-            "F7.3.1": 0.2,
-            "F7.1.2": 0.6,
-            "F7.3.2": 0.6,
-            "F7.1.3": 0.4,
-            "F5": 0.4,
-            "F6.3": 0.4,
-            "F8.3": 0.4,
-            "F9": 0.4,
-            "F7.4": 0.2
+            "F7.3.1": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q12b",
+      "context": "valve-box, run_pump",
+      "effort": 3,
+      "requires": {
+        "Q12": [
+          1
+        ]
+      },
+      "text": "Now loosen the bleed screw (external bleed). Watch the top of the valve and the heads.",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Zone runs once the screw is open",
+          "effects": {
+            "F7.3.1": 1.6,
+            "F7.1.2": -0.6,
+            "F7.1.3": -0.6,
+            "F7.3.2": -0.4,
+            "F6": -0.4,
+            "F8": -0.4
           }
         },
         {
-          "label": "No — nothing happens",
+          "label": "Sprays hard from the valve, heads stay dry/weak",
           "effects": {
-            "F6": 1,
-            "F7.1.2": 1,
-            "F7.3.2": 1,
-            "F7.1.3": 1,
-            "F8": 1
+            "F7.1.2": 1.2,
+            "F7.1.3": 0.6,
+            "F8": 0.6,
+            "F7.3.2": -0.4,
+            "F6": -0.6,
+            "F5": -0.4
+          }
+        },
+        {
+          "label": "Little or no water even from the screw",
+          "effects": {
+            "F6": 1.2,
+            "F5": 0.6,
+            "F7.3.2": 0.6
           }
         }
       ]
@@ -1440,6 +1467,66 @@
             "F7.4": 1.0,
             "F7.1.2": 0.6,
             "F6.1": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q24",
+      "context": "valve-box, run_pump",
+      "effort": 3,
+      "text": "On the valve that won't shut off, screw the flow control fully closed. Does the leak stop?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Yes — flow stops",
+          "effects": {
+            "F7.1.2": -0.8,
+            "F7.1.3": -0.8,
+            "F2.6": 0.6,
+            "F7.3.1": 0.6,
+            "F3.4": 0.4
+          }
+        },
+        {
+          "label": "No — still leaks with flow control shut",
+          "effects": {
+            "F7.1.2": 1.0,
+            "F7.1.3": 1.2,
+            "F7.3.2": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q25",
+      "context": "valve-box, run_zone",
+      "effort": 3,
+      "text": "On the weak zone, open the flow control fully (it may have been throttled). Does flow improve?",
+      "highlight": [
+        "valves",
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "Yes — flow jumps up",
+          "effects": {
+            "F7.4": 1.2,
+            "F5": -0.4,
+            "F6": -0.4,
+            "F7.1.2": -0.2
+          }
+        },
+        {
+          "label": "No — no change",
+          "effects": {
+            "F5": 0.4,
+            "F6.3": 0.4,
+            "F7.3.2": 0.4,
+            "F7.1.2": 0.4,
+            "F9.3": 0.2
           }
         }
       ]
