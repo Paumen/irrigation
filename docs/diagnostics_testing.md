@@ -85,9 +85,12 @@ and asserts the overall median recovery clears `MIN_MEDIAN_RECOVERY`.
   `force` (strongest push — hard/firm/nudge), `rule-out` (share of evidence that
   *subtracts* to exonerate vs only adds), and `shape` (one decisive answer vs graded
   across all). These are independent axes; triage-vs-narrow is only one of them.
-- **Robustness** — per-fault recovery under 1-in-5 random answers. The least-robust
-  faults are exactly the documented degeneracies (no unique fingerprint, so one
-  wrong answer tips them behind a sibling).
+- **Question character** rows carry scanning bars per axis (scope/force/rule-out/shape).
+- **Robustness** — each fault re-run under 1-in-5 random answers, compared to its clean
+  run: share ending in the top-3 vs at #1, and the lock-in slowdown (clean → noisy).
+  The least-robust faults are exactly the documented degeneracies (no unique
+  fingerprint, so one wrong answer tips them behind a sibling); robust faults keep
+  locking at close to their clean speed.
 
 ## Known degeneracies (documented caps)
 

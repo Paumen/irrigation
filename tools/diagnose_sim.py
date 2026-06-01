@@ -359,16 +359,24 @@ def simulate_noisy(fault: str, noise_rate: float, rng: random.Random,
 
 def robustness(fault: str, trials: int = 50, noise_rate: float = 0.2,
                seed: int = 0, top: int = 3) -> dict:
-    """Re-run a fault `trials` times with mis-answer noise. `recovery` is the
-    share of noisy runs whose true fault still ends within the top-`top`.
-    Deterministic for a given seed (seeded per fault index + trial)."""
+    """Re-run a fault `trials` times with mis-answer noise. Reports, comparably to
+    a clean run: how often it still ends in the top-`top` (`recovery`) and at #1
+    (`at1`), and how the lock-in is impacted (`lock_rate` = share of noisy runs
+    that still lock & hold the top-`top`, `med_lockin` = their median lock-in
+    speed). Deterministic for a given seed (seeded per fault index + trial)."""
     fi = FAULTS.index(fault)
-    finals = []
+    finals, lockins = [], []
     for t in range(trials):
         rng = random.Random(seed * 1_000_000 + fi * 1000 + t)
-        finals.append(simulate_noisy(fault, noise_rate, rng).final_rank)
+        traj = simulate_noisy(fault, noise_rate, rng)
+        finals.append(traj.final_rank)
+        lockins.append(traj.lock_in(top))
+    locked = [k for k in lockins if k is not None]
     return {
         "recovery": sum(1 for r in finals if r <= top) / len(finals),
+        "at1": sum(1 for r in finals if r == 1) / len(finals),
+        "lock_rate": len(locked) / len(lockins),
+        "med_lockin": statistics.median(locked) if locked else None,
         "median_final": statistics.median(finals),
     }
 
