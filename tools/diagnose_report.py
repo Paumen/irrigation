@@ -6,20 +6,17 @@ of asserting, it characterises the engine's behaviour so you can see *why* the
 numbers are what they are and where the questionnaire is weak.
 
 Sections:
-  1. Headline                — faults, lock-in median, depth, family-confusion mix.
-  2. Ranking trajectory      — per-fault sparkline of the true fault's rank over
-                               the questions asked, with base/final rank + lock-in.
-  3. Family confusion        — for each fault, the causes outranking it at the end,
-                               flagged sibling (same parent) vs cross-family; the
-                               whole suite bucketed clean / sibling-only / cross.
-  4. Lock-in buckets         — histogram of how many questions it takes to lock a
-                               fault into the top-3 and keep it there.
-  5. Question frequency      — how often each question is actually asked across the
-                               adaptive runs (the engine picks, so not every Q runs).
-  6. Question position       — mean/median step index at which each question lands
-                               (early triage vs late confirmation).
-  7. Question work           — mean rank-improvement each question delivers to the
-                               true fault when answered (which questions do the work).
+  1. Headline           — faults, lock-in median, depth, family-confusion mix.
+  2. Rank trajectory    — per-fault row of coloured rank cells (one per question
+                          asked, 🟩 #1 → 🟥 #7+), with base/final rank + lock-in.
+  3. Family confusion   — for each fault, the causes outranking it at the end,
+                          flagged sibling (same parent) vs cross-family; the whole
+                          suite bucketed clean / sibling-only / cross.
+  4. Lock-in speed      — histogram of how many questions it takes to lock a fault
+                          into the top-3 and keep it there.
+  5. Question scorecard — per question: how often it's asked across the adaptive
+                          runs, its mean position in the funnel, and the mean
+                          rank-improvement it delivers (which questions do the work).
 
 Run:   python3 tools/diagnose_report.py            # console
        python3 tools/diagnose_report.py --md out.md  # also write a markdown file
@@ -29,6 +26,7 @@ Run:   python3 tools/diagnose_report.py            # console
 from __future__ import annotations
 
 import json
+import re
 import statistics
 import sys
 from pathlib import Path
@@ -105,8 +103,9 @@ def rank_cell(r: int) -> str:
     return "🟩" if r == 1 else "🟨" if r <= 3 else "🟧" if r <= 6 else "🟥"
 
 
-def end_badge(r: int) -> str:
-    return "✅" if r == 1 else "🥈" if r <= 3 else "❌"
+def fcode_key(f: str) -> list[int]:
+    """Natural sort key for an F-code: F3.1.1 -> [3, 1, 1]."""
+    return [int(x) for x in re.findall(r"\d+", f)]
 
 
 def work_badge(mean: float) -> str:
@@ -136,7 +135,7 @@ def sec_headline(g: dict) -> list[str]:
     out = len(rows) - at1 - in23
     med = statistics.median(locks) if locks else None
     return [
-        "# 🌱 Diagnostic questionnaire — analysis report",
+        "# Diagnostic questionnaire — analysis report",
         "",
         f"**{len(rows)} faults · depth {DEPTH}**",
         "",
@@ -151,15 +150,15 @@ def sec_trajectory(g: dict) -> list[str]:
     out = ["## Rank trajectory",
            "",
            "Each square = the true fault's rank after one question. "
-           "🟩 #1 · 🟨 #2–3 · 🟧 #4–6 · 🟥 #7+ · ends ✅ #1 🥈 top-3 ❌ out.",
+           "🟩 #1 · 🟨 #2–3 · 🟧 #4–6 · 🟥 #7+.",
            "",
            "```",
-           f"{'fault':7s}{'par':5s}{'base→fin':9s}{'lock':5s} end  trajectory →"]
-    for r in sorted(g["rows"], key=lambda x: (x["final_rank"], x["base_rank"])):
+           f"{'fault':7s}{'par':5s}{'base→fin':9s}{'lock':5s}trajectory →"]
+    for r in sorted(g["rows"], key=lambda x: fcode_key(x["fault"])):
         lock = str(r["lock_in"]) if r["lock_in"] is not None else "—"
         cells = "".join(rank_cell(x) for x in r["ranks"])
         out.append(f"{r['fault']:7s}{r['parent']:5s}"
-                   f"{r['base_rank']:>4}→{r['final_rank']:<4}{lock:5s}{end_badge(r['final_rank'])}   {cells}")
+                   f"{r['base_rank']:>4}→{r['final_rank']:<4}{lock:5s}{cells}")
     out.append("```")
     return out
 
@@ -168,7 +167,7 @@ def sec_family(g: dict) -> list[str]:
     rows = [r for r in g["rows"] if r["kind"] != "clean"]
     cross = [r for r in rows if r["kind"] == "cross-family"]
     sibling = [r for r in rows if r["kind"] == "sibling-only"]
-    out = ["## 🌳 Family confusion",
+    out = ["## Family confusion",
            "",
            "Causes still outranking each fault at the end. "
            "🟥 a *different* family is winning (triage gap) — 🟨 only its *own* "
@@ -202,7 +201,7 @@ def sec_lockin_buckets(g: dict) -> list[str]:
                 counts[label] += 1
                 break
     scale = max([*counts.values(), never, 1])
-    out = ["## 🎯 Lock-in speed",
+    out = ["## Lock-in speed",
            "",
            "Questions needed to lock a fault into the top-3 and keep it there.",
            ""]
@@ -216,7 +215,7 @@ def sec_lockin_buckets(g: dict) -> list[str]:
 def sec_question_scorecard(g: dict) -> list[str]:
     qs = g["qstats"]
     n_runs = len(g["rows"])
-    out = ["## ❓ Question scorecard",
+    out = ["## Question scorecard",
            "",
            "Sorted by **work** = mean rank-improvement the question gives the true "
            "fault (🔥 big mover · 🟢 helps · ⚪ marginal · 🔻 hurts). "
