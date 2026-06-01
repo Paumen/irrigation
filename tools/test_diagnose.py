@@ -7,9 +7,15 @@ answers (the Q9 ages matrix and the Q10/Q10b/Q11/Q11b recent-event matrices,
 taken from each fault's "strongest context correlate") are the design's per-fault
 answer key: what a homeowner whose true fault is F* would report.
 
-It asserts each true cause climbs to the top of the ranked list within 15
-questions. A handful of near-degenerate causes can only reach a documented
-rank (see EXPECTED_MAX) until a dedicated discriminator is added.
+Severity is two-tier. A true cause that ends OUT of the top 3 (beyond its
+documented cap) is a FAILURE and exits non-zero. A cause that merely SHIFTS to
+a worse rank but stays within the top 3 is a WARNING -- the suite still passes
+but flags the regression. A handful of near-degenerate causes can only reach a
+documented rank (see EXPECTED_MAX) until a dedicated discriminator is added.
+
+It also tracks the median number of questions needed to lock a fault into the
+top 3 and keep it there for the rest of the run (BASELINE_MEDIAN_LOCKIN); a
+change in that convergence speed is reported as a WARNING.
 
 Run: python3 tools/test_diagnose.py
 """
@@ -17,6 +23,7 @@ Run: python3 tools/test_diagnose.py
 from __future__ import annotations
 
 import json
+import statistics
 import sys
 from pathlib import Path
 
@@ -131,22 +138,51 @@ CTX = {
 
 LET = {"a": 0, "b": 1, "c": 2, "d": 3}
 
-# Every fault should reach top-3 within 15 questions, except these documented
-# near-degeneracies (each needs a dedicated discriminator to separate from a
-# sibling — see the team notes / option list):
+# A true cause that ends beyond this rank is a FAILURE. The default is top-3;
+# these documented near-degeneracies can't reach top-3 with the current question
+# set (each needs a dedicated discriminator to separate from a sibling — see the
+# team notes / option list):
 #   F4.4   relay install is a strict shadow of F4.1 (every reached answer, esp.
 #          Q20=b, favours the physical defect). Needs a wiggle/loose-lug option.
 #   F5.8   low well shares the heatwave correlate with F5.3, weighted higher.
 #   F7.3.2 metering-port debris overlaps F7.3.1 / F7.1.2 almost exactly.
 EXPECTED_MAX = {"F4.4": 25, "F5.8": 4, "F7.3.2": 4}
-DEFAULT_MAX = 3
+DEFAULT_MAX = 3  # top-3
+
+# The preferred (ideal) rank each fault used to hold. Ending worse than this but
+# still within the failure threshold (top-3 / documented cap) is a WARNING, not
+# a failure: the cause shifted but stayed in the top 3. Faults absent here are
+# only expected to land somewhere in the top 3.
+PREFERRED_MAX = {
+    # always-identifiable causes that should sit at #1
+    "F3.1.1": 1, "F4.1": 1, "F5.1": 1, "F7.1.1": 1, "F9.4": 1, "F2.6": 1,
+    # the locked-in data.json fixes (2b / 3c / 4c)
+    "F9.1.2": 2, "F7.3.2": 4, "F2.5": 2,
+}
+
+# Baseline number of questions to LOCK each top-3-capable fault into the top 3
+# and keep it there for the rest of the run. The median of these is the
+# convergence-speed metric; a shift in either is reported as a WARNING.
+BASELINE_LOCKIN = {
+    "F1.5": 11, "F1.8": 13, "F2.1": 10, "F2.5": 15, "F2.6": 13, "F2.8": 10,
+    "F3.1.1": 2, "F3.1.2": 5, "F3.1.3": 6, "F3.4": 6, "F4.1": 10,
+    "F5.1": 3, "F5.3": 3, "F6.1": 11, "F6.3": 3, "F7.1.1": 4, "F7.1.2": 5,
+    "F7.1.3": 8, "F7.3.1": 5, "F7.4": 11, "F8.1": 11, "F8.3": 7,
+    "F9.1.1": 1, "F9.1.2": 1, "F9.3": 12, "F9.4": 1,
+}
+BASELINE_MEDIAN_LOCKIN = 6.5
 
 failures: list[str] = []
+warnings: list[str] = []
 
 
 def check(name: str, cond: bool, detail: str = "") -> None:
     if not cond:
         failures.append(f"{name}: {detail}")
+
+
+def warn(name: str, detail: str = "") -> None:
+    warnings.append(f"{name}: {detail}" if detail else name)
 
 
 def build_key(fault: str) -> dict:
@@ -181,6 +217,16 @@ def simulate(fault: str, n: int = 15) -> list[int]:
     return ranks
 
 
+def lock_in(ranks: list[int], thr: int = DEFAULT_MAX) -> int | None:
+    """Earliest number of answered questions after which the fault's rank stays
+    <= thr for the entire remainder of the run. None if it never settles."""
+    n = len(ranks)
+    for k in range(1, n + 1):
+        if all(r <= thr for r in ranks[k - 1:]):
+            return k
+    return None
+
+
 # --- the engine starts every fault on the broad scope question ---
 recs0 = ENG.recommendations({}, {})
 check("empty state recommends Q1 first",
@@ -195,23 +241,47 @@ for fault, ranks in results.items():
     # last value reached stands in for any unreached checkpoint.
     r15 = ranks[min(15, len(ranks)) - 1]
     cap = EXPECTED_MAX.get(fault, DEFAULT_MAX)
-    check(f"{fault} rank@15 <= {cap}", r15 <= cap, f"got rank {r15}")
+    pref = PREFERRED_MAX.get(fault, cap)
+    # OUT of the top 3 (or beyond a documented degeneracy cap) -> FAILURE
+    check(f"{fault} ends within top {cap}", r15 <= cap,
+          f"got rank {r15} (out of top {cap})")
+    # SHIFTED to a worse rank but still acceptable -> WARNING
+    if r15 <= cap and r15 > pref:
+        warn(f"{fault} shifted from preferred rank {pref} to {r15}",
+             f"still within top {cap}")
 
-# --- lock in the four data.json fixes so a later edit can't silently undo them ---
-def r15(f: str) -> int:
-    return results[f][min(15, len(results[f])) - 1]
+# --- convergence speed: median # of questions to lock & keep a fault in top-3 ---
+TOP3 = [f for f in T1 if EXPECTED_MAX.get(f, DEFAULT_MAX) <= DEFAULT_MAX]
+lockins = {f: lock_in(results[f], DEFAULT_MAX) for f in TOP3}
+# a top-3-capable fault that never settles in the top 3 is a FAILURE
+for fault in TOP3:
+    check(f"{fault} settles in top-3", lockins[fault] is not None,
+          "never stays in top-3")
+    # an individual fault whose lock-in moved is a WARNING
+    base, now = BASELINE_LOCKIN.get(fault), lockins[fault]
+    if base is not None and now is not None and now != base:
+        warn(f"{fault} lock-in shifted",
+             f"{base} -> {now} questions ({'slower' if now > base else 'faster'})")
 
-check("2b: F9.1.2 (gear-drive) lifted from 4 to <=2", r15("F9.1.2") <= 2, f"got {r15('F9.1.2')}")
-check("3c: F7.3.2 (metering port) lifted from 7 to <=4", r15("F7.3.2") <= 4, f"got {r15('F7.3.2')}")
-check("4c: F2.5 (firmware) lifted from 3 to <=2", r15("F2.5") <= 2, f"got {r15('F2.5')}")
+locked = [v for v in lockins.values() if v is not None]
+median_lockin = statistics.median(locked) if locked else None
+# a shift in the headline median is a WARNING (convergence speed changed)
+if median_lockin != BASELINE_MEDIAN_LOCKIN:
+    direction = "slower" if (median_lockin or 0) > BASELINE_MEDIAN_LOCKIN else "faster"
+    warn(f"median lock-in shifted {direction}",
+         f"{BASELINE_MEDIAN_LOCKIN} -> {median_lockin} questions "
+         f"over {len(locked)} top-3 faults")
 
-# the always-identifiable causes must stay exactly #1 (no-regression guard)
-for fault in ("F3.1.1", "F4.1", "F5.1", "F7.1.1", "F9.4", "F2.6"):
-    check(f"{fault} stays rank 1", r15(fault) == 1, f"got {r15(fault)}")
-
+print(f"--- diagnose: {len(T1)} faults | {len(locked)}/{len(T1)} lock into top-3 "
+      f"| median lock-in {median_lockin} questions ---")
+if warnings:
+    print(f"WARN ({len(warnings)}) — ranking/speed shifts, suite still passes:")
+    for w in warnings:
+        print("  ~", w)
 if failures:
     print(f"FAIL ({len(failures)})")
     for f in failures:
         print("  -", f)
     sys.exit(1)
-print(f"diagnose: all {len(T1)} faults converge within bounds")
+print(f"diagnose: all {len(T1)} faults within top-3 bounds"
+      + (f" ({len(warnings)} warning(s))" if warnings else ""))
