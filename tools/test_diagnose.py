@@ -15,9 +15,40 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from diagnose_sim import DEPTH, ENG, FAULTS, PARENT, robustness_all, simulate_all
+from diagnose_sim import DATA, DEPTH, ENG, FAULTS, PARENT, robustness_all, simulate_all
 
 BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
+
+# Authored-value grids: data.json is hand-maintained, so guard the quantisation.
+# Baselines snap to a 4-value grid; answer effects to a signed 10-value grid
+# (note ±0.8/±1.2 are valid baselines but deliberately NOT valid effects).
+ALLOWED_BASELINES = {0.6, 0.8, 1.0, 1.2}
+ALLOWED_EFFECTS = {-1.6, -1.0, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 1.0, 1.6}
+
+# parent -> direct child causes, derived from each cause's `parent` field.
+_CHILDREN: dict[str, list[str]] = {}
+for _c in DATA["causes"]:
+    _CHILDREN.setdefault(_c["parent"], []).append(_c["id"])
+
+
+def _descendants(node: str) -> set[str]:
+    out: set[str] = set()
+    stack = list(_CHILDREN.get(node, []))
+    while stack:
+        n = stack.pop()
+        out.add(n)
+        stack.extend(_CHILDREN.get(n, []))
+    return out
+
+
+def _answer_effects(q: dict):
+    """Yield (answer_label, effects_dict) for every authored answer on a question."""
+    for o in q.get("options", []):
+        yield o.get("label", "?"), o.get("effects", {})
+    for r in q.get("rows", []):  # matrix rows carry a per-cause effects dict
+        if "effects" in r:
+            yield r.get("id", "?"), r["effects"]
+
 
 NOISE_RATE = 0.2
 NOISE_TRIALS = 50
@@ -52,6 +83,24 @@ def cap_of(fault: str) -> int:
     return EXPECTED_MAX.get(fault, DEFAULT_MAX)
 
 
+def validate_data() -> None:
+    """Static data.json invariants: value grids and no parent/child double-counting."""
+    for c in DATA["causes"]:
+        check(f"{c['id']} baseline on grid", c.get("baseline") in ALLOWED_BASELINES,
+              f"baseline {c.get('baseline')} not in {sorted(ALLOWED_BASELINES)}")
+
+    for q in DATA["questions"]:
+        for label, effects in _answer_effects(q):
+            for cid, v in effects.items():
+                check(f"{q['id']} [{label}] effect on grid", v in ALLOWED_EFFECTS,
+                      f"{cid}={v} not in {sorted(ALLOWED_EFFECTS)}")
+            keys = set(effects)
+            for cid in keys:
+                clash = keys & _descendants(cid)
+                check(f"{q['id']} [{label}] no parent+child effect", not clash,
+                      f"{cid} given alongside descendant(s) {sorted(clash)}")
+
+
 def compute_metrics() -> dict:
     trajs = simulate_all(DEPTH)
     lockins = {
@@ -82,6 +131,8 @@ def save_baseline(metrics: dict) -> None:
 
 
 def run_gate() -> int:
+    validate_data()
+
     recs0 = ENG.recommendations({}, {})
     check("empty state recommends Q1 first",
           bool(recs0) and recs0[0]["q"]["id"] == "Q1",
