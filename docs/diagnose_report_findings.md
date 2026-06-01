@@ -109,3 +109,99 @@ effectively already answered "neither," so it keeps re-recommending it.
 The design-fix is the higher-value change but touches `data.json` (the diagnostic
 source of truth) and would need `tools/test_diagnose.py` to stay green, so it is
 flagged here rather than applied as part of this investigation.
+
+## 3. Two kinds of skip — and whether the "negative-confirmation" kind carries information
+
+A skip can mean two very different things:
+
+- **Don't-know / didn't-do** — the homeowner can't or won't perform the step.
+  Genuinely no information.
+- **Negative confirmation** — the homeowner *did* look and reports "it's none of
+  the listed options." A real negative finding.
+
+In the simulation these are separable by question **type**: a `multiselect`
+("tick all that apply") answered with the empty set is a negative confirmation;
+an `options`/`matrix`/`ages` follow-up left blank is don't-know.
+
+```
+NEGATIVE-CONFIRMATION skips (multiselect answered empty)   DON'T-KNOW skips (follow-up not done)
+  Q18  "where is water / wet ground?"      24 faults         Q2q  13   Q24  9   Q25  9
+  Q22  "run a zone — what at valves/heads?" 14 faults         Q12b  2   Q12  1
+  Q23  "pump only — where does water come?" 27 faults
+```
+
+### Are the negative-confirmation skips giving valuable information?
+
+**The engine treats them as its single most valuable next question — then throws
+the answer away.** Replaying every run and counting how often each multiselect is
+*recommended first* vs how often its answer is actually usable:
+
+```
+            recommended-first   usable (a tick)   discarded as "neither"
+  Q18              20                  5                   15
+  Q22              29                 15                   14
+  Q23              26                  2                   24
+                                          → 53 top-recommendations discarded
+```
+
+So **53 times** the engine spent its best next question on a multiselect (it picks
+them precisely because their options *do* split the live contenders), the
+homeowner answered "none of these," and the scoring model contributed **zero** —
+`Engine._score` iterates over ticked indices, so an empty set is a no-op. The
+information the engine sought is real and was actually obtained; it is then
+silently dropped. This is also why §2's Q23 `asked` count is so low: a usable tick
+is rare, but the question is far from idle.
+
+**Yet you cannot simply turn "neither" into a blanket rule-out.** Treating a
+neither as "subtract every positive-presence weight the options carry" was tested
+two ways:
+
+- *At end-of-run:* it changes only **2/29** final ranks — the positive evidence
+  has already pinned the answer, so as a confirmer it is largely redundant.
+- *Inline (applied when asked):* it is actively **harmful** — **11/29** faults end
+  worse and several never lock into the top-3 — because an untargeted, full-
+  magnitude negation destabilises the contending set and the question path.
+
+The value is real but only a *targeted, low-magnitude* rule-out (like the −0.2
+weights Q22's option 2 already carries) could safely capture it — not a blanket
+negation.
+
+### The blocker: 10 keys answer "neither" on a question that boosts that very fault
+
+A clean rule-out is impossible today because the data is internally inconsistent:
+**10 fault/question pairs answer "neither" on a multiselect whose own option
+*adds* weight to that same fault.** Ruling those out would penalise the true
+cause — which is exactly why the inline experiment hurt F7.3.2 and F7.4.
+
+```
+  F7.4   (valve mis-set)          Q23=neither, yet Q23 "water from valves" +1.0, "from heads" +0.6
+  F7.3.2 (diaphragm screen)       Q18/Q22/Q23=neither, yet all three boost it (Q23 "heads" +0.6 …)
+  F7.3.1 (solenoid plunger)       Q23=neither, yet Q23 "heads" +0.4
+  F6.1   (main-hose break)        Q23=neither, yet Q23 "valves" +0.4
+  F3.1.1 (zone-conductor break)   Q22=neither, yet Q22 "water at zone not switched on" +1.0
+  F3.1.3 (corroded splice)        Q22=neither, yet Q22 +0.4
+  F2.6 / F3.4                     Q23=neither, yet Q23 "heads" +0.4
+```
+
+For several of these the **answer key looks wrong**, not the weights: F7.4 carries
+the *same* +1.0 "water from valves" weight as F7.1.3 (which correctly ticks
+`valves`), so a stuck-open / mis-set valve on a pump-only test almost certainly
+*does* weep at the valves — its key should tick a box, not answer "neither." Same
+story for F7.3.x. Correcting those keys would (a) raise the Q18/Q22/Q23 `asked`
+counts and let them post positive `work`, and (b) make a remaining "neither" a
+*clean* negative finding for the faults that genuinely present nothing.
+
+### Bottom line
+
+The negative-confirmation skips are meaningful answers the engine actively seeks
+(53 discarded), but the current model extracts **no** information from them, and
+the path to fixing that is gated on two changes, in order:
+
+1. **Reconcile the 10 contradictions** (most are answer-key errors — the fault
+   does present at heads/valves and should tick a box).
+2. *Then* optionally let an empty multiselect apply a **small, targeted**
+   rule-out, so "I looked, it's none of these" demotes the absent-symptom causes
+   without destabilising the run.
+
+Both touch `data.json`/the sim and must keep `tools/test_diagnose.py` green, so
+they are flagged here rather than applied as part of this investigation.
