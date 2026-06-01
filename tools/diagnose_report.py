@@ -88,7 +88,7 @@ def work_cell(m: float) -> str:
 
 
 def recov_cell(x: float) -> str:
-    return "🟩" if x >= 0.8 else "🟨" if x >= 0.5 else "🟧" if x >= 0.3 else "🟥"
+    return "🟢" if x >= 0.8 else "🟡" if x >= 0.5 else "🟠" if x >= 0.3 else "🔴"
 
 
 def fcode_key(f: str) -> list[int]:
@@ -188,19 +188,20 @@ def shape_spark(x: float) -> str:
 
 def sec_faults(g: dict) -> list[str]:
     rob = g["robustness"]
-    rows = sorted(
-        g["rows"],
-        key=lambda r: (rob[r["fault"]]["recovery"], -r["final_rank"], fcode_key(r["fault"])),
-    )
+    rows = sorted(g["rows"], key=lambda r: fcode_key(r["fault"]))
     out = [
         "## Per-fault diagnosis",
         "",
         "Every fault's rank as the engine asks questions — the **clean** run over "
-        "the median path under **1-in-5 user errors**. Hardest-first.",
+        "the median path under **1-in-5 user errors**.",
         "",
-        f"{RANK_LEGEND} · `recover` how often a noisy run still ends top-3 · "
-        "`lock` questions to pin top-3 (clean→noisy) · `behind` who still outranks "
-        "it at the end (⚠️ a *different* component — a triage gap).",
+        f"Rank each step: {RANK_LEGEND}.",
+        "",
+        "The ● after each fault is its **recovery tier** — how robust it is to "
+        "answer errors: 🟢 ≥80% of noisy runs still end top-3 · 🟡 50–79% · 🟠 30–49% "
+        "· 🔴 <30% (the exact `recover` % follows). `lock` = questions to pin top-3 "
+        "(clean→noisy) · `behind` = who still outranks it at the end (⚠️ a "
+        "*different* component — a triage gap).",
         "",
         "```",
     ]
