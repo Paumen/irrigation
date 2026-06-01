@@ -170,13 +170,13 @@ def sec_headline(g: dict) -> list[str]:
         f"{n} fault modes · {DEPTH} questions deep",
         "",
         "```",
-        f"{'Finds the right component':28s}{len(plocks):>2}/{n}  "
+        f"{'Finds the right component':33s}{len(plocks):>2}/{n}   "
         f"median {statistics.median(plocks):g} questions to lead & hold",
-        f"{'Locks the sub-cause into top-3':28s}{len(locks):>2}/{n}  "
+        f"{'Locks the sub-cause into top-3':33s}{len(locks):>2}/{n}   "
         f"median {statistics.median(locks):g}, range {min(locks)}–{max(locks)} "
         f"(3 documented misses)",
-        f"{'Lands it at #1 outright':28s}{at1:>2}/{n}",
-        f"{'Recovers from a wrong answer':28s}{robust:>2}/{n}  "
+        f"{'Lands it at #1 outright':33s}{at1:>2}/{n}",
+        f"{'Recovers from a wrong answer':33s}{robust:>2}/{n}   "
         f"≥80% of the time under 1-in-5 random answers (median {statistics.median(recov)*100:.0f}%)",
         "```",
     ]
