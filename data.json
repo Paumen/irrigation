@@ -1221,7 +1221,8 @@
       "id": "Q18",
       "context": "walk, run_zone",
       "effort": 5,
-      "text": "Walk the system — do you see water or wet ground?",
+      "text": "Walk the system — where do you see water or wet ground? (tick all)",
+      "multiselect": true,
       "highlight": [
         "valves"
       ],
@@ -1245,17 +1246,6 @@
           "label": "Along the zone hoses",
           "effects": {
             "F8.1": 1.6
-          }
-        },
-        {
-          "label": "Nothing visible",
-          "effects": {
-            "F6.1": -0.2,
-            "F7.1.2": -0.2,
-            "F7.3.2": -0.2,
-            "F7.1.3": -0.2,
-            "F7.4": -0.2,
-            "F8.1": -0.2
           }
         }
       ]
@@ -1423,24 +1413,14 @@
       "id": "Q23",
       "context": "valve-box, run_pump",
       "effort": 5,
-      "text": "Start the pump only (don't start a zone). With all valves closed, where does water come out?",
+      "text": "Start the pump only (don't start a zone). With all valves closed, where does water come out? (tick all)",
+      "multiselect": true,
       "highlight": [
         "pump",
         "valves",
         "rotor"
       ],
       "options": [
-        {
-          "label": "No water — nothing at heads or valves",
-          "icon": "flow-none",
-          "effects": {
-            "F7.1.2": -0.4,
-            "F7.1.3": -0.6,
-            "F7.3.2": -0.4,
-            "F7.4": -0.4,
-            "F6.1": -0.4
-          }
-        },
         {
           "label": "Water out of the heads",
           "effects": {
@@ -1460,16 +1440,6 @@
             "F7.4": 1.0,
             "F7.1.2": 0.6,
             "F6.1": 0.4
-          }
-        },
-        {
-          "label": "Water out of both heads and valves",
-          "effects": {
-            "F7.1.2": 1.0,
-            "F7.1.3": 1.0,
-            "F7.3.2": 1.0,
-            "F7.4": 1.0,
-            "F3.4": 0.6
           }
         }
       ]
