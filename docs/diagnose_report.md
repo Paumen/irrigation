@@ -1,107 +1,86 @@
 # Diagnostic questionnaire — analysis report
 
-29 fault modes · 18 questions deep
+29 fault modes · 18 questions · raw numbers in `--json`, gate in `test_diagnose.py`.
 
 ```
-Right component leads & holds  28/29   median 6 q
-Sub-cause into top-3           29/29   median 6 q (range 1–17, 3 known misses)
-Lands at #1 outright           16/29
-Survives 1-in-5 user errors    18/29   stays top-3 ≥80% of trials (median 84%)
+component leads & holds   28/29   median 6 q
+sub-cause into top-3      29/29   median 6 q, slowest 17
+lands at #1               16/29
+survives 1-in-5 errors    18/29   median 84% stay top-3
 ```
 
-## Per-fault convergence
+## Convergence
 
-One row per fault, worst-first. **ends** = clean final rank (cell ✅ #1 · 🟩 #2–3 · 🟨 below) · **lock** = questions to lock the top-3 and hold, as an in-cell bar ▁ fast → █ slow (— = never) · **top-3 / #1** = share of 50 noisy runs (1-in-5 answers wrong/skipped) ending top-3 / at #1, top-3 heat-coloured 🟩≥80 🟨≥50 🟧≥30 🟥 · **confused by** = who outranks the true cause (⚠ = a different component — a triage gap).
-
-```
-fault   ends lock   top-3   #1     confused by
-F4.4    🟩#3  █ 17   🟥 28%   ▁  0%  F4.1, F5.1 ⚠
-F5.8    🟩#3  ▆ 13   🟧 32%   ▁  0%  F5.3, F5.1
-F2.5    🟩#2  █ 16   🟨 52%   ▂ 14%  F2.1
-F9.3    🟩#3  ▆ 12   🟨 54%   ▁  4%  F9.4, F9.1.1
-F1.8    🟩#2  ▆ 12   🟨 56%   ▂  8%  F1.5
-F1.5    ✅#1  ▆ 11   🟨 62%   ▃ 28%
-F2.8    🟩#2  ▄  8   🟨 68%   ▂ 12%  F2.1
-F9.1.2  🟩#2  ▁  1   🟨 72%   ▁  0%  F9.1.1
-F9.4    ✅#1  ▁  1   🟨 76%   ▅ 60%
-F2.1    ✅#1  ▄  8   🟨 78%   ▅ 54%
-F9.1.1  ✅#1  ▁  1   🟨 78%   ▄ 46%
-F8.3    ✅#1  ▄  7   🟩 80%   ▅ 54%
-F2.6    🟩#2  ▇ 14   🟩 82%   ▂ 14%
-F4.1    ✅#1  ▃  6   🟩 84%   ▆ 70%
-F7.3.1  ✅#1  ▃  6   🟩 84%   ▆ 74%
-F6.3    ✅#1  ▂  3   🟩 86%   ▅ 52%
-F7.3.2  ✅#1  ▄  8   🟩 90%   ▄ 48%
-F3.4    🟩#3  ▃  6   🟩 94%   ▁  0%  F3.1.1, F3.1.3
-F3.1.2  🟩#2  ▃  6   🟩 94%   ▂ 10%  F3.1.1
-F5.3    ✅#1  ▂  3   🟩 94%   ▄ 46%
-F7.1.1  ✅#1  ▃  5   🟩 94%   ▆ 70%
-F7.1.2  🟩#2  ▃  6   🟩 96%   ▁  4%  F7.1.3
-F3.1.3  🟩#2  ▃  6   🟩 98%   ▂ 16%  F3.1.1
-F6.1    ✅#1  ▃  5   🟩 98%   █ 96%
-F7.4    🟩#2  ▆ 11   🟩100%   ▂ 20%  F7.1.3
-F3.1.1  ✅#1  ▂  2   🟩100%   █ 98%
-F5.1    ✅#1  ▂  3   🟩100%   █ 98%
-F7.1.3  ✅#1  ▃  5   🟩100%   █ 98%
-F8.1    ✅#1  ▄  7   🟩100%   ▇ 92%
-```
-
-Lock-in: median **6**, mean **7.2** questions — 21/29 within 8, 4 need 13+.
-
-**Fragile faults** (recover < 65%) — clean path vs the noise median, one square per answered question (✅ #1 · 🟩 #2–3 · 🟨 #4–5 · 🟧 #6–7 · 🟥 #8+):
+Rank of the true cause after each answered question — 🟥 #8+ 🟧 #6–7 🟨 #4–5 🟩 #2–3 ✅ #1. **fam/top3** = questions to lock the component / exact cause · **noise** = % still top-3 under 1-in-5 errors · **vs** = who else leads (⚠ = a different component). Worst-first.
 
 ```
-F4.4    clean 🟥🟥🟥🟧🟥🟧🟨🟨🟧🟧🟨🟨🟨🟨🟨🟨🟩🟩
-        noise 🟥🟥🟥🟥🟥🟥🟧🟧🟧🟧🟧🟥🟧🟧🟧🟨🟨🟨
-F5.8    clean 🟥🟥🟩🟩🟩🟨🟩🟨🟨🟨🟨🟨🟩🟩
-        noise 🟥🟥🟩🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟧
-F2.5    clean 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟨🟨🟨🟨🟩🟩🟩
-        noise 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟧🟧🟨🟨🟨🟨🟩
-F9.3    clean 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩
-        noise 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩
-F1.8    clean 🟩🟩🟨🟩✅✅✅✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
-        noise 🟩🟩🟨🟩✅✅🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩
-F1.5    clean 🟩✅🟨🟨🟩🟩🟩🟩🟨🟧✅✅✅✅✅✅✅✅
-        noise 🟩✅🟨🟨🟩🟩🟩🟩🟨🟧🟩🟩🟩🟩🟩🟩🟩🟩
+fault  fam top3 noise vs       → converges
+F4.4   6   17     28%  ⚠ F5.1   🟥🟥🟥🟧🟥🟧🟨🟨🟧🟧🟨🟨🟨🟨🟨🟨🟩🟩
+F5.8   1   13     32%  F5.3     🟥🟥🟩🟩🟩🟨🟩🟨🟨🟨🟨🟨🟩🟩
+F2.5   9   16     52%  F2.1     🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟨🟨🟨🟨🟩🟩🟩
+F9.3   1   12     54%  F9.4     🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩
+F1.8   12  12     56%  F1.5     🟩🟩🟨🟩✅✅✅✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
+F1.5   11  11     62%           🟩✅🟨🟨🟩🟩🟩🟩🟨🟧✅✅✅✅✅✅✅✅
+F2.8   8   8      68%  F2.1     🟥🟥🟧🟩🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+F9.1.2 1   1      72%  F9.1.1   🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+F9.4   1   1      76%           ✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+F9.1.1 1   1      78%           🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
+F2.1   10  8      78%           🟥🟥✅🟩🟨🟨🟨🟩🟩✅✅✅✅✅✅✅✅✅
+F8.3   8   7      80%           🟥🟥🟥🟧🟥🟥🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
+F2.6   —   14     82%           🟨✅🟧🟧🟧🟥🟥🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
+F4.1   6   6      84%           🟨🟨🟩🟨🟨✅✅✅✅✅✅✅✅✅✅✅✅✅
+F7.3.1 6   6      84%           🟥🟥🟥🟥🟨🟩🟩✅✅✅✅✅✅✅✅✅✅✅
+F6.3   11  3      86%           🟧🟧✅✅✅✅✅✅✅🟩✅✅✅✅✅✅✅✅
+F7.3.2 6   8      90%           🟥🟥🟥🟥🟥🟧🟧🟩🟩🟩🟩✅✅✅✅✅✅✅
+F5.3   3   3      94%           ✅🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅
+F7.1.1 6   5      94%           🟥🟥🟥🟥🟩✅✅✅✅✅✅✅✅✅✅✅✅✅
+F3.1.2 6   6      94%  F3.1.1   🟥🟥🟥🟥🟧✅✅🟩🟩🟩✅🟩🟩🟩🟩🟩🟩
+F3.4   2   6      94%  F3.1.1   🟥🟥🟥🟥🟥🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+F7.1.2 6   6      96%  F7.1.3   🟥🟥🟨🟨🟧✅✅🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+F6.1   14  5      98%           🟥🟧🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅
+F3.1.3 2   6      98%  F3.1.1   🟥🟧🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+F3.1.1 2   2     100%           🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+F5.1   4   3     100%           🟧🟨🟩✅✅✅✅✅✅✅✅✅✅✅✅
+F7.1.3 6   5     100%           🟥🟥🟧🟥🟩🟩🟩✅✅✅✅✅✅✅✅✅✅✅
+F8.1   8   7     100%           🟥🟥🟧🟨🟥🟥🟩✅✅✅✅✅✅✅✅✅✅✅
+F7.4   7   11    100%  F7.1.3   🟧🟩✅✅🟨🟩✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
 ```
 
-## Per-question value
+## Questions
 
-Sorted by **work** = mean rank gain it delivered for the true fault (cell 🟩 ≥1.0 · 🟨 ≥0.1 · ⬜ idle · 🟥 hurts); **when** = median position asked. The right block is the question's structural *potential* as in-cell bars ▁ low → █ high — **scope** (families it can move), **force** (strongest single push), **rule** (weight spent exonerating rather than accusing), **shape** (decisive: one loud answer → even: graded). **ask** = how often it actually got asked.
+**work** = mean rank-gain it earns the true cause (bar). **carry** = does the triage · **edged** = helps one fault, hurts another · **late** = fires after the ranking settled · **idle** = rarely decisive.
 
 ```
-   q      work when  ask │ scope force rule shape
-🟩 Q1     +5.9    1    █ │     █     █    ▆     ▂
-🟩 Q3     +2.2    2    █ │     █     ▅    ▃     ▂
-🟩 Q16    +2.0    7    ▇ │     ▄     █    ▅     ▇
-🟩 Q2     +1.2    3    █ │     ▆     ▄    ▃     ▄
-🟩 Q10b   +1.0   17    ▂ │     ▃     ▅    ▁     ▂
-🟨 Q5     +1.0    5    █ │     ▆     ▅    ▄     ▅
-🟨 Q4     +0.7    9    ▇ │     ▃     █    ▆     ▁
-🟨 Q11b   +0.6   15    ▂ │     ▅     ▅    ▁     ▃
-🟨 Q20    +0.5    8    ▆ │     ▄     █    ▄     ▂
-🟨 Q25    +0.3   15    ▂ │     ▄     ▅    ▅     ▅
-🟨 Q12b   +0.3   12    ▃ │     ▄     █    ▆     ▂
-🟨 Q11    +0.3   16    ▃ │     ▇     ▅    ▁     ▇
-🟨 Q9     +0.3   12    ▄ │     ▆     ▃    ▄     ▁
-🟨 Q7     +0.2   13    ▅ │     ▄     ▅    ▁     ▆
-🟨 Q18    +0.2   14    ▆ │     ▃     █    ▂     ▃
-🟨 Q10    +0.2   16    ▂ │     ▆     ▅    ▁     ▅
-🟨 Q14    +0.1   11    ▆ │     ▂     █    ▃     ▇
-🟨 Q13    +0.1   14    ▇ │     ▃     ▅    ▆     █
-⬜ Q23    +0.0   15    ▇ │     ▄     ▅    ▂     ▄
-⬜ Q22    +0.0    7    ▆ │     ▆     ▅    ▆     ▅
-⬜ Q12    +0.0    9    █ │     ▆     ▅    █     █
-⬜ Q21    +0.0   16    ▆ │     ▂     █    ▃     ▄
-⬜ Q2q    +0.0    4    ▄ │     ▇     ▄    ▅     ▃
-⬜ Q24    +0.0   14    ▁ │     ▃     ▅    ▅     ▇
-🟥 Q15    -0.1   14    ▅ │     ▃     █    ▅     ▁
-🟥 Q6     -0.1    9    ▇ │     ▄     ▅    ▃     ▄
-🟥 Q8     -0.1    4    █ │     ▇     ▃    ▁     ▁
-🟥 Q17    -0.1   17    ▃ │     ▂     ▄    ▇     ▅
-🟥 Q19    -0.2   14    ▅ │     ▄     ▄    ▆     ▅
+q      work               ask  tag
+Q1     +5.9 ████████████ 100%  carry
+Q3     +2.2 ████         100%  carry
+Q16    +2.0 ████          83%  carry
+Q2     +1.2 ██           100%  carry
+Q10b   +1.0 ██            10%
+Q5     +1.0 ██           100%
+Q4     +0.7 █             83%
+Q11b   +0.6 █             17%
+Q20    +0.5 █             69%
+Q25    +0.3 █             10%
+Q12b   +0.3 █             34%
+Q11    +0.3 █             24%
+Q9     +0.3 █             38%
+Q7     +0.2               59%
+Q18    +0.2               69%
+Q10    +0.2               17%
+Q14    +0.1               72%
+Q13    +0.1               83%
+Q23    +0.0               79%  idle
+Q22    +0.0               72%  idle
+Q12    +0.0               97%  idle
+Q21    +0.0               69%  idle
+Q2q    +0.0               41%  idle
+Q24    +0.0                7%  idle
+Q15    -0.1               52%  late
+Q6     -0.1               86%  late
+Q8     -0.1              100%  edged
+Q17    -0.1               24%  late
+Q19    -0.2               52%  late
 ```
 
-**Low-yield** (asked late, after the ranking has settled) — 🟥 _cost rank_: Q19, Q17, Q8, Q6, Q15 · ⬜ _idle_: Q21, Q23, Q24, Q12, Q22, Q2q.
-
-_scope/force/shape are **potential**; `work` is what landed. High-force questions that arrive late (Q15, Q16, Q20) show little work because the ranking has usually settled by then._
+_edged: Q8 helps F7.1.3 +9, hurts F7.3.2 -3 — isolate its weights if retuned._
