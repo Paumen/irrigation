@@ -174,17 +174,16 @@ def sec_dashboard(g: dict) -> list[str]:
     return out
 
 
-def _div_strip(clean: list[int], noise: list[float]) -> str:
-    """Bottom row: `·` where a 1-in-5 error left the rank unchanged, else the
-    colour the noisy median lands on — so only the cells errors actually move
-    light up."""
-    cells = []
-    for i, cr in enumerate(clean):
-        if i >= len(noise):
-            break
-        nr = round(noise[i])
-        cells.append("·" if nr == cr else rank_cell(nr))
-    return "".join(cells)
+def force_meter(m: float) -> str:
+    return "●●●" if m >= 1.5 else "●●○" if m >= 0.9 else "●○○"
+
+
+def ruleout_sign(x: float) -> str:
+    return "➖" if x >= 0.35 else "➕" if x <= 0.10 else "±"
+
+
+def shape_spark(x: float) -> str:
+    return "▁▁█" if x >= 0.55 else "▆▆▆" if x <= 0.40 else "▁▄█"
 
 
 def sec_faults(g: dict) -> list[str]:
@@ -196,17 +195,14 @@ def sec_faults(g: dict) -> list[str]:
     out = [
         "## Per-fault diagnosis",
         "",
-        "Each fault's rank as the engine asks questions — the **clean** run (top "
-        "row) against the median path under **1-in-5 user errors** (bottom row). "
-        "Sorted hardest-first.",
+        "Every fault's rank as the engine asks questions — the **clean** run over "
+        "the median path under **1-in-5 user errors**. Hardest-first.",
         "",
-        f"Legend: {RANK_LEGEND} — top row clean · bottom row under errors "
-        "(`·` = the error didn't change the rank). **Locks** = questions to pin the "
-        "cause into the top-3, clean → under errors. **Blocked by** = the cause(s) "
-        "still ahead when the walk ends (⚠️ = a *different* component, a triage gap).",
+        f"{RANK_LEGEND} · `recover` how often a noisy run still ends top-3 · "
+        "`lock` questions to pin top-3 (clean→noisy) · `behind` who still outranks "
+        "it at the end (⚠️ a *different* component — a triage gap).",
         "",
-        "| Fault | What | Locks | Recovers | Blocked by | clean · under errors |",
-        "|---|---|:--:|:--:|---|---|",
+        "```",
     ]
     for r in rows:
         f = r["fault"]
@@ -215,20 +211,19 @@ def sec_faults(g: dict) -> list[str]:
         nz = round(v["med_lockin"]) if v["med_lockin"] is not None else None
         cl_s = str(cl) if cl is not None else "—"
         nz_s = str(nz) if (v["lock_rate"] >= 0.5 and nz is not None) else "·"
-        lock = f"{cl_s} → {nz_s}"
-        rec = f"{recov_cell(v['recovery'])} {v['recovery']*100:.0f}%"
         fr = r["final_rank"]
         leaders = r["final_top3"][:fr - 1] if fr <= 3 else r["final_top3"]
-        if fr == 1 or not leaders:
-            blocked = "—"
-        else:
-            blocked = ", ".join(leaders[:2]) + (" …" if len(leaders) > 2 else "")
-            if any(PARENT[c] != r["parent"] for c in leaders):
-                blocked = "⚠️ " + blocked
+        hdr = (f"{f:<7}{recov_cell(v['recovery'])} {v['recovery']*100:>3.0f}%  "
+               f"lock {cl_s}→{nz_s}")
+        if fr > 1 and leaders:
+            mark = "⚠️ " if any(PARENT[c] != r["parent"] for c in leaders) else ""
+            names = ", ".join(leaders[:2]) + (" …" if len(leaders) > 2 else "")
+            hdr += f"  behind {mark}{names}"
+        hdr += f"   {short_label(f)}"
         clean = "".join(rank_cell(x) for x in r["ranks"])
-        noise = _div_strip(r["ranks"], v["median_ranks"])
-        path = f"{clean}<br>{noise}"
-        out.append(f"| {f} | {short_label(f)} | {lock} | {rec} | {blocked} | {path} |")
+        noise = "".join(rank_cell(round(x)) for x in v["median_ranks"])
+        out += [hdr, f"  clean {clean}", f"  noisy {noise}"]
+    out.append("```")
 
     miss = [r["fault"] for r in rows if r["parent_lock"] is None]
     fragile = sorted(
@@ -244,8 +239,8 @@ def sec_faults(g: dict) -> list[str]:
     if fragile:
         frag = ", ".join(f"{f} ({x*100:.0f}%)" for f, x in fragile)
         notes.append(
-            f"Most error-fragile: {frag} — a single wrong answer keeps them behind "
-            "a sibling. Everything marked 🟩 tracks its clean path under noise."
+            f"Most error-fragile: {frag} — one wrong answer keeps them behind a "
+            "sibling. Everything 🟩 tracks its clean path under noise."
         )
     if notes:
         out += ["", "> " + "  \n> ".join(notes)]
@@ -259,34 +254,32 @@ def sec_questions(g: dict) -> list[str]:
     out = [
         "## Questions",
         "",
-        "What each question *did* across the 29 runs — **work** (avg rank-gain for "
-        "the true fault: 🟩 ≥1.0 strong · 🟨 ≥0.1 helps · ⬜ idle · 🟥 hurts), "
-        "**when** it tends to be asked, **asked** how often it comes up — beside what "
-        "it *can* do structurally: **scope** (families it can move), **force** "
-        "(strongest single push), **rule-out** (share of evidence that exonerates vs "
-        "only adds), **shape** (one loud answer vs graded). Sorted by work.",
+        "What each question **did** (work = avg rank-gain for the true fault · "
+        "🟩 ≥1.0 strong · 🟨 helps · ⬜ idle · 🟥 hurts) beside what it **can do** — "
+        "**scope** ▆ families it moves · **force** ● strongest push · **rule-out** "
+        "➖ exonerates / ➕ only adds · **shape** ▁▄█ one loud answer vs graded. "
+        "Sorted by work.",
         "",
-        "_Q1 always goes first, so its work also credits unwinding the no-answer "
-        "prior — read early-position work as partly triage, not pure discrimination._",
-        "",
-        "| Q | Work | When | Asked | Scope | Force | Rule-out | Shape |",
-        "|---|:--:|:--:|:--:|---|:--:|:--:|:--:|",
+        "| Q | Work | Asked | Scope | Force | Rule-out | Shape |",
+        "|---|:--:|:--:|:--|:--|:--:|:--|",
     ]
     for qid, d in sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"]):
         p = prof[qid]
         work = f"{work_cell(d['mean_work'])} {d['mean_work']:+.1f}"
         scope = f"{minibar(p['families'] / 9)} {p['families']}"
-        rout = f"{ruleout_label(p['ruleout'])} {p['ruleout']*100:.0f}%"
+        force = f"{force_meter(p['max_push'])} {force_label(p['max_push'])}"
+        rout = f"{ruleout_sign(p['ruleout'])} {p['ruleout']*100:.0f}%"
+        shape = f"{shape_spark(p['top_share'])} {shape_label(p['top_share'])}"
         out.append(
-            f"| {qid} | {work} | {d['med_pos']:.0f} | {d['asked']/n_runs*100:.0f}% | "
-            f"{scope} | {force_label(p['max_push'])} | {rout} | {shape_label(p['top_share'])} |"
+            f"| {qid} | {work} | {d['asked']/n_runs*100:.0f}% | {scope} | {force} | "
+            f"{rout} | {shape} |"
         )
 
     neg = sorted((q for q, d in qs.items() if d["mean_work"] < -0.05),
                  key=lambda q: qs[q]["mean_work"])
     idle = sorted((q for q, d in qs.items() if -0.05 <= d["mean_work"] < 0.1),
                   key=lambda q: qs[q]["med_pos"], reverse=True)
-    out += ["", "**Carrying their weight?**"]
+    out += ["", "**Not pulling their weight**"]
     if neg:
         late = statistics.fmean(qs[q]["med_pos"] for q in neg)
         out.append(f"- 🟥 *cost rank* — {', '.join(neg)}: asked late (~pos {late:.0f}), "
@@ -294,9 +287,9 @@ def sec_questions(g: dict) -> list[str]:
     if idle:
         out.append(f"- ⬜ *idle* — {', '.join(idle)}: rarely separate the causes still "
                    "live by then (redundant or too narrow).")
-    out.append("")
-    out.append("Triage (high-scope) questions sit early and single-family confirmers "
-               "come last — the intended broad-to-narrow funnel.")
+    out += ["", "_Q1 always goes first, so its work also credits unwinding the "
+            "no-answer prior. Triage (high-scope) questions sit early; single-family "
+            "confirmers come last — the intended broad-to-narrow funnel._"]
     return out
 
 
