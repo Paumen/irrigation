@@ -41,13 +41,13 @@
     {
       "id": "F2.5",
       "parent": "F2",
-      "baseline": 0.6,
+      "baseline": 0.8,
       "label": "Controller software error (firmware)"
     },
     {
       "id": "F2.6",
       "parent": "F2",
-      "baseline": 0.8,
+      "baseline": 1.8,
       "label": "Controller settings (schedule, zone map, master-valve / pump-start)"
     },
     {
