@@ -1,10 +1,3 @@
-"""Pure scoring engine for the irrigation diagnostic.
-
-Source of truth for the questionnaire scoring algorithm. Reads the catalogue
-(causes, questions, weights, stages, slider curves) from data.json via
-tools/diagnose.py. No I/O of its own.
-"""
-
 from __future__ import annotations
 
 from typing import Any
@@ -13,8 +6,6 @@ from typing import Any
 class Engine:
     def __init__(self, data: dict[str, Any]):
         self._data = data
-        # Scoring tunables live together in data.json's `weights` block (the
-        # single home for the questionnaire's tuning knobs).
         w = data.get("weights", {})
         self._effort_weight: float = float(w.get("effort", 0.0))
         self._breadth_weight: float = float(w.get("breadth", 1.0))
@@ -141,9 +132,6 @@ class Engine:
                     s[cid] = s.get(cid, 0) + delta
 
     def _cause_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
-        """The two cause-based factors of the score: isolation (how sharply
-        answers separate specific causes) and the weighted breadth (how many
-        causes the question moves at all). Computed per question type."""
         t = q["type"]
         if t == "options":
             iso = 0.0
@@ -193,10 +181,6 @@ class Engine:
         return 0.0, 0.0
 
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
-        """The three factors behind question q's score: isolation and breadth
-        (how sharply / how broadly it separates the live causes) and effort
-        (ease of answering). The score ranks on isolation+breadth, with effort
-        as a bounded tie-breaker; see discriminators()."""
         iso, breadth = self._cause_terms(q, ids)
         effort = self._effort_term(q)
         return {"isolation": iso, "breadth": breadth, "effort": effort}
@@ -283,8 +267,6 @@ class Engine:
             if not self._requires_met(q, answers):
                 continue
             t = self.discriminator_terms(q, ids)
-            # Gate: only surface a question that actually separates a contending
-            # cause, so a cheap-but-uninformative question can't ride onto the list.
             info = t["isolation"] + t["breadth"]
             if info <= 0:
                 continue
@@ -295,10 +277,7 @@ class Engine:
         m: dict[str, float] = {}
         mx = 0.0
         for qid, info, effort in cands:
-            # Rank by how sharply a question separates the live causes; ease only
-            # nudges within a bounded band (the `ease` weight), breaking ties
-            # between comparably-informative questions without ever outweighing
-            # separation.
+            # ease is a bounded tie-breaker; must not outweigh separation (info).
             ease = (effort / max_effort) if max_effort > 0 else 0.0
             D = info * (1 + self._ease_weight * ease)
             m[qid] = D
