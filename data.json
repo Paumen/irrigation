@@ -1362,15 +1362,15 @@
           "label": "Corroded, green, or wet",
           "effects": {
             "F3.1.3": 1.6,
-            "F3.1.2": 0.4
+            "F3.1.2": 0.6
           }
         },
         {
           "label": "Loose, backed-out, or twisted bare",
           "effects": {
             "F3.1.3": 1,
-            "F3.1.1": 0.4,
-            "F3.4": 0.6
+            "F3.1.1": 0.6,
+            "F3.4": 1.0
           }
         }
       ]
