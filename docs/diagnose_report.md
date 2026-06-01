@@ -25,43 +25,43 @@ Every fault's rank as the engine asks questions — the **clean** run over the m
 
 Rank each step: ✅ #1 · 🟩 #2–3 · 🟨 #4–5 · 🟧 #6–7 · 🟥 #8+.
 
-The ● after each fault is its **recovery tier** — how robust it is to answer errors: 🟢 ≥80% of noisy runs still end top-3 · 🟡 50–79% · 🟠 30–49% · 🔴 <30% (the exact `recover` % follows). `lock` = questions to pin top-3 (clean→noisy) · `behind` = who still outranks it at the end (⚠️ a *different* component — a triage gap).
+The ● after each fault is its **recovery tier** — how robust it is to answer errors: 🟢 ≥80% of noisy runs still end top-3 · 🟡 50–79% · 🟠 30–49% · 🔴 <30% (the exact `recover` % follows). `lock` = questions to pin top-3 (clean→noisy) · `behind ⚠️` = a *different* component still outranking it at the end — a triage gap (same-family siblings in front are expected and not shown).
 
 ```
 F1.5   🟡  62%  lock 11→11   App software error
   clean 🟩✅🟨🟨🟩🟩🟩🟩🟨🟧✅✅✅✅✅✅✅✅
   noisy 🟩✅🟨🟨🟩🟩🟩🟩🟨🟧🟩🟩🟩🟩🟩🟩🟩🟩
-F1.8   🟡  56%  lock 12→13  behind F1.5   App external fault
+F1.8   🟡  56%  lock 12→13   App external fault
   clean 🟩🟩🟨🟩✅✅✅✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
   noisy 🟩🟩🟨🟩✅✅🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩
 F2.1   🟡  78%  lock 8→8   Controller physical defect
   clean 🟥🟥✅🟩🟨🟨🟨🟩🟩✅✅✅✅✅✅✅✅✅
   noisy 🟥🟥✅🟩🟨🟨🟨🟩🟩🟩✅✅✅✅✅✅✅✅
-F2.5   🟡  52%  lock 16→15  behind F2.1   Controller software error
+F2.5   🟡  52%  lock 16→15   Controller software error
   clean 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟨🟨🟨🟨🟩🟩🟩
   noisy 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟧🟧🟨🟨🟨🟨🟩
 F2.6   🟢  82%  lock 14→14  behind ⚠️ F3.1.3   Controller settings
   clean 🟨✅🟧🟧🟧🟥🟥🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
   noisy 🟨✅🟧🟧🟧🟥🟥🟧🟧🟨🟨🟨🟨🟩🟩🟩🟩🟩
-F2.8   🟡  68%  lock 8→8  behind F2.1   Controller external fault
+F2.8   🟡  68%  lock 8→8   Controller external fault
   clean 🟥🟥🟧🟩🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
   noisy 🟥🟥🟧🟩🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
 F3.1.1 🟢 100%  lock 2→2   Wiring zone conductor
   clean 🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
   noisy 🟨✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-F3.1.2 🟢  94%  lock 6→6  behind F3.1.1   Wiring common wire
+F3.1.2 🟢  94%  lock 6→6   Wiring common wire
   clean 🟥🟥🟥🟥🟧✅✅🟩🟩🟩✅🟩🟩🟩🟩🟩🟩
   noisy 🟥🟥🟥🟥🟥🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-F3.1.3 🟢  98%  lock 6→6  behind F3.1.1   Wiring splice
+F3.1.3 🟢  98%  lock 6→6   Wiring splice
   clean 🟥🟧🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
   noisy 🟥🟧🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-F3.4   🟢  94%  lock 6→6  behind F3.1.1, F3.1.3   Wiring install error
+F3.4   🟢  94%  lock 6→6   Wiring install error
   clean 🟥🟥🟥🟥🟥🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
   noisy 🟥🟥🟥🟥🟥🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
 F4.1   🟢  84%  lock 6→6   Relay physical defect
   clean 🟨🟨🟩🟨🟨✅✅✅✅✅✅✅✅✅✅✅✅✅
   noisy 🟨🟨🟩🟨🟨✅✅✅✅✅✅✅✅✅✅✅✅✅
-F4.4   🔴  28%  lock 17→·  behind ⚠️ F4.1, F5.1   Relay install error
+F4.4   🔴  28%  lock 17→·  behind ⚠️ F5.1   Relay install error
   clean 🟥🟥🟥🟧🟥🟧🟨🟨🟧🟧🟨🟨🟨🟨🟨🟨🟩🟩
   noisy 🟥🟥🟥🟥🟥🟥🟧🟧🟧🟧🟧🟥🟧🟧🟧🟨🟨🟨
 F5.1   🟢 100%  lock 3→3   Pump physical defect
@@ -70,7 +70,7 @@ F5.1   🟢 100%  lock 3→3   Pump physical defect
 F5.3   🟢  94%  lock 3→3   Pump suction-side obstruction
   clean ✅🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅
   noisy ✅🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-F5.8   🟠  32%  lock 13→·  behind F5.3, F5.1   Pump external fault
+F5.8   🟠  32%  lock 13→·   Pump external fault
   clean 🟥🟥🟩🟩🟩🟨🟩🟨🟨🟨🟨🟨🟩🟩
   noisy 🟥🟥🟩🟩🟩🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟧
 F6.1   🟢  98%  lock 5→9   Main hose 32mm physical defect
@@ -82,7 +82,7 @@ F6.3   🟢  86%  lock 3→6   Main hose 32mm obstruction
 F7.1.1 🟢  94%  lock 5→7   Solenoid coil
   clean 🟥🟥🟥🟥🟩✅✅✅✅✅✅✅✅✅✅✅✅✅
   noisy 🟥🟥🟥🟥🟧🟩✅✅✅✅✅✅✅✅✅✅✅✅
-F7.1.2 🟢  96%  lock 6→6  behind F7.1.3   Valve diaphragm
+F7.1.2 🟢  96%  lock 6→6   Valve diaphragm
   clean 🟥🟥🟨🟨🟧✅✅🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
   noisy 🟥🟥🟨🟨🟧🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
 F7.1.3 🟢 100%  lock 5→5   Valve body / seat damage
@@ -94,7 +94,7 @@ F7.3.1 🟢  84%  lock 6→7   Solenoid plunger stuck / port clog
 F7.3.2 🟢  90%  lock 8→11   Diaphragm metering port / screen debris
   clean 🟥🟥🟥🟥🟥🟧🟧🟩🟩🟩🟩✅✅✅✅✅✅✅
   noisy 🟥🟥🟥🟥🟥🟧🟨🟨🟩🟨🟩🟩✅🟩✅✅✅🟩
-F7.4   🟢 100%  lock 11→11  behind F7.1.3   Valve install error
+F7.4   🟢 100%  lock 11→11   Valve install error
   clean 🟧🟩✅✅🟨🟩✅🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩
   noisy 🟧🟩✅🟩🟨🟩🟩🟩🟨🟨🟩🟩🟩🟩🟩🟩🟩🟩
 F8.1   🟢 100%  lock 7→7   Zone hose 25mm physical defect
@@ -106,10 +106,10 @@ F8.3   🟢  80%  lock 7→8   Zone hose 25mm obstruction
 F9.1.1 🟡  78%  lock 1→1   Head pressure regulator
   clean 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅✅✅✅
   noisy 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩✅✅✅✅🟩🟩🟩
-F9.1.2 🟡  72%  lock 1→1  behind F9.1.1   Head gear-drive seized
+F9.1.2 🟡  72%  lock 1→1   Head gear-drive seized
   clean 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
   noisy 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-F9.3   🟡  54%  lock 12→13  behind F9.4, F9.1.1   Head obstruction
+F9.3   🟡  54%  lock 12→13   Head obstruction
   clean 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩🟩🟩🟩🟩🟩🟩
   noisy 🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟨🟩
 F9.4   🟡  76%  lock 1→1   Head install error
@@ -118,7 +118,7 @@ F9.4   🟡  76%  lock 1→1   Head install error
 ```
 
 > **F2.6** never gets its *component* to lead and hold — a different family stays on top (the one true triage gap).  
-> Most error-fragile: F4.4 (28%), F5.8 (32%) — one wrong answer keeps them behind a sibling. Everything 🟩 tracks its clean path under noise.
+> Most error-fragile: F4.4 (28%), F5.8 (32%) — one wrong answer keeps them behind a rival cause. Everything 🟩 tracks its clean path under noise.
 
 ## Questions
 

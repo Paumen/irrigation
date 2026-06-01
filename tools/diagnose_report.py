@@ -200,8 +200,9 @@ def sec_faults(g: dict) -> list[str]:
         "The ● after each fault is its **recovery tier** — how robust it is to "
         "answer errors: 🟢 ≥80% of noisy runs still end top-3 · 🟡 50–79% · 🟠 30–49% "
         "· 🔴 <30% (the exact `recover` % follows). `lock` = questions to pin top-3 "
-        "(clean→noisy) · `behind` = who still outranks it at the end (⚠️ a "
-        "*different* component — a triage gap).",
+        "(clean→noisy) · `behind ⚠️` = a *different* component still outranking it "
+        "at the end — a triage gap (same-family siblings in front are expected "
+        "and not shown).",
         "",
         "```",
     ]
@@ -214,12 +215,12 @@ def sec_faults(g: dict) -> list[str]:
         nz_s = str(nz) if (v["lock_rate"] >= 0.5 and nz is not None) else "·"
         fr = r["final_rank"]
         leaders = r["final_top3"][:fr - 1] if fr <= 3 else r["final_top3"]
+        cross = [c for c in leaders if PARENT[c] != r["parent"]]
         hdr = (f"{f:<7}{recov_cell(v['recovery'])} {v['recovery']*100:>3.0f}%  "
                f"lock {cl_s}→{nz_s}")
-        if fr > 1 and leaders:
-            mark = "⚠️ " if any(PARENT[c] != r["parent"] for c in leaders) else ""
-            names = ", ".join(leaders[:2]) + (" …" if len(leaders) > 2 else "")
-            hdr += f"  behind {mark}{names}"
+        if fr > 1 and cross:
+            names = ", ".join(cross[:2]) + (" …" if len(cross) > 2 else "")
+            hdr += f"  behind ⚠️ {names}"
         hdr += f"   {short_label(f)}"
         clean = "".join(rank_cell(x) for x in r["ranks"])
         noise = "".join(rank_cell(round(x)) for x in v["median_ranks"])
@@ -241,7 +242,7 @@ def sec_faults(g: dict) -> list[str]:
         frag = ", ".join(f"{f} ({x*100:.0f}%)" for f, x in fragile)
         notes.append(
             f"Most error-fragile: {frag} — one wrong answer keeps them behind a "
-            "sibling. Everything 🟩 tracks its clean path under noise."
+            "rival cause. Everything 🟩 tracks its clean path under noise."
         )
     if notes:
         out += ["", "> " + "  \n> ".join(notes)]
