@@ -62,8 +62,9 @@ and asserts the overall median recovery clears `MIN_MEDIAN_RECOVERY`.
 
 ## What the report tells you
 
-- **Rank trajectory** — a row of rank cells per fault (✅ #1 · 🟩 #2–3 · 🟨 #4–6 ·
-  🟧 #7–9 · 🟥 #10+), one per question asked, sorted by F-code. Two lock-in columns: `fam` =
+- **Rank trajectory** — a row of cells per fault (✅ #1 · 🟩 #2–3 · 🟨 #4–6 ·
+  🟧 #7–9 · 🟥 #10+, or ⬜ for a question the fault's profile leaves unanswered),
+  one per question the engine asks, sorted by F-code. Two lock-in columns: `fam` =
   questions until the right *component* leads (#1) and holds, and `top3` = until the
   exact cause locks into the top-3. All 29 faults reach the right family at #1
   (median 6 questions) — including the three that never pin the exact sub-cause — so

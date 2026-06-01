@@ -75,7 +75,7 @@ def gather() -> dict:
             "fault": f, "parent": parent,
             "base_rank": t.base_rank, "final_rank": t.final_rank,
             "lock_in": t.lock_in(DEFAULT_MAX), "parent_lock": t.parent_lock_in(parent),
-            "ranks": t.ranks,
+            "ranks": t.ranks, "events": t.events,
             "confusers": confusers, "siblings": siblings, "cross": cross, "kind": kind,
         })
 
@@ -185,22 +185,22 @@ def sec_headline(g: dict) -> list[str]:
 def sec_trajectory(g: dict) -> list[str]:
     out = ["## Rank trajectory",
            "",
-           "Each square = the true fault's rank after one *answered* question. "
-           "✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+. "
-           "**fam** = questions until the right *component* leads (#1) and stays; "
-           "**top3** = until the exact cause locks into the top-3.",
+           "One square per question the engine *asks*: the true fault's rank after "
+           "an answer — ✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+ — or ⬜ when this "
+           "fault's profile leaves it unanswered (a skip; rank unchanged). "
+           "**fam** / **top3** count *answered* questions: until the right *component* "
+           "leads (#1) and stays / until the exact cause locks into the top-3.",
            "",
-           "Rows vary in length: a run stops at 18 answers **or** when no remaining "
-           "question still separates the contending causes (the engine's done "
-           "signal) — whichever comes first. Skipped context/age questions, which "
-           "this fault's profile doesn't answer, aren't plotted.",
+           "A run ends at 18 answers, or when no remaining question separates the "
+           "contending causes (the engine's done signal) — whichever comes first.",
            "",
            "```",
            f"{'fault':7s}{'fam':5s}{'top3':6s}trajectory →"]
     for r in sorted(g["rows"], key=lambda x: fcode_key(x["fault"])):
         fam = str(r["parent_lock"]) if r["parent_lock"] is not None else "—"
         top3 = str(r["lock_in"]) if r["lock_in"] is not None else "—"
-        cells = "".join(rank_cell(x) for x in r["ranks"])
+        cells = "".join("⬜" if rank is None else rank_cell(rank)
+                        for _, rank in r["events"])
         out.append(f"{r['fault']:7s}{fam:5s}{top3:6s}{cells}")
     out.append("```")
     return out

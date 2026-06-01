@@ -21,7 +21,7 @@ from __future__ import annotations
 import json
 import random
 import statistics
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from engine import Engine
@@ -190,6 +190,9 @@ class Trajectory:
     steps: list[Step]
     skipped: list[str]      # questions recommended but with no answer in the key
     base_rank: int          # the fault's rank before any question is answered
+    # the full asked sequence: (qid, rank) for an answered question, (qid, None)
+    # for one the engine recommended but this fault's profile leaves unanswered.
+    events: list[tuple[str, int | None]] = field(default_factory=list)
 
     @property
     def ranks(self) -> list[int]:
@@ -236,6 +239,7 @@ def simulate(fault: str, n: int = DEPTH) -> Trajectory:
     base_rank = next(i for i, r in enumerate(base, 1) if r["id"] == fault)
     steps: list[Step] = []
     asked_skips: list[str] = []
+    events: list[tuple[str, int | None]] = []
     while len(steps) < n:
         recs = ENG.recommendations(answers, skipped)
         if not recs:
@@ -247,10 +251,12 @@ def simulate(fault: str, n: int = DEPTH) -> Trajectory:
             rank = next(i for i, r in enumerate(ranked, 1) if r["id"] == fault)
             pct = next(r["pct"] for r in ranked if r["id"] == fault)
             steps.append(Step(len(steps) + 1, qid, rank, [r["id"] for r in ranked[:3]], pct))
+            events.append((qid, rank))
         else:
             skipped[qid] = True
             asked_skips.append(qid)
-    return Trajectory(fault, steps, asked_skips, base_rank)
+            events.append((qid, None))
+    return Trajectory(fault, steps, asked_skips, base_rank, events)
 
 
 def simulate_all(n: int = DEPTH) -> dict[str, Trajectory]:
