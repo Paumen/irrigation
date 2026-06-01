@@ -185,10 +185,15 @@ def sec_headline(g: dict) -> list[str]:
 def sec_trajectory(g: dict) -> list[str]:
     out = ["## Rank trajectory",
            "",
-           "Each square = the true fault's rank after one question. "
+           "Each square = the true fault's rank after one *answered* question. "
            "✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟧 #7–9 · 🟥 #10+. "
            "**fam** = questions until the right *component* leads (#1) and stays; "
            "**top3** = until the exact cause locks into the top-3.",
+           "",
+           "Rows vary in length: a run stops at 18 answers **or** when no remaining "
+           "question still separates the contending causes (the engine's done "
+           "signal) — whichever comes first. Skipped context/age questions, which "
+           "this fault's profile doesn't answer, aren't plotted.",
            "",
            "```",
            f"{'fault':7s}{'fam':5s}{'top3':6s}trajectory →"]
