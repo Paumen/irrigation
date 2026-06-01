@@ -74,7 +74,8 @@ def gather() -> dict:
         rows.append({
             "fault": f, "parent": parent,
             "base_rank": t.base_rank, "final_rank": t.final_rank,
-            "lock_in": t.lock_in(DEFAULT_MAX), "ranks": t.ranks,
+            "lock_in": t.lock_in(DEFAULT_MAX), "parent_lock": t.parent_lock_in(parent),
+            "ranks": t.ranks,
             "confusers": confusers, "siblings": siblings, "cross": cross, "kind": kind,
         })
 
@@ -140,6 +141,7 @@ def shape_label(x: float) -> str:
 def sec_headline(g: dict) -> list[str]:
     rows = g["rows"]
     locks = [r["lock_in"] for r in rows if r["lock_in"] is not None]
+    plocks = [r["parent_lock"] for r in rows if r["parent_lock"] is not None]
     fm = g["family_mix"]
     at1 = sum(1 for r in rows if r["final_rank"] == 1)
     in23 = sum(1 for r in rows if 1 < r["final_rank"] <= 3)
@@ -153,7 +155,9 @@ def sec_headline(g: dict) -> list[str]:
         "",
         "```",
         f"Outcome      {at1} reach #1 · {in23} settle in top-3 · {out} stay out",
-        f"Lock-in      {len(locks)}/{len(rows)} hold top-3 · "
+        f"Right family {len(plocks)}/{len(rows)} get the right component to #1 · "
+        f"median {statistics.median(plocks):g} questions to lead & hold",
+        f"Exact cause  {len(locks)}/{len(rows)} hold top-3 · "
         f"median {statistics.median(locks):g} · range {min(locks)}–{max(locks)} questions",
         f"Confusion    {fm['clean']} clean · {fm['sibling-only']} within-family · "
         f"{fm['cross-family']} cross-family",
@@ -167,14 +171,17 @@ def sec_trajectory(g: dict) -> list[str]:
     out = ["## Rank trajectory",
            "",
            "Each square = the true fault's rank after one question. "
-           "✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟥 #7+.",
+           "✅ #1 · 🟩 #2–3 · 🟨 #4–6 · 🟥 #7+. "
+           "**fam** = questions until the right *component* leads (#1) and stays; "
+           "**top3** = until the exact cause locks into the top-3.",
            "",
            "```",
-           f"{'fault':7s}{'lock':5s}trajectory →"]
+           f"{'fault':7s}{'fam':5s}{'top3':6s}trajectory →"]
     for r in sorted(g["rows"], key=lambda x: fcode_key(x["fault"])):
-        lock = str(r["lock_in"]) if r["lock_in"] is not None else "—"
+        fam = str(r["parent_lock"]) if r["parent_lock"] is not None else "—"
+        top3 = str(r["lock_in"]) if r["lock_in"] is not None else "—"
         cells = "".join(rank_cell(x) for x in r["ranks"])
-        out.append(f"{r['fault']:7s}{lock:5s}{cells}")
+        out.append(f"{r['fault']:7s}{fam:5s}{top3:6s}{cells}")
     out.append("```")
     return out
 

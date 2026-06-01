@@ -63,8 +63,12 @@ and asserts the overall median recovery clears `MIN_MEDIAN_RECOVERY`.
 ## What the report tells you
 
 - **Rank trajectory** — a row of rank cells per fault (✅ #1 · 🟩 #2–3 · 🟨 #4–6 ·
-  🟥 #7+), one per question asked, sorted by F-code. Spot faults that lock early vs
-  late, and faults that bounce.
+  🟥 #7+), one per question asked, sorted by F-code. Two lock-in columns: `fam` =
+  questions until the right *component* leads (#1) and holds, and `top3` = until the
+  exact cause locks into the top-3. All 29 faults reach the right family at #1
+  (median 6 questions) — including the three that never pin the exact sub-cause — so
+  the engine always finds *which part* is broken; only same-family sub-cause
+  discrimination ever fails.
 - **Family confusion** — the causes outranking each fault at the end. **Cross-family**
   cases (a *different* component winning — a triage gap) are listed in full; the
   **within-family** ones (a missing discriminator inside one component) are listed

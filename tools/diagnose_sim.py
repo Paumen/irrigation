@@ -214,6 +214,17 @@ class Trajectory:
                 return k
         return None
 
+    def parent_lock_in(self, parent: str) -> int | None:
+        """Earliest answered-question count after which the #1-ranked cause stays
+        in `parent`'s family for the rest of the run — i.e. when the right
+        *component* takes (and keeps) the lead, even if the exact sub-cause isn't
+        pinned yet. None if the right family never leads to the end."""
+        tops = [PARENT[s.top3[0]] for s in self.steps]
+        for k in range(1, len(tops) + 1):
+            if all(p == parent for p in tops[k - 1:]):
+                return k
+        return None
+
 
 def simulate(fault: str, n: int = DEPTH) -> Trajectory:
     """Drive the engine through `fault`'s answer key, following the engine's own
