@@ -21,6 +21,10 @@
 # a guide, not a limit. legend = part-callout key for breakdown images. relates = extra context.
 # used_in = docs embedding it.
 #
+# When sharing images/files, always pass the `files` array on the first SendUserFile call — never
+# emit a bare invocation with no arguments. An empty call fails validation with "required parameter
+# `files` is missing" and just adds noise before the retry.
+#
 # procedures: — a TASK axis, orthogonal to subjects:. subjects: groups by the part a picture shows;
 # procedures: groups by the JOB a picture is needed for, which routinely spans several subjects. A
 # valve install touches the valve, the manifold swivel nut (subjects: valve), a poly-hose adapter
