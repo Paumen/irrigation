@@ -12,7 +12,7 @@ contents:
   - flow control adjustment
   - bonnet air relief (water-hammer burp via the flow-control stem)
   - per-valve pressure regulation (Accusync) — system-wide vs per-valve vs at-the-head tiers
-  - installation (placement, arrow orientation, cut threads, teflon paste-or-tape rule, waterproof connectors)
+  - installation (placement, arrow orientation, cut threads, Teflon paste-or-tape rule, waterproof connectors)
   - external leak checklist
   - weeping when off (low-head drainage vs valve debris)
   - slow-closing valve (metering ports)
@@ -24,11 +24,9 @@ contents:
 
 # Zone valve — Hunter PGV-101G
 
-This is the whole-valve neighbourhood. Read it end to end when the engine narrows to
-the valve area, when the homeowner is installing/replacing a valve, or when they ask how
-the valve works. The dense interior is split out: see `valve-internals.md` (diaphragm,
-spring, seat, support ring, metering ports) and `valve-solenoid.md` (coil, plunger,
-exhaust/entry ports). Much of what isolates or excludes a valve failure mode lives in those two.
+The dense interior is split out: see `valve-internals.md` (diaphragm, spring, seat, support
+ring, metering ports) and `valve-solenoid.md` (coil, plunger, exhaust/entry ports) — much of
+what isolates or excludes a valve failure mode lives in those two.
 
 ![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](../media/valve-auto-product-pgv-100g.png)
 
@@ -57,7 +55,7 @@ debris causes outsized trouble — they govern the pressure balance, not the mai
 ![External parts of the valve — bonnet screws, bleed screw, solenoid, body.](../media/valve-auto-breakdown-leak-points.png)
 
 - **Bonnet** — the top section, held by captive bonnet screws (jar-top on some models).
-- **Flow control handle** — limits the diaphragm's stroke to throttle flow/pressure.
+- **Flow control handle** — throttles flow/pressure through the valve.
 - **Bleed screw** — external manual bleed; releases upper-chamber pressure to open the valve by hand.
 - **Solenoid** — the cylinder with two wires; the electrical actuator (see `valve-solenoid.md`).
 
@@ -133,11 +131,11 @@ form a tier:
 
 **Regulation tiers in practice.** The PGV-101G valve is **not** pressure-regulated, so where
 no system-wide regulator is fitted, regulation falls to the heads — PRS40 bodies hold the MP
-nozzles at setpoint, while unregulated I-20 rotors rely on supply pressure landing in their
-1.7–4.8 bar window (see `heads.md`, and `setup.yaml` for what is actually fitted).
+nozzles at setpoint (see `heads-spray.md`), while unregulated I-20 rotors rely on supply pressure
+landing in their 1.7–4.8 bar window (see `heads.md`, and `setup.yaml` for what is actually fitted).
 
 When to think about Accusync: if a zone is **consistently misty or over-radius** at
-the heads, the PRS40 isn't engaging (inlet too low — see `heads.md` *Misting from the
+the heads, the PRS40 isn't engaging (inlet too low — see `heads-spray.md` *Misting from the
 MP on top*), and the failure mode is *not* a single head's regulator failing but the whole
 zone running too hot or too cold, then a per-valve regulator on *that* valve is the
 standard remedy. Treat it as a design fix, not a troubleshooting one — bring it up
@@ -145,7 +143,7 @@ once the routine failure modes (filter, nozzle, riser seal, broken hose) are rul
 
 ## Installation (and how to avoid causing damage)
 
-**The quick tell that answers most "where does the teflon go" questions — lead with it, in these
+**The quick tell that answers most "where does the Teflon go" questions — lead with it, in these
 words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the hose,
 leave the threads bare — the rubber or the clamp is what seals.** ⚠️ Taping those threads stops
 the rubber seating or the nut pulling up tight, which leaks. Teflon only goes where bare thread
@@ -153,7 +151,7 @@ screws into bare thread — the tapered male threads going into a female port (t
 inlet/outlet). "Rubber O-ring" is the phrase a homeowner gets instantly; reach for it before
 "washer" or "compression grip", and gloss those terms the first time you use them.
 
-In *this* system two joints flank the valve, and both keep their threads bare (no teflon): the
+In *this* system two joints flank the valve, and both keep their threads bare (no Teflon): the
 **manifold swivel nut** on the inlet (the loose ring-nut with a rubber O-ring inside) and the
 **PE compression nut** where the outlet meets the `hose.25` poly run (the green nut that clamps
 onto the hose). Give the paste/tape mechanics below after the quick tell — don't make the user
@@ -189,11 +187,9 @@ adapter in too far and **split the valve body**.
   more with a wrench.
 - Tape: wrap the thread three full times. Hand-tighten, then ~½ turn more with a wrench.
 
-So teflon lands only on the male threads that screw into the valve's two female ports;
-the swivel-nut inlet and the compression-nut outlet of this system stay bare (see the rule at the
-top of this section). The outlet adapter is a **PE compression × male-thread** fitting — the
-compression end must match the hose OD (25 mm here). This is the genuinely useful fitting for the
-poly side, distinct from the male × male double nipple that joins the manifold to the inlet.
+So: Teflon on the two valve ports only; both flanking nuts stay bare. The outlet adapter is a
+**PE compression × male-thread** fitting — the compression end must match the hose OD (25 mm here),
+distinct from the male × male double nipple that joins the manifold to the inlet.
 
 **⚠️ Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
 damage them; hand-tight only on the solenoid.
@@ -201,10 +197,6 @@ damage them; hand-tight only on the solenoid.
 **⚠️ Use waterproof splices** for the solenoid-to-field-wire joints in the valve box.
 Non-waterproof connections corrode, which raises electrical resistance; high resistance can
 blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
-
-The ⚠️-marked lines through this section are the install cautions — carry the marker into the
-reply at the matching step, and don't drop it because a line reads like ordinary advice. Lead a
-step with ⚠️ only; don't stack other severity markers on the same line.
 
 ## External leak (valve leaking to the outside)
 
@@ -243,14 +235,14 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 ## PGV body styles (identification)
 
-The PGV family comes in several body styles. This whole-valve reference documents the **1" globe
-with flow control (PGV-101G)** — the first one below. The others are shown so a body that doesn't
-match can be ruled out during identification. Check which body is installed from `setup.yaml`.
+The PGV family comes in several body styles. This reference documents the **1" globe with flow
+control (PGV-101G)**; the others are listed so a non-matching body can be ruled out during
+identification (check `setup.yaml` for what's installed).
 
 ![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-auto-product-pgv-101g.jpg)
 
 - **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
-  and bleed on top. The reference above describes this body.
+  and bleed on top — the body this reference describes.
 - **90° body (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
   deep main hose; lower pressure loss than globe. Flow-direction arrow on the body.
 
@@ -340,4 +332,4 @@ service — see `valve-solenoid.md` and `valve-internals.md` for when to replace
 - `wiring.md` — wire gauge/run, waterproof connectors, swap-wire and continuity tests.
 - `controller.md` — voltage at controller terminals.
 - `hoses.md` — zone-wide weakness from a punctured hose (the alternative failure mode to a partly-open valve diaphragm when one zone is weak).
-- `heads.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.
+- `heads-spray.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.

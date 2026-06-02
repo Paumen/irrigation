@@ -101,8 +101,7 @@ This matters whenever you change the layout:
 - **Removing a head in the middle of a hose:** same fix is not needed
   — water still has somewhere to go (the heads further downstream), so
   cap at the fitting under the removed head and continue. Step-by-step
-  procedure for both cases lives in `heads.md` under *Capping off an I-20
-  in-ground*.
+  procedure for both cases is in *Capping or shortening a hose* below.
 - **Adding a head on a new spur off an existing hose:** the new spur
   must terminate at the new head, not extend past it. Don't pre-run
   hose "for future expansion" — that's exactly an outlet-less stub.
@@ -114,9 +113,8 @@ install.
 ## Capping or shortening a hose (procedure)
 
 Two cases, depending on where the head you're removing sits on the hose.
-The same procedure is repeated in `heads.md` under *Capping off an I-20
-in-ground* because head removal is the most common reason to do it; both
-copies are kept in sync.
+This is the canonical procedure; `heads.md` (rotor removal) points here
+rather than repeating it.
 
 **Case A — head is in the middle of a hose (other heads downstream still
 use the hose):**
@@ -131,10 +129,9 @@ use the hose):**
 
 **Case B — head is the last one on its hose (no heads downstream of it):**
 
-This is the case that requires the dead-end rule above. The hose between
-the upstream tee and the removed head's location would become an outlet-
-less stub, which will freeze and split. So you don't cap *at* the removed
-head — you cap at the *upstream* tee:
+This is the case that requires the dead-end rule above: capping *at* the
+removed head would leave an outlet-less stub that freezes and splits. So
+cap at the *upstream* tee instead:
 
 1. Dig up the *upstream* head's tee on the same hose.
 2. Cut the hose just past the tee, leaving a few cm of hose stub to cap.
@@ -160,8 +157,7 @@ the trench is closed.
 ## See also
 
 - `heads.md` — *Won't pop up* (the head-side symptom this area shows
-  through), *Capping off an I-20 in-ground* (the hose-modification
-  procedure).
+  through); rotor removal points back here for the cap-off procedure.
 - `valve.md` — to exclude the valve as the failure mode when one zone is weak;
   particularly *Weeping when off* and the diaphragm-not-fully-opening
   case, which can also present as a zone-wide pressure drop.

@@ -64,10 +64,11 @@ next to this file — matching how the agent resolves files at runtime.
   repaired fences"); that material is already folded into `hoses.md`.
 
 ### F9 — Heads 
-- Local doc: `knowledge/heads.md` — entry point covering all three head-side components for this system
-  (rotors, regulated bodies, MP nozzles), with the MP ↔ PRS40 pairing and low-head drainage diagnosis.
-- Read when: engine points at the heads area (F9); rotor won't pop up / won't rotate / wrong arc; misting at
-  a head; low-head drainage suspected at the lowest head; replacing a nozzle or a body.
+- Local docs: `knowledge/heads.md` (entry — I-20 rotors + the head overview + low-head drainage) →
+  deeper: `knowledge/heads-spray.md` (Pro-Spray PRS40 bodies, MP Rotator nozzles, MP ↔ PRS40 pairing).
+- Read when: engine points at the heads area (F9). Rotor won't pop up / won't rotate / wrong arc, or
+  low-head drainage at the lowest head → `heads.md`; misting at a head, MP won't rotate, regulator, or
+  replacing a body/nozzle → `heads-spray.md`.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ## Web sources 

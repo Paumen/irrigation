@@ -14,11 +14,9 @@ contents:
 
 # Controller — RainMachine HD-16 TOUCH
 
-**Coverage note.** The only controller content sourced so far is the voltage-at-terminals test
-below (carried in from the valve material). There is no local detail yet on the RainMachine HD-16
-itself — firmware, config, cloud/Wi-Fi, hardware/power faults. For those, fall back per `sources.md`:
-RainMachine support (https://support.rainmachine.com/) first, then web. Treat this file as a stub
-that will grow when those sources are ingested.
+**Coverage note.** Only the voltage-at-terminals test below so far — no local detail yet on the
+RainMachine HD-16 itself (firmware, config, cloud/Wi-Fi, hardware/power faults). For those, fall
+back per `sources.md`: RainMachine support (https://support.rainmachine.com/) first, then web.
 
 ## Testing voltage at the controller terminals
 

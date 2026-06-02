@@ -102,8 +102,7 @@ Coil (the 24 V side the controller drives):
 
 The inrush is what determines wire sizing on the controller→relay run: the coil draws 2.5 A
 *momentarily* every time the controller calls a zone, which is why undersized wire makes a relay
-chatter on a new install. A dedicated common from the controller and a short run sit comfortably
-inside the gauge table above.
+chatter on a new install.
 
 ## Chattering / buzzing relay
 
