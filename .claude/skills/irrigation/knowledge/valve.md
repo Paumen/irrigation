@@ -145,15 +145,19 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ## Installation (and how to avoid causing damage)
 
-**The one rule that answers most "where does the teflon go" questions: seal a joint where the
-thread itself is the seal, leave the threads bare where a washer or grip does the sealing.**
-Tapered male threads going into a female port (the valve's inlet/outlet) get teflon. Joints
-that seal on a rubber washer or a compression grip do **not** — ⚠️ taping them stops the washer
-or grip seating, which leaks. In *this* system that means two bare-thread joints flank the
-valve: the **manifold swivel nut** on the inlet (seals on its rubber washer) and the **PE
-compression nut** where the outlet meets the `hose.25` poly run (seals on the pipe grip). Lead
-with this, then give the paste/tape mechanics below — don't make the user pull it out over
-several turns.
+**The quick tell that answers most "where does the teflon go" questions — lead with it, in these
+words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the pipe,
+leave the threads bare — the rubber or the clamp is what seals.** ⚠️ Taping those threads stops
+the rubber seating or the nut pulling up tight, which leaks. Teflon only goes where bare thread
+screws into bare thread — the tapered male threads going into a female port (the valve's
+inlet/outlet). "Rubber O-ring" is the phrase a homeowner gets instantly; reach for it before
+"washer" or "compression grip", and gloss those terms the first time you use them.
+
+In *this* system two joints flank the valve, and both keep their threads bare (no teflon): the
+**manifold swivel nut** on the inlet (the loose ring-nut with a rubber O-ring inside) and the
+**PE compression nut** where the outlet meets the `hose.25` poly run (the green nut that clamps
+onto the pipe). Give the paste/tape mechanics below after the quick tell — don't make the user
+pull it out over several turns.
 
 ![Flow direction — arrow toward the heads](../media/valve-auto-instruction-flow-direction.png)
 
