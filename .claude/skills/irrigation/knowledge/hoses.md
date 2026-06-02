@@ -166,6 +166,6 @@ the trench is closed.
   particularly *Weeping when off* and the diaphragm-not-fully-opening
   case, which can also present as a zone-wide pressure drop.
 - `valve-internals.md` — debris-on-diaphragm causing a partly-open
-  diaphragm, another zone-wide-weakness candidate.
+  diaphragm, another zone-wide-weakness suspect.
 - `wiring.md` — to exclude wiring on a "no flow at all" zone (different
   symptom from "weak flow", but worth ruling out at the same time).

@@ -23,7 +23,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 4. **Name causes by F-code** (`F<component>.<mode>.<instance>`; see `docs/fcode_spec.md`).
 5. **Keep these near-homonyms distinct — never merge them:**
    - **pump-start relay** (PSR) vs **regulated spray body** (PRS) — a relay vs a head.
-   - **fitting** (pipe joiner) vs **splice** / wire connector (wire joiner).
+   - **fitting** (hose/pipe joiner) vs **splice** / wire connector (wire joiner).
    - **port** (mechanical opening) vs **terminal** (electrical post).
    - **thread** vs **barb** — alternative outlet types, not synonyms.
 6. **No new jargon** unless it's added here.
@@ -36,7 +36,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **well** — the borehole the pump draws from (the water source).
 - **manifold** — the fitting where the main line fans out to the zone valves.
 - **zone** — one valve + its lateral hose + heads; run one at a time.
-- **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC a hose can't replace (e.g. a rigid SCH80 riser nipple).
+- **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC that a hose cannot replace (e.g. a rigid SCH80 riser nipple).
 - **run** — to operate a zone, or one watering cycle.
 
 ### Fittings (hose/pipe joiners)
@@ -107,7 +107,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 
 ### Skill loop
 - **question / answer / option** — the diagnostic Q&A loop.
-- **effect / effects** — the weights an answer applies to candidate causes.
+- **effect / effects** — the weights an answer applies to the ranked causes.
 - **step** — one instruction in a procedure.
 - **playbook** — a skill task script (troubleshoot, identify, capacity, …).
 
