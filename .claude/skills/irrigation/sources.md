@@ -48,8 +48,8 @@ next to this file — matching how the agent resolves files at runtime.
   tier comparison.
 
 ### F7 — Zone valve
-- Local docs: `knowledge/valve.md` (whole-valve, entry point) → deeper: `knowledge/valve-internals.md`, `knowledge/valve-solenoid.md`.
-- Read when: engine points at the valve area; install/replace; "how does it work"; any valve symptom — then go deeper to internals (diaphragm/spring/seat/metering) or solenoid (coil/plunger/ports) as the symptom narrows.
+- Local docs: `knowledge/valve.md` (whole-valve, entry point) → deeper: `knowledge/valve-internals.md`, `knowledge/valve-solenoid.md`; for choosing a replacement model, `knowledge/valve-replacement.md` (PGV/ICV drop-in table).
+- Read when: engine points at the valve area; install/replace; "how does it work"; any valve symptom — then go deeper to internals (diaphragm/spring/seat/metering) or solenoid (coil/plunger/ports) as the symptom narrows; sourcing a replacement valve → `valve-replacement.md`.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ### F8 — Zone hoses 

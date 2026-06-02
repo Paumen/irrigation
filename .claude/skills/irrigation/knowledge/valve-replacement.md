@@ -1,3 +1,16 @@
+---
+subject: Valve replacement compatibility (PGV/ICV drop-in table)
+failure_mode_area: F7
+serves: [replace]
+parent: valve
+summary: Which Hunter PGV/ICV models drop in for the Z1–Z4 PGV-101G zone valves vs. need a clearance check, an adjustment (re-orient / fittings / outlet), or a re-plumb — plus the manifest image mapped to each row.
+read_when: the homeowner is choosing or sourcing a replacement automatic zone valve and needs to know whether a candidate model is a true drop-in for the installed PGV-101G.
+contents:
+  - compatibility table (drop-in / caveat / adjustment / not-like-for-like)
+  - reading the verdicts
+  - related images (manifest IDs mapped to table rows)
+---
+
 # Valve replacement compatibility
 
 Reference for swapping the **automatic zone valves** (Z1–Z4): 1" Hunter PGV
