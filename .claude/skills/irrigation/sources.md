@@ -58,7 +58,7 @@ next to this file — matching how the agent resolves files at runtime.
 - Read when: a whole zone is weak with no fault visible at the heads; one or more heads on a
   zone won't pop up while siblings on the same zone are fine; a persistent wet patch or soft
   ground along a known hose run; you're removing a head or restructuring a zone and a stub
-  will be left behind; you suspect recent garden / fence / driveway work damaged a pipe.
+  will be left behind; you suspect recent garden / fence / driveway work damaged a hose.
 - Fallback: IrrigationTutorials.com, then web. Hunter's "Rotor Not Fully Popping Up" article
   has the textbook broken-hose signature ("look for new trees and shrub plantings, new or
   repaired fences"); that material is already folded into `hoses.md`.

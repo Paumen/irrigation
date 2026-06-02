@@ -3,7 +3,7 @@ subject: Hoses
 root_cause_area: F8
 serves: [troubleshooting, maintain, install, how-it-works]
 coverage: partial
-summary: Partial — the broken-hose signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a pipe, and basic field-diagnosis of a punctured hose. No deep hydraulic-design content yet.
+summary: Partial — the broken-hose signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a hose, and basic field-diagnosis of a punctured hose. No deep hydraulic-design content yet.
 read_when: a whole zone has gone weak with no visible head fault; one or more heads on a zone won't pop up while others on the same zone are normal; you find a persistent wet patch or soft ground along a known hose run; you're removing a head or restructuring a zone and a stub will be left behind; you suspect recent garden/fence/driveway work damaged a hose.
 contents:
   - what the hoses are

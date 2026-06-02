@@ -146,7 +146,7 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 ## Installation (and how to avoid causing damage)
 
 **The quick tell that answers most "where does the teflon go" questions — lead with it, in these
-words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the pipe,
+words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the hose,
 leave the threads bare — the rubber or the clamp is what seals.** ⚠️ Taping those threads stops
 the rubber seating or the nut pulling up tight, which leaks. Teflon only goes where bare thread
 screws into bare thread — the tapered male threads going into a female port (the valve's
@@ -156,7 +156,7 @@ inlet/outlet). "Rubber O-ring" is the phrase a homeowner gets instantly; reach f
 In *this* system two joints flank the valve, and both keep their threads bare (no teflon): the
 **manifold swivel nut** on the inlet (the loose ring-nut with a rubber O-ring inside) and the
 **PE compression nut** where the outlet meets the `hose.25` poly run (the green nut that clamps
-onto the pipe). Give the paste/tape mechanics below after the quick tell — don't make the user
+onto the hose). Give the paste/tape mechanics below after the quick tell — don't make the user
 pull it out over several turns.
 
 ![Flow direction — arrow toward the heads](../media/valve-auto-instruction-flow-direction.png)
@@ -259,7 +259,7 @@ match can be ruled out during identification. Confirm which body is installed fr
 - **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe hoses (common in cold-climate
   installs) — saves threading an adapter.
 
-  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Other body style, for identification.](../media/valve-auto-product-pgv-101mb-barb.jpg)
+  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly hose. Other body style, for identification.](../media/valve-auto-product-pgv-101mb-barb.jpg)
 
 - **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
   non-rising flow control handle; these are the sizes that accept the Accu-Set regulator.

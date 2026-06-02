@@ -32,7 +32,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 
 ### System & water path
 - **irrigation** — the whole watering system: pump → valves → heads.
-- **pump** — the well pump; the system's water + pressure source and its only shutoff. Mains-powered → pro-only.
+- **pump** — the well pump; the system's water + pressure source and its only shutoff. 230 V power → pro-only.
 - **well** — the borehole the pump draws from (the water source).
 - **manifold** — the fitting where the main line fans out to the zone valves.
 - **zone** — one valve + its lateral hose + heads; run one at a time.
@@ -80,7 +80,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 
 ### Electrical & control
 - **controller** — programmable timer; schedules zones, sends 24 VAC.
-- **relay** — the pump start relay; its low-voltage coil switches mains to the pump.
+- **relay** — the pump start relay; its low-voltage coil switches the 230 V supply to the pump.
 - **wire / wiring** — the 24 VAC low-voltage control cable.
 - **conductor** — a single wire.
 - **common** — the shared return wire (C).

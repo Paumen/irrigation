@@ -6,7 +6,7 @@ From how a part works ("what's the diaphragm for, why a bleed screw, how does th
 
 Valve internals have their own sibling docs — `valve-internals.md` (diaphragm, seat, metering ports), `valve-solenoid.md` (coil, plunger). Read the one the question narrows to.
 
-Image choice: a cutaway / parts-callout shot orients best for how-it-works; for a measurement the user hasn't taken yet the illustrated explainers read better, but once they're actually testing switch to the photos of their real Stanley meter. For a multi-part **job**, pull images by the `procedures:` tag in `images.yaml` (e.g. `valve_install`), not by the part the user named — the task set spans subjects (valve body, manifold swivel nut, poly-hose compression adapter, waterproof connectors), and a subjects-only scan keyed on "valve" silently drops the hose and wiring fittings that are half the install.
+Image choice: a cutaway / parts-callout shot orients best for how-it-works; for a measurement the user hasn't taken yet the illustrated explainers read better, but once they're actually testing switch to the photos of their real Stanley multimeter. For a multi-part **job**, pull images by the `procedures:` tag in `images.yaml` (e.g. `valve_install`), not by the part the user named — the task set spans subjects (valve body, manifold swivel nut, poly-hose compression adapter, waterproof connectors), and a subjects-only scan keyed on "valve" silently drops the hose and wiring fittings that are half the install.
 
 When the doc is partial or absent (app, pump, main line — see `sources.md`), name the vendor PDF in `media/` so the user can open it too: `PGV101G.pdf`, `PSR52.pdf`, `I20.pdf`, `ProSpraytm PRS40.pdf`, `Standard MP Rotator Nozzle.pdf`.
 
