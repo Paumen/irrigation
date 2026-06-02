@@ -3,7 +3,8 @@
 # Naming convention (mirrors setup.yaml's category.type taxonomy):
 #   <category>[-<type>]-<role>-<descriptor>
 #   • category — a setup.yaml family (head, valve, nozzle, fitting, hose, pump, controller, relay)
-#                plus wiring, and the non-system buckets tool (gauge/multimeter) and sensor.
+#                plus wiring, and the non-system buckets tool (gauge/multimeter), sensor, and
+#                app (mobile-app / WebUI screenshots, paired with knowledge/app.md).
 #   • type     — the setup.yaml second segment, present only where the image depicts one
 #                (head-rotor, valve-auto, nozzle-rotator, fitting-swing). Models are NOT types.
 #   • role     — what kind of asset it is:
@@ -59,6 +60,55 @@ images:
     legend: {icons: "sun / cloud / rain — weather inputs that scale daily run length", P: pump / master-valve start, C: common, "1–4": zone station outputs, R: relay}
     relates: ET-based scheduling and rain-skip behaviour; useful when explaining what the RainMachine does automatically
     used_in: [playbooks/parts.md, playbooks/upgrades.md]
+
+  IMG.controller-instruction-wiring-diagram-12zone:
+    file: media/controller-instruction-wiring-diagram-12zone.png
+    caption: RainMachine HD-12 full wiring diagram — 24VAC adapter to the power terminals, each zone valve's control wire to its numbered station terminal, all commons to a C terminal, and a master valve on its own output (Valve 1). The HD-16 is identical with 16 zone terminals.
+    subjects: [controller, wiring]
+    failure_modes: [F2, F3]
+    relates: orientation diagram for the whole terminal block before wiring; on this system zones 1–4 are valves and one further output drives the PSR-22 relay. Vendor diagram is the HD-12; applies to the homeowner's HD-16.
+    used_in: [controller.md]
+
+  IMG.controller-instruction-master-valve-wiring:
+    file: media/controller-instruction-master-valve-wiring.png
+    caption: Master valve / pump wiring on the Touch HD-12/16 — one solenoid lead to the master-valve station terminal, the other to C, exactly like a zone valve. On this system that output instead feeds the PSR-22 pump start relay coil rather than an inline MV solenoid.
+    subjects: [controller, wiring, relay]
+    failure_modes: [F2, F4]
+    relates: how a zone output assigned as Master Valve / Pump is wired; pairs with the app-side IMG.app-instruction-zone1-master-valve toggle and relay.md. Vendor diagram is HD-12; applies to the HD-16.
+    used_in: [controller.md]
+
+  # ── app / control (mobile app · WebUI) ───────────────────────────────────────
+  IMG.app-instruction-zone1-master-valve:
+    file: media/app-instruction-zone1-master-valve.png
+    caption: Zone settings in the RainMachine app — the "Master Valve (Pump)" toggle (here ON) with "Before program starts" and "After program ends" timing, which keep the master-valve output on a little early/late around each program.
+    subjects: [controller]
+    failure_modes: [F1, F2]
+    relates: the app-side switch that assigns a zone as master valve / pump; on this system that output drives the PSR-22 relay. Wiring counterpart is IMG.controller-instruction-master-valve-wiring.
+    used_in: [app.md]
+
+  IMG.app-instruction-valve-testing:
+    file: media/app-instruction-valve-testing.png
+    caption: The app's Valve Testing screen — a play button per zone to run each one on demand ("Next Watering — Never" until scheduled); the quickest software check that a zone's valve actually opens.
+    subjects: [controller]
+    failure_modes: [F1]
+    relates: first move in the zone-won't-turn-on check — if a zone runs here but not on schedule it's logic (app.md), not hardware
+    used_in: [app.md]
+
+  IMG.app-instruction-webui-sensors:
+    file: media/app-instruction-webui-sensors.png
+    caption: WebUI (my.rainmachine.com) Settings → Sensors — the Rain Sensor section above and the Flow Meter Sensor section below, with "Use hardware flow meter" ticked and the clicks-per-unit rate entered. Two RESET buttons zero consumption (left) / clear last-leak date (right).
+    subjects: [controller]
+    failure_modes: [F1]
+    relates: software setup for a rain or flow sensor; neither fitted on this system (reference only). Wiring is in controller.md. US app uses gallons, EU app uses m³.
+    used_in: [app.md]
+
+  IMG.app-instruction-flow-clicks-setup:
+    file: media/app-instruction-flow-clicks-setup.png
+    caption: Android app sequence to enable a flow sensor — Sensors → Flow Sensor → set Active, then enter "Flow clicks per m³" (EU units; e.g. 2640 from the meter's datasheet).
+    subjects: [controller]
+    failure_modes: [F1]
+    relates: the mobile-app path for the same flow-meter setup as the WebUI shot IMG.app-instruction-webui-sensors; reference only (no flow meter fitted here)
+    used_in: [app.md]
 
   # ── fitting · swing ─────────────────────────────────────────────────────────
   IMG.fitting-swing-product:
@@ -331,6 +381,22 @@ images:
     used_in: [relay.md]
 
   # ── sensor ──────────────────────────────────────────────────────────────────
+  IMG.sensor-instruction-rain-freeze-wiring:
+    file: media/sensor-instruction-rain-freeze-wiring.png
+    caption: Rain / freeze "click" sensor wired in series with the common — the sensor's two wires sit between the valves' common and a C terminal, so when it trips it breaks the common and stops every zone. No separate power needed.
+    subjects: [controller, wiring]
+    failure_modes: [F2, F1]
+    relates: reference/upgrade wiring — NOT fitted on this system (rain-skip already comes from weather/ET over Wi-Fi). One sensor at a time, rain OR flow. Vendor diagram is HD-12; applies to the HD-16.
+    used_in: [controller.md]
+
+  IMG.sensor-instruction-flow-sensor-wiring:
+    file: media/sensor-instruction-flow-sensor-wiring.png
+    caption: Two-wire (reed-type) flow sensor wired to the flow input — no polarity, it's a magnet-driven open/close switch. HD-12/16 captures pulses up to 2 Hz (3 clicks/second); above that it under-reports flow.
+    subjects: [controller, wiring]
+    failure_modes: [F2, F1]
+    relates: reference/upgrade wiring — NOT fitted on this system (flow meter is a deliberate opt-out in setup.yaml). One sensor at a time, rain OR flow. Software setup (clicks-per-m³) is in app.md. Vendor diagram is HD-12; applies to the HD-16.
+    used_in: [controller.md]
+
   IMG.sensor-product-wind-clik:
     file: media/sensor-product-wind-clik.jpg
     caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.

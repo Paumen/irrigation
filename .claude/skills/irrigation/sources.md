@@ -16,12 +16,19 @@ next to this file — matching how the agent resolves files at runtime.
 ## Routing by failure-mode area
 
 ### F1 — App / control
-- Local doc: none yet.
+- Local doc: `knowledge/app.md` — **partial** (control paths, weather-adaptive programs, zone
+  properties + master-valve toggle, manual run / valve testing, restrictions, sensor software setup,
+  the zone-won't-turn-on software path, remote access).
+- Read when: a program / restriction / zone property / sensor *software* setting; assigning a zone as
+  master valve in the app; a zone runs manually but not on schedule (logic, not hardware).
 - Fallback: RainMachine app + support (https://support.rainmachine.com/), then web.
 
 ### F2 — Controller 
-- Local doc: `knowledge/controller.md` — **partial** (voltage-at-terminals test only).
-- Read when: checking the controller outputs 24–28 VAC on a station; isolating controller vs downstream.
+- Local doc: `knowledge/controller.md` — **partial** (terminal block & power, master-valve/pump and
+  rain/flow sensor *wiring*, Wi-Fi setup/recovery, the zone-won't-run hardware path, voltage-at-terminals
+  test). Software/scheduling is in `knowledge/app.md` (F1).
+- Read when: wiring the controller; checking it outputs 24–28 VAC on a station; isolating controller vs
+  downstream; Wi-Fi won't connect / "WiFi Settings Error".
 - Fallback: RainMachine support (https://support.rainmachine.com/), then web. No local PDF.
 
 ### F3 — Field wiring (24 V low-voltage)
