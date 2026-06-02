@@ -77,7 +77,7 @@ def diagnose(
             {
                 "id": r["id"],
                 "label": engine.causes[r["id"]]["label"],
-                "pct": round(r["pct"], 1),
+                "percent": round(r["percent"], 1),
                 "score": round(r["score"], 3),
             }
             for r in ranked[:top_n_causes]
@@ -90,7 +90,7 @@ def diagnose(
             )
             for rec in recs[:top_n_next]
         ],
-        "answered_count": sum(1 for qid in answers if engine.is_answered(qid, answers[qid])),
+        "answered_count": sum(1 for question_id in answers if engine.is_answered(question_id, answers[question_id])),
         "skipped_count": len(skipped),
         "total_questions": len(engine.main_questions),
     }

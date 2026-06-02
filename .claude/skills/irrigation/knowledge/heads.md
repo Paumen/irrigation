@@ -17,7 +17,7 @@ contents:
 
 The heads are the parts that actually throw water at the lawn. Three components (see `setup.yaml` for what is fitted per zone):
 
-- **I-20 rotors** — pop-up rotors for the large open areas (long throw, slow rotation).
+- **I-20 rotors** — pop-up rotors for the large open areas (long radius, slow rotation).
 - **Pro-Spray PRS40 bodies** — pressure-regulated pop-up bodies (~2.8 bar at the nozzle) that carry the MP nozzles.
 - **MP Rotator nozzles** — multi-stream nozzles that screw into the PRS40 for tighter, slower coverage of flower beds and odd-shaped areas.
 
@@ -104,7 +104,7 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
 **Radius adjustment (up to −25%).**
 1. Insert the 3/32" Allen end into the radius (retention) screw on top of the nozzle.
-2. Clockwise into the stream = shorter throw; counterclockwise = longer throw. Best done with water on so you can see the change.
+2. Clockwise into the stream = shorter radius; counterclockwise = longer radius. Best done with water on so you can see the change.
 3. **⚠️ More than five full clockwise turns can drop the screw out of the nozzle.** Replacement screw is sold separately if lost.
 
 ![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](../media/head-rotor-instruction-arc-radius-adjust.png)

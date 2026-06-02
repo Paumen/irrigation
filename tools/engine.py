@@ -40,9 +40,9 @@ class Engine:
             if not kids:
                 out[k] = v
                 continue
-            for cid in kids:
-                if cid not in effects:
-                    out[cid] = v
+            for cause_id in kids:
+                if cause_id not in effects:
+                    out[cause_id] = v
         return out
 
     def _expand_step_rows(self, q: dict) -> list[dict]:
@@ -61,7 +61,7 @@ class Engine:
                     effects: dict[str, float] = {}
                 else:
                     val = curve[i - 1] if i - 1 < len(curve) else 0
-                    effects = {cid: val for cid in causes}
+                    effects = {cause_id: val for cause_id in causes}
                 steps.append({"label": label, "effects": effects})
             result.append({**row, "steps": steps})
         return result
@@ -101,16 +101,16 @@ class Engine:
         if t == "options":
             if not isinstance(ans, int) or isinstance(ans, bool) or ans < 0 or ans >= len(q["options"]):
                 return
-            for cid, delta in q["options"][ans]["effects"].items():
-                s[cid] = s.get(cid, 0) + delta
+            for cause_id, delta in q["options"][ans]["effects"].items():
+                s[cause_id] = s.get(cause_id, 0) + delta
         elif t == "multi":
             if not isinstance(ans, list):
                 return
             for i in ans:
                 if not isinstance(i, int) or isinstance(i, bool) or i < 0 or i >= len(q["options"]):
                     continue
-                for cid, delta in q["options"][i]["effects"].items():
-                    s[cid] = s.get(cid, 0) + delta
+                for cause_id, delta in q["options"][i]["effects"].items():
+                    s[cause_id] = s.get(cause_id, 0) + delta
         elif t == "matrix":
             if not isinstance(ans, dict):
                 return
@@ -119,8 +119,8 @@ class Engine:
                 m = col_mul.get(ans.get(row["id"], "no"), 0)
                 if m == 0:
                     continue
-                for cid, delta in row["effects"].items():
-                    s[cid] = s.get(cid, 0) + delta * m
+                for cause_id, delta in row["effects"].items():
+                    s[cause_id] = s.get(cause_id, 0) + delta * m
         elif t == "ages":
             if not isinstance(ans, dict):
                 return
@@ -128,8 +128,8 @@ class Engine:
                 idx = ans.get(row["id"])
                 if idx is None or not isinstance(idx, int) or idx < 0 or idx >= len(row["steps"]):
                     continue
-                for cid, delta in row["steps"][idx]["effects"].items():
-                    s[cid] = s.get(cid, 0) + delta
+                for cause_id, delta in row["steps"][idx]["effects"].items():
+                    s[cause_id] = s.get(cause_id, 0) + delta
 
     def _cause_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
         t = q["type"]
@@ -197,22 +197,22 @@ class Engine:
             return isinstance(ans, dict)
         return False
 
-    def is_answered(self, qid: str, ans: Any) -> bool:
+    def is_answered(self, question_id: str, ans: Any) -> bool:
         if ans is None:
             return False
-        q = self.q_by_id.get(qid)
+        q = self.q_by_id.get(question_id)
         if not q:
             return False
         return self._ans_is_present(q, ans)
 
-    def is_completed(self, qid: str, answers: dict | None = None, skipped: dict | None = None) -> bool:
+    def is_completed(self, question_id: str, answers: dict | None = None, skipped: dict | None = None) -> bool:
         answers = answers or {}
         skipped = skipped or {}
-        return self.is_answered(qid, answers.get(qid)) or bool(skipped.get(qid))
+        return self.is_answered(question_id, answers.get(question_id)) or bool(skipped.get(question_id))
 
     def rank(self, answers: dict | None = None) -> list[dict]:
         answers = answers or {}
-        s: dict[str, float] = {cid: self.causes[cid]["baseline"] for cid in self.all_ids}
+        s: dict[str, float] = {cause_id: self.causes[cause_id]["baseline"] for cause_id in self.all_ids}
         for q in self.questions:
             ans = answers.get(q["id"])
             if ans is None:
@@ -221,11 +221,11 @@ class Engine:
         pos_total = sum(max(0, v) for v in s.values())
         result = [
             {
-                "id": cid,
-                "score": s[cid],
-                "pct": (max(0, s[cid]) / pos_total * 100) if pos_total > 0 else 0,
+                "id": cause_id,
+                "score": s[cause_id],
+                "percent": (max(0, s[cause_id]) / pos_total * 100) if pos_total > 0 else 0,
             }
-            for cid in self.all_ids
+            for cause_id in self.all_ids
         ]
         result.sort(key=lambda r: -r["score"])
         return result
@@ -234,9 +234,9 @@ class Engine:
         ranked = self.rank(answers)
         if not ranked:
             return []
-        leader = ranked[0]["pct"]
+        leader = ranked[0]["percent"]
         cutoff = max(2, leader * 0.3)
-        ids = [r["id"] for r in ranked if r["pct"] >= cutoff]
+        ids = [r["id"] for r in ranked if r["percent"] >= cutoff]
         if len(ids) >= 3:
             return ids
         return [r["id"] for r in ranked[:3]]
@@ -276,11 +276,11 @@ class Engine:
             cands.append((q["id"], info, effort))
         m: dict[str, float] = {}
         mx = 0.0
-        for qid, info, effort in cands:
+        for question_id, info, effort in cands:
             # ease is a bounded tie-breaker; must not outweigh separation (info).
             ease = (effort / max_effort) if max_effort > 0 else 0.0
             D = info * (1 + self._ease_weight * ease)
-            m[qid] = D
+            m[question_id] = D
             if D > mx:
                 mx = D
         return {"map": m, "max": mx}
@@ -288,8 +288,8 @@ class Engine:
     def recommendations(self, answers: dict | None = None, skipped: dict | None = None) -> list[dict]:
         d = self.discriminators(answers, skipped)
         items = [
-            {"q": self.q_by_id[qid], "D": D}
-            for qid, D in d["map"].items()
+            {"q": self.q_by_id[question_id], "D": D}
+            for question_id, D in d["map"].items()
             if D > 0
         ]
         items.sort(key=lambda x: -x["D"])

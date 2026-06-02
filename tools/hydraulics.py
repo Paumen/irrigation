@@ -199,21 +199,21 @@ def build_graph(sys_data: dict) -> dict[str, Node]:
     types = sys_data.get("types", {})
     feeds = sys_data["feeds"]
     nodes: dict[str, Node] = {}
-    for nid, spec in feeds.items():
+    for node_id, spec in feeds.items():
         spec = spec or {}
-        scope, dtype, _ = parse_id(nid)
+        scope, dtype, _ = parse_id(node_id)
         merged = {**(types.get(dtype) or {}),
                   **{k: v for k, v in spec.items() if k != "to"}}
-        nodes[nid] = Node(id=nid, scope=scope, dtype=dtype, fields=merged,
+        nodes[node_id] = Node(id=node_id, scope=scope, dtype=dtype, fields=merged,
                           children=list(spec.get("to") or []))
-    for nid, n in nodes.items():
+    for node_id, n in nodes.items():
         for c in n.children:
             if c not in nodes:
-                raise ValueError(f"node {nid!r} feeds unknown node {c!r}")
+                raise ValueError(f"node {node_id!r} feeds unknown node {c!r}")
             if nodes[c].parent is not None:
                 raise ValueError(f"node {c!r} has multiple parents "
-                                 f"({nodes[c].parent!r} and {nid!r}); graph must be a tree")
-            nodes[c].parent = nid
+                                 f"({nodes[c].parent!r} and {node_id!r}); graph must be a tree")
+            nodes[c].parent = node_id
     return nodes
 
 
@@ -221,21 +221,21 @@ def _compute_heights(nodes: dict[str, Node]) -> dict[str, float]:
     """Elevation per node: own height_m, else inherited from nearest ancestor."""
     h: dict[str, float] = {}
 
-    def gh(nid: str) -> float:
-        if nid in h:
-            return h[nid]
-        n = nodes[nid]
+    def gh(node_id: str) -> float:
+        if node_id in h:
+            return h[node_id]
+        n = nodes[node_id]
         v = n.fields.get("height_m")
         if v is not None:
-            h[nid] = float(v)
+            h[node_id] = float(v)
         elif n.parent is not None:
-            h[nid] = gh(n.parent)
+            h[node_id] = gh(n.parent)
         else:
-            h[nid] = 0.0
-        return h[nid]
+            h[node_id] = 0.0
+        return h[node_id]
 
-    for nid in nodes:
-        gh(nid)
+    for node_id in nodes:
+        gh(node_id)
     return h
 
 
@@ -266,8 +266,8 @@ def ordered_leaves(nodes: dict[str, Node], scope: str) -> list[Node]:
     if entry is None:
         return out
 
-    def dfs(nid: str) -> None:
-        n = nodes[nid]
+    def dfs(node_id: str) -> None:
+        n = nodes[node_id]
         if n.is_leaf:
             out.append(n)
             return
@@ -370,16 +370,16 @@ def subtree_flows(nodes: dict[str, Node], leaf_q: dict[str, float]) -> dict[str,
     it. Inactive leaves are absent from leaf_q (treated as 0)."""
     memo: dict[str, float] = {}
 
-    def f(nid: str) -> float:
-        if nid in memo:
-            return memo[nid]
-        n = nodes[nid]
-        v = leaf_q.get(nid, 0.0) if n.is_leaf else sum(f(c) for c in n.children)
-        memo[nid] = v
+    def f(node_id: str) -> float:
+        if node_id in memo:
+            return memo[node_id]
+        n = nodes[node_id]
+        v = leaf_q.get(node_id, 0.0) if n.is_leaf else sum(f(c) for c in n.children)
+        memo[node_id] = v
         return v
 
-    for nid in nodes:
-        f(nid)
+    for node_id in nodes:
+        f(node_id)
     return memo
 
 
@@ -402,13 +402,13 @@ def _propagate(nodes: dict[str, Node], start: str, p_head: dict[str, float],
                sub: dict[str, float], heights: dict[str, float], env: dict) -> None:
     stack = [start]
     while stack:
-        nid = stack.pop()
-        for c in nodes[nid].children:
+        node_id = stack.pop()
+        for c in nodes[node_id].children:
             child = nodes[c]
-            loss = ((heights[c] - heights[nid])
+            loss = ((heights[c] - heights[node_id])
                     + _edge_friction_m(child, sub.get(c, 0.0), env)
                     + _edge_minor_m(child, sub.get(c, 0.0), env))
-            p_head[c] = p_head[nid] - loss
+            p_head[c] = p_head[node_id] - loss
             stack.append(c)
 
 
@@ -501,10 +501,10 @@ def _solve_state(active_scopes: set[str], nodes: dict[str, Node],
 
 def _path_to(nodes: dict[str, Node], leaf_id: str, stop_id: str):
     """Yield each node from leaf up to (excluding) stop_id."""
-    nid = leaf_id
-    while nid != stop_id and nodes[nid].parent is not None:
-        yield nodes[nid]
-        nid = nodes[nid].parent
+    node_id = leaf_id
+    while node_id != stop_id and nodes[node_id].parent is not None:
+        yield nodes[node_id]
+        node_id = nodes[node_id].parent
 
 
 def _pressure_uniformity(zone_id: int, head_out: list[dict]) -> tuple[float | None, list[str]]:
@@ -596,7 +596,7 @@ def _zone_dict(scope: str, nodes: dict[str, Node], state: dict,
     head_out, flags = _head_output(scope, nodes, state, heights, valve_id, env)
     q_zone = sum(state["leaf_q"].get(lf.id, 0.0) for lf in ordered_leaves(nodes, scope))
     pressures = [h["pressure_bar"] for h in head_out]
-    spread_pct, uflags = _pressure_uniformity(zone_id, head_out)
+    spread_percent, uflags = _pressure_uniformity(zone_id, head_out)
     flags = flags + uflags
     if state.get("converged") is False:
         flags = flags + [f"zone {zone_id} solve did not converge in "
@@ -630,7 +630,7 @@ def _zone_dict(scope: str, nodes: dict[str, Node], state: dict,
         "flow_m3h": round(q_zone, 3),
         "pump": pump_pt,
         "head_pressure_bar": {"min": min(pressures), "max": max(pressures)} if pressures else None,
-        "pressure_spread_pct": spread_pct,
+        "pressure_spread_percent": spread_percent,
         "node_pressures_bar": node_pressures,
         "loss_breakdown_bar": loss_breakdown,
         "heads": head_out,
@@ -923,7 +923,7 @@ def _health(zones: list[dict], wl: dict) -> dict:
                               "note": "—"}
 
     spread_flags = [f for z in zones for f in z.get("flags", []) if "pressure spread" in f]
-    worst_spread = max((z.get("pressure_spread_pct") or 0.0 for z in zones), default=0.0)
+    worst_spread = max((z.get("pressure_spread_percent") or 0.0 for z in zones), default=0.0)
     checks["uniformity"] = {
         "label": "Coverage evenness", "status": "warning" if spread_flags else "ok",
         "unit": "%", "kind": "ceiling", "value": r1(worst_spread), "min": 0.0,
@@ -966,7 +966,7 @@ def _health(zones: list[dict], wl: dict) -> dict:
             "status": "warning" if z.get("flags") else "ok",
             "flow_m3h": r1(z["flow_m3h"]),
             "head_pressure_bar": [r1(hp["min"]), r1(hp["max"])] if hp else None,
-            "spread_pct": r1(z.get("pressure_spread_pct")),
+            "spread_percent": r1(z.get("pressure_spread_percent")),
             "flags": z.get("flags", []),
         })
 

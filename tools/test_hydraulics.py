@@ -154,12 +154,12 @@ check("concurrent with Z5 runs", 5 in c25["concurrent"]["zones_running"]
       and c25["concurrent"]["combined_flow_m3h"] > 0, str(c25["concurrent"]["zones_running"]))
 
 z2 = base["zones"][1]
-check("zone reports pressure spread pct", isinstance(z2["pressure_spread_pct"], float),
-      str(z2.get("pressure_spread_pct")))
+check("zone reports pressure spread percent", isinstance(z2["pressure_spread_percent"], float),
+      str(z2.get("pressure_spread_percent")))
 exp_spread = round((z2["head_pressure_bar"]["max"] - z2["head_pressure_bar"]["min"])
                    / z2["head_pressure_bar"]["max"] * 100, 1)
-check("pressure spread matches head min/max", abs(z2["pressure_spread_pct"] - exp_spread) < 0.05,
-      f"{z2['pressure_spread_pct']} vs {exp_spread}")
+check("pressure spread matches head min/max", abs(z2["pressure_spread_percent"] - exp_spread) < 0.05,
+      f"{z2['pressure_spread_percent']} vs {exp_spread}")
 check("balanced baseline raises no spread flag",
       not any("pressure spread" in f for f in z2["flags"]), str(z2["flags"]))
 _, wide = _pressure_uniformity(9, [{"kind": "I-20", "pressure_bar": 3.0},
@@ -204,7 +204,7 @@ check("velocity gauge band is 0..limit",
       str(h["checks"]["velocity"]))
 check("health has a zone line per zone", len(h["zones"]) == len(base["zones"]),
       f"{len(h['zones'])} vs {len(base['zones'])}")
-check("health capacity reports pump load pct",
+check("health capacity reports pump load percent",
       h["capacity"] is not None and 0 < h["capacity"]["pump_load_pct"] < 100,
       str(h["capacity"]))
 check("baseline health has no hard violations", h["violations"] == [], str(h["violations"]))

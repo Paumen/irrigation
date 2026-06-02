@@ -175,10 +175,10 @@ def build_key(fault: str) -> dict:
 @dataclass
 class Step:
     i: int            # 1-based ordinal among *answered* questions
-    qid: str
+    question_id: str
     rank: int         # 1 = top
     top3: list[str]
-    pct: float
+    percent: float
 
 
 @dataclass
@@ -187,7 +187,7 @@ class Trajectory:
     steps: list[Step]
     skipped: list[str]      # recommended but with no answer in the key
     base_rank: int          # rank before any question is answered
-    # (qid, rank) per answered question; (qid, None) when recommended but skipped.
+    # (question_id, rank) per answered question; (question_id, None) when recommended but skipped.
     events: list[tuple[str, int | None]] = field(default_factory=list)
 
     @property
@@ -234,18 +234,18 @@ def simulate(fault: str, n: int = DEPTH) -> Trajectory:
         recs = ENG.recommendations(answers, skipped)
         if not recs:
             break
-        qid = recs[0]["q"]["id"]
-        if qid in key:
-            answers[qid] = key[qid]
+        question_id = recs[0]["q"]["id"]
+        if question_id in key:
+            answers[question_id] = key[question_id]
             ranked = ENG.rank(answers)
             rank = next(i for i, r in enumerate(ranked, 1) if r["id"] == fault)
-            pct = next(r["pct"] for r in ranked if r["id"] == fault)
-            steps.append(Step(len(steps) + 1, qid, rank, [r["id"] for r in ranked[:3]], pct))
-            events.append((qid, rank))
+            percent = next(r["percent"] for r in ranked if r["id"] == fault)
+            steps.append(Step(len(steps) + 1, question_id, rank, [r["id"] for r in ranked[:3]], percent))
+            events.append((question_id, rank))
         else:
-            skipped[qid] = True
-            asked_skips.append(qid)
-            events.append((qid, None))
+            skipped[question_id] = True
+            asked_skips.append(question_id)
+            events.append((question_id, None))
     return Trajectory(fault, steps, asked_skips, base_rank, events)
 
 
@@ -324,24 +324,24 @@ def simulate_noisy(fault: str, noise_rate: float, rng: random.Random,
         recs = ENG.recommendations(answers, skipped)
         if not recs:
             break
-        qid = recs[0]["q"]["id"]
+        question_id = recs[0]["q"]["id"]
         err = rng.random() < noise_rate
-        if qid in key:
+        if question_id in key:
             if err and rng.random() < skip_error_share:
-                skipped[qid] = True       # accidental skip of an answerable question
-                asked_skips.append(qid)
+                skipped[question_id] = True       # accidental skip of an answerable question
+                asked_skips.append(question_id)
                 continue
-            answers[qid] = random_answer(ENG.q_by_id[qid], rng) if err else key[qid]
+            answers[question_id] = random_answer(ENG.q_by_id[question_id], rng) if err else key[question_id]
         else:
             if not err:
-                skipped[qid] = True        # genuine don't-know / not-applicable skip
-                asked_skips.append(qid)
+                skipped[question_id] = True        # genuine don't-know / not-applicable skip
+                asked_skips.append(question_id)
                 continue
-            answers[qid] = random_answer(ENG.q_by_id[qid], rng)  # guessed instead of skipping
+            answers[question_id] = random_answer(ENG.q_by_id[question_id], rng)  # guessed instead of skipping
         ranked = ENG.rank(answers)
         rank = next(i for i, r in enumerate(ranked, 1) if r["id"] == fault)
-        pct = next(r["pct"] for r in ranked if r["id"] == fault)
-        steps.append(Step(len(steps) + 1, qid, rank, [r["id"] for r in ranked[:3]], pct))
+        percent = next(r["percent"] for r in ranked if r["id"] == fault)
+        steps.append(Step(len(steps) + 1, question_id, rank, [r["id"] for r in ranked[:3]], percent))
     return Trajectory(fault, steps, asked_skips, base_rank)
 
 

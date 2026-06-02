@@ -107,14 +107,14 @@ def validate_data() -> None:
             check(f"{q['id']} answer under {MAX_ANSWER_LEN}", len(lbl) < MAX_ANSWER_LEN,
                   f"{len(lbl)} chars: {lbl!r}")
         for label, effects in _answer_effects(q):
-            for cid, v in effects.items():
+            for cause_id, v in effects.items():
                 check(f"{q['id']} [{label}] effect on grid", v in ALLOWED_EFFECTS,
-                      f"{cid}={v} not in {sorted(ALLOWED_EFFECTS)}")
+                      f"{cause_id}={v} not in {sorted(ALLOWED_EFFECTS)}")
             keys = set(effects)
-            for cid in keys:
-                clash = keys & _descendants(cid)
+            for cause_id in keys:
+                clash = keys & _descendants(cause_id)
                 check(f"{q['id']} [{label}] no parent+child effect", not clash,
-                      f"{cid} given alongside descendant(s) {sorted(clash)}")
+                      f"{cause_id} given alongside descendant(s) {sorted(clash)}")
 
 
 def compute_metrics() -> dict:

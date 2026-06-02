@@ -54,13 +54,13 @@ def gather() -> dict:
         t = trajs[f]
         prev = t.base_rank
         for s in t.steps:
-            d = qstats.setdefault(s.qid, {"asked": 0, "positions": [], "deltas": []})
+            d = qstats.setdefault(s.question_id, {"asked": 0, "positions": [], "deltas": []})
             d["asked"] += 1
             d["positions"].append(s.i)
             d["deltas"].append(prev - s.rank)
             prev = s.rank
 
-    for qid, d in qstats.items():
+    for question_id, d in qstats.items():
         d["med_pos"] = statistics.median(d["positions"])
         d["mean_work"] = statistics.fmean(d["deltas"])
 
@@ -265,15 +265,15 @@ def sec_questions(g: dict) -> list[str]:
         "| Q | Work | Asked | Scope | Force | Rule-out | Shape |",
         "|---|:--:|:--:|:--|:--|:--:|:--|",
     ]
-    for qid, d in sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"]):
-        p = prof[qid]
+    for question_id, d in sorted(qs.items(), key=lambda kv: -kv[1]["mean_work"]):
+        p = prof[question_id]
         work = f"{work_cell(d['mean_work'])} {d['mean_work']:+.1f}"
         scope = f"{minibar(p['families'] / 9)} {p['families']}"
         force = f"{force_meter(p['max_push'])} {force_label(p['max_push'])}"
         rout = f"{ruleout_sign(p['ruleout'])} {p['ruleout']*100:.0f}%"
         shape = f"{shape_spark(p['top_share'])} {shape_label(p['top_share'])}"
         out.append(
-            f"| {qid} | {work} | {d['asked']/n_runs*100:.0f}% | {scope} | {force} | "
+            f"| {question_id} | {work} | {d['asked']/n_runs*100:.0f}% | {scope} | {force} | "
             f"{rout} | {shape} |"
         )
 
@@ -308,14 +308,14 @@ def as_json(g: dict) -> str:
         "family_mix": g["family_mix"],
         "faults": [dict(r) for r in g["rows"]],
         "questions": {
-            qid: {
+            question_id: {
                 "asked": d["asked"],
                 "median_position": d["med_pos"],
                 "mean_work": round(d["mean_work"], 3),
                 **{k: round(v, 3) if isinstance(v, float) else v
-                   for k, v in g["profile"][qid].items()},
+                   for k, v in g["profile"][question_id].items()},
             }
-            for qid, d in g["qstats"].items()
+            for question_id, d in g["qstats"].items()
         },
         "robustness": {f: v for f, v in g["robustness"].items()},
     }

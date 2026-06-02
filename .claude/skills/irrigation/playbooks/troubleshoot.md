@@ -45,7 +45,7 @@ These are *your* priors for reading the topology and the tool's output, not user
 - the user says they found the cause, fixed it, or want to stop.
 
 ## Tool response shape
-`diagnose_irrigation(answers, skipped)` returns `ranked` (top causes, each `id` / `label` / `pct` / `score`), `next` (recommended questions, ordered by `D`), and counts (`answered_count`, `skipped_count`, `total_questions` — read the live count, don't hard-code). Each `next` question carries:
+`diagnose_irrigation(answers, skipped)` returns `ranked` (top causes, each `id` / `label` / `percent` / `score`), `next` (recommended questions, ordered by `D`), and counts (`answered_count`, `skipped_count`, `total_questions` — read the live count, don't hard-code). Each `next` question carries:
 - `type` — `options` | `multi` | `matrix` | `ages`. **Branch on this, not on the question id.**
 - `text`, `stage`, `context` (the bucket — batch same-`context` questions), `optional`, `D` and its `factors` (`isolation` / `breadth` / `effort` — `effort` higher = easier; see *Reading effort*).
 - shape-specific: `options[]` (+ `multiselect` for `multi`), `columns[]` / `rows[]` (matrix), `stepLabels` (ages).
@@ -60,7 +60,7 @@ The interactive question tool holds up to four questions per call, each with ≤
 - **`matrix`** — multiselect the rows, then ask `columns` as options for each selected row.
 - **`ages`** — for each row, read the equipment's model and `installed` date from `setup.yaml` (the canonical source — the tool no longer stores them), convert the install date to the matching age bucket using today's date, show that as the current value, and ask whether it's still right.
 
-"I don't know" / "skip" → `skipped[qid] = true`, never `answers`.
+"I don't know" / "skip" → `skipped[question_id] = true`, never `answers`.
 
 ## Answer shapes (what to send back)
 - `options`: integer index into `options[]`.
