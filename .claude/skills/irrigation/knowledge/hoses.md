@@ -95,8 +95,8 @@ This matters whenever you change the layout:
   at the removed head's location. That leaves an outlet-less stub from the
   upstream tee out to the cap, which will fill and freeze.
 - **Correct method:** dig up the *upstream* head's tee, cut the hose
-  just past the tee leaving enough pipe to glue a slip cap, glue a PVC end
-  cap on, and abandon the pipe to the removed head. The hose now ends
+  just past the tee, cap the stub with a compression cap or barbed plug +
+  hose clamp, and abandon the rest to the removed head. The hose now ends
   at a head again, so winterization can purge it.
 - **Removing a head in the middle of a hose:** same fix is not needed
   — water still has somewhere to go (the heads further downstream), so
@@ -131,28 +131,29 @@ use the hose):**
 
 **Case B — head is the last one on its hose (no heads downstream of it):**
 
-This is the case that requires the dead-end rule above. The pipe between
+This is the case that requires the dead-end rule above. The hose between
 the upstream tee and the removed head's location would become an outlet-
 less stub, which will freeze and split. So you don't cap *at* the removed
 head — you cap at the *upstream* tee:
 
 1. Dig up the *upstream* head's tee on the same hose.
-2. Cut the hose just past the tee, leaving enough pipe stub to glue a
-   slip cap onto (a few cm).
-3. Glue a PVC slip end cap onto the stub using approved PVC glue.
+2. Cut the hose just past the tee, leaving a few cm of hose stub to cap.
+3. Cap the stub with a compression cap, or a barbed plug pushed in and
+   secured with a stainless hose clamp. (PE hose can't be solvent-welded —
+   no PVC glue.)
 4. Dig up the dirt around the head you wanted to remove and unscrew it
-   from its fitting. The pipe between the now-capped tee and the removed
+   from its fitting. The hose between the now-capped tee and the removed
    head is abandoned in place — it has no inlet and no outlet, so it
    simply sits in the soil. (If you want, you can also dig it up; it's
    not required.)
-5. ✅ Turn the zone on briefly to check for leaks at the new slip cap before
+5. ✅ Turn the zone on briefly to check for leaks at the new cap before
    backfilling either dig.
 
-**Materials.** PVC slip cap + approved PVC glue for slip joints, or a
-threaded cap + Teflon tape for threaded fittings. Both are sold at any
-hardware retailer in the relevant ½"/¾"/1" sizes.
+**Materials.** A compression cap or barbed plug + stainless hose clamp for
+the hose stub, or a threaded cap + Teflon tape for threaded fittings. Both
+are sold at any hardware retailer in the relevant 25 mm / ½"/¾"/1" sizes.
 
-**Always pressure-test before backfilling.** A glued slip cap that didn't
+**Always pressure-test before backfilling.** A compression cap that didn't
 seat properly will weep, and the cheapest time to find that out is before
 the trench is closed.
 

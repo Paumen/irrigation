@@ -35,7 +35,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **well** — the borehole the pump draws from (the water source).
 - **manifold** — the fitting where the main line fans out to the zone valves.
 - **zone** — one valve + its lateral hose + heads; run one at a time.
-- **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC a hose can't replace (e.g. a glued cap stub).
+- **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC a hose can't replace (e.g. a solvent-weld slip valve body).
 - **run** — to operate a zone, or one watering cycle.
 
 ### Fittings (hose/pipe joiners)
