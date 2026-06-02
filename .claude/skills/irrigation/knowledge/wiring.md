@@ -3,7 +3,7 @@ subject: Field wiring (24 V low-voltage)
 failure_mode_area: F3
 serves: [troubleshooting, test, install]
 coverage: partial
-summary: Partial — wire-length table, waterproof-connector rule, and the isolation tests; no deeper splice or common-wire fault detail yet.
+summary: Partial — wire-length table, waterproof-splice rule, and the isolation tests; no deeper splice or common-wire fault detail yet.
 read_when: a conductor, splice, or common is suspected; positively excluding wire length as a failure mode; isolating wiring vs valve vs controller.
 contents:
   - coverage note (what's missing)
@@ -17,7 +17,7 @@ contents:
 
 # Field wiring — 24 V low-voltage
 
-**Coverage note.** Sourced so far: the wire-length table, the waterproof-connector rule, and the
+**Coverage note.** Sourced so far: the wire-length table, the waterproof-splice rule, and the
 basic continuity/swap tests (carried in from the valve material). No deeper splice-level or
 common-wire fault detail yet. On short residential runs, wire length is almost certainly *not* a
 failure mode — the table is useful mainly to positively exclude it. (Check the actual run lengths in

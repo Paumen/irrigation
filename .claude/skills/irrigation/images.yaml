@@ -94,7 +94,7 @@ images:
 
   IMG.fitting-joint-product-compression-male:
     file: media/fitting-joint-product-compression-male.jpg
-    caption: PE compression × male-thread adapter — green compression nut grips the poly hose (push in, hand-tighten the nut), tapered male thread on the other end. Joins buried 25/32 mm hose to a threaded fitting without glue or heat.
+    caption: PE compression × male-thread adapter — green compression nut grips the poly hose (push in, hand-tighten the nut), tapered male thread on the other end. Joins buried 25 or 32 mm hose to a threaded fitting without glue or heat.
     subjects: [hoses]
     procedures: [valve_install]
     relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the hose OD — the bare-thread (grip-sealed) outlet joint to the hose.25 poly run; filed under hoses, so a valve-keyed scan misses it without the procedures tag
