@@ -608,9 +608,9 @@ images:
 
   IMG.valve-auto-breakdown-pgv-replacement-parts:
     file: media/valve-auto-breakdown-pgv-replacement-parts.png
-    caption: PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly (434100 AC / 458200 DC), bonnet, diaphragm assembly (332100), spring (266000), support ring (331300), body, flow control handle.
+    caption: PGV-100G/101G exploded parts diagram with Hunter catalog numbers — solenoid assembly (434100), bonnet, diaphragm assembly (332100), spring (266000), support ring (331300), body, flow control handle.
     subjects: [valve, valve-internals, valve-solenoid]
-    legend: {1: "Solenoid Assembly (incl. parts 2 & 3) — 434100 AC / 458200 DC", 2: "O-Ring — 262600", 3: "Solenoid Seal — 364400", 4: "Bonnet Screw — 427300", 5: "Bonnet without Flow Control — 458000", 6: "Bonnet with Flow Control — 435005", 7: "Diaphragm Spring — 266000", 8: "Diaphragm Assembly — 332100", 9: "Diaphragm Support Ring — 331300", 10: "Body — 457700 Fem-NPT / 457705 Fem-BSP / 457710 slip×slip / 433400 M×M NPT / 433405 M×M BSP / 460700 M×barb NPT / 460705 M×barb BSP", 11: "Flow Control Handle — 269200 black / 269205 purple"}
+    legend: {1: "Solenoid Assembly (incl. parts 2 & 3) — 434100", 2: "O-Ring — 262600", 3: "Solenoid Seal — 364400", 4: "Bonnet Screw — 427300", 5: "Bonnet without Flow Control — 458000", 6: "Bonnet with Flow Control — 435005", 7: "Diaphragm Spring — 266000", 8: "Diaphragm Assembly — 332100", 9: "Diaphragm Support Ring — 331300", 10: "Body — 457700 Fem-NPT / 457705 Fem-BSP / 433400 M×M NPT / 433405 M×M BSP / 460700 M×barb NPT / 460705 M×barb BSP", 11: "Flow Control Handle — 269200 black / 269205 purple"}
     causes: [F7]
     relates: source for the replacement-part catalog numbers; identify which part to order
     used_in: [valve.md]

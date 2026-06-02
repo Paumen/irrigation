@@ -36,7 +36,7 @@ exhaust/entry ports). Much of what isolates or excludes a valve cause lives in t
 
 ![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](../media/valve-auto-product-pgv-internals-cutaway.jpg)
 
-Water enters from the system main line and pushes against the centre of the diaphragm.
+Water enters from the system main hose and pushes against the centre of the diaphragm.
 A small orifice in the diaphragm lets water bleed through into the upper chamber, between
 the diaphragm and the bonnet. From there it travels on through a port in the bonnet to the
 solenoid area. The solenoid holds a light, spring-loaded metal piston that — when the valve
@@ -146,7 +146,7 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 ## Installation (and how to avoid causing damage)
 
 **The quick tell that answers most "where does the teflon go" questions — lead with it, in these
-words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the pipe,
+words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the hose,
 leave the threads bare — the rubber or the clamp is what seals.** ⚠️ Taping those threads stops
 the rubber seating or the nut pulling up tight, which leaks. Teflon only goes where bare thread
 screws into bare thread — the tapered male threads going into a female port (the valve's
@@ -156,7 +156,7 @@ inlet/outlet). "Rubber O-ring" is the phrase a homeowner gets instantly; reach f
 In *this* system two joints flank the valve, and both keep their threads bare (no teflon): the
 **manifold swivel nut** on the inlet (the loose ring-nut with a rubber O-ring inside) and the
 **PE compression nut** where the outlet meets the `hose.25` poly run (the green nut that clamps
-onto the pipe). Give the paste/tape mechanics below after the quick tell — don't make the user
+onto the hose). Give the paste/tape mechanics below after the quick tell — don't make the user
 pull it out over several turns.
 
 ![Flow direction — arrow toward the heads](../media/valve-auto-instruction-flow-direction.png)
@@ -180,7 +180,7 @@ convenience.
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
 with another. Cut threads avoid this.
 
-![PTFE thread-sealing tape — the teflon tape wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
+![Teflon tape — wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
 
 **⚠️ Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
 while the paste acts as a lubricant; the installer can then unintentionally drive the male
@@ -225,7 +225,7 @@ Run the checklist in cheapest-first order:
 There are two distinct causes, and the most common one is **not** the valve:
 
 - **Low-head drainage (most common).** The lowest head on a zone lets water drain out of the
-  hose after the valve closes. The tell: residual water stops once the pipe has emptied,
+  hose after the valve closes. The tell: residual water stops once the hose has emptied,
   then stays dry. This is a head/hose issue, fixed with check valves (e.g. HCV) on heads or
   hoses — a check valve in the head will *not* fix a valve leak, and vice versa. See `heads.md`.
 - **Water passing through the zone valve.** Usually debris holding the diaphragm off its seat,
@@ -252,14 +252,14 @@ match can be ruled out during identification. Confirm which body is installed fr
 - **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
   and bleed on top. The reference above describes this body.
 - **Angle (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
-  deep main line; lower pressure loss than globe. Flow-direction arrow on the body.
+  deep main hose; lower pressure loss than globe. Flow-direction arrow on the body.
 
   ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-auto-product-pgv-101a-angle.jpg)
 
 - **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe hoses (common in cold-climate
   installs) — saves threading an adapter.
 
-  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly pipe. Other body style, for identification.](../media/valve-auto-product-pgv-101mb-barb.jpg)
+  ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly hose. Other body style, for identification.](../media/valve-auto-product-pgv-101mb-barb.jpg)
 
 - **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
   non-rising flow control handle; these are the sizes that accept the Accu-Set regulator.
@@ -271,8 +271,8 @@ match can be ruled out during identification. Confirm which body is installed fr
 Operating:
 - Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
 - Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
-- Maximum rated pressure: 10.3 bar (150 psi) — the ABS skirted bonnet holds this without softening
-  in hot weather (a known weakness of all-PVC valve bodies). Well within reach of typical residential pump pressures.
+- Maximum rated pressure: 10.3 bar — the ABS skirted bonnet holds this without softening
+  in hot weather. Well within reach of typical residential pump pressures.
 - Temperature rating: 66 °C
 - Warranty: 2 years
 
@@ -283,7 +283,7 @@ Solenoid (summary — full detail in `valve-solenoid.md`):
 - Coil resistance spec (Hunter PGV): 20–60 Ω
 
 Pressure loss across the 1" PGV (Globe body; converted from
-Hunter's GPM/PSI source table):
+Hunter's flow/pressure source table):
 
 | Flow (m³/h) | Flow (l/min) | Loss (bar) |
 |---|---|---|
@@ -320,8 +320,7 @@ The parts the homeowner can actually swap, with Hunter catalog numbers:
 
 | Part | Catalog No. |
 |---|---|
-| Solenoid assembly — AC (incl. O-ring + seal) | 434100 |
-| Solenoid assembly — DC latching (factory option) | 458200 |
+| Solenoid assembly (incl. O-ring + seal) | 434100 |
 | Solenoid O-ring | 262600 |
 | Solenoid seal | 364400 |
 | Bonnet screw | 427300 |

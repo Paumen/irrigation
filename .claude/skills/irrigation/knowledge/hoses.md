@@ -3,8 +3,8 @@ subject: Hoses
 root_cause_area: F8
 serves: [troubleshooting, maintain, install, how-it-works]
 coverage: partial
-summary: Partial — the broken-hose signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a pipe, and basic field-diagnosis of a punctured hose. No deep hydraulic-design content yet.
-read_when: a whole zone has gone weak with no visible head fault; one or more heads on a zone won't pop up while others on the same zone are normal; you find a persistent wet patch or soft ground along a known hose run; you're removing a head or restructuring a zone and a stub will be left behind; you suspect recent garden/fence/driveway work damaged a pipe.
+summary: Partial — the broken-hose signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a hose, and basic field-diagnosis of a punctured hose. No deep hydraulic-design content yet.
+read_when: a whole zone has gone weak with no visible head fault; one or more heads on a zone won't pop up while others on the same zone are normal; you find a persistent wet patch or soft ground along a known hose run; you're removing a head or restructuring a zone and a stub will be left behind; you suspect recent garden/fence/driveway work damaged a hose.
 contents:
   - what the hoses are
   - broken-hose signature (recent landscaping work)
@@ -16,15 +16,15 @@ contents:
 
 # Zone hoses — 25 mm PE, valve manifold to heads
 
-This is the **F8** neighbourhood: the polyethylene pipes that carry water from
+This is the **F8** neighbourhood: the polyethylene hoses that carry water from
 the valve manifold out to the heads on each zone. Each zone has its own buried
-hose (see `setup.yaml` for pipe sizes, hose count, and the per-zone head mix).
+hose (see `setup.yaml` for hose sizes, count, and the per-zone head mix).
 
 Read this when the engine narrows to F8, or when a head-side symptom (won't
 pop up, weak throw, brown spots on the far end of a zone) doesn't match
 anything wrong at the head itself. hoses fail mostly by **puncture** —
 people put a spade, a fence post, or a tree root through one — not by aging
-of the pipe.
+of the hose.
 
 ## Broken-hose signature
 
@@ -33,7 +33,7 @@ valve, or pump, almost always means a hose has been punctured. Hunter's
 own diagnosis flow for "rotor not fully popping up" calls this out
 explicitly: **look for new trees and shrub plantings, new or repaired
 fences, and recently dug ground** — these are the most common causes of a
-broken pipe.
+broken hose.
 
 The tells are:
 
@@ -47,7 +47,7 @@ The tells are:
   footing dug, paving lifted/relaid, mole/vole burrowing, root invasion
   from an established tree.
 - Pressure at the manifold is normal during a zone run (so the pump and
-  main line are fine), but **pressure at the far end of the zone is low**
+  main hose are fine), but **pressure at the far end of the zone is low**
   or there's visible flow loss between the manifold and the heads.
 
 When all four are present the diagnosis is essentially confirmed before
@@ -60,7 +60,7 @@ Cheapest-first checks before digging up the lawn:
 1. **Compare zones.** 🔌 Run each zone in turn at the controller.
    If only the suspect zone is weak, the fault is downstream of *that*
    zone's valve — i.e. its hose or its heads. If multiple zones are
-   weak, look upstream (main line F6, pump F5, controller call F2).
+   weak, look upstream (main hose F6, pump F5, controller call F2).
 2. 🔍 **Walk the hose path during the run.** A punctured hose pushes
    water into the soil. Look for a wet patch, soft/spongy ground,
    unusually dense grass, water bubbling at the surface, or a sinkhole
@@ -75,7 +75,7 @@ Cheapest-first checks before digging up the lawn:
    heads brackets the leak.
 5. **Manifold flow.** With the zone running and a manual gauge on the
    manifold tap (if fitted), zone flow should match the design — a sudden
-   step-up in flow with a step-down in pressure means the pipe is open
+   step-up in flow with a step-down in pressure means the hose is open
    to soil somewhere.
 
 If the leak isn't visible after a careful walk, the puncture is small or
@@ -85,8 +85,8 @@ clears, then dig only the short section that's left.
 ## Dead-end winterization rule
 
 In winterized regions (sustained sub-zero winters), the system is drained
-every autumn. **Water trapped in a pipe with no outlet will freeze, expand, and
-split the pipe.** That's why every hose has to end at a head (or a
+every autumn. **Water trapped in a hose with no outlet will freeze, expand, and
+split the hose.** That's why every hose has to end at a head (or a
 valved drain), not at an outlet-less stub.
 
 This matters whenever you change the layout:
@@ -95,8 +95,8 @@ This matters whenever you change the layout:
   at the removed head's location. That leaves an outlet-less stub from the
   upstream tee out to the cap, which will fill and freeze.
 - **Correct method:** dig up the *upstream* head's tee, cut the hose
-  just past the tee leaving enough pipe to glue a slip cap, glue a PVC end
-  cap on, and abandon the pipe to the removed head. The hose now ends
+  just past the tee, cap the stub with a compression cap or barbed plug +
+  hose clamp, and abandon the rest to the removed head. The hose now ends
   at a head again, so winterization can purge it.
 - **Removing a head in the middle of a hose:** same fix is not needed
   — water still has somewhere to go (the heads further downstream), so
@@ -105,7 +105,7 @@ This matters whenever you change the layout:
   in-ground*.
 - **Adding a head on a new spur off an existing hose:** the new spur
   must terminate at the new head, not extend past it. Don't pre-run
-  pipe "for future expansion" — that's exactly an outlet-less stub.
+  hose "for future expansion" — that's exactly an outlet-less stub.
 
 This rule applies to any winterized region. In a non-freezing region it's
 optional (water in the stub does nothing) but it's still the cleaner
@@ -131,28 +131,29 @@ use the hose):**
 
 **Case B — head is the last one on its hose (no heads downstream of it):**
 
-This is the case that requires the dead-end rule above. The pipe between
+This is the case that requires the dead-end rule above. The hose between
 the upstream tee and the removed head's location would become an outlet-
 less stub, which will freeze and split. So you don't cap *at* the removed
 head — you cap at the *upstream* tee:
 
 1. Dig up the *upstream* head's tee on the same hose.
-2. Cut the hose just past the tee, leaving enough pipe stub to glue a
-   slip cap onto (a few cm).
-3. Glue a PVC slip end cap onto the stub using approved PVC glue.
+2. Cut the hose just past the tee, leaving a few cm of hose stub to cap.
+3. Cap the stub with a compression cap, or a barbed plug pushed in and
+   secured with a stainless hose clamp. (PE hose can't be solvent-welded —
+   no PVC glue.)
 4. Dig up the dirt around the head you wanted to remove and unscrew it
-   from its fitting. The pipe between the now-capped tee and the removed
+   from its fitting. The hose between the now-capped tee and the removed
    head is abandoned in place — it has no inlet and no outlet, so it
    simply sits in the soil. (If you want, you can also dig it up; it's
    not required.)
-5. ✅ Turn the zone on briefly to check for leaks at the new slip cap before
+5. ✅ Turn the zone on briefly to check for leaks at the new cap before
    backfilling either dig.
 
-**Materials.** PVC slip cap + approved PVC glue for slip joints, or a
-threaded cap + Teflon tape for threaded fittings. Both are sold at any
-hardware retailer in the relevant ½"/¾"/1" sizes.
+**Materials.** A compression cap or barbed plug + stainless hose clamp for
+the hose stub, or a threaded cap + Teflon tape for threaded fittings. Both
+are sold at any hardware retailer in the relevant 25 mm / ½"/¾"/1" sizes.
 
-**Always pressure-test before backfilling.** A glued slip cap that didn't
+**Always pressure-test before backfilling.** A compression cap that didn't
 seat properly will weep, and the cheapest time to find that out is before
 the trench is closed.
 
@@ -165,6 +166,6 @@ the trench is closed.
   particularly *Weeping when off* and the diaphragm-not-fully-opening
   case, which can also present as a zone-wide pressure drop.
 - `valve-internals.md` — debris-on-diaphragm causing a partly-open
-  diaphragm, another zone-wide-weakness candidate.
+  diaphragm, another zone-wide-weakness suspect.
 - `wiring.md` — to exclude wiring on a "no flow at all" zone (different
   symptom from "weak flow", but worth ruling out at the same time).

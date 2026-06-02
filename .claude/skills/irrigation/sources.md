@@ -38,7 +38,7 @@ next to this file — matching how the agent resolves files at runtime.
 - Local doc: none yet.
 - Fallback: `media/pump-datasheet-dab-jet-102m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
-### F6 — Main line 
+### F6 — Main hose 
 - Local doc: none yet.
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
 - Design context: Hunter's "Controlling High Pressure" article (residential rotors) describes
@@ -58,7 +58,7 @@ next to this file — matching how the agent resolves files at runtime.
 - Read when: a whole zone is weak with no fault visible at the heads; one or more heads on a
   zone won't pop up while siblings on the same zone are fine; a persistent wet patch or soft
   ground along a known hose run; you're removing a head or restructuring a zone and a stub
-  will be left behind; you suspect recent garden / fence / driveway work damaged a pipe.
+  will be left behind; you suspect recent garden / fence / driveway work damaged a hose.
 - Fallback: IrrigationTutorials.com, then web. Hunter's "Rotor Not Fully Popping Up" article
   has the textbook broken-hose signature ("look for new trees and shrub plantings, new or
   repaired fences"); that material is already folded into `hoses.md`.
