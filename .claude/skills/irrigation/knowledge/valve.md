@@ -180,7 +180,7 @@ convenience.
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
 with another. Cut threads avoid this.
 
-![PTFE thread-sealing tape — the teflon tape wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
+![Teflon tape — wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
 
 **⚠️ Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
 while the paste acts as a lubricant; the installer can then unintentionally drive the male
@@ -272,7 +272,7 @@ Operating:
 - Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
 - Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
 - Maximum rated pressure: 10.3 bar (150 psi) — the ABS skirted bonnet holds this without softening
-  in hot weather (a known weakness of all-PVC valve bodies). Well within reach of typical residential pump pressures.
+  in hot weather. Well within reach of typical residential pump pressures.
 - Temperature rating: 66 °C
 - Warranty: 2 years
 
@@ -320,8 +320,7 @@ The parts the homeowner can actually swap, with Hunter catalog numbers:
 
 | Part | Catalog No. |
 |---|---|
-| Solenoid assembly — AC (incl. O-ring + seal) | 434100 |
-| Solenoid assembly — DC latching (factory option) | 458200 |
+| Solenoid assembly (incl. O-ring + seal) | 434100 |
 | Solenoid O-ring | 262600 |
 | Solenoid seal | 364400 |
 | Bonnet screw | 427300 |

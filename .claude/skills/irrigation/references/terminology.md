@@ -21,7 +21,6 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 4. **Name causes by F-code** (`F<component>.<mode>.<instance>`; see `docs/fcode_spec.md`).
 5. **Keep these near-homonyms distinct — never merge them:**
    - **pump-start relay** (PSR) vs **regulated spray body** (PRS) — a relay vs a head.
-   - **AC** vs **DC** — different solenoid part.
    - **fitting** (pipe joiner) vs **splice** / wire connector (wire joiner).
    - **port** (mechanical opening) vs **terminal** (electrical post).
    - **thread** vs **barb** — alternative outlet types, not synonyms.
@@ -35,7 +34,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **well** — the borehole the pump draws from (the water source).
 - **manifold** — the fitting where the main line fans out to the zone valves.
 - **zone** — one valve + its lateral hose + heads; run one at a time.
-- **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC a hose can't replace (e.g. a solvent-weld slip valve body).
+- **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC a hose can't replace (e.g. a rigid SCH80 riser nipple).
 - **run** — to operate a zone, or one watering cycle.
 
 ### Fittings (hose/pipe joiners)
@@ -43,7 +42,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **inlet / outlet** — the upstream / downstream ports of a valve or fitting.
 - **male thread / female thread** — the two mating thread genders.
 - **barb** — a ribbed poly-hose outlet (an alternative to threads).
-- **PTFE tape** ("teflon tape") — thread-seal tape on a male thread.
+- **Teflon tape** — thread-seal tape on a male thread.
 
 ### Valve
 - **valve** — automatic zone valve; opens / closes a zone.
@@ -85,7 +84,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **common** — the shared return wire (C).
 - **ground** — the earth wire.
 - **terminal** — an electrical screw post on the controller / relay.
-- **voltage** — electrical potential (24 VAC control side, mains pump side). Keep AC and DC distinct.
+- **voltage** — electrical potential (24 VAC control side, power supply on the pump side).
 - **MV (P/MV)** — the controller's pump / master-valve terminal.
 - **signal** — the control pulse to a valve.
 - **sensor** — a rain / wind / flow detector.
@@ -99,10 +98,10 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **resistance** — ohms, read on the multimeter.
 
 ### Diagnostics
-- **cause / failure mode** — a diagnosable root cause, formally an **F-code**.
+- **failure mode** — a diagnosable root cause, formally an **F-code** (use this, not "cause").
 - **fault / failure** — a broken state.
 - **symptom** — the observable problem the homeowner reports.
-- **suspect / candidate** — a likely cause under consideration.
+- **suspect** — a likely cause under consideration (use this, not "candidate").
 
 ### Skill loop
 - **question / answer / option** — the diagnostic Q&A loop.
@@ -127,7 +126,9 @@ Safe substitutions — the right word should be avoided in prose:
 | arc | angle |
 | multimeter | meter |
 | splice | wire connector |
-| PTFE tape | teflon tape |
+| Teflon tape | PTFE tape |
+| failure mode | cause |
+| suspect | candidate |
 
 Words to **keep** because they carry specific meaning (don't collapse to a generic): **weep**
 (valve leaking when off), **flush** (clearing a line), **clog**, **bleed**, **barb**, **diaphragm**.

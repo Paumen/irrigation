@@ -13,7 +13,7 @@ contents:
   - testing coil resistance
   - plunger check
   - clogged exhaust/entry port flush (safety-gated)
-  - replacing the solenoid (P/N 434100 AC; DC latching 458200)
+  - replacing the solenoid (P/N 434100)
   - wiring to the solenoid
 ---
 
@@ -126,9 +126,7 @@ If the controller delivers correct voltage (24–28 VAC) at the valve's wire con
 still won't operate, replace the solenoid. Shut off, unscrew the old solenoid counter-clockwise,
 fit the new one clockwise until snug, and reconnect with **waterproof** connectors (`wiring.md`).
 
-Part number: **434100** (AC solenoid assembly, includes O-ring 262600 and seal 364400). A
-**DC latching** solenoid (P/N **458200**) is offered as a factory option for battery/DC controllers.
-For an AC solenoid running off a mains-powered controller, the replacement is the AC 434100; confirm
+Part number: **434100** (solenoid assembly, includes O-ring 262600 and seal 364400). Confirm
 which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
