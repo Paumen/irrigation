@@ -12,7 +12,7 @@ contents:
   - flow control adjustment
   - bonnet air relief (water-hammer burp via the flow-control stem)
   - per-valve pressure regulation (Accusync) — system-wide vs per-valve vs at-the-head tiers
-  - installation (placement, arrow orientation, cut threads, teflon paste-or-tape rule, waterproof connectors)
+  - installation (placement, arrow orientation, cut threads, Teflon paste-or-tape rule, waterproof connectors)
   - external leak checklist
   - weeping when off (low-head drainage vs valve debris)
   - slow-closing valve (metering ports)
@@ -143,7 +143,7 @@ once the routine failure modes (filter, nozzle, riser seal, broken hose) are rul
 
 ## Installation (and how to avoid causing damage)
 
-**The quick tell that answers most "where does the teflon go" questions — lead with it, in these
+**The quick tell that answers most "where does the Teflon go" questions — lead with it, in these
 words: if the joint has a rubber O-ring (or rubber ring) inside, or its nut clamps onto the hose,
 leave the threads bare — the rubber or the clamp is what seals.** ⚠️ Taping those threads stops
 the rubber seating or the nut pulling up tight, which leaks. Teflon only goes where bare thread
@@ -151,7 +151,7 @@ screws into bare thread — the tapered male threads going into a female port (t
 inlet/outlet). "Rubber O-ring" is the phrase a homeowner gets instantly; reach for it before
 "washer" or "compression grip", and gloss those terms the first time you use them.
 
-In *this* system two joints flank the valve, and both keep their threads bare (no teflon): the
+In *this* system two joints flank the valve, and both keep their threads bare (no Teflon): the
 **manifold swivel nut** on the inlet (the loose ring-nut with a rubber O-ring inside) and the
 **PE compression nut** where the outlet meets the `hose.25` poly run (the green nut that clamps
 onto the hose). Give the paste/tape mechanics below after the quick tell — don't make the user
@@ -187,7 +187,7 @@ adapter in too far and **split the valve body**.
   more with a wrench.
 - Tape: wrap the thread three full times. Hand-tighten, then ~½ turn more with a wrench.
 
-So: teflon on the two valve ports only; both flanking nuts stay bare. The outlet adapter is a
+So: Teflon on the two valve ports only; both flanking nuts stay bare. The outlet adapter is a
 **PE compression × male-thread** fitting — the compression end must match the hose OD (25 mm here),
 distinct from the male × male double nipple that joins the manifold to the inlet.
 
