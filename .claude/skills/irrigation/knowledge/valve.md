@@ -145,6 +145,16 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ## Installation (and how to avoid causing damage)
 
+**The one rule that answers most "where does the teflon go" questions: seal a joint where the
+thread itself is the seal, leave the threads bare where a washer or grip does the sealing.**
+Tapered male threads going into a female port (the valve's inlet/outlet) get teflon. Joints
+that seal on a rubber washer or a compression grip do **not** — taping them stops the washer
+or grip seating, which leaks. In *this* system that means two bare-thread joints flank the
+valve: the **manifold swivel nut** on the inlet (seals on its rubber washer) and the **PE
+compression nut** where the outlet meets the `hose.25` poly run (seals on the pipe grip). Lead
+with this, then give the paste/tape mechanics below — don't make the user pull it out over
+several turns.
+
 ![Flow direction — arrow toward the heads](../media/valve-auto-instruction-flow-direction.png)
 
 ![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](../media/valve-auto-instruction-install-box.png)
@@ -173,12 +183,31 @@ adapter in too far and **split the valve body**.
   more with a wrench.
 - Tape: wrap the pipe three full times. Hand-tighten, then ~½ turn more with a wrench.
 
+So teflon lands only on the male nipple threads that screw into the valve's two female ports;
+the swivel-nut inlet and the compression-nut outlet of this system stay bare (see the rule at the
+top of this section). The outlet adapter is a **PE compression × male-thread** fitting — the
+compression end must match the hose OD (25 mm here); the genuinely useful fitting for the poly
+side, distinct from the male × male double nipple that joins the manifold to the inlet.
+
 **Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
 damage them.
 
 **Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
 Non-waterproof connections corrode, which raises electrical resistance; high resistance can
 blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
+
+### Cautions (all ⚠️)
+
+These are the install statements that carry the **⚠️** marker in a reply — each is "do this
+wrong and you damage the kit or it leaks". Tag them consistently; don't leave one bare because
+it read like ordinary advice.
+
+- ⚠️ **Tape *or* paste, never both** — together you can over-drive the nipple and split the valve body.
+- ⚠️ **No teflon on the manifold swivel nut or the compression nut** — they seal on a washer/grip; taping stops it seating and it leaks.
+- ⚠️ **Flow arrow toward the heads** — a backwards valve won't seat; the single most common new-install fault.
+- ⚠️ **Hand-tight only on the solenoid; never grip the solenoid or flow control as a handle** — you'll damage them.
+- ⚠️ **Waterproof connectors on the field-wire joints** — corroded joints raise resistance and trip the controller.
+- ⚠️ **Depressurise first** (pump off, run a zone) before opening anything under pressure.
 
 ## External leak (valve leaking to the outside)
 

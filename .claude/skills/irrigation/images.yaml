@@ -508,6 +508,19 @@ images:
     relates: install placement and valve-box context; coiled control-wire slack
     used_in: [valve.md]
 
+  # PENDING ASSET — the "where does teflon go" question has no direct image (only nipples and
+  # valve bodies, never teflon ON the threads). Drop a photo of PTFE tape wrapped on a male
+  # nipple thread at media/valve-auto-instruction-teflon-on-threads.jpg, then UNCOMMENT the
+  # entry below to make it live. Do NOT activate it before the file exists — a non-resolving
+  # file: path makes SendUserFile fail silently and looks like a broken image to the user.
+  # IMG.valve-auto-instruction-teflon-on-threads:
+  #   file: media/valve-auto-instruction-teflon-on-threads.jpg
+  #   caption: PTFE tape wrapped on the male nipple thread (3 full turns, in the screw-in direction) before it goes into the valve port — the hex middle and any washer/compression joint stay bare.
+  #   subjects: [valve, hoses]
+  #   causes: [F7]
+  #   relates: answers "where does teflon go" directly; pair with the male × male double nipple and the PE compression × male adapter
+  #   used_in: [valve.md, playbooks/parts.md]
+
   IMG.valve-auto-instruction-solenoid-manual-turn:
     file: media/valve-auto-instruction-solenoid-manual-turn.gif
     caption: Opening the valve by hand by turning the solenoid counter-clockwise ¼–½ turn.
