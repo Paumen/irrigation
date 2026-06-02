@@ -2,8 +2,6 @@
 subject: relay 
 failure_mode_area: F4
 serves: [troubleshooting, install, maintain]
-coverage: power/controller wiring, run length, and chattering are well covered; deeper
-  relay-internal failure modes beyond chattering/contactor fouling are not.
 summary: Pump start relay reference — what it does, power and controller wiring, run-length limits, and the chattering fault.
 read_when: engine points at the relay (F4); pump won't start while the controller calls; relay chatters/buzzes; installing or rewiring the relay.
 contents:
