@@ -138,4 +138,3 @@ support.
 - `controller.md` — the hardware: terminals, power, master-valve/sensor wiring, Wi-Fi, voltage test.
 - `relay.md` — the PSR-22 pump start relay the master-valve output drives on this system.
 - `playbooks/troubleshoot.md` — route any live symptom here rather than chasing it free-hand.
-</content>

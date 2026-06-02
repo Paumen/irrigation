@@ -162,5 +162,3 @@ the problem follows the wire, it is downstream; if it stays on the terminal, it 
 - `wiring.md` — conductor runs, continuity, swap-wire test, the common wire.
 - `valve-solenoid.md` — voltage and resistance at the valve end.
 - `relay.md` — the PSR-22 pump start relay this controller's master-valve output drives.
-</content>
-</invoke>
