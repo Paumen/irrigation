@@ -837,7 +837,7 @@ def _assumptions(pump_model: str, env: dict, mode: str, extra: dict | None = Non
         "hazen_williams_C": HW_C,
         "mp_regulated_bar": round(MP_REG_BAR, 3),
         "note": ("I-20 flow tracks head pressure (Hunter Blue nozzle chart); "
-                 "MP Rotators are 40 PSI regulated (Hunter MP chart); the Z5 "
+                 "MP Rotators are 2.8 bar regulated (Hunter MP chart); the Z5 "
                  "stream nozzle is modelled as free discharge from the 16 mm "
                  "bore. Loss coefficients are approximate and overridable."),
     }
