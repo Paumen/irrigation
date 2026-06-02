@@ -107,7 +107,7 @@ effectively already answered "neither," so it keeps re-recommending it.
   the real tool and the report's `asked` count.
 
 The design-fix is the higher-value change but touches `data.json` (the diagnostic
-source of truth) and would need `tools/test_diagnose.py` to stay green, so it is
+canonical record) and would need `tools/test_diagnose.py` to stay green, so it is
 flagged here rather than applied as part of this investigation.
 
 ## 3. Two kinds of skip — and whether the "negative-confirmation" kind carries information
@@ -132,8 +132,8 @@ NEGATIVE-CONFIRMATION skips (multiselect answered empty)   DON'T-KNOW skips (fol
 
 ### Are the negative-confirmation skips giving valuable information?
 
-**The engine treats them as its single most valuable next question — then throws
-the answer away.** Replaying every run and counting how often each multiselect is
+**The engine treats them as its single most valuable next question — then discards
+the answer.** Replaying every run and counting how often each multiselect is
 *recommended first* vs how often its answer is actually usable:
 
 ```

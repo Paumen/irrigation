@@ -25,7 +25,7 @@ next to this file — matching how the agent resolves files at runtime.
 - Fallback: RainMachine support (https://support.rainmachine.com/), then web. No local PDF.
 
 ### F3 — Field wiring (24 V low-voltage)
-- Local doc: `knowledge/wiring.md` — **partial** (wire-distance table, connectors, isolation tests).
+- Local doc: `knowledge/wiring.md` — **partial** (wire-length table, connectors, isolation tests).
 - Read when: a conductor/splice/common is suspected; excluding wire length; isolating wiring vs valve vs controller.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 

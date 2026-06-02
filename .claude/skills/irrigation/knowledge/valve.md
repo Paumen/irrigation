@@ -16,7 +16,7 @@ contents:
   - external leak checklist
   - weeping when off (low-head drainage vs valve debris)
   - slow-closing valve (metering ports)
-  - PGV body styles (globe/angle/barb/large — identification)
+  - PGV body styles (globe/90°/barb/large — identification)
   - specifications (operating + solenoid summary)
   - filter / mesh (PGV 1")
   - replacement parts (catalog numbers for the PGV-101G)
@@ -180,7 +180,7 @@ convenience.
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
 with another. Cut threads avoid this.
 
-![Teflon tape — wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
+![Teflon tape — wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-teflon-tape.jpg)
 
 **⚠️ Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
 while the paste acts as a lubricant; the installer can then unintentionally drive the male
@@ -238,7 +238,7 @@ Do not assume the valve. Decide which by whether the leak self-stops after the h
 
 Designed to close within ~10–20 seconds of the solenoid de-energising. Slower than that almost
 always means a restriction in the diaphragm metering port(s) — debris clogging the small holes
-that meter water to the upper chamber, so the valve closes very slowly or stays open. Fix is to
+that throttle water to the upper chamber, so the valve closes very slowly or stays open. Fix is to
 replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 ## PGV body styles (identification)
@@ -251,20 +251,20 @@ match can be ruled out during identification. Check which body is installed from
 
 - **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
   and bleed on top. The reference above describes this body.
-- **Angle (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
+- **90° body (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
   deep main hose; lower pressure loss than globe. Flow-direction arrow on the body.
 
-  ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-auto-product-pgv-101a-angle.jpg)
+  ![PGV 90° body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-auto-product-pgv-101a.jpg)
 
 - **Male thread × barb (PGV-100MB).** Barbed outlet for poly hoses (common in cold-climate
   installs) — saves threading an adapter.
 
   ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly hose. Other body style, for identification.](../media/valve-auto-product-pgv-101mb-barb.jpg)
 
-- **1½"/2" globe/angle (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
+- **1½"/2" globe/90° (PGV-151/201).** Larger commercial bodies with a jar-top bonnet and a
   non-rising flow control handle; these are the sizes that accept the Accu-Set regulator.
 
-  ![PGV 1½"/2" globe/angle body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](../media/valve-auto-product-pgv-151g.jpg)
+  ![PGV 1½"/2" globe/90° body — large jar-top bonnet, non-rising flow control handle, ribbed base. Larger commercial sizes, for identification.](../media/valve-auto-product-pgv-151g.jpg)
 
 ## Specifications (PGV)
 
@@ -283,7 +283,7 @@ Solenoid (summary — full detail in `valve-solenoid.md`):
 - Coil resistance spec (Hunter PGV): 20–60 Ω
 
 Pressure loss across the 1" PGV (Globe body; converted from
-Hunter's flow/pressure source table):
+Hunter's flow/pressure vendor table):
 
 | Flow (m³/h) | Flow (l/min) | Loss (bar) |
 |---|---|---|

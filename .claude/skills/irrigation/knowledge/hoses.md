@@ -44,7 +44,7 @@ The tells are:
   riser seal — see `heads.md`).
 - **Recent garden activity** in the last few weeks/months in the rough path
   of the hose: new tree or shrub planted, fence post driven, deck
-  footing dug, paving lifted/relaid, mole/vole burrowing, root invasion
+  foundation dug, paving lifted/relaid, mole/vole burrowing, root invasion
   from an established tree.
 - Pressure at the manifold is normal during a zone run (so the pump and
   main hose are fine), but **pressure at the far end of the zone is low**

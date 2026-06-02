@@ -33,7 +33,7 @@ and the hydraulics together often shift the reasoning more than any single fact.
   for winterized systems: a diaphragm slow to release on the first spring run is usually just
   stuck to the ring, not damaged — cycle it before condemning anything.
 - **Diaphragm** — the flexible rubber disc with a plastic centre. The plastic centre carries
-  the **metering port(s)**: small holes that restrict (meter) how much water reaches the upper
+  the **metering port(s)**: small holes that restrict (throttle) how much water reaches the upper
   chamber above the diaphragm.
 - **Diaphragm spring** — holds the diaphragm against its seat; should compress and bounce back.
 
@@ -104,7 +104,7 @@ first-class suspect, not an edge case.
 
 ## Metering-port clog vs. exhaust-port clog
 
-Both cause "won't open / won't close" symptoms but live in different parts:
+Both produce "won't open / won't close" symptoms but live in different parts:
 - **Metering port** (here, in the diaphragm centre) — clog → slow close / stays open. Fix: replace
   diaphragm assembly.
 - **Solenoid exhaust/entry ports** (in `valve-solenoid.md`) — clog → may not open or not open fully.

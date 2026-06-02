@@ -8,8 +8,8 @@ summary: Pump start relay reference — what it does, power and controller wirin
 read_when: engine points at the relay (F4); pump won't start while the controller calls; relay chatters/buzzes; installing or rewiring the relay.
 contents:
   - what the relay does (24 V coil switches 230 V to the pump)
-  - safety (mains-side work is electrician-only)
-  - power-source connection (wire colours / terminals)
+  - safety (230 V-side work is electrician-only)
+  - power-supply connection (wire colours / terminals)
   - controller connection (P/MV + common)
   - minimum and maximum run length to controller (table)
   - chattering (new-install wire size vs. existing-install contactor fouling)
@@ -22,13 +22,13 @@ the relay coil, and the relay switches 230 V power through to the pump. It is dr
 controller's P/MV (pump) output, ideally on a **dedicated** common separate from the zone-valve
 common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
-> **⚠️ Safety — read first.** Everything on the power-supply side of the relay is mains-voltage work
+> **⚠️ Safety — read first.** Everything on the power-supply side of the relay is 230 V work
 > (120/230 V). Connecting or opening the relay should be done by a licensed electrician following
 > local codes; improper work risks shock or fire. Always switch the main circuit breaker off before
-> any connection. Do not ask the homeowner to perform mains-side wiring — flag the risk and point
+> any connection. Do not ask the homeowner to perform 230 V-side wiring — flag the risk and point
 > them to a professional. The 24 V controller-side signal checks are low-voltage and homeowner-safe.
 
-## Power-source connection (wire colours / terminals)
+## Power-supply connection (wire colours / terminals)
 
 > Electrician-only. Turn the main breaker off before any connection.
 
@@ -69,7 +69,7 @@ the separation dampens it. Hunter also recommends mounting controllers ≥4.5 m 
 high-voltage devices.
 
 **Maximum.** One-way wire length controller → relay must not exceed the figures below (converted
-from the source's AWG values; mm² are nearest-standard equivalents):
+from the vendor's AWG values; mm² are nearest-standard equivalents):
 
 | Model | 0.75 mm² (18 AWG) | 1.5 mm² (16 AWG) | 2.5 mm² (14 AWG) | 4 mm² (12 AWG) | 6 mm² (10 AWG) | 10 mm² (8 AWG) |
 |---|---|---|---|---|---|---|
@@ -87,7 +87,7 @@ table is useful mainly to **exclude** wire length as a failure mode. (Check the 
 > the installed unit. The PSR-22 is a different (smaller) relay; treat the HP/amp/coil values below
 > as PSR-52 placeholders until checked against Hunter's PSR-22 data.
 
-Configuration: **double-pole/single-throw (DPST)** — the 24 V coil closes both legs of the supply
+Configuration: **double-pole (DPST)** — the 24 V coil closes both legs of the supply
 together, so the relay switches a 120 VAC pump up to 3 hp or a 230 VAC pump up to 7.5 hp.
 
 Switching capacity:

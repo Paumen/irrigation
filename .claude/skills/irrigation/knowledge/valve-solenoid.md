@@ -42,7 +42,7 @@ or not open fully.
 **Reverse-flow design (why it matters for surges).** The Hunter solenoid runs on a *reverse-flow*
 principle: the centre hole in the solenoid bowl is the inlet port, not the exhaust. One practical
 consequence is built-in surge relief — when a pressure spike hits the closed valve, the plunger
-lifts slightly to let the spike pass downstream and dissipate through the zone piping, then re-seats
+lifts slightly to let the spike pass downstream and dissipate through the zone hoses, then re-seats
 immediately so the zone does not actually run. So an occasional momentary "blip" at a head on a
 water-hammer event is expected behaviour, not a leaking/weeping solenoid. The design is also
 efficient on long wire runs under high pressure.

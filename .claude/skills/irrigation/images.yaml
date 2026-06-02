@@ -63,9 +63,9 @@ images:
   # ── fitting · swing ─────────────────────────────────────────────────────────
   IMG.fitting-swing-product:
     file: media/fitting-swing-product.jpg
-    caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight pipe with male threads on each end; absorbs lateral movement and lets you set head height to grade without re-cutting the hose.
+    caption: Pre-assembled Hunter Pro-Adjustable swing joint — two 90° elbows joined by a straight nipple with male threads on each end; absorbs side movement and lets you set head height to grade without re-cutting the hose.
     subjects: [heads, hoses]
-    relates: rotor install / replacement; reduces lateral stress when a head is kicked or stepped on
+    relates: rotor install / replacement; reduces side stress when a head is kicked or stepped on
     used_in: [playbooks/parts.md]
 
   IMG.fitting-swing-instruction-rotor-install:
@@ -80,7 +80,7 @@ images:
     file: media/fitting-swing-product-sj712.jpg
     caption: Hunter SJ-712 swing joint (≈30 cm, male × male) — two pre-set 90° elbows on a straight riser; this is the swing-joint line the homeowner actually runs (setup.yaml "Hunter SJ"), 3/4×3/4 under rotors and 3/4×1/2 under spray bodies.
     subjects: [heads, hoses]
-    relates: closer match to this homeowner's swing joints than the generic IMG.fitting-swing-product; sets head height to grade and absorbs side load. Source is a retailer listing screenshot (phone/browser chrome visible).
+    relates: closer match to this homeowner's swing joints than the generic IMG.fitting-swing-product; sets head height to grade and absorbs side load. From a retailer listing screenshot (phone/browser chrome visible).
     used_in: [playbooks/parts.md]
 
   # ── fitting · joint (couplings / nipples / adapters) ─────────────────────────
@@ -100,8 +100,8 @@ images:
     relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the hose OD — the bare-thread (grip-sealed) outlet joint to the hose.25 poly run; filed under hoses, so a valve-keyed scan misses it without the procedures tag
     used_in: [playbooks/parts.md]
 
-  IMG.fitting-product-ptfe-tape:
-    file: media/fitting-product-ptfe-tape.jpg
+  IMG.fitting-product-teflon-tape:
+    file: media/fitting-product-teflon-tape.jpg
     caption: Teflon tape (label "PTFE THREAD SEALING 751-3", 12 mm × 12 m × 0.1 mm) — the white Teflon tape you wrap on a male thread before it screws into a female port. Tape OR paste, never both; 3 full turns in the screw-in direction.
     subjects: [valve, hoses]
     procedures: [valve_install]
@@ -202,9 +202,9 @@ images:
 
   IMG.head-rotor-instruction-nozzle-install-step-2:
     file: media/head-rotor-instruction-nozzle-install-step-2.jpg
-    caption: Rotor nozzle install — step 2 — first check the nozzle screw isn't blocking the socket, then slip the (blue) nozzle into the nozzle socket; the socket is angled up 25°. The white nozzle insertion collar holds the riser open.
+    caption: Rotor nozzle install — step 2 — first check the nozzle screw isn't blocking the socket, then slip the (blue) nozzle into the nozzle socket; the socket is tilted up 25°. The white nozzle insertion collar holds the riser open.
     subjects: [heads]
-    relates: rotor nozzle install procedure; nozzle socket angle (25°); the triangle on the rubber cover marks the direction of water flow when the rotor is retracted
+    relates: rotor nozzle install procedure; nozzle socket tilt (25°); the triangle on the rubber cover marks the direction of water flow when the rotor is retracted
     used_in: [heads.md]
 
   IMG.head-rotor-instruction-nozzle-install-step-3:
@@ -242,11 +242,11 @@ images:
 
   IMG.head-rotor-breakdown-trajectory-chart:
     file: media/head-rotor-breakdown-trajectory-chart.png
-    caption: Trajectory geometry — A = degrees of trajectory, B = max height of spray, C = distance from head to maximum height. Use to check head-to-obstruction clearance.
+    caption: Trajectory geometry — A = degrees of trajectory, B = max height of spray, C = length from head to maximum height. Use to check head-to-obstruction clearance.
     subjects: [heads]
-    legend: {A: degrees of trajectory, B: max height of spray, C: distance from head to maximum height}
+    legend: {A: degrees of trajectory, B: max height of spray, C: length from head to maximum height}
     failure_modes: [F9, F9.4]
-    relates: standard 25° vs low-angle 13° nozzles; spraying over fences/hedges
+    relates: standard 25° vs low-trajectory 13° nozzles; spraying over fences/hedges
     used_in: [heads.md]
 
   # ── head · spray ─────────────────────────────────────────────────────────────
@@ -260,9 +260,9 @@ images:
   # ── hose ────────────────────────────────────────────────────────────────────
   IMG.hose-product-drip-inline-emitter:
     file: media/hose-product-drip-inline-emitter.jpg
-    caption: Inline-emitter dripline — brown 16 mm tubing with built-in pressure-compensating emitters at fixed spacing; coiled.
+    caption: Inline-emitter dripline — brown 16 mm hose with built-in pressure-compensating emitters at fixed spacing; coiled.
     subjects: [hoses, heads]
-    relates: drip-conversion upgrade for flower-bed zones (the upgrades playbook flags this homeowner's Z1 and Z4 as candidates)
+    relates: drip-conversion upgrade for flower-bed zones (the upgrades playbook flags this homeowner's Z1 and Z4 as options)
     used_in: [playbooks/upgrades.md]
 
   # ── nozzle · rotator ────────────────────────────────────────────────────────
@@ -290,7 +290,7 @@ images:
 
   IMG.nozzle-rotator-product-mp2000:
     file: media/nozzle-rotator-product-mp2000.jpg
-    caption: Hunter MP Rotator MP2000 (360°) nozzle — red cap stamped "MP 2000 360°", stainless adjustment ring, red stem on a white inlet screen. Screws onto a Pro-Spray body and throws rotating multi-streams at ~2.8 bar; this is the MP2000 family the homeowner runs on Z1 and Z4 (at their own arcs).
+    caption: Hunter MP Rotator MP2000 (360°) nozzle — red cap stamped "MP 2000 360°", stainless adjustment ring, red stem on a white inlet screen. Screws onto a Pro-Spray body and projects rotating multi-streams at ~2.8 bar; this is the MP2000 family the homeowner runs on Z1 and Z4 (at their own arcs).
     subjects: [heads]
     relates: canonical product photo of the homeowner's rotator nozzle (nozzle.rotator); install/remove with IMG.nozzle-rotator-product-mp-wrench. Rotor counterpart is IMG.head-rotor-product-i20.
     used_in: [playbooks/identify.md, playbooks/parts.md]
@@ -304,7 +304,7 @@ images:
 
   IMG.nozzle-rotator-product-mp-streams-closeup:
     file: media/nozzle-rotator-product-mp-streams-closeup.jpg
-    caption: MP Rotator close-up against a dark background — the orange nozzle and stainless ring throwing several individual rotating streams, the detail that distinguishes an MP Rotator from a solid-fan spray nozzle.
+    caption: MP Rotator close-up against a dark background — the orange nozzle and stainless ring projecting several individual rotating streams, the detail that distinguishes an MP Rotator from a solid-fan spray nozzle.
     subjects: [heads]
     relates: identify an MP Rotator by its multi-stream pattern (vs a fixed spray's solid sheet); pairs with IMG.nozzle-rotator-product-mp2000
     used_in: [playbooks/identify.md]
@@ -324,7 +324,7 @@ images:
     file: media/relay-product-psr-open.jpg
     caption: Hunter pump start relay with the lid open — the wiring diagram is printed inside the cover; matches the homeowner's PSR-22 enclosure. Power In (Line) and Power Out (Load) terminals across the top, Ground (Line / Load) below, and the 24 VAC P/MV (red) + Common (white) low-voltage pair underneath.
     subjects: [relay, wiring]
-    legend: {top: "Power In (Line) / Power Out (Load) — mains terminals", middle: "Ground (Line) / Ground (Load)", bottom: "P/MV (red) + Common (white) — 24 VAC controller signal", "DANGER label": "mains-voltage side — electrician only"}
+    legend: {top: "Power In (Line) / Power Out (Load) — 230 V terminals", middle: "Ground (Line) / Ground (Load)", bottom: "P/MV (red) + Common (white) — 24 VAC controller signal", "DANGER label": "230 V side — electrician only"}
     failure_modes: [F4]
     questions: [Q20]
     relates: real photo of the PSR door wiring diagram; pair with IMG.relay-breakdown-enclosure-cutaway for the inside-the-box view. Model UNCONFIRMED against PSR-22 spec — the enclosure and diagram are the Hunter PSR family.
@@ -335,28 +335,28 @@ images:
     file: media/sensor-product-wind-clik.jpg
     caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
     subjects: [controller]
-    relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted spray on windy days
+    relates: wind-pause upgrade option; pairs with rotor systems to avoid wasted spray on windy days
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-wind-clik-bracket:
     file: media/sensor-product-wind-clik-bracket.jpg
     caption: Hunter Wind-Clik on its mounting bracket — three-cup anemometer head with the SWITCHING SPEED dial (mph / km/h), the swing-arm bracket below, and the wiring/connector module on the right. Mounted view of the same sensor as IMG.sensor-product-wind-clik.
     subjects: [controller]
-    relates: wind-pause upgrade candidate; shows how it mounts and wires in, vs the head-only IMG.sensor-product-wind-clik
+    relates: wind-pause upgrade option; shows how it mounts and wires in, vs the head-only IMG.sensor-product-wind-clik
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-freeze-temp:
     file: media/sensor-product-freeze-temp.jpg
     caption: Wall-mounted freeze / temperature sensor — vented bulb housing the sensing element on a small screw-down back plate; cuts the system off when the air temperature drops toward freezing so heads don't ice up.
     subjects: [controller]
-    relates: freeze-cutoff upgrade candidate alongside the rain/wind Cliks; exact model UNCONFIRMED — treat as illustrative for "a frost sensor looks like this"
+    relates: freeze-cutoff upgrade option alongside the rain/wind Cliks; exact model UNCONFIRMED — treat as illustrative for "a frost sensor looks like this"
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-wm-clik-side:
     file: media/sensor-product-wm-clik-side.jpg
     caption: Hunter WM-CLIK rain sensor — side view; threshold-disc canister on top, calibration cap (1/8"–3/4" / 3–19 mm), spring-loaded vent post, swing bracket on the right.
     subjects: [controller]
-    relates: rain-skip upgrade candidate (note this homeowner's HD-16 TOUCH already gets rain-skip via Wi-Fi / cloud); pair with the internals shot to explain how it works
+    relates: rain-skip upgrade option (note this homeowner's HD-16 TOUCH already gets rain-skip via Wi-Fi / cloud); pair with the internals shot to explain how it works
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-wss-wireless:
@@ -396,9 +396,9 @@ images:
     relates: lead placement before any voltage or resistance check
     used_in: [controller.md, valve-solenoid.md, playbooks/parts.md]
 
-  IMG.tool-product-water-meter:
-    file: media/tool-product-water-meter.jpg
-    caption: Inline multi-jet water meter — blue body with brass union tailpieces and a sealed register (m³); plumbed into a line, it totalises flow so you can read a zone's real throughput.
+  IMG.tool-product-flow-totaliser:
+    file: media/tool-product-flow-totaliser.jpg
+    caption: Inline multi-jet flow totaliser — blue body with brass union tailpieces and a sealed register (m³); plumbed into a line, it totalises flow so you can read a zone's real throughput.
     subjects: [hoses]
     relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in setup.yaml — illustrative.
     used_in: [playbooks/capacity.md]
@@ -409,7 +409,7 @@ images:
     caption: Hunter PGV 1" globe WITH flow control (PGV-101G) — this system's body style; flow-control knob on top, solenoid with looped lead, inline ports.
     subjects: [valve]
     failure_modes: [F7]
-    relates: matches the homeowner's PGV-101G; body-style identification (globe vs angle vs barb)
+    relates: matches the homeowner's PGV-101G; body-style identification (globe vs 90° vs barb)
     used_in: [valve.md]
 
   IMG.valve-auto-product-pgv-101g-catalog:
@@ -423,7 +423,7 @@ images:
 
   IMG.valve-auto-product-pgv-101g-bleed:
     file: media/valve-auto-product-pgv-101g-bleed.jpg
-    caption: Hunter PGV-101G, three-quarter view — flow-control knob and bleed on the bonnet, 24 VAC solenoid with looped lead at the side. Another angle on the homeowner's valve.
+    caption: Hunter PGV-101G, three-quarter view — flow-control knob and bleed on the bonnet, 24 VAC solenoid with looped lead at the side. Another view of the homeowner's valve.
     subjects: [valve, valve-solenoid]
     failure_modes: [F7]
     relates: shows the bleed / flow-control side of the same 101G as IMG.valve-auto-product-pgv-101g and -catalog
@@ -445,12 +445,12 @@ images:
     relates: the no-flow-control sibling of the homeowner's 101G; body/threads identical, top differs (no knob)
     used_in: []
 
-  IMG.valve-auto-product-pgv-101a-angle:
-    file: media/valve-auto-product-pgv-101a-angle.jpg
-    caption: Hunter PGV-101A angle body — outlet turns down 90° from the bottom; flow-control knob + bleed screw on top, flow-direction arrow on the body. NOT this system (which is globe).
+  IMG.valve-auto-product-pgv-101a:
+    file: media/valve-auto-product-pgv-101a.jpg
+    caption: Hunter PGV-101A 90° body — outlet turns down 90° from the bottom; flow-control knob + bleed screw on top, flow-direction arrow on the body. NOT this system (which is globe).
     subjects: [valve]
     failure_modes: [F7]
-    relates: body-style exclusion image — confirm the homeowner does NOT have the angle body
+    relates: body-style exclusion image — confirm the homeowner does NOT have the 90° body
     used_in: [valve.md]
 
   IMG.valve-auto-product-pgv-101mb-barb:
@@ -479,7 +479,7 @@ images:
 
   IMG.valve-auto-product-icv-101g:
     file: media/valve-auto-product-icv-101g.jpg
-    caption: Hunter ICV-101G industrial control valve — heavy globe body with a four-bolt bonnet, a large cross-handle flow control, and the 24 VAC solenoid mounted at an angle. A commercial valve a tier above the PGV; NOT this system.
+    caption: Hunter ICV-101G industrial control valve — heavy globe body with a four-bolt bonnet, a large cross-handle flow control, and the 24 VAC solenoid mounted at a tilt. A commercial valve a tier above the PGV; NOT this system.
     subjects: [valve]
     failure_modes: [F7]
     relates: family exclusion image — confirm the homeowner has the lighter jar-top PGV, not the bolted-bonnet ICV
@@ -498,7 +498,7 @@ images:
     caption: Replacement valve solenoid — black cylindrical body with looped 24 V leads and threaded base with O-ring (purple). Form factor matches the Hunter PGV solenoid; verify exact model and coil resistance (20–60 Ω per the homeowner's setup) against the seller listing before fitting.
     subjects: [valve-solenoid, valve]
     failure_modes: [F7]
-    relates: replacement-part candidate for the PGV-101G 24 VAC solenoid; compare with the installed unit before ordering
+    relates: replacement-part option for the PGV-101G 24 VAC solenoid; compare with the installed unit before ordering
     used_in: [valve-solenoid.md, playbooks/parts.md]
 
   IMG.valve-auto-instruction-bleed-screw:
@@ -612,7 +612,7 @@ images:
     subjects: [valve, valve-internals, valve-solenoid]
     legend: {1: "Solenoid Assembly (incl. parts 2 & 3) — 434100", 2: "O-Ring — 262600", 3: "Solenoid Seal — 364400", 4: "Bonnet Screw — 427300", 5: "Bonnet without Flow Control — 458000", 6: "Bonnet with Flow Control — 435005", 7: "Diaphragm Spring — 266000", 8: "Diaphragm Assembly — 332100", 9: "Diaphragm Support Ring — 331300", 10: "Body — 457700 Fem-NPT / 457705 Fem-BSP / 433400 M×M NPT / 433405 M×M BSP / 460700 M×barb NPT / 460705 M×barb BSP", 11: "Flow Control Handle — 269200 black / 269205 purple"}
     failure_modes: [F7]
-    relates: source for the replacement-part catalog numbers; identify which part to order
+    relates: reference for the replacement-part catalog numbers; identify which part to order
     used_in: [valve.md]
 
   # ── wiring ──────────────────────────────────────────────────────────────────

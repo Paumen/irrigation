@@ -17,4 +17,4 @@ The engine is pure and stateless; the caller owns the conversation state:
 - `answers` — question id → answer (shape depends on the question `type`).
 - `skipped` — question id → true for "I don't know" / skip.
 
-Failure mode baselines, question effects, slider curves, and stage definitions live in `data.json` (the source of truth, scored by `tools/engine.py`). The failure mode taxonomy is documented in `fcode_spec.md`.
+Failure mode baselines, question effects, slider curves, and stage definitions live in `data.json` (the canonical record, scored by `tools/engine.py`). The failure mode taxonomy is documented in `fcode_spec.md`.

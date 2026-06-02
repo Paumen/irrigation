@@ -54,7 +54,7 @@
       "id": "F2.8",
       "parent": "F2",
       "baseline": 0.6,
-      "label": "Controller external fault (no mains power)"
+      "label": "Controller external fault (no 230 V power)"
     },
     {
       "id": "F3.1.1",
@@ -1300,7 +1300,7 @@
       "id": "Q19",
       "context": "install",
       "effort": 1,
-      "text": "Fit a flow meter and run a zone — does it read between 1.0 and 3.0 m³/h?",
+      "text": "Fit a flow gauge and run a zone — does it read between 1.0 and 3.0 m³/h?",
       "highlight": [
         "pump"
       ],

@@ -20,7 +20,7 @@ jobs and was brittle:
 1. **The answer key (the real asset) was trapped in the test.** `T1/T2/CTX/MULTI`
    — what a homeowner with each true fault would report — is a reusable dataset,
    but nothing else could touch it. → **Extracted to `diagnose_sim.py`.**
-2. **The rich trajectory was computed and thrown away.** `simulate()` walked the
+2. **The rich trajectory was computed and discarded.** `simulate()` walked the
    whole funnel but returned only a list of ranks; the gate reduced each run to a
    final rank + one lock-in number. → **`simulate()` now returns a `Trajectory`**
    (per-step question, rank, top-3, confidence) so analysis is possible.

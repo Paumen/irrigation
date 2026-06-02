@@ -2,8 +2,8 @@ schema: irrigation-system
 assumed_system_pressure_bar: 3.0
 
 types:
-  source.well:      { fanout: 1, description: "water source (aquifer / borehole)", location: well }
-  pump.well:        { fanout: 1, description: water + power source, model: "DAB Jet", installed: "2023-06", location: well, max_bar: 4.8, max_flow_m3h: 3.8 }
+  supply.well:      { fanout: 1, description: "water supply (aquifer / borehole)", location: well }
+  pump.well:        { fanout: 1, description: water + power supply, model: "DAB Jet", installed: "2023-06", location: well, max_bar: 4.8, max_flow_m3h: 3.8 }
   hose.32:          { fanout: 1, description: "32 mm, 3 mm wall", installed: "2020-08", location: in_ground, material: LDPE, max_bar: 6.3 }
   hose.25:          { fanout: 1, description: "25 mm, 2.7 mm wall", installed: "2020-08", location: in_ground, material: LDPE, max_bar: 6 }
   hose.16:          { fanout: 1, description: "16 mm, 3 mm wall", installed: "2020-08", location: in_ground, material: LDPE, max_bar: 6.3 }
@@ -25,7 +25,7 @@ types:
   relay:            { description: 24V coil switches 230V to pump, model: "Hunter PSR-22", installed: "2020-08", location: shed, price_eu: 100, terminals: [coil, coil, contact_in, contact_out], closes_contact_when: coil_energized }
 
 feeds:
-  MAIN.source.well.01:      {to: [MAIN.pump.well.01]}
+  MAIN.supply.well.01:      {to: [MAIN.pump.well.01]}
   MAIN.pump.well.01:        {to: [MAIN.fitting.joint.01], height_m: 7.2}
   MAIN.fitting.joint.01:    {to: [MAIN.hose.32.01]}
   MAIN.hose.32.01:          {to: [MAIN.fitting.joint.02], length_m: 20}
@@ -133,7 +133,7 @@ cable_runs:
 location_descriptions:
   house:     indoor — main residence
   shed:      indoor — outbuilding housing the pump start relay
-  well:      outdoor — underground water source housing the pump
+  well:      outdoor — underground water supply housing the pump
   valve_box: outdoor — in-ground enclosure containing the manifold and 4 zone solenoid valves
   in_ground: outdoor — buried in lawn/garden
 

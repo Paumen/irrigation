@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from hydraulics import (GPM_TO_M3H, _pressure_uniformity, build_graph,
+from hydraulics import (MP_FLOW_M3H, _pressure_uniformity, build_graph,
                         free_discharge_m3h, hose_inner_d_m, i20_flow_m3h,
                         load_system, mp_flow_m3h, report, subtree_flows)
 
@@ -25,9 +25,9 @@ q, _ = i20_flow_m3h("4.0", 1.0)
 check("i20 below-range flagged", not _, "expected in_range False")
 
 q, reg = mp_flow_m3h("MP3000", 270, 3.6)  # >3.5 bar regulation floor
-check("mp MP3000@270 regulated", abs(q - round(2.73 * GPM_TO_M3H, 6)) < 1e-6 and reg, f"got {q}")
+check("mp MP3000@270 regulated", abs(q - MP_FLOW_M3H["MP3000"][270]) < 1e-6 and reg, f"got {q}")
 q, reg = mp_flow_m3h("MP3000", 270, 2.0)  # <3.5 bar floor
-check("mp under-regulated flag", not reg and q < 2.73 * GPM_TO_M3H, f"got {q}, reg={reg}")
+check("mp under-regulated flag", not reg and q < MP_FLOW_M3H["MP3000"][270], f"got {q}, reg={reg}")
 q, _ = mp_flow_m3h("MP2000", 180, 3.0)
 check("mp arc interpolation present", q > 0, f"got {q}")
 
@@ -71,10 +71,10 @@ nodes = build_graph(load_system())
 z1 = report(zone=1)["zones"][0]
 lq = {h["loc"]: h["flow_m3h"] for h in z1["heads"]}
 sub = subtree_flows(nodes, lq)
-check("Z1 first lateral carries all 3 heads' flow",
+check("Z1 first branch carries all 3 heads' flow",
       abs(sub["Z1.hose.25.01"] - sum(lq.values())) < 1e-9,
       f"{sub['Z1.hose.25.01']} vs {sum(lq.values())}")
-check("a single-head branch lateral carries less than the shared trunk",
+check("a single-head branch carries less than the shared trunk",
       sub["Z1.hose.25.04"] < sub["Z1.hose.25.01"],
       f"{sub['Z1.hose.25.04']} vs {sub['Z1.hose.25.01']}")
 
@@ -116,10 +116,10 @@ check("node profile pump matches pump.head_bar",
 for h in z3["heads"]:
     lb = h["loss_breakdown_bar"]
     recon = (np3["after_valve"] - lb["elevation_rise"]
-             - lb["lateral_friction"] - lb["swing_joint"])
+             - lb["branch_friction"] - lb["swing_joint"])
     check(f"head {h['loc']} pressure reconciles from breakdown",
           abs(recon - h["pressure_bar"]) < 0.02, f"{recon:.3f} vs {h['pressure_bar']}")
-z3_heads = sorted(z3["heads"], key=lambda h: h["lateral_m"])
+z3_heads = sorted(z3["heads"], key=lambda h: h["branch_m"])
 check("nearer head holds higher pressure than the more distant one",
       z3_heads[0]["pressure_bar"] >= z3_heads[-1]["pressure_bar"],
       f"{z3_heads[0]['pressure_bar']} vs {z3_heads[-1]['pressure_bar']}")
@@ -175,9 +175,9 @@ check("regulated MP spread does not flag", mp == [], str(mp))
 vel = base["weakest_links"]["velocity"]
 check("velocity limit reported", vel["limit_ms"] == 1.5, str(vel["limit_ms"]))
 segs = {it["segment"]: it for it in vel["items"]}
-check("velocity has main + laterals", {"main_line", "zone_laterals"} <= set(segs), str(segs))
+check("velocity has main + branches", {"main_line", "zone_branches"} <= set(segs), str(segs))
 check("baseline velocities computed positive",
-      segs["main_line"]["velocity_ms"] > 0 and segs["zone_laterals"]["velocity_ms"] > 0, str(segs))
+      segs["main_line"]["velocity_ms"] > 0 and segs["zone_branches"]["velocity_ms"] > 0, str(segs))
 check("fastest is the highest-velocity segment",
       vel["fastest"]["velocity_ms"] == max(it["velocity_ms"] for it in vel["items"]),
       str(vel["fastest"]))
