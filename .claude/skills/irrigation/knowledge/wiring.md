@@ -5,7 +5,6 @@ serves: [troubleshooting, test, install]
 summary: Partial — wire-length table, waterproof-splice rule, and the isolation tests; no deeper splice or common-wire fault detail yet.
 read_when: a conductor, splice, or common is suspected; positively excluding wire length as a failure mode; isolating wiring vs valve vs controller.
 contents:
-  - coverage note (what's missing)
   - waterproof connectors (corrosion → resistance → blown fuses)
   - the connector itself — 3M Scotchlok 314 (what it's called + how to buy more)
   - wire length vs gauge table (unit caveat)
