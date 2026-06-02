@@ -131,10 +131,9 @@ use the hose):**
 
 **Case B — head is the last one on its hose (no heads downstream of it):**
 
-This is the case that requires the dead-end rule above. The hose between
-the upstream tee and the removed head's location would become an outlet-
-less stub, which will freeze and split. So you don't cap *at* the removed
-head — you cap at the *upstream* tee:
+This is the case that requires the dead-end rule above: capping *at* the
+removed head would leave an outlet-less stub that freezes and splits. So
+cap at the *upstream* tee instead:
 
 1. Dig up the *upstream* head's tee on the same hose.
 2. Cut the hose just past the tee, leaving a few cm of hose stub to cap.

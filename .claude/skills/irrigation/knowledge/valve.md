@@ -24,11 +24,9 @@ contents:
 
 # Zone valve — Hunter PGV-101G
 
-This is the whole-valve neighbourhood. Read it end to end when the engine narrows to
-the valve area, when the homeowner is installing/replacing a valve, or when they ask how
-the valve works. The dense interior is split out: see `valve-internals.md` (diaphragm,
-spring, seat, support ring, metering ports) and `valve-solenoid.md` (coil, plunger,
-exhaust/entry ports). Much of what isolates or excludes a valve failure mode lives in those two.
+The dense interior is split out: see `valve-internals.md` (diaphragm, spring, seat, support
+ring, metering ports) and `valve-solenoid.md` (coil, plunger, exhaust/entry ports) — much of
+what isolates or excludes a valve failure mode lives in those two.
 
 ![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](../media/valve-auto-product-pgv-100g.png)
 
@@ -189,11 +187,9 @@ adapter in too far and **split the valve body**.
   more with a wrench.
 - Tape: wrap the thread three full times. Hand-tighten, then ~½ turn more with a wrench.
 
-So teflon lands only on the male threads that screw into the valve's two female ports;
-the swivel-nut inlet and the compression-nut outlet of this system stay bare (see the rule at the
-top of this section). The outlet adapter is a **PE compression × male-thread** fitting — the
-compression end must match the hose OD (25 mm here). This is the genuinely useful fitting for the
-poly side, distinct from the male × male double nipple that joins the manifold to the inlet.
+So: teflon on the two valve ports only; both flanking nuts stay bare. The outlet adapter is a
+**PE compression × male-thread** fitting — the compression end must match the hose OD (25 mm here),
+distinct from the male × male double nipple that joins the manifold to the inlet.
 
 **⚠️ Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
 damage them; hand-tight only on the solenoid.
@@ -201,10 +197,6 @@ damage them; hand-tight only on the solenoid.
 **⚠️ Use waterproof splices** for the solenoid-to-field-wire joints in the valve box.
 Non-waterproof connections corrode, which raises electrical resistance; high resistance can
 blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
-
-The ⚠️-marked lines through this section are the install cautions — carry the marker into the
-reply at the matching step, and don't drop it because a line reads like ordinary advice. Lead a
-step with ⚠️ only; don't stack other severity markers on the same line.
 
 ## External leak (valve leaking to the outside)
 

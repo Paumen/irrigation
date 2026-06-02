@@ -17,11 +17,9 @@ contents:
 
 # Field wiring — 24 V low-voltage
 
-**Coverage note.** Sourced so far: the wire-length table, the waterproof-splice rule, and the
-basic continuity/swap tests (carried in from the valve material). No deeper splice-level or
-common-wire fault detail yet. On short residential runs, wire length is almost certainly *not* a
-failure mode — the table is useful mainly to positively exclude it. (Check the actual run lengths in
-`setup.yaml`.)
+**Coverage note.** No deeper splice-level or common-wire fault detail yet. On short residential
+runs, wire length is almost certainly *not* a failure mode — the table is useful mainly to
+positively exclude it. (Check the actual run lengths in `setup.yaml`.)
 
 ## Waterproof connectors (install + corrosion fault)
 
