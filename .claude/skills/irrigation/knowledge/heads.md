@@ -160,7 +160,7 @@ After install: ✅ cycle the head a couple of times to confirm the nozzle is loc
 
 **Capping off an I-20 in-ground (permanent removal).** Two cases, both relevant wherever the system is winterized. The general dead-end-on-a-winterized-hose rule that drives this is in `hoses.md` *Dead-end winterization rule*; the same procedure is mirrored there so either doc can be read standalone.
 - *Removing a head that is not at the end of its hose:* dig down to expose the threaded fitting under the rotor, unscrew the rotor (plus any riser nipple), thread on a same-size cap or plug with Teflon tape, turn the zone on briefly to check for leaks, then backfill.
-- *Removing the last head on a hose (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the pipe. Instead, dig up the *upstream* head's tee, cut the hose just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the pipe to the removed head. Check for leaks before backfilling.
+- *Removing the last head on a hose (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the hose. Instead, dig up the *upstream* head's tee, cut the hose just past the tee leaving enough pipe to glue a slip cap, glue an end cap, and abandon the stub to the removed head. Check for leaks before backfilling.
 
 **Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the hose and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
 
@@ -292,7 +292,7 @@ Two distinct causes, with the same symptom:
 1. **Drain check valve missing or failed at the head.** The cheap, common fix. Both the I-20 and the PRS40 have factory or user-installable drain check valves, rated to ~3 m and ~4.3 m of head-to-hose-high-point elevation respectively. If the hose has more elevation than the check valve holds, the water above the valve will still drain. Upgrade to a stronger check valve or install in-line check valves on the hose.
 2. **Water passing through the zone valve when shut.** The valve itself is letting water trickle through after closing — see `valve.md` *Weeping when off*. The tell: drainage doesn't stop after the hose empties; it keeps going.
 
-**Distinguishing test:** a check-valve issue **self-stops** once the pipe above empties (a finite puddle, then dry). A valve leak **does not self-stop** — it weeps continuously as long as the main line is pressurised. Do not assume the valve, and do not assume the head; let the symptom decide.
+**Distinguishing test:** a check-valve issue **self-stops** once the hose above empties (a finite puddle, then dry). A valve leak **does not self-stop** — it weeps continuously as long as the main line is pressurised. Do not assume the valve, and do not assume the head; let the symptom decide.
 
 ## See also
 

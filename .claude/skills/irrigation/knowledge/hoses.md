@@ -4,7 +4,7 @@ root_cause_area: F8
 serves: [troubleshooting, maintain, install, how-it-works]
 coverage: partial
 summary: Partial — the broken-hose signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a pipe, and basic field-diagnosis of a punctured hose. No deep hydraulic-design content yet.
-read_when: a whole zone has gone weak with no visible head fault; one or more heads on a zone won't pop up while others on the same zone are normal; you find a persistent wet patch or soft ground along a known hose run; you're removing a head or restructuring a zone and a stub will be left behind; you suspect recent garden/fence/driveway work damaged a pipe.
+read_when: a whole zone has gone weak with no visible head fault; one or more heads on a zone won't pop up while others on the same zone are normal; you find a persistent wet patch or soft ground along a known hose run; you're removing a head or restructuring a zone and a stub will be left behind; you suspect recent garden/fence/driveway work damaged a hose.
 contents:
   - what the hoses are
   - broken-hose signature (recent landscaping work)
@@ -16,15 +16,15 @@ contents:
 
 # Zone hoses — 25 mm PE, valve manifold to heads
 
-This is the **F8** neighbourhood: the polyethylene pipes that carry water from
+This is the **F8** neighbourhood: the polyethylene hoses that carry water from
 the valve manifold out to the heads on each zone. Each zone has its own buried
-hose (see `setup.yaml` for pipe sizes, hose count, and the per-zone head mix).
+hose (see `setup.yaml` for hose sizes, count, and the per-zone head mix).
 
 Read this when the engine narrows to F8, or when a head-side symptom (won't
 pop up, weak throw, brown spots on the far end of a zone) doesn't match
 anything wrong at the head itself. hoses fail mostly by **puncture** —
 people put a spade, a fence post, or a tree root through one — not by aging
-of the pipe.
+of the hose.
 
 ## Broken-hose signature
 
@@ -33,7 +33,7 @@ valve, or pump, almost always means a hose has been punctured. Hunter's
 own diagnosis flow for "rotor not fully popping up" calls this out
 explicitly: **look for new trees and shrub plantings, new or repaired
 fences, and recently dug ground** — these are the most common causes of a
-broken pipe.
+broken hose.
 
 The tells are:
 
@@ -75,7 +75,7 @@ Cheapest-first checks before digging up the lawn:
    heads brackets the leak.
 5. **Manifold flow.** With the zone running and a manual gauge on the
    manifold tap (if fitted), zone flow should match the design — a sudden
-   step-up in flow with a step-down in pressure means the pipe is open
+   step-up in flow with a step-down in pressure means the hose is open
    to soil somewhere.
 
 If the leak isn't visible after a careful walk, the puncture is small or
@@ -85,8 +85,8 @@ clears, then dig only the short section that's left.
 ## Dead-end winterization rule
 
 In winterized regions (sustained sub-zero winters), the system is drained
-every autumn. **Water trapped in a pipe with no outlet will freeze, expand, and
-split the pipe.** That's why every hose has to end at a head (or a
+every autumn. **Water trapped in a hose with no outlet will freeze, expand, and
+split the hose.** That's why every hose has to end at a head (or a
 valved drain), not at an outlet-less stub.
 
 This matters whenever you change the layout:
@@ -105,7 +105,7 @@ This matters whenever you change the layout:
   in-ground*.
 - **Adding a head on a new spur off an existing hose:** the new spur
   must terminate at the new head, not extend past it. Don't pre-run
-  pipe "for future expansion" — that's exactly an outlet-less stub.
+  hose "for future expansion" — that's exactly an outlet-less stub.
 
 This rule applies to any winterized region. In a non-freezing region it's
 optional (water in the stub does nothing) but it's still the cleaner

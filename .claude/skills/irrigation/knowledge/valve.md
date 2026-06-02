@@ -225,7 +225,7 @@ Run the checklist in cheapest-first order:
 There are two distinct causes, and the most common one is **not** the valve:
 
 - **Low-head drainage (most common).** The lowest head on a zone lets water drain out of the
-  hose after the valve closes. The tell: residual water stops once the pipe has emptied,
+  hose after the valve closes. The tell: residual water stops once the hose has emptied,
   then stays dry. This is a head/hose issue, fixed with check valves (e.g. HCV) on heads or
   hoses — a check valve in the head will *not* fix a valve leak, and vice versa. See `heads.md`.
 - **Water passing through the zone valve.** Usually debris holding the diaphragm off its seat,
