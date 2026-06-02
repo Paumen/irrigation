@@ -72,7 +72,7 @@ class Engine:
             base_type = q.get("type") or ("multi" if q.get("multiselect") else "options")
             nxt = {**q, "type": base_type}
             if nxt["type"] == "matrix":
-                nxt["colMul"] = {c["id"]: c["mult"] for c in nxt["columns"]}
+                nxt["colMul"] = {c["id"]: c["multiplier"] for c in nxt["columns"]}
                 nxt["rows"] = [
                     {**r, "effects": self._expand_effects(r.get("effects"))} for r in nxt["rows"]
                 ]
@@ -153,7 +153,7 @@ class Engine:
                 iso += sum_abs
             return iso, self._breadth_weight * breadth
         if t == "matrix":
-            mults = [c["mult"] for c in q["columns"]]
+            mults = [c["multiplier"] for c in q["columns"]]
             mult_spread = max(mults) - min(mults)
             n_rows = len(q["rows"])
             p = (self._matrix_expected_filled / n_rows) if n_rows > 0 else 0

@@ -87,7 +87,7 @@ def work_cell(m: float) -> str:
     return "🟩" if m >= 1.0 else "🟨" if m >= 0.1 else "🟥" if m < -0.05 else "⬜"
 
 
-def recov_cell(x: float) -> str:
+def recovery_cell(x: float) -> str:
     return "🟢" if x >= 0.8 else "🟡" if x >= 0.5 else "🟠" if x >= 0.3 else "🔴"
 
 
@@ -124,12 +124,12 @@ def _headline_stats(g: dict) -> dict:
     rows = g["rows"]
     locks = [r["lock_in"] for r in rows if r["lock_in"] is not None]
     plocks = [r["parent_lock"] for r in rows if r["parent_lock"] is not None]
-    recov = [v["recovery"] for v in g["robustness"].values()]
+    recovery = [v["recovery"] for v in g["robustness"].values()]
     return {
         "n": len(rows),
-        "locks": locks, "plocks": plocks, "recov": recov,
+        "locks": locks, "plocks": plocks, "recovery": recovery,
         "at1": sum(1 for r in rows if r["final_rank"] == 1),
-        "robust": sum(1 for x in recov if x >= 0.8),
+        "robust": sum(1 for x in recovery if x >= 0.8),
     }
 
 
@@ -150,7 +150,7 @@ def sec_dashboard(g: dict) -> list[str]:
         f"median {statistics.median(s['locks']):g}, range {min(s['locks'])}–{max(s['locks'])} |",
         f"| 🥇 Lands it at #1 outright | **{s['at1']}/{n}** | |",
         f"| 🛡️ Survives a 1-in-5 user error | **{s['robust']}/{n}** | "
-        f"stays top-3 in ≥80% of noisy runs (median {statistics.median(s['recov'])*100:.0f}%) |",
+        f"stays top-3 in ≥80% of noisy runs (median {statistics.median(s['recovery'])*100:.0f}%) |",
     ]
 
     # lock-in distribution
@@ -216,7 +216,7 @@ def sec_faults(g: dict) -> list[str]:
         fr = r["final_rank"]
         leaders = r["final_top3"][:fr - 1] if fr <= 3 else r["final_top3"]
         cross = [c for c in leaders if PARENT[c] != r["parent"]]
-        hdr = (f"{f:<7}{recov_cell(v['recovery'])} {v['recovery']*100:>3.0f}%  "
+        hdr = (f"{f:<7}{recovery_cell(v['recovery'])} {v['recovery']*100:>3.0f}%  "
                f"lock {cl_s}→{nz_s}")
         if fr > 1 and cross:
             names = ", ".join(cross[:2]) + (" …" if len(cross) > 2 else "")

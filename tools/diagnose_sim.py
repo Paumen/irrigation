@@ -260,7 +260,7 @@ def _question_choices(q: dict) -> list[dict[str, float]]:
     if t in ("options", "multi"):
         return [dict(o["effects"]) for o in q["options"]]
     if t == "matrix":
-        mx = max(c["mult"] for c in q["columns"])
+        mx = max(c["multiplier"] for c in q["columns"])
         return [{c: v * mx for c, v in r["effects"].items()} for r in q["rows"]]
     if t == "ages":
         return [dict(s["effects"]) for r in q["rows"] for s in r["steps"] if s["effects"]]

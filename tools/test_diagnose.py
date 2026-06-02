@@ -126,13 +126,13 @@ def compute_metrics() -> dict:
     }
     locked = [v for v in lockins.values() if v is not None]
     rob = robustness_all(NOISE_TRIALS, NOISE_RATE, seed=0)
-    recov = {f: round(v["recovery"], 3) for f, v in rob.items()}
+    recovery = {f: round(v["recovery"], 3) for f, v in rob.items()}
     return {
         "depth": DEPTH,
         "lockin": lockins,
         "median_lockin": statistics.median(locked) if locked else None,
-        "robustness": recov,
-        "median_recovery": round(statistics.median(recov.values()), 3),
+        "robustness": recovery,
+        "median_recovery": round(statistics.median(recovery.values()), 3),
     }
 
 
@@ -191,24 +191,24 @@ def run_gate() -> int:
             direction = "slower" if (n_med or 0) > (b_med or 0) else "faster"
             warn(f"median lock-in shifted {direction}", f"{b_med} -> {n_med} questions")
 
-    med_recov = metrics["median_recovery"]
-    check("median recovery clears floor", med_recov >= MIN_MEDIAN_RECOVERY,
-          f"median recovery {med_recov} < floor {MIN_MEDIAN_RECOVERY}")
+    med_recovery = metrics["median_recovery"]
+    check("median recovery clears floor", med_recovery >= MIN_MEDIAN_RECOVERY,
+          f"median recovery {med_recovery} < floor {MIN_MEDIAN_RECOVERY}")
     if baseline is not None:
-        b_recov = baseline.get("robustness", {})
+        b_recovery = baseline.get("robustness", {})
         for fault, now in metrics["robustness"].items():
-            base = b_recov.get(fault)
+            base = b_recovery.get(fault)
             if base is not None and now < base - 0.1:
                 warn(f"{fault} robustness dropped", f"{base:.0%} -> {now:.0%} recovery")
         b_med_r = baseline.get("median_recovery")
-        if b_med_r is not None and abs(b_med_r - med_recov) > 0.02:
-            direction = "down" if med_recov < b_med_r else "up"
-            warn(f"median recovery shifted {direction}", f"{b_med_r:.0%} -> {med_recov:.0%}")
+        if b_med_r is not None and abs(b_med_r - med_recovery) > 0.02:
+            direction = "down" if med_recovery < b_med_r else "up"
+            warn(f"median recovery shifted {direction}", f"{b_med_r:.0%} -> {med_recovery:.0%}")
 
     locked = [v for v in lockins.values() if v is not None]
     print(f"--- diagnose: {len(FAULTS)} faults | {len(locked)}/{len(FAULTS)} lock into "
           f"top-3 | median lock-in {metrics['median_lockin']} questions | "
-          f"median recovery {med_recov:.0%} | depth {DEPTH} ---")
+          f"median recovery {med_recovery:.0%} | depth {DEPTH} ---")
     if warnings:
         print(f"WARN ({len(warnings)}) — ranking/speed shifts, suite still passes:")
         for w in warnings:

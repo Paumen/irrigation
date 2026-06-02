@@ -776,22 +776,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 1.0
+          "multiplier": 1.0
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.4
+          "multiplier": 0.4
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
@@ -841,22 +841,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 0.8
+          "multiplier": 0.8
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.4
+          "multiplier": 0.4
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
@@ -898,22 +898,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 0.8
+          "multiplier": 0.8
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.6
+          "multiplier": 0.6
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
@@ -957,22 +957,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 0.8
+          "multiplier": 0.8
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.6
+          "multiplier": 0.6
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
