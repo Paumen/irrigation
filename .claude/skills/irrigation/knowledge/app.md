@@ -2,7 +2,6 @@
 subject: App / control (RainMachine mobile app + WebUI + cloud)
 failure_mode_area: F1
 serves: [how-it-works, configure, troubleshooting]
-coverage: partial
 summary: The software side of the RainMachine HD-16 — how you reach it (touchscreen / app over home Wi-Fi / app over cloud), weather-adaptive programs, zone properties incl. the master-valve toggle, manual run / valve testing, the watering restrictions, sensor software setup (flow meter clicks-per-m³, rain-sensor mode), and the "zone won't turn on — software side" checks.
 read_when: configuring or explaining a program, zone property, restriction, snooze/freeze/hot-days, sensitivity or field capacity; assigning a zone as master valve/pump in the app; enabling a flow or rain sensor in the app/WebUI and entering its rate; a zone won't water and it RAN fine when started manually (logic, not hardware). For terminal/sensor WIRING, Wi-Fi hardware, or the zone-won't-run hardware path → controller.md.
 contents:
