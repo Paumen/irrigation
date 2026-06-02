@@ -2,7 +2,6 @@
 subject: Controller
 failure_mode_area: F2
 serves: [troubleshooting, test, install, how-it-works]
-coverage: partial
 summary: RainMachine HD-12/16 hardware — terminal block, power, master-valve/pump wiring, rain- and flow-sensor wiring (neither fitted here), Wi-Fi setup/recovery, the zone-won't-turn-on hardware path, and the voltage-at-terminals test. Software/scheduling lives in app.md; firmware/cloud internals are still web-only.
 read_when: wiring the controller (power, zones, master valve/pump, a sensor); confirming the controller outputs 24–28 VAC on a station; Wi-Fi won't connect or shows "WiFi Settings Error"; a zone won't turn on and you're isolating controller/wiring/valve. For watering logic, programs, restrictions, app sensor config → app.md. For firmware/cloud faults → sources.md.
 contents:
