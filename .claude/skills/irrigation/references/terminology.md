@@ -87,7 +87,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **ground** — the earth wire.
 - **terminal** — an electrical screw post on the controller / relay.
 - **voltage** — electrical potential (24 VAC control side, power supply on the pump side).
-- **MV (P/MV)** — the controller's pump / master-valve terminal.
+- **MV (P/MV)** — the controller's pump-start terminal.
 - **signal** — the control pulse to a valve.
 - **sensor** — a rain / wind / flow detector.
 - **splice** — a waterproof wire joint (a wire connector).
