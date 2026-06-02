@@ -1,6 +1,6 @@
 ---
 subject: relay 
-root_cause_area: F4
+failure_mode_area: F4
 serves: [troubleshooting, install, maintain]
 coverage: power/controller wiring, distance, and chattering are well covered; deeper
   relay-internal failure modes beyond chattering/contactor fouling are not.
@@ -45,7 +45,7 @@ common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
 - Assemble conduit and connect power supply to the LINE IN side of the relay.
 - Assemble conduit and connect the pump-motor wiring to the LOAD OUT side.
-- Confirm no exposed or loose connections.
+- Check no exposed or loose connections.
 
 ## Controller connection (P/MV + common)
 
@@ -54,7 +54,7 @@ common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 1. Remove the relay cover plate (four Phillips screws).
 2. Run a single wire from the controller **common** terminal to one yellow relay wire.
 3. Run a single wire from the controller **MV/Pump** terminal to the other yellow relay wire.
-4. Make the joints with the enclosed wire nuts; confirm they are secure.
+4. Make the joints with the enclosed wire nuts; check they are secure.
 5. Refit the cover plate and screws; close and lock the cabinet.
 
 The yellow wires in the relay's lower wiring compartment are the ones that go to the controller.
@@ -77,12 +77,12 @@ from the source's AWG values; mm² are nearest-standard equivalents):
 | PSR-22 | 74 m | 118 m | 188 m | 298 m | 473 m | 751 m |
 
 Typical residential controller→relay runs sit comfortably within range on any sane gauge, so the
-table is useful mainly to **exclude** wire length as a cause. (Check the actual run length in
+table is useful mainly to **exclude** wire length as a failure mode. (Check the actual run length in
 `setup.yaml`.)
 
 ## Electrical specifications
 
-> **Re-verify before relying on these numbers.** The figures in this section were sourced for the
+> **Re-check before relying on these numbers.** The figures in this section were sourced for the
 > **PSR-52** and have **not** yet been confirmed against the **PSR-22** that `setup.yaml` records as
 > the installed unit. The PSR-22 is a different (smaller) relay; treat the HP/amp/coil values below
 > as PSR-52 placeholders until checked against Hunter's PSR-22 data.
@@ -115,17 +115,17 @@ installation or one that has worked for years?
 wire** from the controller to the relay; **never share the relay's common with the zone solenoids**.
 Clean every connection and follow the distance/gauge table above.
 > If the install already uses a dedicated common and a short run (check `setup.yaml`), the
-> new-install wire-size cause is effectively ruled out.
+> new-install wire-size failure mode is effectively ruled out.
 
 **Existing installation** (a relay in service for years) → suspect dirt or insects
 inside the relay contactor. Isolate the relay from the incoming power supply and open the contactor
 to clean it (electrician if you are not comfortable with electricity). You can disconnect the
 120/240 V supply while leaving the relay-to-pump wiring in place and check the relay's performance.
-If it still chatters and won't fully engage, verify the incoming amperage from the controller and
+If it still chatters and won't fully engage, check the incoming amperage from the controller and
 clean any suspect connections to cut resistance.
 
 Engine cross-links: pairs with Q3 (pump hums/trips vs. silent), Q10 relay-row (recent service), and
-Q11 pests (insects in the contactor is the classic existing-install cause).
+Q11 pests (insects in the contactor is the classic existing-install failure mode).
 
 ## See also
 - `controller.md` — the P/MV output and common that drive this relay; voltage at terminals.

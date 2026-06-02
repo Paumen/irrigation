@@ -6,7 +6,7 @@
 @@@ below is too verbose@@@
 ```
 Finds the right component        28/29   median 6 questions to lead & hold
-Locks the sub-cause into top-3   29/29   median 6, range 1–17 (3 documented misses)
+Locks the sub-failure mode into top-3   29/29   median 6, range 1–17 (3 documented misses)
 Lands it at #1 outright          16/29
 Recovers from a user error       18/29   ≥80% of the time under 1-in-5 errors (wrong answer / skip; median 84%)
 ```
@@ -14,9 +14,9 @@ Recovers from a user error       18/29   ≥80% of the time under 1-in-5 errors 
 ## Rank trajectory
 
 @@@ below is too verbose@@@
-One square per question the engine *asks*: the true fault's rank after an answer — ✅ #1 · 🟩 #2–3 · 🟨 #4–5 · 🟧 #6–7 · 🟥 #8+ — or ⬜ when this fault's profile leaves it unanswered (a skip; rank unchanged). **fam** / **top3** count *answered* questions: until the right *component* leads (#1) and stays / until the exact cause locks into the top-3.
+One square per question the engine *asks*: the true fault's rank after an answer — ✅ #1 · 🟩 #2–3 · 🟨 #4–5 · 🟧 #6–7 · 🟥 #8+ — or ⬜ when this fault's profile leaves it unanswered (a skip; rank unchanged). **fam** / **top3** count *answered* questions: until the right *component* leads (#1) and stays / until the exact failure mode locks into the top-3.
 
-A run ends at 18 answers, or when no remaining question separates the contending causes (the engine's done signal) — whichever comes first.
+A run ends at 18 answers, or when no remaining question separates the contending failure modes (the engine's done signal) — whichever comes first.
 
 ```
 fault  fam  top3  trajectory →
@@ -53,7 +53,7 @@ F9.4   1    1     ✅✅✅✅✅✅✅✅✅✅✅⬜⬜✅✅✅✅✅✅✅
 
 ## Family confusion
 
-Only the **1** faults that miss the top-3 need attention; the other 11 reach the top-3 with the true cause at #2–3. (`#n` = where the true fault ends · `←` = who outranks it.)
+Only the **1** faults that miss the top-3 need attention; the other 11 reach the top-3 with the true failure mode at #2–3. (`#n` = where the true fault ends · `←` = who outranks it.)
 
 🟥 **Cross-family** — a *different* component wins (triage gap):
 ```
@@ -114,12 +114,12 @@ What each question *did* across the 29 runs. **work** = average rank-improvement
 @@@ below is too verbose@@@
 **Questions that don't pull their weight**
 - 🟥 _cost rank on average_ — Q19, Q17, Q8, Q6, Q15: asked ~pos 12, after the ranking has usually settled, so a stray answer here mostly reshuffles ties the wrong way.
-- ⬜ _≈ no movement_ — Q21, Q23, Q24, Q12, Q22, Q2q: their answer rarely separates the causes still live at that point (redundant with earlier questions, or too narrow to matter).
+- ⬜ _≈ no movement_ — Q21, Q23, Q24, Q12, Q22, Q2q: their answer rarely separates the failure modes still live at that point (redundant with earlier questions, or too narrow to matter).
 
 ## Question character
 
 @@@ below is too verbose@@@
-A structural read of each question from its effect weights (no simulation). **scope** = families it can move · **force** = strongest single push (hard ≥1.5 · firm ≥0.9 · nudge else) · **rule-out** = share of evidence that *subtracts* to exonerate a cause vs only adds · **shape** = how its weight spreads across answers (decisive = one loud answer · even = graded across all).
+A structural read of each question from its effect weights (no simulation). **scope** = families it can move · **force** = strongest single push (hard ≥1.5 · firm ≥0.9 · nudge else) · **rule-out** = share of evidence that *subtracts* to exonerate a failure mode vs only adds · **shape** = how its weight spreads across answers (decisive = one loud answer · even = graded across all).
 
 Bars scale each axis for scanning (more filled = broader / harder / more rule-out / more decisive).
 

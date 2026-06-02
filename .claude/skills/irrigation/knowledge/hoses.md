@@ -1,6 +1,6 @@
 ---
 subject: Hoses
-root_cause_area: F8
+failure_mode_area: F8
 serves: [troubleshooting, maintain, install, how-it-works]
 coverage: partial
 summary: Partial — the broken-hose signature (recent landscaping work), the dead-end winterization rule for capping or abandoning a hose, and basic field-diagnosis of a punctured hose. No deep hydraulic-design content yet.
@@ -32,7 +32,7 @@ A *sudden* zone-wide loss of performance, with no change at the controller,
 valve, or pump, almost always means a hose has been punctured. Hunter's
 own diagnosis flow for "rotor not fully popping up" calls this out
 explicitly: **look for new trees and shrub plantings, new or repaired
-fences, and recently dug ground** — these are the most common causes of a
+fences, and recently dug ground** — these are the most common failure modes of a
 broken hose.
 
 The tells are:
@@ -162,7 +162,7 @@ the trench is closed.
 - `heads.md` — *Won't pop up* (the head-side symptom this area shows
   through), *Capping off an I-20 in-ground* (the hose-modification
   procedure).
-- `valve.md` — to exclude the valve as the cause when one zone is weak;
+- `valve.md` — to exclude the valve as the failure mode when one zone is weak;
   particularly *Weeping when off* and the diaphragm-not-fully-opening
   case, which can also present as a zone-wide pressure drop.
 - `valve-internals.md` — debris-on-diaphragm causing a partly-open

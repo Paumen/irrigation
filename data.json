@@ -19,7 +19,7 @@
     "ease": 0.5,
     "matrixExpectedFilled": 1
   },
-  "causes": [
+  "failure_modes": [
     {
       "id": "F1.5",
       "parent": "F1",
@@ -705,7 +705,7 @@
           "id": "pump",
           "label": "Pump",
           "curve": "standard",
-          "causes": [
+          "failure_modes": [
             "F5.3",
             "F5.1"
           ]
@@ -714,7 +714,7 @@
           "id": "valves",
           "label": "Valves",
           "curve": "fast",
-          "causes": [
+          "failure_modes": [
             "F7.1.1",
             "F7.3.1",
             "F7.1.2",
@@ -726,7 +726,7 @@
           "id": "relay",
           "label": "Start-Relay",
           "curve": "standard",
-          "causes": [
+          "failure_modes": [
             "F4.1"
           ]
         },
@@ -734,7 +734,7 @@
           "id": "ctrl",
           "label": "Controller",
           "curve": "standard",
-          "causes": [
+          "failure_modes": [
             "F2.1",
             "F2.5"
           ]
@@ -743,7 +743,7 @@
           "id": "rotor",
           "label": "Rotors",
           "curve": "standard",
-          "causes": [
+          "failure_modes": [
             "F9.1.1",
             "F9.1.2"
           ]
@@ -752,7 +752,7 @@
           "id": "mainHose",
           "label": "Main hose",
           "curve": "standard",
-          "causes": [
+          "failure_modes": [
             "F6.1"
           ]
         },
@@ -760,7 +760,7 @@
           "id": "hose",
           "label": "Zone hose",
           "curve": "standard",
-          "causes": [
+          "failure_modes": [
             "F8.1"
           ]
         }
@@ -776,22 +776,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 1.0
+          "multiplier": 1.0
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.4
+          "multiplier": 0.4
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
@@ -841,22 +841,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 0.8
+          "multiplier": 0.8
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.4
+          "multiplier": 0.4
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
@@ -898,22 +898,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 0.8
+          "multiplier": 0.8
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.6
+          "multiplier": 0.6
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [
@@ -957,22 +957,22 @@
         {
           "id": "right",
           "label": "Started right after",
-          "mult": 0.8
+          "multiplier": 0.8
         },
         {
           "id": "days",
           "label": "Started weeks after",
-          "mult": 0.6
+          "multiplier": 0.6
         },
         {
           "id": "worse",
           "label": "Worsened — same rate",
-          "mult": 0
+          "multiplier": 0
         },
         {
           "id": "faster",
           "label": "Worsened — faster",
-          "mult": 0.6
+          "multiplier": 0.6
         }
       ],
       "rows": [

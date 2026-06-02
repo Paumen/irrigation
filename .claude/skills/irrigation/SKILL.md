@@ -12,7 +12,7 @@ Ground every answer in **this** homeowner's system, not generic memory. Read `se
 ## Reference content (read it, don't restate it)
 - **`setup.yaml`** (project root) — the homeowner's actual equipment, install dates, zones, hose sizes, wiring, and `system_design_choices`. Source of truth for which models they own and anything physical. Read it first on any turn that touches a physical part.
 - **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
-- **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`causes:`).
+- **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`failure_modes:`).
 - **`references/<topic>.md`** — deeper reference tables that outgrow a knowledge doc. `references/valve-replacement.md` — which Hunter PGV/ICV models are drop-in replacements for the zone valves vs. need adjustment or a repipe; read it when the user is choosing a replacement valve. `references/terminology.md` — the house vocabulary (canonical term per concept, one-line glosses, writing conventions); the source of truth behind the *use-the-left-term* rule below.
 - **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main hose, app). Check here before answering from memory.
 - **`media/`** (inside this skill, next to `images.yaml`) — vendor PDFs and photos.

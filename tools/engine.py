@@ -11,12 +11,12 @@ class Engine:
         self._breadth_weight: float = float(w.get("breadth", 1.0))
         self._ease_weight: float = float(w.get("ease", 0.5))
         self._matrix_expected_filled: float = float(w.get("matrixExpectedFilled", 1))
-        self.causes: dict[str, dict] = {c["id"]: c for c in data["causes"]}
-        self.all_ids: list[str] = list(self.causes.keys())
+        self.failure_modes: dict[str, dict] = {c["id"]: c for c in data["failure_modes"]}
+        self.all_fcodes: list[str] = list(self.failure_modes.keys())
 
-        self._cause_children: dict[str, list[str]] = {}
-        for c in data["causes"]:
-            self._cause_children.setdefault(c["parent"], []).append(c["id"])
+        self._mode_children: dict[str, list[str]] = {}
+        for c in data["failure_modes"]:
+            self._mode_children.setdefault(c["parent"], []).append(c["id"])
 
         self.questions: list[dict] = self._build_questions()
         self.main_questions = [q for q in self.questions if not q.get("optional")]
@@ -36,13 +36,13 @@ class Engine:
             return effects
         out: dict[str, float] = {}
         for k, v in effects.items():
-            kids = self._cause_children.get(k)
+            kids = self._mode_children.get(k)
             if not kids:
                 out[k] = v
                 continue
-            for cid in kids:
-                if cid not in effects:
-                    out[cid] = v
+            for fcode in kids:
+                if fcode not in effects:
+                    out[fcode] = v
         return out
 
     def _expand_step_rows(self, q: dict) -> list[dict]:
@@ -54,14 +54,14 @@ class Engine:
                 result.append(row)
                 continue
             curve = curves.get(row.get("curve"), [])
-            causes = row.get("causes", [])
+            failure_modes = row.get("failure_modes", [])
             steps = []
             for i, label in enumerate(labels):
                 if i == 0:
                     effects: dict[str, float] = {}
                 else:
                     val = curve[i - 1] if i - 1 < len(curve) else 0
-                    effects = {cid: val for cid in causes}
+                    effects = {fcode: val for fcode in failure_modes}
                 steps.append({"label": label, "effects": effects})
             result.append({**row, "steps": steps})
         return result
@@ -72,7 +72,7 @@ class Engine:
             base_type = q.get("type") or ("multi" if q.get("multiselect") else "options")
             nxt = {**q, "type": base_type}
             if nxt["type"] == "matrix":
-                nxt["colMul"] = {c["id"]: c["mult"] for c in nxt["columns"]}
+                nxt["colMul"] = {c["id"]: c["multiplier"] for c in nxt["columns"]}
                 nxt["rows"] = [
                     {**r, "effects": self._expand_effects(r.get("effects"))} for r in nxt["rows"]
                 ]
@@ -101,16 +101,16 @@ class Engine:
         if t == "options":
             if not isinstance(ans, int) or isinstance(ans, bool) or ans < 0 or ans >= len(q["options"]):
                 return
-            for cid, delta in q["options"][ans]["effects"].items():
-                s[cid] = s.get(cid, 0) + delta
+            for fcode, delta in q["options"][ans]["effects"].items():
+                s[fcode] = s.get(fcode, 0) + delta
         elif t == "multi":
             if not isinstance(ans, list):
                 return
             for i in ans:
                 if not isinstance(i, int) or isinstance(i, bool) or i < 0 or i >= len(q["options"]):
                     continue
-                for cid, delta in q["options"][i]["effects"].items():
-                    s[cid] = s.get(cid, 0) + delta
+                for fcode, delta in q["options"][i]["effects"].items():
+                    s[fcode] = s.get(fcode, 0) + delta
         elif t == "matrix":
             if not isinstance(ans, dict):
                 return
@@ -119,8 +119,8 @@ class Engine:
                 m = col_mul.get(ans.get(row["id"], "no"), 0)
                 if m == 0:
                     continue
-                for cid, delta in row["effects"].items():
-                    s[cid] = s.get(cid, 0) + delta * m
+                for fcode, delta in row["effects"].items():
+                    s[fcode] = s.get(fcode, 0) + delta * m
         elif t == "ages":
             if not isinstance(ans, dict):
                 return
@@ -128,16 +128,16 @@ class Engine:
                 idx = ans.get(row["id"])
                 if idx is None or not isinstance(idx, int) or idx < 0 or idx >= len(row["steps"]):
                     continue
-                for cid, delta in row["steps"][idx]["effects"].items():
-                    s[cid] = s.get(cid, 0) + delta
+                for fcode, delta in row["steps"][idx]["effects"].items():
+                    s[fcode] = s.get(fcode, 0) + delta
 
-    def _cause_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
+    def _failure_mode_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
         t = q["type"]
         if t == "options":
             iso = 0.0
             breadth = 0
-            for cause_id in ids:
-                deltas = [o["effects"].get(cause_id, 0) for o in q["options"]]
+            for fcode in ids:
+                deltas = [o["effects"].get(fcode, 0) for o in q["options"]]
                 spread = max(deltas) - min(deltas)
                 if spread > 0:
                     breadth += 1
@@ -146,42 +146,42 @@ class Engine:
         if t == "multi":
             iso = 0.0
             breadth = 0
-            for cause_id in ids:
-                sum_abs = sum(abs(o["effects"].get(cause_id, 0)) for o in q["options"])
+            for fcode in ids:
+                sum_abs = sum(abs(o["effects"].get(fcode, 0)) for o in q["options"])
                 if sum_abs > 0:
                     breadth += 1
                 iso += sum_abs
             return iso, self._breadth_weight * breadth
         if t == "matrix":
-            mults = [c["mult"] for c in q["columns"]]
+            mults = [c["multiplier"] for c in q["columns"]]
             mult_spread = max(mults) - min(mults)
             n_rows = len(q["rows"])
             p = (self._matrix_expected_filled / n_rows) if n_rows > 0 else 0
             iso = 0.0
             rows_affecting: dict[str, int] = {}
             for row in q["rows"]:
-                for cause_id in ids:
-                    e = abs(row["effects"].get(cause_id, 0))
+                for fcode in ids:
+                    e = abs(row["effects"].get(fcode, 0))
                     if e > 0:
                         iso += e * mult_spread * p
-                        rows_affecting[cause_id] = rows_affecting.get(cause_id, 0) + 1
+                        rows_affecting[fcode] = rows_affecting.get(fcode, 0) + 1
             breadth = sum(1 - (1 - p) ** k for k in rows_affecting.values())
             return iso, self._breadth_weight * breadth
         if t == "ages":
             iso = 0.0
             affected = set()
             for row in q["rows"]:
-                for cause_id in ids:
-                    deltas = [st["effects"].get(cause_id, 0) for st in row["steps"]]
+                for fcode in ids:
+                    deltas = [st["effects"].get(fcode, 0) for st in row["steps"]]
                     spread = max(deltas) - min(deltas)
                     if spread > 0:
                         iso += spread
-                        affected.add(cause_id)
+                        affected.add(fcode)
             return iso, self._breadth_weight * len(affected)
         return 0.0, 0.0
 
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
-        iso, breadth = self._cause_terms(q, ids)
+        iso, breadth = self._failure_mode_terms(q, ids)
         effort = self._effort_term(q)
         return {"isolation": iso, "breadth": breadth, "effort": effort}
 
@@ -197,22 +197,22 @@ class Engine:
             return isinstance(ans, dict)
         return False
 
-    def is_answered(self, qid: str, ans: Any) -> bool:
+    def is_answered(self, question_id: str, ans: Any) -> bool:
         if ans is None:
             return False
-        q = self.q_by_id.get(qid)
+        q = self.q_by_id.get(question_id)
         if not q:
             return False
         return self._ans_is_present(q, ans)
 
-    def is_completed(self, qid: str, answers: dict | None = None, skipped: dict | None = None) -> bool:
+    def is_completed(self, question_id: str, answers: dict | None = None, skipped: dict | None = None) -> bool:
         answers = answers or {}
         skipped = skipped or {}
-        return self.is_answered(qid, answers.get(qid)) or bool(skipped.get(qid))
+        return self.is_answered(question_id, answers.get(question_id)) or bool(skipped.get(question_id))
 
     def rank(self, answers: dict | None = None) -> list[dict]:
         answers = answers or {}
-        s: dict[str, float] = {cid: self.causes[cid]["baseline"] for cid in self.all_ids}
+        s: dict[str, float] = {fcode: self.failure_modes[fcode]["baseline"] for fcode in self.all_fcodes}
         for q in self.questions:
             ans = answers.get(q["id"])
             if ans is None:
@@ -221,11 +221,11 @@ class Engine:
         pos_total = sum(max(0, v) for v in s.values())
         result = [
             {
-                "id": cid,
-                "score": s[cid],
-                "pct": (max(0, s[cid]) / pos_total * 100) if pos_total > 0 else 0,
+                "id": fcode,
+                "score": s[fcode],
+                "percent": (max(0, s[fcode]) / pos_total * 100) if pos_total > 0 else 0,
             }
-            for cid in self.all_ids
+            for fcode in self.all_fcodes
         ]
         result.sort(key=lambda r: -r["score"])
         return result
@@ -234,9 +234,9 @@ class Engine:
         ranked = self.rank(answers)
         if not ranked:
             return []
-        leader = ranked[0]["pct"]
+        leader = ranked[0]["percent"]
         cutoff = max(2, leader * 0.3)
-        ids = [r["id"] for r in ranked if r["pct"] >= cutoff]
+        ids = [r["id"] for r in ranked if r["percent"] >= cutoff]
         if len(ids) >= 3:
             return ids
         return [r["id"] for r in ranked[:3]]
@@ -276,11 +276,11 @@ class Engine:
             cands.append((q["id"], info, effort))
         m: dict[str, float] = {}
         mx = 0.0
-        for qid, info, effort in cands:
+        for question_id, info, effort in cands:
             # ease is a bounded tie-breaker; must not outweigh separation (info).
             ease = (effort / max_effort) if max_effort > 0 else 0.0
             D = info * (1 + self._ease_weight * ease)
-            m[qid] = D
+            m[question_id] = D
             if D > mx:
                 mx = D
         return {"map": m, "max": mx}
@@ -288,8 +288,8 @@ class Engine:
     def recommendations(self, answers: dict | None = None, skipped: dict | None = None) -> list[dict]:
         d = self.discriminators(answers, skipped)
         items = [
-            {"q": self.q_by_id[qid], "D": D}
-            for qid, D in d["map"].items()
+            {"q": self.q_by_id[question_id], "D": D}
+            for question_id, D in d["map"].items()
             if D > 0
         ]
         items.sort(key=lambda x: -x["D"])

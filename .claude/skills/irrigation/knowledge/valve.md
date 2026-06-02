@@ -1,6 +1,6 @@
 ---
 subject: Zone valve (Hunter PGV-101G)
-root_cause_area: F7
+failure_mode_area: F7
 serves: [troubleshooting, install, replace, maintain, how-it-works]
 deeper: [valve-internals, valve-solenoid]
 summary: Whole-valve reference for the PGV-101G — how it works, install and damage-avoidance, manual operation, leak modes, specs, filter.
@@ -28,7 +28,7 @@ This is the whole-valve neighbourhood. Read it end to end when the engine narrow
 the valve area, when the homeowner is installing/replacing a valve, or when they ask how
 the valve works. The dense interior is split out: see `valve-internals.md` (diaphragm,
 spring, seat, support ring, metering ports) and `valve-solenoid.md` (coil, plunger,
-exhaust/entry ports). Much of what isolates or excludes a valve cause lives in those two.
+exhaust/entry ports). Much of what isolates or excludes a valve failure mode lives in those two.
 
 ![Hunter PGV-100 series zone valve — 1" globe body, 24 V solenoid on top with looped lead-out, flow control + bleed screw.](../media/valve-auto-product-pgv-100g.png)
 
@@ -138,10 +138,10 @@ nozzles at setpoint, while unregulated I-20 rotors rely on supply pressure landi
 
 When to think about Accusync: if a zone is **consistently misty or over-radius** at
 the heads, the PRS40 isn't engaging (inlet too low — see `heads.md` *Misting from the
-MP on top*), and the cause is *not* a single head's regulator failing but the whole
+MP on top*), and the failure mode is *not* a single head's regulator failing but the whole
 zone running too hot or too cold, then a per-valve regulator on *that* valve is the
 standard remedy. Treat it as a design fix, not a troubleshooting one — bring it up
-once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
+once the routine failure modes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ## Installation (and how to avoid causing damage)
 
@@ -222,7 +222,7 @@ Run the checklist in cheapest-first order:
 
 ## Weeping / leaking when the system is OFF
 
-There are two distinct causes, and the most common one is **not** the valve:
+There are two distinct failure modes, and the most common one is **not** the valve:
 
 - **Low-head drainage (most common).** The lowest head on a zone lets water drain out of the
   hose after the valve closes. The tell: residual water stops once the hose has emptied,
@@ -245,7 +245,7 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 The PGV family comes in several body styles. This whole-valve reference documents the **1" globe
 with flow control (PGV-101G)** — the first one below. The others are shown so a body that doesn't
-match can be ruled out during identification. Confirm which body is installed from `setup.yaml`.
+match can be ruled out during identification. Check which body is installed from `setup.yaml`.
 
 ![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-auto-product-pgv-101g.jpg)
 
@@ -339,5 +339,5 @@ service — see `valve-solenoid.md` and `valve-internals.md` for when to replace
 - `valve-solenoid.md` — coil, plunger, exhaust/entry ports, voltage and resistance tests.
 - `wiring.md` — wire gauge/run, waterproof connectors, swap-wire and continuity tests.
 - `controller.md` — voltage at controller terminals.
-- `hoses.md` — zone-wide weakness from a punctured hose (the alternative cause to a partly-open valve diaphragm when one zone is weak).
+- `hoses.md` — zone-wide weakness from a punctured hose (the alternative failure mode to a partly-open valve diaphragm when one zone is weak).
 - `heads.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.

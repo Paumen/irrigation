@@ -1,10 +1,10 @@
 ---
 subject: Valve internals 
-root_cause_area: F7
+failure_mode_area: F7
 serves: [troubleshooting, replace, clean, maintain, how-it-works]
 parent: valve
 summary: The diaphragm-assembly interior — failure modes, internal hydraulics, and the disassembly/inspection procedure.
-read_when: narrowed to the valve but can't isolate the cause; conflicting valve feedback; diaphragm, spring, seat, or metering port suspected; cleaning or replacing internals.
+read_when: narrowed to the valve but can't isolate the failure mode; conflicting valve feedback; diaphragm, spring, seat, or metering port suspected; cleaning or replacing internals.
 contents:
   - components (support ring, diaphragm, spring, metering port)
   - how the internals govern open/close
@@ -17,7 +17,7 @@ contents:
 
 # Valve internals — diaphragm assembly
 
-The dense interior of the PGV-101G, split out from `valve.md` because most valve causes are
+The dense interior of the PGV-101G, split out from `valve.md` because most valve failure modes are
 confirmed or excluded in here, and "read everything about the internals" is a tractable,
 high-yield read when feedback about the valve is conflicting. If you have narrowed to the
 valve but cannot nail it, read this whole file — the metering behaviour, the failure modes,
@@ -98,7 +98,7 @@ first-class suspect, not an edge case.
    be clean, with no nicks, dents, or abrasions. Wash the diaphragm in clean fresh water to clear any
    deposited debris.
 6. Check the spring: intact, springs back when compressed.
-7. 🔍 Inspect the body and seat; remove any debris, pebbles, or dirty water; confirm the seat is clean
+7. 🔍 Inspect the body and seat; remove any debris, pebbles, or dirty water; check the seat is clean
    and unscored.
 8. Reassemble in the same orientation. Replace the diaphragm assembly if anything is visibly damaged.
 

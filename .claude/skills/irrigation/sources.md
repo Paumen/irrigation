@@ -1,6 +1,6 @@
 # Sources & routing
 
-How to use this file: the engine returns root-cause **areas** (F1–F9). Resolve the area here to its
+How to use this file: the engine returns failure-mode **areas** (F1–F9). Resolve the area here to its
 subject doc and read that first — `knowledge/` docs are normalized to EU units and the skill's
 vocabulary. If the local doc doesn't cover the symptom, fall back down the ladder: **local
 `knowledge/` doc → raw vendor PDF in `media/` → web**. Consult this at *confirm* time (the engine has
@@ -13,7 +13,7 @@ is the explicit path map for whole-file / by-path reads.
 Paths (`knowledge/…`, `media/…`) are relative to this skill folder — both directories live here,
 next to this file — matching how the agent resolves files at runtime.
 
-## Routing by root-cause area
+## Routing by failure-mode area
 
 ### F1 — App / control
 - Local doc: none yet.

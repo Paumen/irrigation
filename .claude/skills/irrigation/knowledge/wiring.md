@@ -1,10 +1,10 @@
 ---
 subject: Field wiring (24 V low-voltage)
-root_cause_area: F3
+failure_mode_area: F3
 serves: [troubleshooting, test, install]
 coverage: partial
 summary: Partial — wire-distance table, waterproof-connector rule, and the isolation tests; no deeper splice or common-wire fault detail yet.
-read_when: a conductor, splice, or common is suspected; positively excluding wire length as a cause; isolating wiring vs valve vs controller.
+read_when: a conductor, splice, or common is suspected; positively excluding wire length as a failure mode; isolating wiring vs valve vs controller.
 contents:
   - coverage note (what's missing)
   - waterproof connectors (corrosion → resistance → blown fuses)
@@ -20,7 +20,7 @@ contents:
 **Coverage note.** Sourced so far: the wire-distance table, the waterproof-connector rule, and the
 basic continuity/swap tests (carried in from the valve material). No deeper splice-level or
 common-wire fault detail yet. On short residential runs, wire length is almost certainly *not* a
-cause — the table is useful mainly to positively exclude it. (Check the actual run lengths in
+failure mode — the table is useful mainly to positively exclude it. (Check the actual run lengths in
 `setup.yaml`.)
 
 ## Waterproof connectors (install + corrosion fault)
@@ -65,7 +65,7 @@ inrush / 190 mA holding at 60 Hz; 370 mA / 210 mA at 50 Hz). With **two** soleno
 simultaneously on the same wires, **halve** these distances.
 
 > **Unit caveat:** the source table is metric by gauge (mm²) but its caption reads "distance in
-> feet". The figures below are reproduced as given — confirm feet vs. metres against the Hunter PGV
+> feet". The figures below are reproduced as given — check feet vs. metres against the Hunter PGV
 > document in `media/` before relying on a value near the limit. Academic for short residential runs.
 
 Distance by ground (C) wire (rows) × control/hot wire (columns), in the source's units:

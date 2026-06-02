@@ -25,15 +25,15 @@ BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
 ALLOWED_BASELINES = {0.6, 0.8, 1.0, 1.2}
 ALLOWED_EFFECTS = {-1.6, -1.0, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 1.0, 1.6}
 
-# Copy budgets: keep question prompts, answer labels, and cause names terse
-# enough to render (cause labels share a row with the F-code in the report).
+# Copy budgets: keep question prompts, answer labels, and failure mode names terse
+# enough to render (failure mode labels share a row with the F-code in the report).
 MAX_QUESTION_LEN = 100
 MAX_ANSWER_LEN = 45
 MAX_CAUSE_LEN = 45
 
-# parent -> direct child causes, derived from each cause's `parent` field.
+# parent -> direct child failure modes, derived from each failure mode's `parent` field.
 _CHILDREN: dict[str, list[str]] = {}
-for _c in DATA["causes"]:
+for _c in DATA["failure_modes"]:
     _CHILDREN.setdefault(_c["parent"], []).append(_c["id"])
 
 
@@ -51,7 +51,7 @@ def _answer_effects(q: dict):
     """Yield (answer_label, effects_dict) for every authored answer on a question."""
     for o in q.get("options", []):
         yield o.get("label", "?"), o.get("effects", {})
-    for r in q.get("rows", []):  # matrix rows carry a per-cause effects dict
+    for r in q.get("rows", []):  # matrix rows carry a per-failure mode effects dict
         if "effects" in r:
             yield r.get("id", "?"), r["effects"]
 
@@ -91,7 +91,7 @@ def cap_of(fault: str) -> int:
 
 def validate_data() -> None:
     """Static data.json invariants: value grids and no parent/child double-counting."""
-    for c in DATA["causes"]:
+    for c in DATA["failure_modes"]:
         check(f"{c['id']} baseline on grid", c.get("baseline") in ALLOWED_BASELINES,
               f"baseline {c.get('baseline')} not in {sorted(ALLOWED_BASELINES)}")
         lbl = c.get("label", "")
@@ -107,14 +107,14 @@ def validate_data() -> None:
             check(f"{q['id']} answer under {MAX_ANSWER_LEN}", len(lbl) < MAX_ANSWER_LEN,
                   f"{len(lbl)} chars: {lbl!r}")
         for label, effects in _answer_effects(q):
-            for cid, v in effects.items():
+            for fcode, v in effects.items():
                 check(f"{q['id']} [{label}] effect on grid", v in ALLOWED_EFFECTS,
-                      f"{cid}={v} not in {sorted(ALLOWED_EFFECTS)}")
+                      f"{fcode}={v} not in {sorted(ALLOWED_EFFECTS)}")
             keys = set(effects)
-            for cid in keys:
-                clash = keys & _descendants(cid)
+            for fcode in keys:
+                clash = keys & _descendants(fcode)
                 check(f"{q['id']} [{label}] no parent+child effect", not clash,
-                      f"{cid} given alongside descendant(s) {sorted(clash)}")
+                      f"{fcode} given alongside descendant(s) {sorted(clash)}")
 
 
 def compute_metrics() -> dict:
@@ -126,13 +126,13 @@ def compute_metrics() -> dict:
     }
     locked = [v for v in lockins.values() if v is not None]
     rob = robustness_all(NOISE_TRIALS, NOISE_RATE, seed=0)
-    recov = {f: round(v["recovery"], 3) for f, v in rob.items()}
+    recovery = {f: round(v["recovery"], 3) for f, v in rob.items()}
     return {
         "depth": DEPTH,
         "lockin": lockins,
         "median_lockin": statistics.median(locked) if locked else None,
-        "robustness": recov,
-        "median_recovery": round(statistics.median(recov.values()), 3),
+        "robustness": recovery,
+        "median_recovery": round(statistics.median(recovery.values()), 3),
     }
 
 
@@ -191,24 +191,24 @@ def run_gate() -> int:
             direction = "slower" if (n_med or 0) > (b_med or 0) else "faster"
             warn(f"median lock-in shifted {direction}", f"{b_med} -> {n_med} questions")
 
-    med_recov = metrics["median_recovery"]
-    check("median recovery clears floor", med_recov >= MIN_MEDIAN_RECOVERY,
-          f"median recovery {med_recov} < floor {MIN_MEDIAN_RECOVERY}")
+    med_recovery = metrics["median_recovery"]
+    check("median recovery clears floor", med_recovery >= MIN_MEDIAN_RECOVERY,
+          f"median recovery {med_recovery} < floor {MIN_MEDIAN_RECOVERY}")
     if baseline is not None:
-        b_recov = baseline.get("robustness", {})
+        b_recovery = baseline.get("robustness", {})
         for fault, now in metrics["robustness"].items():
-            base = b_recov.get(fault)
+            base = b_recovery.get(fault)
             if base is not None and now < base - 0.1:
                 warn(f"{fault} robustness dropped", f"{base:.0%} -> {now:.0%} recovery")
         b_med_r = baseline.get("median_recovery")
-        if b_med_r is not None and abs(b_med_r - med_recov) > 0.02:
-            direction = "down" if med_recov < b_med_r else "up"
-            warn(f"median recovery shifted {direction}", f"{b_med_r:.0%} -> {med_recov:.0%}")
+        if b_med_r is not None and abs(b_med_r - med_recovery) > 0.02:
+            direction = "down" if med_recovery < b_med_r else "up"
+            warn(f"median recovery shifted {direction}", f"{b_med_r:.0%} -> {med_recovery:.0%}")
 
     locked = [v for v in lockins.values() if v is not None]
     print(f"--- diagnose: {len(FAULTS)} faults | {len(locked)}/{len(FAULTS)} lock into "
           f"top-3 | median lock-in {metrics['median_lockin']} questions | "
-          f"median recovery {med_recov:.0%} | depth {DEPTH} ---")
+          f"median recovery {med_recovery:.0%} | depth {DEPTH} ---")
     if warnings:
         print(f"WARN ({len(warnings)}) — ranking/speed shifts, suite still passes:")
         for w in warnings:

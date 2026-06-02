@@ -38,7 +38,7 @@ still be confirmed with `irrigation_hydraulics`; the bigger risks here are
 - **✅ Direct drop-in** — unscrew old, thread new in same orientation (flow
   arrow downstream), move the wires over. Follow the valve-replacement steps
   in `../playbooks/parts.md`.
-- **⚠️ Caveat** — it will fit/run, but verify one thing first: **footprint**
+- **⚠️ Caveat** — it will fit/run, but check one thing first: **footprint**
   (does the wider/taller body clear the box and neighbouring valves?), or
   **solenoid** (`-LS` ships without one).
 - **🔧 Adjustment** — same nominal size, but you must change something:
