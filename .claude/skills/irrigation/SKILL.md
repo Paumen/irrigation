@@ -11,9 +11,9 @@ Ground every answer in **this** homeowner's system, not generic memory: read `se
 
 ## Reference content 
 - **`setup.yaml`** (project root) — the homeowner's actual equipment, install dates, zones, hose sizes, wiring, and `system_design_choices`. Canonical record for which models they own and anything physical.
-- **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
+- **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `heads-spray`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
 - **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`failure_modes:`).
-- **`references/<topic>.md`** — deeper reference tables that outgrow a knowledge doc. `references/valve-replacement.md` — which Hunter PGV/ICV models are drop-in replacements for the zone valves vs. need adjustment or a re-plumb; read it when the user is choosing a replacement valve.
+- **`knowledge/valve-replacement.md`** — a deeper reference table: which Hunter PGV/ICV models are drop-in replacements for the zone valves vs. need adjustment or a re-plumb; read it when the user is choosing a replacement valve.
 - **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main hose, app). Check here before answering from memory.
 
 

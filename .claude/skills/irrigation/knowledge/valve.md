@@ -131,11 +131,11 @@ form a tier:
 
 **Regulation tiers in practice.** The PGV-101G valve is **not** pressure-regulated, so where
 no system-wide regulator is fitted, regulation falls to the heads — PRS40 bodies hold the MP
-nozzles at setpoint, while unregulated I-20 rotors rely on supply pressure landing in their
-1.7–4.8 bar window (see `heads.md`, and `setup.yaml` for what is actually fitted).
+nozzles at setpoint (see `heads-spray.md`), while unregulated I-20 rotors rely on supply pressure
+landing in their 1.7–4.8 bar window (see `heads.md`, and `setup.yaml` for what is actually fitted).
 
 When to think about Accusync: if a zone is **consistently misty or over-radius** at
-the heads, the PRS40 isn't engaging (inlet too low — see `heads.md` *Misting from the
+the heads, the PRS40 isn't engaging (inlet too low — see `heads-spray.md` *Misting from the
 MP on top*), and the failure mode is *not* a single head's regulator failing but the whole
 zone running too hot or too cold, then a per-valve regulator on *that* valve is the
 standard remedy. Treat it as a design fix, not a troubleshooting one — bring it up
@@ -332,4 +332,4 @@ service — see `valve-solenoid.md` and `valve-internals.md` for when to replace
 - `wiring.md` — wire gauge/run, waterproof connectors, swap-wire and continuity tests.
 - `controller.md` — voltage at controller terminals.
 - `hoses.md` — zone-wide weakness from a punctured hose (the alternative failure mode to a partly-open valve diaphragm when one zone is weak).
-- `heads.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.
+- `heads-spray.md` — *Pairing MP ↔ PRS40* for the at-the-head regulation tier; *Misting from the MP on top* for the symptom that may suggest moving to per-valve Accusync.

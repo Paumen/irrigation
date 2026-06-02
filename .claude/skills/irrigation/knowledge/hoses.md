@@ -101,8 +101,7 @@ This matters whenever you change the layout:
 - **Removing a head in the middle of a hose:** same fix is not needed
   — water still has somewhere to go (the heads further downstream), so
   cap at the fitting under the removed head and continue. Step-by-step
-  procedure for both cases lives in `heads.md` under *Capping off an I-20
-  in-ground*.
+  procedure for both cases is in *Capping or shortening a hose* below.
 - **Adding a head on a new spur off an existing hose:** the new spur
   must terminate at the new head, not extend past it. Don't pre-run
   hose "for future expansion" — that's exactly an outlet-less stub.
@@ -114,9 +113,8 @@ install.
 ## Capping or shortening a hose (procedure)
 
 Two cases, depending on where the head you're removing sits on the hose.
-The same procedure is repeated in `heads.md` under *Capping off an I-20
-in-ground* because head removal is the most common reason to do it; both
-copies are kept in sync.
+This is the canonical procedure; `heads.md` (rotor removal) points here
+rather than repeating it.
 
 **Case A — head is in the middle of a hose (other heads downstream still
 use the hose):**
@@ -159,8 +157,7 @@ the trench is closed.
 ## See also
 
 - `heads.md` — *Won't pop up* (the head-side symptom this area shows
-  through), *Capping off an I-20 in-ground* (the hose-modification
-  procedure).
+  through); rotor removal points back here for the cap-off procedure.
 - `valve.md` — to exclude the valve as the failure mode when one zone is weak;
   particularly *Weeping when off* and the diaphragm-not-fully-opening
   case, which can also present as a zone-wide pressure drop.
