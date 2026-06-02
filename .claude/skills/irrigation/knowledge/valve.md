@@ -183,11 +183,11 @@ adapter in too far and **split the valve body**.
   more with a wrench.
 - Tape: wrap the pipe three full times. Hand-tighten, then ~½ turn more with a wrench.
 
-So teflon lands only on the male nipple threads that screw into the valve's two female ports;
+So teflon lands only on the male threads that screw into the valve's two female ports;
 the swivel-nut inlet and the compression-nut outlet of this system stay bare (see the rule at the
 top of this section). The outlet adapter is a **PE compression × male-thread** fitting — the
-compression end must match the hose OD (25 mm here); the genuinely useful fitting for the poly
-side, distinct from the male × male double nipple that joins the manifold to the inlet.
+compression end must match the hose OD (25 mm here). This is the genuinely useful fitting for the
+poly side, distinct from the male × male double nipple that joins the manifold to the inlet.
 
 **Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
 damage them.
@@ -203,7 +203,7 @@ wrong and you damage the kit or it leaks". Tag them consistently; don't leave on
 it read like ordinary advice.
 
 - ⚠️ **Tape *or* paste, never both** — together you can over-drive the nipple and split the valve body.
-- ⚠️ **No teflon on the manifold swivel nut or the compression nut** — they seal on a washer/grip; taping stops it seating and it leaks.
+- ⚠️ **No teflon on the manifold swivel nut or the compression nut** — they seal on a washer/grip; taping stops them from seating, causing leaks.
 - ⚠️ **Flow arrow toward the heads** — a backwards valve won't seat; the single most common new-install fault.
 - ⚠️ **Hand-tight only on the solenoid; never grip the solenoid or flow control as a handle** — you'll damage them.
 - ⚠️ **Waterproof connectors on the field-wire joints** — corroded joints raise resistance and trip the controller.

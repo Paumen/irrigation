@@ -20,6 +20,14 @@
 # that resolves or the send fails silently. subjects/causes/questions mark where an image applies —
 # a guide, not a limit. legend = part-callout key for breakdown images. relates = extra context.
 # used_in = docs embedding it.
+#
+# procedures: — a TASK axis, orthogonal to subjects:. subjects: groups by the part a picture shows;
+# procedures: groups by the JOB a picture is needed for, which routinely spans several subjects. A
+# valve install touches the valve, the manifold swivel nut (subjects: valve), a poly-hose adapter
+# (subjects: hoses) and waterproof connectors (subjects: wiring) — a subjects-only scan keyed on
+# "valve" silently drops the hose and wiring fittings that are half the job. When walking a
+# procedure, pull the whole set by its procedures: tag, not by the part the user named. Current
+# tags: valve_install. Add a tag here (and to the relevant entries) when documenting a new job.
 
 images:
 
@@ -76,14 +84,16 @@ images:
     file: media/fitting-joint-product-double-nipple.webp
     caption: Black poly double nipple — male thread on both ends with a hex middle; screws two female-thread fittings together (e.g. a manifold swivel-nut outlet to a valve inlet). A plain fitting.joint coupling, rated to ~10 bar.
     subjects: [hoses, valve]
-    relates: realises the many fitting.joint nodes in setup.yaml; spare for re-plumbing the valve box
+    procedures: [valve_install]
+    relates: realises the many fitting.joint nodes in setup.yaml; spare for re-plumbing the valve box — the male × male nipple into the valve inlet (teflon on the thread)
     used_in: [playbooks/parts.md]
 
   IMG.fitting-joint-product-compression-male:
     file: media/fitting-joint-product-compression-male.jpg
     caption: PE-pipe compression × male-thread adapter — green compression nut grips the poly pipe (push in, hand-tighten the nut), tapered male thread on the other end. Joins buried 25/32 mm hose to a threaded fitting without glue or heat.
     subjects: [hoses]
-    relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the pipe OD
+    procedures: [valve_install]
+    relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the pipe OD — the bare-thread (grip-sealed) outlet joint to the hose.25 poly run; filed under hoses, so a valve-keyed scan misses it without the procedures tag
     used_in: [playbooks/parts.md]
 
   # ── fitting · manifold ───────────────────────────────────────────────────────
@@ -91,7 +101,8 @@ images:
     file: media/fitting-manifold-product-lev-6way.jpg
     caption: LEV 6-way distributor manifold — a single barred header with six 1" swivel-nut female outlets (rubber sealing washers shown loose); the trunk feeds it and each outlet runs to one zone valve. This is the homeowner's manifold (setup.yaml fitting.manifold).
     subjects: [valve, hoses]
-    relates: the MAIN → Z1…Z6 fan-out point in the valve box; swivel nuts let a single valve come off without disturbing the others
+    procedures: [valve_install]
+    relates: the MAIN → Z1…Z6 fan-out point in the valve box; swivel nuts let a single valve come off without disturbing the others — the bare-thread (washer-sealed) inlet joint
     used_in: [playbooks/identify.md, playbooks/parts.md]
 
   # ── head · rotor ────────────────────────────────────────────────────────────
@@ -393,6 +404,7 @@ images:
     caption: Hunter PGV-101G — clean catalog front view; 1" globe body, flow-control knob and bleed on top, 24 VAC solenoid (right) with the looped lead. Matches the homeowner's four zone valves.
     subjects: [valve]
     causes: [F7]
+    procedures: [valve_install]
     relates: sharpest straight-on view for confirming the 101G against what's in the valve box; same valve as IMG.valve-auto-product-pgv-101g
     used_in: [playbooks/identify.md]
 
@@ -497,6 +509,7 @@ images:
     caption: Flow-direction arrow on the valve body; water must flow toward the heads.
     subjects: [valve]
     causes: [F7, F7.4]
+    procedures: [valve_install]
     relates: install orientation; valve installed backwards (proposed flow-direction question)
     used_in: [valve.md]
 
@@ -505,21 +518,9 @@ images:
     caption: PGV install detail — valve in a plastic valve box with cover; control wire coiled for slack; hose to the heads downstream.
     subjects: [valve]
     causes: [F7]
+    procedures: [valve_install]
     relates: install placement and valve-box context; coiled control-wire slack
     used_in: [valve.md]
-
-  # PENDING ASSET — the "where does teflon go" question has no direct image (only nipples and
-  # valve bodies, never teflon ON the threads). Drop a photo of PTFE tape wrapped on a male
-  # nipple thread at media/valve-auto-instruction-teflon-on-threads.jpg, then UNCOMMENT the
-  # entry below to make it live. Do NOT activate it before the file exists — a non-resolving
-  # file: path makes SendUserFile fail silently and looks like a broken image to the user.
-  # IMG.valve-auto-instruction-teflon-on-threads:
-  #   file: media/valve-auto-instruction-teflon-on-threads.jpg
-  #   caption: PTFE tape wrapped on the male nipple thread (3 full turns, in the screw-in direction) before it goes into the valve port — the hex middle and any washer/compression joint stay bare.
-  #   subjects: [valve, hoses]
-  #   causes: [F7]
-  #   relates: answers "where does teflon go" directly; pair with the male × male double nipple and the PE compression × male adapter
-  #   used_in: [valve.md, playbooks/parts.md]
 
   IMG.valve-auto-instruction-solenoid-manual-turn:
     file: media/valve-auto-instruction-solenoid-manual-turn.gif
@@ -607,5 +608,6 @@ images:
     caption: 3M Scotchlok 314 gel-filled waterproof wire connector — blue cap stamped "3M 314"; the clear/white body holds the silicone gel and the metal IDC element. Crimp the cap down with pliers to splice 24 V irrigation wires; no stripping needed.
     subjects: [wiring]
     causes: [F3, F3.1.1, F3.1.2, F3.1.3]
-    relates: waterproof splice for the 24 V field wires; the part to re-order when adding/repairing a connection
+    procedures: [valve_install]
+    relates: waterproof splice for the 24 V field wires; the part to re-order when adding/repairing a connection — the solenoid-to-field-wire joints in a valve install
     used_in: [knowledge/wiring.md, playbooks/parts.md, playbooks/identify.md]
