@@ -65,7 +65,7 @@ inrush / 190 mA holding at 60 Hz; 370 mA / 210 mA at 50 Hz). With **two** soleno
 simultaneously on the same wires, **halve** these distances.
 
 > **Unit caveat:** the source table is metric by gauge (mm²) but its caption reads "distance in
-> feet". The figures below are reproduced as given — confirm feet vs. metres against the Hunter PGV
+> feet". The figures below are reproduced as given — check feet vs. metres against the Hunter PGV
 > document in `media/` before relying on a value near the limit. Academic for short residential runs.
 
 Distance by ground (C) wire (rows) × control/hot wire (columns), in the source's units:

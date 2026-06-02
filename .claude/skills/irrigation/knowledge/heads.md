@@ -273,7 +273,7 @@ Quick read: the canister colour tells you the line (black = standard 10 mm/hr; g
 
 ### Common faults
 
-- **Won't pop up at all.** Inlet pressure below ~1.0 bar. Confirm pump and main hose — a weak pump or a clog upstream is the usual failure mode.
+- **Won't pop up at all.** Inlet pressure below ~1.0 bar. Check pump and main hose — a weak pump or a clog upstream is the usual failure mode.
 - **Pops up but won't rotate.** Filter screen clogged. Pull the nozzle from the body, lift the screen out, rinse, refit. The viscous drive (silicone chamber, brass stator) is sealed and rarely fails — suspect the screen first.
 - **Misting / fine spray instead of distinct streams.** Pressure too high (>3.8 bar at the nozzle). With a PRS40 body this should not happen; if it does, the PRS40 regulator is failing — swap the body or fit a seal kit.
 - **Wrong arc / arc-adjustment turning does nothing.** You're adjusting while the head is retracted. Turn the zone on, adjust while popped up, then shut off.

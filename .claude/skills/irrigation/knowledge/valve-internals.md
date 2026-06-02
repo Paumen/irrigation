@@ -98,7 +98,7 @@ first-class suspect, not an edge case.
    be clean, with no nicks, dents, or abrasions. Wash the diaphragm in clean fresh water to clear any
    deposited debris.
 6. Check the spring: intact, springs back when compressed.
-7. 🔍 Inspect the body and seat; remove any debris, pebbles, or dirty water; confirm the seat is clean
+7. 🔍 Inspect the body and seat; remove any debris, pebbles, or dirty water; check the seat is clean
    and unscored.
 8. Reassemble in the same orientation. Replace the diaphragm assembly if anything is visibly damaged.
 

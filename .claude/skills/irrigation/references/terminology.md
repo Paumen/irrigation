@@ -133,6 +133,15 @@ Safe substitutions — the right word should be avoided in prose:
 | Teflon tape | PTFE tape |
 | failure mode | cause |
 | suspect | candidate |
+| check | confirm, verify *(but keep "confirm" for the ✅ confirm-it-worked marker)* |
 
 Words to **keep** because they carry specific meaning (don't collapse to a generic): **weep**
 (valve leaking when off), **flush** (clearing a line), **clog**, **bleed**, **barb**, **diaphragm**.
+
+Near-synonyms that are **not** interchangeable here — don't collapse them either:
+- **size** — a physical dimension or class (valve ¾"/1", **wire size** = gauge/cross-section). *Not* `length` (a run distance — the opposite axis for wire).
+- **triage** vs **narrow** — broad cross-family discrimination vs pinning one family; both are diagnostic phases, neither is a synonym for "diagnose".
+- **nudge** / **firm** / **hard** — the three force tiers in the question scorecard; **nudge** is a magnitude, not "adjust".
+- **swap** — the hydraulics what-if action ("swap a nozzle") and the *swap-wire* continuity test; keep distinct from the prose verb "replace".
+- **area** (the F1–F9 region / `knowledge/<area>.md` scope) vs **surface** (the verb "surface an image"; "surface area"). Different words, not one concept.
+- **replacement** / **adjustment** are nouns (and `adjustments` is a tool parameter); don't fold them into the verbs "replace" / "adjust".

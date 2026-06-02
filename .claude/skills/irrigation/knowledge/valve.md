@@ -245,7 +245,7 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 The PGV family comes in several body styles. This whole-valve reference documents the **1" globe
 with flow control (PGV-101G)** — the first one below. The others are shown so a body that doesn't
-match can be ruled out during identification. Confirm which body is installed from `setup.yaml`.
+match can be ruled out during identification. Check which body is installed from `setup.yaml`.
 
 ![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-auto-product-pgv-101g.jpg)
 

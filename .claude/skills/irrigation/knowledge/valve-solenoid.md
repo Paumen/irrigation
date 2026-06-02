@@ -120,13 +120,13 @@ If the valve turns on via the external bleed screw but not electrically, suspect
 
 ## Replacing the solenoid
 
-![Replacement valve solenoid — black cylindrical body, looped 24 V leads, threaded base with O-ring. Form factor matches the PGV; verify coil resistance (20–60 Ω) and thread before swapping.](../media/valve-auto-product-solenoid-replacement.jpg)
+![Replacement valve solenoid — black cylindrical body, looped 24 V leads, threaded base with O-ring. Form factor matches the PGV; check coil resistance (20–60 Ω) and thread before swapping.](../media/valve-auto-product-solenoid-replacement.jpg)
 
 If the controller delivers correct voltage (24–28 VAC) at the valve's wire connection and the valve
 still won't operate, replace the solenoid. Shut off, unscrew the old solenoid counter-clockwise,
 fit the new one clockwise until snug, and reconnect with **waterproof** connectors (`wiring.md`).
 
-Part number: **434100** (solenoid assembly, includes O-ring 262600 and seal 364400). Confirm
+Part number: **434100** (solenoid assembly, includes O-ring 262600 and seal 364400). Check
 which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
