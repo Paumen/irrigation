@@ -16,7 +16,7 @@ types:
   fitting.cap:      { fanout: 0, max_bar: 10 }
   valve.auto:       { fanout: 1, description: opened electrically, model: "Hunter PGV-101G", installed: "2020-08", location: valve_box, price_eu: 25, min_bar: 1.5, max_bar: 10.3, min_flow_m3h: 0.1, max_flow_m3h: 9.0, min_ohm: 20, max_ohm: 60, features: [bleed_screw, flow_control] }
   valve.manual:     { fanout: 1, description: opened by hand }
-  head.rotor:       { fanout: 1, takes: nozzle.rotor, description: "gear-driven, long throw", model: "Hunter I-20-04-SS", installed: "2020-08", location: in_ground, price_eu: 25, inlet: '3/4"', features: [radius_setscrew, FloStop, stainless_steel_riser] }
+  head.rotor:       { fanout: 1, takes: nozzle.rotor, description: "gear-driven, long radius", model: "Hunter I-20-04-SS", installed: "2020-08", location: in_ground, price_eu: 25, inlet: '3/4"', features: [radius_setscrew, FloStop, stainless_steel_riser] }
   head.spray:       { fanout: 1, takes: nozzle.rotator, description: fixed-fan pop-up, model: "Hunter Pro-Spray PRS40", installed: "2020-08", location: in_ground, price_eu: 25, inlet: '1/2"', regulated_bar: 2.76 }
   nozzle.rotor:     { fanout: 0, description: fits a rotor body }
   nozzle.rotator:   { fanout: 0, description: rotary streams; fits a spray body }

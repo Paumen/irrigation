@@ -117,7 +117,7 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
    ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](../media/head-rotor-instruction-nozzle-install-step-1.jpg)
 
-2. 🔍 Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
+2. 🔍 Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will spray.
 
    ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](../media/head-rotor-instruction-nozzle-install-step-2.jpg)
 

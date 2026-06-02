@@ -2,16 +2,16 @@
 subject: relay 
 failure_mode_area: F4
 serves: [troubleshooting, install, maintain]
-coverage: power/controller wiring, distance, and chattering are well covered; deeper
+coverage: power/controller wiring, run length, and chattering are well covered; deeper
   relay-internal failure modes beyond chattering/contactor fouling are not.
-summary: Pump start relay reference — what it does, power and controller wiring, distance limits, and the chattering fault.
+summary: Pump start relay reference — what it does, power and controller wiring, run-length limits, and the chattering fault.
 read_when: engine points at the relay (F4); pump won't start while the controller calls; relay chatters/buzzes; installing or rewiring the relay.
 contents:
   - what the relay does (24 V coil switches 230 V to the pump)
   - safety (mains-side work is electrician-only)
   - power-source connection (wire colours / terminals)
   - controller connection (P/MV + common)
-  - minimum and maximum distance to controller (table)
+  - minimum and maximum run length to controller (table)
   - chattering (new-install wire size vs. existing-install contactor fouling)
 ---
 
@@ -59,7 +59,7 @@ common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
 The yellow wires in the relay's lower wiring compartment are the ones that go to the controller.
 
-## Distance to the controller
+## Run length to the controller
 
 The 4.5 m minimum separation is also labelled on the wiring diagram above.
 
@@ -113,7 +113,7 @@ installation or one that has worked for years?
 
 **New installation** → suspect undersized wire from controller to relay. Use a **separate common
 wire** from the controller to the relay; **never share the relay's common with the zone solenoids**.
-Clean every connection and follow the distance/gauge table above.
+Clean every connection and follow the length/gauge table above.
 > If the install already uses a dedicated common and a short run (check `setup.yaml`), the
 > new-install wire-size failure mode is effectively ruled out.
 

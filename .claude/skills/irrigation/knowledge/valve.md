@@ -187,7 +187,7 @@ while the paste acts as a lubricant; the installer can then unintentionally driv
 adapter in too far and **split the valve body**.
 - Paste: fills the voids between threads. Hand-tighten the nipple into the valve, then ~¼ turn
   more with a wrench.
-- Tape: wrap the pipe three full times. Hand-tighten, then ~½ turn more with a wrench.
+- Tape: wrap the thread three full times. Hand-tighten, then ~½ turn more with a wrench.
 
 So teflon lands only on the male threads that screw into the valve's two female ports;
 the swivel-nut inlet and the compression-nut outlet of this system stay bare (see the rule at the
@@ -198,7 +198,7 @@ poly side, distinct from the male × male double nipple that joins the manifold 
 **⚠️ Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
 damage them; hand-tight only on the solenoid.
 
-**⚠️ Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
+**⚠️ Use waterproof splices** for the solenoid-to-field-wire joints in the valve box.
 Non-waterproof connections corrode, which raises electrical resistance; high resistance can
 blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
 
@@ -256,7 +256,7 @@ match can be ruled out during identification. Check which body is installed from
 
   ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-auto-product-pgv-101a-angle.jpg)
 
-- **Male thread × barb (PGV-100MB).** Barbed outlet for poly-pipe hoses (common in cold-climate
+- **Male thread × barb (PGV-100MB).** Barbed outlet for poly hoses (common in cold-climate
   installs) — saves threading an adapter.
 
   ![PGV male-thread × barb body — tapered male NPT inlet (left), ribbed barb outlet (right) for poly hose. Other body style, for identification.](../media/valve-auto-product-pgv-101mb-barb.jpg)

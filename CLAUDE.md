@@ -9,7 +9,7 @@ An agent-facing diagnostic toolkit for one homeowner's irrigation/rotor system. 
 - **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root failure modes. Driven by the `playbooks/troubleshoot.md` playbook via the `diagnose_irrigation` MCP tool.
 - **Hydraulics & general assistance** — a full hydraulic solve plus how-it-works / identify / capacity / upgrade / maintenance playbooks. Driven by the `irrigation_hydraulics` MCP tool.
 
-Both live in the single `irrigation` skill. See `.claude/skills/irrigation/SKILL.md` (shared preamble + intent → playbook router) and `.claude/skills/irrigation/playbooks/` for how the agent loops run, and `docs/spec.md` for the diagnostic-engine spec. House vocabulary (canonical term per concept + writing conventions) lives in `.claude/skills/irrigation/references/terminology.md` — follow it when editing any skill/knowledge/playbook prose.
+Both live in the single `irrigation` skill. See `.claude/skills/irrigation/SKILL.md` (shared preamble + intent → playbook router) and `.claude/skills/irrigation/playbooks/` for how the agent loops run, and `docs/spec.md` for the diagnostic-engine spec.
 
 ## Build / run
 

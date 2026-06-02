@@ -94,19 +94,19 @@ images:
 
   IMG.fitting-joint-product-compression-male:
     file: media/fitting-joint-product-compression-male.jpg
-    caption: PE-pipe compression × male-thread adapter — green compression nut grips the poly pipe (push in, hand-tighten the nut), tapered male thread on the other end. Joins buried 25/32 mm hose to a threaded fitting without glue or heat.
+    caption: PE compression × male-thread adapter — green compression nut grips the poly hose (push in, hand-tighten the nut), tapered male thread on the other end. Joins buried 25/32 mm hose to a threaded fitting without glue or heat.
     subjects: [hoses]
     procedures: [valve_install]
-    relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the pipe OD — the bare-thread (grip-sealed) outlet joint to the hose.25 poly run; filed under hoses, so a valve-keyed scan misses it without the procedures tag
+    relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the hose OD — the bare-thread (grip-sealed) outlet joint to the hose.25 poly run; filed under hoses, so a valve-keyed scan misses it without the procedures tag
     used_in: [playbooks/parts.md]
 
   IMG.fitting-product-ptfe-tape:
     file: media/fitting-product-ptfe-tape.jpg
-    caption: PTFE thread-sealing tape (label "PTFE THREAD SEALING 751-3", 12 mm × 12 m × 0.1 mm) — the white teflon tape you wrap on a male thread before it screws into a female port. Tape OR paste, never both; 3 full turns in the screw-in direction.
+    caption: Teflon tape (label "PTFE THREAD SEALING 751-3", 12 mm × 12 m × 0.1 mm) — the white Teflon tape you wrap on a male thread before it screws into a female port. Tape OR paste, never both; 3 full turns in the screw-in direction.
     subjects: [valve, hoses]
     procedures: [valve_install]
     failure_modes: [F7]
-    relates: the teflon-tape consumable for a valve/fitting install; goes only on threads that seal on the thread, never on a washer- or compression-sealed joint
+    relates: the Teflon-tape consumable for a valve/fitting install; goes only on threads that seal on the thread, never on a washer- or compression-sealed joint
     used_in: [valve.md]
 
   # ── fitting · manifold ───────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ images:
 
   IMG.head-rotor-instruction-arc-radius-adjust:
     file: media/head-rotor-instruction-arc-radius-adjust.png
-    caption: Hunter wrench rotating the arc adjustment (90° per full turn) and the radius/range screw above it; small arrow shows reduced throw.
+    caption: Hunter wrench rotating the arc adjustment (90° per full turn) and the radius/range screw above it; small arrow shows reduced radius.
     subjects: [heads]
     failure_modes: [F9, F9.1.1, F9.3, F9.4]
     relates: arc & radius adjustment direction
@@ -211,7 +211,7 @@ images:
     file: media/head-rotor-instruction-nozzle-install-step-3.jpg
     caption: Rotor nozzle install — step 3 — turn the radius reduction / nozzle adjustment screw a quarter turn clockwise to lock the nozzle in place. More than a quarter turn reduces the radius.
     subjects: [heads]
-    relates: rotor nozzle install procedure; do not over-turn the radius reduction screw (limits throw)
+    relates: rotor nozzle install procedure; do not over-turn the radius reduction screw (limits radius)
     used_in: [heads.md]
 
   IMG.head-rotor-product-cap-internals:
@@ -252,7 +252,7 @@ images:
   # ── head · spray ─────────────────────────────────────────────────────────────
   IMG.head-spray-product-pro-spray-prs40:
     file: media/head-spray-product-pro-spray-prs40.jpg
-    caption: Hunter Pro-Spray PRS40 pop-up body — 4" black riser with a grey pressure-regulating cap (holds 2.8 bar / 40 psi at the nozzle) and an adjustable blue-top nozzle. This is the spray body on the homeowner's Z1 and Z4, carrying MP Rotator nozzles.
+    caption: Hunter Pro-Spray PRS40 pop-up body — 4" black riser with a grey pressure-regulating cap (holds 2.8 bar at the nozzle) and an adjustable blue-top nozzle. This is the spray body on the homeowner's Z1 and Z4, carrying MP Rotator nozzles.
     subjects: [heads]
     relates: the head.spray body in setup.yaml (takes nozzle.rotator); the PRS40 regulation is what keeps MP Rotators at their design pressure. Rotor sibling is IMG.head-rotor-product-i20.
     used_in: [playbooks/identify.md, playbooks/parts.md]
@@ -275,7 +275,7 @@ images:
 
   IMG.nozzle-rotator-instruction-radius-adjust:
     file: media/nozzle-rotator-instruction-radius-adjust.jpg
-    caption: Setting throw with the ringed adjustment tool while the head runs — slip the ring over the nozzle and turn to cut back or extend the radius; the wetted arc shows the new reach right away. Adjust with the zone running so you can see where the water lands.
+    caption: Setting radius with the ringed adjustment tool while the head runs — slip the ring over the nozzle and turn to cut back or extend the radius; the wetted arc shows the new reach right away. Adjust with the zone running so you can see where the water lands.
     subjects: [heads]
     failure_modes: [F9, F9.3, F9.4]
     relates: MP Rotator / spray radius set on the homeowner's Z1 and Z4; uses the same ringed key as IMG.nozzle-rotator-product-mp-wrench
@@ -283,7 +283,7 @@ images:
 
   IMG.nozzle-product-family-render:
     file: media/nozzle-product-family-render.png
-    caption: Stylised lineup of sprinkler nozzle/part variants with one highlighted — a "pick the matching part" selector graphic.
+    caption: Stylised lineup of nozzle/part variants with one highlighted — a "pick the matching part" selector graphic.
     subjects: [heads]
     relates: generic choose-your-nozzle visual; LOW CONFIDENCE — exact product set unconfirmed from the low-res thumbnail, treat as illustrative until the real part is identified
     used_in: []
@@ -335,7 +335,7 @@ images:
     file: media/sensor-product-wind-clik.jpg
     caption: Hunter Wind-Clik — three-cup anemometer with RESET SPEED and SWITCHING SPEED dials (mph + km/h). Pauses the system above the switching threshold; resumes once wind drops below the reset threshold.
     subjects: [controller]
-    relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted throw on windy days
+    relates: wind-pause upgrade candidate; pairs with rotor systems to avoid wasted spray on windy days
     used_in: [playbooks/upgrades.md]
 
   IMG.sensor-product-wind-clik-bracket:
@@ -376,7 +376,7 @@ images:
   # ── tool (gauge / multimeter) ────────────────────────────────────────────────
   IMG.tool-product-gauge-pressure-test:
     file: media/tool-product-gauge-pressure-test.jpg
-    caption: Hunter pressure-test gauge attached to a Pro-Spray pop-up riser (in place of the nozzle) — reads in psi and bar; verifies head operating pressure (~2.8 bar / 40 psi for a PRS40 body).
+    caption: Hunter pressure-test gauge attached to a Pro-Spray pop-up riser (in place of the nozzle) — reads in bar; verifies head operating pressure (~2.8 bar for a PRS40 body).
     subjects: [heads]
     relates: pressure check during capacity diagnosis or verification; confirms the PRS40 regulation is doing its job
     used_in: [playbooks/parts.md]
@@ -385,7 +385,7 @@ images:
     file: media/tool-product-multimeter-illustrated.jpg
     caption: Multimeter with red and black probes — illustration for voltage and resistance checks.
     subjects: [wiring, valve-solenoid, controller]
-    relates: friendlier explainer alternative to the homeowner's real meter photos; handy before the homeowner has the meter in hand
+    relates: friendlier explainer alternative to the homeowner's real multimeter photos; handy before the homeowner has the multimeter in hand
     used_in: [playbooks/parts.md]
 
   IMG.tool-product-multimeter-stanley-fmht82563:
@@ -455,10 +455,10 @@ images:
 
   IMG.valve-auto-product-pgv-101mb-barb:
     file: media/valve-auto-product-pgv-101mb-barb.jpg
-    caption: Hunter PGV 1" male-thread × barb (PGV-101MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly-pipe hoses; flow-control knob on top. NOT this system.
+    caption: Hunter PGV 1" male-thread × barb (PGV-101MB) — tapered male NPT inlet (left), ribbed barb outlet (right) for poly hoses; flow-control knob on top. NOT this system.
     subjects: [valve]
     failure_modes: [F7]
-    relates: body-style exclusion image — barbed poly-pipe outlet variant
+    relates: body-style exclusion image — barbed poly-hose outlet variant
     used_in: [valve.md]
 
   IMG.valve-auto-product-pgv-151g:
@@ -549,7 +549,7 @@ images:
     subjects: [valve-solenoid, wiring]
     failure_modes: [F7, F3]
     questions: [Q13, Q15]
-    relates: stylised explainer for the solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your meter looks like" + "where to put the probes"
+    relates: stylised explainer for the solenoid voltage/resistance check; pair with the real Stanley FATMAX photo for "what your multimeter looks like" + "where to put the probes"
     used_in: [playbooks/parts.md]
 
   IMG.valve-auto-product-pgv-internals-cutaway:
@@ -618,7 +618,7 @@ images:
   # ── wiring ──────────────────────────────────────────────────────────────────
   IMG.wiring-product-3m-connector-314:
     file: media/wiring-product-3m-connector-314.jpg
-    caption: 3M Scotchlok 314 gel-filled waterproof wire connector — blue cap stamped "3M 314"; the clear/white body holds the silicone gel and the metal IDC element. Crimp the cap down with pliers to splice 24 V irrigation wires; no stripping needed.
+    caption: 3M Scotchlok 314 gel-filled waterproof splice — blue cap stamped "3M 314"; the clear/white body holds the silicone gel and the metal IDC element. Crimp the cap down with pliers to splice 24 V irrigation wires; no stripping needed.
     subjects: [wiring]
     failure_modes: [F3, F3.1.1, F3.1.2, F3.1.3]
     procedures: [valve_install]
