@@ -88,17 +88,17 @@ first-class suspect, not an edge case.
 
 1. Shut off the main water supply.
 2. Unscrew the solenoid (counter-clockwise) and check the plunger is clean and moves freely.
-   You can test the solenoid by running that station from the controller and watching whether the
+   🔌 You can test the solenoid by running that station from the controller and watching whether the
    plunger retracts when energised. (Full solenoid detail: `valve-solenoid.md`.)
 3. Unscrew the bonnet screws (or jar top, depending on model). Pull the bonnet away from the body
    **carefully** so you do not lose the diaphragm or spring.
 4. The diaphragm may stay in the body or come away captured in the bonnet. Remove the diaphragm and
-   spring. **Note the orientation of the diaphragm** so it goes back exactly as it came out.
+   spring. 🔍 **Note the orientation of the diaphragm** so it goes back exactly as it came out.
 5. Inspect: the diaphragm should be clean, with no wrinkles, tears, or perforations. The seal should
    be clean, with no nicks, dents, or abrasions. Wash the diaphragm in clean fresh water to clear any
    deposited debris.
 6. Check the spring: intact, springs back when compressed.
-7. Inspect the body and seat; remove any debris, pebbles, or dirty water; confirm the seat is clean
+7. 🔍 Inspect the body and seat; remove any debris, pebbles, or dirty water; confirm the seat is clean
    and unscored.
 8. Reassemble in the same orientation. Replace the diaphragm assembly if anything is visibly damaged.
 

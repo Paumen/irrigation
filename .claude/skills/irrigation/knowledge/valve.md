@@ -213,7 +213,7 @@ Run the checklist in cheapest-first order:
 - **Bleed screw open or damaged** — hand-tighten clockwise.
 - **Solenoid loose or turned on manually** — hand-tighten clockwise until snug.
 - **Loose bonnet/body screws** — tighten until snug.
-- **Diaphragm not seated correctly** — remove the bonnet and inspect alignment (`valve-internals.md`).
+- **Diaphragm not seated correctly** — 🔍 remove the bonnet and inspect alignment (`valve-internals.md`).
 - **Crack in the body** — requires valve replacement.
 
 ## Weeping / leaking when the system is OFF

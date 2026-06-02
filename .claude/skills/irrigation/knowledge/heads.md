@@ -113,11 +113,11 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
 ![Hunter nozzle insertion collar (P/N 123200) — slides over the riser body to hold the rotor cap open during nozzle install.](../media/head-rotor-product-nozzle-insertion-collar.jpg)
 
-1. Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
+1. 🔧 Insert the plastic end of the adjustment wrench into the **lifting socket** on top of the cap and turn 90°. Pull the riser up — the nozzle port is now accessible. Slide the insertion collar over the riser body to hold it up.
 
    ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](../media/head-rotor-instruction-nozzle-install-step-1.jpg)
 
-2. Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
+2. 🔍 Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
 
    ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](../media/head-rotor-instruction-nozzle-install-step-2.jpg)
 
@@ -125,14 +125,14 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
    ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](../media/head-rotor-instruction-nozzle-install-step-3.jpg)
 
-After install: cycle the head a couple of times to confirm the nozzle is locked and the rotor returns to its arc. Use Flo-Stop (below) if you don't want to run the whole zone for that check.
+After install: ✅ cycle the head a couple of times to confirm the nozzle is locked and the rotor returns to its arc. Use Flo-Stop (below) if you don't want to run the whole zone for that check.
 
 **Flo-Stop (shut off one rotor while the zone runs).** Insert the Hunter wrench into the centre hole of the rubber cover (the Flo-Stop port) and turn clockwise until flow at this head stops. Use this for nozzle swaps or quick service without shutting the whole zone. Turn counterclockwise to restore flow.
 
 **Filter cleaning (when a rotor won't rotate).**
 1. Unscrew the body cap counterclockwise. After a season or two it may need pliers to break free.
 2. Lift the internal assembly out of the body.
-3. The filter is the cylindrical screen at the very bottom of the internal assembly; pull it out with needle-nose pliers.
+3. The filter is the cylindrical screen at the very bottom of the internal assembly; 🔧 pull it out with needle-nose pliers.
 4. Rinse under clean water, refit, screw the assembly back in.
 5. I-20 filter spec: **.050" (1.27 mm) square openings, ~14 mesh, ~1410 µm**. Replacement P/N **102600-SP** (same screen as PGP-ADJ / PGP Ultra).
 6. If clean filter doesn't restore rotation, the gear drive is gone — replace the rotor.
@@ -150,9 +150,9 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 4. While still gripping, remove the old rubber seal — the spring's tension releases when the seal comes off.
 5. Remove the plastic spring seat (it may have already popped off).
 6. To install the new seal: with the base on a solid surface, push the retraction spring down below the nozzle turret and hold it there. Drop the new rigid spring seat onto the riser grooved-side-down. Work the new flexible rubber seal (flat side up) onto the turret and then down onto the riser body — don't twist or deform it as it crosses the gap between turret and shaft. Snap the body cap back on (it slides freely once past the ring at the top of the turret). Release the spring.
-7. Cycle the riser by hand several times to seat the parts so they don't stick.
+7. ✅ Cycle the riser by hand several times to seat the parts so they don't stick.
 8. Screw the internal assembly back into the body — ⚠️ **hand-tight only, no threads visible under the cap**. If threads can be felt, the seal isn't seated; redo it.
-9. Re-check installation height (set to grade) before turning on for leak test.
+9. 🔍 Re-check installation height (set to grade) before turning on for leak test.
 
 **Drain check valve (low-head drainage at this rotor).** Hunter sells a screw-in check valve sub-assembly (P/N **142300**, Filter/Screen Check Valve combined). To fit: unthread the body cap, pull the internal assembly, flip upside-down, push the large irregular end of the check valve into the bottom of the riser (the small rubber tip stays outside the riser), refit the internal assembly.
 

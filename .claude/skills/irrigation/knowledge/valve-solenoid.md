@@ -68,8 +68,8 @@ calls it, the fault is electrical (wiring, controller, or solenoid coil) rather 
 ![Stanley FATMAX with leads attached — black to COM, red to VΩ port.](../media/tool-product-multimeter-stanley-fmht82563.jpg)
 
 Use the AC-voltage setting. Solenoids have two wires — one common, one station power (commons are
-usually shared across the system to save wire). With the station activated, place one probe on the
-common wire and the other on the solenoid's power wire at the valve manifold. You should read
+usually shared across the system to save wire). With the station activated, 🔧 place one probe on the
+common wire and the other on the solenoid's power wire at the valve manifold. ✅ You should read
 **24–28 VAC**.
 
 Interpretation:
@@ -87,7 +87,7 @@ bad joint from a bad coil before you replace anything.
 
 ## Testing coil resistance
 
-With the station off, measure resistance across the solenoid's two wires:
+With the station off, 🔧 measure resistance across the solenoid's two wires:
 - **20–60 Ω** → coil is healthy. Does **not** rule out a stuck plunger or clogged port.
 - **Open / infinite** → coil is broken (burnt out). Replace the solenoid.
 - **Near zero / very low** → coil shorted. Replace the solenoid.
@@ -96,7 +96,7 @@ With the station off, measure resistance across the solenoid's two wires:
 
 ## Plunger check
 
-Unscrew the solenoid (counter-clockwise) and confirm the plunger is clean and moves freely. A
+Unscrew the solenoid (counter-clockwise) and ✅ confirm the plunger is clean and moves freely. A
 sticky or dirty plunger can fail to lift or fail to re-seat even with a healthy coil. Clean it; if
 it still binds, replace the solenoid.
 
@@ -113,10 +113,10 @@ If the valve turns on via the external bleed screw but not electrically, suspect
 2. Shut off the main water supply.
 3. Remove the captive bonnet screws on top of the valve.
 4. Remove the bonnet (with solenoid), diaphragm, spring, and support ring.
-5. Pass a thin piece of metal — about 0.8 mm² wire, paperclip-thin — through the exhaust
+5. 🔧 Pass a thin piece of metal — about 0.8 mm² wire, paperclip-thin — through the exhaust
    port to flush out debris (Teflon, glue, dirt).
 6. Reinstall bonnet, diaphragm, spring, and support ring.
-7. Activate the station from the controller to test.
+7. 🔌 Activate the station from the controller to test.
 
 ## Replacing the solenoid
 
