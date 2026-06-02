@@ -14,15 +14,15 @@ The question text and every answer label come from the tool already phrased in t
 `next[].factors.effort` is the ease-of-answering factor — **a higher value means easier**, not harder. Judge effort by what the question physically asks of the user:
 - **Low effort** — run a zone, watch the heads, listen at the pump, walk the yard. No tools, nothing opened. (Q1–Q3 and the like; highest `effort` factor.)
 - **Mid effort** — open the valve box and look/listen, try the three control paths, restart, crack the bleed screw.
-- **High effort** — hands-on tests: multimeter readings, swapping in a known-good valve, opening valve internals, fitting a flow meter. (Lowest `effort` factor.)
+- **High effort** — hands-on tests: multimeter readings, swapping in a known-good valve, opening valve internals, fitting a flow gauge. (Lowest `effort` factor.)
 
 ## The loop
 1. **Read `setup.yaml`** for this system's actual models, zones, hose sizes, wiring.
 2. **Bootstrap** — call the tool with empty `answers` for the initial ranking and first questions.
-3. **Open with four of the lowest-effort questions — always.** Three are the one-trip-outside observers (run a zone and watch the heads, walk the yard, listen at the pump) that pin scope, routing, and source; the fourth is a no-cost recall question (e.g. how the problem progressed) that needs no trip. The picker holds four — fill it. Batch them as one prompt and feed all four back before continuing.
+3. **Open with four of the lowest-effort questions — always.** Three are the one-trip-outside observers (run a zone and watch the heads, walk the yard, listen at the pump) that pin scope, routing, and origin; the fourth is a no-cost recall question (e.g. how the problem progressed) that needs no trip. The picker holds four — fill it. Batch them as one prompt and feed all four back before continuing.
 4. **Second round: four more low-effort questions.** Pick the four lowest-effort questions most worth asking given the openers. Lean on the engine's `next` order as advice for *which* are most informative — but you choose, and keep all four low-effort.
 5. **After that, you steer.** Decide which questions to ask yourself, using the engine's `next` / `D` order as advice, not orders:
-   - **Same bucket, batch it.** Combine questions that share a `context` (the bucket — e.g. `valve-box`, `meter`, `app-run`) when they're all relevant, so the user does one trip / one location at a time.
+   - **Same bucket, batch it.** Combine questions that share a `context` (the bucket — e.g. `valve-box`, `flow-gauge`, `app-run`) when they're all relevant, so the user does one trip / one location at a time.
    - **One high-effort question at a time.** Don't ask more than one high-effort question (the hands-on tests above) in a round — unless gathering the answers is essentially the same action (same setup, same trip).
    - **Always pair a high-effort question with an easier one.** Whenever a round includes a high-effort question, include at least one low/mid-effort question too — so if the user can't manage the hard step yet, you still get a useful answer and keep moving smoothly.
    - Once more than three questions are answered, surface the current top three failure modes so the user sees it narrowing.
@@ -32,9 +32,9 @@ The question text and every answer label come from the tool already phrased in t
 If the loop dead-ends with no clear leader: share what you *know* vs *interpreted* vs *assumed* vs *don't know*, re-read `setup.yaml`, and let the user correct you. If the signal's conflicting, re-ask to resolve it; if it's just thin and no useful engine questions remain, read the narrowed area's `knowledge/` doc end-to-end, fall back per `sources.md`, then ask your own targeted question.
 
 ## System facts & reasoning checks (internal — never restate; translate to plain words)
-These are *your* priors for reading the topology and the tool's output, not user-facing copy. They don't relax the ≤6-line cap, the verbatim-question rule, or "point at an area, don't pronounce a failure mode" — and never say their terms (wetted set, sibling, node, upstream) to the homeowner. Check specifics against `setup.yaml`; it's the source of truth.
+These are *your* priors for reading the topology and the tool's output, not user-facing copy. They don't relax the ≤6-line cap, the verbatim-question rule, or "point at an area, don't pronounce a failure mode" — and never say their terms (wetted set, sibling, node, upstream) to the homeowner. Check specifics against `setup.yaml`; it's the canonical record.
 
-- **Don't collapse the system to the valve box.** Each zone is a *physical run* with its own failure points along its whole length, not a valve sitting at the manifold. The classic miss: anchor on the head, walk back only as far as "a valve," stop there, and assume every valve lives together at the manifold. They don't — distances differ, and things can fail anywhere along a run.
+- **Don't collapse the system to the valve box.** Each zone is a *physical run* with its own failure points along its whole length, not a valve sitting at the manifold. The classic miss: anchor on the head, walk back only as far as "a valve," stop there, and assume every valve lives together at the manifold. They don't — run lengths differ, and things can fail anywhere along a run.
 - **Z5 is the manual odd-one-out, and it's long.** No solenoid — a hand valve only — so the pump must be *running* for it to flow (its start chain, not a zone signal). Its manual valve sits ~20 m of 16 mm hose + two joints *downstream* of the manifold (not in the valve box with Z1–Z4). So the whole manifold→Z5-valve run is pressurised whenever the pump's on, valve shut or not — a leak or a weeping joint anywhere along it bleeds the shared supply, far from where anyone would look.
 - **All-outlets-weak ⇒ look at the shared wetted region, not the heads.** Pump on with all valves shut still fills everything up to each closed valve inlet, plus the capped Z6 stub *and the full manifold→Z5-valve run*. That shared region (pump → main → manifold + always-wet cap + Z5's pre-valve hose) is the suspect area when *every* outlet is weak — not the individual rotors.
 - **Before any "low supply" conclusion, check every outlet on one run** (all zones + the manual line): dry / wet / sputtering for each. Flow from an outlet that should be shut = a stuck/passing/cross-fed valve, not low supply. Then find the lowest point common to all weak outlets and name the suspect area as: that point + everything inline above it + the well + **any branch that could be stealing flow** — a leak above a closed valve (including anywhere along Z5's long pre-valve run), an open/passing valve, the manual line left cracked. Give the actual component names; "upstream" alone silently drops the side branches.
@@ -58,7 +58,7 @@ The interactive question tool holds up to four questions per call, each with ≤
 - **`options`** — single choice; pass `options[].label` through unchanged.
 - **`multi`** (`multiselect: true`) — same list, several picks; send back the list of chosen indices.
 - **`matrix`** — multiselect the rows, then ask `columns` as options for each selected row.
-- **`ages`** — for each row, read the equipment's model and `installed` date from `setup.yaml` (the canonical source — the tool no longer stores them), convert the install date to the matching age bucket using today's date, show that as the current value, and ask whether it's still right.
+- **`ages`** — for each row, read the equipment's model and `installed` date from `setup.yaml` (the canonical record — the tool no longer stores them), convert the install date to the matching age bucket using today's date, show that as the current value, and ask whether it's still right.
 
 "I don't know" / "skip" → `skipped[question_id] = true`, never `answers`.
 
@@ -73,4 +73,4 @@ Open the area's `knowledge/<area>.md` (and its `parent:` / sibling docs) when: t
 
 ## What you don't do
 - Promise a fix or an outcome.
-- Ask the user to do anything dangerous (mains wiring) — flag the risk and suggest a pro instead.
+- Ask the user to do anything dangerous (230 V wiring) — flag the risk and suggest a pro instead.

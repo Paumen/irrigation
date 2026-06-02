@@ -15,7 +15,7 @@ contents:
 
 # Heads — rotors, spray bodies, MP Rotator nozzles
 
-The heads are the parts that actually throw water at the lawn. Three components (see `setup.yaml` for what is fitted per zone):
+The heads are the parts that actually spray water at the lawn. Three components (see `setup.yaml` for what is fitted per zone):
 
 - **I-20 rotors** — pop-up rotors for the large open areas (long radius, slow rotation).
 - **Pro-Spray PRS40 bodies** — pressure-regulated pop-up bodies (~2.8 bar at the nozzle) that carry the MP nozzles.
@@ -36,18 +36,18 @@ Hunter's mid-range gear-drive rotor. The **I-20-04-SS** variant has a 4" pop-up 
 - Recommended pressure: **1.7–4.8 bar**
 - Operating pressure: 1.4–6.9 bar
 - Precipitation rate: ~10 mm/hr
-- Nozzle trajectory: standard 25°, low-angle 13°
+- Nozzle trajectory: standard 25°, low-trajectory 13°
 - Drain check valve: holds back up to ~3 m of elevation
 - Warranty: 5 years
 
-![Trajectory geometry — A = angle, B = max height of spray, C = distance from head to max height](../media/head-rotor-breakdown-trajectory-chart.png)
+![Trajectory geometry — A = trajectory, B = max height of spray, C = length from head to max height](../media/head-rotor-breakdown-trajectory-chart.png)
 
-Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-20 envelope peaks around 3–4 m above grade at 6–10 m out, so a 2 m hedge or fence within ~8 m of the head will clip the stream. Switch to the grey low-angle (13°) nozzle for those spots — peaks at ~1–1.5 m height.
+Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-20 envelope peaks around 3–4 m above grade at 6–10 m out, so a 2 m hedge or fence within ~8 m of the head will clip the stream. Switch to the grey low-trajectory (13°) nozzle for those spots — peaks at ~1–1.5 m height.
 
 ### Construction and variants
 
 - Body and riser: corrosion- and impact-resistant ABS plastic; stainless-steel riser spring.
-- Variants exist as shrub head, 4" plastic, **4" stainless-steel (-SS)**, 6" plastic, 6" SS, and 12" plastic. The number is the pop-up height in inches.
+- Variants exist as shrub head, 4" plastic, **4" stainless-steel (-SS)**, 6" plastic, 6" SS, and 12" plastic. The number is the pop-up height.
 - Factory-installed rubber boot/cover protects the top of the body.
 
 ### Features
@@ -64,9 +64,9 @@ Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-
 The I-20 ships with multiple nozzle sets, colour-coded by category:
 
 - **Blue** (standard): 1.5 to 8.0 — the default rack, used at recommended pressure.
-- **Grey** (low-angle, 13° trajectory): 2.0 to 4.5 — for windy spots or near walls where the standard 25° throws over the target.
+- **Grey** (low-trajectory, 13°): 2.0 to 4.5 — for windy spots or near walls where the standard 25° oversprays the target.
 - **Black** (short-radius): 0.50 to 3.0 — for tight zones below ~6 m.
-- **Dark green** (high-flow): 6.0 to 13.0 — for long throws on high-flow zones.
+- **Dark green** (high-flow): 6.0 to 13.0 — for a long radius on high-flow zones.
 - **MPR-25 / MPR-30 / MPR-35** — matched-precipitation rates at 7.6 / 9.1 / 10.7 m radii.
 
 Mixing nozzle sizes within a zone is how installers balance differently-sized arcs so each head finishes the design radius at the design pressure.
@@ -117,9 +117,9 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
    ![Step 1 — wrench in the lifting socket, pull the riser up; insertion collar holds it open.](../media/head-rotor-instruction-nozzle-install-step-1.jpg)
 
-2. 🔍 Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is angled up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will throw.
+2. 🔍 Visually check the **nozzle / radius adjustment screw** isn't blocking the nozzle socket. Slip the nozzle in — the socket is tilted up 25°. The triangle on the rubber cover marks the direction of water flow when the rotor is retracted, so it tells you which way the nozzle will spray.
 
-   ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](../media/head-rotor-instruction-nozzle-install-step-2.jpg)
+   ![Step 2 — nozzle slipped into the 25°-tilted socket; insertion collar still holding the riser.](../media/head-rotor-instruction-nozzle-install-step-2.jpg)
 
 3. Turn the **nozzle / radius adjustment screw** a **quarter turn clockwise** to lock the nozzle in place. ⚠️ More than a quarter turn starts to reduce the radius — don't over-turn.
 
@@ -162,7 +162,7 @@ After install: ✅ cycle the head a couple of times to confirm the nozzle is loc
 - *Removing a head that is not at the end of its hose:* dig down to expose the threaded fitting under the rotor, unscrew the rotor (plus any riser nipple), thread on a same-size cap or plug with Teflon tape, turn the zone on briefly to check for leaks, then backfill.
 - *Removing the last head on a hose (if this branch is winterized!):* never just cap the dead-end at the removed head — water trapped in the dead-end will freeze and split the hose. Instead, dig up the *upstream* head's tee, cut the hose just past the tee, cap the stub with a compression cap or a barbed plug + hose clamp (PE hose can't be glued), and abandon the rest to the removed head. Check for leaks before backfilling.
 
-**Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the hose and the rotor inlet) lets you adjust height after the head is installed and absorbs lateral shock from foot traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
+**Setting height to grade — swing joint vs hard riser.** When you replace a rotor, the new head should sit flush with the surrounding turf (top of cap just at grade, not proud, not sunk). A SCH80 nipple riser fixes the height at install — measure twice. A Hunter swing joint (flexible elbowed link between the hose and the rotor inlet) lets you adjust height after the head is installed and absorbs side load from pedestrian traffic or settling soil — the better choice on a sandy/settling site. The I-20 inlet is **¾" NPT**; use Teflon tape on the threads.
 
 ## Pro-Spray PRS40 spray body
 

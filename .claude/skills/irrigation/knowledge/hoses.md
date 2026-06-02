@@ -21,7 +21,7 @@ the valve manifold out to the heads on each zone. Each zone has its own buried
 hose (see `setup.yaml` for hose sizes, count, and the per-zone head mix).
 
 Read this when the engine narrows to F8, or when a head-side symptom (won't
-pop up, weak throw, brown spots on the far end of a zone) doesn't match
+pop up, short radius, brown spots on the far end of a zone) doesn't match
 anything wrong at the head itself. hoses fail mostly by **puncture** —
 people put a spade, a fence post, or a tree root through one — not by aging
 of the hose.
@@ -44,7 +44,7 @@ The tells are:
   riser seal — see `heads.md`).
 - **Recent garden activity** in the last few weeks/months in the rough path
   of the hose: new tree or shrub planted, fence post driven, deck
-  footing dug, paving lifted/relaid, mole/vole burrowing, root invasion
+  foundation dug, paving lifted/relaid, mole/vole burrowing, root invasion
   from an established tree.
 - Pressure at the manifold is normal during a zone run (so the pump and
   main hose are fine), but **pressure at the far end of the zone is low**

@@ -17,18 +17,17 @@ import yaml
 
 SETUP_PATH = Path(__file__).resolve().parent.parent / "setup.yaml"
 
-GPM_TO_M3H = 0.2271247
 M_PER_BAR = 10.197
-PSI_PER_BAR = 14.5038
 G = 9.80665
+KV_PER_CV = 0.864978  # metric Kv (m³/h at 1 bar) per catalogue valve coefficient
 
-MP_FLOW_40PSI_GPM: dict[str, dict[int, float]] = {
-    "MP1000": {90: 0.19, 180: 0.37, 210: 0.43, 360: 0.75},
-    "MP2000": {90: 0.40, 180: 0.74, 210: 0.86, 270: 1.10, 360: 1.47},
-    "MP3000": {90: 0.86, 180: 1.82, 210: 2.12, 270: 2.73, 360: 3.64},
+MP_FLOW_M3H: dict[str, dict[int, float]] = {  # Hunter MP chart, fully-regulated flow
+    "MP1000": {90: 0.043154, 180: 0.084036, 210: 0.097664, 360: 0.170344},
+    "MP2000": {90: 0.09085, 180: 0.168072, 210: 0.195327, 270: 0.249837, 360: 0.333873},
+    "MP3000": {90: 0.195327, 180: 0.413367, 210: 0.481504, 270: 0.62005, 360: 0.826734},
 }
-MP_REG_BAR = 40.0 / PSI_PER_BAR
-# PRS40 needs inlet above its 2.76 bar setpoint to regulate; below this it
+MP_REG_BAR = 2.7579
+# PRS40 needs inlet above its ~2.76 bar setpoint to regulate; below this it
 # passes inlet pressure straight through. Not equal to MP_REG_BAR.
 MP_REG_MIN_INLET_BAR = 3.5
 
@@ -96,8 +95,8 @@ def hazen_williams_m(q_m3h: float, d_m: float, length_m: float, c: float = HW_C)
 def valve_loss_bar(q_m3h: float, cv: float = VALVE_CV) -> float:
     if q_m3h <= 0:
         return 0.0
-    gpm = q_m3h / GPM_TO_M3H
-    return ((gpm / cv) ** 2) / PSI_PER_BAR
+    kv = cv * KV_PER_CV
+    return (q_m3h / kv) ** 2
 
 
 def velocity_ms(q_m3h: float, d_m: float) -> float:
@@ -132,16 +131,16 @@ def i20_flow_m3h(nozzle_num: str, pressure_bar: float) -> tuple[float, bool]:
     return _interp(pressure_bar, I20_PRESSURES_BAR, table), True
 
 
-def _mp_arc_flow_gpm(model: str, arc_deg: float) -> float:
-    arcs = sorted(MP_FLOW_40PSI_GPM[model])
-    return _interp(arc_deg, arcs, [MP_FLOW_40PSI_GPM[model][a] for a in arcs])
+def _mp_arc_flow_m3h(model: str, arc_deg: float) -> float:
+    arcs = sorted(MP_FLOW_M3H[model])
+    return _interp(arc_deg, arcs, [MP_FLOW_M3H[model][a] for a in arcs])
 
 
 def mp_flow_m3h(model: str, arc_deg: float, inlet_bar: float) -> tuple[float, bool]:
     """Returns (flow, regulated). Below MP_REG_MIN_INLET_BAR flow falls off."""
-    if model not in MP_FLOW_40PSI_GPM:
-        raise ValueError(f"unknown MP model {model!r}; known: {sorted(MP_FLOW_40PSI_GPM)}")
-    base = _mp_arc_flow_gpm(model, arc_deg) * GPM_TO_M3H
+    if model not in MP_FLOW_M3H:
+        raise ValueError(f"unknown MP model {model!r}; known: {sorted(MP_FLOW_M3H)}")
+    base = _mp_arc_flow_m3h(model, arc_deg)
     if inlet_bar >= MP_REG_MIN_INLET_BAR:
         return base, True
     nozzle_bar = max(min(inlet_bar, MP_REG_BAR), 0.0)
@@ -549,7 +548,7 @@ def _head_output(scope: str, nodes: dict[str, Node], state: dict,
             spec = f"{kind}@{lf.fields.get('arc_deg')}"
         else:
             spec = "single stream"
-        lateral_m = sum(float(n.fields.get("length_m", 0.0))
+        branch_m = sum(float(n.fields.get("length_m", 0.0))
                         for n in _path_to(nodes, lf.id, valve_id or lf.id)
                         if n.dtype.startswith("hose."))
         item = {
@@ -558,7 +557,7 @@ def _head_output(scope: str, nodes: dict[str, Node], state: dict,
             "spec": spec,
             "arc_deg": lf.fields.get("arc_deg"),
             "elevation_m": lf.fields.get("height_m"),
-            "lateral_m": round(lateral_m, 2),
+            "branch_m": round(branch_m, 2),
             "flow_m3h": round(q, 3),
             "pressure_bar": p_bar,
         }
@@ -570,7 +569,7 @@ def _head_output(scope: str, nodes: dict[str, Node], state: dict,
                 minor += _edge_minor_m(n, sub.get(n.id, 0.0), env)
             item["loss_breakdown_bar"] = {
                 "elevation_rise": round(elev / M_PER_BAR, 3),
-                "lateral_friction": round(fric / M_PER_BAR, 3),
+                "branch_friction": round(fric / M_PER_BAR, 3),
                 "swing_joint": round(minor / M_PER_BAR, 3),
             }
         if kind == "I-20" and not st.get("in_range", True):
@@ -686,7 +685,7 @@ def _ratings(sys_data: dict) -> dict:
         "pump_max_bar": g("pump.well", "max_bar"),
         "pump_flow": g("pump.well", "max_flow_m3h"),
         "main_bar": g("hose.32", "max_bar"),
-        "lat_bar": g("hose.25", "max_bar"),
+        "branch_bar": g("hose.25", "max_bar"),
         "manifold_bar": g("fitting.manifold", "max_bar"),
         "manifold_flow": g("fitting.manifold", "max_flow_m3h"),
         "valve_min_bar": g("valve.auto", "min_bar"),
@@ -698,8 +697,8 @@ def _ratings(sys_data: dict) -> dict:
     }
 
 
-def _busiest_lateral(nodes: dict[str, Node], zones: list[dict]) -> dict | None:
-    """The lateral hose segment (not the main line) running the highest
+def _busiest_branch(nodes: dict[str, Node], zones: list[dict]) -> dict | None:
+    """The branch hose segment (not the main line) running the highest
     velocity, using its segment flow."""
     best = None
     for z in zones:
@@ -710,9 +709,9 @@ def _busiest_lateral(nodes: dict[str, Node], zones: list[dict]) -> dict | None:
             if n.scope == scope and n.dtype.startswith("hose."):
                 v = velocity_ms(sub.get(n.id, 0.0), hose_inner_d_m(n.dtype))
                 if best is None or v > best["velocity_ms"]:
-                    best = {"segment": "zone_laterals", "size_mm": hose_nominal_mm(n.dtype),
+                    best = {"segment": "zone_branches", "size_mm": hose_nominal_mm(n.dtype),
                             "flow_m3h": round(sub.get(n.id, 0.0), 3), "velocity_ms": round(v, 2),
-                            "scope": "busiest lateral (per segment)"}
+                            "scope": "busiest branch (per segment)"}
     return best
 
 
@@ -730,7 +729,7 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
     max_ratings = {
         "pump (max deliverable)": r["pump_max_bar"],
         "main_line": r["main_bar"],
-        "zone_laterals": r["lat_bar"],
+        "zone_branches": r["branch_bar"],
         "manifold": r["manifold_bar"],
         "zone_valves": r["valve_max_bar"],
         "swing_joints_rotor": r["sj_bar"],
@@ -792,7 +791,7 @@ def weakest_links(sys_data: dict, nodes: dict[str, Node], zones: list[dict], env
          "flow_m3h": round(pm_load, 3), "velocity_ms": round(velocity_ms(pm_load, main_d), 2),
          "scope": pm_scope},
     ]
-    busiest = _busiest_lateral(nodes, zones)
+    busiest = _busiest_branch(nodes, zones)
     if busiest:
         velocity_items.append(busiest)
     velocity_items.sort(key=lambda it: it["velocity_ms"], reverse=True)
@@ -837,7 +836,7 @@ def _assumptions(pump_model: str, env: dict, mode: str, extra: dict | None = Non
         "hazen_williams_C": HW_C,
         "mp_regulated_bar": round(MP_REG_BAR, 3),
         "note": ("I-20 flow tracks head pressure (Hunter Blue nozzle chart); "
-                 "MP Rotators are 40 PSI regulated (Hunter MP chart); the Z5 "
+                 "MP Rotators are 2.8 bar regulated (Hunter MP chart); the Z5 "
                  "stream nozzle is modelled as free discharge from the 16 mm "
                  "bore. Loss coefficients are approximate and overridable."),
     }
@@ -855,7 +854,7 @@ _FRIENDLY = {
     "swing_joints_rotor": "Rotor swing joints",
     "swing_joints_mp": "MP swing joints",
     "main_line": "Main line",
-    "zone_laterals": "Zone laterals",
+    "zone_branches": "Zone branches",
 }
 
 
@@ -913,12 +912,12 @@ def _health(zones: list[dict], wl: dict) -> dict:
     if fast:
         status = "warning" if (vv or fast["velocity_ms"] >= 0.8 * limit) else "ok"
         checks["velocity"] = {
-            "label": "Pipe velocity", "status": status, "unit": "m/s", "kind": "ceiling",
+            "label": "Hose velocity", "status": status, "unit": "m/s", "kind": "ceiling",
             "value": r1(fast["velocity_ms"]), "min": 0.0, "max": r1(limit),
             "note": f"fastest: {_FRIENDLY.get(fast['segment'], fast['segment'])}",
         }
     else:
-        checks["velocity"] = {"label": "Pipe velocity", "status": "ok", "unit": "m/s",
+        checks["velocity"] = {"label": "Hose velocity", "status": "ok", "unit": "m/s",
                               "kind": "ceiling", "value": None, "min": 0.0, "max": r1(limit),
                               "note": "—"}
 

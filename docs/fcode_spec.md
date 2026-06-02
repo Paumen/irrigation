@@ -3,7 +3,7 @@
 **Version:** 1.0 
 **Status:** canonical
 **Format:** dotted (`F<component>.<mode>.<instance>`)
-**Source of truth for migration:** the live `data.json` failure mode taxonomy
+**Canonical record for migration:** the live `data.json` failure mode taxonomy
 
 ---
 
@@ -85,7 +85,7 @@ F5  Pump
 ├─ F5.1   Physical defect (motor, cap, impeller)
 ├─ F5.3   Physical obstruction (suction-side)
 │  ├─ F5.3.1   lost prime (air leak)
-│  └─ F5.3.2   foot-valve clog (strainer)
+│  └─ F5.3.2   suction-strainer clog
 └─ F5.8   External fault (low well level)
 
 F6  Main hose (32 mm)
@@ -255,13 +255,13 @@ String = rename/move. Array = 1→many split (manual apportioning required, §5)
 
 ## 5. Split apportioning (required before data.json migration)
 
-Each split source's `baseline` and every per-question `effects` entry divides between
+Each split origin's `baseline` and every per-question `effects` entry divides between
 its two targets.
 
 **Baseline apportioning.** Naive duplication doubles the prior. Suggested defaults
 (tune as needed):
 
-| Source | `baseline` | → first | → second |
+| Origin | `baseline` | → first | → second |
 |---|---|---|---|
 | R22 (1.2) | F2.1 0.8 | F2.8 0.4 | unit defects more common than socket-side power |
 | R23 (1.2) | F2.5 0.6 | F2.6 0.6 | firmware ≈ settings a priori |
@@ -304,7 +304,7 @@ Hits: Q10 rotor row (1.0). Lean F9.4, small weight on F9.1.2.
 ## 5.5 Per-question recalibration
 
 Effects in `data.json` that need adjustment beyond §5's default rule — cases where a
-split-source effect should be **moved**, **dropped on one side**, or
+split-origin effect should be **moved**, **dropped on one side**, or
 **asymmetrically weighted** rather than duplicated. Anything not listed below
 duplicates as-is.
 

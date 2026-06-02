@@ -3,13 +3,13 @@ subject: Field wiring (24 V low-voltage)
 failure_mode_area: F3
 serves: [troubleshooting, test, install]
 coverage: partial
-summary: Partial — wire-distance table, waterproof-connector rule, and the isolation tests; no deeper splice or common-wire fault detail yet.
+summary: Partial — wire-length table, waterproof-splice rule, and the isolation tests; no deeper splice or common-wire fault detail yet.
 read_when: a conductor, splice, or common is suspected; positively excluding wire length as a failure mode; isolating wiring vs valve vs controller.
 contents:
   - coverage note (what's missing)
   - waterproof connectors (corrosion → resistance → blown fuses)
   - the connector itself — 3M Scotchlok 314 (what it's called + how to buy more)
-  - wire distance vs gauge table (unit caveat)
+  - wire length vs gauge table (unit caveat)
   - swap-wire test (controller end)
   - swap-valve test (valve-box end, four-in-one-box)
   - continuity / resistance check
@@ -17,7 +17,7 @@ contents:
 
 # Field wiring — 24 V low-voltage
 
-**Coverage note.** Sourced so far: the wire-distance table, the waterproof-connector rule, and the
+**Coverage note.** Sourced so far: the wire-length table, the waterproof-splice rule, and the
 basic continuity/swap tests (carried in from the valve material). No deeper splice-level or
 common-wire fault detail yet. On short residential runs, wire length is almost certainly *not* a
 failure mode — the table is useful mainly to positively exclude it. (Check the actual run lengths in
@@ -25,7 +25,7 @@ failure mode — the table is useful mainly to positively exclude it. (Check the
 
 ## Waterproof connectors (install + corrosion fault)
 
-Use waterproof wire connectors for every solenoid-to-field-wire joint in the valve box.
+Use waterproof splices for every solenoid-to-field-wire joint in the valve box.
 Non-waterproof connections corrode; corrosion raises electrical resistance; high resistance can blow
 fuses or trip the controller. A corroded splice is a classic intermittent/seasonal fault.
 
@@ -36,14 +36,14 @@ Scotchlok 314** connectors (the blue cap is stamped "3M 314"). Clear/white silic
 blue squeeze-down cap, two or three wire ports. They're *insulation-displacement* (IDC) connectors —
 you push the un-stripped wires in and crimp the cap flat with pliers; the metal element bites through
 the insulation and the gel seals out water. About **2.4 cm long × 1.7 cm wide × 1.7 cm tall**. Rated
-for low-voltage / 24 V irrigation control wire (also sold as a phone/alarm wire connector).
+for low-voltage / 24 V irrigation control wire (also sold as a phone/alarm connector).
 
 This is the part to search for when re-ordering or buying spares. It goes by many names — surface this
 section whenever the homeowner describes *that blue/white thing on the wires* or asks what it's called:
 
 > **3M Scotchlok 314** · 3M 314 connector · gel connector / gel-filled connector · gel-cap ·
-> waterproof wire connector · waterproof splice connector · low-voltage / 24 V wire connector ·
-> sprinkler / irrigation wire connector · the blue/white connector · blue-white splice · cable
+> waterproof splice · waterproof splice connector · low-voltage / 24 V splice ·
+> irrigation splice · the blue/white connector · blue-white splice · cable
 > connector · wire splice
 >
 > **Dutch (NL):** afzetklem · waterdichte (kabel)verbinder · waterdichte lasdop / kabelverbinder ·
@@ -58,17 +58,17 @@ section whenever the homeowner describes *that blue/white thing on the wires* or
 Images: `IMG.wiring-product-3m-connector-314` (the stamped blue cap) — surface it when showing the
 homeowner what to look for or order.
 
-## Wire distance vs. gauge
+## Wire length vs. gauge
 
 Maximum one-way run between controller and a single active heavy-duty solenoid (24 VAC; 350 mA
 inrush / 190 mA holding at 60 Hz; 370 mA / 210 mA at 50 Hz). With **two** solenoids energised
-simultaneously on the same wires, **halve** these distances.
+simultaneously on the same wires, **halve** these lengths.
 
-> **Unit caveat:** the source table is metric by gauge (mm²) but its caption reads "distance in
-> feet". The figures below are reproduced as given — check feet vs. metres against the Hunter PGV
+> **Unit caveat:** the vendor table is metric by gauge (mm²) but its caption gives run length in
+> imperial units. The figures below are reproduced as given — check the units against the Hunter PGV
 > document in `media/` before relying on a value near the limit. Academic for short residential runs.
 
-Distance by ground (C) wire (rows) × control/hot wire (columns), in the source's units:
+Length by ground (C) wire (rows) × control/hot wire (columns), in the vendor's units:
 
 | C \ Hot | 0.5 mm² | 1.0 mm² | 1.5 mm² | 2.5 mm² | 4.0 mm² | 6.0 mm² |
 |---|---|---|---|---|---|---|
