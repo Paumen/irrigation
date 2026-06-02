@@ -55,7 +55,7 @@ debris causes outsized trouble — they govern the pressure balance, not the mai
 ![External parts of the valve — bonnet screws, bleed screw, solenoid, body.](../media/valve-auto-breakdown-leak-points.png)
 
 - **Bonnet** — the top section, held by captive bonnet screws (jar-top on some models).
-- **Flow control handle** — limits the diaphragm's stroke to throttle flow/pressure.
+- **Flow control handle** — throttles flow/pressure through the valve.
 - **Bleed screw** — external manual bleed; releases upper-chamber pressure to open the valve by hand.
 - **Solenoid** — the cylinder with two wires; the electrical actuator (see `valve-solenoid.md`).
 
@@ -235,14 +235,14 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 ## PGV body styles (identification)
 
-The PGV family comes in several body styles. This whole-valve reference documents the **1" globe
-with flow control (PGV-101G)** — the first one below. The others are shown so a body that doesn't
-match can be ruled out during identification. Check which body is installed from `setup.yaml`.
+The PGV family comes in several body styles. This reference documents the **1" globe with flow
+control (PGV-101G)**; the others are listed so a non-matching body can be ruled out during
+identification (check `setup.yaml` for what's installed).
 
 ![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-auto-product-pgv-101g.jpg)
 
 - **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
-  and bleed on top. The reference above describes this body.
+  and bleed on top — the body this reference describes.
 - **90° body (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
   deep main hose; lower pressure loss than globe. Flow-direction arrow on the body.
 

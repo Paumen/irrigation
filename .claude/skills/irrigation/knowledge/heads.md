@@ -52,12 +52,7 @@ Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-
 
 ### Features
 
-- **Radius adjustment setscrew** — Hunter wrench or flat-blade screwdriver; turn down to reduce radius up to ~25%.
-- **Patented automatic arc return** — if the turret gets vandalized or kicked, it returns to the original arc the next time the zone runs.
-- **Arc adjustable 40°–360°** in a single model (part- and full-circle in one).
-- **QuickCheck arc mechanism** — through-the-top arc adjustment for fast tweaks without pulling the rotor.
-- **FloStop** — closes the flow at this individual head so you can change a nozzle or do a repair without shutting the zone.
-- **Stainless steel riser** (the `-SS` designator).
+Beyond the adjustment/service detail below, two are worth knowing: **automatic arc return** (a kicked or vandalised turret returns to its original arc the next time the zone runs) and the **QuickCheck** through-the-top arc mechanism (tweaks without pulling the rotor). Radius/arc adjustment (40°–360°), Flo-Stop, and the stainless `-SS` riser each get their own coverage below.
 
 ### Nozzle racks
 
@@ -206,12 +201,7 @@ Exposed diameter (above ground) is 5.7 cm on all PROS-02 through PROS-12. A side
 
 ### Features
 
-- **Industry-strongest body** — heavy-duty spring for consistent riser retraction.
-- **Co-molded wiper seal** — chemical-/chlorine-resistant; keeps debris out of the body well.
-- **Cap-to-body seal** — design tolerates a loose cap without leaking, so a *new* cap-to-body leak almost always means debris on the seal seat.
-- **Check valve option** — eliminates low-head drainage within the elevations above.
-- **FloGuard option** — reduces flow to a single ~3 m tall stream when the nozzle is missing. See the diagnostic note under *Common faults*.
-- **Interchangeable components** — wiper seal, spring, cap, and check valve are all field-replaceable.
+Field-replaceable: wiper seal, spring, cap, and check valve. Two options change behaviour — the **drain check valve** (eliminates low-head drainage within the elevations above) and **FloGuard** (drops flow to a single ~3 m stream when the nozzle is missing; diagnostic note under *Common faults*). The heavy-duty retraction spring, the chemical-/chlorine-resistant wiper seal, and the loose-cap-tolerant seal (so a *new* cap-to-body leak means debris on the seat) are covered under *Construction* and *Common faults*.
 
 ### Common faults
 
