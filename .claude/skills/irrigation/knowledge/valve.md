@@ -153,10 +153,11 @@ screws into bare thread — the tapered male threads going into a female port (t
 inlet/outlet). "Rubber O-ring" is the phrase a homeowner gets instantly; reach for it before
 "washer" or "compression grip", and gloss those terms the first time you use them.
 
-In *this* system two bare-thread joints flank the valve: the **manifold swivel nut** on the inlet
-(the loose ring-nut with a rubber O-ring inside) and the **PE compression nut** where the outlet
-meets the `hose.25` poly run (the green nut that clamps onto the pipe). Give the paste/tape
-mechanics below after the quick tell — don't make the user pull it out over several turns.
+In *this* system two joints flank the valve, and both keep their threads bare (no teflon): the
+**manifold swivel nut** on the inlet (the loose ring-nut with a rubber O-ring inside) and the
+**PE compression nut** where the outlet meets the `hose.25` poly run (the green nut that clamps
+onto the pipe). Give the paste/tape mechanics below after the quick tell — don't make the user
+pull it out over several turns.
 
 ![Flow direction — arrow toward the heads](../media/valve-auto-instruction-flow-direction.png)
 
