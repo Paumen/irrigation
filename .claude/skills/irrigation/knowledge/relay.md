@@ -63,13 +63,13 @@ The yellow wires in the relay's lower wiring compartment are the ones that go to
 
 The 4.5 m minimum separation is also labelled on the wiring diagram above.
 
-**Minimum.** Keep at least **4.5 m** (15 ft) between controller and relay. When the relay contacts
+**Minimum.** Keep at least **4.5 m** between controller and relay. When the relay contacts
 make and break, they generate electromagnetic noise that can travel back along the 24 V coil wires;
 the separation dampens it. Hunter also recommends mounting controllers ≥4.5 m from pumps and other
 high-voltage devices.
 
 **Maximum.** One-way wire length controller → relay must not exceed the figures below (converted
-from the source's feet/AWG values; mm² are nearest-standard equivalents):
+from the source's AWG values; mm² are nearest-standard equivalents):
 
 | Model | 0.75 mm² (18 AWG) | 1.5 mm² (16 AWG) | 2.5 mm² (14 AWG) | 4 mm² (12 AWG) | 6 mm² (10 AWG) | 10 mm² (8 AWG) |
 |---|---|---|---|---|---|---|

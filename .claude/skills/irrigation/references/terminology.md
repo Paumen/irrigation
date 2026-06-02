@@ -16,8 +16,10 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 2. **Generic in prose; model only when identity is the point.** Use the role word ("valve",
    "controller") in prose; cite a specific model id (from `setup.yaml`) only in identify / replace
    contexts. Keep model and brand names out of this glossary.
-3. **Metric-first.** bar (psi in parens), m (ft in parens), L, °C, EUR. Reproduce vendor tables in
-   their original units, flagged as such — don't silently convert a cited source.
+3. **Metric only — no imperial units.** bar, m, L, °C, EUR; convert vendor figures to metric.
+   Keep nominal **inch thread/pipe sizes** (1", ¾") and inch-based model names (I-20-04 = 4" body):
+   those are standard product designations, not measurements. Where a vendor table's units are
+   genuinely ambiguous, keep the provenance caveat rather than guess.
 4. **Name causes by F-code** (`F<component>.<mode>.<instance>`; see `docs/fcode_spec.md`).
 5. **Keep these near-homonyms distinct — never merge them:**
    - **pump-start relay** (PSR) vs **regulated spray body** (PRS) — a relay vs a head.
@@ -67,7 +69,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **radius / throw** — how far a head sprays.
 
 ### Pressure, flow & regulation
-- **bar** — the pressure unit (psi in parens).
+- **bar** — the pressure unit.
 - **flow** — water volume per zone (m³/h).
 - **regulator / regulation** — pressure control: at-head spray body, per-valve, or system tier.
 - **low-head drainage** — low heads weep after shutoff when water above a failed check valve drains out.

@@ -19,7 +19,7 @@ still be confirmed with `irrigation_hydraulics`; the bigger risks here are
 | ✅ Direct drop-in | **PGV-101G** | **Your current valve.** Same body/thread/solenoid; adds a flow-control knob you can leave open. |
 | ⚠️ Caveat: footprint | **PGV-100JT-G** | Same 1" globe / FPT / 24 VAC, but **jar-top bonnet → wider & taller body (~3¼" vs 2½")**. Check box/manifold clearance. |
 | ⚠️ Caveat: footprint | **PGV-101JT-G** | As above (jar-top, wider & taller) **+ flow control**. Clearance check. |
-| ⚠️ Caveat: footprint | **ICV-101G** | Threads + 24 VAC match, so it screws on. But taller/wider commercial body (clearance check) and 220 PSI rating is overkill for a residential zone. |
+| ⚠️ Caveat: footprint | **ICV-101G** | Threads + 24 VAC match, so it screws on. But taller/wider commercial body (clearance check) and ≈15 bar rating is overkill for a residential zone. |
 | ⚠️ Caveat: footprint | **ICV-101G-FS / ICV-101G-FS-R** | As ICV-101G, taller still (Filter Sentry). Reclaimed (`-R`) only if you want the purple ID. |
 | ⚠️ Caveat: no solenoid | **any `-LS` model** | Same body, ships **without a solenoid** — transfer yours or buy one. |
 | 🔧 Adjustment: re-orient | **PGV-100A / PGV-101A** | 1", but **angle body** = bottom-feed / 90° outlet. Plumbing must feed from below. |
@@ -27,8 +27,8 @@ still be confirmed with `irrigation_hydraulics`; the bigger risks here are
 | 🔧 Adjustment: fittings | **PGV-100JT-MM / PGV-101JT-MM** | Jar-top (also wider), same male × male thread issue. |
 | 🔧 Adjustment: re-plumb outlet | **PGV-100MB / PGV-101MB** | Male inlet + **barb outlet** for poly/drip hose — outlet side must be re-plumbed. |
 | 🔧 Adjustment: re-plumb outlet | **PGV-100JT-MB / PGV-101JT-MB** | Jar-top (also wider), same barb-outlet issue. |
-| ❌ Not like-for-like: size | **PGV-151 / -151-LS** | 1½" — needs reducer bushings or a repipe; sized for 20–120 GPM. |
-| ❌ Not like-for-like: size | **PGV-201 / -201-LS** | 2" — repipe; 20–150 GPM. |
+| ❌ Not like-for-like: size | **PGV-151 / -151-LS** | 1½" — needs reducer bushings or a repipe; sized for ≈4.5–27 m³/h. |
+| ❌ Not like-for-like: size | **PGV-201 / -201-LS** | 2" — repipe; ≈4.5–34 m³/h. |
 | ❌ Not like-for-like: size | **ICV-151G / ICV-201G / ICV-301** (+ all `-FS`/`-R`/`-A`/`-G` variants) | 1½"–3" commercial — repipe + larger valve box. |
 | ❌ Not like-for-like: class | **PGV-ASV** (¾") | Anti-siphon — mounts above ground, ≥6" above the highest head; not an in-box inline replacement. |
 | ❌ Not like-for-like: class | **PGV-101-ASV** (1") | 1" but still anti-siphon — different mounting/install class, not a drop-in. |

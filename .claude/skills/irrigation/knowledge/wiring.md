@@ -9,7 +9,7 @@ contents:
   - coverage note (what's missing)
   - waterproof connectors (corrosion → resistance → blown fuses)
   - the connector itself — 3M Scotchlok 314 (what it's called + how to buy more)
-  - wire distance vs gauge table (feet/metres caveat)
+  - wire distance vs gauge table (unit caveat)
   - swap-wire test (controller end)
   - swap-valve test (valve-box end, four-in-one-box)
   - continuity / resistance check

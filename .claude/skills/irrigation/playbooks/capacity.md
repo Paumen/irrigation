@@ -4,7 +4,7 @@ Limits questions: "how many zones at once / can I add a fifth / what's my flow b
 
 ## Use the hydraulics tool for the numbers
 
-Don't hand-derive flows or pressures — call the `irrigation_hydraulics` tool (MCP), or `python tools/hydraulics.py` for a JSON report. It runs a full solve (pump curve → elevation lift → pipe friction → per-head pressure → per-head flow; I-20 rotors track pressure, MP Rotators are 40 PSI regulated) and returns each zone's flow, each head's flow and pressure, the pump operating point, and a **weakest-link** report (the safe pressure window and the tightest flow margin, with the binding component named).
+Don't hand-derive flows or pressures — call the `irrigation_hydraulics` tool (MCP), or `python tools/hydraulics.py` for a JSON report. It runs a full solve (pump curve → elevation lift → pipe friction → per-head pressure → per-head flow; I-20 rotors track pressure, MP Rotators are 2.8 bar regulated) and returns each zone's flow, each head's flow and pressure, the pump operating point, and a **weakest-link** report (the safe pressure window and the tightest flow margin, with the binding component named).
 
 What-if questions go straight to the tool's `adjustments`:
 - **"flow if I swap a nozzle?"** → `{"heads":[{"zone":2,"match":{"nozzle":"2.5 blue"},"set":{"nozzle":"4.0 blue"}}]}`

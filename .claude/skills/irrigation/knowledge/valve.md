@@ -271,7 +271,7 @@ match can be ruled out during identification. Confirm which body is installed fr
 Operating:
 - Flow: 0.05 to 9 m³/h (0.7 to 150 l/min)
 - Recommended pressure: 1.5 to 10 bar (150 to 1000 kPa)
-- Maximum rated pressure: 10.3 bar (150 psi) — the ABS skirted bonnet holds this without softening
+- Maximum rated pressure: 10.3 bar — the ABS skirted bonnet holds this without softening
   in hot weather. Well within reach of typical residential pump pressures.
 - Temperature rating: 66 °C
 - Warranty: 2 years
@@ -283,7 +283,7 @@ Solenoid (summary — full detail in `valve-solenoid.md`):
 - Coil resistance spec (Hunter PGV): 20–60 Ω
 
 Pressure loss across the 1" PGV (Globe body; converted from
-Hunter's GPM/PSI source table):
+Hunter's flow/pressure source table):
 
 | Flow (m³/h) | Flow (l/min) | Loss (bar) |
 |---|---|---|
