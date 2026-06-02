@@ -10,7 +10,7 @@ answers two questions raised by the report's **Question scorecard**:
 Both were traced by replaying the engine's pick order fault-by-fault and logging,
 for every answered step, `prev_rank → new_rank` (the `work` the report averages).
 
-## 1. Negative `work` — two distinct causes
+## 1. Negative `work` — two distinct failure modes
 
 The scorecard's `work` is `prev_rank − new_rank` along the engine's *chosen*
 question order: positive = the answer moved the true fault toward #1. It is a
@@ -52,9 +52,9 @@ Q8 biggest swings:  F7.1.3 +9, F1.8 +3, F2.8 +3   (helps)
 net −4 over 29 asks  →  mean −0.14
 ```
 
-Mechanism: "progression" is a symptom most causes share, so for the average true
+Mechanism: "progression" is a symptom most failure modes share, so for the average true
 fault the generic answer boosts a *competing* sibling about as often as the true
-cause. This is a genuine **content** signal (Q8's effect weights are not
+failure mode. This is a genuine **content** signal (Q8's effect weights are not
 well-isolated per fault), distinct from the timing artifact above — worth a look
 if Q8's weights are ever retuned, but it is not a correctness bug.
 
@@ -102,7 +102,7 @@ effectively already answered "neither," so it keeps re-recommending it.
   statement about the *key*, not about the question's usefulness.
 - **Question-design fix (`data.json`):** add an explicit "Nowhere — nothing comes
   out" option to Q23 carrying *rule-out* weight (subtracting from the F7.x
-  pump-side bleed causes). That makes Q23 answerable for every fault and stops the
+  pump-side bleed failure modes). That makes Q23 answerable for every fault and stops the
   engine re-recommending it once the homeowner reports no leak — improving both
   the real tool and the report's `asked` count.
 
@@ -171,7 +171,7 @@ negation.
 A clean rule-out is impossible today because the data is internally inconsistent:
 **10 fault/question pairs answer "neither" on a multiselect whose own option
 *adds* weight to that same fault.** Ruling those out would penalise the true
-cause — which is exactly why the inline experiment hurt F7.3.2 and F7.4.
+failure mode — which is exactly why the inline experiment hurt F7.3.2 and F7.4.
 
 ```
   F7.4   (valve mis-set)          Q23=neither, yet Q23 "water from valves" +1.0, "from heads" +0.6
@@ -200,7 +200,7 @@ the path to fixing that is gated on two changes, in order:
 1. **Reconcile the contradictions** (most are answer-key errors — the fault
    does present at heads/valves and should tick a box).
 2. *Then* let "none of these" apply a **small, targeted** rule-out, so "I looked,
-   it's none of these" demotes the absent-symptom causes without destabilising
+   it's none of these" demotes the absent-symptom failure modes without destabilising
    the run.
 
 ## 4. What was applied
@@ -217,7 +217,7 @@ on Q23 and *water-at-wrong-zone* on Q22 (its diaphragm screen does weep), and
 fix, no fault answers "none" on a question whose option boosts it.
 
 **Step 2 — small rule-out on "none".** Each "None of the above" option carries a
-**−0.2** effect on that question's strong (≥0.6) presence-causes only — e.g. Q23's
+**−0.2** effect on that question's strong (≥0.6) presence-failure modes only — e.g. Q23's
 "nowhere" gently demotes F7.1.2/F7.1.3/F7.3.2/F7.4. Magnitude is deliberately the
 grid floor: a full-magnitude negation was shown above to destabilise the run.
 

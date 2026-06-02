@@ -3,7 +3,7 @@
 **Version:** 1.0 
 **Status:** canonical
 **Format:** dotted (`F<component>.<mode>.<instance>`)
-**Source of truth for migration:** the live `data.json` cause taxonomy
+**Source of truth for migration:** the live `data.json` failure mode taxonomy
 
 ---
 
@@ -46,10 +46,10 @@ fault.
 | `4` | **Install error** | Physical setup fault |
 | `5` | **Software error** | Code-level fault (app bug, firmware) |
 | `6` | **Settings error** | Logical config in software |
-| `8` | **External fault** | Cause outside the component's boundary |
+| `8` | **External fault** | Failure mode outside the component's boundary |
 
 Digits `1–6` form the physical→logical gradient; digit `8` (external) sits off this
-axis, marking a cause beyond the component's own boundary.
+axis, marking a failure mode beyond the component's own boundary.
 
 **Reserved component digits:** `0`. **Reserved mode digits:** `0, 2, 7, 9`.
 
@@ -149,7 +149,7 @@ So an `F7` symptom on its own does not tell you which neighbour to suspect; the 
 *won't seal because the seal is bad* vs. *won't seal because something holds it open* —
 is split by the **flow control**: screwing it fully shut clamps the diaphragm onto the
 seat regardless of the solenoid. If a leak then stops, the surfaces can seal and the
-cause is upstream (controller `F2.6`, solenoid stuck open `F7.3.1`, cross-wire `F3.4`);
+failure mode is upstream (controller `F2.6`, solenoid stuck open `F7.3.1`, cross-wire `F3.4`);
 if it still leaks, the diaphragm/seat is gone. Opening a throttled flow control on a
 weak zone is likewise the cleanest probe for a mis-set valve (`F7.4`). The live
 questionnaire implements these as `Q12`/`Q12b` (bleed ladder) and `Q24`/`Q25` (flow
@@ -159,7 +159,7 @@ control).
 valve body: an install act with a defect outcome. Score it as `F7.1.3`, not as an `F7.4`
 instance, to avoid double-counting.
 
-**Forward-looking codes (no historical cause, absent from migration):**
+**Forward-looking codes (no historical failure mode, absent from migration):**
 `F3.4`, `F4.4`, `F5.8`. (`F2.8` is sourced from the R22 split.)
 
 **Stale code (images.yaml only, never in `data.json`):** `R93` — used in
@@ -202,12 +202,12 @@ images. Resolves to **`F9.4`** in the new taxonomy. Rekey at migration time.
 aggregates `R11` (straight move) plus the `R23` settings share. The old `F1.6` no longer
 exists.
 
-**Parent linkage in `data.json`.** Every F-code cause row carries
+**Parent linkage in `data.json`.** Every F-code failure mode row carries
 `parent: 'F<component>'` — flat at the component level — regardless of whether the
 code itself is at mode level (e.g., `F7.4`) or instance level (e.g., `F7.1.1`). The
 mode digit is structural in the F-code *name* but not in the parent chain: no
-intermediate `F7.1` / `F7.3` / `F7.4` cause rows exist. This keeps the existing
-engine's flat `parent`-field broadcast logic unchanged — `F7:x` lifts every cause
+intermediate `F7.1` / `F7.3` / `F7.4` failure mode rows exist. This keeps the existing
+engine's flat `parent`-field broadcast logic unchanged — `F7:x` lifts every failure mode
 with `parent: 'F7'` (all F7.1.x, F7.3.x leaves plus the mode-level `F7.4` row).
 Mode-level broadcasts (e.g., `F7.1:x` to all valve defects) are **not** supported by
 this convention; if ever needed, add them as additional explicit effects rather than
@@ -401,7 +401,7 @@ explicit hit needed there.)
 
 ### Downstream cleanup
 
-- **Q9 ctrl row** `causes: ['R12', 'R22', 'R23']` → `['F2.1', 'F2.5']`. Drop
+- **Q9 ctrl row** `failure modes: ['R12', 'R22', 'R23']` → `['F2.1', 'F2.5']`. Drop
   F1.5 (app bugs aren't controller-age-correlated), drop F2.8 (socket/breaker
   don't age), drop F2.6 (stored settings don't age).
 

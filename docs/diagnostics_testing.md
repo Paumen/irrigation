@@ -35,8 +35,8 @@ jobs and was brittle:
 5. **Depth was 15.** Four faults (F1.8, F2.6, F4.4, F5.3) keep improving past Q15.
    → **Depth raised to 18** (`DEPTH` in `diagnose_sim.py`).
 
-Severity semantics are unchanged: a true cause ending **out of top-3** (beyond a
-documented `EXPECTED_MAX` cap) is a **FAILURE**; a cause that merely **shifts**
+Severity semantics are unchanged: a true failure mode ending **out of top-3** (beyond a
+documented `EXPECTED_MAX` cap) is a **FAILURE**; a failure mode that merely **shifts**
 rank or lock-in but stays acceptable is a **WARNING**.
 
 ## Running it
@@ -66,11 +66,11 @@ and asserts the overall median recovery clears `MIN_MEDIAN_RECOVERY`.
   🟧 #7–9 · 🟥 #10+, or ⬜ for a question the fault's profile leaves unanswered),
   one per question the engine asks, sorted by F-code. Two lock-in columns: `fam` =
   questions until the right *component* leads (#1) and holds, and `top3` = until the
-  exact cause locks into the top-3. All 29 faults reach the right family at #1
-  (median 6 questions) — including the three that never pin the exact sub-cause — so
-  the engine always finds *which part* is broken; only same-family sub-cause
+  exact failure mode locks into the top-3. All 29 faults reach the right family at #1
+  (median 6 questions) — including the three that never pin the exact sub-failure mode — so
+  the engine always finds *which part* is broken; only same-family sub-failure mode
   discrimination ever fails.
-- **Family confusion** — the causes outranking each fault at the end. **Cross-family**
+- **Family confusion** — the failure modes outranking each fault at the end. **Cross-family**
   cases (a *different* component winning — a triage gap) are listed in full; the
   **within-family** ones (a missing discriminator inside one component) are listed
   lighter. The four documented degeneracies (F4.4, F5.8, F7.3.2, F7.4) are all

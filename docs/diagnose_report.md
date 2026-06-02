@@ -1,11 +1,11 @@
 # Diagnostic questionnaire — analysis report
 
-*29 fault modes · 18 questions deep.* How reliably the engine walks to the true cause, and where it struggles.
+*29 fault modes · 18 questions deep.* How reliably the engine walks to the true failure mode, and where it struggles.
 
 | | Score | |
 |---|:--:|---|
 | 🧭 Finds the right component | **28/29** | median 6 questions to lead & hold |
-| 🎯 Locks the sub-cause into top-3 | **29/29** | median 6, range 1–17 |
+| 🎯 Locks the specific failure mode into top-3 | **29/29** | median 6, range 1–17 |
 | 🥇 Lands it at #1 outright | **16/29** | |
 | 🛡️ Survives a 1-in-5 user error | **18/29** | stays top-3 in ≥80% of noisy runs (median 84%) |
 
@@ -118,7 +118,7 @@ F9.4   🟡  76%  lock 1→1   Head install error
 ```
 
 > **F2.6** never gets its *component* to lead and hold — a different family stays on top (the one true triage gap).  
-> Most error-fragile: F4.4 (28%), F5.8 (32%) — one wrong answer keeps them behind a rival cause. Everything 🟩 tracks its clean path under noise.
+> Most error-fragile: F4.4 (28%), F5.8 (32%) — one wrong answer keeps them behind a rival failure mode. Everything 🟩 tracks its clean path under noise.
 
 ## Questions
 
@@ -158,6 +158,6 @@ What each question **did** (work = avg rank-gain for the true fault · 🟩 ≥1
 
 **Not pulling their weight**
 - 🟥 *cost rank* — Q19, Q17, Q8, Q6, Q15: asked late (~pos 12), so a stray answer mostly reshuffles already-settled ties.
-- ⬜ *idle* — Q21, Q23, Q24, Q12, Q22, Q2q: rarely separate the causes still live by then (redundant or too narrow).
+- ⬜ *idle* — Q21, Q23, Q24, Q12, Q22, Q2q: rarely separate the failure modes still live by then (redundant or too narrow).
 
 _Q1 always goes first, so its work also credits unwinding the no-answer prior. Triage (high-scope) questions sit early; single-family confirmers come last — the intended broad-to-narrow funnel._

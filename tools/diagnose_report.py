@@ -140,13 +140,13 @@ def sec_dashboard(g: dict) -> list[str]:
         "# Diagnostic questionnaire — analysis report",
         "",
         f"*{n} fault modes · {DEPTH} questions deep.* How reliably the engine walks "
-        "to the true cause, and where it struggles.",
+        "to the true failure mode, and where it struggles.",
         "",
         "| | Score | |",
         "|---|:--:|---|",
         f"| 🧭 Finds the right component | **{len(s['plocks'])}/{n}** | "
         f"median {statistics.median(s['plocks']):g} questions to lead & hold |",
-        f"| 🎯 Locks the sub-cause into top-3 | **{len(s['locks'])}/{n}** | "
+        f"| 🎯 Locks the specific failure mode into top-3 | **{len(s['locks'])}/{n}** | "
         f"median {statistics.median(s['locks']):g}, range {min(s['locks'])}–{max(s['locks'])} |",
         f"| 🥇 Lands it at #1 outright | **{s['at1']}/{n}** | |",
         f"| 🛡️ Survives a 1-in-5 user error | **{s['robust']}/{n}** | "
@@ -242,7 +242,7 @@ def sec_faults(g: dict) -> list[str]:
         frag = ", ".join(f"{f} ({x*100:.0f}%)" for f, x in fragile)
         notes.append(
             f"Most error-fragile: {frag} — one wrong answer keeps them behind a "
-            "rival cause. Everything 🟩 tracks its clean path under noise."
+            "rival failure mode. Everything 🟩 tracks its clean path under noise."
         )
     if notes:
         out += ["", "> " + "  \n> ".join(notes)]
@@ -287,7 +287,7 @@ def sec_questions(g: dict) -> list[str]:
         out.append(f"- 🟥 *cost rank* — {', '.join(neg)}: asked late (~pos {late:.0f}), "
                    "so a stray answer mostly reshuffles already-settled ties.")
     if idle:
-        out.append(f"- ⬜ *idle* — {', '.join(idle)}: rarely separate the causes still "
+        out.append(f"- ⬜ *idle* — {', '.join(idle)}: rarely separate the failure modes still "
                    "live by then (redundant or too narrow).")
     out += ["", "_Q1 always goes first, so its work also credits unwinding the "
             "no-answer prior. Triage (high-scope) questions sit early; single-family "

@@ -1,6 +1,6 @@
 ---
 subject: Valve solenoid
-root_cause_area: F7
+failure_mode_area: F7
 serves: [troubleshooting, test, replace, clean, how-it-works]
 parent: valve
 summary: The solenoid actuator — coil, plunger, entry/exhaust ports, plus the voltage and resistance tests and replacement.
@@ -20,7 +20,7 @@ contents:
 # Valve solenoid
 
 The electrical actuator of the PGV-101G, split out from `valve.md` because it is a frequent
-cause and a frequent point of exclusion. Read the whole file when the valve is electrically
+failure mode and a frequent point of exclusion. Read the whole file when the valve is electrically
 suspect, or when the homeowner is taking a measurement and needs the exact method. A clean coil
 reading is **not** a clean bill of health for the solenoid — a mechanically stuck plunger or a
 clogged port reads a perfectly normal coil resistance.

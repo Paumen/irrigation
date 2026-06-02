@@ -1,6 +1,6 @@
 ---
 subject: relay 
-root_cause_area: F4
+failure_mode_area: F4
 serves: [troubleshooting, install, maintain]
 coverage: power/controller wiring, distance, and chattering are well covered; deeper
   relay-internal failure modes beyond chattering/contactor fouling are not.
@@ -77,7 +77,7 @@ from the source's AWG values; mm² are nearest-standard equivalents):
 | PSR-22 | 74 m | 118 m | 188 m | 298 m | 473 m | 751 m |
 
 Typical residential controller→relay runs sit comfortably within range on any sane gauge, so the
-table is useful mainly to **exclude** wire length as a cause. (Check the actual run length in
+table is useful mainly to **exclude** wire length as a failure mode. (Check the actual run length in
 `setup.yaml`.)
 
 ## Electrical specifications
@@ -115,7 +115,7 @@ installation or one that has worked for years?
 wire** from the controller to the relay; **never share the relay's common with the zone solenoids**.
 Clean every connection and follow the distance/gauge table above.
 > If the install already uses a dedicated common and a short run (check `setup.yaml`), the
-> new-install wire-size cause is effectively ruled out.
+> new-install wire-size failure mode is effectively ruled out.
 
 **Existing installation** (a relay in service for years) → suspect dirt or insects
 inside the relay contactor. Isolate the relay from the incoming power supply and open the contactor
@@ -125,7 +125,7 @@ If it still chatters and won't fully engage, verify the incoming amperage from t
 clean any suspect connections to cut resistance.
 
 Engine cross-links: pairs with Q3 (pump hums/trips vs. silent), Q10 relay-row (recent service), and
-Q11 pests (insects in the contactor is the classic existing-install cause).
+Q11 pests (insects in the contactor is the classic existing-install failure mode).
 
 ## See also
 - `controller.md` — the P/MV output and common that drive this relay; voltage at terminals.

@@ -11,12 +11,12 @@ class Engine:
         self._breadth_weight: float = float(w.get("breadth", 1.0))
         self._ease_weight: float = float(w.get("ease", 0.5))
         self._matrix_expected_filled: float = float(w.get("matrixExpectedFilled", 1))
-        self.causes: dict[str, dict] = {c["id"]: c for c in data["causes"]}
-        self.all_ids: list[str] = list(self.causes.keys())
+        self.failure_modes: dict[str, dict] = {c["id"]: c for c in data["failure_modes"]}
+        self.all_fcodes: list[str] = list(self.failure_modes.keys())
 
-        self._cause_children: dict[str, list[str]] = {}
-        for c in data["causes"]:
-            self._cause_children.setdefault(c["parent"], []).append(c["id"])
+        self._mode_children: dict[str, list[str]] = {}
+        for c in data["failure_modes"]:
+            self._mode_children.setdefault(c["parent"], []).append(c["id"])
 
         self.questions: list[dict] = self._build_questions()
         self.main_questions = [q for q in self.questions if not q.get("optional")]
@@ -36,13 +36,13 @@ class Engine:
             return effects
         out: dict[str, float] = {}
         for k, v in effects.items():
-            kids = self._cause_children.get(k)
+            kids = self._mode_children.get(k)
             if not kids:
                 out[k] = v
                 continue
-            for cause_id in kids:
-                if cause_id not in effects:
-                    out[cause_id] = v
+            for fcode in kids:
+                if fcode not in effects:
+                    out[fcode] = v
         return out
 
     def _expand_step_rows(self, q: dict) -> list[dict]:
@@ -54,14 +54,14 @@ class Engine:
                 result.append(row)
                 continue
             curve = curves.get(row.get("curve"), [])
-            causes = row.get("causes", [])
+            failure_modes = row.get("failure_modes", [])
             steps = []
             for i, label in enumerate(labels):
                 if i == 0:
                     effects: dict[str, float] = {}
                 else:
                     val = curve[i - 1] if i - 1 < len(curve) else 0
-                    effects = {cause_id: val for cause_id in causes}
+                    effects = {fcode: val for fcode in failure_modes}
                 steps.append({"label": label, "effects": effects})
             result.append({**row, "steps": steps})
         return result
@@ -101,16 +101,16 @@ class Engine:
         if t == "options":
             if not isinstance(ans, int) or isinstance(ans, bool) or ans < 0 or ans >= len(q["options"]):
                 return
-            for cause_id, delta in q["options"][ans]["effects"].items():
-                s[cause_id] = s.get(cause_id, 0) + delta
+            for fcode, delta in q["options"][ans]["effects"].items():
+                s[fcode] = s.get(fcode, 0) + delta
         elif t == "multi":
             if not isinstance(ans, list):
                 return
             for i in ans:
                 if not isinstance(i, int) or isinstance(i, bool) or i < 0 or i >= len(q["options"]):
                     continue
-                for cause_id, delta in q["options"][i]["effects"].items():
-                    s[cause_id] = s.get(cause_id, 0) + delta
+                for fcode, delta in q["options"][i]["effects"].items():
+                    s[fcode] = s.get(fcode, 0) + delta
         elif t == "matrix":
             if not isinstance(ans, dict):
                 return
@@ -119,8 +119,8 @@ class Engine:
                 m = col_mul.get(ans.get(row["id"], "no"), 0)
                 if m == 0:
                     continue
-                for cause_id, delta in row["effects"].items():
-                    s[cause_id] = s.get(cause_id, 0) + delta * m
+                for fcode, delta in row["effects"].items():
+                    s[fcode] = s.get(fcode, 0) + delta * m
         elif t == "ages":
             if not isinstance(ans, dict):
                 return
@@ -128,16 +128,16 @@ class Engine:
                 idx = ans.get(row["id"])
                 if idx is None or not isinstance(idx, int) or idx < 0 or idx >= len(row["steps"]):
                     continue
-                for cause_id, delta in row["steps"][idx]["effects"].items():
-                    s[cause_id] = s.get(cause_id, 0) + delta
+                for fcode, delta in row["steps"][idx]["effects"].items():
+                    s[fcode] = s.get(fcode, 0) + delta
 
-    def _cause_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
+    def _failure_mode_terms(self, q: dict, ids: list[str]) -> tuple[float, float]:
         t = q["type"]
         if t == "options":
             iso = 0.0
             breadth = 0
-            for cause_id in ids:
-                deltas = [o["effects"].get(cause_id, 0) for o in q["options"]]
+            for fcode in ids:
+                deltas = [o["effects"].get(fcode, 0) for o in q["options"]]
                 spread = max(deltas) - min(deltas)
                 if spread > 0:
                     breadth += 1
@@ -146,8 +146,8 @@ class Engine:
         if t == "multi":
             iso = 0.0
             breadth = 0
-            for cause_id in ids:
-                sum_abs = sum(abs(o["effects"].get(cause_id, 0)) for o in q["options"])
+            for fcode in ids:
+                sum_abs = sum(abs(o["effects"].get(fcode, 0)) for o in q["options"])
                 if sum_abs > 0:
                     breadth += 1
                 iso += sum_abs
@@ -160,28 +160,28 @@ class Engine:
             iso = 0.0
             rows_affecting: dict[str, int] = {}
             for row in q["rows"]:
-                for cause_id in ids:
-                    e = abs(row["effects"].get(cause_id, 0))
+                for fcode in ids:
+                    e = abs(row["effects"].get(fcode, 0))
                     if e > 0:
                         iso += e * mult_spread * p
-                        rows_affecting[cause_id] = rows_affecting.get(cause_id, 0) + 1
+                        rows_affecting[fcode] = rows_affecting.get(fcode, 0) + 1
             breadth = sum(1 - (1 - p) ** k for k in rows_affecting.values())
             return iso, self._breadth_weight * breadth
         if t == "ages":
             iso = 0.0
             affected = set()
             for row in q["rows"]:
-                for cause_id in ids:
-                    deltas = [st["effects"].get(cause_id, 0) for st in row["steps"]]
+                for fcode in ids:
+                    deltas = [st["effects"].get(fcode, 0) for st in row["steps"]]
                     spread = max(deltas) - min(deltas)
                     if spread > 0:
                         iso += spread
-                        affected.add(cause_id)
+                        affected.add(fcode)
             return iso, self._breadth_weight * len(affected)
         return 0.0, 0.0
 
     def discriminator_terms(self, q: dict, ids: list[str]) -> dict[str, float]:
-        iso, breadth = self._cause_terms(q, ids)
+        iso, breadth = self._failure_mode_terms(q, ids)
         effort = self._effort_term(q)
         return {"isolation": iso, "breadth": breadth, "effort": effort}
 
@@ -212,7 +212,7 @@ class Engine:
 
     def rank(self, answers: dict | None = None) -> list[dict]:
         answers = answers or {}
-        s: dict[str, float] = {cause_id: self.causes[cause_id]["baseline"] for cause_id in self.all_ids}
+        s: dict[str, float] = {fcode: self.failure_modes[fcode]["baseline"] for fcode in self.all_fcodes}
         for q in self.questions:
             ans = answers.get(q["id"])
             if ans is None:
@@ -221,11 +221,11 @@ class Engine:
         pos_total = sum(max(0, v) for v in s.values())
         result = [
             {
-                "id": cause_id,
-                "score": s[cause_id],
-                "percent": (max(0, s[cause_id]) / pos_total * 100) if pos_total > 0 else 0,
+                "id": fcode,
+                "score": s[fcode],
+                "percent": (max(0, s[fcode]) / pos_total * 100) if pos_total > 0 else 0,
             }
-            for cause_id in self.all_ids
+            for fcode in self.all_fcodes
         ]
         result.sort(key=lambda r: -r["score"])
         return result

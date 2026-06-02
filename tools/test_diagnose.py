@@ -25,15 +25,15 @@ BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
 ALLOWED_BASELINES = {0.6, 0.8, 1.0, 1.2}
 ALLOWED_EFFECTS = {-1.6, -1.0, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 1.0, 1.6}
 
-# Copy budgets: keep question prompts, answer labels, and cause names terse
-# enough to render (cause labels share a row with the F-code in the report).
+# Copy budgets: keep question prompts, answer labels, and failure mode names terse
+# enough to render (failure mode labels share a row with the F-code in the report).
 MAX_QUESTION_LEN = 100
 MAX_ANSWER_LEN = 45
 MAX_CAUSE_LEN = 45
 
-# parent -> direct child causes, derived from each cause's `parent` field.
+# parent -> direct child failure modes, derived from each failure mode's `parent` field.
 _CHILDREN: dict[str, list[str]] = {}
-for _c in DATA["causes"]:
+for _c in DATA["failure_modes"]:
     _CHILDREN.setdefault(_c["parent"], []).append(_c["id"])
 
 
@@ -51,7 +51,7 @@ def _answer_effects(q: dict):
     """Yield (answer_label, effects_dict) for every authored answer on a question."""
     for o in q.get("options", []):
         yield o.get("label", "?"), o.get("effects", {})
-    for r in q.get("rows", []):  # matrix rows carry a per-cause effects dict
+    for r in q.get("rows", []):  # matrix rows carry a per-failure mode effects dict
         if "effects" in r:
             yield r.get("id", "?"), r["effects"]
 
@@ -91,7 +91,7 @@ def cap_of(fault: str) -> int:
 
 def validate_data() -> None:
     """Static data.json invariants: value grids and no parent/child double-counting."""
-    for c in DATA["causes"]:
+    for c in DATA["failure_modes"]:
         check(f"{c['id']} baseline on grid", c.get("baseline") in ALLOWED_BASELINES,
               f"baseline {c.get('baseline')} not in {sorted(ALLOWED_BASELINES)}")
         lbl = c.get("label", "")
@@ -107,14 +107,14 @@ def validate_data() -> None:
             check(f"{q['id']} answer under {MAX_ANSWER_LEN}", len(lbl) < MAX_ANSWER_LEN,
                   f"{len(lbl)} chars: {lbl!r}")
         for label, effects in _answer_effects(q):
-            for cause_id, v in effects.items():
+            for fcode, v in effects.items():
                 check(f"{q['id']} [{label}] effect on grid", v in ALLOWED_EFFECTS,
-                      f"{cause_id}={v} not in {sorted(ALLOWED_EFFECTS)}")
+                      f"{fcode}={v} not in {sorted(ALLOWED_EFFECTS)}")
             keys = set(effects)
-            for cause_id in keys:
-                clash = keys & _descendants(cause_id)
+            for fcode in keys:
+                clash = keys & _descendants(fcode)
                 check(f"{q['id']} [{label}] no parent+child effect", not clash,
-                      f"{cause_id} given alongside descendant(s) {sorted(clash)}")
+                      f"{fcode} given alongside descendant(s) {sorted(clash)}")
 
 
 def compute_metrics() -> dict:

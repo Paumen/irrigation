@@ -12,8 +12,8 @@ DEPTH = 18
 
 DATA = json.loads((Path(__file__).resolve().parent.parent / "data.json").read_text())
 ENG = Engine(DATA)
-PARENT: dict[str, str] = {c["id"]: c["parent"] for c in DATA["causes"]}
-LABEL: dict[str, str] = {c["id"]: c.get("label", c["id"]) for c in DATA["causes"]}
+PARENT: dict[str, str] = {c["id"]: c["parent"] for c in DATA["failure_modes"]}
+LABEL: dict[str, str] = {c["id"]: c.get("label", c["id"]) for c in DATA["failure_modes"]}
 
 # a/b/c/d -> option index 0/1/2/3 ; '-' = skip
 T1_COLS = ["Q1", "Q2", "Q2q", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8"]
@@ -102,7 +102,7 @@ T3 = {
 }
 
 # Age step 4 = 12+ yrs; "right" = "started right after". Cells with no effect on
-# the target cause are omitted, not filled.
+# the target failure mode are omitted, not filled.
 CTX = {
     "F1.5":   {},
     "F1.8":   {"Q11b": {"outage": "right"}},
@@ -212,7 +212,7 @@ class Trajectory:
         return None
 
     def parent_lock_in(self, parent: str) -> int | None:
-        """Earliest count after which the #1 cause stays in `parent`'s family to
+        """Earliest count after which the #1 failure mode stays in `parent`'s family to
         the end. None if never."""
         tops = [PARENT[s.top3[0]] for s in self.steps]
         for k in range(1, len(tops) + 1):
@@ -278,7 +278,7 @@ def question_profile() -> dict[str, dict]:
         prof[q["id"]] = {
             "type": q["type"],
             "families": len({PARENT[c] for ch in chs for c in ch if c in PARENT}),
-            "causes": len({c for ch in chs for c in ch}),
+            "failure_modes": len({c for ch in chs for c in ch}),
             "max_push": max(absall) if absall else 0.0,
             "ruleout": (sum(-v for v in alld if v < 0) / tot) if tot else 0.0,
             "top_share": (max(masses) / sum(masses)) if sum(masses) else 0.0,

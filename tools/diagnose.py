@@ -1,4 +1,4 @@
-"""Agent-facing diagnose tool: takes answers, returns ranked causes and
+"""Agent-facing diagnose tool: takes answers, returns ranked failure modes and
 the next best question to ask."""
 
 from __future__ import annotations
@@ -76,7 +76,7 @@ def diagnose(
         "ranked": [
             {
                 "id": r["id"],
-                "label": engine.causes[r["id"]]["label"],
+                "label": engine.failure_modes[r["id"]]["label"],
                 "percent": round(r["percent"], 1),
                 "score": round(r["score"], 3),
             }

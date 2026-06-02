@@ -20,7 +20,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
    Keep nominal **inch thread/pipe sizes** (1", ¾") and inch-based model names (I-20-04 = 4" body):
    those are standard product designations, not measurements. Where a vendor table's units are
    genuinely ambiguous, keep the provenance caveat rather than guess.
-4. **Name causes by F-code** (`F<component>.<mode>.<instance>`; see `docs/fcode_spec.md`).
+4. **Name failure modes by F-code** (`F<component>.<mode>.<instance>`; see `docs/fcode_spec.md`).
 5. **Keep these near-homonyms distinct — never merge them:**
    - **pump-start relay** (PSR) vs **regulated spray body** (PRS) — a relay vs a head.
    - **fitting** (hose/pipe joiner) vs **splice** / wire connector (wire joiner).
@@ -103,11 +103,11 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **failure mode** — a diagnosable root cause, formally an **F-code** (use this, not "cause").
 - **fault / failure** — a broken state.
 - **symptom** — the observable problem the homeowner reports.
-- **suspect** — a likely cause under consideration (use this, not "candidate").
+- **suspect** — a likely failure mode under consideration (use this, not "candidate").
 
 ### Skill loop
 - **question / answer / option** — the diagnostic Q&A loop.
-- **effect / effects** — the weights an answer applies to the ranked causes.
+- **effect / effects** — the weights an answer applies to the ranked failure modes.
 - **step** — one instruction in a procedure.
 - **playbook** — a skill task script (troubleshoot, identify, capacity, …).
 
