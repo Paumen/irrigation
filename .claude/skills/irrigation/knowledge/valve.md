@@ -148,7 +148,7 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 **The one rule that answers most "where does the teflon go" questions: seal a joint where the
 thread itself is the seal, leave the threads bare where a washer or grip does the sealing.**
 Tapered male threads going into a female port (the valve's inlet/outlet) get teflon. Joints
-that seal on a rubber washer or a compression grip do **not** — taping them stops the washer
+that seal on a rubber washer or a compression grip do **not** — ⚠️ taping them stops the washer
 or grip seating, which leaks. In *this* system that means two bare-thread joints flank the
 valve: the **manifold swivel nut** on the inlet (seals on its rubber washer) and the **PE
 compression nut** where the outlet meets the `hose.25` poly run (seals on the pipe grip). Lead
@@ -163,7 +163,7 @@ several turns.
 area the valves serve, but positioned so you are not sprayed when you operate the system by hand.
 
 **Orientation — the single most common new-install fault.** Each valve has an inlet and an
-outlet, with an arrow moulded into the body showing the direction water must flow. The arrow
+outlet, with an arrow moulded into the body showing the direction water must flow. ⚠️ The arrow
 must point **toward the heads**. A valve plumbed backwards will not hold/seat correctly. Whether
 the valve sits vertical or horizontal does not matter hydraulically — that is only a maintenance
 convenience.
@@ -176,7 +176,7 @@ convenience.
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
 with another. Cut threads avoid this.
 
-**Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
+**⚠️ Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
 while the paste acts as a lubricant; the installer can then unintentionally drive the male
 adapter in too far and **split the valve body**.
 - Paste: fills the voids between threads. Hand-tighten the nipple into the valve, then ~¼ turn
@@ -189,25 +189,16 @@ top of this section). The outlet adapter is a **PE compression × male-thread** 
 compression end must match the hose OD (25 mm here). This is the genuinely useful fitting for the
 poly side, distinct from the male × male double nipple that joins the manifold to the inlet.
 
-**Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
-damage them.
+**⚠️ Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
+damage them; hand-tight only on the solenoid.
 
-**Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
+**⚠️ Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
 Non-waterproof connections corrode, which raises electrical resistance; high resistance can
 blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
 
-### Cautions (all ⚠️)
-
-These are the install statements that carry the **⚠️** marker in a reply — each is "do this
-wrong and you damage the kit or it leaks". Tag them consistently; don't leave one bare because
-it read like ordinary advice.
-
-- ⚠️ **Tape *or* paste, never both** — together you can over-drive the nipple and split the valve body.
-- ⚠️ **No teflon on the manifold swivel nut or the compression nut** — they seal on a washer/grip; taping stops them from seating, causing leaks.
-- ⚠️ **Flow arrow toward the heads** — a backwards valve won't seat; the single most common new-install fault.
-- ⚠️ **Hand-tight only on the solenoid; never grip the solenoid or flow control as a handle** — you'll damage them.
-- ⚠️ **Waterproof connectors on the field-wire joints** — corroded joints raise resistance and trip the controller.
-- ⚠️ **Depressurise first** (pump off, run a zone) before opening anything under pressure.
+The ⚠️-marked lines through this section are the install cautions — carry the marker into the
+reply at the matching step, and don't drop it because a line reads like ordinary advice. Lead a
+step with ⚠️ only; don't stack other severity markers on the same line.
 
 ## External leak (valve leaking to the outside)
 
