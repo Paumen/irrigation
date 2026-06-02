@@ -38,7 +38,7 @@ next to this file — matching how the agent resolves files at runtime.
 - Local doc: none yet.
 - Fallback: `media/pump-datasheet-dab-jet-102m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
-### F6 — Main line 
+### F6 — Main hose 
 - Local doc: none yet.
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
 - Design context: Hunter's "Controlling High Pressure" article (residential rotors) describes

@@ -36,7 +36,7 @@ exhaust/entry ports). Much of what isolates or excludes a valve cause lives in t
 
 ![PGV cutaway — flow control + bleed screw (left), 24 V solenoid (right), diaphragm and metering screen mid-body; flow arrow runs inlet → outlet, left to right.](../media/valve-auto-product-pgv-internals-cutaway.jpg)
 
-Water enters from the system main line and pushes against the centre of the diaphragm.
+Water enters from the system main hose and pushes against the centre of the diaphragm.
 A small orifice in the diaphragm lets water bleed through into the upper chamber, between
 the diaphragm and the bonnet. From there it travels on through a port in the bonnet to the
 solenoid area. The solenoid holds a light, spring-loaded metal piston that — when the valve
@@ -252,7 +252,7 @@ match can be ruled out during identification. Confirm which body is installed fr
 - **1" globe, flow control (PGV-101G).** Inlet and outlet inline; flow control knob
   and bleed on top. The reference above describes this body.
 - **Angle (PGV-100A/101A).** Outlet exits at 90° from the bottom, so the valve can sit on top of a
-  deep main line; lower pressure loss than globe. Flow-direction arrow on the body.
+  deep main hose; lower pressure loss than globe. Flow-direction arrow on the body.
 
   ![PGV angle body — outlet turns down 90°; flow-direction arrow on the body. Other body style, for identification.](../media/valve-auto-product-pgv-101a-angle.jpg)
 

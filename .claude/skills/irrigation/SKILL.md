@@ -14,7 +14,7 @@ Ground every answer in **this** homeowner's system, not generic memory. Read `se
 - **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `wiring`, `heads`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
 - **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`causes:`).
 - **`references/<topic>.md`** — deeper reference tables that outgrow a knowledge doc. `references/valve-replacement.md` — which Hunter PGV/ICV models are drop-in replacements for the zone valves vs. need adjustment or a repipe; read it when the user is choosing a replacement valve. `references/terminology.md` — the house vocabulary (canonical term per concept, one-line glosses, writing conventions); the source of truth behind the *use-the-left-term* rule below.
-- **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main line, app). Check here before answering from memory.
+- **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main hose, app). Check here before answering from memory.
 - **`media/`** (inside this skill, next to `images.yaml`) — vendor PDFs and photos.
 
 ## Audience and language

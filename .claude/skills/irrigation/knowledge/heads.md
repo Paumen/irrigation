@@ -53,7 +53,7 @@ Use the trajectory geometry to check clearance: a standard 25° nozzle at the I-
 ### Features
 
 - **Radius adjustment setscrew** — Hunter wrench or flat-blade screwdriver; turn down to reduce radius up to ~25%.
-- **Patented automatic arc return** — if the turret gets vandalized or kicked, it returns to the original arc the next time the valve calls.
+- **Patented automatic arc return** — if the turret gets vandalized or kicked, it returns to the original arc the next time the zone runs.
 - **Arc adjustable 40°–360°** in a single model (part- and full-circle in one).
 - **QuickCheck arc mechanism** — through-the-top arc adjustment for fast tweaks without pulling the rotor.
 - **FloStop** — closes the flow at this individual head so you can change a nozzle or do a repair without shutting the zone.
@@ -75,7 +75,7 @@ Mixing nozzle sizes within a zone is how installers balance differently-sized ar
 
 - **Won't pop up.** Debris in the well, weak riser seal, body cracked. Most often: a pebble or twig in the well. Pull the cap and clear. Low system pressure is also a suspect — check pressure at the manifold while the zone runs. Note: a worn riser seal causes *flow-by* (water flushed out as the riser starts to rise) which bleeds the pressure needed to seat the riser; Hunter rotors are designed for zero flow-by, so visible flush during pop-up = replace the riser seal + spring seat. If the whole zone is weak (not just this head): a punctured hose after recent garden / fence / driveway work is the textbook cause — see `hoses.md` *Broken-hose signature*. Could also be a partly-stuck valve diaphragm restricting flow to the zone — see `valve-internals.md`.
 - **Pops up but won't rotate.** Sand or grit in the drive, or the nozzle is too small for the available pressure (a gear-drive needs flow to drive). Pull the rotor, flush in clean water, reinstall. Persistent → replace the rotor. The bottom-of-internal-assembly **filter** is the most common culprit before the drive itself — pull it with needle-nose pliers and rinse before condemning the rotor (see *Adjustment & service procedures* below).
-- **Wrong arc / always 360°.** The FloStop or arc adjustment is at end-stop. Reset per the Hunter wrench instructions. Auto arc return will bring the original arc back the next time the valve calls. Don't step on or kick rotors during mowing — the impact drifts the right stop, and auto arc return is the recovery, not a license to abuse the head.
+- **Wrong arc / always 360°.** The FloStop or arc adjustment is at end-stop. Reset per the Hunter wrench instructions. Auto arc return will bring the original arc back the next time the zone runs. Don't step on or kick rotors during mowing — the impact drifts the right stop, and auto arc return is the recovery, not a license to abuse the head.
 - **Right-side arc off (wet walkway / dry turf strip on one edge).** The fixed right stop has drifted. Reset by rotating the turret fully clockwise, then counterclockwise back to the right stop. If still misaligned, either rotate the whole body+fitting to the desired position, or unscrew the body cap, remove the internal assembly, rotate the turret to the right stop, and refit with the nozzle pointing at the start of the desired arc — then re-adjust the left arc. No need to dig the body out.
 - **Uneven coverage / brown spots.** Nozzle mismatch, wrong radius set, or a downstream head is starving this one of pressure. Check pressure at the head while running.
 - **Water draining from the lowest head when the system is off.** The drain check valve is missing or failed. See *Low-head drainage* below.
@@ -218,7 +218,7 @@ Exposed diameter (above ground) is 5.7 cm on all PROS-02 through PROS-12. A side
 - **Cap-to-body leak.** Almost always debris on the seal seat, since the seal tolerates a loose cap by design. Pull the cap, rinse, refit.
 - **Riser stuck up.** Weak spring or debris in the well; clean and rinse, replace the spring if visibly tired.
 - **Misting from the MP on top.** Two possible causes — diagnose by checking inlet pressure:
-  - Inlet < ~3.5 bar: the regulator can't engage (needs 0.7 bar differential above its 2.8 bar setpoint). The fix is upstream — pump weak, main-line restricted, or zone over-flowing. The PRS40 is not faulty.
+  - Inlet < ~3.5 bar: the regulator can't engage (needs 0.7 bar differential above its 2.8 bar setpoint). The fix is upstream — pump weak, main-hose restricted, or zone over-flowing. The PRS40 is not faulty.
   - Inlet ≥ 3.5 bar: the regulator itself is failing. Swap the body or fit a new internal seal kit.
 - **Tall single stream of water (~3 m) from one head.** Not a fault — that's **FloGuard** signalling a missing or detached nozzle. Refit or replace the nozzle. Without FloGuard the body would fountain at full flow, soaking the area.
 - **Leak at the threaded inlet (in-ground).** Over-torque on install. Same Teflon paste-or-tape rule as `valve.md` — never both.
@@ -273,7 +273,7 @@ Quick read: the canister colour tells you the line (black = standard 10 mm/hr; g
 
 ### Common faults
 
-- **Won't pop up at all.** Inlet pressure below ~1.0 bar. Confirm pump and main line — a weak pump or a clog upstream is the usual cause.
+- **Won't pop up at all.** Inlet pressure below ~1.0 bar. Confirm pump and main hose — a weak pump or a clog upstream is the usual cause.
 - **Pops up but won't rotate.** Filter screen clogged. Pull the nozzle from the body, lift the screen out, rinse, refit. The viscous drive (silicone chamber, brass stator) is sealed and rarely fails — suspect the screen first.
 - **Misting / fine spray instead of distinct streams.** Pressure too high (>3.8 bar at the nozzle). With a PRS40 body this should not happen; if it does, the PRS40 regulator is failing — swap the body or fit a seal kit.
 - **Wrong arc / arc-adjustment turning does nothing.** You're adjusting while the head is retracted. Turn the zone on, adjust while popped up, then shut off.
@@ -292,7 +292,7 @@ Two distinct causes, with the same symptom:
 1. **Drain check valve missing or failed at the head.** The cheap, common fix. Both the I-20 and the PRS40 have factory or user-installable drain check valves, rated to ~3 m and ~4.3 m of head-to-hose-high-point elevation respectively. If the hose has more elevation than the check valve holds, the water above the valve will still drain. Upgrade to a stronger check valve or install in-line check valves on the hose.
 2. **Water passing through the zone valve when shut.** The valve itself is letting water trickle through after closing — see `valve.md` *Weeping when off*. The tell: drainage doesn't stop after the hose empties; it keeps going.
 
-**Distinguishing test:** a check-valve issue **self-stops** once the hose above empties (a finite puddle, then dry). A valve leak **does not self-stop** — it weeps continuously as long as the main line is pressurised. Do not assume the valve, and do not assume the head; let the symptom decide.
+**Distinguishing test:** a check-valve issue **self-stops** once the hose above empties (a finite puddle, then dry). A valve leak **does not self-stop** — it weeps continuously as long as the main hose is pressurised. Do not assume the valve, and do not assume the head; let the symptom decide.
 
 ## See also
 

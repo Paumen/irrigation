@@ -77,7 +77,7 @@ visibly scored or the weeping persists after cleaning.
 ## Debris in the body
 
 Examine the valve body and remove any debris, pebbles, or dirty water. New installations without
-proper flushing, recent main-line repair, or well water all push debris into the valve where it
+proper flushing, recent main-hose repair, or well water all push debris into the valve where it
 lodges between the diaphragm and the seat. On well-fed systems, treat debris as a
 first-class suspect, not an edge case.
 

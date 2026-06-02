@@ -47,7 +47,7 @@ The tells are:
   footing dug, paving lifted/relaid, mole/vole burrowing, root invasion
   from an established tree.
 - Pressure at the manifold is normal during a zone run (so the pump and
-  main line are fine), but **pressure at the far end of the zone is low**
+  main hose are fine), but **pressure at the far end of the zone is low**
   or there's visible flow loss between the manifold and the heads.
 
 When all four are present the diagnosis is essentially confirmed before
@@ -60,7 +60,7 @@ Cheapest-first checks before digging up the lawn:
 1. **Compare zones.** 🔌 Run each zone in turn at the controller.
    If only the suspect zone is weak, the fault is downstream of *that*
    zone's valve — i.e. its hose or its heads. If multiple zones are
-   weak, look upstream (main line F6, pump F5, controller call F2).
+   weak, look upstream (main hose F6, pump F5, controller call F2).
 2. 🔍 **Walk the hose path during the run.** A punctured hose pushes
    water into the soil. Look for a wet patch, soft/spongy ground,
    unusually dense grass, water bubbling at the surface, or a sinkhole

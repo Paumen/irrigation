@@ -34,7 +34,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **irrigation** — the whole watering system: pump → valves → heads.
 - **pump** — the well pump; the system's water + pressure source and its only shutoff. 230 V power → pro-only.
 - **well** — the borehole the pump draws from (the water source).
-- **manifold** — the fitting where the main line fans out to the zone valves.
+- **manifold** — the fitting where the main hose fans out to the zone valves.
 - **zone** — one valve + its lateral hose + heads; run one at a time.
 - **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC that a hose cannot replace (e.g. a rigid SCH80 riser nipple).
 - **run** — to operate a zone, or one watering cycle.
@@ -55,7 +55,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **solenoid-plunger** — the pin the solenoid lifts to release pressure above the diaphragm.
 - **bleed screw** — manual valve-open for testing.
 - **flow-control knob** — throttles a zone's flow at the valve.
-- **exhaust port** — the solenoid's internal drain path through the bonnet.
+- **exhaust port** — the opening in the bonnet that the solenoid-plunger uncovers to drain the upper chamber (the port itself, distinct from the plunger that covers it).
 
 ### Heads & spray
 - **head** — the sprinkler that delivers water. Two types here ↓
@@ -66,7 +66,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **nozzle** — the orifice that sets a head's flow and radius.
 - **rotator** — a multi-stream nozzle type.
 - **arc** — a head's sweep angle (degrees).
-- **radius / throw** — how far a head sprays.
+- **radius** — how far a head sprays.
 
 ### Pressure, flow & regulation
 - **bar** — the pressure unit.
@@ -128,6 +128,8 @@ Safe substitutions — the right word should be avoided in prose:
 | arc | angle |
 | multimeter | meter |
 | splice | wire connector |
+| radius | throw |
+| length | distance |
 | Teflon tape | PTFE tape |
 | failure mode | cause |
 | suspect | candidate |
