@@ -57,11 +57,11 @@ digging.
 
 Cheapest-first checks before digging up the lawn:
 
-1. **Compare zones.** Run each zone in turn at the controller.
+1. **Compare zones.** 🔌 Run each zone in turn at the controller.
    If only the suspect zone is weak, the fault is downstream of *that*
    zone's valve — i.e. its hose or its heads. If multiple zones are
    weak, look upstream (main line F6, pump F5, controller call F2).
-2. **Walk the hose path during the run.** A punctured hose pushes
+2. 🔍 **Walk the hose path during the run.** A punctured hose pushes
    water into the soil. Look for a wet patch, soft/spongy ground,
    unusually dense grass, water bubbling at the surface, or a sinkhole
    along the line. The leak will be uphill of the failing heads, since
@@ -69,7 +69,7 @@ Cheapest-first checks before digging up the lawn:
 3. **Listen.** With the zone running and other zones off, kneel near the
    suspected wet spot — a moderate to large puncture is audible as a
    hiss.
-4. **Pressure-check at the heads.** With a pitot gauge in the stream or
+4. 🔧 **Pressure-check at the heads.** With a pitot gauge in the stream or
    by feel: heads upstream of the puncture will be roughly normal, heads
    downstream will be weak. The transition between "normal" and "weak"
    heads brackets the leak.
@@ -126,7 +126,7 @@ use the hose):**
 3. Thread a same-size cap or plug (½" or ¾" NPT to match the inlet) onto
    the fitting. Use Teflon tape on the threads — not paste *and* tape
    together (same Teflon rule as `valve.md`).
-4. Turn the zone on briefly to check for leaks at the new joint.
+4. ✅ Turn the zone on briefly to check for leaks at the new joint.
 5. Backfill once dry.
 
 **Case B — head is the last one on its hose (no heads downstream of it):**
@@ -145,7 +145,7 @@ head — you cap at the *upstream* tee:
    head is abandoned in place — it has no inlet and no outlet, so it
    simply sits in the soil. (If you want, you can also dig it up; it's
    not required.)
-5. Turn the zone on briefly to check for leaks at the new slip cap before
+5. ✅ Turn the zone on briefly to check for leaks at the new slip cap before
    backfilling either dig.
 
 **Materials.** PVC slip cap + approved PVC glue for slip joints, or a

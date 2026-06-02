@@ -22,7 +22,7 @@ the relay coil, and the relay switches 230 V power through to the pump. It is dr
 controller's P/MV (pump) output, ideally on a **dedicated** common separate from the zone-valve
 common. (See `setup.yaml` for this install's relay model, location, and wiring.)
 
-> **Safety — read first.** Everything on the power-supply side of the relay is mains-voltage work
+> **⚠️ Safety — read first.** Everything on the power-supply side of the relay is mains-voltage work
 > (120/230 V). Connecting or opening the relay should be done by a licensed electrician following
 > local codes; improper work risks shock or fire. Always switch the main circuit breaker off before
 > any connection. Do not ask the homeowner to perform mains-side wiring — flag the risk and point

@@ -2,9 +2,11 @@
 
 From how a part works ("what's the diaphragm for, why a bleed screw, how does the relay decide to switch the pump on") through to doing the job (install/replace a rotor or valve, set arc/radius, run a valve manually to test, clean a filter, swap a solenoid, winterize). Same conversation at two depths — understand it, then act on it.
 
+**Before answering any install / replace / re-plumb, trace the part in `setup.yaml` first.** Find the node and walk what meets it on **each side** — inlet *and* outlet (e.g. `Z1.valve.auto.01` sits between a manifold swivel-nut outlet and a `hose.25` poly run). The fittings you name, the images you surface, and the sealing advice all follow from what is physically bolted to each side *in this system* — not from the part in the abstract. A valve install that only describes the valve, and skips the swivel nut on the inlet and the compression adapter on the poly outlet, is half an answer. Do this trace even when the user asks about one detail (e.g. "where does teflon go") — the neighbouring fittings are usually half the real answer.
+
 Valve internals have their own sibling docs — `valve-internals.md` (diaphragm, seat, metering ports), `valve-solenoid.md` (coil, plunger). Read the one the question narrows to.
 
-Image choice: a cutaway / parts-callout shot orients best for how-it-works; for a measurement the user hasn't taken yet the illustrated explainers read better, but once they're actually testing switch to the photos of their real Stanley meter.
+Image choice: a cutaway / parts-callout shot orients best for how-it-works; for a measurement the user hasn't taken yet the illustrated explainers read better, but once they're actually testing switch to the photos of their real Stanley meter. For a multi-part **job**, pull images by the `procedures:` tag in `images.yaml` (e.g. `valve_install`), not by the part the user named — the task set spans subjects (valve body, manifold swivel nut, poly-hose compression adapter, waterproof connectors), and a subjects-only scan keyed on "valve" silently drops the hose and wiring fittings that are half the install.
 
 When the doc is partial or absent (app, pump, main line — see `sources.md`), name the vendor PDF in `media/` so the user can open it too: `PGV101G.pdf`, `PSR52.pdf`, `I20.pdf`, `ProSpraytm PRS40.pdf`, `Standard MP Rotator Nozzle.pdf`.
 

@@ -81,7 +81,7 @@ Distance by ground (C) wire (rows) × control/hot wire (columns), in the source'
 
 ## Swap-wire test (controller end)
 
-Move the suspect station's wire to a known-working terminal at the controller. If the fault follows
+🔧 Move the suspect station's wire to a known-working terminal at the controller. If the fault follows
 the wire, it is in the conductor/splice/solenoid downstream. If it stays on the original terminal,
 it is the controller.
 
@@ -90,7 +90,7 @@ it is the controller.
 Where the zone valves share one box, use them against each other. At the valve manifold,
 swap the suspect station's field wires onto a valve you know works (or move the known-good valve's
 wires onto the suspect run). Then:
-- **Fault follows the valve** → the valve/solenoid is bad, not the wiring.
+- ✅ **Fault follows the valve** → the valve/solenoid is bad, not the wiring.
 - **Fault stays on the original wire/position** → the conductor or splice on that run is bad, not the
   valve.
 Pairs naturally with the splice-vs-solenoid voltage check in `valve-solenoid.md`: voltage isolates
@@ -98,7 +98,7 @@ where the signal dies, the swap isolates whether the hardware or the wire is at 
 
 ## Continuity / resistance check
 
-At the controller, check the suspect run:
+🔧 At the controller, check the suspect run:
 - **Continuous, low resistance** → conductor is sound.
 - **Open / high resistance** → broken conductor or corroded splice.
 - **Intermittent when wiggled** → loose or marginal splice/connection.

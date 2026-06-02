@@ -145,6 +145,16 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 
 ## Installation (and how to avoid causing damage)
 
+**The one rule that answers most "where does the teflon go" questions: seal a joint where the
+thread itself is the seal, leave the threads bare where a washer or grip does the sealing.**
+Tapered male threads going into a female port (the valve's inlet/outlet) get teflon. Joints
+that seal on a rubber washer or a compression grip do **not** — ⚠️ taping them stops the washer
+or grip seating, which leaks. In *this* system that means two bare-thread joints flank the
+valve: the **manifold swivel nut** on the inlet (seals on its rubber washer) and the **PE
+compression nut** where the outlet meets the `hose.25` poly run (seals on the pipe grip). Lead
+with this, then give the paste/tape mechanics below — don't make the user pull it out over
+several turns.
+
 ![Flow direction — arrow toward the heads](../media/valve-auto-instruction-flow-direction.png)
 
 ![PGV install detail — valve sits in a plastic valve box with cover; control wire coiled for slack; hose runs out to the heads downstream.](../media/valve-auto-instruction-install-box.png)
@@ -153,7 +163,7 @@ once the routine causes (filter, nozzle, riser seal, broken hose) are ruled out.
 area the valves serve, but positioned so you are not sprayed when you operate the system by hand.
 
 **Orientation — the single most common new-install fault.** Each valve has an inlet and an
-outlet, with an arrow moulded into the body showing the direction water must flow. The arrow
+outlet, with an arrow moulded into the body showing the direction water must flow. ⚠️ The arrow
 must point **toward the heads**. A valve plumbed backwards will not hold/seat correctly. Whether
 the valve sits vertical or horizontal does not matter hydraulically — that is only a maintenance
 convenience.
@@ -166,19 +176,31 @@ convenience.
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
 with another. Cut threads avoid this.
 
-**Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
+![PTFE thread-sealing tape — the teflon tape wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
+
+**⚠️ Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
 while the paste acts as a lubricant; the installer can then unintentionally drive the male
 adapter in too far and **split the valve body**.
 - Paste: fills the voids between threads. Hand-tighten the nipple into the valve, then ~¼ turn
   more with a wrench.
 - Tape: wrap the pipe three full times. Hand-tighten, then ~½ turn more with a wrench.
 
-**Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
-damage them.
+So teflon lands only on the male threads that screw into the valve's two female ports;
+the swivel-nut inlet and the compression-nut outlet of this system stay bare (see the rule at the
+top of this section). The outlet adapter is a **PE compression × male-thread** fitting — the
+compression end must match the hose OD (25 mm here). This is the genuinely useful fitting for the
+poly side, distinct from the male × male double nipple that joins the manifold to the inlet.
 
-**Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
+**⚠️ Never use the solenoid or flow control as a grip handle** when tightening a nipple — you will
+damage them; hand-tight only on the solenoid.
+
+**⚠️ Use waterproof wire connectors** for the solenoid-to-field-wire joints in the valve box.
 Non-waterproof connections corrode, which raises electrical resistance; high resistance can
 blow fuses or trip the controller. (Wire gauge vs. run length: see `wiring.md`.)
+
+The ⚠️-marked lines through this section are the install cautions — carry the marker into the
+reply at the matching step, and don't drop it because a line reads like ordinary advice. Lead a
+step with ⚠️ only; don't stack other severity markers on the same line.
 
 ## External leak (valve leaking to the outside)
 
@@ -191,7 +213,7 @@ Run the checklist in cheapest-first order:
 - **Bleed screw open or damaged** — hand-tighten clockwise.
 - **Solenoid loose or turned on manually** — hand-tighten clockwise until snug.
 - **Loose bonnet/body screws** — tighten until snug.
-- **Diaphragm not seated correctly** — remove the bonnet and inspect alignment (`valve-internals.md`).
+- **Diaphragm not seated correctly** — 🔍 remove the bonnet and inspect alignment (`valve-internals.md`).
 - **Crack in the body** — requires valve replacement.
 
 ## Weeping / leaking when the system is OFF
