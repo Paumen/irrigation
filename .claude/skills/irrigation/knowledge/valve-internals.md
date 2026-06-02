@@ -83,8 +83,8 @@ first-class suspect, not an edge case.
 
 ## Disassembly and inspection (procedure)
 
-> **Safety:** shut off the main water supply first. Opening a valve under pressure is dangerous
-> and can injure you.
+> **⚠️ Safety:** shut off the main water supply first (on this system, pump off — then run a zone to
+> bleed off pressure). Opening a valve under pressure is dangerous and can injure you.
 
 1. Shut off the main water supply.
 2. Unscrew the solenoid (counter-clockwise) and check the plunger is clean and moves freely.

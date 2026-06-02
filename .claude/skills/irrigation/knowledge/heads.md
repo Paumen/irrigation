@@ -105,7 +105,7 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 **Radius adjustment (up to −25%).**
 1. Insert the 3/32" Allen end into the radius (retention) screw on top of the nozzle.
 2. Clockwise into the stream = shorter throw; counterclockwise = longer throw. Best done with water on so you can see the change.
-3. **Caution: more than five full clockwise turns can drop the screw out of the nozzle.** Replacement screw is sold separately if lost.
+3. **⚠️ More than five full clockwise turns can drop the screw out of the nozzle.** Replacement screw is sold separately if lost.
 
 ![Arc adjustment with the wrench (90° per full turn) and the radius/range screw above it](../media/head-rotor-instruction-arc-radius-adjust.png)
 
@@ -121,7 +121,7 @@ The I-20 carries four top callouts (visible after pulling the riser up by its li
 
    ![Step 2 — nozzle slipped into the 25°-angled socket; insertion collar still holding the riser.](../media/head-rotor-instruction-nozzle-install-step-2.jpg)
 
-3. Turn the **nozzle / radius adjustment screw** a **quarter turn clockwise** to lock the nozzle in place. More than a quarter turn starts to reduce the radius — don't over-turn.
+3. Turn the **nozzle / radius adjustment screw** a **quarter turn clockwise** to lock the nozzle in place. ⚠️ More than a quarter turn starts to reduce the radius — don't over-turn.
 
    ![Step 3 — quarter-turn the radius reduction screw to lock the nozzle.](../media/head-rotor-instruction-nozzle-install-step-3.jpg)
 
@@ -151,7 +151,7 @@ After install: cycle the head a couple of times to confirm the nozzle is locked 
 5. Remove the plastic spring seat (it may have already popped off).
 6. To install the new seal: with the base on a solid surface, push the retraction spring down below the nozzle turret and hold it there. Drop the new rigid spring seat onto the riser grooved-side-down. Work the new flexible rubber seal (flat side up) onto the turret and then down onto the riser body — don't twist or deform it as it crosses the gap between turret and shaft. Snap the body cap back on (it slides freely once past the ring at the top of the turret). Release the spring.
 7. Cycle the riser by hand several times to seat the parts so they don't stick.
-8. Screw the internal assembly back into the body — **hand-tight only, no threads visible under the cap**. If threads can be felt, the seal isn't seated; redo it.
+8. Screw the internal assembly back into the body — ⚠️ **hand-tight only, no threads visible under the cap**. If threads can be felt, the seal isn't seated; redo it.
 9. Re-check installation height (set to grade) before turning on for leak test.
 
 **Drain check valve (low-head drainage at this rotor).** Hunter sells a screw-in check valve sub-assembly (P/N **142300**, Filter/Screen Check Valve combined). To fit: unthread the body cap, pull the internal assembly, flip upside-down, push the large irregular end of the check valve into the bottom of the riser (the small rubber tip stays outside the riser), refit the internal assembly.

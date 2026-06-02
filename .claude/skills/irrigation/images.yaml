@@ -96,6 +96,15 @@ images:
     relates: fitting.joint between a hose run and a threaded part (valve, swing joint, manifold); the compression end must match the pipe OD — the bare-thread (grip-sealed) outlet joint to the hose.25 poly run; filed under hoses, so a valve-keyed scan misses it without the procedures tag
     used_in: [playbooks/parts.md]
 
+  IMG.fitting-product-ptfe-tape:
+    file: media/fitting-product-ptfe-tape.jpg
+    caption: PTFE thread-sealing tape (label "PTFE THREAD SEALING 751-3", 12 mm × 12 m × 0.1 mm) — the white teflon tape you wrap on a male thread before it screws into a female port. Tape OR paste, never both; 3 full turns in the screw-in direction.
+    subjects: [valve, hoses]
+    procedures: [valve_install]
+    causes: [F7]
+    relates: the teflon-tape consumable for a valve/fitting install; goes only on threads that seal on the thread, never on a washer- or compression-sealed joint
+    used_in: [valve.md]
+
   # ── fitting · manifold ───────────────────────────────────────────────────────
   IMG.fitting-manifold-product-lev-6way:
     file: media/fitting-manifold-product-lev-6way.jpg

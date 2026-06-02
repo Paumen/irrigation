@@ -176,6 +176,8 @@ convenience.
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
 with another. Cut threads avoid this.
 
+![PTFE thread-sealing tape — the teflon tape wrapped on a male thread before it enters a female port; 3 full turns, screw-in direction.](../media/fitting-product-ptfe-tape.jpg)
+
 **⚠️ Teflon — paste or tape, never both.** Together, the tape adds dimension to the threads
 while the paste acts as a lubricant; the installer can then unintentionally drive the male
 adapter in too far and **split the valve body**.

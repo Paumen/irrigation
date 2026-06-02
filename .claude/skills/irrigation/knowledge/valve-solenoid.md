@@ -106,7 +106,8 @@ it still binds, replace the solenoid.
 
 If the valve turns on via the external bleed screw but not electrically, suspect a port clog.
 
-> **Safety:** shut off the main water supply before opening the valve under pressure.
+> **⚠️ Safety:** shut off the main water supply before opening the valve under pressure (on this
+> system, pump off — then run a zone to bleed off pressure).
 
 1. Try opening the valve with the external bleed screw. If it opens that way, a port issue is likely.
 2. Shut off the main water supply.
