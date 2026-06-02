@@ -38,11 +38,11 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 - **hose** — the poly water line (main and laterals). Use **pipe** only for rigid PVC a hose can't replace (e.g. a glued cap stub).
 - **run** — to operate a zone, or one watering cycle.
 
-### Fittings (pipe joiners)
-- **fitting** — a pipe joiner; sub-types **fitting-manifold**, **fitting-tee**, **fitting-swing-joint**, **fitting-cap**.
+### Fittings (hose/pipe joiners)
+- **fitting** — a hose or pipe joiner; sub-types **fitting-manifold**, **fitting-tee**, **fitting-swing-joint**, **fitting-cap**.
 - **inlet / outlet** — the upstream / downstream ports of a valve or fitting.
 - **male thread / female thread** — the two mating thread genders.
-- **barb** — a ribbed poly-pipe outlet (an alternative to threads).
+- **barb** — a ribbed poly-hose outlet (an alternative to threads).
 - **PTFE tape** ("teflon tape") — thread-seal tape on a male thread.
 
 ### Valve
@@ -80,7 +80,7 @@ word-frequency study of the skill + knowledge + `setup.yaml` files.
 ### Electrical & control
 - **controller** — programmable timer; schedules zones, sends 24 VAC.
 - **relay** — the pump start relay; its low-voltage coil switches mains to the pump.
-- **wire / wiring** — the 24 V low-voltage control cable.
+- **wire / wiring** — the 24 VAC low-voltage control cable.
 - **conductor** — a single wire.
 - **common** — the shared return wire (C).
 - **ground** — the earth wire.
