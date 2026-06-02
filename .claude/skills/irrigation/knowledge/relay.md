@@ -71,7 +71,6 @@ from the vendor's AWG values; mm² are nearest-standard equivalents):
 
 | Model | 0.75 mm² (18 AWG) | 1.5 mm² (16 AWG) | 2.5 mm² (14 AWG) | 4 mm² (12 AWG) | 6 mm² (10 AWG) | 10 mm² (8 AWG) |
 |---|---|---|---|---|---|---|
-| PSR-52 / PSR-53 | 41 m | 65 m | 104 m | 165 m | 262 m | 416 m |
 | PSR-22 | 74 m | 118 m | 188 m | 298 m | 473 m | 751 m |
 
 Typical residential controller→relay runs sit comfortably within range on any sane gauge, so the
