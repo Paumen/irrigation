@@ -349,6 +349,51 @@ def _valve_state(diaphragm_intact, seat_seals, fill_ok, bleed_open, coil_on):
     return "shut", "de-energised, held shut"
 
 
+# ---- which parts actually hold water --------------------------------------
+# Sealing sub-parts: a part whose `to`-edge stops water unless it is currently
+# open. Used by _wetted so the wetted set is reachability over the real flow
+# edges, not a hand-listed table -- it re-derives for any state/fault.
+_SEAL_CLOG = ("metering_port", "solenoid_entry", "plunger", "filter")
+_SEVERING = ("inlet_thread", "outlet_nut")
+
+
+def _wetted(nodes, valve_states, elec):
+    """Flow parts that contain water in the current state: reachability from the
+    well over `to`-edges, blocked only where a seal is closed. Derived from the
+    same valve/coil state the solve uses -- one source of truth, no second model.
+
+    Seals: a valve `seat` passes only when its valve is open/weeping; a solenoid
+    `plunger` passes only when its coil is energised; a snapped thread severs its
+    downstream; a clogged control orifice blocks (e.g. a clogged metering port
+    leaves the bonnet chamber dry -- which is *why* that valve won't shut)."""
+    flow = {nid: n for nid, n in nodes.items() if n["domain"] == "flow"}
+
+    def conducts(u, v):
+        part = u.rsplit(".", 1)[-1]
+        if part == "seat" and v.endswith(".outlet"):
+            z = u.split(".")[0]
+            return valve_states.get(z, {}).get("state") in ("open", "weeping")
+        if part == "plunger" and v.endswith(".solenoid_exhaust"):
+            z = u.split(".")[0]
+            return bool(z[1:].isdigit() and elec["coils"].get(int(z[1:])))
+        if _cond(nodes, u) == "broken" and part in _SEVERING:
+            return False
+        if _cond(nodes, u) == "clogged" and part in _SEAL_CLOG:
+            return False
+        return True
+
+    wet, stack = set(), ["well"]
+    while stack:
+        u = stack.pop()
+        if u in wet or u not in flow:
+            continue
+        wet.add(u)
+        for v in flow[u]["to"]:
+            if v in flow and conducts(u, v):
+                stack.append(v)
+    return sorted(wet)
+
+
 # ============================================================================
 # Piece 3 -- collapse + generalized (non-tree) flow solve
 # ============================================================================
@@ -698,10 +743,11 @@ def _solve_pipeline(commanded, conditions, pump_commanded, graph_path, env):
     fl = Flow(graph, nodes, valve_states, elec["pump_running"])
     pump_model = _pick_pump(nodes)
     q, p, dem, pump_h, converged, head_ok = _solve_hydraulic(fl, pump_model, env)
+    wetted = _wetted(nodes, valve_states, elec)
     return {"graph": graph, "nodes": nodes, "elec": elec,
             "valve_states": valve_states, "fl": fl, "pump_model": pump_model,
             "q": q, "p": p, "dem": dem, "pump_h": pump_h,
-            "converged": converged, "head_ok": head_ok}
+            "converged": converged, "head_ok": head_ok, "wetted": wetted}
 
 
 def simulate(commanded_zones, conditions=None, concurrent_zones=None,
@@ -720,11 +766,11 @@ def simulate(commanded_zones, conditions=None, concurrent_zones=None,
     return _build_report(R["graph"], R["nodes"], commanded, concurrent_zones,
                          R["elec"], R["valve_states"], R["fl"], R["q"], R["p"],
                          R["dem"], R["pump_h"], R["converged"], R["head_ok"],
-                         R["pump_model"], baseline)
+                         R["pump_model"], baseline, R["wetted"])
 
 
 def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
-                  q, p, dem, pump_h, converged, head_ok, pump_model, baseline):
+                  q, p, dem, pump_h, converged, head_ok, pump_model, baseline, wetted):
     pump_running = elec["pump_running"]
     total = dem.get("pump.outlet", 0.0)
 
@@ -788,6 +834,8 @@ def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
         "valves": valve_states,
         "zones": zones_out,
         "leaks": leaks,
+        "wetted": wetted,
+        "wetted_count": len(wetted),
         "pump": {"running": pump_running, "model": pump_model,
                  "flow_m3h": round(total, 4), "head_m": round(pump_h, 2),
                  "head_bar": round(pump_h / M_PER_BAR, 3)},

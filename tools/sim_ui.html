@@ -54,6 +54,7 @@
     <span style="background:var(--pop)"></span>won't-pop
     <span style="background:var(--dead)"></span>dead
     <span style="background:var(--off)"></span>off
+    &nbsp;·&nbsp;<span style="background:none;border:2px solid var(--live);width:9px;height:9px"></span>wet (water inside)
   </span>
 </header>
 <main>
@@ -80,7 +81,7 @@ let conditions={};                // node -> condition
 let commanded=new Set([1,2,3,4]); // commanded zones
 let pumpOn=null;                  // null = follow schedule; true/false = forced
 let openComp=null;                // component whose sub-parts are shown
-let solveTimer=null;
+let lastRep=null;                 // most recent solve, for the detail panel
 
 const el=(t,a={})=>{const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
 const GRADE={full:"var(--full)",weak:"var(--weak)","won't-pop":"var(--pop)",dead:"var(--dead)"};
@@ -180,17 +181,19 @@ function openComponent(id){
   const d=document.getElementById("detail"); d.innerHTML="";
   const h=document.createElement("div"); h.innerHTML=`<b>${id}</b> <span class="badge">${G.flow[id]?.kind||G.circuit[id]?.kind||""}</span>`;
   d.appendChild(h);
+  const wetSet=new Set(lastRep?.wetted||[]);
+  const drop=p=>wetSet.has(p)?" 💧":"";
   let any=false;
   for(const part of parts){
     const allowed=settableFor(part);
     if(!allowed) {            // show non-settable sub-parts greyed, for context
       const row=document.createElement("div"); row.className="partrow";
-      row.innerHTML=`<span class="pn">${part.replace(id+".","")}</span><span class="hint">— can't fail</span>`;
+      row.innerHTML=`<span class="pn">${part.replace(id+".","")}${drop(part)}</span><span class="hint">— can't fail</span>`;
       d.appendChild(row); continue;
     }
     any=true;
     const row=document.createElement("div"); row.className="partrow";
-    const name=document.createElement("span"); name.className="pn"; name.textContent=part.replace(id+".","")||part;
+    const name=document.createElement("span"); name.className="pn"; name.textContent=(part.replace(id+".","")||part)+drop(part);
     const sel=document.createElement("select");
     ["ok",...allowed].forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;sel.appendChild(op);});
     sel.value=conditions[part]||"ok";
@@ -229,6 +232,8 @@ async function solve(){
 }
 
 function paint(rep){
+  lastRep=rep;
+  if(openComp) openComponent(openComp);   // refresh wet markers in the panel
   // headline + pump
   document.getElementById("headline").textContent=rep.summary.headline+
      (rep.summary.converged?"":"  (did not converge)");
@@ -240,12 +245,17 @@ function paint(rep){
   const headGrade={}, headInfo={};
   rep.zones.forEach(z=>z.heads.forEach(h=>{headGrade[h.loc]=h.grade;headInfo[h.loc]=h;}));
   const leakSet={}; rep.leaks.forEach(l=>leakSet[l.loc]=l.flow_m3h);
+  // a drawn flow node is wet if it (or any of its sub-parts) holds water
+  const wet=rep.wetted||[];
+  const isWet=id=>wet.some(w=>w===id||w.startsWith(id+"."));
 
   document.querySelectorAll("#flow .node").forEach(g=>{
     const id=g.getAttribute("data-id"); const rect=g.querySelector("rect");
-    let fill="var(--panel)", stroke="var(--line)";
+    let fill="var(--panel)", stroke=isWet(id)?"var(--live)":"var(--line)";
     if(headGrade[id]){ fill=GRADE[headGrade[id]]||"var(--off)"; }
-    rect.setAttribute("fill",fill); rect.setAttribute("stroke",stroke);
+    rect.setAttribute("fill",fill);
+    rect.setAttribute("stroke",stroke);
+    rect.setAttribute("stroke-width",isWet(id)?2:1);
     // tooltip
     let tip=id;
     if(headInfo[id]){const h=headInfo[id];tip=`${id}\n${h.grade} — ${h.reason}\n${h.flow_m3h} m³/h @ ${h.pressure_bar} bar (healthy ${h.nominal_m3h})`;}

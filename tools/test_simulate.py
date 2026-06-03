@@ -104,6 +104,21 @@ e6 = simulate([3], pump_on=False)
 check("E6 pump forced off while Z3 called -> Z3 dead", all_dead(e6, 3),
       grades(e6, 3))
 
+# wetted set: derived reachability, not a separate computation
+w = set(simulate([], pump_on=True)["wetted"])         # dead-head
+check("W dead-head wets the main + manifold",
+      {"mhose", "mani.inlet"} <= w, "")
+check("W dead-head wets the valve pilot internals (chamber/metering_port)",
+      {"Z1.valve.chamber", "Z1.valve.metering_port", "Z1.valve.seat"} <= w, "")
+check("W dead-head leaves downstream of the shut seat dry",
+      not ({"Z1.valve.outlet", "Z1.head1.nozzle", "Z1.valve.solenoid_exhaust"} & w),
+      "")
+w3 = set(simulate([3])["wetted"])                      # Z3 energised
+check("W energising a zone wets its heads + opens the pilot exhaust",
+      {"Z3.head1.nozzle", "Z3.valve.solenoid_exhaust"} <= w3, "")
+check("W an un-commanded zone stays dry downstream",
+      "Z1.head1.nozzle" not in w3, "")
+
 
 # ---------------------------------------------------------------------------
 # Valve pilot loop (Piece 1)

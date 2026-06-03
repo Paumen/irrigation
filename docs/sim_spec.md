@@ -63,6 +63,13 @@ reused — it asserts a single parent and `is_leaf ⇒ nozzle`, both false here.
    stuck-open valve on **any** branch — including the valveless Z5 — draws the shared supply down and
    weakens *other* commanded zones. Symptom zone ≠ fault zone.
 
+   The report also includes a **`wetted`** set (`_wetted`) — the flow parts that actually hold water
+   in the current state, as reachability from the well over `to`-edges, blocked only where a seal is
+   closed (a `seat` whose valve is shut, a `plunger` whose coil is de-energised, a snapped thread, a
+   clogged control orifice). It is derived from the *same* valve/coil state the solve uses — one
+   source of truth, not a second computation — so it re-derives for any fault (e.g. a clogged
+   metering port leaves the bonnet chamber dry, which is *why* that valve won't shut).
+
 4. **Grading** (`_grade`) — each head is graded against its own **healthy-baseline flow** (a second
    engine solve of the same commanded set with no faults), so cross-zone draw-down reads as "weak vs
    healthy" and open-end streams grade on flow rather than nozzle pressure. Rotors below the 1.7-bar
