@@ -163,6 +163,46 @@ def _is_component(kdef):
     return isinstance(kdef, dict) and "parts" in kdef
 
 
+# ---- operational settings (deliberate manual controls, NOT failures) -------
+# A part may declare `ops: [...]` in graph.yaml -- the manual positions a person
+# can set it to (the first is the normal/default). These are distinct from the
+# fault axis: a bleed screw left open or a flow-control screwed shut is an
+# operation, not a fault. Their effects still fall out of the same connectivity
+# (the pilot loop, the nozzle discharge) -- only the input vocabulary is new.
+def _op_axis(graph: dict) -> dict:
+    """{node_id: [allowed ops]} for every part that declares `ops`."""
+    kinds = graph.get("kinds", {})
+    axis: dict[str, list] = {}
+    for inst, spec in (graph.get("flow") or {}).items():
+        kd = kinds.get((spec or {}).get("kind"))
+        if _is_component(kd):
+            for pname, pv in kd["parts"].items():
+                if pv and "ops" in pv:
+                    axis[f"{inst}.{pname}"] = list(pv["ops"])
+    return axis
+
+
+def _validate_settings(op_axis: dict, settings: dict) -> dict:
+    """Check each setting against its part's op axis; raise listing every problem."""
+    errs = []
+    for nid, val in (settings or {}).items():
+        if nid not in op_axis:
+            errs.append(f"{nid!r}: has no operational setting")
+        elif val not in op_axis[nid]:
+            errs.append(f"{nid}: setting {val!r} not in {op_axis[nid]}")
+    if errs:
+        raise ValueError("invalid settings:\n  " + "\n  ".join(errs))
+    return dict(settings or {})
+
+
+def _op(settings: dict, op_axis: dict, nid: str):
+    """Current operational state of a node: the explicit setting, else default."""
+    if nid in settings:
+        return settings[nid]
+    a = op_axis.get(nid)
+    return a[0] if a else None
+
+
 # ============================================================================
 # Piece 2 -- electrical pass
 # ============================================================================
@@ -285,23 +325,28 @@ def _path_passable(nodes, chain):
     return True
 
 
-def _resolve_valves(graph, nodes, elec, commanded):
+def _resolve_valves(graph, nodes, elec, settings, op_axis):
     """Resolve each automatic valve to {open, shut, weeping} from its own
-    sub-part connectivity + coil energisation; the manual valve from command."""
+    sub-part connectivity + coil energisation + manual operations (bleed screw,
+    solenoid twist, flow control); the manual valve from its handle."""
     out = {}
     for z in ZONES:
         v = f"Z{z}.valve"
         coil_on = elec["coils"][z]
+        op = lambda part: _op(settings, op_axis, f"{v}.{part}")
 
         fill_ok = _path_passable(nodes, [f"{v}.metering_port", f"{v}.chamber"])
-        # also dead if the chamber/bonnet can't hold pressure
-        if _cond(nodes, f"{v}.bonnet") == "broken":
+        if _cond(nodes, f"{v}.bonnet") == "broken":     # chamber can't hold
             fill_ok = False
 
-        bleed_solenoid = coil_on and _path_passable(
+        # bleed the bonnet chamber: by the energised coil, OR by twisting the
+        # solenoid open manually (coil op `bleed`) -- both lift the plunger.
+        solenoid_open = (coil_on or op("coil") == "bleed") and _path_passable(
             nodes, [f"{v}.solenoid_entry", f"{v}.plunger", f"{v}.solenoid_exhaust"])
-        bleed_screw = _cond(nodes, f"{v}.bleed_screw") in ("broken", "misconfigured")
-        bleed_open = bleed_solenoid or bleed_screw
+        # the manual bleed screw: opened on purpose, or failed open
+        bleed_screw = (op("bleed_screw") == "open"
+                       or _cond(nodes, f"{v}.bleed_screw") in ("broken", "misconfigured"))
+        bleed_open = solenoid_open or bleed_screw
 
         diaphragm_intact = _cond(nodes, f"{v}.diaphragm") != "broken"
         seat_cond = _cond(nodes, f"{v}.seat")
@@ -309,25 +354,37 @@ def _resolve_valves(graph, nodes, elec, commanded):
 
         state, reason = _valve_state(diaphragm_intact, seat_seals,
                                      fill_ok, bleed_open, coil_on)
+        # flow-control stem: screwed shut holds the diaphragm down regardless;
+        # throttled (or set wrong) restricts but still opens.
+        fc, fc_fault = op("flow_control"), _cond(nodes, f"{v}.flow_control")
+        throttled = fc == "throttled" or fc_fault == "misconfigured"
+        if fc == "shut" and state != "shut":
+            state, reason = "shut", "flow-control screwed shut"
+        elif throttled and state == "open":
+            reason += "; flow-control throttled"
+
         out[f"Z{z}"] = {
             "state": state, "reason": reason, "coil_energised": coil_on,
             "fill_ok": fill_ok, "bleed_open": bleed_open,
+            "solenoid_open": solenoid_open, "throttled": throttled,
             "diaphragm_intact": diaphragm_intact, "seat_seals": seat_seals,
             "seat_clogged": seat_cond == "clogged",
         }
 
-    # manual zone: commanding it means the user opened the handle
+    # manual zone: opened by its handle, not by the controller
     mv = f"Z{MANUAL_ZONE}.valve"
     seat_cond = _cond(nodes, f"{mv}.seat")
-    commanded_open = MANUAL_ZONE in commanded
+    handle_open = _op(settings, op_axis, f"{mv}.handle") == "open"
     if seat_cond == "broken":
-        state, reason = "open" if commanded_open else "weeping", "seat won't seal"
-    elif commanded_open:
+        state, reason = ("open", "seat won't seal") if handle_open \
+            else ("weeping", "seat won't seal when shut")
+    elif handle_open:
         state, reason = "open", "handle open"
     else:
         state, reason = "shut", "handle closed"
     out[f"Z{MANUAL_ZONE}"] = {"state": state, "reason": reason,
-                              "coil_energised": None,
+                              "coil_energised": None, "solenoid_open": False,
+                              "throttled": False,
                               "seat_clogged": seat_cond == "clogged"}
     return out
 
@@ -357,25 +414,25 @@ _SEAL_CLOG = ("metering_port", "solenoid_entry", "plunger", "filter")
 _SEVERING = ("inlet_thread", "outlet_nut")
 
 
-def _wetted(nodes, valve_states, elec):
+def _wetted(nodes, valve_states):
     """Flow parts that contain water in the current state: reachability from the
     well over `to`-edges, blocked only where a seal is closed. Derived from the
-    same valve/coil state the solve uses -- one source of truth, no second model.
+    same valve state the solve uses -- one source of truth, no second model.
 
     Seals: a valve `seat` passes only when its valve is open/weeping; a solenoid
-    `plunger` passes only when its coil is energised; a snapped thread severs its
-    downstream; a clogged control orifice blocks (e.g. a clogged metering port
-    leaves the bonnet chamber dry -- which is *why* that valve won't shut)."""
+    `plunger` passes only when that valve's bleed path is open (energised coil or
+    a manual solenoid twist); a snapped thread severs its downstream; a clogged
+    control orifice blocks (e.g. a clogged metering port leaves the bonnet
+    chamber dry -- which is *why* that valve won't shut)."""
     flow = {nid: n for nid, n in nodes.items() if n["domain"] == "flow"}
 
     def conducts(u, v):
         part = u.rsplit(".", 1)[-1]
+        z = u.split(".")[0]
         if part == "seat" and v.endswith(".outlet"):
-            z = u.split(".")[0]
             return valve_states.get(z, {}).get("state") in ("open", "weeping")
         if part == "plunger" and v.endswith(".solenoid_exhaust"):
-            z = u.split(".")[0]
-            return bool(z[1:].isdigit() and elec["coils"].get(int(z[1:])))
+            return bool(valve_states.get(z, {}).get("solenoid_open"))
         if _cond(nodes, u) == "broken" and part in _SEVERING:
             return False
         if _cond(nodes, u) == "clogged" and part in _SEAL_CLOG:
@@ -401,11 +458,13 @@ class Flow:
     """Active flow graph: a single-parent tree-with-internal-sinks built from
     the expanded sub-part nodes, after collapsing each valve to one edge."""
 
-    def __init__(self, graph, nodes, valve_states, pump_head_ok):
+    def __init__(self, graph, nodes, valve_states, pump_head_ok, settings, op_axis):
         self.graph = graph
         self.nodes = nodes
         self.valve_states = valve_states
         self.pump_head_ok = pump_head_ok
+        self.settings = settings
+        self.op_axis = op_axis
         self.to: dict[str, list[str]] = {}
         self.parent: dict[str, str] = {}
         self.height: dict[str, float] = {}
@@ -489,6 +548,8 @@ class Flow:
                 "nozzle": str(p.get("nozzle", "")),
                 "arc": float(p.get("arc", 180)),
                 "deregulate": _cond(self.nodes, f"{comp}.regulator") == "broken"}
+        spec["shutoff"] = _op(self.settings, self.op_axis,
+                              f"{comp}.flow_control") == "shut"
         if kind == "head.rotor":
             spec["type"] = "rotor"
             spec["num"] = spec["nozzle"].split()[0] if spec["nozzle"] else "3.0"
@@ -508,6 +569,12 @@ class Flow:
         if rotor:                                    # rotor filter restricts too
             fe = _effect("filter", _cond(self.nodes, f"{comp}.filter"))
             s *= fe.get("scale", 1.0)
+        # per-head shutoff/throttle screw (an operation, not a fault)
+        fc = _op(self.settings, self.op_axis, f"{comp}.flow_control")
+        if fc == "shut":
+            s = 0.0
+        elif fc == "throttled":
+            s *= 0.5
         return s
 
     def _root_and_height(self):
@@ -604,6 +671,8 @@ def _edge_loss_m(fl: Flow, child: str, q_m3h: float) -> float:
         vs = fl.valve_states[comp.split(".")[0]]
         loss += valve_loss_bar(q_m3h, VALVE_CV) * M_PER_BAR
         if vs.get("seat_clogged"):
+            loss += VALVE_LOSS_CLOGGED_BAR * M_PER_BAR
+        if vs.get("throttled"):                      # flow-control stem down
             loss += VALVE_LOSS_CLOGGED_BAR * M_PER_BAR
     loss += fl.add_loss_m.get(child, 0.0)
     return loss
@@ -736,41 +805,53 @@ def _zone_of(nid):
     return nid.split(".")[0]
 
 
-def _solve_pipeline(commanded, conditions, pump_commanded, graph_path, env):
+def _solve_pipeline(commanded, conditions, settings, pump_commanded, graph_path, env):
     graph, nodes, axis = _load_and_expand(conditions, graph_path)
+    op_axis = _op_axis(graph)
+    settings = _validate_settings(op_axis, settings)
     elec = _resolve_electrical(graph, nodes, commanded, pump_commanded)
-    valve_states = _resolve_valves(graph, nodes, elec, commanded)
-    fl = Flow(graph, nodes, valve_states, elec["pump_running"])
+    valve_states = _resolve_valves(graph, nodes, elec, settings, op_axis)
+    fl = Flow(graph, nodes, valve_states, elec["pump_running"], settings, op_axis)
     pump_model = _pick_pump(nodes)
     q, p, dem, pump_h, converged, head_ok = _solve_hydraulic(fl, pump_model, env)
-    wetted = _wetted(nodes, valve_states, elec)
+    wetted = _wetted(nodes, valve_states)
     return {"graph": graph, "nodes": nodes, "elec": elec,
             "valve_states": valve_states, "fl": fl, "pump_model": pump_model,
-            "q": q, "p": p, "dem": dem, "pump_h": pump_h,
+            "q": q, "p": p, "dem": dem, "pump_h": pump_h, "op_axis": op_axis,
             "converged": converged, "head_ok": head_ok, "wetted": wetted}
 
 
-def simulate(commanded_zones, conditions=None, concurrent_zones=None,
-             pump_on=None, graph_path=GRAPH, env_overrides=None):
-    commanded = sorted(set(commanded_zones or []))
+def simulate(commanded_zones, conditions=None, settings=None,
+             concurrent_zones=None, pump_on=None, graph_path=GRAPH,
+             env_overrides=None):
+    # commanded_zones are CONTROLLER stations (Z1-Z4). Z5 is a manual valve --
+    # it runs from its handle setting, not from the controller.
+    commanded = sorted(set(commanded_zones or []) & set(ZONES))
+    settings = settings or {}
     env = dict(env_overrides or {})
     # The pump/master-valve is its own controller output. By default it follows
     # the schedule (runs when a zone is called); pass pump_on to drive it
     # explicitly -- True to run with valves shut, False to hold it off.
     pump_commanded = bool(commanded) if pump_on is None else bool(pump_on)
-    R = _solve_pipeline(commanded, conditions, pump_commanded, graph_path, env)
-    # healthy baseline (same commands, no faults) -> per-nozzle reference
-    B = _solve_pipeline(commanded, {}, pump_commanded, graph_path, env)
+    R = _solve_pipeline(commanded, conditions, settings, pump_commanded, graph_path, env)
+    # healthy baseline keeps the SAME operations (they're intended), drops faults
+    B = _solve_pipeline(commanded, {}, settings, pump_commanded, graph_path, env)
     baseline = {nz: B["q"].get(nz, 0.0) for nz in B["fl"].nozzles}
 
-    return _build_report(R["graph"], R["nodes"], commanded, concurrent_zones,
-                         R["elec"], R["valve_states"], R["fl"], R["q"], R["p"],
-                         R["dem"], R["pump_h"], R["converged"], R["head_ok"],
-                         R["pump_model"], baseline, R["wetted"])
+    # which zones are meant to be watering: commanded autos + Z5 if its handle is
+    # open (a manual valve open by hand counts as "running", not "rogue").
+    z5_open = R["valve_states"][f"Z{MANUAL_ZONE}"]["state"] in ("open", "weeping")
+    running = set(commanded) | ({MANUAL_ZONE} if z5_open else set())
+
+    return _build_report(R["graph"], R["nodes"], commanded, running,
+                         concurrent_zones, R["elec"], R["valve_states"], R["fl"],
+                         R["q"], R["p"], R["dem"], R["pump_h"], R["converged"],
+                         R["head_ok"], R["pump_model"], baseline, R["wetted"])
 
 
-def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
-                  q, p, dem, pump_h, converged, head_ok, pump_model, baseline, wetted):
+def _build_report(graph, nodes, commanded, running, concurrent, elec,
+                  valve_states, fl, q, p, dem, pump_h, converged, head_ok,
+                  pump_model, baseline, wetted):
     pump_running = elec["pump_running"]
     total = dem.get("pump.outlet", 0.0)
 
@@ -784,8 +865,10 @@ def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
         nominal = baseline.get(nz, 0.0)
         vs = valve_states[f"Z{z}"]["state"]
         severed = nz in fl.severed or nz not in fl.active
-        grade, reason = _grade(spec, p_bar, flow, nominal, z in commanded,
+        grade, reason = _grade(spec, p_bar, flow, nominal, z in running,
                                severed, pump_running, vs)
+        if spec.get("shutoff") and grade == "dead":
+            reason = "manually shut off"
         kind = {"rotor": "I-20", "spray": spec.get("model", "MP"),
                 "stream": "stream"}[spec["type"]]
         zone_heads[z].append({
@@ -800,7 +883,7 @@ def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
         heads = sorted(zone_heads[z], key=lambda h: h["loc"])
         zflow = round(sum(h["flow_m3h"] for h in heads), 4)
         zones_out.append({
-            "id": z, "commanded": z in commanded,
+            "id": z, "commanded": z in running, "manual": z == MANUAL_ZONE,
             "valve_state": valve_states[f"Z{z}"]["state"],
             "valve_reason": valve_states[f"Z{z}"]["reason"],
             "flow_m3h": zflow, "heads": heads,
@@ -817,10 +900,11 @@ def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
                           "pressure_bar": round(max(p.get(nid, 0.0), 0.0) / M_PER_BAR, 3)})
     leaks.sort(key=lambda l: -l["flow_m3h"])
 
-    headline = _headline(zones_out, leaks, elec, valve_states, commanded)
+    headline = _headline(zones_out, leaks, elec, valve_states, running)
     return {
         "summary": {
             "commanded_zones": commanded,
+            "running_zones": sorted(running),
             "concurrent_zones": sorted(set(concurrent)) if concurrent else commanded,
             "pump_running": pump_running, "total_flow_m3h": round(total, 4),
             "headline": headline, "converged": converged,
@@ -882,7 +966,7 @@ def _headline(zones, leaks, elec, valve_states, commanded):
         bits.append("zones " + ",".join(map(str, rogue)) + " running while off")
     if leaks:
         bits.append(f"{len(leaks)} leak(s), biggest at {leaks[0]['loc']}")
-    return "; ".join(bits) if bits else "all commanded zones full"
+    return "; ".join(bits) if bits else "all running zones full"
 
 
 # ============================================================================
@@ -899,6 +983,7 @@ def main(argv=None):
         report = simulate(
             payload.get("commanded_zones", []),
             payload.get("conditions", {}),
+            payload.get("settings", {}),
             payload.get("concurrent_zones"),
             pump_on=payload.get("pump_on"),
             env_overrides=payload.get("env"),

@@ -19,7 +19,16 @@ add a special case.
 ## Inputs
 
 - **`graph.yaml`** (repo root) — three graphs: `kinds` (per-component sub-part connectivity), `flow`
-  (water DAG), `circuit` (electrical netlist); `fail_axis: [broken, clogged, misconfigured]`.
+  (water DAG), `circuit` (electrical netlist); `fail_axis: [broken, clogged, misconfigured]`. Parts
+  with a manual control also carry an **`ops:`** axis (the first value is the normal position): a
+  valve `bleed_screw` `[closed, open]`, `coil` `[auto, bleed]` (solenoid twist), `flow_control`
+  `[open, throttled, shut]`, the manual `handle` `[closed, open]`, and a rotor head `flow_control`
+  `[open, throttled, shut]` (per-head shutoff). `faults.py` ignores `ops`; the simulator reads it.
+- **Operations vs faults.** `commanded_zones` are CONTROLLER stations (Z1–Z4, solenoid). Z5 is a
+  **manual** valve — not commanded; it runs from `settings={"Z5.valve.handle":"open"}`. Operations
+  (a `settings` map) are deliberate positions, distinct from the fault `conditions`: opening a bleed
+  screw, twisting a solenoid, screwing a flow-control shut, or closing one head are *operations*, not
+  failures. Their effects fall out of the same pilot-loop / discharge logic — only the input is new.
 - **`tools/faults.py`** — `expand(graph)` → 285-node flat set (every component **and** sub-part) with
   a validated `condition` per node. `simulate.py` consumes this; it does not re-derive the node set.
 - A run request: `{commanded_zones, conditions, concurrent_zones}`.

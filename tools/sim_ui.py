@@ -19,7 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import faults
-from simulate import GRAPH, simulate
+from simulate import GRAPH, _op_axis, simulate
 
 HERE = Path(__file__).resolve().parent
 HTML = HERE / "sim_ui.html"
@@ -34,6 +34,7 @@ def _graph_payload():
         "kinds": graph["kinds"],
         "fail_axis": axis,
         "settable": faults.settable(nodes),
+        "ops": _op_axis(graph),
     }
 
 
@@ -65,7 +66,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("request body must be a JSON object")
             rep = simulate(req.get("commanded_zones", []),
                            req.get("conditions", {}),
-                           req.get("concurrent_zones"))
+                           req.get("settings", {}),
+                           req.get("concurrent_zones"),
+                           req.get("pump_on"))
             self._send(200, json.dumps(rep))
         except ValueError as e:        # invalid condition -> faults.py message
             self._send(400, json.dumps({"error": str(e)}))

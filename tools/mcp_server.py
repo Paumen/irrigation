@@ -63,6 +63,7 @@ def irrigation_hydraulics(
 def simulate_irrigation(
     commanded_zones: list[int] | None = None,
     conditions: dict[str, str] | None = None,
+    settings: dict[str, str] | None = None,
     concurrent_zones: list[int] | None = None,
     pump_on: bool | None = None,
 ) -> dict:
@@ -76,13 +77,20 @@ def simulate_irrigation(
     water leaks, each coil energised or not, and whether the pump is running.
 
     Args:
-        commanded_zones: zone ids (1-5) the controller is told to run. Z1-Z4 are
-            automatic (solenoid); Z5 is the manual line.
+        commanded_zones: CONTROLLER stations the schedule is calling (Z1-Z4,
+            automatic solenoid valves). Z5 is a manual valve -- it is not
+            commanded; run it via settings ({"Z5.valve.handle": "open"}).
         conditions: {node_id: "broken"|"clogged"|"misconfigured"} fault set.
             Node ids are graph.yaml sub-parts, e.g. "Z1.valve.metering_port",
             "cond.common", "Z1.hose1", "Z4.head1.regulator". A condition must be
             in that node's allowed fail axis (validated; an error lists the
             allowed set).
+        settings: {node_id: op} deliberate manual operations (NOT faults), e.g.
+            {"Z5.valve.handle": "open"} (manual valve), {"Z1.valve.bleed_screw":
+            "open"} or {"Z1.valve.coil": "bleed"} (manually open a solenoid valve
+            without power), {"Z2.valve.flow_control": "shut"/"throttled"} (valve
+            flow-control stem), {"Z1.head2.flow_control": "shut"} (close one
+            rotor head). Each must be in that part's op axis.
         concurrent_zones: which commanded zones run simultaneously (shared
             pump/main). Defaults to all commanded zones.
         pump_on: drive the pump/master-valve output explicitly. None (default) =
@@ -90,8 +98,8 @@ def simulate_irrigation(
             pump even with every valve shut (dead-head / pump test); False = hold
             the pump off while a zone is called.
     """
-    return _simulate(commanded_zones or [], conditions or {}, concurrent_zones,
-                     pump_on)
+    return _simulate(commanded_zones or [], conditions or {}, settings or {},
+                     concurrent_zones, pump_on)
 
 
 if __name__ == "__main__":

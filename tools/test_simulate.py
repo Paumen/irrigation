@@ -56,8 +56,8 @@ for zid in (1, 2, 3, 4):
     check(f"B-xval zone {zid} all heads full", all_full(sim, zid), grades(sim, zid))
     check(f"B-xval zone {zid} converged", sim["summary"]["converged"], "")
 
-base5 = simulate([5])
-check("B Z5 stream full", all_full(base5, 5), grades(base5, 5))
+base5 = simulate([], settings={"Z5.valve.handle": "open"}, pump_on=True)
+check("B Z5 stream full (manual handle open)", all_full(base5, 5), grades(base5, 5))
 check("B Z5 pump running, no leaks", base5["pump"]["running"] and not base5["leaks"], "")
 
 
@@ -73,7 +73,8 @@ check("E1 reason cites open return",
       "common" in e1["electrical"]["coil_reasons"][1], e1["electrical"]["coil_reasons"][1])
 check("E1 pump still runs (any zone commanded)", e1["electrical"]["pump_running"], "")
 
-e1b = simulate([1, 2, 3, 4, 5], {"cond.common": "broken"})
+e1b = simulate([1, 2, 3, 4], {"cond.common": "broken"},
+               settings={"Z5.valve.handle": "open"})
 check("E1b manual Z5 unaffected by cond.common", all_full(e1b, 5), grades(e1b, 5))
 
 e2 = simulate([2], {"relay.coil": "broken"})
@@ -121,6 +122,50 @@ check("W an un-commanded zone stays dry downstream",
 
 
 # ---------------------------------------------------------------------------
+# Operational controls (settings, NOT faults)
+# ---------------------------------------------------------------------------
+o1 = simulate([], settings={"Z1.valve.bleed_screw": "open"}, pump_on=True)
+check("O1 bleed screw opened -> valve opens with no power",
+      o1["valves"]["Z1"]["state"] == "open" and not o1["electrical"]["coils"][1],
+      o1["valves"]["Z1"])
+check("O1 Z1 actually waters", zone(o1, 1)["flow_m3h"] > 0.5, zone(o1, 1)["flow_m3h"])
+
+o2 = simulate([], settings={"Z2.valve.coil": "bleed"}, pump_on=True)
+check("O2 solenoid twisted open -> valve opens with no power",
+      o2["valves"]["Z2"]["state"] == "open" and not o2["electrical"]["coils"][2], "")
+check("O2 twist wets the pilot exhaust",
+      "Z2.valve.solenoid_exhaust" in set(o2["wetted"]), "")
+
+o3 = simulate([3], settings={"Z3.valve.flow_control": "shut"})
+check("O3 flow-control screwed shut -> zone off though commanded+energised",
+      o3["valves"]["Z3"]["state"] == "shut" and o3["electrical"]["coils"][3],
+      o3["valves"]["Z3"])
+check("O3 Z3 dead", all_dead(o3, 3), grades(o3, 3))
+
+o4 = simulate([2], settings={"Z2.head1.flow_control": "shut"})
+zh = {h["loc"]: h for h in zone(o4, 2)["heads"]}
+check("O4 one rotor closed by hand -> that head off, the other keeps running",
+      zh["Z2.head1"]["grade"] == "dead" and zh["Z2.head2"]["grade"] == "full",
+      {k: v["grade"] for k, v in zh.items()})
+check("O4 closed-head reason says manual", "manual" in zh["Z2.head1"]["reason"],
+      zh["Z2.head1"]["reason"])
+
+o5 = simulate([], settings={"Z5.valve.handle": "open"}, pump_on=True)
+check("O5 Z5 runs from its handle, is flagged manual",
+      zone(o5, 5)["commanded"] and zone(o5, 5)["manual"], "")
+check("O5 Z5 not in commanded (controller) list",
+      o5["summary"]["commanded_zones"] == [] and o5["summary"]["running_zones"] == [5],
+      o5["summary"])
+
+# invalid setting -> ValueError (validated like conditions)
+try:
+    simulate([], settings={"Z1.valve.seat": "open"})
+    check("O6 invalid setting rejected", False, "expected ValueError")
+except ValueError:
+    check("O6 invalid setting rejected", True)
+
+
+# ---------------------------------------------------------------------------
 # Valve pilot loop (Piece 1)
 # ---------------------------------------------------------------------------
 v1 = simulate([1], {"Z1.valve.coil": "broken"})
@@ -145,11 +190,12 @@ v4 = simulate([2], {"Z2.valve.metering_port": "clogged"})
 check("V4 metering_port clogged -> won't shut off (open)",
       v4["valves"]["Z2"]["state"] == "open", v4["valves"]["Z2"]["reason"])
 
-v5 = simulate([5], {"Z4.valve.bleed_screw": "broken"})
+v5 = simulate([], {"Z4.valve.bleed_screw": "broken"},
+              settings={"Z5.valve.handle": "open"}, pump_on=True)
 check("V5 bleed_screw broken -> Z4 open while de-energised",
       v5["valves"]["Z4"]["state"] == "open"
       and not v5["electrical"]["coils"][4], "")
-check("V5 Z4 wastes water while only Z5 commanded",
+check("V5 Z4 wastes water while only Z5 running",
       zone(v5, 4)["flow_m3h"] > 0.3, zone(v5, 4)["flow_m3h"])
 
 v6 = simulate([1], {"Z1.valve.plunger": "broken"})

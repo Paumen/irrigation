@@ -77,8 +77,9 @@
 <script>
 const SVGNS="http://www.w3.org/2000/svg";
 let G=null;                       // graph payload
-let conditions={};                // node -> condition
-let commanded=new Set([1,2,3,4]); // commanded zones
+let conditions={};                // node -> fault condition
+let settings={};                  // node -> operational setting (not a fault)
+let commanded=new Set([1,2,3,4]); // controller stations (Z1-Z4)
 let pumpOn=null;                  // null = follow schedule; true/false = forced
 let openComp=null;                // component whose sub-parts are shown
 let lastRep=null;                 // most recent solve, for the detail panel
@@ -184,24 +185,37 @@ function openComponent(id){
   const wetSet=new Set(lastRep?.wetted||[]);
   const drop=p=>wetSet.has(p)?" 💧":"";
   let any=false;
+  const mkSel=(opts,cur,onpick)=>{
+    const s=document.createElement("select");
+    opts.forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;s.appendChild(op);});
+    s.value=cur; s.onchange=()=>onpick(s.value); return s;
+  };
   for(const part of parts){
-    const allowed=settableFor(part);
-    if(!allowed) {            // show non-settable sub-parts greyed, for context
-      const row=document.createElement("div"); row.className="partrow";
-      row.innerHTML=`<span class="pn">${part.replace(id+".","")}${drop(part)}</span><span class="hint">— can't fail</span>`;
-      d.appendChild(row); continue;
-    }
-    any=true;
+    const allowed=settableFor(part);   // fault axis
+    const ops=G.ops[part];             // operational axis (settings, not faults)
     const row=document.createElement("div"); row.className="partrow";
-    const name=document.createElement("span"); name.className="pn"; name.textContent=(part.replace(id+".","")||part)+drop(part);
-    const sel=document.createElement("select");
-    ["ok",...allowed].forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;sel.appendChild(op);});
-    sel.value=conditions[part]||"ok";
-    sel.onchange=()=>{ if(sel.value==="ok") delete conditions[part]; else conditions[part]=sel.value; solve(); };
-    row.appendChild(name); row.appendChild(sel); d.appendChild(row);
+    const name=document.createElement("span"); name.className="pn";
+    name.textContent=(part.replace(id+".","")||part)+drop(part);
+    row.appendChild(name);
+    if(ops){                           // a green "set" knob: manual operation
+      const s=mkSel(ops, settings[part]||ops[0], v=>{
+        if(v===ops[0]) delete settings[part]; else settings[part]=v; solve();});
+      s.title="operate (setting, not a fault)"; s.style.borderColor="#2e9e54";
+      row.appendChild(s);
+    }
+    if(allowed){                       // the fault knob
+      const s=mkSel(["ok",...allowed], conditions[part]||"ok", v=>{
+        if(v==="ok") delete conditions[part]; else conditions[part]=v; solve();});
+      s.title="fail this part"; row.appendChild(s);
+    }
+    if(!ops && !allowed){
+      const t=document.createElement("span"); t.className="hint"; t.textContent="— fixed";
+      row.appendChild(t);
+    } else { any=true; }
+    d.appendChild(row);
   }
-  if(!any && parts.length===1 && !settableFor(id)){
-    d.appendChild(Object.assign(document.createElement("div"),{className:"hint",textContent:"This node has no failure modes."}));
+  if(!any){
+    d.appendChild(Object.assign(document.createElement("div"),{className:"hint",textContent:"No knobs on this part."}));
   }
 }
 
@@ -224,7 +238,7 @@ async function solve(){
   let rep;
   try{
     const r=await fetch("/solve",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({commanded_zones:[...commanded],conditions,pump_on:pumpOn})});
+      body:JSON.stringify({commanded_zones:[...commanded],conditions,settings,pump_on:pumpOn})});
     rep=await r.json();
     if(rep.error){ document.getElementById("headline").textContent=rep.error; return; }
   }catch(e){ document.getElementById("headline").textContent="engine error: "+e; return; }
@@ -311,13 +325,21 @@ function paint(rep){
 function renderZoneControls(){
   const z=document.getElementById("zones");
   z.innerHTML="commanded: ";
-  [1,2,3,4,5].forEach(i=>{
+  [1,2,3,4].forEach(i=>{        // controller stations (auto solenoid valves)
     const lab=document.createElement("label");
     const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=commanded.has(i);
     cb.onchange=()=>{cb.checked?commanded.add(i):commanded.delete(i); solve();};
-    lab.appendChild(cb); lab.appendChild(document.createTextNode(" Z"+i+(i===5?"(man)":"")));
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(" Z"+i));
     z.appendChild(lab);
   });
+  // Z5 is a MANUAL valve -- its own handle, not a controller station.
+  const HANDLE="Z5.valve.handle";
+  const h5=document.createElement("label"); h5.style.marginLeft="6px";
+  const cb5=document.createElement("input"); cb5.type="checkbox";
+  cb5.checked=settings[HANDLE]==="open";
+  cb5.onchange=()=>{ if(cb5.checked)settings[HANDLE]="open"; else delete settings[HANDLE]; solve();};
+  h5.appendChild(cb5); h5.appendChild(document.createTextNode(" Z5 handle (manual)"));
+  z.appendChild(h5);
   // pump output: its own controller tap. follow / force-on / force-off.
   const pl=document.createElement("label"); pl.style.marginLeft="10px";
   pl.appendChild(document.createTextNode(" pump: "));
