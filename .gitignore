@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 node_modules/
 package-lock.json
+
+# generated sim viz raster (regenerate from tools/sim_viz.py)
+scenarios.png
