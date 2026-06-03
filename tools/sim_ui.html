@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Irrigation fault simulator</title>
+<style>
+  :root{
+    --bg:#0f1418; --panel:#172026; --line:#2a3742; --ink:#dde6ec; --dim:#8aa0ad;
+    --full:#2e9e54; --weak:#e0a423; --pop:#e06f1f; --dead:#c2453d; --off:#4a5862;
+    --pipe:#3d5060; --live:#37b3e0; --leak:#ff5b51;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:13px/1.4 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{padding:8px 14px;border-bottom:1px solid var(--line);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:600}
+  header .hl{color:var(--dim);font-size:12px}
+  .zones label{margin-right:8px;cursor:pointer;user-select:none}
+  .pump-pill{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+  main{display:flex;height:calc(100vh - 47px)}
+  .canvas{flex:1;overflow:auto;position:relative}
+  .side{width:300px;border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:10px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);margin:14px 0 6px}
+  svg{display:block}
+  .node{cursor:pointer}
+  .node rect{fill:var(--panel);stroke:var(--line);stroke-width:1;rx:5}
+  .node text{fill:var(--ink);font-size:11px}
+  .node .sub{fill:var(--dim);font-size:9px}
+  .node.comp rect{stroke:#3a4b57}
+  .edge{stroke:var(--pipe);fill:none}
+  .edge.back{stroke:#2a3742;opacity:.35;stroke-dasharray:3 3}
+  .legend span{display:inline-block;width:11px;height:11px;border-radius:2px;margin:0 4px -1px 10px}
+  .faults li{display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)}
+  .faults code{color:#ffd9a6}
+  .faults button{background:none;border:1px solid var(--line);color:var(--dim);border-radius:4px;cursor:pointer}
+  select{background:#0e1418;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px}
+  .partrow{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:2px 0}
+  .partrow .pn{color:var(--dim)}
+  .badge{font-size:10px;padding:1px 5px;border-radius:8px;background:#222d35;color:var(--dim)}
+  .hint{color:var(--dim);font-size:11px}
+  .leakdot{fill:var(--leak)}
+  button.solveerr{color:var(--leak)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Irrigation fault simulator</h1>
+  <span class="zones" id="zones"></span>
+  <span id="pump" class="pump-pill" style="background:var(--off)">pump —</span>
+  <span class="hl" id="headline"></span>
+  <span style="margin-left:auto" class="legend">
+    grade:<span style="background:var(--full)"></span>full
+    <span style="background:var(--weak)"></span>weak
+    <span style="background:var(--pop)"></span>won't-pop
+    <span style="background:var(--dead)"></span>dead
+    <span style="background:var(--off)"></span>off
+    &nbsp;·&nbsp;<span style="background:none;border:2px solid var(--live);width:9px;height:9px"></span>wet (water inside)
+  </span>
+</header>
+<main>
+  <div class="canvas" id="canvas">
+    <svg id="flow"></svg>
+    <svg id="circuit"></svg>
+  </div>
+  <div class="side">
+    <h2>Detail / knobs</h2>
+    <div id="detail" class="hint">Click any component to open its sub-parts and set a condition.</div>
+    <h2>Active faults</h2>
+    <ul class="faults" id="faultlist"></ul>
+    <button id="clear" style="margin-top:6px">clear all faults</button>
+    <h2>Notes</h2>
+    <div class="hint">Every painted result comes from re-running the Python engine
+      on the current fault set — there is no physics in this page. Watch a fault
+      on one branch draw the shared supply down and dim heads on other zones.</div>
+  </div>
+</main>
+<script>
+const SVGNS="http://www.w3.org/2000/svg";
+let G=null;                       // graph payload
+let conditions={};                // node -> fault condition
+let settings={};                  // node -> operational setting (not a fault)
+let commanded=new Set([1,2,3,4]); // controller stations (Z1-Z4)
+let pumpOn=null;                  // null = follow schedule; true/false = forced
+let openComp=null;                // component whose sub-parts are shown
+let lastRep=null;                 // most recent solve, for the detail panel
+
+const el=(t,a={})=>{const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const GRADE={full:"var(--full)",weak:"var(--weak)","won't-pop":"var(--pop)",dead:"var(--dead)"};
+
+// ---- layout helpers --------------------------------------------------------
+function tidyTree(flow){
+  const kids=id=>(flow[id]?.to||[]).filter(t=>flow[t]);
+  const hasParent={};
+  Object.keys(flow).forEach(id=>kids(id).forEach(c=>hasParent[c]=1));
+  const roots=Object.keys(flow).filter(id=>!hasParent[id]);
+  const pos={}; let leaf=0;
+  function dfs(id,d,seen){
+    if(seen.has(id)) return pos[id]?pos[id].y:0; seen.add(id);
+    const ch=kids(id);
+    if(!ch.length){pos[id]={x:d,y:leaf++};return pos[id].y;}
+    const ys=ch.map(c=>dfs(c,d+1,seen));
+    pos[id]={x:d,y:(Math.min(...ys)+Math.max(...ys))/2};
+    return pos[id].y;
+  }
+  roots.forEach(r=>dfs(r,0,new Set()));
+  return pos;
+}
+function layers(graph,root){
+  const layer={}, q=[[root,0]];
+  layer[root]=0;
+  while(q.length){const [n,d]=q.shift();(graph[n]?.to||[]).forEach(t=>{if(graph[t]&&layer[t]==null){layer[t]=d+1;q.push([t,d+1]);}});}
+  let maxL=0; Object.values(layer).forEach(v=>maxL=Math.max(maxL,v));
+  Object.keys(graph).forEach(n=>{if(layer[n]==null)layer[n]=maxL+1;});
+  const byL={}; Object.keys(graph).sort().forEach(n=>{(byL[layer[n]]=byL[layer[n]]||[]).push(n);});
+  const pos={}; Object.entries(byL).forEach(([l,ns])=>ns.forEach((n,i)=>pos[n]={x:+l,y:i}));
+  return pos;
+}
+
+// ---- rendering -------------------------------------------------------------
+const DX=158, DY=44, OX=24, OY=26, W=132, H=30;
+function px(p){return {x:OX+p.x*DX, y:OY+p.y*DY};}
+
+function drawGraph(svg, instances, pos, opts){
+  svg.innerHTML=""; let maxx=0,maxy=0;
+  // edges first
+  for(const id in instances){
+    const a=pos[id]; if(!a)continue;
+    for(const t of (instances[id].to||[])){
+      const b=pos[t]; if(!b)continue;
+      const A=px(a),B=px(b), back=b.x<=a.x;
+      svg.appendChild(el("path",{class:"edge"+(back?" back":""),
+        d:`M${A.x+W} ${A.y+H/2} C${A.x+W+40} ${A.y+H/2},${B.x-40} ${B.y+H/2},${B.x} ${B.y+H/2}`,
+        "data-edge":id+"->"+t, "stroke-width":opts.edgeW?opts.edgeW(id,t):2}));
+    }
+  }
+  // nodes
+  for(const id in instances){
+    const p=pos[id]; if(!p)continue; const c=px(p);
+    maxx=Math.max(maxx,c.x+W); maxy=Math.max(maxy,c.y+H);
+    const kind=instances[id].kind||opts.kindOf?.(id)||"";
+    const g=el("g",{class:"node"+(opts.isComp?.(id)?" comp":""), transform:`translate(${c.x},${c.y})`,"data-id":id});
+    const r=el("rect",{width:W,height:H,rx:5}); g.appendChild(r);
+    const t1=el("text",{x:7,y:13}); t1.textContent=opts.label?opts.label(id):id; g.appendChild(t1);
+    const t2=el("text",{x:7,y:24,class:"sub"}); t2.textContent=kind; g.appendChild(t2);
+    g.onclick=()=>opts.onClick?.(id);
+    g.setAttribute("data-node",id);
+    svg.appendChild(g);
+  }
+  svg.setAttribute("width",maxx+OX+20); svg.setAttribute("height",maxy+OY+20);
+}
+
+function renderFlow(){
+  const pos=tidyTree(G.flow);
+  drawGraph(document.getElementById("flow"), G.flow, pos, {
+    isComp:id=>!!G.kinds[G.flow[id].kind]?.parts,
+    label:id=>{const f=G.flow[id]; let s=id; if(f.nozzle)s+=" · "+f.nozzle; return s;},
+    onClick:openComponent,
+  });
+}
+function renderCircuit(){
+  const pos=layers(G.circuit,"mains");
+  // shift the circuit svg below the flow one
+  drawGraph(document.getElementById("circuit"), G.circuit, pos, {
+    isComp:_=>false,
+    kindOf:id=>G.circuit[id].kind||"",
+    label:id=>id,
+    onClick:openComponent,
+  });
+}
+
+// ---- knobs / detail panel --------------------------------------------------
+function settableFor(id){return G.settable[id];}            // sub-part or atomic
+function compParts(id){
+  const k=G.flow[id]?.kind||G.circuit[id]?.kind;
+  const kd=G.kinds[k];
+  if(kd&&kd.parts) return Object.keys(kd.parts).map(p=>id+"."+p);
+  return [id];                                              // atomic node itself
+}
+function openComponent(id){
+  openComp=id;
+  const parts=compParts(id);
+  const d=document.getElementById("detail"); d.innerHTML="";
+  const h=document.createElement("div"); h.innerHTML=`<b>${id}</b> <span class="badge">${G.flow[id]?.kind||G.circuit[id]?.kind||""}</span>`;
+  d.appendChild(h);
+  const wetSet=new Set(lastRep?.wetted||[]);
+  const drop=p=>wetSet.has(p)?" 💧":"";
+  let any=false;
+  const mkSel=(opts,cur,onpick)=>{
+    const s=document.createElement("select");
+    opts.forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;s.appendChild(op);});
+    s.value=cur; s.onchange=()=>onpick(s.value); return s;
+  };
+  for(const part of parts){
+    const allowed=settableFor(part);   // fault axis
+    const ops=G.ops[part];             // operational axis (settings, not faults)
+    const row=document.createElement("div"); row.className="partrow";
+    const name=document.createElement("span"); name.className="pn";
+    name.textContent=(part.replace(id+".","")||part)+drop(part);
+    row.appendChild(name);
+    if(ops){                           // a green "set" knob: manual operation
+      const s=mkSel(ops, settings[part]||ops[0], v=>{
+        if(v===ops[0]) delete settings[part]; else settings[part]=v; solve();});
+      s.title="operate (setting, not a fault)"; s.style.borderColor="#2e9e54";
+      row.appendChild(s);
+    }
+    if(allowed){                       // the fault knob
+      const s=mkSel(["ok",...allowed], conditions[part]||"ok", v=>{
+        if(v==="ok") delete conditions[part]; else conditions[part]=v; solve();});
+      s.title="fail this part"; row.appendChild(s);
+    }
+    if(!ops && !allowed){
+      const t=document.createElement("span"); t.className="hint"; t.textContent="— fixed";
+      row.appendChild(t);
+    } else { any=true; }
+    d.appendChild(row);
+  }
+  if(!any){
+    d.appendChild(Object.assign(document.createElement("div"),{className:"hint",textContent:"No knobs on this part."}));
+  }
+}
+
+function renderFaultList(){
+  const ul=document.getElementById("faultlist"); ul.innerHTML="";
+  const keys=Object.keys(conditions);
+  if(!keys.length){ul.innerHTML='<li class="hint">none — healthy system</li>';return;}
+  keys.sort().forEach(k=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<span><code>${k}</code> → ${conditions[k]}</span>`;
+    const b=document.createElement("button"); b.textContent="✕";
+    b.onclick=()=>{delete conditions[k]; if(openComp)openComponent(openComp); solve();};
+    li.appendChild(b); ul.appendChild(li);
+  });
+}
+
+// ---- solve + paint ---------------------------------------------------------
+async function solve(){
+  renderFaultList();
+  let rep;
+  try{
+    const r=await fetch("/solve",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({commanded_zones:[...commanded],conditions,settings,pump_on:pumpOn})});
+    rep=await r.json();
+    if(rep.error){ document.getElementById("headline").textContent=rep.error; return; }
+  }catch(e){ document.getElementById("headline").textContent="engine error: "+e; return; }
+  paint(rep);
+}
+
+function paint(rep){
+  lastRep=rep;
+  if(openComp) openComponent(openComp);   // refresh wet markers in the panel
+  // headline + pump
+  document.getElementById("headline").textContent=rep.summary.headline+
+     (rep.summary.converged?"":"  (did not converge)");
+  const pp=document.getElementById("pump");
+  pp.textContent="pump "+(rep.pump.running?("on · "+rep.pump.flow_m3h+" m³/h · "+rep.pump.head_bar+" bar"):("off · "+rep.electrical.pump_reason));
+  pp.style.background=rep.pump.running?"var(--full)":"var(--dead)";
+
+  // head grades -> color the head nodes; build flow + leak maps
+  const headGrade={}, headInfo={};
+  rep.zones.forEach(z=>z.heads.forEach(h=>{headGrade[h.loc]=h.grade;headInfo[h.loc]=h;}));
+  const leakSet={}; rep.leaks.forEach(l=>leakSet[l.loc]=l.flow_m3h);
+  // a drawn flow node is wet if it (or any of its sub-parts) holds water
+  const wet=rep.wetted||[];
+  const isWet=id=>wet.some(w=>w===id||w.startsWith(id+"."));
+
+  document.querySelectorAll("#flow .node").forEach(g=>{
+    const id=g.getAttribute("data-id"); const rect=g.querySelector("rect");
+    let fill="var(--panel)", stroke=isWet(id)?"var(--live)":"var(--line)";
+    if(headGrade[id]){ fill=GRADE[headGrade[id]]||"var(--off)"; }
+    rect.setAttribute("fill",fill);
+    rect.setAttribute("stroke",stroke);
+    rect.setAttribute("stroke-width",isWet(id)?2:1);
+    // tooltip
+    let tip=id;
+    if(headInfo[id]){const h=headInfo[id];tip=`${id}\n${h.grade} — ${h.reason}\n${h.flow_m3h} m³/h @ ${h.pressure_bar} bar (healthy ${h.nominal_m3h})`;}
+    g.querySelector("title")?.remove();
+    const ti=el("title"); ti.textContent=tip; g.appendChild(ti);
+  });
+  // leak markers
+  document.querySelectorAll("#flow .leakdot").forEach(n=>n.remove());
+  const flow=document.getElementById("flow");
+  Object.keys(leakSet).forEach(loc=>{
+    // leak id may be a sub-part (Z3.valve.inlet, mani.body) -> mark whichever
+    // ancestor is actually drawn: full id, 2-part component, then 1-part.
+    const parts=loc.split(".");
+    const cands=[loc, parts.slice(0,2).join("."), parts[0]];
+    let target=null;
+    for(const c of cands){ target=document.querySelector(`#flow .node[data-id="${c}"]`); if(target)break; }
+    if(!target)return;
+    const tr=target.getAttribute("transform").match(/translate\(([-\d.]+)[,\s]+([-\d.]+)\)/);
+    const x=+tr[1], y=+tr[2];
+    const c=el("circle",{class:"leakdot",cx:x+W-6,cy:y+6,r:6});
+    const ti=el("title"); ti.textContent="leak "+leakSet[loc]+" m³/h @ "+loc; c.appendChild(ti);
+    flow.appendChild(c);
+  });
+
+  // valve states -> badge on valve nodes
+  document.querySelectorAll("#flow .vstate").forEach(n=>n.remove());
+  for(const zk in rep.valves){
+    const v=rep.valves[zk]; const vid=zk+".valve";
+    const node=document.querySelector(`#flow .node[data-id="${vid}"]`); if(!node)continue;
+    const tr=node.getAttribute("transform").match(/translate\(([-\d.]+)[,\s]+([-\d.]+)\)/);
+    const x=+tr[1],y=+tr[2];
+    const col={open:"var(--full)",shut:"var(--off)",weeping:"var(--weak)"}[v.state]||"var(--off)";
+    const t=el("text",{class:"vstate",x:x+7,y:y+H+11,fill:col}); t.textContent=v.state;
+    const ti=el("title");ti.textContent=v.reason;t.appendChild(ti);
+    flow.appendChild(t);
+  }
+
+  // circuit: color coils + pump.motor; edges carrying live current
+  document.querySelectorAll("#circuit .node").forEach(g=>{
+    const id=g.getAttribute("data-id"); const rect=g.querySelector("rect");
+    let fill="var(--panel)";
+    const m=id.match(/^Z(\d)\.valve\.coil$/);
+    if(m){ fill=rep.electrical.coils[+m[1]]?"var(--live)":"var(--off)"; }
+    if(id==="pump.motor"||id==="relay.coil"||id==="relay.contactor"){
+      fill=rep.pump.running?"var(--live)":"var(--off)";
+    }
+    if(conditions[id]) fill="var(--dead)";
+    rect.setAttribute("fill",fill);
+  });
+}
+
+// ---- boot ------------------------------------------------------------------
+function renderZoneControls(){
+  const z=document.getElementById("zones");
+  z.innerHTML="commanded: ";
+  [1,2,3,4].forEach(i=>{        // controller stations (auto solenoid valves)
+    const lab=document.createElement("label");
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=commanded.has(i);
+    cb.onchange=()=>{cb.checked?commanded.add(i):commanded.delete(i); solve();};
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(" Z"+i));
+    z.appendChild(lab);
+  });
+  // Z5 is a MANUAL valve -- its own handle, not a controller station.
+  const HANDLE="Z5.valve.handle";
+  const h5=document.createElement("label"); h5.style.marginLeft="6px";
+  const cb5=document.createElement("input"); cb5.type="checkbox";
+  cb5.checked=settings[HANDLE]==="open";
+  cb5.onchange=()=>{ if(cb5.checked)settings[HANDLE]="open"; else delete settings[HANDLE]; solve();};
+  h5.appendChild(cb5); h5.appendChild(document.createTextNode(" Z5 handle (manual)"));
+  z.appendChild(h5);
+  // pump output: its own controller tap. follow / force-on / force-off.
+  const pl=document.createElement("label"); pl.style.marginLeft="10px";
+  pl.appendChild(document.createTextNode(" pump: "));
+  const sel=document.createElement("select");
+  [["follow","schedule"],["on","force on"],["off","force off"]].forEach(([v,t])=>{
+    const o=document.createElement("option"); o.value=v; o.textContent=t; sel.appendChild(o);});
+  sel.value=pumpOn===null?"follow":(pumpOn?"on":"off");
+  sel.onchange=()=>{pumpOn=sel.value==="follow"?null:(sel.value==="on"); solve();};
+  pl.appendChild(sel); z.appendChild(pl);
+}
+document.getElementById("clear").onclick=()=>{conditions={}; if(openComp)openComponent(openComp); solve();};
+
+(async function(){
+  G=await (await fetch("/graph")).json();
+  renderZoneControls();
+  renderFlow();
+  renderCircuit();
+  solve();
+})();
+</script>
+</body>
+</html>
