@@ -10,6 +10,7 @@ from mcp.server.fastmcp import FastMCP
 
 from diagnose import diagnose as _diagnose
 from hydraulics import report as _hydraulics
+from simulate import simulate as _simulate
 
 mcp = FastMCP("irrigation-diagnostic")
 
@@ -56,6 +57,35 @@ def irrigation_hydraulics(
             global_operating_pressure_bar.
     """
     return _hydraulics(adjustments or {}, zone, concurrent_zones)
+
+
+@mcp.tool()
+def simulate_irrigation(
+    commanded_zones: list[int] | None = None,
+    conditions: dict[str, str] | None = None,
+    concurrent_zones: list[int] | None = None,
+) -> dict:
+    """Predict what the system does under a fault set, from graph.yaml.
+
+    Unlike irrigation_hydraulics (a healthy-system calculator), this runs a
+    fault simulation: it energises the controller circuit, resolves each valve's
+    pilot loop, then solves the coupled hydraulics so a fault on one branch
+    (leak, stuck-open valve) draws the shared supply down and can weaken *other*
+    zones. Returns per-head behaviour (full / weak / won't-pop / dead), where
+    water leaks, each coil energised or not, and whether the pump is running.
+
+    Args:
+        commanded_zones: zone ids (1-5) the controller is told to run. Z1-Z4 are
+            automatic (solenoid); Z5 is the manual line.
+        conditions: {node_id: "broken"|"clogged"|"misconfigured"} fault set.
+            Node ids are graph.yaml sub-parts, e.g. "Z1.valve.metering_port",
+            "cond.common", "Z1.hose1", "Z4.head1.regulator". A condition must be
+            in that node's allowed fail axis (validated; an error lists the
+            allowed set).
+        concurrent_zones: which commanded zones run simultaneously (shared
+            pump/main). Defaults to all commanded zones.
+    """
+    return _simulate(commanded_zones or [], conditions or {}, concurrent_zones)
 
 
 if __name__ == "__main__":
