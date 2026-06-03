@@ -275,7 +275,8 @@ def _resolve_electrical(graph, nodes, commanded, pump_commanded):
                                motor_ok, cap_ok, pump_commanded)
 
     return {"coils": coils, "coil_reasons": coil_reasons,
-            "pump_running": pump_running, "pump_reason": pump_reason}
+            "pump_running": pump_running, "pump_reason": pump_reason,
+            "energised": sorted(nid for nid in circ_ids if live(nid))}
 
 
 def _coil_reason(nodes, z, cid, from_source, to_return, commanded, gated):
@@ -914,6 +915,7 @@ def _build_report(graph, nodes, commanded, running, concurrent, elec,
             "coil_reasons": {z: elec["coil_reasons"][z] for z in ZONES},
             "pump_running": pump_running, "pump_reason": elec["pump_reason"],
             "pump_head_available": head_ok,
+            "energised": elec.get("energised", []),
         },
         "valves": valve_states,
         "zones": zones_out,

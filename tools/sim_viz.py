@@ -47,11 +47,54 @@ def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def load_flow():
+def _graph():
     if yaml is None:
         raise SystemExit("pyyaml required")
-    g = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "graph.yaml")))
-    return {k: (v.get("to") or []) for k, v in g["flow"].items()}
+    return yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "graph.yaml")))
+
+
+def load_flow():
+    return {k: (v.get("to") or []) for k, v in _graph()["flow"].items()}
+
+
+def load_circuit():
+    return {k: (v.get("to") or []) for k, v in _graph()["circuit"].items()}
+
+
+# Hand-placed ladder for the electrical loop (a return cycle, not a tree):
+# controller taps -> field wires -> solenoid coils -> shared common return,
+# plus the pump-start relay branch and the 230 V motor feed.  (col, row).
+CCELL_X, CCELL_Y = 96, 46
+CIRC_POS = {
+    "mains": (0, 2), "ctrl.psu": (1, 2), "ctrl.fw": (2, 2),
+    "ctrl.tr1": (3, 0), "ctrl.tr2": (3, 1), "ctrl.tr3": (3, 2), "ctrl.tr4": (3, 3),
+    "ctrl.ts1": (4, 0), "ctrl.ts2": (4, 1), "ctrl.ts3": (4, 2), "ctrl.ts4": (4, 3),
+    "cond.s1": (5, 0), "cond.s2": (5, 1), "cond.s3": (5, 2), "cond.s4": (5, 3),
+    "splice.Z1": (6, 0), "splice.Z2": (6, 1), "splice.Z3": (6, 2), "splice.Z4": (6, 3),
+    "Z1.valve.coil": (7, 0), "Z2.valve.coil": (7, 1),
+    "Z3.valve.coil": (7, 2), "Z4.valve.coil": (7, 3),
+    "splice.Z1c": (8, 0), "splice.Z2c": (8, 1), "splice.Z3c": (8, 2), "splice.Z4c": (8, 3),
+    "cond.common": (9, 1.5), "ctrl.tcom": (10, 1.5),
+    # pump-start relay branch (low-voltage trigger loop)
+    "ctrl.trpmv": (3, 5), "ctrl.tpmv": (4, 5), "cond.rsig": (5, 5),
+    "relay.coil": (6, 5), "cond.rcom": (7, 5), "ctrl.trcom": (8, 5),
+    # 230 V power path to the motor
+    "relay.line": (1, 6.6), "relay.contactor": (2, 6.6),
+    "pump.motor": (3, 6.6), "pump.capacitor": (4, 6.6),
+    # controller feature chips (not in the conduction path)
+    "ctrl.sched": (1.1, 0), "ctrl.screen": (1.1, 0.55),
+    "ctrl.wifi": (1.9, 0), "ctrl.cloud": (1.9, 0.55),
+}
+CLABEL = {
+    "mains": "mains", "ctrl.psu": "PSU", "ctrl.fw": "logic",
+    "cond.common": "COMMON", "ctrl.tcom": "com", "relay.coil": "relay coil",
+    "relay.line": "relay line", "relay.contactor": "contactor", "pump.motor": "MOTOR",
+    "pump.capacitor": "cap", "cond.rsig": "sig", "cond.rcom": "rcom",
+    "ctrl.trpmv": "P-tap", "ctrl.tpmv": "pmv", "ctrl.trcom": "rtn",
+    "ctrl.sched": "sched", "ctrl.screen": "scr", "ctrl.wifi": "wifi", "ctrl.cloud": "cloud",
+}
+HOT = "#e8a200"      # energised
+COLD = "#dfe3e8"     # de-energised
 
 
 def layout(flow):
@@ -211,8 +254,130 @@ def render(scenarios):
             f'{legend}{"".join(parts)}</svg>')
 
 
+CLEFT, CTOP = 40, 50
+
+
+def clabel(n):
+    if n in CLABEL:
+        return CLABEL[n]
+    if n.startswith("ctrl.tr"):
+        return "triac" + n[-1] if n[-1].isdigit() else "triac"
+    if n.startswith("ctrl.ts"):
+        return n.split(".")[-1]
+    if n.startswith("cond.s"):
+        return n.split(".")[-1]
+    if n.endswith(".valve.coil"):
+        return n.split(".")[0] + " coil"
+    if n.startswith("splice."):
+        return n.split(".")[-1]
+    return n.split(".")[-1]
+
+
+def circuit_panel(title, res, conditions, oy, w):
+    e = []
+    e.append(f'<rect x="2" y="{oy+2}" width="{w-4}" height="{CIRC_PANEL_H-6}" rx="9" '
+             f'fill="#fbfbfd" stroke="#d4d7dc"/>')
+    e.append(f'<text x="{CLEFT}" y="{oy+22}" font-size="15" font-weight="700" fill="#1a1a1a">{esc(title)}</text>')
+    el = res["electrical"]
+    sub = (f'pump {"ON" if el["pump_running"] else "OFF"} ({el["pump_reason"]})   |   '
+           f'coils energised: {sorted(z for z,v in el["coils"].items() if v) or "none"}')
+    e.append(f'<text x="{CLEFT}" y="{oy+40}" font-size="12" fill="#444">{esc(sub)}</text>')
+    live = set(el.get("energised", []))
+    cond = conditions or {}
+    circ = load_circuit()
+
+    def xy(n):
+        cx, cy = CIRC_POS[n]
+        return CLEFT + 30 + cx * CCELL_X, oy + CTOP + 38 + cy * CCELL_Y
+
+    # column headers
+    for cx, txt in [(3, "controller taps"), (5, "field wire"), (7, "solenoid coils"), (9, "common return")]:
+        e.append(f'<text x="{CLEFT+30+cx*CCELL_X}" y="{oy+CTOP+10}" font-size="9.5" '
+                 f'text-anchor="middle" fill="#9aa0a6">{txt}</text>')
+
+    # edges
+    for n, kids in circ.items():
+        if n not in CIRC_POS:
+            continue
+        x0, y0 = xy(n)
+        for c in kids:
+            if c not in CIRC_POS:
+                continue
+            x1, y1 = xy(c)
+            hot = (n in live and c in live)
+            col = HOT if hot else "#cfd4da"
+            e.append(f'<path d="M{x0:.0f},{y0:.0f} L{(x0+x1)/2:.0f},{y0:.0f} '
+                     f'L{(x0+x1)/2:.0f},{y1:.0f} L{x1:.0f},{y1:.0f}" fill="none" '
+                     f'stroke="{col}" stroke-width="{2.4 if hot else 1.6}"/>')
+
+    # nodes
+    for n in CIRC_POS:
+        x, y = xy(n)
+        on = n in live
+        if n == "pump.motor":
+            fill = "#2e9e4f" if res["electrical"]["pump_running"] else COLD
+        elif n in ("ctrl.sched", "ctrl.screen", "ctrl.wifi", "ctrl.cloud"):
+            fill = "#eef1f4"
+        else:
+            fill = HOT if on else COLD
+        coil = n.endswith(".valve.coil")
+        relay = n in ("relay.coil", "relay.contactor", "relay.line")
+        if coil or n == "relay.coil":
+            e.append(f'<rect x="{x-11}" y="{y-8}" width="22" height="16" rx="3" fill="{fill}" stroke="#888"/>')
+        elif n == "pump.motor":
+            e.append(f'<circle cx="{x}" cy="{y}" r="11" fill="{fill}" stroke="#555"/>'
+                     f'<text x="{x}" y="{y+4}" font-size="9" text-anchor="middle" fill="white" font-weight="700">M</text>')
+        elif n == "mains":
+            e.append(f'<rect x="{x-10}" y="{y-9}" width="20" height="18" rx="3" fill="#6b7280"/>'
+                     f'<text x="{x}" y="{y+4}" font-size="8" text-anchor="middle" fill="white">~</text>')
+        elif n == "cond.common":
+            e.append(f'<rect x="{x-9}" y="{y-22}" width="18" height="44" rx="3" fill="{fill}" stroke="#888"/>')
+        else:
+            e.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{fill}" stroke="#9aa0a6" stroke-width="0.7"/>')
+        # labels
+        ly = y - 13 if n != "cond.common" else y - 27
+        e.append(f'<text x="{x}" y="{ly}" font-size="8" text-anchor="middle" fill="#555">{esc(clabel(n))}</text>')
+        # fault marker
+        if n in cond:
+            e.append(f'<circle cx="{x}" cy="{y}" r="12" fill="none" stroke="#d11" stroke-width="2"/>'
+                     f'<text x="{x}" y="{y+25}" font-size="8.5" text-anchor="middle" fill="#d11" '
+                     f'font-weight="700">{esc(cond[n])}</text>'
+                     f'<line x1="{x-9}" y1="{y-9}" x2="{x+9}" y2="{y+9}" stroke="#d11" stroke-width="1.6"/>'
+                     f'<line x1="{x+9}" y1="{y-9}" x2="{x-9}" y2="{y+9}" stroke="#d11" stroke-width="1.6"/>')
+    return "".join(e)
+
+
+CIRC_PANEL_H = CTOP + 38 + int(7.4 * CCELL_Y) + 24
+
+
+def render_circuit(scenarios):
+    maxcol = max(cx for cx, _ in CIRC_POS.values())
+    w = CLEFT + 30 + int(maxcol * CCELL_X) + 90
+    parts = []
+    for i, (title, req) in enumerate(scenarios):
+        res = simulate.simulate(**req)
+        parts.append(f'<g transform="translate(0,{HEADER + i*CIRC_PANEL_H})">'
+                     f'{circuit_panel(title, res, req.get("conditions"), 0, w)}</g>')
+    total_h = HEADER + CIRC_PANEL_H * len(scenarios) + 6
+    legend = (
+        '<text x="18" y="24" font-size="19" font-weight="800" fill="#111">'
+        'Irrigation fault simulator &#8212; electrical circuit (controller, relay, wiring)</text>'
+        '<text x="18" y="42" font-size="11.5" fill="#555">'
+        'Controller PSU/logic &#8594; per-zone triac taps &#8594; field wires &#8594; solenoid coils '
+        '&#8594; shared COMMON return, plus the pump-start relay loop and 230 V motor feed. '
+        'Gold = energised, grey = de-energised; red &#10005; = the injected fault.</text>'
+    )
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{total_h}" '
+            f'font-family="Segoe UI, Arial, sans-serif">'
+            f'<rect width="{w}" height="{total_h}" fill="white"/>{legend}{"".join(parts)}</svg>')
+
+
 if __name__ == "__main__":
-    out = sys.argv[1] if len(sys.argv) > 1 else "scenarios.svg"
-    with open(out, "w") as f:
+    flow_out = sys.argv[1] if len(sys.argv) > 1 else "scenarios.svg"
+    with open(flow_out, "w") as f:
         f.write(render(SCENARIOS))
-    print("wrote", out)
+    print("wrote", flow_out)
+    circ_out = sys.argv[2] if len(sys.argv) > 2 else "scenarios_circuit.svg"
+    with open(circ_out, "w") as f:
+        f.write(render_circuit(SCENARIOS))
+    print("wrote", circ_out)
