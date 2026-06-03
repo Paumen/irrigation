@@ -57,42 +57,10 @@ def load_flow():
     return {k: (v.get("to") or []) for k, v in _graph()["flow"].items()}
 
 
-def load_circuit():
-    return {k: (v.get("to") or []) for k, v in _graph()["circuit"].items()}
-
-
 # Hand-placed ladder for the electrical loop (a return cycle, not a tree):
 # controller taps -> field wires -> solenoid coils -> shared common return,
-# plus the pump-start relay branch and the 230 V motor feed.  (col, row).
-CCELL_X, CCELL_Y = 96, 46
-CIRC_POS = {
-    "mains": (0, 2), "ctrl.psu": (1, 2), "ctrl.fw": (2, 2),
-    "ctrl.tr1": (3, 0), "ctrl.tr2": (3, 1), "ctrl.tr3": (3, 2), "ctrl.tr4": (3, 3),
-    "ctrl.ts1": (4, 0), "ctrl.ts2": (4, 1), "ctrl.ts3": (4, 2), "ctrl.ts4": (4, 3),
-    "cond.s1": (5, 0), "cond.s2": (5, 1), "cond.s3": (5, 2), "cond.s4": (5, 3),
-    "splice.Z1": (6, 0), "splice.Z2": (6, 1), "splice.Z3": (6, 2), "splice.Z4": (6, 3),
-    "Z1.valve.coil": (7, 0), "Z2.valve.coil": (7, 1),
-    "Z3.valve.coil": (7, 2), "Z4.valve.coil": (7, 3),
-    "splice.Z1c": (8, 0), "splice.Z2c": (8, 1), "splice.Z3c": (8, 2), "splice.Z4c": (8, 3),
-    "cond.common": (9, 1.5), "ctrl.tcom": (10, 1.5),
-    # pump-start relay branch (low-voltage trigger loop)
-    "ctrl.trpmv": (3, 5), "ctrl.tpmv": (4, 5), "cond.rsig": (5, 5),
-    "relay.coil": (6, 5), "cond.rcom": (7, 5), "ctrl.trcom": (8, 5),
-    # 230 V power path to the motor
-    "relay.line": (1, 6.6), "relay.contactor": (2, 6.6),
-    "pump.motor": (3, 6.6), "pump.capacitor": (4, 6.6),
-    # controller feature chips (not in the conduction path)
-    "ctrl.sched": (1.1, 0), "ctrl.screen": (1.1, 0.55),
-    "ctrl.wifi": (1.9, 0), "ctrl.cloud": (1.9, 0.55),
-}
-CLABEL = {
-    "mains": "mains", "ctrl.psu": "PSU", "ctrl.fw": "logic",
-    "cond.common": "COMMON", "ctrl.tcom": "com", "relay.coil": "relay coil",
-    "relay.line": "relay line", "relay.contactor": "contactor", "pump.motor": "MOTOR",
-    "pump.capacitor": "cap", "cond.rsig": "sig", "cond.rcom": "rcom",
-    "ctrl.trpmv": "P-tap", "ctrl.tpmv": "pmv", "ctrl.trcom": "rtn",
-    "ctrl.sched": "sched", "ctrl.screen": "scr", "ctrl.wifi": "wifi", "ctrl.cloud": "cloud",
-}
+# It is drawn as a proper ladder (see circuit_panel) with a single horizontal
+# COMMON return bus, so every coil loop reads as closed back to the transformer.
 HOT = "#e8a200"      # energised
 COLD = "#dfe3e8"     # de-energised
 
@@ -254,28 +222,32 @@ def render(scenarios):
             f'{legend}{"".join(parts)}</svg>')
 
 
-CLEFT, CTOP = 40, 50
+CLEFT, CTOP = 40, 52
+# ladder column x-offsets (px from panel left) and row pitch
+CX = {"xfmr": 70, "hot": 150, "tap": 235, "ts": 320, "field": 405,
+      "coil": 540, "ret": 660, "bus_l": 150}
+ROW_Y = 44
+CIRC_W = 940
+CIRC_PANEL_H = 372
 
 
-def clabel(n):
-    if n in CLABEL:
-        return CLABEL[n]
-    if n.startswith("ctrl.tr"):
-        return "triac" + n[-1] if n[-1].isdigit() else "triac"
-    if n.startswith("ctrl.ts"):
-        return n.split(".")[-1]
-    if n.startswith("cond.s"):
-        return n.split(".")[-1]
-    if n.endswith(".valve.coil"):
-        return n.split(".")[0] + " coil"
-    if n.startswith("splice."):
-        return n.split(".")[-1]
-    return n.split(".")[-1]
+def _wire(x1, y1, x2, y2, hot, w=None):
+    col = HOT if hot else "#c9ced4"
+    sw = (2.6 if hot else 1.6) if w is None else w
+    return (f'<path d="M{x1:.0f},{y1:.0f} H{(x1+x2)/2:.0f} V{y2:.0f} H{x2:.0f}" '
+            f'fill="none" stroke="{col}" stroke-width="{sw}"/>')
 
 
-def circuit_panel(title, res, conditions, oy, w):
+def _faultx(x, y, label):
+    return (f'<line x1="{x-9}" y1="{y-9}" x2="{x+9}" y2="{y+9}" stroke="#d11" stroke-width="2"/>'
+            f'<line x1="{x+9}" y1="{y-9}" x2="{x-9}" y2="{y+9}" stroke="#d11" stroke-width="2"/>'
+            f'<text x="{x}" y="{y-15}" font-size="8.5" text-anchor="middle" fill="#d11" '
+            f'font-weight="700">{esc(label)}</text>')
+
+
+def circuit_panel(title, res, conditions, oy):
     e = []
-    e.append(f'<rect x="2" y="{oy+2}" width="{w-4}" height="{CIRC_PANEL_H-6}" rx="9" '
+    e.append(f'<rect x="2" y="{oy+2}" width="{CIRC_W-4}" height="{CIRC_PANEL_H-6}" rx="9" '
              f'fill="#fbfbfd" stroke="#d4d7dc"/>')
     e.append(f'<text x="{CLEFT}" y="{oy+22}" font-size="15" font-weight="700" fill="#1a1a1a">{esc(title)}</text>')
     el = res["electrical"]
@@ -284,92 +256,165 @@ def circuit_panel(title, res, conditions, oy, w):
     e.append(f'<text x="{CLEFT}" y="{oy+40}" font-size="12" fill="#444">{esc(sub)}</text>')
     live = set(el.get("energised", []))
     cond = conditions or {}
-    circ = load_circuit()
 
-    def xy(n):
-        cx, cy = CIRC_POS[n]
-        return CLEFT + 30 + cx * CCELL_X, oy + CTOP + 38 + cy * CCELL_Y
+    def L(n):                       # node is live (energised)
+        return n in live
+    top = oy + CTOP + 24
+    zy = [top + i * ROW_Y for i in range(4)]          # Z1..Z4 rungs
+    bus_y = top + 4 * ROW_Y + 8                        # shared COMMON return bus
+    rly_y = top + 5 * ROW_Y + 18                       # relay (pump) rung, own return
+    pwr_y = top + 6 * ROW_Y + 30                       # 230 V power chain
 
-    # column headers
-    for cx, txt in [(3, "controller taps"), (5, "field wire"), (7, "solenoid coils"), (9, "common return")]:
-        e.append(f'<text x="{CLEFT+30+cx*CCELL_X}" y="{oy+CTOP+10}" font-size="9.5" '
-                 f'text-anchor="middle" fill="#9aa0a6">{txt}</text>')
+    def node(x, y, kind, label, on, fault=None, w=22, h=16):
+        fill = HOT if on else COLD
+        if kind == "coil":
+            e.append(f'<rect x="{x-w/2}" y="{y-h/2}" width="{w}" height="{h}" rx="3" '
+                     f'fill="{fill}" stroke="#888"/>')
+        elif kind == "dot":
+            e.append(f'<circle cx="{x}" cy="{y}" r="5.5" fill="{fill}" stroke="#9aa0a6" stroke-width="0.7"/>')
+        elif kind == "motor":
+            mc = "#2e9e4f" if on else COLD
+            e.append(f'<circle cx="{x}" cy="{y}" r="12" fill="{mc}" stroke="#555"/>'
+                     f'<text x="{x}" y="{y+4}" font-size="10" text-anchor="middle" fill="white" font-weight="700">M</text>')
+        if label:
+            e.append(f'<text x="{x}" y="{y-11}" font-size="8" text-anchor="middle" fill="#555">{esc(label)}</text>')
+        if fault:
+            e.append(_faultx(x, y, fault))
 
-    # edges
-    for n, kids in circ.items():
-        if n not in CIRC_POS:
-            continue
-        x0, y0 = xy(n)
-        for c in kids:
-            if c not in CIRC_POS:
-                continue
-            x1, y1 = xy(c)
-            hot = (n in live and c in live)
-            col = HOT if hot else "#cfd4da"
-            e.append(f'<path d="M{x0:.0f},{y0:.0f} L{(x0+x1)/2:.0f},{y0:.0f} '
-                     f'L{(x0+x1)/2:.0f},{y1:.0f} L{x1:.0f},{y1:.0f}" fill="none" '
-                     f'stroke="{col}" stroke-width="{2.4 if hot else 1.6}"/>')
+    # ---- transformer / PSU (the source AND the return sink, on the left) ----
+    tx = CLEFT + CX["xfmr"]
+    psu_on = L("ctrl.psu")
+    e.append(f'<rect x="{tx-20}" y="{top-14}" width="40" height="{rly_y-top+28}" rx="6" '
+             f'fill="{"#fff5e0" if psu_on else "#f1f3f5"}" stroke="#b08a2e" stroke-width="1.2"/>')
+    e.append(f'<text x="{tx}" y="{top-20}" font-size="9" text-anchor="middle" fill="#7a5c12" font-weight="700">24 VAC</text>')
+    e.append(f'<text x="{tx}" y="{rly_y+24}" font-size="8.5" text-anchor="middle" fill="#7a5c12">transformer (PSU)</text>')
+    # mains primary into the transformer
+    mx = CLEFT + 6
+    e.append(f'<rect x="{mx-6}" y="{top-6}" width="12" height="14" rx="2" fill="#6b7280"/>'
+             f'<text x="{mx}" y="{top-12}" font-size="7.5" text-anchor="middle" fill="#555">mains</text>')
+    e.append(_wire(mx, top + 1, tx - 20, top + 1, L("mains") and psu_on))
+    hotx = CLEFT + CX["hot"]
+    # hot distribution bus (transformer secondary "hot") feeding every tap
+    e.append(_wire(tx + 20, top, hotx, top, psu_on))
+    e.append(f'<text x="{hotx}" y="{top-14}" font-size="8" text-anchor="middle" fill="#555">logic/hot</text>')
+    e.append(f'<line x1="{hotx}" y1="{zy[0]}" x2="{hotx}" y2="{rly_y}" '
+             f'stroke="{HOT if psu_on else COLD}" stroke-width="2.6"/>')
 
-    # nodes
-    for n in CIRC_POS:
-        x, y = xy(n)
-        on = n in live
-        if n == "pump.motor":
-            fill = "#2e9e4f" if res["electrical"]["pump_running"] else COLD
-        elif n in ("ctrl.sched", "ctrl.screen", "ctrl.wifi", "ctrl.cloud"):
-            fill = "#eef1f4"
+    # ---- four zone rungs: hot tap -> triac -> field -> coil -> down to COMMON --
+    headers = [(CX["tap"], "triac"), (CX["field"], "field wire"),
+               (CX["coil"], "solenoid coil"), (CX["ret"], "return")]
+    for cxv, txt in headers:
+        e.append(f'<text x="{CLEFT+cxv}" y="{top-26}" font-size="9" text-anchor="middle" fill="#9aa0a6">{txt}</text>')
+    for i, z in enumerate((1, 2, 3, 4)):
+        y = zy[i]
+        tap, ts = f"ctrl.tr{z}", f"ctrl.ts{z}"
+        fld, spl, coil, splc = f"cond.s{z}", f"splice.Z{z}", f"Z{z}.valve.coil", f"splice.Z{z}c"
+        xt, xs, xf, xc, xr = (CLEFT + CX["tap"], CLEFT + CX["ts"], CLEFT + CX["field"],
+                              CLEFT + CX["coil"], CLEFT + CX["ret"])
+        # hot bus -> triac
+        e.append(_wire(hotx, y, xt, y, psu_on and L(tap)))
+        node(xt, y, "dot", f"triac{z}", L(tap), cond.get(tap))
+        # triac -> ts -> field wire -> splice -> coil
+        e.append(_wire(xt, y, xf, y, L(tap) and L(fld)))
+        node(xf, y, "dot", "field", L(fld), cond.get(fld))
+        e.append(_wire(xf, y, xc - 12, y, L(fld) and L(coil)))
+        node(xc, y, "coil", f"Z{z} coil", L(coil), cond.get(coil))
+        # coil -> return splice -> down to the common bus
+        e.append(_wire(xc + 12, y, xr, y, L(coil) and L(splc)))
+        node(xr, y, "dot", None, L(splc), cond.get(splc))
+        e.append(f'<line x1="{xr}" y1="{y}" x2="{xr}" y2="{bus_y}" '
+                 f'stroke="{HOT if (L(splc) and L("cond.common")) else COLD}" stroke-width="2.2"/>')
+
+    # ---- the shared COMMON return bus, back to the transformer common ----
+    bus_on = L("cond.common")
+    busx_r = CLEFT + CX["ret"]
+    busx_l = CLEFT + CX["bus_l"]
+    e.append(f'<line x1="{busx_l}" y1="{bus_y}" x2="{busx_r}" y2="{bus_y}" '
+             f'stroke="{HOT if bus_on else COLD}" stroke-width="3.4"/>')
+    e.append(f'<text x="{(busx_l+busx_r)/2}" y="{bus_y+15}" font-size="8.5" '
+             f'text-anchor="middle" fill="#555">COMMON return bus (cond.common)</text>')
+    # bus into the transformer common terminal
+    e.append(f'<line x1="{busx_l}" y1="{bus_y}" x2="{tx+20}" y2="{bus_y}" '
+             f'stroke="{HOT if bus_on else COLD}" stroke-width="3.4"/>'
+             f'<line x1="{tx+20}" y1="{bus_y}" x2="{tx+20}" y2="{rly_y}" '
+             f'stroke="{HOT if bus_on else COLD}" stroke-width="3.4"/>')
+    if "cond.common" in cond:
+        e.append(_faultx((busx_l + busx_r) / 2, bus_y, cond["cond.common"]))
+
+    # ---- pump-start relay rung: its OWN return (cond.rcom -> ctrl.trcom -> PSU) -
+    y = rly_y
+    e.append(_wire(hotx, y, CLEFT + CX["tap"], y, psu_on and L("ctrl.trpmv")))
+    node(CLEFT + CX["tap"], y, "dot", "pump tap", L("ctrl.trpmv"), cond.get("ctrl.trpmv"))
+    e.append(_wire(CLEFT + CX["tap"], y, CLEFT + CX["field"], y, L("ctrl.trpmv") and L("cond.rsig")))
+    node(CLEFT + CX["field"], y, "dot", "sig", L("cond.rsig"), cond.get("cond.rsig"))
+    e.append(_wire(CLEFT + CX["field"], y, CLEFT + CX["coil"] - 12, y, L("cond.rsig") and L("relay.coil")))
+    node(CLEFT + CX["coil"], y, "coil", "relay coil", L("relay.coil"), cond.get("relay.coil"))
+    # relay coil return: a SEPARATE wire back to the transformer (NOT the common bus)
+    rcom_on = L("relay.coil") and L("cond.rcom")
+    rry = y + 16
+    e.append(_wire(CLEFT + CX["coil"] + 12, y, CLEFT + CX["ret"], y, rcom_on))
+    node(CLEFT + CX["ret"], y, "dot", "rcom", L("cond.rcom"), cond.get("cond.rcom"))
+    e.append(f'<line x1="{CLEFT+CX["ret"]}" y1="{y}" x2="{CLEFT+CX["ret"]}" y2="{rry}" stroke="{HOT if rcom_on else COLD}" stroke-width="2"/>'
+             f'<line x1="{tx+12}" y1="{rry}" x2="{CLEFT+CX["ret"]}" y2="{rry}" stroke="{HOT if rcom_on else COLD}" stroke-width="2"/>'
+             f'<line x1="{tx+12}" y1="{y}" x2="{tx+12}" y2="{rry}" stroke="{HOT if rcom_on else COLD}" stroke-width="2"/>')
+    e.append(f'<text x="{(tx+CLEFT+CX["ret"])/2}" y="{rry+12}" font-size="8" text-anchor="middle" '
+             f'fill="#9a7" >relay common (separate return -> not shared)</text>')
+
+    # ---- 230 V power side: deliberately an open chain (documented simplification) -
+    py = pwr_y
+    px0 = CLEFT + CX["hot"]
+    pumpon = el["pump_running"]
+    e.append(f'<rect x="{CLEFT+4}" y="{py-15}" width="{CIRC_W-CLEFT-20}" height="34" rx="6" '
+             f'fill="#fbf0f0" stroke="#e2b6b6" stroke-dasharray="4 3"/>')
+    e.append(f'<text x="{CLEFT+12}" y="{py-19}" font-size="8.5" fill="#b06">'
+             f'230 V power side &#8212; modelled as a chain, not a closed loop (no neutral / capacitor; see sim_spec)</text>')
+    e.append(f'<rect x="{CLEFT+CX["xfmr"]-30}" y="{py-7}" width="14" height="14" rx="2" fill="#6b7280"/>'
+             f'<text x="{CLEFT+CX["xfmr"]-23}" y="{py-11}" font-size="7" text-anchor="middle" fill="#555">230V</text>')
+    pts = [("relay.line", px0, "line"), ("relay.contactor", px0 + 150, "contactor"),
+           ("pump.motor", px0 + 320, "motor")]
+    e.append(_wire(CLEFT + CX["xfmr"] - 16, py, px0, py, pumpon))
+    prev = px0
+    for nid, x, lbl in pts:
+        seg_on = pumpon
+        e.append(_wire(prev, py, x, py, seg_on))
+        if nid == "pump.motor":
+            node(x, py, "motor", "motor", pumpon, cond.get(nid))
         else:
-            fill = HOT if on else COLD
-        coil = n.endswith(".valve.coil")
-        relay = n in ("relay.coil", "relay.contactor", "relay.line")
-        if coil or n == "relay.coil":
-            e.append(f'<rect x="{x-11}" y="{y-8}" width="22" height="16" rx="3" fill="{fill}" stroke="#888"/>')
-        elif n == "pump.motor":
-            e.append(f'<circle cx="{x}" cy="{y}" r="11" fill="{fill}" stroke="#555"/>'
-                     f'<text x="{x}" y="{y+4}" font-size="9" text-anchor="middle" fill="white" font-weight="700">M</text>')
-        elif n == "mains":
-            e.append(f'<rect x="{x-10}" y="{y-9}" width="20" height="18" rx="3" fill="#6b7280"/>'
-                     f'<text x="{x}" y="{y+4}" font-size="8" text-anchor="middle" fill="white">~</text>')
-        elif n == "cond.common":
-            e.append(f'<rect x="{x-9}" y="{y-22}" width="18" height="44" rx="3" fill="{fill}" stroke="#888"/>')
-        else:
-            e.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{fill}" stroke="#9aa0a6" stroke-width="0.7"/>')
-        # labels
-        ly = y - 13 if n != "cond.common" else y - 27
-        e.append(f'<text x="{x}" y="{ly}" font-size="8" text-anchor="middle" fill="#555">{esc(clabel(n))}</text>')
-        # fault marker
-        if n in cond:
-            e.append(f'<circle cx="{x}" cy="{y}" r="12" fill="none" stroke="#d11" stroke-width="2"/>'
-                     f'<text x="{x}" y="{y+25}" font-size="8.5" text-anchor="middle" fill="#d11" '
-                     f'font-weight="700">{esc(cond[n])}</text>'
-                     f'<line x1="{x-9}" y1="{y-9}" x2="{x+9}" y2="{y+9}" stroke="#d11" stroke-width="1.6"/>'
-                     f'<line x1="{x+9}" y1="{y-9}" x2="{x-9}" y2="{y+9}" stroke="#d11" stroke-width="1.6"/>')
+            node(x, py, "dot", lbl, _intact_for_viz(res, nid), cond.get(nid))
+        prev = x
+    e.append(f'<text x="{px0+320}" y="{py+22}" font-size="8" text-anchor="middle" fill="#b06">(open end &#8212; no modelled neutral)</text>')
     return "".join(e)
 
 
-CIRC_PANEL_H = CTOP + 38 + int(7.4 * CCELL_Y) + 24
+def _intact_for_viz(res, nid):
+    # the power-side parts have no energised set; colour them "live" when the
+    # pump is running (the engine's gate is relay-coil + all parts intact).
+    return res["electrical"]["pump_running"]
+
+
+CIRC_HEADER = 64
 
 
 def render_circuit(scenarios):
-    maxcol = max(cx for cx, _ in CIRC_POS.values())
-    w = CLEFT + 30 + int(maxcol * CCELL_X) + 90
     parts = []
     for i, (title, req) in enumerate(scenarios):
         res = simulate.simulate(**req)
-        parts.append(f'<g transform="translate(0,{HEADER + i*CIRC_PANEL_H})">'
-                     f'{circuit_panel(title, res, req.get("conditions"), 0, w)}</g>')
-    total_h = HEADER + CIRC_PANEL_H * len(scenarios) + 6
+        parts.append(f'<g transform="translate(0,{CIRC_HEADER + i*CIRC_PANEL_H})">'
+                     f'{circuit_panel(title, res, req.get("conditions"), 0)}</g>')
+    total_h = CIRC_HEADER + CIRC_PANEL_H * len(scenarios) + 6
     legend = (
-        '<text x="18" y="24" font-size="19" font-weight="800" fill="#111">'
-        'Irrigation fault simulator &#8212; electrical circuit (controller, relay, wiring)</text>'
-        '<text x="18" y="42" font-size="11.5" fill="#555">'
-        'Controller PSU/logic &#8594; per-zone triac taps &#8594; field wires &#8594; solenoid coils '
-        '&#8594; shared COMMON return, plus the pump-start relay loop and 230 V motor feed. '
-        'Gold = energised, grey = de-energised; red &#10005; = the injected fault.</text>'
+        '<text x="18" y="22" font-size="19" font-weight="800" fill="#111">'
+        'Irrigation fault simulator &#8212; electrical ladder (controller, relay, wiring)</text>'
+        '<text x="18" y="40" font-size="11.5" fill="#555">'
+        'Transformer hot bus &#8594; per-zone triac &#8594; field wire &#8594; solenoid coil, all '
+        'returning on one shared COMMON bus to the transformer.</text>'
+        '<text x="18" y="55" font-size="11.5" fill="#555">'
+        'The relay coil has its OWN return (so a broken common drops the zones but not the pump). '
+        'Gold = energised, grey = dead, red &#10005; = injected fault.</text>'
     )
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{total_h}" '
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{CIRC_W}" height="{total_h}" '
             f'font-family="Segoe UI, Arial, sans-serif">'
-            f'<rect width="{w}" height="{total_h}" fill="white"/>{legend}{"".join(parts)}</svg>')
+            f'<rect width="{CIRC_W}" height="{total_h}" fill="white"/>{legend}{"".join(parts)}</svg>')
 
 
 if __name__ == "__main__":

@@ -52,6 +52,18 @@ reused — it asserts a single parent and `is_leaf ⇒ nozzle`, both false here.
    auto valves fail shut. This falls out of the netlist; it is not special-cased. Output: per-coil
    energised + pump-running.
 
+   **Modelling note — two return paths, and the 230 V side.** The four zone coils share one return
+   (`splice.Z*c → cond.common → ctrl.tcom → ctrl.psu`); the pump-start **relay coil** has its *own*
+   return (`relay.coil → cond.rcom → ctrl.trcom → ctrl.psu`). That separation is why a broken
+   `cond.common` drops all four zones yet leaves the pump able to run. Both low-voltage loops close at
+   the 24 VAC transformer (`ctrl.psu`), not back at `mains` — correct for a transformer secondary.
+   The **230 V motor power path is deliberately modelled as an open chain**, not a closed loop:
+   `mains → relay.line → relay.contactor → pump.motor` has no neutral/return edge, and
+   `pump.capacitor` is an unwired node. The engine does **not** trace a motor neutral; `pump_running`
+   is `relay.coil` live **and** `relay.line` / `relay.contactor` / `pump.motor` / `pump.capacitor` all
+   intact (`_pump_reason`). This is a simplification, not a missing wire: the model only needs each
+   power-side part's intactness, so the neutral and the capacitor topology are out of scope.
+
 2. **Valve pilot loop** (`_resolve_valves`) — each automatic valve is resolved to `{open, shut,
    weeping}` by reachability over its *own* sub-parts plus coil energisation, not a fault table:
    `fill_ok` = `inlet→metering_port→chamber` passable; `bleed_open` = (coil + intact solenoid path)
