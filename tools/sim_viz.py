@@ -66,7 +66,6 @@ def panel(title, res, oy):
              f'<text x="{mx+7}" y="{ty+58}" font-size="10" text-anchor="middle" fill="#555">manifold</text>')
 
     valves = res["valves"]
-    zones = {z["id"]: z for z in res["zones"]}
     zx = mx + 60
     n = len(res["zones"])
     span = PANEL_H - 70
@@ -76,9 +75,7 @@ def panel(title, res, oy):
         e.append(f'<line x1="{mx+14}" y1="{ty}" x2="{zx}" y2="{zy}" stroke="#9bbcf7" stroke-width="2"/>')
         # valve glyph
         vstate = valves.get(f"Z{zid}", {}).get("state", "shut")
-        vreason = valves.get(f"Z{zid}", {}).get("reason", "")
         vc = VALVE_COLOR.get(vstate, "#9aa0a6")
-        stuck = "stuck" in vreason or "can't fill" in vreason or "uncommanded" in str(z.get("heads"))
         # detect uncommanded-open: commanded False but open
         unc = (not z["commanded"]) and vstate == "open" and not z["manual"]
         e.append(f'<rect x="{zx}" y="{zy-9}" width="18" height="18" rx="3" fill="{vc}" '
@@ -95,11 +92,14 @@ def panel(title, res, oy):
             e.append(f'<text x="{hx+9}" y="{zy+22}" font-size="8.5" text-anchor="middle" fill="#666">{esc(short)}</text>')
             # leak burst on this node?
             hx += 95
-        # leak markers (match by zone prefix)
+        # leak markers (match by zone prefix); stack vertically if a zone has several
+        leak_idx = 0
         for lk in res["leaks"]:
             if lk["loc"].startswith(f"Z{zid}."):
-                e.append(f'<text x="{zx+30}" y="{zy+4}" font-size="16" fill="#d11">&#9889;</text>'
-                         f'<text x="{zx+30}" y="{zy+18}" font-size="8.5" fill="#d11">{lk["flow_m3h"]} m3/h leak</text>')
+                oyl = leak_idx * 20
+                e.append(f'<text x="{zx+30}" y="{zy+4+oyl}" font-size="16" fill="#d11">&#9889;</text>'
+                         f'<text x="{zx+30}" y="{zy+18+oyl}" font-size="8.5" fill="#d11">{lk["flow_m3h"]} m3/h leak</text>')
+                leak_idx += 1
     return "\n".join(e)
 
 
