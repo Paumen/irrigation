@@ -37,9 +37,9 @@ from pathlib import Path
 import faults
 from hydraulics import (DEFAULT_PUMP, G, I20_OP_RANGE_BAR, M_PER_BAR,
                         MP_REG_BAR, MP_REG_MIN_INLET_BAR, PUMP_CURVES,
-                        SOLVE_TOL, free_discharge_m3h, hazen_williams_m,
-                        hose_inner_d_m, i20_flow_m3h, mp_flow_m3h,
-                        pump_head_m, valve_loss_bar)
+                        SOLVE_TOL, _mp_arc_flow_m3h, free_discharge_m3h,
+                        hazen_williams_m, hose_inner_d_m, i20_flow_m3h,
+                        mp_flow_m3h, pump_head_m, valve_loss_bar)
 
 GRAPH = Path(__file__).resolve().parent.parent / "graph.yaml"
 
@@ -483,8 +483,14 @@ class Flow:
         self.order = order                           # topological (BFS) order
         self.active = set(order)
 
-        # heights: inherit down the tree; a node's own h_m wins
-        z_pump = self.nodes["pump.foot_valve"]["params"].get("h_m", 7.2)
+        # heights: inherit down the tree; a node's own h_m wins. The pump is
+        # structural -- fail loud if it or its elevation is missing rather than
+        # silently propagating a default that hides a broken graph.
+        if "pump.foot_valve" not in self.nodes:
+            raise ValueError("graph is missing the pump (pump.foot_valve)")
+        z_pump = self.nodes["pump.foot_valve"]["params"].get("h_m")
+        if z_pump is None:
+            raise ValueError("pump.foot_valve is missing its elevation 'h_m'")
         self.height[root] = z_pump
         for nid in order:
             if nid == root:
@@ -508,7 +514,6 @@ class Flow:
             q = i20_flow_m3h(spec["num"], p)[0]
         elif t == "spray":
             if spec["deregulate"]:                   # no regulation: q ~ sqrt(p)
-                from hydraulics import _mp_arc_flow_m3h
                 base = _mp_arc_flow_m3h(spec["model"], spec["arc"])
                 q = base * math.sqrt(p / MP_REG_BAR) if p > 0 else 0.0
             else:
@@ -620,7 +625,7 @@ def _solve_hydraulic(fl: Flow, pump_model, env):
         while resid(hi) > 0.0 and hi < 60.0:
             hi *= 1.5
         lo = 0.0
-        for _ in range(60):
+        for _ in range(40):          # 2^40 resolution is far below SOLVE_TOL
             mid = 0.5 * (lo + hi)
             if resid(mid) > 0.0:
                 lo = mid
@@ -681,7 +686,7 @@ def _zone_of(nid):
     return nid.split(".")[0]
 
 
-def _solve_pipeline(commanded, conditions, concurrent, graph_path, env):
+def _solve_pipeline(commanded, conditions, graph_path, env):
     graph, nodes, axis = _load_and_expand(conditions, graph_path)
     elec = _resolve_electrical(graph, nodes, commanded)
     valve_states = _resolve_valves(graph, nodes, elec, commanded)
@@ -698,9 +703,9 @@ def simulate(commanded_zones, conditions=None, concurrent_zones=None,
              graph_path=GRAPH, env_overrides=None):
     commanded = sorted(set(commanded_zones or []))
     env = dict(env_overrides or {})
-    R = _solve_pipeline(commanded, conditions, concurrent_zones, graph_path, env)
+    R = _solve_pipeline(commanded, conditions, graph_path, env)
     # healthy baseline (same commanded set, no faults) -> per-nozzle reference
-    B = _solve_pipeline(commanded, {}, concurrent_zones, graph_path, env)
+    B = _solve_pipeline(commanded, {}, graph_path, env)
     baseline = {nz: B["q"].get(nz, 0.0) for nz in B["fl"].nozzles}
 
     return _build_report(R["graph"], R["nodes"], commanded, concurrent_zones,
@@ -749,8 +754,6 @@ def _build_report(graph, nodes, commanded, concurrent, elec, valve_states, fl,
     # leaks
     leaks = []
     for nid in fl.leaks:
-        if nid in fl.active and q.get(nid, 0.0) <= 0 and not fl.is_sink(nid):
-            continue
         fq = fl.discharge(nid, max(p.get(nid, 0.0), 0.0) / M_PER_BAR) \
             if nid in fl.active else 0.0
         if nid in fl.active and fq > DEAD_Q:

@@ -61,6 +61,8 @@ class Handler(BaseHTTPRequestHandler):
         n = int(self.headers.get("Content-Length", 0))
         try:
             req = json.loads(self.rfile.read(n) or b"{}")
+            if not isinstance(req, dict):
+                raise ValueError("request body must be a JSON object")
             rep = simulate(req.get("commanded_zones", []),
                            req.get("conditions", {}),
                            req.get("concurrent_zones"))

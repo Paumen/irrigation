@@ -262,7 +262,7 @@ function paint(rep){
     let target=null;
     for(const c of cands){ target=document.querySelector(`#flow .node[data-id="${c}"]`); if(target)break; }
     if(!target)return;
-    const tr=target.getAttribute("transform").match(/translate\(([-\d.]+),([-\d.]+)\)/);
+    const tr=target.getAttribute("transform").match(/translate\(([-\d.]+)[,\s]+([-\d.]+)\)/);
     const x=+tr[1], y=+tr[2];
     const c=el("circle",{class:"leakdot",cx:x+W-6,cy:y+6,r:6});
     const ti=el("title"); ti.textContent="leak "+leakSet[loc]+" m³/h @ "+loc; c.appendChild(ti);
@@ -274,7 +274,7 @@ function paint(rep){
   for(const zk in rep.valves){
     const v=rep.valves[zk]; const vid=zk+".valve";
     const node=document.querySelector(`#flow .node[data-id="${vid}"]`); if(!node)continue;
-    const tr=node.getAttribute("transform").match(/translate\(([-\d.]+),([-\d.]+)\)/);
+    const tr=node.getAttribute("transform").match(/translate\(([-\d.]+)[,\s]+([-\d.]+)\)/);
     const x=+tr[1],y=+tr[2];
     const col={open:"var(--full)",shut:"var(--off)",weeping:"var(--weak)"}[v.state]||"var(--off)";
     const t=el("text",{class:"vstate",x:x+7,y:y+H+11,fill:col}); t.textContent=v.state;
