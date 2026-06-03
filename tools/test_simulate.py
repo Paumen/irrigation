@@ -91,6 +91,19 @@ check("E4 coil1 reason 'not commanded'",
       e4["electrical"]["coil_reasons"][1] == "not commanded",
       e4["electrical"]["coil_reasons"][1])
 
+# pump is an independent controller output: it can run with every valve shut
+e5 = simulate([], pump_on=True)
+check("E5 pump_on with no zones -> pump runs", e5["electrical"]["pump_running"], "")
+check("E5 all valves shut", all(e5["valves"][f"Z{z}"]["state"] == "shut"
+                                for z in (1, 2, 3, 4, 5)), e5["valves"])
+check("E5 dead-head, no leaks/flow", not e5["leaks"]
+      and e5["pump"]["flow_m3h"] < 0.001, (e5["leaks"], e5["pump"]["flow_m3h"]))
+check("E5 headline names the dead-head", "dead-head" in e5["summary"]["headline"],
+      e5["summary"]["headline"])
+e6 = simulate([3], pump_on=False)
+check("E6 pump forced off while Z3 called -> Z3 dead", all_dead(e6, 3),
+      grades(e6, 3))
+
 
 # ---------------------------------------------------------------------------
 # Valve pilot loop (Piece 1)

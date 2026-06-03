@@ -78,6 +78,7 @@ const SVGNS="http://www.w3.org/2000/svg";
 let G=null;                       // graph payload
 let conditions={};                // node -> condition
 let commanded=new Set([1,2,3,4]); // commanded zones
+let pumpOn=null;                  // null = follow schedule; true/false = forced
 let openComp=null;                // component whose sub-parts are shown
 let solveTimer=null;
 
@@ -220,7 +221,7 @@ async function solve(){
   let rep;
   try{
     const r=await fetch("/solve",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({commanded_zones:[...commanded],conditions})});
+      body:JSON.stringify({commanded_zones:[...commanded],conditions,pump_on:pumpOn})});
     rep=await r.json();
     if(rep.error){ document.getElementById("headline").textContent=rep.error; return; }
   }catch(e){ document.getElementById("headline").textContent="engine error: "+e; return; }
@@ -307,6 +308,15 @@ function renderZoneControls(){
     lab.appendChild(cb); lab.appendChild(document.createTextNode(" Z"+i+(i===5?"(man)":"")));
     z.appendChild(lab);
   });
+  // pump output: its own controller tap. follow / force-on / force-off.
+  const pl=document.createElement("label"); pl.style.marginLeft="10px";
+  pl.appendChild(document.createTextNode(" pump: "));
+  const sel=document.createElement("select");
+  [["follow","schedule"],["on","force on"],["off","force off"]].forEach(([v,t])=>{
+    const o=document.createElement("option"); o.value=v; o.textContent=t; sel.appendChild(o);});
+  sel.value=pumpOn===null?"follow":(pumpOn?"on":"off");
+  sel.onchange=()=>{pumpOn=sel.value==="follow"?null:(sel.value==="on"); solve();};
+  pl.appendChild(sel); z.appendChild(pl);
 }
 document.getElementById("clear").onclick=()=>{conditions={}; if(openComp)openComponent(openComp); solve();};
 

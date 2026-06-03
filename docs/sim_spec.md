@@ -35,10 +35,13 @@ reused — it asserts a single parent and `is_leaf ⇒ nozzle`, both false here.
 
 1. **Electrical pass** (`_resolve_electrical`) — pure reachability over `circuit`. A node is *live*
    iff an intact, un-gated path runs `mains → … → node → … → return(ctrl.psu)`. Zone taps `ctrl.trN`
-   conduct only when zone N is commanded; the pump tap `ctrl.trpmv` when any zone is. Because
-   `cond.common` is the shared return for all four `splice.Z*c`, `cond.common broken` removes the
-   return for all four coils at once → all four auto valves fail shut. This falls out of the netlist;
-   it is not special-cased. Output: per-coil energised + pump-running.
+   conduct only when zone N is commanded. The pump/master-valve tap `ctrl.trpmv` is its **own**
+   controller output: by default it follows the schedule (on when a zone is called), but `pump_on`
+   drives it explicitly — `True` runs the pump with every valve shut (a dead-head / pump test),
+   `False` holds it off while a zone is called. Because `cond.common` is the shared return for all
+   four `splice.Z*c`, `cond.common broken` removes the return for all four coils at once → all four
+   auto valves fail shut. This falls out of the netlist; it is not special-cased. Output: per-coil
+   energised + pump-running.
 
 2. **Valve pilot loop** (`_resolve_valves`) — each automatic valve is resolved to `{open, shut,
    weeping}` by reachability over its *own* sub-parts plus coil energisation, not a fault table:

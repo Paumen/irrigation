@@ -64,6 +64,7 @@ def simulate_irrigation(
     commanded_zones: list[int] | None = None,
     conditions: dict[str, str] | None = None,
     concurrent_zones: list[int] | None = None,
+    pump_on: bool | None = None,
 ) -> dict:
     """Predict what the system does under a fault set, from graph.yaml.
 
@@ -84,8 +85,13 @@ def simulate_irrigation(
             allowed set).
         concurrent_zones: which commanded zones run simultaneously (shared
             pump/main). Defaults to all commanded zones.
+        pump_on: drive the pump/master-valve output explicitly. None (default) =
+            it follows the schedule (runs when a zone is called); True = run the
+            pump even with every valve shut (dead-head / pump test); False = hold
+            the pump off while a zone is called.
     """
-    return _simulate(commanded_zones or [], conditions or {}, concurrent_zones)
+    return _simulate(commanded_zones or [], conditions or {}, concurrent_zones,
+                     pump_on)
 
 
 if __name__ == "__main__":

@@ -166,9 +166,14 @@ def _is_component(kdef):
 # ============================================================================
 # Piece 2 -- electrical pass
 # ============================================================================
-def _resolve_electrical(graph, nodes, commanded):
+def _resolve_electrical(graph, nodes, commanded, pump_commanded):
     """Reachability over `circuit`. A node is live iff an intact, un-gated path
-    runs source(mains) -> node -> return(ctrl.psu). Returns coils + pump."""
+    runs source(mains) -> node -> return(ctrl.psu). Returns coils + pump.
+
+    `ctrl.trpmv` (the pump/master-valve output) is its own controller tap, gated
+    by `pump_commanded` independently of the zone taps -- so the pump can run with
+    every valve shut (a dead-head / pump test), and a zone can be called with the
+    pump off."""
     # The coil nodes are dual-referenced (flow + circuit); expand() merges them
     # and keeps domain='flow', so pull them in explicitly alongside the circuit.
     circ_ids = {nid for nid, n in nodes.items() if n["domain"] == "circuit"}
@@ -181,14 +186,14 @@ def _resolve_electrical(graph, nodes, commanded):
         for t in outs:
             rev[t].append(nid)
 
-    # Gating: a zone tap conducts only when its zone is commanded; the pump-start
-    # tap conducts when any zone is commanded. Tracked separately from faults so
-    # "off because not commanded" != "off because broken".
+    # Gating: each controller tap conducts only when its station is commanded --
+    # the four zone taps by their zone, the pump tap by `pump_commanded`. Tracked
+    # separately from faults so "off because not commanded" != "off because broken".
     gated = set()
     for z in ZONES:
         if z not in commanded:
             gated.add(f"ctrl.tr{z}")
-    if not commanded:
+    if not pump_commanded:
         gated.add("ctrl.trpmv")
 
     def passable(nid):
@@ -227,7 +232,7 @@ def _resolve_electrical(graph, nodes, commanded):
     pump_running = (relay_coil_live and contactor_ok and line_ok
                     and motor_ok and cap_ok)
     pump_reason = _pump_reason(relay_coil_live, contactor_ok, line_ok,
-                               motor_ok, cap_ok, bool(commanded))
+                               motor_ok, cap_ok, pump_commanded)
 
     return {"coils": coils, "coil_reasons": coil_reasons,
             "pump_running": pump_running, "pump_reason": pump_reason}
@@ -245,9 +250,9 @@ def _coil_reason(nodes, z, cid, from_source, to_return, commanded, gated):
     return "energised"
 
 
-def _pump_reason(relay_coil_live, contactor_ok, line_ok, motor_ok, cap_ok, any_cmd):
-    if not any_cmd:
-        return "no zone commanded"
+def _pump_reason(relay_coil_live, contactor_ok, line_ok, motor_ok, cap_ok, pump_cmd):
+    if not pump_cmd:
+        return "pump not commanded"
     if not relay_coil_live:
         return "relay coil not energised"
     if not line_ok:
@@ -686,9 +691,9 @@ def _zone_of(nid):
     return nid.split(".")[0]
 
 
-def _solve_pipeline(commanded, conditions, graph_path, env):
+def _solve_pipeline(commanded, conditions, pump_commanded, graph_path, env):
     graph, nodes, axis = _load_and_expand(conditions, graph_path)
-    elec = _resolve_electrical(graph, nodes, commanded)
+    elec = _resolve_electrical(graph, nodes, commanded, pump_commanded)
     valve_states = _resolve_valves(graph, nodes, elec, commanded)
     fl = Flow(graph, nodes, valve_states, elec["pump_running"])
     pump_model = _pick_pump(nodes)
@@ -700,12 +705,16 @@ def _solve_pipeline(commanded, conditions, graph_path, env):
 
 
 def simulate(commanded_zones, conditions=None, concurrent_zones=None,
-             graph_path=GRAPH, env_overrides=None):
+             pump_on=None, graph_path=GRAPH, env_overrides=None):
     commanded = sorted(set(commanded_zones or []))
     env = dict(env_overrides or {})
-    R = _solve_pipeline(commanded, conditions, graph_path, env)
-    # healthy baseline (same commanded set, no faults) -> per-nozzle reference
-    B = _solve_pipeline(commanded, {}, graph_path, env)
+    # The pump/master-valve is its own controller output. By default it follows
+    # the schedule (runs when a zone is called); pass pump_on to drive it
+    # explicitly -- True to run with valves shut, False to hold it off.
+    pump_commanded = bool(commanded) if pump_on is None else bool(pump_on)
+    R = _solve_pipeline(commanded, conditions, pump_commanded, graph_path, env)
+    # healthy baseline (same commands, no faults) -> per-nozzle reference
+    B = _solve_pipeline(commanded, {}, pump_commanded, graph_path, env)
     baseline = {nz: B["q"].get(nz, 0.0) for nz in B["fl"].nozzles}
 
     return _build_report(R["graph"], R["nodes"], commanded, concurrent_zones,
@@ -800,7 +809,12 @@ def _leak_kind(nodes, nid):
 
 
 def _headline(zones, leaks, elec, valve_states, commanded):
+    open_zones = [z for z in zones if z["valve_state"] in ("open", "weeping")]
     if not commanded:
+        if elec["pump_running"] and not open_zones:
+            return "pump running, all valves shut — dead-head (no outlet)"
+        if elec["pump_running"]:
+            return "no zones commanded; pump running"
         return "no zones commanded"
     if not elec["pump_running"]:
         return f"pump not running ({elec['pump_reason']}) — nothing waters"
@@ -838,6 +852,7 @@ def main(argv=None):
             payload.get("commanded_zones", []),
             payload.get("conditions", {}),
             payload.get("concurrent_zones"),
+            pump_on=payload.get("pump_on"),
             env_overrides=payload.get("env"),
         )
     except ValueError as e:
