@@ -374,17 +374,22 @@ function paint(rep){
     flow.appendChild(t);
   }
 
-  // circuit: color coils + pump.motor; light up the wires carrying current
+  // circuit: color coils + pump.motor; light up the wires carrying current.
+  // A node is "hot" when it sits on the live path so the wire-into-it animates.
+  // Zone path: ctrl.ts{z} -> cond.s{z} -> splice.Z{z} -> coil -> splice.Z{z}c
+  //            -> cond.common -> ctrl.tcom.  Pump path: ctrl.tpmv/relay/pump.
   const energized=new Set();
+  const anyActive=rep.pump.running||Object.values(rep.electrical.coils).some(Boolean);
   document.querySelectorAll("#circuit .node").forEach(g=>{
     const id=g.getAttribute("data-id"); const rect=g.querySelector("rect");
     let fill="var(--panel2)", hot=false;
-    const m=id.match(/^Z(\d)\.valve\.coil$/);
-    if(m && rep.electrical.coils[+m[1]]){ fill="var(--live)"; hot=true; }
-    if((id==="pump.motor"||id==="relay.coil"||id==="relay.contactor") && rep.pump.running){
-      fill="var(--live)"; hot=true; }
-    if(/^(mains|common|controller)/.test(id) && (rep.pump.running||Object.values(rep.electrical.coils).some(Boolean))){
-      hot=true; }
+    const m=id.match(/^(?:Z(\d)\.valve\.coil|cond\.s(\d)|splice\.Z(\d)c?)$/);
+    if(m){ const z=m[1]||m[2]||m[3];
+      if(rep.electrical.coils[z]){ hot=true; if(id.endsWith(".coil")) fill="var(--live)"; } }
+    if(rep.pump.running){
+      if(id==="pump.motor"||id==="relay.coil"||id==="relay.contactor"){ fill="var(--live)"; hot=true; }
+      else if(id==="cond.rsig"||id==="cond.rcom"||id==="relay.line"||id==="pump.capacitor"){ hot=true; } }
+    if(anyActive && (id==="mains"||id==="cond.common"||id.startsWith("ctrl."))){ hot=true; }
     if(conditions[id]) fill="var(--dead)";
     rect.setAttribute("fill",fill);
     if(hot) energized.add(id);
