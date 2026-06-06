@@ -46,6 +46,7 @@ kinds:
     out: outlet
     max_pressure_bar: 10.3
     min_operating_bar: 1.5
+    Kv: 6.0
     parts:
       inlet:           {to: [diaphragm, metering_port, inlet_thread, body]}
       inlet_thread:    {to: [], fail: [broken, misconfigured]}
