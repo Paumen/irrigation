@@ -662,7 +662,7 @@ def _edge_loss_m(fl: Flow, child: str, q_m3h: float) -> float:
     if kind.startswith("hose."):
         c = fl.hwc.get(child, HW_C_OK)
         loss += hazen_williams_m(q_m3h, hose_inner_d_m(kind),
-                                 float(n["params"].get("len_m", 0.0)), c)
+                                 float(n["params"].get("length_m", 0.0)), c)
     if kind == "swing":
         loss += SJ_LOSS_BAR * M_PER_BAR
     # collapsed valve edge: inlet->outlet (open valve) carries the valve loss
