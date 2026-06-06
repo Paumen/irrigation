@@ -20,6 +20,7 @@ kinds:
     in: foot_valve
     out: outlet
     model: JET 82 M
+    bar: 4.6
     parts:
       foot_valve: {to: [suction], fail: [broken, clogged]}
       suction:    {to: [impeller], fail: [clogged]}

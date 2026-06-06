@@ -43,7 +43,7 @@ for zid in (1, 2, 3):
     check(f"baseline zone {zid} plausible", 1.4 < flows[zid] < 2.1, f"got {flows[zid]}")
 
 wl = base["weakest_links"]
-check("pressure window", wl["pressure"]["safe_window_bar"] == [3.5, 4.8],
+check("pressure window", wl["pressure"]["safe_window_bar"] == [3.5, 4.6],
       str(wl["pressure"]["safe_window_bar"]))
 check("no baseline pressure violations", wl["pressure"]["violations"] == [],
       str(wl["pressure"]["violations"]))
@@ -99,7 +99,7 @@ check("pinned head pressure honoured",
       all(h["pressure_bar"] == 3.5 for h in pinned["zones"][0]["heads"]),
       str(pinned["zones"][0]["heads"]))
 
-weak_pump = report({"pump_model": "JET 82 M"}, zone=2)
+weak_pump = report({"pump_model": "JET 62 M"}, zone=2)
 check("smaller pump lowers head pressure",
       weak_pump["zones"][0]["head_pressure_bar"]["max"]
       < base["zones"][1]["head_pressure_bar"]["max"],
