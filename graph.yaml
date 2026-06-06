@@ -31,7 +31,7 @@ kinds:
   manifold:
     in: inlet
     out: outlet
-    max_m3h: 7
+    bore_mm: 25
     max_pressure_bar: 10
     bends: 1
     parts:
