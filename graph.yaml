@@ -207,3 +207,8 @@ circuit:
     relay_return: {from: relay.coil,    to: controller}
     power_b:      {from: socket_b,      to: relay.contact}
     power_pump:   {from: relay.contact, to: pump}
+    signal_1:     {from: controller,    to: Z1.valve.coil}
+    signal_2:     {from: controller,    to: Z2.valve.coil}
+    signal_3:     {from: controller,    to: Z3.valve.coil}
+    signal_4:     {from: controller,    to: Z4.valve.coil}
+    valve_common: {from: [Z1.valve.coil, Z2.valve.coil, Z3.valve.coil, Z4.valve.coil], to: controller}
