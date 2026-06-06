@@ -4,13 +4,13 @@ fail_axis: [broken, clogged, misconfigured]
 kinds:
 
   supply:        {fail: [clogged]}
-  joint:         {fail: [broken, misconfigured]}
-  tee:           {fail: [broken]}
-  swing:         {fail: [broken]}
+  joint:         {max_bar: 10, fail: [broken, misconfigured]}
+  tee:           {max_bar: 10, fail: [broken]}
+  swing:         {max_bar: 10.2, fail: [broken]}
   hose.32:       {od_mm: 32, wall_mm: 3,   material: LDPE, max_bar: 6.3, fail: [broken, clogged]}
   hose.25:       {od_mm: 25, wall_mm: 2.7, material: LDPE, max_bar: 6,   fail: [broken, clogged]}
   hose.16:       {od_mm: 16, wall_mm: 3,   material: LDPE, max_bar: 6.3, fail: [broken, clogged]}
-  cap:           {fail: [broken]}
+  cap:           {max_bar: 10, fail: [broken]}
   nozzle.stream: {fail: [clogged, misconfigured]}
   conductor:     {fail: [broken]}
   splice:        {fail: [broken, misconfigured]}
@@ -31,6 +31,7 @@ kinds:
     in: inlet
     out: outlet
     max_m3h: 7
+    max_bar: 10
     parts:
       inlet:      {to: [outlet, body, inlet_seal, port_seal]}
       inlet_seal: {to: [], fail: [broken, misconfigured]}
@@ -41,6 +42,10 @@ kinds:
   valve.auto:
     in: inlet
     out: outlet
+    min_bar: 1.5
+    max_bar: 10.3
+    min_m3h: 0.1
+    max_m3h: 9.0
     parts:
       inlet:           {to: [diaphragm, metering_port, inlet_thread, body]}
       inlet_thread:    {to: [], fail: [broken, misconfigured]}
