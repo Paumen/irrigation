@@ -380,6 +380,32 @@ images:
     relates: real photo of the PSR door wiring diagram; pair with IMG.relay-breakdown-enclosure-cutaway for the inside-the-box view. Model UNCONFIRMED against PSR-22 spec — the enclosure and diagram are the Hunter PSR family.
     used_in: [relay.md]
 
+  IMG.relay-instruction-pump-wiring-annotated:
+    file: media/relay-instruction-pump-wiring-annotated.jpg
+    caption: This system's actual pump-start wiring — the controller's COM and MV terminals (lower closeup) feed the PSR relay's 24 VAC coil; the relay contact switches the 230 V Schuko mains to the DAB pump. EU colours — brown = live, blue = neutral, green/yellow = earth.
+    subjects: [relay, wiring, controller, pump]
+    legend: {top: "relay contact — 230 V mains in (Schuko plug) → load out to pump", middle: "green/yellow = earth, blue = neutral, brown = live", bottom: "controller terminals COM · MV · 1 · 2 — MV+COM drive the relay coil"}
+    failure_modes: [F4]
+    questions: [Q20]
+    relates: ground-truth wiring for the homeowner's setup. Controller terminals are COM, MV, 1, 2…; the master-valve output (MV) drives the relay coil exactly like a valve, sharing the single COM common. The pump runs on its own switched 230 V mains, not the controller's 24 VAC. Confirms IMG.controller-instruction-master-valve-wiring on the real hardware.
+    used_in: [relay.md, wiring.md]
+
+  IMG.relay-product-enclosure-open:
+    file: media/relay-product-enclosure-open.png
+    caption: Pump start relay enclosure, lid open — the compact contactor module mounted inside the weatherproof grey box.
+    subjects: [relay]
+    failure_modes: [F4]
+    questions: [Q20]
+    relates: clean product shot of the PSR-family enclosure interior; pairs with IMG.relay-product-psr-open (door diagram) and IMG.relay-breakdown-enclosure-cutaway (interior callouts).
+    used_in: [relay.md]
+
+  IMG.relay-product-enclosure-closed:
+    file: media/relay-product-enclosure-closed.png
+    caption: Pump start relay enclosure with the cover showing the wiring diagram printed inside the lid.
+    subjects: [relay]
+    relates: PSR-family enclosure exterior/lid; the inside-cover diagram is the same one read in IMG.relay-product-psr-open.
+    used_in: [relay.md]
+
   # ── sensor ──────────────────────────────────────────────────────────────────
   IMG.sensor-instruction-rain-freeze-wiring:
     file: media/sensor-instruction-rain-freeze-wiring.png
