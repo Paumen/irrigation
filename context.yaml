@@ -1,0 +1,42 @@
+system_metadata:
+  area: Netherlands, Wijchen
+location_descriptions:
+  house: indoor — main residence
+  shed: indoor — outbuilding housing the pump start relay
+  well: outdoor — underground water supply housing the pump
+  valve_box: outdoor — in-ground enclosure containing the manifold and 4 zone solenoid valves
+  in_ground: outdoor — buried in lawn/garden
+control_paths:
+- via:
+  - touchscreen
+  to: controller
+- via:
+  - mobile_app
+  - home_wifi
+  to: controller
+- via:
+  - mobile_app
+  - rainmachine_cloud
+  - home_wifi
+  to: controller
+settings:
+  programs:
+  - name: all_zones_sequential
+    scope: Z1–Z4 (all valve.auto zones)
+    run: one at a time
+  - name: single_zone
+    scope: one of Z1–Z4
+  - name: pump_start_only
+    scope: MAIN.relay.01 only — drives pump for manual Z5
+system_design_choices:
+  backflow_preventer: well is isolated from drinking water
+  master_valve: pump is controller-triggered and provides the leak-limiting shutoff a master valve would add
+  flow_meter: programs run one zone at a time; sensor adds failure modes; diagnostic value can be inferred from other observations
+  pressure_meter: programs run one zone at a time; sensor adds failure modes; diagnostic value can be inferred from other
+    observations
+  manual_shutoff_valve: pump on/off is the primary shutoff (Z5's valve.manual is a zone control, not a system shutoff)
+  zone_1_head_mix_rationale: rotor for lawn, MP rotators for flower beds (different precipitation rates)
+cable_runs:
+  controller_to_valve_box: 10
+  controller_to_relay: 10
+assumed_system_pressure_bar: 3.0
