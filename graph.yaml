@@ -19,6 +19,7 @@ kinds:
     out: outlet
     model: JET 82 M
     bar: 4.6
+    max_flow_m3h: 3.6
     parts:
       foot_valve: {to: [suction], fail: [broken, clogged]}
       suction:    {to: [impeller], fail: [clogged]}
@@ -33,6 +34,8 @@ kinds:
     max_pressure_bar: 10
     bends: 1
     model: LEV 6-way distributor
+    material: hard plastic
+    connection: '1" swivel nut female thread'
     parts:
       inlet:      {to: [outlet, body, inlet_seal, port_seal]}
       inlet_seal: {to: [], fail: [broken, misconfigured]}

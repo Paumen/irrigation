@@ -49,6 +49,7 @@ equipment:
     location: in_ground
   swing:
     location: in_ground
+    price_eur: 5
   manifold:
     installed: 2020-08
     location: valve_box
