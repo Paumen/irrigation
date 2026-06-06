@@ -52,13 +52,13 @@ kinds:
       seat:            {to: [outlet], fail: [broken, clogged]}
       metering_port:   {to: [chamber], fail: [clogged]}
       chamber:         {to: [solenoid_entry, bleed_screw], acts: [diaphragm]}
-      bleed_screw:     {to: [], fail: [broken, misconfigured], ops: [closed, open]}
+      bleed_screw:     {to: [], fail: [broken, misconfigured]}
       solenoid_entry:  {to: [plunger], fail: [clogged]}
       plunger:         {to: [solenoid_exhaust], fail: [broken, clogged]}
       solenoid_exhaust: {to: [outlet], fail: [clogged]}
-      coil:            {ohm: [20, 60], acts: [plunger], fail: [broken], ops: [auto, bleed]}
+      coil:            {ohm: [20, 60], acts: [plunger], fail: [broken]}
       spring:          {acts: [diaphragm], fail: [broken]}
-      flow_control:    {acts: [diaphragm], fail: [broken, misconfigured], ops: [open, throttled, shut]}
+      flow_control:    {acts: [diaphragm], fail: [broken, misconfigured]}
       bonnet:          {to: [], acts: [chamber], fail: [broken, misconfigured]}
       oring:           {to: [], acts: [solenoid_entry], fail: [broken]}
       body:            {to: [], acts: [seat], fail: [broken]}
@@ -72,7 +72,7 @@ kinds:
       inlet:        {to: [seat, inlet_thread, body]}
       inlet_thread: {to: [], fail: [broken, misconfigured]}
       seat:         {to: [outlet], fail: [broken, clogged]}
-      handle:       {acts: [seat], fail: [misconfigured], ops: [closed, open]}
+      handle:       {acts: [seat], fail: [misconfigured]}
       body:         {to: [], fail: [broken]}
       outlet:       {}
 
@@ -89,7 +89,7 @@ kinds:
       filter:         {to: [nozzle], fail: [clogged]}
       nozzle:         {to: [], fail: [clogged, misconfigured]}
       arc:            {acts: [nozzle], fail: [misconfigured]}
-      flow_control:   {acts: [nozzle], ops: [open, throttled, shut]}
+      flow_control:   {acts: [nozzle]}
 
   head.spray:
     in: inlet_thread
