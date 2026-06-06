@@ -18,8 +18,7 @@ kinds:
     in: foot_valve
     out: outlet
     model: JET 82 M
-    bar: 4.6
-    max_flow_m3h: 3.6
+    max_output_bar: 4.6
     parts:
       foot_valve: {to: [suction], fail: [broken, clogged]}
       suction:    {to: [impeller], fail: [clogged]}
@@ -99,7 +98,7 @@ kinds:
 
   head.spray:
     in: inlet_thread
-    reg_bar: 2.76
+    regulated_bar: 2.76
     model: Hunter Pro-Spray PRS40
     parts:
       inlet_thread:   {to: [body], fail: [broken, misconfigured]}

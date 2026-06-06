@@ -645,7 +645,7 @@ class Flow:
 
 def _pick_pump(nodes):
     """Nearest JET curve to the pump's rated bar (mirrors hydraulics)."""
-    bar = nodes.get("pump.foot_valve", {}).get("params", {}).get("bar")
+    bar = nodes.get("pump.foot_valve", {}).get("params", {}).get("max_output_bar")
     if not bar:
         return DEFAULT_PUMP
     target = bar * M_PER_BAR

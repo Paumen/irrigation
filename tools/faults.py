@@ -29,7 +29,7 @@ import yaml
 GRAPH = Path(__file__).resolve().parent.parent / "graph.yaml"
 
 # instance/kind/part keys that are physical parameters, carried as metadata
-PARAM_KEYS = ("ohm", "volt", "reg_bar", "h_m", "length_m", "max_m3h", "bar", "nozzle", "arc")
+PARAM_KEYS = ("ohm", "volt", "regulated_bar", "h_m", "length_m", "max_output_bar", "nozzle", "arc")
 
 
 def load(path: Path = GRAPH) -> dict:
