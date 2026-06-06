@@ -192,56 +192,18 @@ flow:
   Z6.cap:    {kind: cap}
 
 circuit:
-  mains: {volt: 230, to: [ctrl.psu, relay.line]}
-
-  ctrl.psu:    {to: [ctrl.fw], fail: [broken]}
-  ctrl.fw:     {to: [ctrl.tr1, ctrl.tr2, ctrl.tr3, ctrl.tr4, ctrl.trpmv], fail: [broken]}
-  ctrl.sched:  {acts: [ctrl.fw], fail: [misconfigured]}
-  ctrl.screen: {acts: [ctrl.fw], fail: [broken]}
-  ctrl.wifi:   {acts: [ctrl.fw], fail: [broken]}
-  ctrl.cloud:  {acts: [ctrl.fw], fail: [broken]}
-
-  ctrl.tr1:   {to: [ctrl.ts1], fail: [broken]}
-  ctrl.tr2:   {to: [ctrl.ts2], fail: [broken]}
-  ctrl.tr3:   {to: [ctrl.ts3], fail: [broken]}
-  ctrl.tr4:   {to: [ctrl.ts4], fail: [broken]}
-  ctrl.trpmv: {to: [ctrl.tpmv], fail: [broken]}
-
-  ctrl.ts1:  {to: [cond.s1], fail: [broken, misconfigured]}
-  ctrl.ts2:  {to: [cond.s2], fail: [broken, misconfigured]}
-  ctrl.ts3:  {to: [cond.s3], fail: [broken, misconfigured]}
-  ctrl.ts4:  {to: [cond.s4], fail: [broken, misconfigured]}
-  ctrl.tpmv: {to: [cond.rsig], fail: [broken, misconfigured]}
-  ctrl.tcom: {to: [ctrl.psu], fail: [broken, misconfigured]}
-  ctrl.trcom: {to: [ctrl.psu], fail: [broken, misconfigured]}
-
-  cond.s1: {kind: conductor, to: [splice.Z1]}
-  cond.s2: {kind: conductor, to: [splice.Z2]}
-  cond.s3: {kind: conductor, to: [splice.Z3]}
-  cond.s4: {kind: conductor, to: [splice.Z4]}
-
-  splice.Z1: {kind: splice, to: [Z1.valve.coil]}
-  splice.Z2: {kind: splice, to: [Z2.valve.coil]}
-  splice.Z3: {kind: splice, to: [Z3.valve.coil]}
-  splice.Z4: {kind: splice, to: [Z4.valve.coil]}
-
-  Z1.valve.coil: {to: [splice.Z1c]}
-  Z2.valve.coil: {to: [splice.Z2c]}
-  Z3.valve.coil: {to: [splice.Z3c]}
-  Z4.valve.coil: {to: [splice.Z4c]}
-
-  splice.Z1c: {kind: splice, to: [cond.common]}
-  splice.Z2c: {kind: splice, to: [cond.common]}
-  splice.Z3c: {kind: splice, to: [cond.common]}
-  splice.Z4c: {kind: splice, to: [cond.common]}
-
-  cond.common: {kind: conductor, to: [ctrl.tcom]}
-
-  cond.rsig:       {kind: conductor, to: [relay.coil]}
-  relay.coil:      {to: [cond.rcom], acts: [relay.contactor], fail: [broken]}
-  cond.rcom:       {kind: conductor, to: [ctrl.trcom]}
-  relay.line:      {to: [relay.contactor], fail: [broken]}
-  relay.contactor: {to: [pump.motor], fail: [broken, clogged]}
-
-  pump.capacitor: {acts: [pump.motor], fail: [broken]}
-  pump.motor:     {acts: [pump.impeller], fail: [broken]}
+  parts:
+    socket_a: {}
+    socket_b: {}
+    controller: {}
+    pump: {}
+    relay:
+      coil: {}
+      contact: {}
+      coil_energized_closes: contact
+  wires:
+    power_a:      {from: socket_a,      to: controller}
+    signal_relay: {from: controller,    to: relay.coil}
+    relay_return: {from: relay.coil,    to: controller}
+    power_b:      {from: socket_b,      to: relay.contact}
+    power_pump:   {from: relay.contact, to: pump}
