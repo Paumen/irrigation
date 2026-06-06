@@ -6,8 +6,8 @@ kinds:
   supply:        {fail: [clogged]}
   joint:         {max_pressure_bar: 10, fail: [broken, misconfigured]}
   tee:           {max_pressure_bar: 10, bends: 1, fail: [broken, misconfigured]}
-  swing.34x34:   {max_pressure_bar: 10.2, bore_mm: 19, bends: 4, fail: [broken]}   # 3/4" x 3/4"
-  swing.34x12:   {max_pressure_bar: 10.2, bore_mm: 13, bends: 4, fail: [broken]}   # 3/4" x 1/2"
+  swing.34x34:   {max_pressure_bar: 10.2, bore_mm: 19, bends: 4, model: "Hunter SJ 3/4x3/4", fail: [broken]}   # 3/4" x 3/4"
+  swing.34x12:   {max_pressure_bar: 10.2, bore_mm: 13, bends: 4, model: "Hunter SJ 3/4x1/2", fail: [broken]}   # 3/4" x 1/2"
   hose.32:       {outer_diameter_mm: 32, wall_thickness_mm: 3,   material: LDPE, max_pressure_bar: 6.3, fail: [broken, clogged]}
   hose.25:       {outer_diameter_mm: 25, wall_thickness_mm: 2.7, material: LDPE, max_pressure_bar: 6,   fail: [broken, clogged]}
   hose.16:       {outer_diameter_mm: 16, wall_thickness_mm: 3,   material: LDPE, max_pressure_bar: 6.3, fail: [broken, clogged]}
@@ -32,6 +32,7 @@ kinds:
     bore_mm: 25
     max_pressure_bar: 10
     bends: 1
+    model: LEV 6-way distributor
     parts:
       inlet:      {to: [outlet, body, inlet_seal, port_seal]}
       inlet_seal: {to: [], fail: [broken, misconfigured]}
@@ -45,6 +46,7 @@ kinds:
     max_pressure_bar: 10.3
     min_operating_bar: 1.5
     Kv: 6.0
+    model: Hunter PGV-101G
     parts:
       inlet:           {to: [diaphragm, metering_port, inlet_thread, body]}
       inlet_thread:    {to: [], fail: [broken, misconfigured]}
@@ -78,6 +80,7 @@ kinds:
 
   head.rotor:
     in: inlet_thread
+    model: Hunter I-20-04-SS
     parts:
       inlet_thread:   {to: [body], fail: [broken, misconfigured]}
       body:           {to: [riser, check_valve], fail: [broken]}
@@ -94,6 +97,7 @@ kinds:
   head.spray:
     in: inlet_thread
     reg_bar: 2.76
+    model: Hunter Pro-Spray PRS40
     parts:
       inlet_thread:   {to: [body], fail: [broken, misconfigured]}
       body:           {to: [regulator, check_valve, cap], fail: [broken]}
@@ -192,10 +196,11 @@ flow:
 circuit:
   parts:
     adapter: {}
-    controller: {}
+    controller: {model: RainMachine HD-16 TOUCH, pump_lead_s: 5}
     mains: {}
     pump: {}
     relay:
+      model: Hunter PSR-22
       coil: {}
       contact: {}
       neutral: {}
