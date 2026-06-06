@@ -7,9 +7,9 @@ kinds:
   joint:         {fail: [broken, misconfigured]}
   tee:           {fail: [broken]}
   swing:         {fail: [broken]}
-  hose.32:       {fail: [broken, clogged]}
-  hose.25:       {fail: [broken, clogged]}
-  hose.16:       {fail: [broken, clogged]}
+  hose.32:       {od_mm: 32, wall_mm: 3,   material: LDPE, max_bar: 6.3, fail: [broken, clogged]}
+  hose.25:       {od_mm: 25, wall_mm: 2.7, material: LDPE, max_bar: 6,   fail: [broken, clogged]}
+  hose.16:       {od_mm: 16, wall_mm: 3,   material: LDPE, max_bar: 6.3, fail: [broken, clogged]}
   cap:           {fail: [broken]}
   nozzle.stream: {fail: [clogged, misconfigured]}
   conductor:     {fail: [broken]}
