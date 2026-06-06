@@ -40,3 +40,37 @@ cable_runs:
   controller_to_valve_box: 10
   controller_to_relay: 10
 assumed_system_pressure_bar: 3.0
+equipment:
+  pump.well:
+    installed: 2023-06
+    location: well
+  hose:
+    installed: 2020-08
+    location: in_ground
+  swing:
+    location: in_ground
+  manifold:
+    installed: 2020-08
+    location: valve_box
+    price_eur: 150
+  valve.auto:
+    installed: 2020-08
+    location: valve_box
+    price_eur: 25
+  head.rotor:
+    installed: 2020-08
+    location: in_ground
+    price_eur: 25
+    inlet: 3/4"
+  head.spray:
+    installed: 2020-08
+    location: in_ground
+    price_eur: 25
+    inlet: 1/2"
+  controller:
+    installed: 2020-08
+    location: house
+  relay:
+    installed: 2020-08
+    location: shed
+    price_eur: 100
