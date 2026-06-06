@@ -19,8 +19,7 @@ kinds:
   pump.well:
     in: foot_valve
     out: outlet
-    max_m3h: 3.8
-    bar: 4.8
+    model: JET 82 M
     parts:
       foot_valve: {to: [suction], fail: [broken, clogged]}
       suction:    {to: [impeller], fail: [clogged]}
