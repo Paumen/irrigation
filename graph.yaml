@@ -5,7 +5,7 @@ kinds:
 
   supply:        {fail: [clogged]}
   joint:         {max_pressure_bar: 10, fail: [broken, misconfigured]}
-  tee:           {max_pressure_bar: 10, fail: [broken]}
+  tee:           {max_pressure_bar: 10, bends: 1, fail: [broken]}
   swing.34x34:   {max_pressure_bar: 10.2, bore_mm: 19, bends: 4, fail: [broken]}   # 3/4" x 3/4"
   swing.34x12:   {max_pressure_bar: 10.2, bore_mm: 13, bends: 4, fail: [broken]}   # 3/4" x 1/2"
   hose.32:       {outer_diameter_mm: 32, wall_thickness_mm: 3,   material: LDPE, max_pressure_bar: 6.3, fail: [broken, clogged]}
@@ -32,7 +32,8 @@ kinds:
     in: inlet
     out: outlet
     max_m3h: 7
-    max_bar: 10
+    max_pressure_bar: 10
+    bends: 1
     parts:
       inlet:      {to: [outlet, body, inlet_seal, port_seal]}
       inlet_seal: {to: [], fail: [broken, misconfigured]}
