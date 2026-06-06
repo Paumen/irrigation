@@ -79,7 +79,7 @@ turn it clockwise until snug on the valve.
 Loosen the bleed screw just enough to release air — ¼ to ½ turn. Hand-tighten it to close
 the valve again. Some water trickling from the bleed screw is normal.
 
-Where a manual hose is fed off the manifold (see `setup.yaml`), the pump is started from the
+Where a manual hose is fed off the manifold (see `graph.yaml`), the pump is started from the
 controller, and with all solenoids shut the manual hose fills and can be opened at the hose
 end. The valve closes within about 15 seconds after the solenoid or bleed screw is returned
 to its closed position.
@@ -132,7 +132,7 @@ form a tier:
 **Regulation tiers in practice.** The PGV-101G valve is **not** pressure-regulated, so where
 no system-wide regulator is fitted, regulation falls to the heads — PRS40 bodies hold the MP
 nozzles at setpoint (see `heads-spray.md`), while unregulated I-20 rotors rely on supply pressure
-landing in their 1.7–4.8 bar window (see `heads.md`, and `setup.yaml` for what is actually fitted).
+landing in their 1.7–4.8 bar window (see `heads.md`, and `graph.yaml` for what is actually fitted).
 
 When to think about Accusync: if a zone is **consistently misty or over-radius** at
 the heads, the PRS40 isn't engaging (inlet too low — see `heads-spray.md` *Misting from the
@@ -172,7 +172,7 @@ convenience.
 
 > Note: on a recent install, backwards orientation, unflushed construction debris, an unseated
 > diaphragm, and loose bonnet screws are all live possibilities even when nothing has "failed".
-> Check the arrow first. (See `setup.yaml` for install dates.)
+> Check the arrow first. (See `context.yaml`'s `equipment:` for install dates.)
 
 **Use nipples with cut threads, not moulded threads.** Moulded thread sizes vary a lot
 between brands, so a moulded male adapter can end up too tight with one brand and too loose
@@ -237,7 +237,7 @@ replace the diaphragm assembly. Full detail in `valve-internals.md`.
 
 The PGV family comes in several body styles. This reference documents the **1" globe with flow
 control (PGV-101G)**; the others are listed so a non-matching body can be ruled out during
-identification (check `setup.yaml` for what's installed).
+identification (check `graph.yaml` for what's installed).
 
 ![PGV 1" globe with flow control (PGV-101G) — flow control knob on top, solenoid with looped lead, inline ports.](../media/valve-auto-product-pgv-101g.jpg)
 
@@ -290,7 +290,7 @@ Hunter's flow/pressure vendor table):
 
 At a typical per-zone flow of ~2.2 m³/h (≈37 l/min), each zone valve costs ~0.28 bar of
 the available pump head — useful when budgeting pressure for the heads downstream. (See the
-hydraulics tool / `setup.yaml` for this system's actual per-zone flows.)
+hydraulics tool for this system's actual per-zone flows, solved from `graph.yaml`.)
 
 ## Filter / mesh (PGV 1")
 

@@ -135,4 +135,4 @@ Quick read: the canister colour tells you the line (black = standard 10 mm/hr; g
 
 - `heads.md` — I-20 rotors, the head-area overview, and *Low-head drainage* (head-side vs valve-side).
 - `valve.md` — *Per-valve pressure regulation (Accusync)* when at-the-head PRS40 regulation isn't enough; *Weeping when off* for the valve-side of low-head drainage.
-- `setup.yaml` — per-zone head counts and types for this system.
+- `graph.yaml` — per-zone head counts and types for this system (`flow:`).

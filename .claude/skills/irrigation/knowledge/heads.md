@@ -14,7 +14,7 @@ contents:
 
 # Heads — rotors, spray bodies, MP Rotator nozzles
 
-The heads are the parts that actually spray water at the lawn. Three components (see `setup.yaml` for what is fitted per zone):
+The heads are the parts that actually spray water at the lawn. Three components (see `graph.yaml` for what is fitted per zone):
 
 - **I-20 rotors** — pop-up rotors for the large open areas (long radius, slow rotation). Covered in full below.
 - **Pro-Spray PRS40 bodies** — pressure-regulated pop-up bodies (~2.8 bar at the nozzle) that carry the MP nozzles. See `heads-spray.md`.
@@ -172,4 +172,4 @@ Two distinct failure modes, with the same symptom:
 - `valve-internals.md` — partly-stuck diaphragm restricting flow to a zone, an alternative failure mode when a whole zone is weak.
 - `hoses.md` — *Broken-hose signature* and *Capping or shortening a hose* for the zone-wide-weakness case and for head removal/cap-off planning.
 - `wiring.md` — heads are mechanical only; no wiring at the head.
-- `setup.yaml` — per-zone head counts and types for this system.
+- `graph.yaml` — per-zone head counts and types for this system (`flow:`).

@@ -127,7 +127,7 @@ still won't operate, replace the solenoid. Shut off, unscrew the old solenoid co
 fit the new one clockwise until snug, and reconnect with **waterproof** connectors (`wiring.md`).
 
 Part number: **434100** (solenoid assembly, includes O-ring 262600 and seal 364400). Check
-which solenoid is fitted in `setup.yaml`. The full PGV parts list is in `valve.md`.
+which solenoid is fitted in `graph.yaml`. The full PGV parts list is in `valve.md`.
 
 ## Wiring to the solenoid
 
