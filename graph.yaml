@@ -4,13 +4,13 @@ fail_axis: [broken, clogged, misconfigured]
 kinds:
 
   supply:        {fail: [clogged]}
-  joint:         {max_bar: 10, fail: [broken, misconfigured]}
-  tee:           {max_bar: 10, fail: [broken]}
+  joint:         {max_pressure_bar: 10, fail: [broken, misconfigured]}
+  tee:           {max_pressure_bar: 10, fail: [broken]}
   swing:         {max_bar: 10.2, fail: [broken]}
   hose.32:       {outer_diameter_mm: 32, wall_thickness_mm: 3,   material: LDPE, max_pressure_bar: 6.3, fail: [broken, clogged]}
   hose.25:       {outer_diameter_mm: 25, wall_thickness_mm: 2.7, material: LDPE, max_pressure_bar: 6,   fail: [broken, clogged]}
   hose.16:       {outer_diameter_mm: 16, wall_thickness_mm: 3,   material: LDPE, max_pressure_bar: 6.3, fail: [broken, clogged]}
-  cap:           {max_bar: 10, fail: [broken]}
+  cap:           {max_pressure_bar: 10, fail: [broken]}
   nozzle.stream: {fail: [clogged, misconfigured]}
   conductor:     {fail: [broken]}
   splice:        {fail: [broken, misconfigured]}
