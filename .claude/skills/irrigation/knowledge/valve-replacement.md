@@ -1,0 +1,98 @@
+---
+subject: Valve replacement compatibility (PGV/ICV drop-in table)
+failure_mode_area: F7
+serves: [replace]
+parent: valve
+summary: Which Hunter PGV/ICV models drop in for the Z1–Z4 PGV-101G zone valves vs. need a clearance check, an adjustment (re-orient / fittings / outlet), or a re-plumb — plus the manifest image mapped to each row.
+read_when: the homeowner is choosing or sourcing a replacement automatic zone valve and needs to know whether a candidate model is a true drop-in for the installed PGV-101G.
+contents:
+  - compatibility table (drop-in / caveat / adjustment / not-like-for-like)
+  - reading the verdicts
+  - related images (manifest IDs mapped to table rows)
+---
+
+# Valve replacement compatibility
+
+Reference for swapping the **automatic zone valves** (Z1–Z4): 1" Hunter PGV
+globe valves, FPT × FPT threaded, 24 VAC solenoid. The currently installed
+valve is the **PGV-101G** (globe body + flow-control knob). Use this table
+to judge whether a replacement valve is a true drop-in, a drop-in with a
+caveat, an in-place swap that needs some adjustment, or a non-starter.
+
+Anything that changes flow/pressure (rarely, for a like-size valve) should
+still be confirmed with `irrigation_hydraulics`; the bigger risks here are
+**physical fit** (thread type, body size, mounting class) and
+**electrical fit** (solenoid voltage).
+
+## Compatibility table
+
+| Verdict | Model | Why |
+|---|---|---|
+| ✅ Direct drop-in | **PGV-100G** | Same 1" globe body, FPT thread, 24 VAC solenoid. No flow control. |
+| ✅ Direct drop-in | **PGV-101G** | **Your current valve.** Same body/thread/solenoid; adds a flow-control knob you can leave open. |
+| ⚠️ Caveat: clearance | **PGV-100JT-G** | Same 1" globe / FPT / 24 VAC, but **jar-top bonnet → wider & taller body (~3¼" vs 2½")**. Check box/manifold clearance. |
+| ⚠️ Caveat: clearance | **PGV-101JT-G** | As above (jar-top, wider & taller) **+ flow control**. Clearance check. |
+| ⚠️ Caveat: clearance | **ICV-101G** | Threads + 24 VAC match, so it screws on. But taller/wider commercial body (clearance check) and ≈15 bar rating is overkill for a residential zone. |
+| ⚠️ Caveat: clearance | **ICV-101G-FS / ICV-101G-FS-R** | As ICV-101G, taller still (Filter Sentry). Reclaimed (`-R`) only if you want the purple ID. |
+| ⚠️ Caveat: no solenoid | **any `-LS` model** | Same body, ships **without a solenoid** — transfer yours or buy one. |
+| 🔧 Adjustment: re-orient | **PGV-100A / PGV-101A** | 1", but **90° body** = bottom-feed / 90° outlet. Plumbing must feed from below. |
+| 🔧 Adjustment: fittings | **PGV-100MM / PGV-101MM** | 1", but **male × male** thread — your hose needs female fittings. |
+| 🔧 Adjustment: fittings | **PGV-100JT-MM / PGV-101JT-MM** | Jar-top (also wider), same male × male thread issue. |
+| 🔧 Adjustment: re-plumb outlet | **PGV-100MB / PGV-101MB** | Male inlet + **barb outlet** for poly/drip hose — outlet side must be re-plumbed. |
+| 🔧 Adjustment: re-plumb outlet | **PGV-100JT-MB / PGV-101JT-MB** | Jar-top (also wider), same barb-outlet issue. |
+| ❌ Not like-for-like: size | **PGV-151 / -151-LS** | 1½" — needs reducer bushings or a re-plumb; sized for ≈4.5–27 m³/h. |
+| ❌ Not like-for-like: size | **PGV-201 / -201-LS** | 2" — re-plumb; ≈4.5–34 m³/h. |
+| ❌ Not like-for-like: size | **ICV-151G / ICV-201G / ICV-301** (+ all `-FS`/`-R`/`-A`/`-G` variants) | 1½"–3" commercial — re-plumb + larger valve box. |
+| ❌ Not like-for-like: class | **PGV-ASV** (¾") | Anti-siphon — mounts above ground, ≥6" above the highest head; not an in-box inline replacement. |
+| ❌ Not like-for-like: class | **PGV-101-ASV** (1") | 1" but still anti-siphon — different mounting/install class, not a drop-in. |
+
+### Reading the verdicts
+
+- **✅ Direct drop-in** — unscrew old, thread new in same orientation (flow
+  arrow downstream), move the wires over. Follow the valve-replacement steps
+  in `../playbooks/parts.md`.
+- **⚠️ Caveat** — it will fit/run, but check one thing first: **clearance**
+  (does the wider/taller body clear the box and neighbouring valves?), or
+  **solenoid** (`-LS` ships without one).
+- **🔧 Adjustment** — same nominal size, but you must change something:
+  re-orient the plumbing (90° body), add/remove female fittings
+  (male × male), or re-plumb the outlet (barb).
+- **❌ Not like-for-like** — wrong size or wrong class (anti-siphon).
+  Re-plumbing or a different install procedure; not a swap.
+
+## Related images
+
+Use the skill's **existing** image system — don't add a parallel one. Valve
+photos already live in `media/` and are indexed in `images.yaml`; surface
+them with `SendUserFile`, passing the manifest `caption:` (see SKILL.md →
+*Images*). Markdown `![](…)` does not render in the chat UI.
+
+Manifest images already on hand, mapped to the rows above (look the ID up in
+`images.yaml`, then send its `file:`):
+
+| Table row | `images.yaml` ID |
+|---|---|
+| PGV-101G (installed) | `IMG.valve-auto-product-pgv-101g` (the only clean standalone 101G shot) |
+| PGV-100G drop-in | `IMG.valve-auto-product-pgv-100g-globe`, `IMG.valve-auto-product-pgv-100g` — the 100G has the same globe body/threads as your 101G but **no flow-control knob** (bleed screw only on top). |
+| what you actually swap (bonnet / diaphragm / solenoid) | `IMG.valve-auto-breakdown-pgv-replacement-parts`, `IMG.valve-auto-instruction-bleed-screw-location` |
+| `-A` re-orient (90° body) | `IMG.valve-auto-product-pgv-101a` (a PGV-101A) |
+| `-MB` re-plumb outlet (barb) | `IMG.valve-auto-product-pgv-101mb-barb` (a PGV-101MB) |
+| `MM` end type | `IMG.valve-auto-product-pgv-family` — 1" family: 101G, 100G, 101MM, 100MM side by side |
+| PGV-151 (1½") / PGV-201 (2") over-size | `IMG.valve-auto-product-pgv-151g`, `IMG.valve-auto-product-pgv-201g` |
+
+The `…cutaway` image (`IMG.valve-auto-product-pgv-internals-cutaway`)
+is probably a larger PGV-201G body, not the 101G — fine for illustrating how the
+valve works (the hydraulics are common to the family), but don't present it as
+the homeowner's exact valve.
+
+No manifest image yet for: 1" **jar-top** (`…JT-G`), the **ICV** series, or the
+anti-siphon (`ASV`). To
+add one, drop the picture in `media/` and add an entry keyed by the model under
+`subjects:`, with `file:` (path under `media/`) and a `caption:` — it then
+surfaces the same way as every entry above.
+
+Linking convention (matches the rest of the skill):
+1. One image index only — `images.yaml`. One compatibility index only — this
+   table. Neither duplicates the other.
+2. When the user is comparing, lead with the **currently installed** valve
+   (PGV-101G) and, at most, the one option being weighed — never a gallery.

@@ -1,0 +1,1572 @@
+{
+  "sliderCurves": {
+    "standard": [
+      -0.2,
+      0,
+      0.2,
+      0.4
+    ],
+    "fast": [
+      -0.2,
+      0.2,
+      0.2,
+      0.4
+    ]
+  },
+  "weights": {
+    "effort": 3,
+    "breadth": 1.0,
+    "ease": 0.5,
+    "matrixExpectedFilled": 1
+  },
+  "failure_modes": [
+    {
+      "id": "F1.5",
+      "parent": "F1",
+      "baseline": 1.2,
+      "label": "App software error (bug)"
+    },
+    {
+      "id": "F1.8",
+      "parent": "F1",
+      "baseline": 1.2,
+      "label": "App external fault (no wifi / cloud)"
+    },
+    {
+      "id": "F2.1",
+      "parent": "F2",
+      "baseline": 0.8,
+      "label": "Controller physical defect (incl. screen)"
+    },
+    {
+      "id": "F2.5",
+      "parent": "F2",
+      "baseline": 0.6,
+      "label": "Controller software error (firmware)"
+    },
+    {
+      "id": "F2.6",
+      "parent": "F2",
+      "baseline": 1.2,
+      "label": "Controller settings (schedule / zone map)"
+    },
+    {
+      "id": "F2.8",
+      "parent": "F2",
+      "baseline": 0.6,
+      "label": "Controller external fault (no 230 V power)"
+    },
+    {
+      "id": "F3.1.1",
+      "parent": "F3",
+      "baseline": 1,
+      "label": "Wiring zone conductor (break / cut)"
+    },
+    {
+      "id": "F3.1.2",
+      "parent": "F3",
+      "baseline": 0.8,
+      "label": "Wiring common wire (break / cut)"
+    },
+    {
+      "id": "F3.1.3",
+      "parent": "F3",
+      "baseline": 0.8,
+      "label": "Wiring splice (corroded / intermittent)"
+    },
+    {
+      "id": "F3.4",
+      "parent": "F3",
+      "baseline": 0.6,
+      "label": "Wiring install error (loose / not isolated)"
+    },
+    {
+      "id": "F4.1",
+      "parent": "F4",
+      "baseline": 1.2,
+      "label": "Relay physical defect"
+    },
+    {
+      "id": "F4.4",
+      "parent": "F4",
+      "baseline": 0.6,
+      "label": "Relay install error"
+    },
+    {
+      "id": "F5.1",
+      "parent": "F5",
+      "baseline": 1,
+      "label": "Pump physical defect (motor, cap, impeller)"
+    },
+    {
+      "id": "F5.3",
+      "parent": "F5",
+      "baseline": 1.2,
+      "label": "Pump suction-side obstruction (lost prime)"
+    },
+    {
+      "id": "F5.8",
+      "parent": "F5",
+      "baseline": 0.6,
+      "label": "Pump external fault (low well level)"
+    },
+    {
+      "id": "F6.1",
+      "parent": "F6",
+      "baseline": 0.8,
+      "label": "Main hose 32mm defect (leak / break)"
+    },
+    {
+      "id": "F6.3",
+      "parent": "F6",
+      "baseline": 1,
+      "label": "Main hose 32mm obstruction (air / debris)"
+    },
+    {
+      "id": "F7.1.1",
+      "parent": "F7",
+      "baseline": 0.6,
+      "label": "Solenoid coil (open / shorted)"
+    },
+    {
+      "id": "F7.1.2",
+      "parent": "F7",
+      "baseline": 0.8,
+      "label": "Valve diaphragm (tear / perished)"
+    },
+    {
+      "id": "F7.1.3",
+      "parent": "F7",
+      "baseline": 0.8,
+      "label": "Valve body / seat damage"
+    },
+    {
+      "id": "F7.3.1",
+      "parent": "F7",
+      "baseline": 0.6,
+      "label": "Solenoid plunger stuck / port clog"
+    },
+    {
+      "id": "F7.3.2",
+      "parent": "F7",
+      "baseline": 0.6,
+      "label": "Diaphragm metering port / screen debris"
+    },
+    {
+      "id": "F7.4",
+      "parent": "F7",
+      "baseline": 1,
+      "label": "Valve install error (mis-set / assembly)"
+    },
+    {
+      "id": "F8.1",
+      "parent": "F8",
+      "baseline": 0.8,
+      "label": "Zone hose 25mm defect (leak / break)"
+    },
+    {
+      "id": "F8.3",
+      "parent": "F8",
+      "baseline": 0.8,
+      "label": "Zone hose 25mm obstruction (air / debris)"
+    },
+    {
+      "id": "F9.1.1",
+      "parent": "F9",
+      "baseline": 0.6,
+      "label": "Head pressure regulator (PRS40)"
+    },
+    {
+      "id": "F9.1.2",
+      "parent": "F9",
+      "baseline": 0.6,
+      "label": "Head gear-drive seized (rotor stuck)"
+    },
+    {
+      "id": "F9.3",
+      "parent": "F9",
+      "baseline": 0.6,
+      "label": "Head obstruction (debris / nozzle clog)"
+    },
+    {
+      "id": "F9.4",
+      "parent": "F9",
+      "baseline": 0.8,
+      "label": "Head install error (arc / nozzle mis-set)"
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "context": "app-run, recall, run_zone",
+      "effort": 6,
+      "text": "Run all 4 automated zones from the app and watch the heads. Where's water missing or too weak?",
+      "highlight": [
+        "rotor",
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "All 4 zones — none run properly",
+          "icon": "scope-all",
+          "effects": {
+            "F1": 0.2,
+            "F2": 0.2,
+            "F4": 0.2,
+            "F5": 0.4,
+            "F6": 0.4,
+            "F3.1.2": 0.2,
+            "F9": -1.0,
+            "F3.1.1": -0.2,
+            "F8.1": -0.2
+          }
+        },
+        {
+          "label": "2–3 zones don't run properly",
+          "icon": "scope-multi",
+          "effects": {
+            "F5": 0.2,
+            "F6": 0.2,
+            "F3.1.2": 0.2,
+            "F9": -0.6
+          }
+        },
+        {
+          "label": "Just one zone doesn't run properly",
+          "icon": "scope-single",
+          "effects": {
+            "F3.1.1": 0.2,
+            "F3.1.2": -1.6,
+            "F3.1.3": 0.2,
+            "F7": 0.2,
+            "F8": 0.2,
+            "F6.1": -0.2,
+            "F9.1.2": -0.2
+          }
+        },
+        {
+          "label": "Just one rotor (rest of its zone is fine)",
+          "icon": "scope-one",
+          "effects": {
+            "F3.1.2": -1.6,
+            "F9": 1.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "context": "app-run, recall, run_zone",
+      "effort": 5,
+      "text": "Start one zone from the app and walk the yard. Where does water actually come out?",
+      "highlight": [
+        "rotor",
+        "valves",
+        "ctrl"
+      ],
+      "options": [
+        {
+          "label": "At the selected zone (correct)",
+          "icon": "flow-normal",
+          "effects": {
+            "F3.1.1": -0.4,
+            "F3.1.2": -0.4,
+            "F3.4": -0.4,
+            "F2.6": -0.4,
+            "F2.5": -0.2,
+            "F7.1.1": -0.2,
+            "F7.3.1": -0.2,
+            "F3.1.3": -0.2,
+            "F2.8": -0.2
+          }
+        },
+        {
+          "label": "At a different zone",
+          "icon": "scope-one",
+          "effects": {
+            "F3.1.1": 0.6,
+            "F3.1.3": 0.4,
+            "F7.4": 0.4,
+            "F2.6": 0.4,
+            "F7.1.2": 0.2,
+            "F7.3.2": 0.2,
+            "F3.4": 0.4
+          }
+        },
+        {
+          "label": "At several zones at once",
+          "icon": "scope-multi",
+          "effects": {
+            "F7.1.2": 0.6,
+            "F7.3.2": 0.6,
+            "F3.1.2": 0.4,
+            "F3.1.1": 0.4,
+            "F3.1.3": 0.4,
+            "F3.4": 0.4,
+            "F7.4": 0.4,
+            "F2.5": 0.2,
+            "F2.6": 0.4,
+            "F5": 0.2
+          }
+        },
+        {
+          "label": "No water anywhere",
+          "icon": "flow-none",
+          "effects": {
+            "F1": 0.6,
+            "F2": 0.6,
+            "F4": 0.6,
+            "F5.3": 0.4,
+            "F5.1": 0.6,
+            "F6": 0.4,
+            "F3": 0.4,
+            "F7.1.1": 0.4,
+            "F7.3.1": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q2q",
+      "context": "app-run, recall, run_zone",
+      "effort": 5,
+      "requires": {
+        "Q2": [
+          0
+        ]
+      },
+      "text": "With the pump on, how does the water at the zone behave?",
+      "highlight": [
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "Normal and steady",
+          "icon": "flow-normal",
+          "effects": {
+            "F1": 0.6,
+            "F5": -0.4,
+            "F6": -0.4,
+            "F3": -0.4,
+            "F7": -0.4,
+            "F8": -0.4,
+            "F2.6": 0.6
+          }
+        },
+        {
+          "label": "Weak throughout",
+          "icon": "flow-weak",
+          "effects": {
+            "F5": 0.2,
+            "F6.3": 0.2,
+            "F3": 0.2,
+            "F7.1.2": 0.2,
+            "F7.3.2": 0.2,
+            "F7.4": 0.2,
+            "F8": 0.2,
+            "F9": 0.4
+          }
+        },
+        {
+          "label": "Ramps up or down during the run",
+          "icon": "flow-decline",
+          "effects": {
+            "F5.1": 0.6,
+            "F5.8": 0.6,
+            "F5.3": 0.4,
+            "F6.3": 0.4,
+            "F8.3": 0.4
+          }
+        },
+        {
+          "label": "Erratic — random surges or drops",
+          "icon": "pat-noise",
+          "effects": {
+            "F1": 0.4,
+            "F2.5": 0.4,
+            "F2.6": 0.6,
+            "F5": 0.4,
+            "F6.1": 0.4,
+            "F6.3": 0.2,
+            "F3": 0.4,
+            "F7.1.1": 0.2,
+            "F7.3.1": 0.2,
+            "F8.1": 0.4,
+            "F9.1.1": 0.2,
+            "F9.3": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "context": "app-run, recall, run_zone",
+      "effort": 5,
+      "text": "Start a zone from the app and listen at the pump. What does it do?",
+      "highlight": [
+        "pump"
+      ],
+      "options": [
+        {
+          "label": "Runs smoothly",
+          "effects": {
+            "F4.4": -0.6,
+            "F5": -0.4,
+            "F6": 0.2,
+            "F3": 0.2,
+            "F7": 0.2,
+            "F8": 0.2,
+            "F9": 0.2,
+            "F4.1": -0.2
+          }
+        },
+        {
+          "label": "Hums and trips the breaker",
+          "effects": {
+            "F4": 1,
+            "F5.1": 1,
+            "F5.3": -0.2
+          }
+        },
+        {
+          "label": "Stays silent",
+          "effects": {
+            "F1": 0.4,
+            "F2.1": 1,
+            "F2.8": 1,
+            "F4": 0.6,
+            "F5.1": 0.6
+          }
+        },
+        {
+          "label": "Keeps starting/stopping, or no pressure",
+          "effects": {
+            "F5": 0.6,
+            "F6.1": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "context": "controller, recall, run_zone",
+      "effort": 3,
+      "text": "Start a zone three ways — touchscreen, app on Wi-Fi, app on cellular. What works?",
+      "highlight": [
+        "sw",
+        "ctrl"
+      ],
+      "options": [
+        {
+          "label": "No difference between the three",
+          "effects": {
+          
+            "F1.5": -0.6,
+            "F1.8": 0.4,
+            "F2.1": -0.6,
+            "F2.5": -0.4,
+            "F2.8": -0.6
+          }
+        },
+        {
+          "label": "Touchscreen OK, app fails both networks",
+          "effects": {
+            "F1.5": 1,
+            "F1.8": 0.4
+          }
+        },
+        {
+          "label": "App OK on Wi-Fi, fails on cellular",
+          "effects": {
+            "F1.8": 1.6,
+            "F1.5": -0.4
+          }
+        },
+        {
+          "label": "Nothing works on any path",
+          "effects": {
+            "F2.1": 0.4,
+            "F2.5": 0.4,
+            "F2.8": 0.4,
+            "F2.6": 0.2,
+            "F1.5": -0.4,
+            "F1.8": -0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "context": "valve-box, recall, run_pump",
+      "effort": 4,
+      "text": "Open the manual valve on Zone 5 by hand — how is the flow from its hose?",
+      "highlight": [
+        "pump"
+      ],
+      "options": [
+        {
+          "label": "Strong and steady",
+          "effects": {
+            "F5": -0.6,
+            "F6": -0.6,
+            "F3": 0.2,
+            "F7": 0.2,
+            "F8": 0.2,
+            "F9": 0.2,
+            "F4.1": -0.6,
+            "F4.4": -0.2
+          }
+        },
+        {
+          "label": "Weak or sputtering",
+          "effects": {
+            "F5.3": 0.6,
+            "F5.1": 0.4,
+            "F6": 0.6
+          }
+        },
+        {
+          "label": "None at all",
+          "effects": {
+            "F5": 1.0,
+            "F6": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "context": "valve-box, run_zone",
+      "effort": 4,
+      "text": "Start a zone from the app and stand at the valve box. What do you hear?",
+      "highlight": [
+        "valves",
+        "ctrl"
+      ],
+      "options": [
+        {
+          "label": "Clear click",
+          "effects": {
+            "F3.1.1": -0.4,
+            "F3.1.2": -0.4,
+            "F7.1.1": -0.6,
+            "F7.3.1": -0.6,
+            "F7.1.2": 0.4,
+            "F7.3.2": 0.4,
+            "F7.1.3": 0.4,
+            "F8": 0.4,
+            "F9": 0.6
+          }
+        },
+        {
+          "label": "Buzz or hum",
+          "effects": {
+            "F3": 1,
+            "F7.3.1": 0.4
+          }
+        },
+        {
+          "label": "Weak click",
+          "effects": {
+            "F3": 0.2,
+            "F7.1.1": 0.2,
+            "F7.3.1": 0.2
+          }
+        },
+        {
+          "label": "Silent — no click",
+          "effects": {
+            "F3": 0.4,
+            "F7.1.1": 0.6,
+            "F7.3.1": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q7",
+      "context": "controller, recall",
+      "effort": 3,
+      "text": "Switch the controller off and on, then the pump. Did either help, even briefly?",
+      "highlight": [
+        "ctrl",
+        "sw",
+        "pump",
+        "relay"
+      ],
+      "options": [
+        {
+          "label": "Controller restart briefly fixed it",
+          "effects": {
+            "F1.5": 0.6,
+            "F1.8": 0.6,
+            "F2.5": 1
+          }
+        },
+        {
+          "label": "Pump restart briefly fixed it",
+          "effects": {
+            "F4": 0.4,
+            "F5.1": 0.4,
+            "F5.3": 0.4
+          }
+        },
+        {
+          "label": "Tried — no effect",
+          "effects": {}
+        }
+      ]
+    },
+    {
+      "id": "Q8",
+      "context": "recall_harder",
+      "effort": 5,
+      "text": "How did the problem progress?",
+      "options": [
+        {
+          "label": "Sudden",
+          "icon": "pat-sudden",
+          "effects": {
+            "F2.1": 0.4,
+            "F2.8": 0.4,
+            "F4": 0.2,
+            "F6.1": 0.2,
+            "F3.1.3": 0.2,
+            "F7.1.1": 0.2,
+            "F7.3.1": 0.2,
+            "F9": 0.4
+          }
+        },
+        {
+          "label": "Gradual",
+          "icon": "pat-gradual-all",
+          "effects": {
+            "F5": 0.4,
+            "F6.3": 0.4,
+            "F7.1.2": 0.2,
+            "F7.3.2": 0.4,
+            "F7.1.3": 0.4,
+            "F9.1.1": 0.4,
+            "F9.3": 0.4,
+            "F9.1.2": 0.2
+          }
+        },
+        {
+          "label": "Intermittent",
+          "icon": "pat-gradual-int",
+          "effects": {
+            "F2.6": 0.2,
+            "F1.8": 0.2,
+            "F5": 0.2,
+            "F3": 0.2,
+            "F7": 0.2,
+            "F2.5": 0.2
+          }
+        },
+        {
+          "label": "No clear pattern",
+          "icon": "pat-noise",
+          "effects": {
+            "F1.8": 0.2,
+            "F5.1": 0.2,
+            "F3.1.1": 0.4,
+            "F3.1.2": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q9",
+      "context": "recall_harder",
+      "effort": 4,
+      "type": "ages",
+      "text": "Do these dates still reflect your latest replacements?",
+      "highlight": [
+        "pump",
+        "valves",
+        "relay",
+        "ctrl",
+        "rotor"
+      ],
+      "stepLabels": [
+        "—",
+        "0–4 yrs",
+        "4–8 yrs",
+        "8–12 yrs",
+        "12+ yrs"
+      ],
+      "ageBuckets": [
+        4,
+        8,
+        12
+      ],
+      "rows": [
+        {
+          "id": "pump",
+          "label": "Pump",
+          "curve": "standard",
+          "failure_modes": [
+            "F5.3",
+            "F5.1"
+          ]
+        },
+        {
+          "id": "valves",
+          "label": "Valves",
+          "curve": "fast",
+          "failure_modes": [
+            "F7.1.1",
+            "F7.3.1",
+            "F7.1.2",
+            "F7.3.2",
+            "F7.1.3"
+          ]
+        },
+        {
+          "id": "relay",
+          "label": "Start-Relay",
+          "curve": "standard",
+          "failure_modes": [
+            "F4.1"
+          ]
+        },
+        {
+          "id": "ctrl",
+          "label": "Controller",
+          "curve": "standard",
+          "failure_modes": [
+            "F2.1",
+            "F2.5"
+          ]
+        },
+        {
+          "id": "rotor",
+          "label": "Rotors",
+          "curve": "standard",
+          "failure_modes": [
+            "F9.1.1",
+            "F9.1.2"
+          ]
+        },
+        {
+          "id": "mainHose",
+          "label": "Main hose",
+          "curve": "standard",
+          "failure_modes": [
+            "F6.1"
+          ]
+        },
+        {
+          "id": "hose",
+          "label": "Zone hose",
+          "curve": "standard",
+          "failure_modes": [
+            "F8.1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "context": "recall_harder",
+      "effort": 4,
+      "type": "matrix",
+      "text": "Recent work on the water side — how does it relate to the issue? (leave blank if not applicable)",
+      "columns": [
+        {
+          "id": "right",
+          "label": "Started right after",
+          "multiplier": 1.0
+        },
+        {
+          "id": "days",
+          "label": "Started weeks after",
+          "multiplier": 0.4
+        },
+        {
+          "id": "worse",
+          "label": "Worsened — same rate",
+          "multiplier": 0
+        },
+        {
+          "id": "faster",
+          "label": "Worsened — faster",
+          "multiplier": 0.6
+        }
+      ],
+      "rows": [
+        {
+          "id": "pump",
+          "label": "Pump",
+          "effects": {
+            "F5.3": 0.6,
+            "F5.1": 1
+          }
+        },
+        {
+          "id": "valves",
+          "label": "Valves",
+          "effects": {
+            "F7": 1,
+            "F3": 0.6
+          }
+        },
+        {
+          "id": "rotor",
+          "label": "Rotors",
+          "effects": {
+            "F9.1.1": 0.6,
+            "F9.3": 0.6,
+            "F9.1.2": 0.4,
+            "F9.4": 1
+          }
+        },
+        {
+          "id": "hose",
+          "label": "Hoses",
+          "effects": {
+            "F8": 1,
+            "F6": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q10b",
+      "context": "recall_harder",
+      "effort": 4,
+      "type": "matrix",
+      "text": "Recent electrical/control work — how does it relate to the issue? (leave blank if not applicable)",
+      "columns": [
+        {
+          "id": "right",
+          "label": "Started right after",
+          "multiplier": 0.8
+        },
+        {
+          "id": "days",
+          "label": "Started weeks after",
+          "multiplier": 0.4
+        },
+        {
+          "id": "worse",
+          "label": "Worsened — same rate",
+          "multiplier": 0
+        },
+        {
+          "id": "faster",
+          "label": "Worsened — faster",
+          "multiplier": 0.6
+        }
+      ],
+      "rows": [
+        {
+          "id": "ctrl",
+          "label": "Controller",
+          "effects": {
+            "F2.6": 1,
+            "F2.1": 1,
+            "F2.8": 0.6,
+            "F3": 0.6
+          }
+        },
+        {
+          "id": "relay",
+          "label": "Start-Relay",
+          "effects": {
+            "F4.1": 0.6,
+            "F3": 0.6,
+            "F4.4": 1
+          }
+        },
+        {
+          "id": "wiring",
+          "label": "Wiring",
+          "effects": {
+            "F3": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "context": "recall_harder",
+      "effort": 4,
+      "type": "matrix",
+      "text": "Weather events — how do they relate to the issue? (leave blank if not applicable)",
+      "columns": [
+        {
+          "id": "right",
+          "label": "Started right after",
+          "multiplier": 0.8
+        },
+        {
+          "id": "days",
+          "label": "Started weeks after",
+          "multiplier": 0.6
+        },
+        {
+          "id": "worse",
+          "label": "Worsened — same rate",
+          "multiplier": 0
+        },
+        {
+          "id": "faster",
+          "label": "Worsened — faster",
+          "multiplier": 0.6
+        }
+      ],
+      "rows": [
+        {
+          "id": "storm",
+          "label": "Storm or lightning",
+          "effects": {
+            "F2.1": 0.4,
+            "F2.8": 1,
+            "F3": 1,
+            "F1.8": 1,
+            "F4": 0.6
+          }
+        },
+        {
+          "id": "freeze",
+          "label": "Freeze",
+          "effects": {
+            "F6.1": 1,
+            "F7.1.3": 1,
+            "F8.1": 1
+          }
+        },
+        {
+          "id": "heat",
+          "label": "Heatwave or drought",
+          "effects": {
+            "F5.3": 1,
+            "F5.8": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q11b",
+      "context": "recall_harder",
+      "effort": 4,
+      "type": "matrix",
+      "text": "Other external events — how do they relate to the issue? (leave blank if not applicable)",
+      "columns": [
+        {
+          "id": "right",
+          "label": "Started right after",
+          "multiplier": 0.8
+        },
+        {
+          "id": "days",
+          "label": "Started weeks after",
+          "multiplier": 0.6
+        },
+        {
+          "id": "worse",
+          "label": "Worsened — same rate",
+          "multiplier": 0
+        },
+        {
+          "id": "faster",
+          "label": "Worsened — faster",
+          "multiplier": 0.6
+        }
+      ],
+      "rows": [
+        {
+          "id": "outage",
+          "label": "Power outage",
+          "effects": {
+            "F1.8": 1,
+            "F2.5": 1,
+            "F2.6": 0.4,
+            "F2.8": 0.6,
+            "F1.5": 1.0
+          }
+        },
+        {
+          "id": "pests",
+          "label": "Pests or rodents",
+          "effects": {
+            "F6.1": 1,
+            "F8.1": 1,
+            "F3": 1
+          }
+        },
+        {
+          "id": "dig",
+          "label": "Digging or vehicle",
+          "effects": {
+            "F6.1": 1,
+            "F3.1.1": 1,
+            "F3.1.2": 1,
+            "F8.1": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q12",
+      "context": "valve-box, run_pump",
+      "effort": 3,
+      "text": "Rotate the solenoid a quarter-turn open (internal bleed — box stays dry). Does the zone run?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Yes — zone runs",
+          "effects": {
+            "F7.3.1": -1.0,
+            "F7.1.2": -0.6,
+            "F7.1.3": -0.4,
+            "F7.3.2": -0.4,
+            "F8": -0.4,
+            "F9": -0.4,
+            "F6": -0.2,
+            "F7.1.1": 0.6,
+            "F3": 0.6,
+            "F2.6": 0.2,
+            "F2.5": 0.2
+          }
+        },
+        {
+          "label": "No — nothing at the heads",
+          "effects": {
+            "F7.3.1": 0.4,
+            "F7.1.1": -0.4,
+            "F2.6": -0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q12b",
+      "context": "valve-box, run_pump",
+      "effort": 3,
+      "requires": {
+        "Q12": [
+          1
+        ]
+      },
+      "text": "Now loosen the bleed screw (external bleed). Watch the top of the valve and the heads.",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Zone runs once the screw is open",
+          "effects": {
+            "F7.3.1": 1.6,
+            "F7.1.2": -0.6,
+            "F7.1.3": -0.6,
+            "F7.3.2": -0.4,
+            "F6": -0.4,
+            "F8": -0.4
+          }
+        },
+        {
+          "label": "Sprays hard from valve, heads stay dry/weak",
+          "effects": {
+            "F7.1.2": 1.0,
+            "F7.1.3": 0.6,
+            "F8": 0.6,
+            "F7.3.2": -0.4,
+            "F6": -0.6,
+            "F5": -0.4
+          }
+        },
+        {
+          "label": "Little or no water even from the screw",
+          "effects": {
+            "F6": 1.0,
+            "F5": 0.6,
+            "F7.3.2": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q13",
+      "context": "multimeter",
+      "effort": 2,
+      "text": "Press \"start zone\" on the controller. At the zone terminal, what does a multimeter read?",
+      "highlight": [
+        "ctrl",
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "~24 VAC present",
+          "effects": {
+            
+            
+            "F2.1": -0.2,
+            "F2.8": -0.2,
+            "F7.1.1": 0.2,
+            "F7.3.1": 0.4
+          }
+        },
+        {
+          "label": "0 V",
+          "effects": {
+            "F2.6": 0.6,
+            "F2.1": 1.0,
+            "F3.1.3": 0.6,
+            "F7": -0.4,
+            "F2.8": 0.2
+          }
+        },
+        {
+          "label": "Low or fluctuating",
+          "effects": {
+            "F3.1.1": 0.6,
+            "F3.1.2": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q14",
+      "context": "multimeter",
+      "effort": 2,
+      "text": "Measure the resistance of the wires to the valves, at the controller terminals. What do you get?",
+      "highlight": [
+        "ctrl",
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Low and steady",
+          "effects": {
+            "F3": -0.4
+          }
+        },
+        {
+          "label": "Very high, or no reading at all",
+          "effects": {
+            "F3": 1.6
+          }
+        },
+        {
+          "label": "Jumps around when you wiggle the wires",
+          "effects": {
+            "F3": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q15",
+      "context": "multimeter",
+      "effort": 2,
+      "text": "Measure the solenoid coil's resistance (20–60 Ω) — at the coil, then from the controller end.",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "In range",
+          "effects": {
+            "F7.1.1": -1,
+            "F3.1.1": -0.6,
+            "F3.1.3": -0.4
+          }
+        },
+        {
+          "label": "Open or infinite",
+          "effects": {
+            "F7.1.1": 1.6,
+            "F3.1.2": 1.0
+          }
+        },
+        {
+          "label": "Near zero / very low",
+          "effects": {
+            "F7.1.1": 1.6
+          }
+        },
+        {
+          "label": "Fine at the coil, bad from the controller",
+          "effects": {
+            "F3.1.1": 1.6,
+            "F7.1.1": -1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q16",
+      "context": "valve-box, disassembly",
+      "effort": 1,
+      "text": "Swap in a known-good valve — does the issue stay with the zone?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Yes — stays with the zone",
+          "effects": {
+            "F3": 0.6,
+            "F7": -0.6,
+            "F8": 0.6
+          }
+        },
+        {
+          "label": "No — follows the valve",
+          "effects": {
+            "F7": 1.6,
+            "F9": -1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q17",
+      "context": "valve-box., disassembly",
+      "effort": 1,
+      "text": "Open each valve and inspect the internals — what do you find?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Intact, no debris",
+          "effects": {
+            "F7.1.2": -0.4,
+            "F7.3.2": -0.4,
+            "F7.1.3": -0.4,
+            "F7.3.1": -0.6,
+            "F7.4": -0.2
+          }
+        },
+        {
+          "label": "Damage or debris present",
+          "effects": {
+            "F7.1.2": 0.6,
+            "F7.3.2": 0.4,
+            "F7.1.3": 0.6,
+            "F7.3.1": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q18",
+      "context": "walk, run_zone",
+      "effort": 5,
+      "text": "Walk the system — where do you see water or wet ground? (tick all)",
+      "multiselect": true,
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Along the main hose route",
+          "effects": {
+            "F6.1": 1.6
+          }
+        },
+        {
+          "label": "In the valve box, or heads drip when off",
+          "effects": {
+            "F7.1.2": 0.4,
+            "F7.3.2": 0.2,
+            "F7.1.3": 1.0,
+            "F7.4": 1.0
+          }
+        },
+        {
+          "label": "Along the zone hoses",
+          "effects": {
+            "F8.1": 1.6
+          }
+        },
+        {
+          "label": "Nowhere — no water or wet ground",
+          "effects": {
+            "F6.1": -0.2,
+            "F8.1": -0.2,
+            "F7.1.3": -0.2,
+            "F7.4": -0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q19",
+      "context": "install",
+      "effort": 1,
+      "text": "Fit a flow gauge and run a zone — does it read between 1.0 and 3.0 m³/h?",
+      "highlight": [
+        "pump"
+      ],
+      "options": [
+        {
+          "label": "Yes — in range",
+          "effects": {
+            "F5": -0.4,
+            "F6": -0.4,
+            "F9.4": 0.2,
+            "F8.3": -0.2
+          }
+        },
+        {
+          "label": "No — out of range",
+          "effects": {
+            "F5": 0.4,
+            "F6": 0.6
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q20",
+      "context": "pump, relay, run_zone",
+      "effort": 2,
+      "text": "Start a zone and go to the pump-start relay. Does it switch, and is 230 V reaching the pump?",
+      "highlight": [
+        "relay",
+        "pump"
+      ],
+      "options": [
+        {
+          "label": "Clicks, 230 V at output",
+          "effects": {
+            "F4.1": -1.6,
+            "F5.1": 0.6,
+            "F5.3": 0.4,
+            "F2.1": -0.2,
+            "F2.8": -0.4,
+            "F4.4": -0.6
+          }
+        },
+        {
+          "label": "Clicks, but no 230 V out",
+          "effects": {
+            "F4.1": 1.6,
+            "F5.1": -0.4,
+            "F4.4": 0.4
+          }
+        },
+        {
+          "label": "Clicks, but breaker trips",
+          "effects": {
+            "F4.1": 1,
+            "F5.1": 1
+          }
+        },
+        {
+          "label": "Silent — no click",
+          "effects": {
+            "F4.1": 0.6,
+            "F2.1": 0.4,
+            "F2.8": 0.6,
+            "F3.1.3": 0.6,
+            "F2.5": 0.4,
+            "F2.6": 0.4,
+            "F4.4": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q21",
+      "context": "valve-box, visual_inspection",
+      "effort": 2,
+      "text": "Open the valve box and inspect the wire splices to each solenoid. What do they look like?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Clean, dry, sealed connectors",
+          "effects": {
+            "F3.1.3": -0.2,
+            "F3.4": -0.6
+          }
+        },
+        {
+          "label": "Corroded, green, or wet",
+          "effects": {
+            "F3.1.3": 1.6,
+            "F3.1.2": 0.6
+          }
+        },
+        {
+          "label": "Loose, backed-out, or twisted bare",
+          "effects": {
+            "F3.1.3": 1,
+            "F3.1.1": 0.6,
+            "F3.4": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q22",
+      "context": "valve-box, run_zone",
+      "effort": 5,
+      "text": "Run a zone, open the valve box and look at the valves and heads. What do you see? (tick all)",
+      "multiselect": true,
+      "highlight": [
+        "valves",
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "Water at a zone you didn't switch on",
+          "effects": {
+            "F3.1.1": 1,
+            "F3.1.3": 0.4,
+            "F7.4": 1,
+            "F7.1.2": 0.6,
+            "F7.3.2": 0.6,
+            "F7.1.3": 0.4,
+            "F5": -0.2,
+            "F6": -0.2,
+            "F2.6": 0.2
+          }
+        },
+        {
+          "label": "Water leaking from a valve",
+          "effects": {
+            "F7.1.3": 1,
+            "F7.1.2": 0.2,
+            "F7.3.2": 0.2
+          }
+        },
+        {
+          "label": "Water at the zone you switched on",
+          "effects": {
+            "F4": -0.2,
+            "F2.1": -0.2,
+            "F2.8": -0.2,
+            "F3.1.1": -0.2,
+            "F3.1.3": -0.2,
+            "F7.1.1": -0.2,
+            "F7.3.1": -0.2,
+            "F5": -0.2,
+            "F6": -0.2
+          }
+        },
+        {
+          "label": "None of these — nothing unusual",
+          "effects": {
+            "F7.4": -0.2,
+            "F7.1.3": -0.2,
+            "F7.1.2": -0.2,
+            "F7.3.2": -0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q23",
+      "context": "valve-box, run_pump",
+      "effort": 5,
+      "text": "Start the pump only (no zone). With all valves closed, where does water come out? (tick all)",
+      "multiselect": true,
+      "highlight": [
+        "pump",
+        "valves",
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "Water out of the heads",
+          "effects": {
+            "F7.1.2": 0.6,
+            "F7.1.3": 0.6,
+            "F7.3.2": 0.6,
+            "F7.3.1": 0.4,
+            "F7.4": 0.6,
+            "F3.4": 0.4,
+            "F2.6": 0.4
+          }
+        },
+        {
+          "label": "Water out of the valves",
+          "effects": {
+            "F7.1.3": 1.0,
+            "F7.4": 1.0,
+            "F7.1.2": 0.6,
+            "F6.1": 0.4
+          }
+        },
+        {
+          "label": "Nowhere — nothing comes out",
+          "effects": {
+            "F7.1.2": -0.2,
+            "F7.1.3": -0.2,
+            "F7.3.2": -0.2,
+            "F7.4": -0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q24",
+      "context": "valve-box, run_pump",
+      "effort": 3,
+      "text": "On the valve that won't shut off, screw the flow control fully closed. Does the leak stop?",
+      "highlight": [
+        "valves"
+      ],
+      "options": [
+        {
+          "label": "Yes — flow stops",
+          "effects": {
+            "F7.1.2": -1.0,
+            "F7.1.3": -1.0,
+            "F2.6": 0.6,
+            "F7.3.1": 0.6,
+            "F3.4": 0.4
+          }
+        },
+        {
+          "label": "No — still leaks with flow control shut",
+          "effects": {
+            "F7.1.2": 1.0,
+            "F7.1.3": 1.0,
+            "F7.3.2": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q25",
+      "context": "valve-box, run_zone",
+      "effort": 3,
+      "text": "On the weak zone, open the flow control fully (it may have been throttled). Does flow improve?",
+      "highlight": [
+        "valves",
+        "rotor"
+      ],
+      "options": [
+        {
+          "label": "Yes — flow jumps up",
+          "effects": {
+            "F7.4": 1.0,
+            "F5": -0.4,
+            "F6": -0.4,
+            "F7.1.2": -0.2
+          }
+        },
+        {
+          "label": "No — no change",
+          "effects": {
+            "F5": 0.4,
+            "F6.3": 0.4,
+            "F7.3.2": 0.4,
+            "F7.1.2": 0.4,
+            "F9.3": 0.2
+          }
+        }
+      ]
+    }
+  ]
+}
