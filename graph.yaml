@@ -199,7 +199,7 @@ circuit:
   parts:
     adapter: {}
     controller: {model: RainMachine HD-16 TOUCH, pump_lead_s: 5}
-    mains: {}
+    grid: {}
     pump: {}
     relay:
       model: Hunter PSR-22
@@ -218,9 +218,9 @@ circuit:
     signal_3:         {from: controller, to: Z3.valve.coil}
     signal_4:         {from: controller, to: Z4.valve.coil}
     valve_common:     {from: [Z1.valve.coil, Z2.valve.coil, Z3.valve.coil, Z4.valve.coil], to: controller}
-    mains_live:       {from: mains, to: relay.contact}
+    grid_live:        {from: grid, to: relay.contact}
     pump_live:        {from: relay.contact, to: pump}
-    mains_neutral:    {from: mains, to: relay.neutral}
+    grid_neutral:     {from: grid, to: relay.neutral}
     pump_neutral:     {from: relay.neutral, to: pump}
-    mains_earth:      {from: mains, to: relay.earth}
+    grid_earth:       {from: grid, to: relay.earth}
     pump_earth:       {from: relay.earth, to: pump}
