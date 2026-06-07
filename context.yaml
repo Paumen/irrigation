@@ -39,7 +39,6 @@ system_design_choices:
 cable_runs:
   controller_to_valve_box: 10
   controller_to_relay: 10
-assumed_system_pressure_bar: 3.0
 equipment:
   pump.well:
     installed: 2023-06
