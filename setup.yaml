@@ -3,7 +3,7 @@ assumed_system_pressure_bar: 3.0
 
 types:
   supply.well:      { fanout: 1, description: "water supply (aquifer / borehole)", location: well }
-  pump.well:        { fanout: 1, description: water + power supply, model: "DAB Jet", installed: "2023-06", location: well, max_bar: 4.8, max_flow_m3h: 3.8 }
+  pump.well:        { fanout: 1, description: water + power supply, model: "DAB Jet", installed: "2023-06", location: well, max_bar: 4.6, max_flow_m3h: 3.6 }
   hose.32:          { fanout: 1, description: "32 mm, 3 mm wall", installed: "2020-08", location: in_ground, material: LDPE, max_bar: 6.3 }
   hose.25:          { fanout: 1, description: "25 mm, 2.7 mm wall", installed: "2020-08", location: in_ground, material: LDPE, max_bar: 6 }
   hose.16:          { fanout: 1, description: "16 mm, 3 mm wall", installed: "2020-08", location: in_ground, material: LDPE, max_bar: 6.3 }

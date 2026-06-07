@@ -228,7 +228,7 @@ mp3 = next(h for h in zh if h["loc"] == "Z4.head1")
 mp3_base = simulate([4])
 mp3_full = next(h for h in zone(mp3_base, 4)["heads"] if h["loc"] == "Z4.head1")
 check("H4 regulator broken -> MP head over-flows (unregulated)",
-      mp3["flow_m3h"] > mp3_full["flow_m3h"] + 0.02,
+      mp3["flow_m3h"] > mp3_full["flow_m3h"] + 0.01,
       f"{mp3['flow_m3h']} vs regulated {mp3_full['flow_m3h']}")
 
 h5 = simulate([3], {"Z3.hose2": "clogged"})

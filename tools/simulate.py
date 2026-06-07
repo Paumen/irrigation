@@ -97,7 +97,7 @@ def _effect(kind: str, cond: str) -> dict:
             return {"leak": LEAK_D_HOSE[kind]}        # rupture: leak, keep passing
         if cond == "clogged":
             return {"hw_c": HW_C_CLOGGED}             # fouled bore: more friction
-    if kind in ("joint", "tee", "swing", "supply"):
+    if kind in ("joint", "tee", "supply") or kind.startswith("swing"):
         if cond == "broken":
             return {"leak": LEAK_D_SMALL}
         if cond == "misconfigured":                   # loose/cross-fit fitting
@@ -645,7 +645,7 @@ class Flow:
 
 def _pick_pump(nodes):
     """Nearest JET curve to the pump's rated bar (mirrors hydraulics)."""
-    bar = nodes.get("pump.foot_valve", {}).get("params", {}).get("bar")
+    bar = nodes.get("pump.foot_valve", {}).get("params", {}).get("max_output_bar")
     if not bar:
         return DEFAULT_PUMP
     target = bar * M_PER_BAR
@@ -662,8 +662,8 @@ def _edge_loss_m(fl: Flow, child: str, q_m3h: float) -> float:
     if kind.startswith("hose."):
         c = fl.hwc.get(child, HW_C_OK)
         loss += hazen_williams_m(q_m3h, hose_inner_d_m(kind),
-                                 float(n["params"].get("len_m", 0.0)), c)
-    if kind == "swing":
+                                 float(n["params"].get("length_m", 0.0)), c)
+    if kind.startswith("swing"):
         loss += SJ_LOSS_BAR * M_PER_BAR
     # collapsed valve edge: inlet->outlet (open valve) carries the valve loss
     if child.endswith(".outlet") and _is_valve_outlet(fl, child):

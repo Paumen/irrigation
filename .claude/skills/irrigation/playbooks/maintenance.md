@@ -1,6 +1,6 @@
 # Seasonal maintenance
 
-Calendar-driven work: winterize, spring start-up, mid-season checks, filter/diaphragm cadence — framed by the Wijchen, NL climate (real winter freeze risk, mild summer drought, growing season roughly April–October). `setup.yaml`'s hoses note ("zero freeze damage historically") and install dates feed the winterize and inspection logic; for winterizing use `knowledge/hoses.md`'s documented dead-end rule rather than improvising from generic North-American advice.
+Calendar-driven work: winterize, spring start-up, mid-season checks, filter/diaphragm cadence — framed by the Wijchen, NL climate (real winter freeze risk, mild summer drought, growing season roughly April–October). the homeowner's reported freeze history ("zero freeze damage historically") and the `installed` dates in `context.yaml`'s `equipment:` section feed the winterize and inspection logic; for winterizing use `knowledge/hoses.md`'s documented dead-end rule rather than improvising from generic North-American advice.
 
 Answer the cadence the user asked about — don't recite the whole calendar for a narrow question. When you do walk an ordered job (winterize, spring start-up), use the **1️⃣ 2️⃣ 3️⃣** step markers, **⚠️** before the depressurise/freeze-risk lines, **🔍** for the eyes-on inspections (walk each zone, watch every head), and **✅** for the confirm-it-worked checks — see `SKILL.md` → *Reply formatting*.
 
