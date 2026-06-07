@@ -114,80 +114,80 @@ kinds:
 
 flow:
   well:      {kind: supply, to: [pump]}
-  pump:      {kind: pump.well, to: [mj1], h_m: 7.2}
-  mj1:       {kind: joint, to: [mhose]}
-  mhose:     {kind: hose.32, to: [mj2], length_m: 20}
-  mj2:       {kind: joint, to: [mani]}
-  mani:      {kind: manifold, to: [Z1.j1, Z2.j1, Z3.j1, Z4.j1, Z5.j1, Z6.cap], h_m: 11.2}
+  pump:      {kind: pump.well, to: [joint1], h_m: 7.2}
+  joint1:    {kind: joint, to: [hose1]}
+  hose1:     {kind: hose.32, to: [joint2], length_m: 20}
+  joint2:    {kind: joint, to: [manifold]}
+  manifold:  {kind: manifold, to: [Z1.joint1, Z2.joint1, Z3.joint1, Z4.joint1, Z5.joint1, Z6.cap], h_m: 11.2}
 
-  Z1.j1:    {kind: joint, to: [Z1.valve]}
-  Z1.valve: {kind: valve.auto, to: [Z1.j2], h_m: 11.2}
-  Z1.j2:    {kind: joint, to: [Z1.hose1]}
-  Z1.hose1: {kind: hose.25, to: [Z1.tee1], length_m: 8}
-  Z1.tee1:  {kind: tee, to: [Z1.hose2, Z1.hose3]}
-  Z1.hose2: {kind: hose.25, to: [Z1.j3], length_m: 7}
-  Z1.j3:    {kind: joint, to: [Z1.sw1]}
-  Z1.sw1:   {kind: swing.34x12, to: [Z1.head1]}
-  Z1.head1: {kind: head.spray, nozzle: MP3000, arc: 270, h_m: 10.5}
-  Z1.hose3: {kind: hose.25, to: [Z1.tee2], length_m: 3}
-  Z1.tee2:  {kind: tee, to: [Z1.sw2, Z1.hose4]}
-  Z1.sw2:   {kind: swing.34x34, to: [Z1.head2]}
-  Z1.head2: {kind: head.rotor, nozzle: "4.0 blue", arc: 170, h_m: 11.6}
-  Z1.hose4: {kind: hose.25, to: [Z1.j4], length_m: 17}
-  Z1.j4:    {kind: joint, to: [Z1.sw3]}
-  Z1.sw3:   {kind: swing.34x12, to: [Z1.head3]}
-  Z1.head3: {kind: head.spray, nozzle: MP2000, arc: 180, h_m: 11.4}
+  Z1.joint1: {kind: joint, to: [Z1.valve]}
+  Z1.valve:  {kind: valve.auto, to: [Z1.joint2], h_m: 11.2}
+  Z1.joint2: {kind: joint, to: [Z1.hose1]}
+  Z1.hose1:  {kind: hose.25, to: [Z1.tee1], length_m: 8}
+  Z1.tee1:   {kind: tee, to: [Z1.hose2, Z1.hose3]}
+  Z1.hose2:  {kind: hose.25, to: [Z1.joint3], length_m: 7}
+  Z1.joint3: {kind: joint, to: [Z1.swing1]}
+  Z1.swing1: {kind: swing.34x12, to: [Z1.head1]}
+  Z1.head1:  {kind: head.spray, nozzle: MP3000, arc: 270, h_m: 10.5}
+  Z1.hose3:  {kind: hose.25, to: [Z1.tee2], length_m: 3}
+  Z1.tee2:   {kind: tee, to: [Z1.swing2, Z1.hose4]}
+  Z1.swing2: {kind: swing.34x34, to: [Z1.head2]}
+  Z1.head2:  {kind: head.rotor, nozzle: "4.0 blue", arc: 170, h_m: 11.6}
+  Z1.hose4:  {kind: hose.25, to: [Z1.joint4], length_m: 17}
+  Z1.joint4: {kind: joint, to: [Z1.swing3]}
+  Z1.swing3: {kind: swing.34x12, to: [Z1.head3]}
+  Z1.head3:  {kind: head.spray, nozzle: MP2000, arc: 180, h_m: 11.4}
 
-  Z2.j1:    {kind: joint, to: [Z2.valve]}
-  Z2.valve: {kind: valve.auto, to: [Z2.j2], h_m: 11.2}
-  Z2.j2:    {kind: joint, to: [Z2.hose1]}
-  Z2.hose1: {kind: hose.25, to: [Z2.tee1], length_m: 2}
-  Z2.tee1:  {kind: tee, to: [Z2.hose2, Z2.hose3]}
-  Z2.hose2: {kind: hose.25, to: [Z2.j3], length_m: 1}
-  Z2.j3:    {kind: joint, to: [Z2.sw1]}
-  Z2.sw1:   {kind: swing.34x34, to: [Z2.head1]}
-  Z2.head1: {kind: head.rotor, nozzle: "2.5 blue", arc: 150, h_m: 11.1}
-  Z2.hose3: {kind: hose.25, to: [Z2.j4], length_m: 9}
-  Z2.j4:    {kind: joint, to: [Z2.sw2]}
-  Z2.sw2:   {kind: swing.34x34, to: [Z2.head2]}
-  Z2.head2: {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 11.2}
+  Z2.joint1: {kind: joint, to: [Z2.valve]}
+  Z2.valve:  {kind: valve.auto, to: [Z2.joint2], h_m: 11.2}
+  Z2.joint2: {kind: joint, to: [Z2.hose1]}
+  Z2.hose1:  {kind: hose.25, to: [Z2.tee1], length_m: 2}
+  Z2.tee1:   {kind: tee, to: [Z2.hose2, Z2.hose3]}
+  Z2.hose2:  {kind: hose.25, to: [Z2.joint3], length_m: 1}
+  Z2.joint3: {kind: joint, to: [Z2.swing1]}
+  Z2.swing1: {kind: swing.34x34, to: [Z2.head1]}
+  Z2.head1:  {kind: head.rotor, nozzle: "2.5 blue", arc: 150, h_m: 11.1}
+  Z2.hose3:  {kind: hose.25, to: [Z2.joint4], length_m: 9}
+  Z2.joint4: {kind: joint, to: [Z2.swing2]}
+  Z2.swing2: {kind: swing.34x34, to: [Z2.head2]}
+  Z2.head2:  {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 11.2}
 
-  Z3.j1:    {kind: joint, to: [Z3.valve]}
-  Z3.valve: {kind: valve.auto, to: [Z3.j2], h_m: 11.2}
-  Z3.j2:    {kind: joint, to: [Z3.hose1]}
-  Z3.hose1: {kind: hose.25, to: [Z3.tee1], length_m: 20}
-  Z3.tee1:  {kind: tee, to: [Z3.hose2, Z3.hose3]}
-  Z3.hose2: {kind: hose.25, to: [Z3.j3], length_m: 3}
-  Z3.j3:    {kind: joint, to: [Z3.sw1]}
-  Z3.sw1:   {kind: swing.34x34, to: [Z3.head1]}
-  Z3.head1: {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 10.2}
-  Z3.hose3: {kind: hose.25, to: [Z3.j4], length_m: 12}
-  Z3.j4:    {kind: joint, to: [Z3.sw2]}
-  Z3.sw2:   {kind: swing.34x34, to: [Z3.head2]}
-  Z3.head2: {kind: head.rotor, nozzle: "2.5 blue", arc: 180, h_m: 10.5}
+  Z3.joint1: {kind: joint, to: [Z3.valve]}
+  Z3.valve:  {kind: valve.auto, to: [Z3.joint2], h_m: 11.2}
+  Z3.joint2: {kind: joint, to: [Z3.hose1]}
+  Z3.hose1:  {kind: hose.25, to: [Z3.tee1], length_m: 20}
+  Z3.tee1:   {kind: tee, to: [Z3.hose2, Z3.hose3]}
+  Z3.hose2:  {kind: hose.25, to: [Z3.joint3], length_m: 3}
+  Z3.joint3: {kind: joint, to: [Z3.swing1]}
+  Z3.swing1: {kind: swing.34x34, to: [Z3.head1]}
+  Z3.head1:  {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 10.2}
+  Z3.hose3:  {kind: hose.25, to: [Z3.joint4], length_m: 12}
+  Z3.joint4: {kind: joint, to: [Z3.swing2]}
+  Z3.swing2: {kind: swing.34x34, to: [Z3.head2]}
+  Z3.head2:  {kind: head.rotor, nozzle: "2.5 blue", arc: 180, h_m: 10.5}
 
-  Z4.j1:    {kind: joint, to: [Z4.valve]}
-  Z4.valve: {kind: valve.auto, to: [Z4.j2], h_m: 11.2}
-  Z4.j2:    {kind: joint, to: [Z4.hose1]}
-  Z4.hose1: {kind: hose.25, to: [Z4.tee1], length_m: 9}
-  Z4.tee1:  {kind: tee, to: [Z4.hose2, Z4.hose3]}
-  Z4.hose2: {kind: hose.25, to: [Z4.j3], length_m: 2}
-  Z4.j3:    {kind: joint, to: [Z4.sw1]}
-  Z4.sw1:   {kind: swing.34x12, to: [Z4.head1]}
-  Z4.head1: {kind: head.spray, nozzle: MP3000, arc: 270, h_m: 11.3}
-  Z4.hose3: {kind: hose.25, to: [Z4.tee2], length_m: 8}
-  Z4.tee2:  {kind: tee, to: [Z4.hose4, Z4.hose5]}
-  Z4.hose4: {kind: hose.25, to: [Z4.sw2], length_m: 6}
-  Z4.sw2:   {kind: swing.34x12, to: [Z4.head2]}
-  Z4.head2: {kind: head.spray, nozzle: MP1000, arc: 210, h_m: 12.0}
-  Z4.hose5: {kind: hose.25, to: [Z4.j4], length_m: 19}
-  Z4.j4:    {kind: joint, to: [Z4.sw3]}
-  Z4.sw3:   {kind: swing.34x12, to: [Z4.head3]}
-  Z4.head3: {kind: head.spray, nozzle: MP2000, arc: 270, h_m: 12.0}
+  Z4.joint1: {kind: joint, to: [Z4.valve]}
+  Z4.valve:  {kind: valve.auto, to: [Z4.joint2], h_m: 11.2}
+  Z4.joint2: {kind: joint, to: [Z4.hose1]}
+  Z4.hose1:  {kind: hose.25, to: [Z4.tee1], length_m: 9}
+  Z4.tee1:   {kind: tee, to: [Z4.hose2, Z4.hose3]}
+  Z4.hose2:  {kind: hose.25, to: [Z4.joint3], length_m: 2}
+  Z4.joint3: {kind: joint, to: [Z4.swing1]}
+  Z4.swing1: {kind: swing.34x12, to: [Z4.head1]}
+  Z4.head1:  {kind: head.spray, nozzle: MP3000, arc: 270, h_m: 11.3}
+  Z4.hose3:  {kind: hose.25, to: [Z4.tee2], length_m: 8}
+  Z4.tee2:   {kind: tee, to: [Z4.hose4, Z4.hose5]}
+  Z4.hose4:  {kind: hose.25, to: [Z4.swing2], length_m: 6}
+  Z4.swing2: {kind: swing.34x12, to: [Z4.head2]}
+  Z4.head2:  {kind: head.spray, nozzle: MP1000, arc: 210, h_m: 12.0}
+  Z4.hose5:  {kind: hose.25, to: [Z4.joint4], length_m: 19}
+  Z4.joint4: {kind: joint, to: [Z4.swing3]}
+  Z4.swing3: {kind: swing.34x12, to: [Z4.head3]}
+  Z4.head3:  {kind: head.spray, nozzle: MP2000, arc: 270, h_m: 12.0}
 
-  Z5.j1:     {kind: joint, to: [Z5.hose1]}
-  Z5.hose1:  {kind: hose.16, to: [Z5.j2], length_m: 10}
-  Z5.j2:     {kind: joint, to: [Z5.hose2]}
+  Z5.joint1: {kind: joint, to: [Z5.hose1]}
+  Z5.hose1:  {kind: hose.16, to: [Z5.joint2], length_m: 10}
+  Z5.joint2: {kind: joint, to: [Z5.hose2]}
   Z5.hose2:  {kind: hose.16, to: [Z5.valve], length_m: 10}
   Z5.valve:  {kind: valve.manual, to: [Z5.hose3], h_m: 12.2}
   Z5.hose3:  {kind: hose.16, to: [Z5.nozzle], length_m: 10}
