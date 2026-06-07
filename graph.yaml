@@ -17,8 +17,8 @@ kinds:
   pump.well:
     in: foot_valve
     out: outlet
-    model: JET 82 M
-    max_output_bar: 4.6
+    model: AQUAJET 132 M
+    max_output_bar: 4.7
     parts:
       foot_valve: {to: [suction], fail: [broken, clogged]}
       suction:    {to: [impeller], fail: [clogged]}
