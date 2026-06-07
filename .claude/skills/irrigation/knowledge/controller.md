@@ -53,7 +53,7 @@ so it can drive either an inline master valve on the supply, or — through a re
 
 On *this* system there is no separate inline master-valve solenoid. Instead the master-valve output
 drives the **Hunter PSR-22 pump start relay** (`relay.md`), whose 24 V coil switches 230 V to the
-**DAB Jet** well pump. The pump starting is what pressurises the line, and `graph.yaml`'s `circuit` records a
+**DAB Aquajet 132M** well pump. The pump starting is what pressurises the line, and `graph.yaml`'s `circuit` records a
 **5-second pump-start-to-valve delay** (`controller.pump_lead_s`) so pressure is up before a zone opens. So the controller's
 "master valve" feature is in use here — it just starts the pump rather than opening a valve.
 
