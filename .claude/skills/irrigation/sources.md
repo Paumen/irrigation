@@ -43,7 +43,7 @@ next to this file — matching how the agent resolves files at runtime.
 
 ### F5 — Pump 
 - Local doc: none yet.
-- Fallback: `media/pump-datasheet-dab-jet-102m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
+- Fallback: `media/pump-datasheet-dab-aquajet-132m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
 ### F6 — Main hose 
 - Local doc: none yet.
