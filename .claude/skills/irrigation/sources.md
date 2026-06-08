@@ -44,7 +44,7 @@ next to this file — matching how the agent resolves files at runtime.
 ### F5 — Pump 
 - Local doc: `knowledge/pump.md` — DAB AquaJet / AquaJet-INOX booster set (this system's pump is the AquaJet 132 M): technical/electrical data per model, head-vs-flow curves, install, start-up & priming, maintenance, cable replacement, pressure-switch & tank pre-charge setup, full troubleshooting table.
 - Read when: engine points at the pump (F5); pump won't start / hums / won't prime / won't build pressure; short-cycling or won't stop; setting pressure-switch cut-in/cut-out or tank pre-charge; replacing the power cable; sizing/choosing an AquaJet model; winterising the pump.
-- Fallback: `media/pump-datasheet-dab-aquajet-132m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
+- Fallback: DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
 ### F6 — Main hose 
 - Local doc: none yet.
