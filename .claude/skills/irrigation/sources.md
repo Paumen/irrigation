@@ -33,7 +33,7 @@ next to this file — matching how the agent resolves files at runtime.
 
 ### F5 — Pump 
 - Local doc: `knowledge/pump.md`.
-- Fallback: `media/pump-datasheet-dab-aquajet-132m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
+- Fallback: DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support. (No local datasheet PDF is kept — go straight to DAB's documentation on the web.)
 
 ### F6 — Main hose 
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
