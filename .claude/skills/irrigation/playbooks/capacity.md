@@ -12,8 +12,7 @@ What-if questions re-run the same arithmetic with one input changed:
 - **"what if the pump/water table changed?"** → swap the `pump_curves` entry or the well `water_level_m` and re-solve the operating point.
 
 Common shapes:
-- **How many zones at once?** One. Settings run zones sequentially and the no-flow-sensor / no-master-valve design assumes it. Check each zone's computed flow (zone flows aren't stored anywhere — solve them from `graph.yaml`'s topology) sits under the pump's 3.8 m³/h.
-- **Flow budget per zone?** Pump 3.8 m³/h (≈63 L/min) minus a ~10–15% margin as the ceiling; compare each zone's computed `flow_m3h` and state headroom.
+
 - **Add a fifth zone?** The controller has spare stations (HD-16); the real limit is pump headroom and the 32 mm main hose. State both.
 - **Run time for zone X?** A precipitation question, not a flow one: nozzle precip rate (I-20 / MP Rotator / PRS40 PDFs) + soil/root assumption + Wijchen ET → minutes. Label it an estimate to refine from observed runoff.
 - **Pump big enough?** Zone peak flow vs 3.8 m³/h, and required head (~2.8 bar at the PRS40 heads + elevation + hose friction) vs the pump's 4.8 bar. State the margins.
