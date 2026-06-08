@@ -1,7 +1,4 @@
 pump_curves:
-  JET 62 M:  {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0],                head_m: [42, 35, 29.2, 25.6, 22.9, 21.1]}
-  JET 82 M:  {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6],           head_m: [47, 40, 34, 30, 26.2, 23.5, 20.3]}
-  JET 92 M:  {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6, 4.2, 4.8], head_m: [36.2, 33.5, 31, 28.4, 26, 24, 21.8, 19.6, 17]}
   JET 102 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6],           head_m: [53.8, 47, 41, 36.3, 32.4, 28.8, 25.8]}
   JET 112 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6],           head_m: [61, 54, 47.8, 42.8, 38.8, 34.8, 20]}
   AQUAJET 132 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6, 4.2, 4.8], head_m: [48.3, 45.6, 42.8, 40, 37.6, 35, 32.5, 30, 27.2]}
@@ -25,11 +22,6 @@ nozzle_i20:
   operating_range_bar: [1.7, 4.5]
 
 nozzle_mp:
-  # PRS40 spray body regulates inlet to 2.76 bar; below that the MP nozzle
-  # flows on its own pressure curve. Hunter rated band is 25-55 psi
-  # (1.72-3.79 bar); MP1000 is unrated at 25 psi (null). Flows converted from
-  # the Hunter MP Rotator cutsheet GPM tables (x0.2271247). The 2.76 bar column
-  # equals the former single-point regulated values.
   regulated_bar: 2.76
   operating_range_bar: [1.72, 3.79]
   pressure_bar: [1.72, 2.07, 2.41, 2.76, 3.10, 3.45, 3.79]
