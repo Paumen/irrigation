@@ -1,0 +1,222 @@
+pump:
+  h_m: 7.2
+  source: measured
+joint1:
+  h_m: 7.2
+  source: interp
+hose1:
+  h_m: 9.2
+  source: interp
+joint2:
+  h_m: 11.2
+  source: interp
+manifold:
+  h_m: 11.2
+  source: measured
+Z1.joint1:
+  h_m: 11.2
+  source: interp
+Z2.joint1:
+  h_m: 11.2
+  source: interp
+Z3.joint1:
+  h_m: 11.2
+  source: interp
+Z4.joint1:
+  h_m: 11.2
+  source: interp
+Z5.joint1:
+  h_m: 11.2
+  source: interp
+Z6.cap:
+  h_m: 11.2
+  source: interp_flat
+Z1.valve:
+  h_m: 11.2
+  source: measured
+Z2.valve:
+  h_m: 11.2
+  source: measured
+Z3.valve:
+  h_m: 11.2
+  source: measured
+Z4.valve:
+  h_m: 11.2
+  source: measured
+Z5.hose1:
+  h_m: 11.45
+  source: interp
+Z1.joint2:
+  h_m: 11.2
+  source: interp
+Z2.joint2:
+  h_m: 11.2
+  source: interp
+Z3.joint2:
+  h_m: 11.2
+  source: interp
+Z4.joint2:
+  h_m: 11.2
+  source: interp
+Z5.joint2:
+  h_m: 11.7
+  source: interp
+Z1.hose1:
+  h_m: 11.2
+  source: interp
+Z2.hose1:
+  h_m: 11.18
+  source: interp
+Z3.hose1:
+  h_m: 10.87
+  source: interp
+Z4.hose1:
+  h_m: 11.3
+  source: interp
+Z5.hose2:
+  h_m: 11.95
+  source: interp
+Z1.tee1:
+  h_m: 11.19
+  source: interp
+Z2.tee1:
+  h_m: 11.17
+  source: interp
+Z3.tee1:
+  h_m: 10.55
+  source: interp
+Z4.tee1:
+  h_m: 11.4
+  source: interp
+Z5.valve:
+  h_m: 12.2
+  source: measured
+Z1.hose2:
+  h_m: 10.66
+  source: interp
+Z1.hose3:
+  h_m: 11.41
+  source: interp
+Z2.hose2:
+  h_m: 11.12
+  source: interp
+Z2.hose3:
+  h_m: 11.2
+  source: interp
+Z3.hose2:
+  h_m: 10.27
+  source: interp
+Z3.hose3:
+  h_m: 10.63
+  source: interp
+Z4.hose2:
+  h_m: 11.29
+  source: interp
+Z4.hose3:
+  h_m: 11.57
+  source: interp
+Z5.hose3:
+  h_m: 12.2
+  source: interp
+Z1.joint3:
+  h_m: 10.5
+  source: interp
+Z1.tee2:
+  h_m: 11.44
+  source: interp
+Z2.joint3:
+  h_m: 11.1
+  source: interp
+Z2.joint4:
+  h_m: 11.2
+  source: interp
+Z3.joint3:
+  h_m: 10.2
+  source: interp
+Z3.joint4:
+  h_m: 10.5
+  source: interp
+Z4.joint3:
+  h_m: 11.3
+  source: interp
+Z4.tee2:
+  h_m: 11.68
+  source: interp
+Z5.nozzle:
+  h_m: 12.2
+  source: measured
+Z1.swing1:
+  h_m: 10.5
+  source: interp
+Z1.swing2:
+  h_m: 11.6
+  source: interp
+Z1.hose4:
+  h_m: 11.34
+  source: interp
+Z2.swing1:
+  h_m: 11.1
+  source: interp
+Z2.swing2:
+  h_m: 11.2
+  source: interp
+Z3.swing1:
+  h_m: 10.2
+  source: interp
+Z3.swing2:
+  h_m: 10.5
+  source: interp
+Z4.swing1:
+  h_m: 11.3
+  source: interp
+Z4.hose4:
+  h_m: 11.9
+  source: interp
+Z4.hose5:
+  h_m: 11.79
+  source: interp
+Z1.head1:
+  h_m: 10.5
+  source: measured
+Z1.head2:
+  h_m: 11.6
+  source: measured
+Z1.joint4:
+  h_m: 11.4
+  source: interp
+Z2.head1:
+  h_m: 11.1
+  source: measured
+Z2.head2:
+  h_m: 11.2
+  source: measured
+Z3.head1:
+  h_m: 10.2
+  source: measured
+Z3.head2:
+  h_m: 10.5
+  source: measured
+Z4.head1:
+  h_m: 11.3
+  source: measured
+Z4.swing2:
+  h_m: 12.0
+  source: interp
+Z4.joint4:
+  h_m: 12.0
+  source: interp
+Z1.swing3:
+  h_m: 11.4
+  source: interp
+Z4.head2:
+  h_m: 12.0
+  source: measured
+Z4.swing3:
+  h_m: 12.0
+  source: interp
+Z1.head3:
+  h_m: 11.4
+  source: measured
+Z4.head3:
+  h_m: 12.0
+  source: measured
