@@ -493,7 +493,7 @@ images:
     caption: Inline multi-jet flow totaliser — blue body with brass union tailpieces and a sealed register (m³); plumbed into a line, it totalises flow so you can read a zone's real throughput.
     subjects: [hoses]
     relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in graph.yaml — illustrative.
-    used_in: [playbooks/capacity.md]
+    used_in: []
 
   # ── valve · auto ─────────────────────────────────────────────────────────────
   IMG.valve-auto-product-pgv-101g:

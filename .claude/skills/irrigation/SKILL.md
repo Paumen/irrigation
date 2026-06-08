@@ -67,7 +67,6 @@ Pick by what the user wants; if ambiguous, ask one clarifying question first. Al
 |---|---|
 | how a part works, or how to install / configure / run / clean / replace it | `playbooks/parts.md` |
 | what model do I have? is this a PGV-101G? | `playbooks/identify.md` |
-| how many zones at once? flow budget? pump big enough? | `playbooks/capacity.md` |
 | what upgrades do you recommend? | `playbooks/upgrades.md` |
 | winter prep? spring start-up? filter cadence? | `playbooks/maintenance.md` |
 | any symptom — won't start, not turning, weeping when off | `playbooks/troubleshoot.md` |
