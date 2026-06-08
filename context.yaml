@@ -31,9 +31,11 @@ equipment:
   pump.well:
     installed: 2023-06
     location: well
+    price_eu: 350
   hose:
     installed: 2020-08
     location: in_ground
+    price_eu_m: 2
   swing:
     location: in_ground
     price_eur: 5
@@ -58,6 +60,7 @@ equipment:
   controller:
     installed: 2020-08
     location: house
+    price_eu: 200
   relay:
     installed: 2020-08
     location: shed
