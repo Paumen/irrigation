@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Interpolate ground elevations (h_m) for irrigation flow nodes that lack a
-measured value.
+"""Fill in ground elevations (h_m) for irrigation flow nodes that lack a
+measured value, writing them back into graph.yaml so the model stays a single
+source of truth.
 
 The flow network in graph.yaml is a tree rooted at the well. A sparse set of
 nodes carry a measured `h_m` (pump, manifold, zone valves, sprinkler heads).
@@ -11,15 +12,23 @@ distance coordinate. Trunk nodes shared by several anchor->anchor paths get the
 average of their per-path estimates. Dead ends with no downstream anchor inherit
 the nearest upstream anchor (flat).
 
-Usage: python3 epanet/interpolate_elevation.py [--write epanet/elevations.yaml]
+Measured anchors are the nodes whose `h_m` carries no `h_m_src`. Derived values
+are written with `h_m_src: interp` (or `interp_flat`) so an estimate is never
+mistaken for a measurement, and so a re-run can tell anchors from fill-ins.
+
+Usage:
+  python3 epanet/interpolate_elevation.py            # print the table
+  python3 epanet/interpolate_elevation.py --write     # bake h_m into graph.yaml
 """
+import re
 import sys
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-FLOW = yaml.safe_load((ROOT / "graph.yaml").read_text())["flow"]
+GRAPH = ROOT / "graph.yaml"
+FLOW = yaml.safe_load(GRAPH.read_text())["flow"]
 
 
 def span(node):
@@ -56,7 +65,9 @@ def coordinates(parent, order):
 def interpolate():
     root, parent, order = build_tree()
     coord = coordinates(parent, order)
-    anchor = {k: float(v["h_m"]) for k, v in FLOW.items() if "h_m" in v}
+    # Anchors are the measured elevations: an h_m with no derived-source tag.
+    anchor = {k: float(v["h_m"]) for k, v in FLOW.items()
+              if "h_m" in v and "h_m_src" not in v}
 
     est = {n: [] for n in FLOW}
     for d in anchor:
@@ -97,6 +108,41 @@ def interpolate():
     return order, coord, result
 
 
+def write_graph(result):
+    """Bake derived h_m values into graph.yaml's flow node lines in place,
+    preserving the file's hand-formatting. Measured anchors are left untouched;
+    derived nodes get `h_m: <v>, h_m_src: <source>` inside their braces."""
+    derived = {n: r for n, r in result.items() if r["source"] != "measured"}
+    lines = GRAPH.read_text().splitlines(keepends=True)
+
+    in_flow = False
+    node_re = re.compile(r"^(\s*)([\w.]+):(\s*)\{(.*)\}(\s*)$")
+    strip_re = re.compile(r",?\s*(?<![\w])h_m(?:_src)?:\s*[^,}]+")
+
+    for i, line in enumerate(lines):
+        stripped = line.rstrip("\n")
+        if re.match(r"^flow:\s*$", stripped):
+            in_flow = True
+            continue
+        if in_flow and re.match(r"^\S", stripped):  # next top-level key
+            in_flow = False
+        if not in_flow:
+            continue
+        m = node_re.match(stripped)
+        if not m:
+            continue
+        name = m.group(2)
+        if name not in derived:
+            continue
+        indent, ws, body, trail = m.group(1), m.group(3), m.group(4), m.group(5)
+        body = strip_re.sub("", body).rstrip()
+        v = derived[name]
+        addition = f", h_m: {v['h_m']:g}, h_m_src: {v['source']}"
+        lines[i] = f"{indent}{name}:{ws}{{{body}{addition}}}{trail}\n"
+
+    GRAPH.write_text("".join(lines))
+
+
 def main():
     order, coord, result = interpolate()
     width = max(len(n) for n in result)
@@ -108,10 +154,9 @@ def main():
         print(f"{n:<{width}}  {coord[n]:7.1f}  {r['h_m']:6.2f}  {r['source']}")
 
     if "--write" in sys.argv:
-        out = Path(sys.argv[sys.argv.index("--write") + 1])
-        out.write_text(yaml.safe_dump(
-            {n: result[n] for n in order if n in result}, sort_keys=False))
-        print(f"\nwrote {out}")
+        write_graph(result)
+        n = sum(1 for r in result.values() if r["source"] != "measured")
+        print(f"\nwrote {n} derived h_m values into {GRAPH}")
 
 
 if __name__ == "__main__":
