@@ -7,8 +7,8 @@ vocabulary. If the local doc doesn't cover the symptom, fall back down the ladde
 named an area) as well as at a dead-end, not only when stuck.
 
 Each subject doc carries its own `summary` / `read_when` / `contents` front-matter — read that with the
-doc for when-to-open and symptom triggers. This file is the explicit path map and the escalation
-ladder: which doc(s) own each area, where the local knowledge is partial or absent, and where to go next.
+doc for when-to-open, what it covers, and symptom triggers. This file is the explicit path map and the
+escalation ladder: which doc(s) own each area and where to go next.
 
 Paths (`knowledge/…`, `media/…`) are relative to this skill folder — both directories live here,
 next to this file — matching how the agent resolves files at runtime.
@@ -16,19 +16,15 @@ next to this file — matching how the agent resolves files at runtime.
 ## Routing by failure-mode area
 
 ### F1 — App / control
-- Local doc: `knowledge/app.md` — **partial** (control paths, weather-adaptive programs, zone
-  properties + master-valve toggle, manual run / valve testing, restrictions, sensor software setup,
-  the zone-won't-turn-on software path, remote access).
+- Local doc: `knowledge/app.md`.
 - Fallback: RainMachine app + support (https://support.rainmachine.com/), then web.
 
 ### F2 — Controller 
-- Local doc: `knowledge/controller.md` — **partial** (terminal block & power, master-valve/pump and
-  rain/flow sensor *wiring*, Wi-Fi setup/recovery, the zone-won't-run hardware path, voltage-at-terminals
-  test). Software/scheduling is in `knowledge/app.md` (F1).
-- Fallback: RainMachine support (https://support.rainmachine.com/), then web. No local PDF.
+- Local doc: `knowledge/controller.md`. Software/scheduling is in `knowledge/app.md` (F1).
+- Fallback: RainMachine support (https://support.rainmachine.com/), then web.
 
 ### F3 — Field wiring (24 V low-voltage)
-- Local doc: `knowledge/wiring.md` — **partial** (wire-length table, connectors, isolation tests).
+- Local doc: `knowledge/wiring.md`.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ### F4 — Pump start relay 
@@ -36,11 +32,10 @@ next to this file — matching how the agent resolves files at runtime.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ### F5 — Pump 
-- Local doc: `knowledge/pump.md` — DAB AquaJet / AquaJet-INOX booster set (this system's pump is the AquaJet 132 M): technical/electrical data per model, head-vs-flow curves, install, start-up & priming, maintenance, cable replacement, pressure-switch & tank pre-charge setup, full troubleshooting table.
+- Local doc: `knowledge/pump.md`.
 - Fallback: `media/pump-datasheet-dab-aquajet-132m.pdf`, then DAB product documentation (web), then IrrigationTutorials.com (pump/hydraulics), then Hunter support.
 
 ### F6 — Main hose 
-- Local doc: none yet.
 - Fallback: IrrigationTutorials.com (hydraulics, common-failure patterns), then web.
 - Design context: Hunter's "Controlling High Pressure" article (residential rotors) describes
   whole-system pressure regulation as the coarsest of three tiers (system-wide → per-valve →
@@ -53,8 +48,7 @@ next to this file — matching how the agent resolves files at runtime.
 - Fallback: Hunter support (https://www.hunterindustries.com/support), then web.
 
 ### F8 — Zone hoses 
-- Local doc: `knowledge/hoses.md` — **partial** (broken-hose signature, field-diagnosis
-  steps, dead-end winterization rule, cap-off/shorten-hose procedure).
+- Local doc: `knowledge/hoses.md`.
 - Fallback: IrrigationTutorials.com, then web. Hunter's "Rotor Not Fully Popping Up" article
   has the textbook broken-hose signature ("look for new trees and shrub plantings, new or
   repaired fences"); that material is already folded into `hoses.md`.
