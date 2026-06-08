@@ -10,8 +10,7 @@ This is STATE ONLY. It produces the settable node graph and records a condition
 on each node. It does NOT compute what a condition does to flow or signal -- that
 is the simulation's job (see the prompt that ships alongside this file).
 
-Layout: drop this in tools/ next to hydraulics.py; it reads ../graph.yaml,
-mirroring how hydraulics.py finds ../setup.yaml. Override with graph_path.
+Layout: lives in tools/ and reads ../graph.yaml. Override with graph_path.
 
 Usage:
     python3 faults.py --list                 # every settable node + allowed conditions

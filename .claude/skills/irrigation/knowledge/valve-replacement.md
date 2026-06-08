@@ -20,7 +20,8 @@ to judge whether a replacement valve is a true drop-in, a drop-in with a
 caveat, an in-place swap that needs some adjustment, or a non-starter.
 
 Anything that changes flow/pressure (rarely, for a like-size valve) should
-still be confirmed with `irrigation_hydraulics`; the bigger risks here are
+still be confirmed by reworking the per-zone solve from `graph.yaml` +
+`catalog.yaml` (see `playbooks/capacity.md`); the bigger risks here are
 **physical fit** (thread type, body size, mounting class) and
 **electrical fit** (solenoid voltage).
 

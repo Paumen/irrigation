@@ -81,7 +81,7 @@ couples them (the controller's switches, a solenoid acting on a pilot).
 The physical laws live in the simulation, applied to the one model. Nothing is
 borrowed from a separate "reference" tool. And no number is presented with more
 confidence than its inputs earn.
-- **Kills:** importing `hydraulics.py`'s functions (a reference calculator built
+- **Kills:** importing a standalone reference calculator's functions (built
   for a different source) into the simulation; four-decimal output resting on
   guessed constants.
 - **Check:** no import of a standalone reference calculator. Any output resting
