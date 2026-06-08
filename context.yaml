@@ -19,15 +19,6 @@ control_paths:
   - rainmachine_cloud
   - home_wifi
   to: controller
-settings:
-  programs:
-  - name: all_zones_sequential
-    scope: Z1–Z4 (all valve.auto zones)
-    run: one at a time
-  - name: single_zone
-    scope: one of Z1–Z4
-  - name: pump_start_only
-    scope: MAIN.relay.01 only — drives pump for manual Z5
 system_design_choices:
   backflow_preventer: well is isolated from drinking water
   master_valve: pump is controller-triggered and provides the leak-limiting shutoff a master valve would add
