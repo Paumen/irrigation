@@ -12,7 +12,7 @@ kinds:
   hose.25:       {outer_diameter_mm: 25, wall_thickness_mm: 2.7, inner_diameter_mm: 19.6, material: LDPE, hazen_williams_c: 150, max_pressure_bar: 6,   fail: [broken, clogged]}
   hose.16:       {outer_diameter_mm: 16, wall_thickness_mm: 3,   inner_diameter_mm: 10,   material: LDPE, hazen_williams_c: 150, max_pressure_bar: 6.3, fail: [broken, clogged]}
   cap:           {max_pressure_bar: 10, fail: [broken]}
-  nozzle.stream: {fail: [clogged, misconfigured]}
+  nozzle.stream: {bore_mm: 10, cd: 0.97, discharge: open_hose_end, fail: [clogged, misconfigured]}
 
   pump.well:
     in: foot_valve
@@ -73,6 +73,7 @@ kinds:
   valve.manual:
     in: inlet
     out: outlet
+    Kv: 6.0
     parts:
       inlet:        {to: [seat, inlet_thread, body]}
       inlet_thread: {to: [], fail: [broken, misconfigured]}
