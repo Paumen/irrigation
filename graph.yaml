@@ -114,7 +114,7 @@ kinds:
       nozzle:         {to: [], fail: [clogged, misconfigured]}
 
 flow:
-  well:      {kind: supply, to: [hose1], h_m: 5.5}
+  well:      {kind: water.level, to: [hose1], h_m: 5.5}
   hose1:     {kind: hose.25, to: [pump], length_m: 4.5, h_m: 4.8}
   pump:      {kind: pump.well, to: [joint1], h_m: 8.2}
   joint1:    {kind: joint, to: [hose2], h_m: 8.2}
