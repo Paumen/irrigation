@@ -14,15 +14,19 @@ kinds:
   nozzle.stream: {bore_mm: 10, cd: 0.97, discharge: open_hose_end, fail: [clogged, misconfigured]}
 
   pump.well:
-    in: foot_valve
+    in: suction
     out: outlet
     model: AQUAJET 132 M
     max_output_bar: 4.7
     parts:
-      suction:    {to: [impeller], fail: [clogged]}
-      impeller:   {to: [outlet], fail: [broken]}
-      mech_seal:  {to: [], acts: [impeller], fail: [broken]}
-      outlet:     {}
+      suction:     {to: [impeller], fail: [clogged]}
+      impeller:    {to: [diffuser], fail: [broken, clogged]}
+      diffuser:    {to: [outlet], fail: [broken, clogged]}
+      mech_seal:   {to: [], acts: [impeller], fail: [broken]}
+      priming_cap: {to: [], acts: [suction], fail: [broken, misconfigured]}
+      motor:       {acts: [impeller], fail: [broken]}
+      capacitor:   {acts: [motor], fail: [broken]}
+      outlet:      {}
 
   manifold:
     in: inlet
