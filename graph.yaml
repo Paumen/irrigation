@@ -116,7 +116,7 @@ kinds:
 
 flow:
   well:      {kind: supply, to: [hose1], water_level_m: 5.5}
-  hose1:     {kind: hose.25, to: [pump], length_m: 4.5, h_m: 8.2}
+  hose1:     {kind: hose.25, to: [pump], length_m: 4.5, h_m: 4.8}
   pump:      {kind: pump.well, to: [joint1], h_m: 8.2}
   joint1:    {kind: joint, to: [hose2], h_m: 8.2}
   hose2:     {kind: hose.32, to: [joint2], length_m: 1, h_m: 8.2}
