@@ -290,8 +290,7 @@ Hunter's flow/pressure vendor table):
 
 At a typical per-zone flow of ~2.2 m³/h (≈37 l/min), each zone valve costs ~0.28 bar of
 the available pump head — useful when budgeting pressure for the heads downstream. (This
-system's per-zone flows are solved from `graph.yaml`'s topology and `catalog.yaml`'s charts —
-see `playbooks/capacity.md`.)
+system's per-zone flows are solved from `graph.yaml`'s topology and `catalog.yaml`'s charts.)
 
 ## Filter / mesh (PGV 1")
 
