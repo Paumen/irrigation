@@ -19,7 +19,6 @@ kinds:
     model: AQUAJET 132 M
     max_output_bar: 4.7
     parts:
-      foot_valve: {to: [suction], fail: [broken, clogged]}
       suction:    {to: [impeller], fail: [clogged]}
       impeller:   {to: [outlet], fail: [broken]}
       mech_seal:  {to: [], acts: [impeller], fail: [broken]}
