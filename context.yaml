@@ -22,9 +22,6 @@ control_paths:
 system_design_choices:
   backflow_preventer: well is isolated from drinking water
   master_valve: pump is controller-triggered and provides the leak-limiting shutoff a master valve would add
-  flow_meter: programs run one zone at a time; sensor adds failure modes; diagnostic value can be inferred from other observations
-  pressure_meter: programs run one zone at a time; sensor adds failure modes; diagnostic value can be inferred from other
-    observations
   manual_shutoff_valve: pump on/off is the primary shutoff (Z5's valve.manual is a zone control, not a system shutoff)
   zone_1_head_mix_rationale: rotor for lawn, MP rotators for flower beds (different precipitation rates)
 cable_runs:
