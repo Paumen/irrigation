@@ -20,7 +20,7 @@ The heads are the parts that actually spray water at the lawn. Three components 
 - **Pro-Spray PRS40 bodies** — pressure-regulated pop-up bodies (~2.8 bar at the nozzle) that carry the MP nozzles. See `heads-spray.md`.
 - **MP Rotator nozzles** — multi-stream nozzles that screw into the PRS40 for tighter, slower coverage of flower beds and odd-shaped areas. See `heads-spray.md`.
 
-Read this when the engine narrows to F9, when something looks wrong at one head, or when the homeowner is changing a nozzle or replacing a body. The I-20 rotor is below; for an MP/PRS40 symptom (misting, MP won't rotate, regulator) go straight to `heads-spray.md`. For weeping that *looks* like a head fault but might be the valve, see `valve.md` *Weeping when off* — the distinguishing test is below in *Low-head drainage*.
+Read this when the engine narrows to the heads area, when something looks wrong at one head, or when the homeowner is changing a nozzle or replacing a body. The I-20 rotor is below; for an MP/PRS40 symptom (misting, MP won't rotate, regulator) go straight to `heads-spray.md`. For weeping that *looks* like a head fault but might be the valve, see `valve.md` *Weeping when off* — the distinguishing test is below in *Low-head drainage*.
 
 ## I-20 rotor
 
