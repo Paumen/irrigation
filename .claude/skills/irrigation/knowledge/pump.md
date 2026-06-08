@@ -95,11 +95,11 @@ Approximate delivery head in metres at the listed flow. Use it to confirm a mode
 | Flow Q (m³/h) → | 0.6 | 1.2 | 1.8 | 2.4 | 3.0 | 3.6 | 4.2 | 4.8 |
 |---|---|---|---|---|---|---|---|---|
 | **(l/min)** | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 |
-| AquaJet 82 M  | 47   | 40   | 34   | 30   | 26.2 | 23.5 | 20.3 | — |
-| AquaJet 92 M  | 36.2 | 33.5 | 31   | 28.4 | 26   | 24   | 21.8 | 17.5 |
-| AquaJet 102 M | 53.8 | 47   | 41   | 36.3 | 32.4 | 28.8 | 25.8 | — |
-| AquaJet 112 M | 61   | 54   | 47.8 | 42.8 | 38.8 | 34.8 | 22   | — |
-| AquaJet 132 M | 48.3 | 45.6 | 42.8 | 40   | 37.6 | 35   | 32.5 | 27.2 |
+| AquaJet 82 M  | 40   | 34   | 30   | 26.2 | 23.5 | 20.3 | —    | — |
+| AquaJet 92 M  | 33.5 | 31   | 28.4 | 26   | 24   | 21.8 | 19.6 | 17 |
+| AquaJet 102 M | 47   | 41   | 36.3 | 32.4 | 28.8 | 25.8 | —    | — |
+| AquaJet 112 M | 54   | 47.8 | 42.8 | 38.8 | 34.8 | 20   | —    | — |
+| AquaJet 132 M | 45.6 | 42.8 | 40   | 37.6 | 35   | 32.5 | 30   | 27.2 |
 
 (AquaJet‑INOX head figures are effectively identical to the AquaJet equivalents.)
 

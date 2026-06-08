@@ -232,7 +232,8 @@ circuit:
       zone_3: {fail: [broken, misconfigured]}
       zone_4: {fail: [broken, misconfigured]}
       mv:     {fail: [broken, misconfigured]}
-      c:      {fail: [broken, misconfigured]}
+      c_1:    {to: [c_2], fail: [broken, misconfigured]}
+      c_2:    {fail: [broken, misconfigured]}
       
     relay:
       model: Hunter PSR-22
