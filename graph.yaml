@@ -121,7 +121,7 @@ flow:
   joint1:    {kind: joint, to: [hose2], h_m: 8.2}
   hose2:     {kind: hose.32, to: [joint2], length_m: 1, h_m: 8.2}
   joint2:    {kind: joint, to: [hose3], h_m: 8.2}
-  hose3:     {kind: hose.32, to: [joint2], length_m: 20, h_m: 8.2}
+  hose3:     {kind: hose.32, to: [joint3], length_m: 20, h_m: 8.2}
   joint3:    {kind: joint, to: [manifold], h_m: 11.2}
   manifold:  {kind: manifold, to: [Z1.joint1, Z2.joint1, Z3.joint1, Z4.joint1, Z5.joint1, Z6.cap], h_m: 11.2}
 
