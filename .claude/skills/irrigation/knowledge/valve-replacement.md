@@ -21,7 +21,7 @@ caveat, an in-place swap that needs some adjustment, or a non-starter.
 
 Anything that changes flow/pressure (rarely, for a like-size valve) should
 still be confirmed by reworking the per-zone solve from `graph.yaml` +
-`catalog.yaml` (see `playbooks/capacity.md`); the bigger risks here are
+`catalog.yaml`; the bigger risks here are
 **physical fit** (thread type, body size, mounting class) and
 **electrical fit** (solenoid voltage).
 

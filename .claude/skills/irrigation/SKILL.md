@@ -1,6 +1,6 @@
 ---
 name: irrigation
-description: One-stop assistant for a homeowner's irrigation/rotor system — explain how parts work, identify which model is installed, walk through install / configure / run / clean / winterize procedures, plan capacity, recommend upgrades, and diagnose problems (rotors, valves, pump, controller, wiring) when something isn't working right.
+description: One-stop assistant for a homeowner's irrigation/rotor system — explain how parts work, identify which model is installed, walk through install / configure / run / clean / winterize procedures, recommend upgrades, and diagnose problems (rotors, valves, pump, controller, wiring) when something isn't working right.
 ---
 
 # Irrigation assistant
@@ -16,7 +16,7 @@ Ground every answer in **this** homeowner's system, not generic memory: read `gr
 - **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `app`, `wiring`, `heads`, `heads-spray`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
 - **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`failure_modes:`).
 - **`knowledge/valve-replacement.md`** — a deeper reference table: which Hunter PGV/ICV models are drop-in replacements for the zone valves vs. need adjustment or a re-plumb; read it when the user is choosing a replacement valve.
-- **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main hose). Check here before answering from memory.
+- **`sources.md`** — per-area path map (which doc owns each failure area) and the fallback ladder (local doc → vendor PDF → web). Check here before answering from memory.
 
 
 ## Audience and language
@@ -67,7 +67,5 @@ Pick by what the user wants; if ambiguous, ask one clarifying question first. Al
 |---|---|
 | how a part works, or how to install / configure / run / clean / replace it | `playbooks/parts.md` |
 | what model do I have? is this a PGV-101G? | `playbooks/identify.md` |
-| how many zones at once? flow budget? pump big enough? | `playbooks/capacity.md` |
 | what upgrades do you recommend? | `playbooks/upgrades.md` |
-| winter prep? spring start-up? filter cadence? | `playbooks/maintenance.md` |
 | any symptom — won't start, not turning, weeping when off | `playbooks/troubleshoot.md` |
