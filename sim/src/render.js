@@ -100,7 +100,7 @@ export function createRenderer(svgEl, layout) {
       y: b.y + (b.h >= 200 ? b.h / 2 + 4 : Math.min(b.h / 2 + 4, 24)),
       "text-anchor": "middle",
       fill: "#3c4043",
-      "font-size": "13",
+      "font-size": "12",
       "font-weight": "600",
     });
     t.textContent = b.label;

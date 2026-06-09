@@ -30,7 +30,7 @@ export function wireClass(name, wire) {
 // under them.
 
 // bottom-strip terminal x positions (24 VAC block, then C 1 2 3 4 MV C)
-const STRIP = { ac_1: 380, ac_2: 420, c_1: 480, z1: 520, z2: 560, z3: 600, z4: 640, mv: 680, c_2: 720 };
+const STRIP = { ac_1: 380, ac_2: 420, mv: 470, c_1: 510, z1: 560, z2: 600, z3: 640, z4: 680, c_2: 720 };
 const STRIP_Y = 680; // controller bottom edge
 const VALVE_X = { 1: 430, 2: 570, 3: 710, 4: 850 }; // solenoid centers, row below
 const VALVE_TOP = 840;
@@ -70,19 +70,19 @@ const PARTS = {
     ],
   },
   adapter_socket: {
-    x: 120, y: 360, w: 150, h: 120, label: "Adapter socket",
+    x: 55, y: 360, w: 140, h: 120, label: "Adapter socket",
     anchors: [
       { port: "adapter_socket.l", side: "E", y: 410, label: "L" },
       { port: "adapter_socket.n", side: "E", y: 445, label: "N" },
     ],
   },
   adapter: {
-    x: 300, y: 360, w: 150, h: 120, label: "24 VAC adapter",
+    x: 240, y: 360, w: 130, h: 120, label: "24 VAC adapter",
     anchors: [
       { port: "adapter.ac_l", side: "W", y: 410, label: "L" },
       { port: "adapter.ac_n", side: "W", y: 445, label: "N" },
-      { port: "adapter.out_1", side: "S", x: 315, label: "1" },
-      { port: "adapter.out_2", side: "S", x: 340, label: "2" },
+      { port: "adapter.out_1", side: "S", x: 280, label: "1" },
+      { port: "adapter.out_2", side: "S", x: 305, label: "2" },
     ],
   },
   controller: {
@@ -90,12 +90,12 @@ const PARTS = {
     anchors: [
       { port: "controller.ac_1", side: "S", x: STRIP.ac_1, label: "AC1" },
       { port: "controller.ac_2", side: "S", x: STRIP.ac_2, label: "AC2" },
+      { port: "controller.mv", side: "S", x: STRIP.mv, label: "MV" },
       { port: "controller.c_1", side: "S", x: STRIP.c_1, label: "C" },
       { port: "controller.zone_1", side: "S", x: STRIP.z1, label: "1" },
       { port: "controller.zone_2", side: "S", x: STRIP.z2, label: "2" },
       { port: "controller.zone_3", side: "S", x: STRIP.z3, label: "3" },
       { port: "controller.zone_4", side: "S", x: STRIP.z4, label: "4" },
-      { port: "controller.mv", side: "S", x: STRIP.mv, label: "MV" },
       { port: "controller.c_2", side: "S", x: STRIP.c_2, label: "C" },
     ],
   },
@@ -135,12 +135,13 @@ const ROUTES = {
   pump_earth: { from: "relay.earth@E" },
   adapter_socket_live: {},
   adapter_socket_neutral: {},
-  adapter_supply_1: { vias: [[315, 695], [STRIP.ac_1, 695]] },
-  adapter_supply_2: { vias: [[340, 705], [STRIP.ac_2, 705]] },
-  // MV runs right and up the page edge to the relay coil; C1 loops around the left —
-  // like the physical 10 m cable run from house to shed
-  signal_relay: { vias: [[STRIP.mv, 690], [985, 690], [985, 330], [585, 330]] },
-  relay_return: { vias: [[495, 330], [100, 330], [100, 718], [STRIP.c_1, 718]] },
+  adapter_supply_1: { vias: [[280, 650], [STRIP.ac_1, 650]] },
+  adapter_supply_2: { vias: [[305, 658], [STRIP.ac_2, 658]] },
+  // MV and its common leave the strip together and run as a nested 2-wire bundle
+  // around the left margin up into the relay coil terminals — the physical 10 m
+  // house->shed cable
+  signal_relay: { vias: [[STRIP.mv, 700], [40, 700], [40, 305], [585, 305]] },
+  relay_return: { vias: [[495, 295], [30, 295], [30, 708], [STRIP.c_1, 708]] },
   signal_1: { vias: [[STRIP.z1, ZONE_RAIL[1]], [VALVE_X[1], ZONE_RAIL[1]]] },
   signal_2: { vias: [[STRIP.z2, ZONE_RAIL[2]], [VALVE_X[2], ZONE_RAIL[2]]] },
   signal_3: { vias: [[STRIP.z3, ZONE_RAIL[3]], [VALVE_X[3], ZONE_RAIL[3]]] },
