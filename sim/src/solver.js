@@ -132,7 +132,10 @@ export function solveSteady(model, state, hyd) {
     }
   }
 
-  // mass balance: total outflow == pump supply
+  // mass balance: total outflow == total reservoir inflow. EPANET reports a source
+  // reservoir's demand as negative (water leaving it into the network), so the inflow
+  // is the negated sum over reservoirs — robust to gravity-fed or multi-pump networks.
+  const totalInflow = topo.reservoirs.reduce((sum, r) => sum - res.demand[r.id], 0);
   const pumpFlow = topo.pumpLinkId ? res.flow[topo.pumpLinkId] : 0;
   let outSum = 0;
   for (const o of outlets) if (reachable.has(o.id)) outSum += demands.get(o.id);
@@ -147,7 +150,7 @@ export function solveSteady(model, state, hyd) {
     reachable, // Set of filled flow ids
     pumpFlow,
     outSum,
-    massImbalance: Math.abs(pumpFlow - outSum),
+    massImbalance: Math.abs(totalInflow - outSum),
     converged,
     iters,
     topo,

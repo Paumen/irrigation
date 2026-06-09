@@ -137,6 +137,8 @@ export function buildTopology(model, state) {
     if (!isLink(L)) continue;
     const n1 = resolveEndpoint(parentOf.get(L.id), L, true);
     const n2 = resolveEndpoint(L.to[0], L, false);
+    if (!n1) throw new Error(`network: link "${L.id}" has no upstream node`);
+    if (!n2) throw new Error(`network: link "${L.id}" has no downstream node`);
     const mloss = foldedK.get(L.id) || 0;
 
     if (L.role === "pipe") {

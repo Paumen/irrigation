@@ -32,7 +32,9 @@ export function outletDemandAt(outlet, p_bar, curves) {
 
   if (subkind === "rotor") {
     // I-20: unregulated, follows the nozzle_i20 table for the fitted size.
-    const size = String(params.nozzle).match(/[\d.]+/)[0];
+    const match = String(params.nozzle ?? "").match(/[\d.]+/);
+    if (!match) throw new Error(`outlets: no nozzle size in "${params.nozzle}"`);
+    const size = match[0];
     const row = curves.nozzleI20.flow_m3h[size];
     if (!row) throw new Error(`outlets: no nozzle_i20 row for "${params.nozzle}"`);
     return interp(curves.nozzleI20.pressure_bar, row, p_bar);

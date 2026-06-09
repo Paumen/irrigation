@@ -71,21 +71,21 @@ export function buildModel(rawGraph, rawCatalog) {
     }
   }
 
-  // Resolve catalog curves now so a missing table fails fast.
+  // Resolve catalog curves now so a missing definition or table fails fast.
   const pumpKind = kinds["pump.well"];
-  const pumpModel = pumpKind && pumpKind.model;
-  const pumpCurve = pumpModel && rawCatalog.pump_curves[pumpModel];
-  if (!pumpCurve) {
-    throw new Error(`model: no pump curve for model "${pumpModel}"`);
-  }
+  if (!pumpKind) throw new Error('model: missing "pump.well" kind definition');
+  const pumpModel = pumpKind.model;
+  if (!pumpModel) throw new Error('model: "pump.well" kind has no "model"');
+  const pumpCurve = rawCatalog.pump_curves[pumpModel];
+  if (!pumpCurve) throw new Error(`model: no pump curve for model "${pumpModel}"`);
 
   const valveKind = kinds["valve.auto"];
-  const valveModel = valveKind && valveKind.model;
+  if (!valveKind) throw new Error('model: missing "valve.auto" kind definition');
+  const valveModel = valveKind.model;
+  if (!valveModel) throw new Error('model: "valve.auto" kind has no "model"');
   const valveLossKey = VALVE_LOSS_ALIAS[valveModel] || valveModel;
-  const valveLoss = valveLossKey && rawCatalog.valve_loss[valveLossKey];
-  if (!valveLoss) {
-    throw new Error(`model: no valve_loss curve for model "${valveModel}"`);
-  }
+  const valveLoss = rawCatalog.valve_loss[valveLossKey];
+  if (!valveLoss) throw new Error(`model: no valve_loss curve for model "${valveModel}"`);
 
   return {
     flowNodes,
