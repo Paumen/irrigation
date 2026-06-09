@@ -1,6 +1,6 @@
 ---
 name: irrigation
-description: One-stop assistant for a homeowner's irrigation/rotor system — explain how parts work, identify which model is installed, walk through install / configure / run / clean / winterize procedures, plan capacity, recommend upgrades, and diagnose problems (rotors, valves, pump, controller, wiring) when something isn't working right.
+description: One-stop assistant for a homeowner's irrigation/rotor system — explain how parts work, identify which model is installed, walk through install / configure / run / clean / winterize procedures, recommend upgrades, and diagnose problems (rotors, valves, pump, controller, wiring) when something isn't working right.
 ---
 
 # Irrigation assistant
@@ -13,10 +13,10 @@ Ground every answer in **this** homeowner's system, not generic memory: read `gr
 - **`graph.yaml`** (project root) — the canonical physical model of this system: every component and sub-part, the water topology (zones, hoses, swing joints, manifold, heads with their nozzles/arcs/elevations), and the electrical circuit (controller, relay, solenoid wiring). `kinds:` carries the per-model facts (which valve/rotor/spray/pump/controller/relay model is fitted, pressures, bores). This is the record for which models they own and anything physical.
 - **`context.yaml`** (project root) — non-physical metadata that isn't in the graph: per-equipment `installed` dates, `location`s and prices, `cable_runs`, `control_paths`, `settings.programs`, and `system_design_choices` (why a flow sensor / master valve / backflow preventer were left out).
 - **`catalog.yaml`** (project root) — generic manufacturer reference data by model (pump curves, valve-loss curves, I-20 and MP nozzle flow charts). True for every unit of that model; `graph.yaml` points at it by model name.
-- **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `app`, `wiring`, `heads`, `heads-spray`, `hoses`). Scan the front-matter (`coverage:` / `contents:` / `read_when:`), then read the section you need.
+- **`knowledge/<area>.md`** — homeowner-grade reference per area (`valve`, `valve-internals`, `valve-solenoid`, `relay`, `controller`, `pump`, `app`, `wiring`, `heads`, `heads-spray`, `hoses`). Scan the front-matter (`summary:` / `contents:` / `read_when:`), then read the section you need.
 - **`images.yaml`** — image manifest; look up by `subjects:`, question id (`questions:`), or F-code (`failure_modes:`).
 - **`knowledge/valve-replacement.md`** — a deeper reference table: which Hunter PGV/ICV models are drop-in replacements for the zone valves vs. need adjustment or a re-plumb; read it when the user is choosing a replacement valve.
-- **`sources.md`** — fallback ladder (local doc → vendor PDF → web) and which areas have no/partial local doc (pump, main hose). Check here before answering from memory.
+- **`sources.md`** — per-area path map (which doc owns each failure area) and the fallback ladder (local doc → vendor PDF → web). Check here before answering from memory.
 
 
 ## Audience and language
@@ -68,5 +68,4 @@ Pick by what the user wants; if ambiguous, ask one clarifying question first. Al
 | how a part works, or how to install / configure / run / clean / replace it | `playbooks/parts.md` |
 | what model do I have? is this a PGV-101G? | `playbooks/identify.md` |
 | what upgrades do you recommend? | `playbooks/upgrades.md` |
-| winter prep? spring start-up? filter cadence? | `playbooks/maintenance.md` |
 | any symptom — won't start, not turning, weeping when off | `playbooks/troubleshoot.md` |

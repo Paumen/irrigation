@@ -494,6 +494,7 @@ images:
     subjects: [hoses]
     relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in graph.yaml — illustrative.
     used_in: []
+    relates: measuring actual flow during a flow/pressure check or diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in graph.yaml — illustrative.
 
   # ── valve · auto ─────────────────────────────────────────────────────────────
   IMG.valve-auto-product-pgv-101g:
