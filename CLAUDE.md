@@ -2,10 +2,21 @@
 
 ## Project
 
-An agent-facing diagnostic toolkit for one homeowner's irrigation/rotor system. One **Claude skill backed by MCP tools** (there is no web app), covering two capabilities:
+Two things for one homeowner's irrigation/rotor system:
 
-- **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root failure modes. Driven by the `playbooks/troubleshoot.md` playbook via the `diagnose_irrigation` MCP tool.
-- **Hydraulics & general assistance** — how-it-works / identify / upgrade / maintenance playbooks.
+1. An agent-facing **diagnostic toolkit** — one **Claude skill backed by MCP tools**, covering two capabilities:
+   - **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root failure modes. Driven by the `playbooks/troubleshoot.md` playbook via the `diagnose_irrigation` MCP tool. Pure scoring engine lives in `tools/` (`engine.py`, `diagnose*.py`, `data.json`).
+   - **Hydraulics & general assistance** — how-it-works / identify / upgrade / maintenance playbooks.
+2. A browser-based **simulator** under `sim/` (in progress) — see below. Unrelated to the `tools/` diagnostic engine.
+
+## Simulator (`sim/`)
+
+A static, browser-based simulator of the system's hydraulics **and** control wiring (spec: `docs/Sim_spec.md`; how-to-build: `docs/sim_implementation_plan.md`; full design + milestones M0–M8: `docs/sim_build_plan.md`).
+
+- **Inputs** are the three root YAMLs: `graph.yaml` (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:` lists), `catalog.yaml` (pump curve, valve-loss, nozzle tables), `context.yaml` (labels). Single source of truth — the sim fetches these, no copies.
+- **Hydraulics = EPANET** via `epanet-js` (EPANET 2.2 wasm), wrapped by our own outer fixed-point demand loop. Browser loads deps (epanet-js, js-yaml, elkjs) from **CDN** via importmap; deployment target is **GitHub Pages** (whole-repo artifact; needs repo Settings → Pages → Source: GitHub Actions enabled once).
+- The physics core is plain ES modules importable headless by **Node**, so it's testable without a browser. `sim/package.json` + `node_modules` (git-ignored) exist only for that harness — not a browser build step.
+- **Status: M0 (EPANET spike) done.** `cd sim && npm install && npm run smoke` runs `test/m0-smoke.mjs`. M1–M8 not yet built.
 
 ## Session setup
 
