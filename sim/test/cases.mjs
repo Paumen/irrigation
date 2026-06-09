@@ -20,6 +20,18 @@ export const cases = [
     state: { manualOpen: {} },
   },
   {
+    name: "all four zones commanded (heaviest healthy state)",
+    kind: "allzones",
+    commands: { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } },
+    state: { manualOpen: {} },
+  },
+  {
+    name: "zone 1 commanded with pump off (valve cannot lift)",
+    kind: "notopening",
+    commands: { mv: false, zones: { 1: true } },
+    state: { manualOpen: {} },
+  },
+  {
     name: "pump on + Z5 manual handle open",
     kind: "z5",
     commands: { mv: true, zones: {} },

@@ -18,6 +18,7 @@ import {
   STABLE_ITERS,
   VALVE_OPEN_BAR,
   VALVE_STAY_BAR,
+  VALVE_FREEZE_TAIL,
 } from "./config.js";
 import { buildTopology } from "./network.js";
 import { toInp } from "./inp.js";
@@ -73,6 +74,7 @@ export function solveSteady(model, state, elec, hyd) {
   const zoneEnergised = elec.zoneEnergised;
   const manualOpen = state.manualOpen || {};
   const bleedOpen = state.bleedOpen || {};
+  const liftBar = model.minOperatingBar ?? VALVE_OPEN_BAR;
 
   const outlets = [...flowNodes.values()].filter((n) => n.role === "outlet");
   // Rotor/spray outlets obey table laws and are driven by the outer demand loop.
@@ -102,6 +104,7 @@ export function solveSteady(model, state, elec, hyd) {
   let converged = false;
   let stable = 0;
   let iters = 0;
+  let valvesFrozen = false;
 
   for (let iter = 1; iter <= MAX_ITERS; iter++) {
     iters = iter;
@@ -138,18 +141,27 @@ export function solveSteady(model, state, elec, hyd) {
       if (Number.isFinite(now)) maxdp = Math.max(maxdp, Math.abs(now - (p_prev[e] || 0)));
     }
 
-    // actuate auto-valves for the next iteration from this solve's inlet pressures
-    for (const v of topo.valves) {
-      if (!v.isAuto) continue;
-      const inletP = res.pressureBar[v.n1];
-      // energised through healthy wiring, or its bleed screw opened by hand
-      const commanded = !!zoneEnergised[zoneOf(v.flowId)] || !!bleedOpen[v.flowId];
-      let open = false;
-      if (commanded && Number.isFinite(inletP)) {
-        open = valveOpen[v.flowId] ? inletP >= VALVE_STAY_BAR : inletP >= VALVE_OPEN_BAR;
+    // actuate auto-valves for the next iteration from this solve's inlet pressures;
+    // in the final iterations the states are frozen so a flapping valve can't keep
+    // the demand fixed point from settling
+    if (iter > MAX_ITERS - VALVE_FREEZE_TAIL) {
+      valvesFrozen = true;
+    } else {
+      for (const v of topo.valves) {
+        if (!v.isAuto) continue;
+        const inletP = res.pressureBar[v.n1];
+        // energised through healthy wiring, or its bleed screw opened by hand
+        const commanded = !!zoneEnergised[zoneOf(v.flowId)] || !!bleedOpen[v.flowId];
+        // a valve on a dead branch cannot lift no matter what EPANET reports there —
+        // never trust pressures on disconnected nodes
+        const wet = reachable.has(v.flowId);
+        let open = false;
+        if (commanded && wet && Number.isFinite(inletP)) {
+          open = valveOpen[v.flowId] ? inletP >= VALVE_STAY_BAR : inletP >= liftBar;
+        }
+        valveOpen[v.flowId] = open;
+        commandedNotOpening[v.flowId] = commanded && !open;
       }
-      valveOpen[v.flowId] = open;
-      commandedNotOpening[v.flowId] = commanded && !open;
     }
 
     p_prev = res.pressureBar;
@@ -190,6 +202,7 @@ export function solveSteady(model, state, elec, hyd) {
     massImbalance: Math.abs(totalInflow - outSum),
     converged,
     iters,
+    valvesFrozen, // true when the anti-flap freeze engaged; treat valve states with suspicion
     topo,
   };
 }

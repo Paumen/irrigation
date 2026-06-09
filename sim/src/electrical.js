@@ -103,8 +103,63 @@ export function reachable(adj, from, to) {
   return false;
 }
 
+// Every port reachable from `from`, including itself.
+function bfsFrom(adj, from) {
+  const seen = new Set([from]);
+  const queue = [from];
+  while (queue.length) {
+    const curr = queue.shift();
+    for (const next of adj.get(curr)) {
+      if (!seen.has(next)) {
+        seen.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return seen;
+}
+
+// Shortest port path from -> to, or null. Used to attribute loop state to the
+// individual wires/ports along it for display.
+function findPath(adj, from, to) {
+  if (!adj.has(from) || !adj.has(to)) return null;
+  if (from === to) return [from];
+  const parent = new Map([[from, null]]);
+  const queue = [from];
+  while (queue.length) {
+    const curr = queue.shift();
+    for (const next of adj.get(curr)) {
+      if (parent.has(next)) continue;
+      parent.set(next, curr);
+      if (next === to) {
+        const path = [];
+        for (let p = next; p != null; p = parent.get(p)) path.push(p);
+        return path.reverse();
+      }
+      queue.push(next);
+    }
+  }
+  return null;
+}
+
+// port-pair -> wire name, both directions. Path edges with no entry here are
+// intra-part links; their state shows on the endpoint ports instead.
+function wireEdgeLabels(circuit) {
+  const labels = new Map();
+  for (const [name, w] of Object.entries(circuit.wires)) {
+    labels.set(`${w.from}|${w.to}`, name);
+    labels.set(`${w.to}|${w.from}`, name);
+  }
+  return labels;
+}
+
 // commands = { mv: bool, zones: {1:bool,2:bool,3:bool,4:bool} }
 // blocked  = Set of open-circuit port ids and/or wire names (faults inject here).
+//
+// Besides the aggregate booleans, the result carries the three display states per
+// wire and per port for the schematic (R12): `asked` (on a commanded path with faults
+// disabled), `powered` (on a live path in the real, faulted solve), `broken` (the
+// element is faulted itself, or it is the first dead gap on an asked-but-dead path).
 export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
   const mv = !!commands.mv;
   const zones = commands.zones || {};
@@ -115,10 +170,9 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
   // the controller is powered only when that loop is closed AND the low-voltage supply
   // wires reach the controller.
   const primaryEnergised = reachable(g, "adapter_socket.l", "adapter_socket.n");
-  const controllerPowered =
-    primaryEnergised &&
-    reachable(g, "adapter.out_1", "controller.ac_1") &&
-    reachable(g, "adapter.out_2", "controller.ac_2");
+  const supply1 = primaryEnergised && reachable(g, "adapter.out_1", "controller.ac_1");
+  const supply2 = primaryEnergised && reachable(g, "adapter.out_2", "controller.ac_2");
+  const controllerPowered = supply1 && supply2;
 
   // Relay coil loop: controller mv out -> coil -> coil common -> controller return.
   const relayCoil =
@@ -143,5 +197,89 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
       reachable(g, `controller.zone_${n}`, "controller.c_2");
   }
 
-  return { primaryEnergised, controllerPowered, relayCoil, pumpPowered, zoneEnergised };
+  // ---- per-wire / per-port display states ----
+  // "Asked" is judged on the fault-free graph: what the current commands would
+  // energise if every wire and part were healthy.
+  const healthy = buildContinuityGraph(circuit);
+  const healthyClosed = buildContinuityGraph(circuit, { contactClosed: true });
+  const hPrimary = reachable(healthy, "adapter_socket.l", "adapter_socket.n");
+  const hController =
+    hPrimary &&
+    reachable(healthy, "adapter.out_1", "controller.ac_1") &&
+    reachable(healthy, "adapter.out_2", "controller.ac_2");
+  const hCoil = hController && mv && reachable(healthy, "controller.mv", "controller.c_2");
+  const hPump = hCoil && reachable(healthyClosed, "grid_socket.l", "grid_socket.n");
+
+  // One record per energisation loop. `eligible` gates the broken-gap search: when a
+  // loop is dead only because its prerequisite is (controller unpowered, relay coil
+  // open), the fault is displayed on the prerequisite loop, not on this one.
+  const loops = [
+    { from: "adapter_socket.l", to: "adapter_socket.n", asked: true,
+      powered: primaryEnergised, real: g, healthy, eligible: true },
+    { from: "adapter.out_1", to: "controller.ac_1", asked: hPrimary,
+      powered: supply1, real: g, healthy, eligible: primaryEnergised },
+    { from: "adapter.out_2", to: "controller.ac_2", asked: hPrimary,
+      powered: supply2, real: g, healthy, eligible: primaryEnergised },
+    { from: "controller.mv", to: "controller.c_2", asked: mv && hController,
+      powered: relayCoil, real: g, healthy, eligible: controllerPowered },
+    { from: "grid_socket.l", to: "grid_socket.n", asked: hPump,
+      powered: pumpPowered, real: pumpGraph, healthy: healthyClosed, eligible: relayCoil },
+  ];
+  for (let n = 1; n <= 4; n++) {
+    loops.push({
+      from: `controller.zone_${n}`, to: "controller.c_2",
+      asked: !!zones[n] && hController && reachable(healthy, `controller.zone_${n}`, "controller.c_2"),
+      powered: zoneEnergised[n], real: g, healthy, eligible: controllerPowered,
+    });
+  }
+
+  const labels = wireEdgeLabels(circuit);
+  const wires = {};
+  for (const name of Object.keys(circuit.wires)) {
+    wires[name] = { asked: false, powered: false, broken: false };
+  }
+  const ports = {};
+  for (const id of healthy.keys()) {
+    ports[id] = { asked: false, powered: false, broken: false };
+  }
+
+  const mark = (path, key) => {
+    for (const p of path) ports[p][key] = true;
+    for (let i = 0; i + 1 < path.length; i++) {
+      const w = labels.get(`${path[i]}|${path[i + 1]}`);
+      if (w) wires[w][key] = true;
+    }
+  };
+
+  for (const L of loops) {
+    if (!L.asked) continue;
+    const askedPath = findPath(L.healthy, L.from, L.to);
+    if (!askedPath) continue;
+    mark(askedPath, "asked");
+    if (L.powered) {
+      const livePath = findPath(L.real, L.from, L.to);
+      if (livePath) mark(livePath, "powered");
+    } else if (L.eligible) {
+      // first asked-but-dead gap: walk the asked path until it leaves the region the
+      // source can really reach; the element crossed there is shown as broken
+      const live = bfsFrom(L.real, L.from);
+      for (let i = 0; i + 1 < askedPath.length; i++) {
+        if (live.has(askedPath[i]) && !live.has(askedPath[i + 1])) {
+          const w = labels.get(`${askedPath[i]}|${askedPath[i + 1]}`);
+          if (blocked.has(askedPath[i + 1])) ports[askedPath[i + 1]].broken = true;
+          else if (w) wires[w].broken = true;
+          else ports[askedPath[i + 1]].broken = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // every faulted element displays broken, on a commanded path or not
+  for (const b of blocked) {
+    if (wires[b]) wires[b].broken = true;
+    if (ports[b]) ports[b].broken = true;
+  }
+
+  return { primaryEnergised, controllerPowered, relayCoil, pumpPowered, zoneEnergised, wires, ports };
 }

@@ -16,7 +16,7 @@ A static, browser-based simulator of the system's hydraulics **and** control wir
 - **Inputs** are the three root YAMLs: `graph.yaml` (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:` lists), `catalog.yaml` (pump curve, valve-loss, nozzle tables), `context.yaml` (labels). Single source of truth — the sim fetches these, no copies.
 - **Hydraulics = EPANET** via `epanet-js` (EPANET 2.2 wasm), wrapped by our own outer fixed-point demand loop. Browser loads deps (epanet-js, js-yaml, elkjs) from **CDN** via importmap; deployment target is **GitHub Pages** (whole-repo artifact; needs repo Settings → Pages → Source: GitHub Actions enabled once).
 - The physics core is plain ES modules importable headless by **Node**, so it's testable without a browser. `sim/package.json` + `node_modules` (git-ignored) exist only for that harness — not a browser build step.
-- **Status: M0 (EPANET spike) done.** `cd sim && npm install && npm run smoke` runs `test/m0-smoke.mjs`. M1–M8 not yet built.
+- **Status: M0–M4 done** (headless hydraulic + electrical core, verified by `cd sim && npm install && npm test`; `npm run smoke` is the M0 EPANET spike). M5+ (schematic UI, controls, quasi-time, faults) not yet built.
 
 ## Session setup
 

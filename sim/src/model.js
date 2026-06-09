@@ -90,7 +90,10 @@ export function buildModel(rawGraph, rawCatalog) {
   return {
     flowNodes,
     kinds,
-    circuit: rawGraph.circuit, // untouched until M3
+    circuit: rawGraph.circuit, // consumed by electrical.js (solveElectrical)
+    // The diaphragm lift threshold comes from the data, not a constant, so a YAML
+    // change propagates; solver falls back to config VALVE_OPEN_BAR when absent.
+    minOperatingBar: valveKind.min_operating_bar,
     curves: {
       pump: pumpCurve, // {flow_m3h:[…], head_m:[…]}
       valveLoss, // {flow_m3h:[…], loss_bar:[…]}
