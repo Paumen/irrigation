@@ -37,8 +37,8 @@ Rationale:
 - "Standalone" is best served by an artifact that runs anywhere with no server — open the page,
   it works. The model data is static and small; there is no persistence or auth need.
 - The container these sessions run in is ephemeral; a static build avoids a process to keep alive.
-- The hydraulic solver is a self-contained numeric routine (curve interpolation + a fixed-point
-  loop over a tree, §5). Porting it to TS is bounded and testable.
+- The hydraulic solver is a self-contained numeric routine (curve interpolation + a nodal
+  Newton solve, §5). Porting it to TS is bounded and testable.
 
 **Trade-off / fallback.** The cost is maintaining the solver in TS rather than reusing Python.
 If we later want one solver shared with the diagnostic engine, the fallback is **Python solver +
@@ -246,7 +246,7 @@ anywhere on this segment" control in addition to the part-specific `broken` mode
    loader must represent as "no flow below threshold" rather than treat as an error.)
 3. **Electrical resolver** (§6) — continuity over `circuit:` → energised/commanded/broken per
    element; pump-runs and per-valve-open booleans.
-4. **Hydraulic solver** (§5) — element laws, active-subgraph pruning, tree fixed-point, state
+4. **Hydraulic solver** (§5) — element laws, active element graph, nodal Newton solve, state
    schema (§5.3). Unit-test each element law against `catalog.yaml` points first.
 5. **Validation** — sanity scenarios (single zone at known nozzle/pressure ≈ catalog flow;
    mass balance; elevation effect); if we keep a Python reference, golden-fixture parity in CI.
