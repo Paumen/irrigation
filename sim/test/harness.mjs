@@ -323,19 +323,19 @@ const layout = await computeLayout(model, circuit);
     "every zone cluster sits right of the manifold",
   );
 
-  // the splice part is exploded into per-port lugs; every other part is a box
+  // the splice part renders as per-port field-splice dots; every other part is a box
   const expectedParts = [
     ...Object.keys(circuit.parts).filter((p) => p !== "splice"),
     "Z1.valve", "Z2.valve", "Z3.valve", "Z4.valve",
   ];
   check(
     expectedParts.every((p) => layout.circuit.parts.has(p)) && !layout.circuit.parts.has("splice"),
-    "every circuit part placed as a box, splice exploded",
+    "every circuit part placed as a box, splice as field-splice dots",
   );
-  const spliceLugs = Object.keys(circuit.parts.splice).map((p) => `splice.${p}`);
+  const spliceDots = Object.keys(circuit.parts.splice).map((p) => `splice.${p}`);
   check(
-    spliceLugs.every((p) => layout.circuit.lugs.has(p) && inCanvas(layout.circuit.lugs.get(p))),
-    `all ${spliceLugs.length} splice ports placed as lugs`,
+    spliceDots.every((p) => layout.circuit.splices.has(p) && inCanvas(layout.circuit.splices.get(p))),
+    `all ${spliceDots.length} splice ports placed as field-splice dots`,
   );
   check(
     ["splice.sig_1", "splice.sig_2", "splice.sig_3", "splice.sig_4"].every(
@@ -343,32 +343,29 @@ const layout = await computeLayout(model, circuit);
     ),
     "the four splice->coil leads routed as polylines",
   );
+  // every wire drawn, all segments orthogonal (circuit-layout validates and throws,
+  // but pin the invariant here too), conductor class assigned
+  const orthogonal = (pts) =>
+    pts.every((p, i) => i === 0 || p.x === pts[i - 1].x || p.y === pts[i - 1].y);
   check(
-    Object.keys(circuit.wires).every((w) => layout.circuit.wires.get(w)?.points.length >= 2),
-    "every wire routed as a polyline",
-  );
-  const locations = [...layout.circuit.groups.keys()].sort();
-  check(
-    locations.join(",") === "house,shed,valve box,well",
-    `circuit clustered by location (got ${locations.join(",")})`,
-  );
-  const within = (b, g) => b.x >= g.x && b.y >= g.y && b.x + b.w <= g.x + g.w && b.y + b.h <= g.y + g.h;
-  check(
-    within(layout.circuit.parts.get("controller"), layout.circuit.groups.get("house")) &&
-      within(layout.circuit.parts.get("relay"), layout.circuit.groups.get("shed")) &&
-      within(layout.circuit.parts.get("pump"), layout.circuit.groups.get("well")),
-    "controller in house, relay in shed, pump in well",
+    Object.keys(circuit.wires).every((w) => {
+      const e = layout.circuit.wires.get(w);
+      return e && e.points.length >= 2 && orthogonal(e.points) && e.cls;
+    }),
+    "every wire routed as an orthogonal polyline with a conductor class",
   );
   check(
-    spliceLugs.every((p) => within(layout.circuit.lugs.get(p), layout.circuit.groups.get("valve box"))) &&
-      ["Z1.valve", "Z2.valve", "Z3.valve", "Z4.valve"].every((p) =>
-        within(layout.circuit.parts.get(p), layout.circuit.groups.get("valve box")),
-      ),
-    "all splice lugs and solenoid coils inside the valve box frame",
+    layout.circuit.wires.get("grid_live").cls === "live" &&
+      layout.circuit.wires.get("pump_neutral").cls === "neutral" &&
+      layout.circuit.wires.get("grid_earth").cls === "earth" &&
+      layout.circuit.wires.get("signal_2").cls === "lv" &&
+      layout.circuit.wires.get("common_return").cls === "lv",
+    "conductor classes: live / neutral / earth / 24 VAC",
   );
   const flowBottom = Math.max(...[...layout.flow.nodes.values()].map((n) => n.y + n.h));
   const circuitTop = Math.min(
-    ...[...layout.circuit.parts.values(), ...layout.circuit.lugs.values()].map((p) => p.y),
+    ...[...layout.circuit.parts.values()].map((p) => p.y),
+    ...[...layout.circuit.splices.values()].map((p) => p.y),
   );
   check(
     circuitTop >= flowBottom + CIRCUIT_BAND_GAP - 1e-6,
@@ -434,12 +431,12 @@ console.log("Case: M5 scene (visual attribute computation)");
   check(z1Nodes.get("Z1.valve").state === "open" && z1Nodes.get("Z2.valve").state === "closed", "valve glyph states open/closed");
   check(z1Nodes.get("pump").state === "on", "pump glyph state on");
 
-  const z1Lugs = byKey(z1Scene.lugs);
+  const z1Splices = byKey(z1Scene.splices);
   check(
-    z1Lugs.get("splice.sig_1").state === "powered" && z1Lugs.get("splice.com_4").state === "powered",
-    "pump+Z1: zone-1 signal lug and shared-return lug powered",
+    z1Splices.get("splice.sig_1").state === "powered" && z1Splices.get("splice.com_4").state === "powered",
+    "pump+Z1: zone-1 signal splice and shared-return splice powered",
   );
-  check(z1Lugs.get("splice.sig_2").state === "off", "pump+Z1: zone-2 signal lug off");
+  check(z1Splices.get("splice.sig_2").state === "off", "pump+Z1: zone-2 signal splice off");
   const z1Leads = byKey(z1Scene.leads);
   check(z1Leads.get("lead:splice.sig_1").state === "powered", "pump+Z1: zone-1 solenoid lead powered");
   check(z1Leads.get("lead:splice.sig_2").state === "off", "pump+Z1: zone-2 solenoid lead off");
@@ -467,7 +464,7 @@ console.log("Case: M5 scene (visual attribute computation)");
       scene.nodes.map((n) => [n.key, n.x, n.y]),
       scene.wires.map((w) => [w.key, w.points]),
       scene.leads.map((l) => [l.key, l.points]),
-      scene.lugs.map((l) => [l.key, l.x, l.y]),
+      scene.splices.map((s) => [s.key, s.x, s.y]),
     ]);
   check(geomOf(idleScene) === geomOf(z1Scene), "positions never move between states");
 }

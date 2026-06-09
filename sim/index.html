@@ -38,10 +38,14 @@
   <span>pressure: 0 bar <span class="ramp"></span> 5 bar</span>
   <span>flow: <svg width="60" height="12"><line x1="0" y1="9" x2="18" y2="9" stroke="#444" stroke-width="1.5"/><line x1="26" y1="7" x2="58" y2="7" stroke="#444" stroke-width="8" stroke-linecap="round"/></svg> more</span>
   <span><span class="swatch" style="background:#9aa0a6"></span> unfilled/idle</span>
-  <span>wiring: <span class="swatch" style="background:#2e7d32"></span> powered
-    <span class="swatch" style="background:#f9a825"></span> asked
-    <span class="swatch" style="background:#c62828"></span> broken
-    <span class="swatch" style="background:#b0bec5"></span> off</span>
+  <span>wiring: <span class="swatch" style="background:#d6524b"></span> 230 V live
+    <span class="swatch" style="background:#4f86d4"></span> neutral
+    <span class="swatch" style="background:#76a23c"></span> earth
+    <span class="swatch" style="background:#c08a2e"></span> 24 VAC
+    <span style="color:#c08a2e">●</span> field splice</span>
+  <span>state: solid = powered · faded = off ·
+    <svg width="26" height="10"><line x1="0" y1="6" x2="26" y2="6" stroke="#c08a2e" stroke-width="2" stroke-dasharray="5 3"/></svg> asked, not powered ·
+    <svg width="26" height="10"><line x1="0" y1="6" x2="26" y2="6" stroke="#c62828" stroke-width="2" stroke-dasharray="4 3"/></svg> broken</span>
 </div>
 <svg id="schematic" xmlns="http://www.w3.org/2000/svg"></svg>
 <script type="module" src="src/app.js"></script>
