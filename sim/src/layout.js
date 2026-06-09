@@ -167,6 +167,11 @@ function buildFlowElkGraph(model) {
 
 // --- circuit graph -> ELK ---
 
+// Parts drawn as per-port "lugs" instead of one box: the splice "part" is a bundle of
+// independent wire nuts in the valve box, not one enclosure. Pure display decision —
+// the electrical model (graph.yaml circuit + electrical.js) is untouched.
+const EXPLODED_PARTS = new Set(["splice"]);
+
 // "grid_socket.l" belongs to part "grid_socket"; "Z1.valve.coil" to the synthetic
 // coil box "Z1.valve" (the solenoid's electrical face — wires target hydraulic-part
 // ports that have no entry in circuit.parts).
@@ -193,24 +198,59 @@ function buildCircuitElkGraph(circuit) {
     if (!portsByPart.has(partId)) portsByPart.set(partId, new Set());
   }
 
-  const children = [...portsByPart.entries()].map(([partId, ports]) => ({
-    id: `part:${partId}`,
-    width: Math.max(64, partId.length * 8 + 20, ports.size * 18 + 12),
-    height: 34,
-    ports: [...ports].map((p) => ({ id: p, width: 5, height: 5 })),
-  }));
+  const children = [];
+  const lugIds = new Set();
+  for (const [partId, ports] of portsByPart) {
+    if (EXPLODED_PARTS.has(partId)) {
+      // One small lug node per port, node id = port id. Each lug carries one explicit
+      // ELK port (suffixed #lug) and every edge references ports only: elkjs 0.11.1
+      // crashes ('Cannot read properties of null') on this graph when edges attach to
+      // the lug NODES directly — do not 'simplify' the #lug ports away.
+      for (const portId of ports) {
+        lugIds.add(portId);
+        children.push({
+          id: portId,
+          width: 52,
+          height: 14,
+          ports: [{ id: `${portId}#lug`, width: 5, height: 5 }],
+        });
+      }
+    } else {
+      children.push({
+        id: `part:${partId}`,
+        width: Math.max(64, partId.length * 8 + 20, ports.size * 18 + 12),
+        height: 34,
+        ports: [...ports].map((p) => ({ id: p, width: 5, height: 5 })),
+      });
+    }
+  }
+  const ref = (portId) => (lugIds.has(portId) ? `${portId}#lug` : portId);
 
   const edges = Object.entries(circuit.wires).map(([name, w]) => ({
     id: name,
-    sources: [w.from],
-    targets: [w.to],
+    sources: [ref(w.from)],
+    targets: [ref(w.to)],
   }));
+  // Display-only "lead" edges for an exploded port's cross-part `to:` references
+  // (splice.sig_N -> ZN.valve.coil): physical solenoid leads that are intra-part
+  // continuity in the model and would otherwise render as nothing. Sibling `to:`
+  // references (the com chain) are skipped — the common_chain_* wires already draw them.
+  for (const partId of EXPLODED_PARTS) {
+    for (const [subName, sub] of Object.entries(circuit.parts[partId] || {})) {
+      for (const t of sub?.to || []) {
+        if (!t.includes(".")) continue;
+        const from = `${partId}.${subName}`;
+        edges.push({ id: `lead:${from}`, sources: [ref(from)], targets: [ref(t)] });
+      }
+    }
+  }
 
   const graph = {
     id: "circuit",
     layoutOptions: {
       "elk.algorithm": "layered",
       "elk.direction": "RIGHT",
+      "elk.edgeRouting": "ORTHOGONAL",
       "elk.layered.spacing.nodeNodeBetweenLayers": "50",
       "elk.spacing.nodeNode": "28",
       "elk.spacing.edgeNode": "12",
@@ -239,9 +279,11 @@ function sectionPoints(edge, containerOffsets) {
 //   flow: { nodes:    Map<id, {x,y,w,h,glyph,zone}>,          // absolute top-left
 //           edges:    Map<key, {points, epLinkId, wetIds, u, v}>,
 //           zones:    Map<"Z1".., {x,y,w,h}> },
-//   circuit: { parts: Map<partId, {x,y,w,h}>,
-//              ports: Map<portId, {x,y}>,                     // port centers
-//              wires: Map<wireName, {points}> },
+//   circuit: { parts: Map<partId, {x,y,w,h}>,                 // enclosure boxes
+//              lugs:  Map<portId, {x,y,w,h}>,                 // exploded splice points
+//              ports: Map<portId, {x,y}>,                     // port centers (box parts)
+//              wires: Map<wireName, {points}>,
+//              leads: Map<"lead:<port>", {points, from, to}> },
 // }
 export async function computeLayout(model, circuit) {
   const elk = new ELK();
@@ -314,27 +356,42 @@ export async function computeLayout(model, circuit) {
   // circuit band sits below the hydraulics
   const bandY = flowOut.height + CIRCUIT_BAND_GAP;
   const parts = new Map();
+  const lugs = new Map(); // exploded per-port nodes (the splice wire nuts)
   const ports = new Map();
   for (const child of circuitOut.children) {
-    const partId = child.id.slice("part:".length);
-    parts.set(partId, { x: child.x, y: child.y + bandY, w: child.width, h: child.height });
-    for (const p of child.ports || []) {
-      ports.set(p.id, {
-        x: child.x + p.x + p.width / 2,
-        y: child.y + p.y + p.height / 2 + bandY,
-      });
+    if (child.id.startsWith("part:")) {
+      const partId = child.id.slice("part:".length);
+      parts.set(partId, { x: child.x, y: child.y + bandY, w: child.width, h: child.height });
+      for (const p of child.ports || []) {
+        ports.set(p.id, {
+          x: child.x + p.x + p.width / 2,
+          y: child.y + p.y + p.height / 2 + bandY,
+        });
+      }
+    } else {
+      lugs.set(child.id, { x: child.x, y: child.y + bandY, w: child.width, h: child.height });
     }
   }
   const bandOffsets = new Map([["circuit", { x: 0, y: bandY }]]);
   const wires = new Map();
+  const leads = new Map();
+  const unref = (id) => id.replace(/#lug$/, ""); // back to the elec.ports key
   for (const e of circuitOut.edges) {
-    wires.set(e.id, { points: sectionPoints(e, bandOffsets) });
+    if (e.id.startsWith("lead:")) {
+      leads.set(e.id, {
+        points: sectionPoints(e, bandOffsets),
+        from: unref(e.sources[0]),
+        to: unref(e.targets[0]),
+      });
+    } else {
+      wires.set(e.id, { points: sectionPoints(e, bandOffsets) });
+    }
   }
 
   return {
     width: Math.max(flowOut.width, circuitOut.width),
     height: bandY + circuitOut.height,
     flow: { nodes: flowNodes, edges: flowEdges, zones },
-    circuit: { parts, ports, wires },
+    circuit: { parts, lugs, ports, wires, leads },
   };
 }

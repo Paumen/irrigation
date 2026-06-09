@@ -58,7 +58,9 @@ function wireState(s) {
 //   nodes:  [{key, x, y, w, h, glyph, zone, dead, state, color, title}]
 //   labels: [{key, x, y, text, dead}]            // outlet discharge labels
 //   wires:  [{key, points, state}]
+//   leads:  [{key, points, state}]               // solenoid leads (splice -> coil)
 //   parts:  [{key, x, y, w, h, label}]
+//   lugs:   [{key, x, y, w, h, label, state}]    // exploded splice points
 //   ports:  [{key, x, y, state}]
 // }
 export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
@@ -127,9 +129,35 @@ export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
     wires.push({ key: name, points: w.points, state: wireState(elec.wires[name]) });
   }
 
+  // a lead is intra-part continuity in the model, so it has no wire state of its
+  // own — combine its two endpoint ports (live only when current crosses both)
+  const leads = [];
+  for (const [key, l] of layout.circuit.leads) {
+    const a = elec.ports[l.from] || {};
+    const b = elec.ports[l.to] || {};
+    const state = a.broken || b.broken ? "broken"
+      : a.powered && b.powered ? "powered"
+      : a.asked && b.asked ? "asked"
+      : "off";
+    leads.push({ key, points: l.points, state });
+  }
+
   const parts = [];
   for (const [partId, b] of layout.circuit.parts) {
     parts.push({ key: partId, x: b.x, y: b.y, w: b.w, h: b.h, label: partId });
+  }
+
+  const lugs = [];
+  for (const [portId, b] of layout.circuit.lugs) {
+    lugs.push({
+      key: portId,
+      x: b.x,
+      y: b.y,
+      w: b.w,
+      h: b.h,
+      label: portId.slice(portId.lastIndexOf(".") + 1),
+      state: wireState(elec.ports[portId]),
+    });
   }
 
   const ports = [];
@@ -137,5 +165,5 @@ export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
     ports.push({ key: portId, x: p.x, y: p.y, state: wireState(elec.ports[portId]) });
   }
 
-  return { pipes, nodes, labels, wires, parts, ports };
+  return { pipes, nodes, labels, wires, leads, parts, lugs, ports };
 }

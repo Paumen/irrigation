@@ -58,7 +58,7 @@ export function createRenderer(svgEl, layout) {
 
   // layer order: zone frames under pipes under glyphs under labels
   const layers = {};
-  for (const name of ["zones", "pipes", "nodes", "labels", "wires", "parts", "ports"]) {
+  for (const name of ["zones", "pipes", "nodes", "labels", "wires", "leads", "parts", "lugs", "ports"]) {
     layers[name] = el("g", { class: name });
     svgEl.appendChild(layers[name]);
   }
@@ -170,6 +170,43 @@ export function createRenderer(svgEl, layout) {
           node.setAttribute("stroke", s.stroke);
           node.setAttribute("stroke-width", s.width);
           node.setAttribute("stroke-dasharray", s.dash);
+        },
+      );
+
+      join(
+        scene.leads,
+        "lead",
+        (l) => {
+          const line = el("polyline", { points: pointsAttr(l.points), fill: "none" });
+          layers.leads.appendChild(line);
+          return { node: line };
+        },
+        ({ node }, l) => {
+          const s = WIRE_STYLE[l.state];
+          node.setAttribute("stroke", s.stroke);
+          node.setAttribute("stroke-width", s.width);
+          node.setAttribute("stroke-dasharray", s.dash);
+        },
+      );
+
+      join(
+        scene.lugs,
+        "lug",
+        (l) => {
+          const dot = el("circle", { cx: l.x + 5, cy: l.y + l.h / 2, r: 4, stroke: "#80868b" });
+          const label = el("text", {
+            x: l.x + 12,
+            y: l.y + l.h / 2 + 3.5,
+            "font-size": "9",
+            fill: "#5f6368",
+          });
+          label.textContent = l.label;
+          layers.lugs.appendChild(dot);
+          layers.lugs.appendChild(label);
+          return { node: dot };
+        },
+        ({ node }, l) => {
+          node.setAttribute("fill", WIRE_STYLE[l.state].stroke);
         },
       );
 
