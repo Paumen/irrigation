@@ -82,6 +82,13 @@ python3 -m http.server 8000   # from the repo root
 # open http://localhost:8000/sim/
 ```
 
+## Deploy (GitHub Pages)
+
+`.github/workflows/pages.yml` deploys the **whole repo** as the Pages artifact on every push to
+`main` (so `sim/index.html` can fetch the root YAMLs at `../graph.yaml` etc.). The sim is then at
+`https://paumen.github.io/irrigation/sim/`. Requires repo **Settings → Pages → Source: GitHub
+Actions** — a one-time manual step, already enabled on this repo.
+
 `npm test` loads the real root YAMLs, builds the model, and solves a set of settled states, each first run
 through the electrical solve and then the hydraulic loop:
 
