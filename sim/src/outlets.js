@@ -70,6 +70,11 @@ export function outletDemandAt(outlet, p_bar, curves) {
 // q[m³/h] = C * sqrt(head_m); evaluating at head = p_bar*M_PER_BAR reproduces the
 // orifice law above exactly.
 export function streamEmitterCoeff(params) {
+  if (!params || !(params.bore_mm > 0) || !(params.cd > 0)) {
+    throw new Error(
+      `outlets: stream nozzle needs positive bore_mm and cd (got bore_mm=${params?.bore_mm}, cd=${params?.cd})`,
+    );
+  }
   const A = (Math.PI / 4) * (params.bore_mm / 1000) ** 2; // m^2
   return params.cd * A * Math.sqrt(2 * G) * 3600;
 }

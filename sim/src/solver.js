@@ -28,7 +28,7 @@ const epOf = (id) => id.replace(/\./g, "_");
 
 // "Z1.valve" -> 1, used to look up that valve's zone in the electrical result.
 const zoneOf = (flowId) => {
-  const m = flowId.match(/^Z(\d)\./);
+  const m = flowId.match(/^Z(\d+)\./);
   return m ? Number(m[1]) : null;
 };
 
@@ -65,9 +65,12 @@ export function computeReachable(model, pumpOn, valveOpen) {
 // elec  = ElecResult from solveElectrical: { pumpPowered, zoneEnergised:{1..4}, … }
 //   (controller commands are routed through the wiring to produce this)
 export function solveSteady(model, state, elec, hyd) {
+  if (!elec || typeof elec.pumpPowered !== "boolean" || !elec.zoneEnergised) {
+    throw new Error("solver: missing or invalid electrical solve result (elec)");
+  }
   const { flowNodes, curves } = model;
-  const pumpOn = !!(elec && elec.pumpPowered);
-  const zoneEnergised = (elec && elec.zoneEnergised) || {};
+  const pumpOn = elec.pumpPowered;
+  const zoneEnergised = elec.zoneEnergised;
   const manualOpen = state.manualOpen || {};
   const bleedOpen = state.bleedOpen || {};
 

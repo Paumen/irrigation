@@ -43,19 +43,26 @@ function resolveTarget(part, target) {
 // ("splice.com_4") and/or wire names ("common_return"). `contactClosed` enables the
 // gated relay-contact edges.
 export function buildContinuityGraph(circuit, { contactClosed = false, blocked = new Set() } = {}) {
+  if (!circuit || typeof circuit !== "object" || !circuit.parts || !circuit.wires) {
+    throw new Error("electrical: invalid or missing circuit structure (need parts + wires)");
+  }
   const adj = new Map();
   const node = (p) => {
     if (!adj.has(p)) adj.set(p, new Set());
     return adj.get(p);
   };
   const edge = (a, b) => {
+    // register both endpoints even when the edge is dropped, so a blocked/isolated
+    // port still exists in the graph and reachable() can tell it apart from a typo
+    node(a);
+    node(b);
     if (blocked.has(a) || blocked.has(b)) return;
     if (!contactClosed && (a === RELAY_CONTACT || b === RELAY_CONTACT)) return;
-    node(a).add(b);
-    node(b).add(a);
+    adj.get(a).add(b);
+    adj.get(b).add(a);
   };
 
-  for (const [partName, part] of Object.entries(circuit.parts || {})) {
+  for (const [partName, part] of Object.entries(circuit.parts)) {
     for (const [subName, sub] of Object.entries(part)) {
       if (META_KEYS.has(subName)) continue;
       if (sub === null || typeof sub !== "object" || Array.isArray(sub)) continue;
@@ -66,7 +73,7 @@ export function buildContinuityGraph(circuit, { contactClosed = false, blocked =
     }
   }
 
-  for (const [wireName, w] of Object.entries(circuit.wires || {})) {
+  for (const [wireName, w] of Object.entries(circuit.wires)) {
     if (blocked.has(wireName)) continue;
     edge(w.from, w.to);
   }
@@ -74,14 +81,18 @@ export function buildContinuityGraph(circuit, { contactClosed = false, blocked =
   return adj;
 }
 
-// Plain undirected BFS over the port graph.
+// Plain undirected BFS over the port graph. Every port referenced anywhere in the
+// circuit is registered in the graph (even blocked/isolated ones), so an unknown
+// endpoint here is a typo, not a fault state — fail loudly instead of returning false.
 export function reachable(adj, from, to) {
-  if (!adj.has(from) || !adj.has(to)) return false;
+  if (!adj.has(from)) throw new Error(`electrical: unknown port "${from}" in continuity graph`);
+  if (!adj.has(to)) throw new Error(`electrical: unknown port "${to}" in continuity graph`);
   if (from === to) return true;
   const seen = new Set([from]);
   const queue = [from];
   while (queue.length) {
-    for (const next of adj.get(queue.shift())) {
+    const curr = queue.shift();
+    for (const next of adj.get(curr)) {
       if (next === to) return true;
       if (!seen.has(next)) {
         seen.add(next);
