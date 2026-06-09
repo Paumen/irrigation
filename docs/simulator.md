@@ -1,232 +1,110 @@
 # Irrigation System Simulator — Plan
 
-**Status:** draft for review (this is a plan — nothing has been built yet)
-**Related notes:** `docs/spec.md` (the troubleshooting tool), `docs/fcode_spec.md` (the list of ways the system can fail)
-**Describes the system recorded in:** `graph.yaml` (layout + wiring), `context.yaml` (background details), `catalog.yaml` (manufacturer flow/pressure tables)
-
----
+**Status:** draft for review — a plan, nothing built yet.
+**Describes the system in:** `graph.yaml` (layout + wiring), `catalog.yaml` (manufacturer flow/pressure tables), `context.yaml` (background details).
 
 ## 1. What it is
 
-A simulator of this one home irrigation system. You set what's switched on and what (if anything)
-is broken, and it shows you:
+A simulator of this one home irrigation system. You set what's switched on and what's broken, and it
+shows where the water goes, how hard it's pushing at each point, and where — and how much — comes out.
+It's a live picture: change a setting or break a part and it updates at once.
 
-- where the water goes,
-- how hard it's pushing (the pressure) at each point,
-- and where — and how much — water comes out.
-
-It's a live picture: change a setting or break a part, and the diagram updates straight away.
-
-This is a "what if" explorer. It's separate from the existing troubleshooting tool: that tool asks
-you questions to guess what's wrong, while this one lets you set up a situation and watch what the
-system would actually do. They describe the same system and the same list of possible faults, so
-they fit together, but building that link is not part of this plan.
+It's a "what if" explorer, separate from the existing troubleshooting tool (which asks questions to
+guess a fault). Same system, same fault list, so they fit together — but linking them isn't part of this.
 
 ## 2. The main decisions
 
 | Decision | Choice | Why |
 |---|---|---|
-| What this round delivers | This plan only | No software is being written yet. |
-| How you use it | An interactive page in a web browser | You asked for a hands-on, clickable picture. (Note: the rest of this project is a chat assistant with no web page, so that description will need updating once this is built.) |
-| How the water side is worked out | A proven, free irrigation/water-network calculator called **EPANET**, with a thin layer of our own around it | Far safer than writing the pressure-and-flow maths from scratch — EPANET is the standard tool for exactly this, well tested on the tricky situations. |
-| What can be broken | Any individual part, in the way that part really fails | Matches the existing fault list one-to-one. **Still to be reviewed** — see §8. |
-| Where it runs | Entirely inside the web browser | Nothing to install, no server to keep running — just open the page. |
+| This round delivers | This plan only | No software yet. |
+| How you use it | An interactive page in a web browser | You wanted a hands-on, clickable picture. (The rest of this project has no web page, so that note will need updating once built.) |
+| The water maths | A proven free water-network calculator, **EPANET**, with a thin layer of our own around it | Far safer than writing pressure-and-flow maths from scratch — EPANET is the standard tool, well tested on the tricky cases. |
+| What can break | Any individual part, the way it really fails | Matches the existing fault list. **Still to be reviewed** — see §6. |
+| Where it runs | Entirely in the browser — nothing to install, no server | Suits the short-lived environment these sessions run in. EPANET has a browser version, so the proven maths come with it; we write only what it doesn't cover. |
 
-## 3. Where it runs
+## 3. Where the facts come from
 
-The whole thing is a single web page you open in a browser. The system's facts are baked into the
-page, and the water calculations run right there on your computer — there's no server to set up or
-keep alive, which suits the short-lived environment these sessions run in.
+Everything needed already lives in the project files. `graph.yaml` holds the full picture — well, pump,
+every pipe and fitting, the manifold, the four automatic zones and the hand zone, every head with its
+nozzle, angle and height, plus the wiring and each part's possible failures. `catalog.yaml` holds the
+manufacturer's real numbers (pump push vs. flow, valve and nozzle behaviour vs. pressure). The simulator
+just reads them.
 
-EPANET — the water-network calculator — has a version that runs inside a browser, so we get the
-proven calculations with nothing to install. We only write the parts EPANET doesn't cover: feeding
-it this system's layout, deciding which valves and the pump are actually on, applying any faults,
-and turning its answers back into the picture.
+## 4. How the water side works
 
-If we ever want the troubleshooting tool to share these same calculations, EPANET also has a version
-that runs the identical system description elsewhere — so there'd never be two separate sets of maths
-to keep in step.
+It accounts for what a plumber would: pipes lose pressure to friction (faster flow and longer/narrower
+pipes cost more); height costs pressure (the pump must lift water up to each head); the pump can only
+push so hard, and pushing harder moves less water (its manufacturer "curve"); valves and fittings add
+resistance; heads spray more at higher pressure, per the nozzle tables (the spray heads self-regulate to
+about 2.76 bar); and leaks let water escape. Everything is connected — open another zone and the pressure
+everywhere shifts. EPANET settles it all at once so the books balance: total water out = what the pump
+supplies.
 
-## 4. Where the system's facts come from
+**Why it isn't a simple one-way chain** — three things the calculator must juggle together:
+- **The automatic valves open themselves using water pressure.** Water takes two routes through one at
+  once: the main way through, and a side route to a control chamber on the diaphragm. Energise the
+  solenoid (or open the manual bleed) and that chamber drains, so water pressure lifts the valve open. So
+  a valve isn't a plain on/off tap, and several faults live in that little control circuit.
+- **The wiring is a loop** (power out to a solenoid and back along a shared return), not a line.
+- **Everything affects everything** — with one pump and pressure-dependent spray, no branch can be worked
+  out on its own. This is exactly why we lean on EPANET rather than home-grown maths.
 
-Everything the simulator needs already exists in the project files; it just reads them:
+**Friction method.** Two standards exist; the common irrigation shortcut (Hazen–Williams) is only
+reliable at ordinary water speeds, while the other (Darcy–Weisbach) stays accurate from a trickle to a
+race. This system does both — slow feed pipes, a fast hose-reel line, and faults that push pipes well
+outside normal speeds — so we use the accurate-across-the-range one. It needs each pipe's inside
+smoothness; the hoses are smooth plastic, so a standard value has been added per hose in `graph.yaml`.
 
-- **`graph.yaml`** — the full picture of the system: the well, the pump, every pipe and fitting, the
-  manifold in the valve box, the four automatic zones plus the hand-operated zone, and every sprinkler
-  head with its nozzle, spray angle, and height. It also records the wiring — controller, relay, and
-  the wires out to each valve's solenoid. Each part lists the ways it can fail.
-- **`catalog.yaml`** — the manufacturer's reference tables: how hard the pump pushes at different flows,
-  how much each valve and nozzle resists or sprays at different pressures. These are the real numbers
-  the simulator works from.
-- **`context.yaml`** — background details (where things are, when they were installed) used for labels.
+## 5. The electrical side, and what you can control
 
-The water travels in one direction: up from the well, through the pump, along the main line to the
-manifold, then out into the separate zones, and finally out of the sprinkler heads. Nothing loops back
-on itself in the pipework — but, as the next section explains, that doesn't make the system simple.
+Before any water is worked out, the simulator decides what's actually on. **A valve opens** only if its
+solenoid really gets power — the controller calling that zone *and* an unbroken path of wires to the coil
+and back — or if its manual bleed is open by hand. **The pump runs** only if it's called for, its relay
+gets the signal, and mains power reaches it. The hand valve and the rotor flo-stops are purely mechanical.
+So the picture can show three things at once: what's *asked* for, what's *getting power*, and *where a
+path is broken*.
 
-## 5. How the water side works
+**You can set** any combination of: the pump; the four automatic zones; the hand-zone valve; each valve's
+flow-control (the throttle screw); each rotor's flo-stop; and each valve's bleed screw. The situation
+simulated is just these settings plus any faults you switch on.
 
-### 5.1 What makes the water move (and what slows it down)
+## 6. What can go wrong (still to be reviewed)
 
-The simulator accounts for the same things a real plumber would:
+You can break any individual part the way it really fails — the list already exists in `graph.yaml` and
+lines up with the system's fault list. It's long, so **this is flagged for your review** (we may show
+only common ones first). The effects are realistic: a **clog** restricts flow (a full block stops it); a
+**break** either leaks or stops a part working; a **wrong setting** (throttled flow-control, bleed left
+open, mis-set nozzle, mis-wiring) misbehaves accordingly; an **electrical break** stops the valve or pump
+it feeds from switching on; a **weak pump** pushes less. (See §8 for the open choices here.)
 
-- **Pipes lose pressure to friction.** The faster the water flows, the more pressure it costs to push
-  it down a pipe. Narrower and longer pipes cost more.
-- **Height matters.** The pump has to lift water up from the well and out to heads that sit at
-  different heights; every metre up costs pressure.
-- **The pump has limits.** It can only push so hard, and the harder it has to push, the less water it
-  moves — that trade-off is the pump's "curve", taken straight from the manufacturer's table.
-- **Valves and fittings add resistance** when water passes through them.
-- **Sprinkler heads spray more when the pressure is higher** — exactly as much as the manufacturer's
-  nozzle tables say. The spray-type heads have a built-in regulator that holds them at about 2.76 bar,
-  so above a threshold they spray a steady amount regardless of supply pressure.
-- **Leaks** let water escape wherever one is present.
+## 7. The picture and how you use it
 
-The key point is that everything is connected. Open another zone and the pressure everywhere changes;
-the heads already running will spray a little differently. The calculator settles all of this at once
-so that the books balance: the total water coming out of every head and leak equals what the pump is
-supplying.
+The diagram lays the system out roughly as it sits in real life — well and pump, the main run to the
+valve box, the four zones, the hand zone — with the wiring drawn as a layer over the top (using the icons
+we already have). Water is shown visually: bolder lines where more is flowing, colour for pressure, and
+working parts distinct from idle ones. Every place water leaves — each head, the hand-zone nozzle, any
+leak — is marked with how much, plus a running total. The wiring shows what's switched on, what's powered,
+and where it's broken. Controls and fault switches sit alongside, and it updates instantly, with a short
+note if something's off (e.g. the pump asked for more than it can give, or a valve that won't open because
+pressure's too low). Ready-made examples jump to common situations (all off, one zone running, classic
+faults).
 
-The simulator feeds all of the above into EPANET — pipes with their friction, the pump's curve, the
-valves, the heads' spray-vs-pressure behaviour, the regulators on the spray heads, and any leaks — and
-EPANET works out the pressure at every point and the flow through every pipe.
+## 8. How we'd build it, and what's still to decide
 
-### 5.2 Why it isn't just a simple chain
+**Build, once approved:** read and check the system files → turn the manufacturer tables into usable
+numbers (flagging anything out of range) → work out the electrical side (what's actually on, what's
+broken) → describe the system to EPANET and confirm a simple case matches the manufacturer's figures →
+apply controls and faults, run it, and turn results into the picture → sanity-check (totals balance,
+height and multi-zone effects behave) → build the page → update the project docs. The electrical/EPANET
+middle is the heart of it; the page is the biggest job but low-risk once the maths return clean answers.
 
-The pipework runs one way with no loops, but three things stop the system being a simple feed-forward
-chain, and the calculator has to handle all of them together:
-
-- **The automatic valves open themselves using water pressure.** Water takes two routes through one of
-  these valves at once — the main way through, and a tiny side route that controls a chamber on top of
-  the rubber diaphragm. When the controller energises the solenoid (or you open the manual bleed), that
-  chamber is allowed to drain, the pressure on top drops, and the water pressure underneath lifts the
-  diaphragm open. So a valve isn't a simple on/off tap — it opens because of the pressures around it,
-  and several faults live in that little control circuit (a blocked control port, a weep, a bleed screw
-  left open).
-- **The wiring is a loop, not a line.** Electricity has to flow out to a solenoid and back again along a
-  shared return wire, so the electrical side forms loops by nature.
-- **Everything influences everything.** Because of the single pump and the way each head's spray depends
-  on pressure, you can't work out one branch on its own — they all have to be balanced together.
-
-This is precisely why we're using EPANET rather than a home-grown calculation: it's built to settle all
-these interactions at once.
-
-### 5.3 Choosing how friction is calculated
-
-There are two standard ways to work out pipe friction. One (called Hazen–Williams) is the common
-shortcut in irrigation, but it's only reliable when water is moving at ordinary speeds. The other
-(Darcy–Weisbach) stays accurate whether the water is barely trickling or racing.
-
-This system does both extremes. In normal use, the busy "trunk" pipes carrying a whole zone's water run
-at sensible speeds. But the many small pipes feeding a single head run very slowly, and the hand-zone's
-narrow hose-reel line can run extremely fast. On top of that, faults like clogs and throttled valves
-push pipes well outside ordinary speeds. So we use the method that stays accurate across the whole range.
-
-(The slow little feed pipes barely lose any pressure either way, so the choice doesn't really change
-those — it matters most for the fast hose-reel line and for fault situations.)
-
-This method needs to know how smooth each pipe is on the inside. The hoses are smooth plastic, so a
-standard smoothness value has been added for each hose in `graph.yaml`. The old shortcut value is kept
-alongside it in case we ever want to compare the two.
-
-## 6. The electrical and control side
-
-Before working out any water, the simulator first decides what is actually switched on:
-
-- **A valve opens** only if its solenoid actually gets power — meaning the controller is calling for that
-  zone *and* there's an unbroken path of wires all the way out to the coil and back. (Or if you've opened
-  that valve's manual bleed by hand.) A broken wire, a dead coil, or a controller that isn't sending the
-  signal will leave a valve shut even though it's been told to open.
-- **The pump runs** only if it's being called for *and* its relay gets that signal *and* there's mains
-  power to it. The relay is the switch that lets the controller turn the mains-powered pump on and off.
-- **The hand valve and the sprinkler flo-stops** are purely mechanical — no electricity involved.
-
-In the picture this means we can show three different things at once for each wire and switch: what's
-being *asked* for, what's actually *getting power*, and *where a path is broken*.
-
-## 7. What you can control
-
-You can set any combination of:
-
-- the **pump** (on/off),
-- the **four automatic zones** (on/off),
-- the **hand-operated zone's valve** (open/closed),
-- each **valve's flow-control** (the screw that throttles a valve down or shut),
-- each **rotor's flo-stop** (the feature that shuts off one sprinkler head),
-- and each **valve's bleed screw** (which opens a valve by hand, without the solenoid).
-
-The situation being simulated is simply: these settings, plus the position of every hand control, plus
-whatever faults you've switched on.
-
-## 8. What can go wrong (the faults — still to be reviewed)
-
-You can break any individual part in the way that part actually fails. The list of parts and their
-possible failures already exists in `graph.yaml`, and it lines up with the system's existing fault list.
-It's a long list, though, so **this is flagged for your review** — we may want to show only the common
-ones at first. Each kind of failure has a realistic effect:
-
-- **A clog** restricts flow at that spot — and a fully blocked head or pipe stops water getting through.
-- **A break** either lets water escape (a leak) or stops a part working, depending on what breaks.
-- **A wrong setting** — a throttled flow-control, a bleed screw left open, a mis-set nozzle, mis-wiring.
-- **An electrical break** — a cut wire, dead coil, or controller fault — stops the valve or pump it feeds
-  from switching on.
-- **A weak pump** pushes less than it should.
-
-A couple of things to decide here (see §11): whether to show the full list or a curated short list at
-first, and whether to add a simple "leak somewhere along this pipe" option on top of the part-by-part
-breaks.
-
-## 9. The picture and how you use it
-
-- **The diagram** lays out the whole system roughly the way it sits in real life — well and pump, the
-  main run out to the valve box, the four zones, and the hand zone — with the control wiring drawn as a
-  second layer over the top. Where we already have icons (pump, valve, rotor) we use them.
-- **Water is shown visually:** thicker, bolder lines where more water is flowing; colour for how much
-  pressure; and parts that are full and working shown differently from parts that are empty or idle.
-- **Every place water leaves** — each sprinkler head, the hand-zone nozzle, and any leak — is marked with
-  how much is coming out, plus a running total of how much the system is putting out altogether.
-- **The wiring shows** what's been switched on, what's actually getting power, and where a path is broken.
-- **Controls and fault switches** sit alongside the diagram: toggles for the pump, the zones, the hand
-  valve, the flo-stops, the flow-controls and bleeds, and a set of buttons to introduce or clear faults.
-- **It updates instantly** whenever you change anything, and shows a short note if something's off (for
-  example, the pump being asked for more than it can deliver, or a valve that won't open because the
-  pressure's too low to work it).
-- **Ready-made examples** let you jump straight to common situations — everything off, a single zone
-  running, or classic faults like a blocked nozzle, a split zone pipe, a dead solenoid, or a tired pump.
-
-## 10. How we'd build it (once this plan is approved)
-
-1. **Read the system files** and check they're complete — every part, nozzle, and model referenced should
-   have its matching reference data, with a clear error if anything's missing.
-2. **Turn the manufacturer tables into usable numbers** — the pump, valve, and nozzle behaviour — and
-   flag clearly if anything is ever asked for outside the range those tables cover.
-3. **Work out the electrical side** — for any set of commands and electrical faults, decide which valves
-   and the pump are actually on, and which paths are broken.
-4. **Hand the system to EPANET** — describe this system's layout to the water calculator (pipes, heights,
-   pump curve, the spray-head regulators, and how much each head sprays), and confirm a known simple case
-   matches the manufacturer's figures.
-5. **Add the controls and faults** — apply what's switched on and any faults, run the calculation, and
-   turn the results back into the form the picture needs.
-6. **Check it behaves sensibly** — the totals balance, height has the right effect, and running two zones
-   together affects each other correctly.
-7. **Build the page** — the diagram, the controls, the fault switches, the instant updates, the examples.
-8. **Tidy up the docs** — update the project notes (this adds a web page, which the project didn't have
-   before) and write a short how-to-run note.
-
-Steps 3–5 are the heart of it; step 7 is the biggest job but low-risk once the calculations are returning
-clean answers.
-
-## 11. Still to decide before building
-
-1. **How many faults to show** — the full part-by-part list, or a shorter common set to start? And should
-   we add a simple "leak somewhere along this pipe" option? (There's also a practical question for us: a
-   handful of the part-by-part faults may be awkward to represent inside EPANET — those few are the only
-   ones that might need special handling.)
-2. **How much valve detail to show** — is it enough to treat each automatic valve as simply open, shut, or
-   throttled (with the self-opening mechanism explained only as a label on the diagram), or do you want
-   that inner workings shown more fully?
-3. **Diagram style** — a clean schematic (easiest to read) or a true-to-the-garden layout?
-4. **Units** — pressure in bar and flow in cubic-metres-per-hour to match the manufacturer tables, or
-   litres-per-minute (more familiar), or a switch between them?
-5. **How "live" it needs to be** — just "set it up and see the result", or also animate water filling and
-   draining over time? (The plan above assumes the simpler "see the result" version.)
+**Still to decide:**
+1. **Faults** — full part-by-part list or a common short set to start? Add a simple "leak somewhere along
+   this pipe" option? (A few part-by-part faults may be awkward to represent inside EPANET — those are the
+   only ones that might need special handling.)
+2. **Valve detail** — treat each automatic valve as just open/shut/throttled (explaining the self-opening
+   mechanism only as a label), or show its inner workings more fully?
+3. **Diagram style** — clean schematic, or true-to-the-garden layout?
+4. **Units** — bar and m³/h (matching the tables), litres-per-minute (more familiar), or a switch?
+5. **How "live"** — just "set it up and see the result", or also animate filling and draining over time?
+   (The plan assumes the simpler version.)
