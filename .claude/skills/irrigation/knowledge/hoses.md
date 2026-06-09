@@ -15,11 +15,11 @@ contents:
 
 # Zone hoses — 25 mm PE, valve manifold to heads
 
-This is the **F8** neighbourhood: the polyethylene hoses that carry water from
+This is the **zone-hose** neighbourhood: the polyethylene hoses that carry water from
 the valve manifold out to the heads on each zone. Each zone has its own buried
 hose (see `graph.yaml` for hose sizes, count, and the per-zone head mix).
 
-Read this when the engine narrows to F8, or when a head-side symptom (won't
+Read this when the engine narrows to the zone hoses, or when a head-side symptom (won't
 pop up, short radius, brown spots on the far end of a zone) doesn't match
 anything wrong at the head itself. hoses fail mostly by **puncture** —
 people put a spade, a fence post, or a tree root through one — not by aging
@@ -59,7 +59,7 @@ Cheapest-first checks before digging up the lawn:
 1. **Compare zones.** 🔌 Run each zone in turn at the controller.
    If only the suspect zone is weak, the fault is downstream of *that*
    zone's valve — i.e. its hose or its heads. If multiple zones are
-   weak, look upstream (main hose F6, pump F5, controller call F2).
+   weak, look upstream (the main hose, the pump, or the controller call).
 2. 🔍 **Walk the hose path during the run.** A punctured hose pushes
    water into the soil. Look for a wet patch, soft/spongy ground,
    unusually dense grass, water bubbling at the surface, or a sinkhole

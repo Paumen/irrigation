@@ -118,7 +118,7 @@ form a tier:
    simple — every zone sees the same regulated pressure, and you lose the ability to
    tune individual zones. Useful when supply pressure is wildly higher than every zone
    needs and design varies little between zones. Not fitted in every system; covered as
-   F6 context in `sources.md`.
+   main-hose / supply context in `sources.md`.
 2. **Per-valve pressure regulator (Hunter Accusync).** Sits on each individual valve
    and holds its downstream pressure at a per-zone setpoint regardless of upstream
    variation. The right answer when zones have **elevation changes** or **long hose
