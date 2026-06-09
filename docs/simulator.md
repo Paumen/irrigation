@@ -9,7 +9,12 @@
 - Water pressure and flow computed by **EPANET** (a proven water-network calculator with a browser
   version), with our own layer feeding it the system and reading results back.
 - Friction calculated by the Darcy–Weisbach method, using the per-hose smoothness value in `graph.yaml`.
-- Any individual part can be broken, per the failure list in `graph.yaml` (scope to confirm — §5).
+- Any individual part can be broken — the full part-by-part failure list from `graph.yaml`, plus a
+  generic "leak somewhere along a pipe" option.
+- Shows the settled (steady-state) result instantly, and also a quasi-time mode that steps through a
+  sequence of settled states (e.g. a watering program, or a series of changes) — not full transient
+  simulation.
+- Pressures in bar and flows in m³/h (matching the manufacturer tables), with a litres-per-minute toggle.
 
 ## 2. Water behaviour to reproduce
 
@@ -47,17 +52,18 @@ Three things are linked and must be settled together:
 The pump; the four automatic zones; the hand-zone valve; each valve's flow-control (throttle screw); each
 rotor's flo-stop; each valve's bleed screw. The situation simulated is these settings plus any active faults.
 
-## 5. Faults (scope to confirm)
+## 5. Faults
 
-Per-part, from `graph.yaml`. Effects: a **clog** restricts flow (a full block stops it); a **break** either
-leaks or disables the part; a **wrong setting** (throttled flow-control, bleed left open, mis-set nozzle,
-mis-wiring) misbehaves accordingly; an **electrical break** stops the valve or pump it feeds from switching
-on; a **weak pump** pushes less.
+The full part-by-part failure list from `graph.yaml`, plus a generic "leak somewhere along a pipe" option.
+Effects: a **clog** restricts flow (a full block stops it); a **break** either leaks or disables the part;
+a **wrong setting** (throttled flow-control, bleed left open, mis-set nozzle, mis-wiring) misbehaves
+accordingly; an **electrical break** stops the valve or pump it feeds from switching on; a **weak pump**
+pushes less.
 
 ## 6. The picture
 
-- Layout roughly as in real life — well, pump, main run, valve box, four zones, hand zone — with the
-  wiring drawn as a layer over the top (use the icons we already have).
+- A clean schematic layout (legible, not to scale) — well, pump, main run, valve box, four zones, hand
+  zone — with the wiring drawn as a layer over the top (use the icons we already have).
 - Water shown visually: bolder lines where more is flowing, colour for pressure, working parts distinct
   from idle ones.
 - Every place water leaves — each head, the hand-zone nozzle, any leak — marked with how much, plus a
@@ -75,13 +81,15 @@ simple case matches the tables → apply controls and faults, run it, turn resul
 sanity-check (totals balance, height and multi-zone effects behave) → build the page → update the project
 docs.
 
-## 8. Decisions needed before building
+## 8. Decisions (settled)
 
-1. **Faults** — full part-by-part list, or a common short set first? Add a simple "leak somewhere along
-   this pipe" option? (A few part-by-part faults may be awkward to represent inside EPANET — those few are
-   the only ones that might need special handling.)
-2. **Valve detail** — treat each automatic valve as just open/shut/throttled (self-opening shown only as a
-   label), or model its inner workings more fully?
-3. **Diagram style** — clean schematic, or true-to-the-garden layout?
-4. **Units** — bar and m³/h (matching the tables), litres-per-minute, or a switch?
-5. **How "live"** — just set-it-up-and-see-the-result, or also animate filling and draining over time?
+- **Faults:** full part-by-part list from `graph.yaml`, plus a generic "leak somewhere along a pipe"
+  option. (A few part-by-part faults may be awkward to represent inside EPANET — those few are the only
+  ones that might need special handling.)
+- **Valve detail:** start simple — each automatic valve is open/shut/throttled, with the self-opening
+  mechanism shown only as a diagram label and pilot-side faults mapped to a setting or small leak. Fuller
+  modelling of the inner workings can come later.
+- **Diagram style:** clean schematic, legible and not to scale.
+- **Liveness:** steady-state ("set it up, see the settled result") plus a quasi-time mode that steps
+  through a sequence of settled states; not full transient simulation.
+- **Units:** bar and m³/h (matching the manufacturer tables), with a litres-per-minute toggle.
