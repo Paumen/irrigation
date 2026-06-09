@@ -294,17 +294,3 @@ class Engine:
         ]
         items.sort(key=lambda x: -x["D"])
         return items
-
-    def stage_progress(
-        self, answers: dict | None = None, skipped: dict | None = None
-    ) -> dict[int, dict]:
-        out = {}
-        for s in self.stages:
-            qs = self.stage_qs[s]
-            out[s] = {
-                "total": len(qs),
-                "answered": sum(
-                    1 for q in qs if self.is_completed(q["id"], answers, skipped)
-                ),
-            }
-        return out
