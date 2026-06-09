@@ -152,12 +152,18 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   epanet-js enums (`NodeProperty.Pressure`, `LinkProperty.Flow`), CMH units, D-W, pump HEAD curve, GPV.
 - **M1:** `model.js`, `network.js`, `inp.js`, `epanet-runner.js`; validate one healthy zone vs pump curve.
 - **M2:** `outlets.js`, `solver.js`; idle + pump+Z1 converge with correct mass balance; `harness.mjs` cases 1–2.
-- **M3:** `electrical.js` + valve actuation in the loop; harness case 4 (broken wire / shared return).
-- **M4:** `faults.js` grouped table + specials; harness case 3 (clog) + a leak case.
+- **M3 (Z5 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
+  `nozzle.stream` open-orifice discharge, manual-handle open/close in the state model; harness case
+  (pump + Z5 open → orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV,
+  orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
+- **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
 - **M5:** `layout.js` (elkjs) + `render.js` — static schematic with flow/pressure encoding.
-- **M6:** `controls.js` + `app.js` wiring + units toggle (live update).
+- **M6:** `controls.js` + `app.js` wiring + units toggle (live update); pump, zones, Z5 manual handle,
+  rotor flo-stop, valve flow-control.
 - **M7:** `quasitime.js` (step through a sequence of settled command-states).
-- **M8:** polish — wiring asked/powered/broken styling, labels, Z5 manual, `commandedNotOpening`,
+- **M8 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
+  case; fault toggle widgets wired into `controls.js`/`render.js`.
+- **M9:** polish — wiring asked/powered/broken styling, labels, `commandedNotOpening`,
   max-pressure warnings; `.github/workflows/pages.yml` + `sim/README.md`.
 
 ## Requirement → milestone traceability
@@ -168,23 +174,23 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
 | # | Requirement (Sim_spec.md) | Milestone |
 |---|---|---|
 | **States** | | |
-| R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 (state model) |
-| R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 |
-| R3 | Electrical circuit to pump and each solenoid is intact or broken | M3 |
-| R4 | Any element healthy or faulted — hydraulic (clog, leak, weak pump) or electrical (no signal, broken wire, dead solenoid) | M4 |
+| R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M8 (state model) |
+| R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 (Z5 manual) + M4 |
+| R3 | Electrical circuit to pump and each solenoid is intact or broken | M4 |
+| R4 | Any element healthy or faulted — hydraulic (clog, leak, weak pump) or electrical (no signal, broken wire, dead solenoid) | M8 |
 | **Logic** | | |
 | R5 | For any state, compute physically realistic pressure & flow throughout the network | M1 + M2 |
-| R6 | How much each open outlet releases depends on the pressure reaching it | M2 |
-| R7 | Valve opens when solenoid energised through healthy wiring or manual bleed opened; pump runs only when commanded through healthy wiring | M3 |
+| R6 | How much each open outlet releases depends on the pressure reaching it | M2 + M3 (Z5 orifice) |
+| R7 | Valve opens when solenoid energised through healthy wiring or manual bleed opened; pump runs only when commanded through healthy wiring | M4 |
 | R8 | Opening/closing valves redistributes pressure & flow across the whole system | M2 |
-| R9 | A fault behaves realistically (clog restricts, leak escapes, weak pump less, electrical fault stops actuation) | M4 |
-| R10 | Water leaves only through open outlets and leaks; total outflow = what the pump supplies | M2 (balance) + M4 (leaks) |
+| R9 | A fault behaves realistically (clog restricts, leak escapes, weak pump less, electrical fault stops actuation) | M8 |
+| R10 | Water leaves only through open outlets and leaks; total outflow = what the pump supplies | M2 (balance) + M8 (leaks) |
 | **UI** | | |
 | R11 | System shown as a diagram | M5 |
-| R12 | Control wiring shown: commanded on / energised / where a path is broken | M5 (computed M3) |
+| R12 | Control wiring shown: commanded on / energised / where a path is broken | M5 (computed M4) |
 | R13 | Pressure & flow shown wherever they occur; filled parts distinguished from empty | M5 |
 | R14 | Every point where water leaves shown, with how much | M5 |
-| R15 | User can command every control (pump, valves, head flo-stop, valve flow control) and inject faults | M6 |
+| R15 | User can command every control (pump, valves, head flo-stop, valve flow control) and inject faults | M6 (controls) + M8 (fault injection) |
 | R16 | The view updates live as the state changes | M6 |
 
 ## Risks
