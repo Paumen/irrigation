@@ -1,0 +1,13 @@
+{
+  "name": "irrigation-sim",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Browser-based irrigation system simulator (hydraulics + control wiring). Browser loads deps from CDN; this package.json exists only for the headless Node test harness.",
+  "scripts": {
+    "smoke": "node test/m0-smoke.mjs"
+  },
+  "devDependencies": {
+    "epanet-js": "^0.8.0"
+  }
+}
