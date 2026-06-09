@@ -184,10 +184,28 @@ function partOf(portId, circuit) {
 }
 
 function buildCircuitElkGraph(circuit) {
-  // only ports actually referenced by wires get drawn (and laid out)
+  // Display-only "lead" pairs for an exploded port's cross-part `to:` references
+  // (splice.sig_N -> ZN.valve.coil): physical solenoid leads that are intra-part
+  // continuity in the model and would otherwise render as nothing. Sibling `to:`
+  // references (the com chain) are skipped — the common_chain_* wires already draw
+  // them. Collected before the port registration below so both endpoints get laid
+  // out even when no wire references them (a dangling endpoint would crash ELK).
+  const leadPairs = [];
+  for (const partId of EXPLODED_PARTS) {
+    const part = circuit.parts[partId];
+    if (!part) throw new Error(`layout: exploded part "${partId}" missing from circuit.parts`);
+    for (const [subName, sub] of Object.entries(part)) {
+      for (const t of sub?.to || []) {
+        if (t.includes(".")) leadPairs.push([`${partId}.${subName}`, t]);
+      }
+    }
+  }
+
+  // only ports referenced by wires or leads get drawn (and laid out)
   const portsByPart = new Map(); // partId -> Set of port ids
-  for (const w of Object.values(circuit.wires)) {
-    for (const portId of [w.from, w.to]) {
+  const endpointPairs = [...Object.values(circuit.wires).map((w) => [w.from, w.to]), ...leadPairs];
+  for (const pair of endpointPairs) {
+    for (const portId of pair) {
       const part = partOf(portId, circuit);
       if (!portsByPart.has(part)) portsByPart.set(part, new Set());
       portsByPart.get(part).add(portId);
@@ -231,18 +249,8 @@ function buildCircuitElkGraph(circuit) {
     sources: [ref(w.from)],
     targets: [ref(w.to)],
   }));
-  // Display-only "lead" edges for an exploded port's cross-part `to:` references
-  // (splice.sig_N -> ZN.valve.coil): physical solenoid leads that are intra-part
-  // continuity in the model and would otherwise render as nothing. Sibling `to:`
-  // references (the com chain) are skipped — the common_chain_* wires already draw them.
-  for (const partId of EXPLODED_PARTS) {
-    for (const [subName, sub] of Object.entries(circuit.parts[partId] || {})) {
-      for (const t of sub?.to || []) {
-        if (!t.includes(".")) continue;
-        const from = `${partId}.${subName}`;
-        edges.push({ id: `lead:${from}`, sources: [ref(from)], targets: [ref(t)] });
-      }
-    }
+  for (const [from, to] of leadPairs) {
+    edges.push({ id: `lead:${from}`, sources: [ref(from)], targets: [ref(to)] });
   }
 
   const graph = {
