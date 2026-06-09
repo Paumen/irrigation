@@ -22,6 +22,7 @@ let ctx = null; // { model, circuit, hyd, layout, renderer } once booted
 // Solve commands+state through the electrical and hydraulic cores and paint the
 // result. The single entry point M6's controls will call.
 export function renderState(commands, state = { manualOpen: {} }, opts = {}) {
+  if (!ctx) throw new Error("app: renderState called before the simulator finished booting");
   const { model, circuit, hyd, layout, renderer } = ctx;
   const elec = solveElectrical(circuit, commands, opts.blocked || new Set());
   const steady = solveSteady(model, state, elec, hyd);

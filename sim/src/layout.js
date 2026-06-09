@@ -171,8 +171,11 @@ function buildFlowElkGraph(model) {
 // coil box "Z1.valve" (the solenoid's electrical face — wires target hydraulic-part
 // ports that have no entry in circuit.parts).
 function partOf(portId, circuit) {
-  const owner = portId.slice(0, portId.lastIndexOf("."));
-  return circuit.parts[portId.split(".")[0]] ? portId.split(".")[0] : owner;
+  const dot = portId.lastIndexOf(".");
+  // a wire endpoint is always "<part>.<port>"; anything else is malformed graph.yaml
+  if (dot < 0) throw new Error(`layout: wire endpoint "${portId}" has no part prefix`);
+  const root = portId.slice(0, portId.indexOf("."));
+  return circuit.parts[root] ? root : portId.slice(0, dot);
 }
 
 function buildCircuitElkGraph(circuit) {
