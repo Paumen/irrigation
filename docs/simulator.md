@@ -63,7 +63,7 @@ The solver consumes the existing files unchanged:
   fault catalog from the `fail:` lists.
 - **`graph.yaml` → `circuit:`** — `parts:` (controller, adapter, relay, pump, splice, solenoid
   coils) and `wires:`. Drives the electrical resolver (§6).
-- **`catalog.yaml`** — `pump_curves` (AQUAJET 132 M Q–H), `valve_loss` (PGV-101G), `nozzle_i20`
+- **`catalog.yaml`** — `pump_curves` (pump Q–H), `valve_loss` (valve loss), `nozzle_i20`
   and `nozzle_mp` flow-vs-pressure tables. The physical curves the solver interpolates.
 - **`context.yaml`** — non-physical metadata (locations, install dates); used for labels/tooltips.
 
@@ -80,16 +80,16 @@ recursive tree traversal replaces a general loop-network (Hardy Cross) method.
 - **Pipe (`hose.*`)** — Hazen-Williams friction:
   `h_f = 10.67 · L · Q^1.852 / (C^1.852 · d^4.87)` (SI, Q in m³/s, d in m), plus minor losses
   `h_m = k_minor · v²/2g` for fittings (`joint`, `tee`, `swing`, `manifold`, `bends`).
-- **Pump (`pump.well`)** — head from the AQUAJET 132 M Q–H curve in `catalog.yaml`, interpolated
+- **Pump (`pump.well`)** — head from the pump Q–H curve in `catalog.yaml`, interpolated
   at the operating flow; the solve finds the curve/system intersection (§5.2).
-- **Automatic valve (`valve.auto`, PGV-101G)** — when open, loss from the `valve_loss` curve
+- **Automatic valve (`valve.auto`)** — when open, loss from the `valve_loss` curve
   (interpolated on flow); when closed, the subtree carries zero flow. `min_operating_bar` (1.5)
   flags valves that won't reliably actuate below that inlet pressure.
 - **Manual valve (`valve.manual`, Z5)** — `Kv`-based loss; open/closed by its handle.
 - **Heads** —
-  - *Rotor* (`head.rotor`, I-20): discharge from `nozzle_i20` flow-vs-pressure for the fitted
+  - *Rotor* (`head.rotor`): discharge from `nozzle_i20` flow-vs-pressure for the fitted
     nozzle code (e.g. "4.0 blue" → "4.0"); a closed flo-stop sets discharge to 0.
-  - *Spray* (`head.spray`, MP rotators, PRS40): pressure-regulated to `regulated_bar` (2.76);
+  - *Spray* (`head.spray`, MP rotators): pressure-regulated to `regulated_bar` (2.76);
     discharge from `nozzle_mp` flow-vs-pressure-by-arc for the fitted nozzle+arc, clamped to the
     regulated point above the regulator's threshold.
   - *Stream nozzle* (`nozzle.stream`, Z5): orifice discharge `q = Cd·A·√(2ΔP/ρ)` from `bore_mm`/`cd`.
@@ -162,7 +162,7 @@ The user can set, per the spec:
 - **Pump** — on/off command (subject to the relay/wiring resolving to actually running).
 - **Zone valves Z1–Z4** — controller zone command on/off (subject to solenoid energising).
 - **Z5 manual valve** — handle open/closed.
-- **Valve flow control** — the PGV `flow_control` position (throttles/closes the diaphragm).
+- **Valve flow control** — the valve `flow_control` position (throttles/closes the diaphragm).
 - **Rotor flo-stop** — per-rotor open/closed.
 - **Valve bleed screw** — manual open (opens valve without the solenoid).
 
@@ -212,8 +212,10 @@ anywhere on this segment" control in addition to the part-specific `broken` mode
 
 1. **Data layer** — YAML→JSON build step; typed model loader; validate `flow:`/`circuit:`
    adjacency and that every `kind`/`nozzle`/`model` referenced resolves to params/curves.
-2. **Curve utilities** — interpolation for pump, valve-loss, and nozzle tables (with
-   out-of-range/`null` handling, e.g. MP1000 below its first pressure point).
+2. **Curve utilities** — interpolation for pump, valve-loss, and nozzle tables, with loud
+   validation/exceptions for out-of-range queries rather than fallback null/0.0 values.
+   (Note: some nozzle tables carry genuine below-operating-range `null` data points, which the
+   loader must represent as "no flow below threshold" rather than treat as an error.)
 3. **Electrical resolver** (§6) — continuity over `circuit:` → energised/commanded/broken per
    element; pump-runs and per-valve-open booleans.
 4. **Hydraulic solver** (§5) — element laws, active-subgraph pruning, tree fixed-point, state
