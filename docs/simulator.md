@@ -23,11 +23,26 @@ The result must reflect:
 - Pipe friction (faster flow, and longer/narrower pipes, cost more pressure).
 - Height — the pump lifts water up to each head's elevation.
 - The pump curve (pushing harder moves less water), from `catalog.yaml`.
-- Valve and fitting resistance.
-- Heads spraying more at higher pressure, per the nozzle tables; spray heads self-regulate to ~2.76 bar.
+- Valve and fitting resistance — the automatic valve's loss from the `valve_loss` table in
+  `catalog.yaml`; the hand valve from its `Kv` rating (it has no catalog loss curve). Use one source per
+  valve, not both.
+- Outlet discharge depends on the pressure reaching each outlet, and the two head types differ:
+  - **Rotors** (`head.rotor`, I-20) are unregulated — discharge follows the `nozzle_i20` table for the
+    fitted nozzle size, rising with pressure.
+  - **Spray heads** (`head.spray`, MP rotators) have a built-in regulator (`regulated_bar` 2.76): clamp
+    the nozzle inlet to min(supply, 2.76 bar), then read the `nozzle_mp` table for the fitted nozzle+arc.
+    The table is the nozzle's raw pressure-vs-flow, *not* the regulated behaviour — the regulator is what
+    holds it steady.
+  - **The hand-zone nozzle** (`nozzle.stream`) is an open orifice — discharge from its bore and Cd, not a
+    table.
 - Leaks releasing water wherever present.
 - Mass balance: total water out = what the pump supplies; opening or closing anything re-balances the
   whole system.
+
+The calculator works from demands, so every pressure-dependent outlet (each head, the hand nozzle, and
+any leak) has to be set up as a pressure-driven discharge fitted from the figures above — flow falling as
+pressure drops and rising as it climbs, rather than a fixed amount. This is the core mechanism; get it
+right first.
 
 Three things are linked and must be settled together:
 
@@ -38,6 +53,17 @@ Three things are linked and must be settled together:
 - **The wiring is a loop** — out to a solenoid and back along a shared return.
 - **Everything affects everything** — one pump and pressure-dependent spray mean no branch can be worked
   out on its own.
+
+The everyday states must stay stable, not just a single running zone:
+
+- **Closed and dead zones** — normally three of the four zones are shut. A shut valve isolates a dead-end
+  branch; handle it so the calculation stays stable (no false pressures on the isolated part) and that
+  part simply reads as not flowing.
+- **Pump off** — define the resting state (no flow; static or drained) so "where the water sits" shows
+  correctly rather than as an error.
+- **Valve won't open** — an automatic valve needs at least its `min_operating_bar` (1.5 bar) at the inlet
+  to actually lift, even when energised; below that, report it as commanded-but-not-opening (this drives
+  the §6 warning).
 
 ## 3. The electrical side
 
