@@ -19,7 +19,7 @@ guess a fault). Same system, same fault list, so they fit together — but linki
 | This round delivers | This plan only | No software yet. |
 | How you use it | An interactive page in a web browser | You wanted a hands-on, clickable picture. (The rest of this project has no web page, so that note will need updating once built.) |
 | The water maths | A proven free water-network calculator, **EPANET**, with a thin layer of our own around it | Far safer than writing pressure-and-flow maths from scratch — EPANET is the standard tool, well tested on the tricky cases. |
-| What can break | Any individual part, the way it really fails | Matches the existing fault list. **Still to be reviewed** — see §6. |
+| What can break | Any individual part, the way it really fails | Matches the existing fault list. **Still to be reviewed** — see §7. |
 | Where it runs | Entirely in the browser — nothing to install, no server | Suits the short-lived environment these sessions run in. EPANET has a browser version, so the proven maths come with it; we write only what it doesn't cover. |
 
 ## 3. Where the facts come from
@@ -55,7 +55,7 @@ race. This system does both — slow feed pipes, a fast hose-reel line, and faul
 outside normal speeds — so we use the accurate-across-the-range one. It needs each pipe's inside
 smoothness; the hoses are smooth plastic, so a standard value has been added per hose in `graph.yaml`.
 
-## 5. The electrical side, and what you can control
+## 5. The electrical side
 
 Before any water is worked out, the simulator decides what's actually on. **A valve opens** only if its
 solenoid really gets power — the controller calling that zone *and* an unbroken path of wires to the coil
@@ -64,20 +64,22 @@ gets the signal, and mains power reaches it. The hand valve and the rotor flo-st
 So the picture can show three things at once: what's *asked* for, what's *getting power*, and *where a
 path is broken*.
 
-**You can set** any combination of: the pump; the four automatic zones; the hand-zone valve; each valve's
+## 6. What you can control
+
+You can set any combination of: the pump; the four automatic zones; the hand-zone valve; each valve's
 flow-control (the throttle screw); each rotor's flo-stop; and each valve's bleed screw. The situation
 simulated is just these settings plus any faults you switch on.
 
-## 6. What can go wrong (still to be reviewed)
+## 7. What can go wrong (still to be reviewed)
 
 You can break any individual part the way it really fails — the list already exists in `graph.yaml` and
 lines up with the system's fault list. It's long, so **this is flagged for your review** (we may show
 only common ones first). The effects are realistic: a **clog** restricts flow (a full block stops it); a
 **break** either leaks or stops a part working; a **wrong setting** (throttled flow-control, bleed left
 open, mis-set nozzle, mis-wiring) misbehaves accordingly; an **electrical break** stops the valve or pump
-it feeds from switching on; a **weak pump** pushes less. (See §8 for the open choices here.)
+it feeds from switching on; a **weak pump** pushes less. (See §9 for the open choices here.)
 
-## 7. The picture and how you use it
+## 8. The picture and how you use it
 
 The diagram lays the system out roughly as it sits in real life — well and pump, the main run to the
 valve box, the four zones, the hand zone — with the wiring drawn as a layer over the top (using the icons
@@ -89,7 +91,7 @@ note if something's off (e.g. the pump asked for more than it can give, or a val
 pressure's too low). Ready-made examples jump to common situations (all off, one zone running, classic
 faults).
 
-## 8. How we'd build it, and what's still to decide
+## 9. How we'd build it, and what's still to decide
 
 **Build, once approved:** read and check the system files → turn the manufacturer tables into usable
 numbers (flagging anything out of range) → work out the electrical side (what's actually on, what's
