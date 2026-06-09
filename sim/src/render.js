@@ -63,15 +63,18 @@ export function createRenderer(svgEl, layout) {
     svgEl.appendChild(layers[name]);
   }
 
-  // static chrome: zone frames + titles, circuit part boxes (state never changes them)
-  for (const [zone, b] of layout.flow.zones) {
+  // static chrome: zone frames + titles, circuit location frames, part boxes
+  // (state never changes any of them)
+  const frame = (label, b) => {
     layers.zones.appendChild(
       el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 8, fill: "none", stroke: "#dadce0" }),
     );
     const t = el("text", { x: b.x + 8, y: b.y + 16, fill: "#5f6368", "font-size": "12" });
-    t.textContent = zone;
+    t.textContent = label;
     layers.zones.appendChild(t);
-  }
+  };
+  for (const [zone, b] of layout.flow.zones) frame(zone, b);
+  for (const [location, b] of layout.circuit.groups) frame(location, b);
   for (const [partId, b] of layout.circuit.parts) {
     layers.parts.appendChild(
       el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 4, fill: "#f8f9fa", stroke: "#80868b" }),

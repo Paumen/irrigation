@@ -172,6 +172,25 @@ function buildFlowElkGraph(model) {
 // the electrical model (graph.yaml circuit + electrical.js) is untouched.
 const EXPLODED_PARTS = new Set(["splice"]);
 
+// Physical location of each circuit part (labels follow context.yaml's
+// location_descriptions / equipment locations). The circuit band clusters by these,
+// like the hydraulic band clusters by zone — pure auto-layout scattered the lugs and
+// coils into a topologically-correct but physically meaningless arrangement.
+const PART_LOCATION = {
+  adapter_socket: "house",
+  adapter: "house",
+  controller: "house",
+  grid_socket: "shed",
+  relay: "shed",
+  pump: "well",
+};
+function locationOf(partId) {
+  if (PART_LOCATION[partId]) return PART_LOCATION[partId];
+  // splice lugs and the ZN.valve solenoid coils all live in the valve box
+  if (EXPLODED_PARTS.has(partId) || /^Z\d+\.valve$/.test(partId)) return "valve box";
+  throw new Error(`layout: no location for circuit part "${partId}"`);
+}
+
 // "grid_socket.l" belongs to part "grid_socket"; "Z1.valve.coil" to the synthetic
 // coil box "Z1.valve" (the solenoid's electrical face — wires target hydraulic-part
 // ports that have no entry in circuit.parts).
@@ -216,7 +235,12 @@ function buildCircuitElkGraph(circuit) {
     if (!portsByPart.has(partId)) portsByPart.set(partId, new Set());
   }
 
-  const children = [];
+  const byLocation = new Map(); // location label -> ELK children
+  const child = (partId, node) => {
+    const loc = locationOf(partId);
+    if (!byLocation.has(loc)) byLocation.set(loc, []);
+    byLocation.get(loc).push(node);
+  };
   const lugIds = new Set();
   for (const [partId, ports] of portsByPart) {
     if (EXPLODED_PARTS.has(partId)) {
@@ -226,7 +250,7 @@ function buildCircuitElkGraph(circuit) {
       // the lug NODES directly — do not 'simplify' the #lug ports away.
       for (const portId of ports) {
         lugIds.add(portId);
-        children.push({
+        child(partId, {
           id: portId,
           width: 52,
           height: 14,
@@ -234,7 +258,7 @@ function buildCircuitElkGraph(circuit) {
         });
       }
     } else {
-      children.push({
+      child(partId, {
         id: `part:${partId}`,
         width: Math.max(64, partId.length * 8 + 20, ports.size * 18 + 12),
         height: 34,
@@ -259,11 +283,16 @@ function buildCircuitElkGraph(circuit) {
       "elk.algorithm": "layered",
       "elk.direction": "RIGHT",
       "elk.edgeRouting": "ORTHOGONAL",
-      "elk.layered.spacing.nodeNodeBetweenLayers": "50",
-      "elk.spacing.nodeNode": "28",
+      "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+      "elk.layered.spacing.nodeNodeBetweenLayers": "40",
+      "elk.spacing.nodeNode": "24",
       "elk.spacing.edgeNode": "12",
     },
-    children,
+    children: [...byLocation.entries()].map(([loc, children]) => ({
+      id: `group:${loc}`,
+      layoutOptions: { "elk.padding": "[top=26,left=16,bottom=16,right=16]" },
+      children,
+    })),
     edges,
   };
   return { graph };
@@ -287,11 +316,12 @@ function sectionPoints(edge, containerOffsets) {
 //   flow: { nodes:    Map<id, {x,y,w,h,glyph,zone}>,          // absolute top-left
 //           edges:    Map<key, {points, epLinkId, wetIds, u, v}>,
 //           zones:    Map<"Z1".., {x,y,w,h}> },
-//   circuit: { parts: Map<partId, {x,y,w,h}>,                 // enclosure boxes
-//              lugs:  Map<portId, {x,y,w,h}>,                 // exploded splice points
-//              ports: Map<portId, {x,y}>,                     // port centers (box parts)
-//              wires: Map<wireName, {points}>,
-//              leads: Map<"lead:<port>", {points, from, to}> },
+//   circuit: { parts:  Map<partId, {x,y,w,h}>,                // enclosure boxes
+//              lugs:   Map<portId, {x,y,w,h}>,                // exploded splice points
+//              ports:  Map<portId, {x,y}>,                    // port centers (box parts)
+//              wires:  Map<wireName, {points}>,
+//              leads:  Map<"lead:<port>", {points, from, to}>,
+//              groups: Map<location, {x,y,w,h}> },            // house/shed/well/valve box
 // }
 export async function computeLayout(model, circuit) {
   const elk = new ELK();
@@ -366,25 +396,35 @@ export async function computeLayout(model, circuit) {
   const parts = new Map();
   const lugs = new Map(); // exploded per-port nodes (the splice wire nuts)
   const ports = new Map();
-  for (const child of circuitOut.children) {
-    if (child.id.startsWith("part:")) {
-      const partId = child.id.slice("part:".length);
-      parts.set(partId, { x: child.x, y: child.y + bandY, w: child.width, h: child.height });
-      for (const p of child.ports || []) {
-        ports.set(p.id, {
-          x: child.x + p.x + p.width / 2,
-          y: child.y + p.y + p.height / 2 + bandY,
-        });
+  const groups = new Map(); // location frames (house / shed / well / valve box)
+  const bandOffsets = new Map([["circuit", { x: 0, y: bandY }]]);
+  for (const group of circuitOut.children) {
+    groups.set(group.id.slice("group:".length), {
+      x: group.x,
+      y: group.y + bandY,
+      w: group.width,
+      h: group.height,
+    });
+    bandOffsets.set(group.id, { x: group.x, y: group.y + bandY });
+    for (const child of group.children) {
+      const x = group.x + child.x;
+      const y = group.y + child.y + bandY;
+      if (child.id.startsWith("part:")) {
+        const partId = child.id.slice("part:".length);
+        parts.set(partId, { x, y, w: child.width, h: child.height });
+        for (const p of child.ports || []) {
+          ports.set(p.id, { x: x + p.x + p.width / 2, y: y + p.y + p.height / 2 });
+        }
+      } else {
+        lugs.set(child.id, { x, y, w: child.width, h: child.height });
       }
-    } else {
-      lugs.set(child.id, { x: child.x, y: child.y + bandY, w: child.width, h: child.height });
     }
   }
-  const bandOffsets = new Map([["circuit", { x: 0, y: bandY }]]);
   const wires = new Map();
   const leads = new Map();
   const unref = (id) => id.replace(/#lug$/, ""); // back to the elec.ports key
-  for (const e of circuitOut.edges) {
+  const allCircuitEdges = [...circuitOut.edges, ...circuitOut.children.flatMap((c) => c.edges || [])];
+  for (const e of allCircuitEdges) {
     if (e.id.startsWith("lead:")) {
       leads.set(e.id, {
         points: sectionPoints(e, bandOffsets),
@@ -400,6 +440,6 @@ export async function computeLayout(model, circuit) {
     width: Math.max(flowOut.width, circuitOut.width),
     height: bandY + circuitOut.height,
     flow: { nodes: flowNodes, edges: flowEdges, zones },
-    circuit: { parts, lugs, ports, wires, leads },
+    circuit: { parts, lugs, ports, wires, leads, groups },
   };
 }

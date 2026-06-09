@@ -347,6 +347,25 @@ const layout = await computeLayout(model, circuit);
     Object.keys(circuit.wires).every((w) => layout.circuit.wires.get(w)?.points.length >= 2),
     "every wire routed as a polyline",
   );
+  const locations = [...layout.circuit.groups.keys()].sort();
+  check(
+    locations.join(",") === "house,shed,valve box,well",
+    `circuit clustered by location (got ${locations.join(",")})`,
+  );
+  const within = (b, g) => b.x >= g.x && b.y >= g.y && b.x + b.w <= g.x + g.w && b.y + b.h <= g.y + g.h;
+  check(
+    within(layout.circuit.parts.get("controller"), layout.circuit.groups.get("house")) &&
+      within(layout.circuit.parts.get("relay"), layout.circuit.groups.get("shed")) &&
+      within(layout.circuit.parts.get("pump"), layout.circuit.groups.get("well")),
+    "controller in house, relay in shed, pump in well",
+  );
+  check(
+    spliceLugs.every((p) => within(layout.circuit.lugs.get(p), layout.circuit.groups.get("valve box"))) &&
+      ["Z1.valve", "Z2.valve", "Z3.valve", "Z4.valve"].every((p) =>
+        within(layout.circuit.parts.get(p), layout.circuit.groups.get("valve box")),
+      ),
+    "all splice lugs and solenoid coils inside the valve box frame",
+  );
   const flowBottom = Math.max(...[...layout.flow.nodes.values()].map((n) => n.y + n.h));
   const circuitTop = Math.min(
     ...[...layout.circuit.parts.values(), ...layout.circuit.lugs.values()].map((p) => p.y),
