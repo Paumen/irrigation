@@ -9,6 +9,7 @@
     "test": "node test/harness.mjs"
   },
   "devDependencies": {
+    "elkjs": "^0.11.0",
     "epanet-js": "^0.8.0",
     "js-yaml": "^4.2.0"
   }

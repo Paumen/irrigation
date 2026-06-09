@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Irrigation system simulator</title>
+<!-- Dependencies come from CDN (no bundler, no vendoring). The elkjs entry is the
+     deep specifier layout.js imports, mapped to the self-contained main-thread build.
+     Versions pinned to match sim/package.json devDependencies (the Node harness). -->
+<script type="importmap">
+{
+  "imports": {
+    "epanet-js": "https://esm.sh/epanet-js@0.8.0",
+    "js-yaml": "https://esm.sh/js-yaml@4.2.0",
+    "elkjs/lib/elk.bundled.js": "https://esm.sh/elkjs@0.11.1/lib/elk.bundled.js"
+  }
+}
+</script>
+<style>
+  body { margin: 0; font: 14px system-ui, sans-serif; color: #202124; }
+  header { padding: 10px 16px; border-bottom: 1px solid #dadce0; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+  h1 { font-size: 16px; margin: 0; }
+  #status { color: #5f6368; font-size: 13px; }
+  #schematic { width: 100%; height: calc(100vh - 110px); display: block; }
+  .legend { display: flex; gap: 18px; padding: 6px 16px; font-size: 12px; color: #5f6368; align-items: center; flex-wrap: wrap; }
+  .legend .ramp { width: 90px; height: 10px; border-radius: 5px;
+    background: linear-gradient(to right, hsl(220,80%,45%), hsl(110,80%,45%), hsl(0,80%,45%)); }
+  .legend svg { vertical-align: middle; }
+  .swatch { display: inline-block; width: 14px; height: 3px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Irrigation simulator</h1>
+  <div id="status">booting…</div>
+</header>
+<div class="legend">
+  <span>pressure: 0 bar <span class="ramp"></span> 5 bar</span>
+  <span>flow: <svg width="60" height="12"><line x1="0" y1="9" x2="18" y2="9" stroke="#444" stroke-width="1.5"/><line x1="26" y1="7" x2="58" y2="7" stroke="#444" stroke-width="8" stroke-linecap="round"/></svg> more</span>
+  <span><span class="swatch" style="background:#9aa0a6"></span> unfilled/idle</span>
+  <span>wiring: <span class="swatch" style="background:#2e7d32"></span> powered
+    <span class="swatch" style="background:#f9a825"></span> asked
+    <span class="swatch" style="background:#c62828"></span> broken
+    <span class="swatch" style="background:#b0bec5"></span> off</span>
+</div>
+<svg id="schematic" xmlns="http://www.w3.org/2000/svg"></svg>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

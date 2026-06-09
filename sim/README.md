@@ -10,8 +10,8 @@ so the engine is testable without a browser.
 
 ## Status
 
-**M0–M4 — done.** The headless hydraulic **and** electrical core is built and verified; the UI (M5+) is
-not yet built.
+**M0–M5 — done.** The headless hydraulic **and** electrical core is built and verified, and the static
+schematic renders in the browser; controls/live updates (M6+) are not yet built.
 
 - **M0 (EPANET spike):** `test/m0-smoke.mjs` hand-writes a tiny INP (reservoir → pump → valve → demand)
   exercising every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
@@ -46,19 +46,40 @@ not yet built.
   `asked` (on a commanded path with faults disabled), `powered` (on a live path in the faulted solve),
   `broken` (faulted itself, or the first dead gap on an asked-but-dead path) — as `elec.wires` /
   `elec.ports`.
+- **M5 (static schematic):** `src/layout.js` lays the system out with **elkjs** (layered,
+  left-to-right, each `Zn.` zone clustered in its own frame, the control circuit in a reserved band
+  below) — computed **once** at startup, since coordinates depend only on the static graph. Hoses and
+  swing joints become the drawn edges whose stroke encodes flow; pump and valves (EPANET *links*) are
+  drawn as glyphs because they carry displayable state. `src/scene.js` is the pure half of rendering:
+  solved results + layout → primitives with every visual attribute computed (stroke width ∝ |flow|,
+  color ∝ pressure blue→green→red, unfilled branches grey/dashed with pressures shown as "—", every
+  outlet labeled with its discharge in m³/h or L/min, wires colored powered/asked/broken/off) — this
+  half is what the Node harness gates. `src/render.js` applies a scene to SVG with a vanilla keyed
+  data-join: geometry is set once, updates only touch visual attributes. `index.html` + `src/app.js`
+  boot the page (CDN importmap → `epanet-js`, `js-yaml`, `elkjs`) and render one representative state
+  (pump on + zone 1); `renderState()` is the hook M6's controls will drive.
 
 The physics modules in `src/` are plain ES modules with no browser dependency, so they run unchanged under
-Node. In the browser the same modules will load `epanet-js` from a CDN; the YAML is parsed at the edge
-(`test/yaml-node.mjs` for Node, a fetch-based loader for the browser) and passed to `buildModel` already
-parsed.
+Node. In the browser the same modules load `epanet-js` from a CDN; the YAML is parsed at the edge
+(`test/yaml-node.mjs` for Node, `src/yaml-load.js` fetches the repo-root YAMLs in the browser) and passed
+to `buildModel` already parsed.
 
-## Run the tests
+## Run it
+
+Headless tests:
 
 ```sh
 cd sim
-npm install      # installs epanet-js + js-yaml as dev dependencies (node_modules is git-ignored)
+npm install      # installs epanet-js + js-yaml + elkjs as dev dependencies (node_modules is git-ignored)
 npm run smoke    # M0: node test/m0-smoke.mjs
-npm test         # M1–M4: node test/harness.mjs
+npm test         # M1–M5: node test/harness.mjs
+```
+
+Browser (the page fetches `../graph.yaml` etc., so serve from the **repo root**):
+
+```sh
+python3 -m http.server 8000   # from the repo root
+# open http://localhost:8000/sim/
 ```
 
 `npm test` loads the real root YAMLs, builds the model, and solves a set of settled states, each first run
@@ -76,6 +97,12 @@ through the electrical solve and then the hydraulic loop:
 - **broken shared common return** — all four zones drop while the pump stays powered;
 - **broken signal_2** — only zone 2 drops;
 - plus electrical-only continuity spot checks (broken mains, broken adapter supply, single broken lead)
-  and wire/port display-state checks (asked / powered / broken, gap attribution).
+  and wire/port display-state checks (asked / powered / broken, gap attribution);
+- **M5 layout** — every flow node placed in-canvas, hoses routed as polylines, left-to-right ordering,
+  zone clustering, the circuit band below the hydraulics, deterministic coordinates;
+- **M5 scene** — color/width scale pins, idle = all grey/dashed with "—" labels, pump+Z1 = bold colored
+  Z1 pipes with catalog-matching labels and the closed-valve half-edge dead, wiring states
+  (broken `signal_2` shown broken, the rest powered), and geometry identical across states (positions
+  never move; only visual attributes change).
 
 It prints a per-case outlet table and exits non-zero on any failure.
