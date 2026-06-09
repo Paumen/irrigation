@@ -24,7 +24,7 @@ ground-truth generator for the diagnostic side, but that integration is out of s
 |---|---|---|
 | Deliverable this round | **Plan + this design doc only** | No code yet. |
 | UI form | **Standalone interactive web app** | Explicitly chosen over an MCP-tool/rendered-image approach; departs from the "no web app" line in `CLAUDE.md`, which should be updated when this lands. |
-| Hydraulics fidelity | **Full steady-state network solver** | Real Hazen-Williams + minor + elevation losses, pump Q–H curve, valve loss curves, nozzle flow-vs-pressure charts; mass-conserving (outflow = pump supply). |
+| Hydraulics fidelity | **Full steady-state network solver** | Real Darcy–Weisbach + minor + elevation losses, pump Q–H curve, valve loss curves, nozzle flow-vs-pressure charts; mass-conserving (outflow = pump supply). |
 | Fault vocabulary | **Per-part fail modes from `graph.yaml`** | *To be reviewed* — see §8. Aligns 1:1 with the F-code taxonomy. |
 | Stack | **Recommended: client-side TS, solver ported to TS** | See §3 for the trade-off and the fallback. |
 
@@ -57,7 +57,8 @@ The solver consumes the existing files unchanged:
 - **`graph.yaml` → `flow:`** — the system-level hydraulic network: ~70 placed nodes
   (`well`, `pump`, `hose*`, `joint*`, `manifold`, `Z1..Z6` zone trees) each with a `kind`, a
   `to:` adjacency list, an elevation `h_m`, and per-node params (`length_m`, `nozzle`, `arc`).
-- **`graph.yaml` → `kinds:`** — the hydraulic element model per `kind` (bore, Hazen-Williams C,
+- **`graph.yaml` → `kinds:`** — the hydraulic element model per `kind` (bore, roughness `ε`
+  (`roughness_mm`) for Darcy–Weisbach plus `hazen_williams_c` for cross-check,
   `k_minor`, `bends`, valve `Kv`, pump `max_output_bar`, head regulation) **and** the
   injectable `fail:` list per sub-part. The simulator reads element params here and derives its
   fault catalog from the `fail:` lists.
@@ -96,8 +97,14 @@ initial guess — but the solve is a general nodal one (§5.2), not a recursive 
 
 ### 5.1 Elements (head loss / discharge laws)
 
-- **Pipe (`hose.*`)** — Hazen-Williams friction:
-  `h_f = 10.67 · L · Q^1.852 / (C^1.852 · d^4.87)` (SI, Q in m³/s, d in m), plus minor losses
+- **Pipe (`hose.*`)** — Darcy–Weisbach friction (default):
+  `h_f = f · (L/d) · v²/2g`, with the friction factor `f` from an explicit Colebrook
+  approximation (Swamee–Jain) over Reynolds number `Re = v·d/ν` and relative roughness `ε/d`
+  (ε = `roughness_mm`, 0.0015 mm for the LDPE hoses). This is valid across the full velocity
+  range the system spans — from near-stagnant throttled/clogged branches up to the ~19 m/s in
+  the Z5 hose-reel line — where the empirical Hazen-Williams law (kept as `hazen_williams_c` for
+  cross-check, valid only ~0.6–3 m/s) would drift at both ends. The friction law is a swappable
+  element so H-W can be selected for comparison. Minor losses
   `h_m = k_minor · v²/2g` for fittings (`joint`, `tee`, `swing`, `manifold`, `bends`).
 - **Pump (`pump.well`)** — head from the pump Q–H curve in `catalog.yaml`, interpolated
   at the operating flow; the solve finds the curve/system intersection (§5.2).
