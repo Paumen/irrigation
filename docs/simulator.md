@@ -1,286 +1,232 @@
-# Irrigation System Simulator — Design & Implementation Plan
+# Irrigation System Simulator — Plan
 
-**Status:** draft for review (spec only — no implementation in this round)
-**Companion to:** `docs/spec.md` (diagnostic engine), `docs/fcode_spec.md` (fault taxonomy)
-**Models the system in:** `graph.yaml` (topology + circuit), `context.yaml` (metadata), `catalog.yaml` (curves)
+**Status:** draft for review (this is a plan — nothing has been built yet)
+**Related notes:** `docs/spec.md` (the troubleshooting tool), `docs/fcode_spec.md` (the list of ways the system can fail)
+**Describes the system recorded in:** `graph.yaml` (layout + wiring), `context.yaml` (background details), `catalog.yaml` (manufacturer flow/pressure tables)
 
 ---
 
-## 1. Goal
+## 1. What it is
 
-A simulator of this homeowner's irrigation system's **hydraulics and control wiring**: for
-any combination of commands and faults, compute where water sits, at what pressure, and where
-and how much leaves — and present it as a **live, interactive diagram**.
+A simulator of this one home irrigation system. You set what's switched on and what (if anything)
+is broken, and it shows you:
 
-This is a *what-if explorer*, distinct from the diagnostic engine. The diagnostic engine
-(`tools/engine.py`) ranks failure modes from a homeowner Q&A; the simulator runs the physics
-forward from a chosen state. They share one vocabulary — the per-part fail modes in
-`graph.yaml` and the F-codes in `fcode_spec.md` — and the simulator can later serve as the
-ground-truth generator for the diagnostic side, but that integration is out of scope here.
+- where the water goes,
+- how hard it's pushing (the pressure) at each point,
+- and where — and how much — water comes out.
 
-## 2. Decisions (from spec review)
+It's a live picture: change a setting or break a part, and the diagram updates straight away.
 
-| Decision | Choice | Notes |
+This is a "what if" explorer. It's separate from the existing troubleshooting tool: that tool asks
+you questions to guess what's wrong, while this one lets you set up a situation and watch what the
+system would actually do. They describe the same system and the same list of possible faults, so
+they fit together, but building that link is not part of this plan.
+
+## 2. The main decisions
+
+| Decision | Choice | Why |
 |---|---|---|
-| Deliverable this round | **Plan + this design doc only** | No code yet. |
-| UI form | **Standalone interactive web app** | Explicitly chosen over an MCP-tool/rendered-image approach; departs from the "no web app" line in `CLAUDE.md`, which should be updated when this lands. |
-| Hydraulics solver | **EPANET (global gradient algorithm) + wrapper** | Reuse the standard solver rather than hand-rolling; Darcy–Weisbach + minor + elevation, pump Q–H curve, PRV/TCV valves, pressure-dependent emitters; mass-conserving. See §5. |
-| Fault vocabulary | **Per-part fail modes from `graph.yaml`** | *To be reviewed* — see §8. Aligns 1:1 with the F-code taxonomy. Each maps to an EPANET primitive (§5.1, §8). |
-| Stack | **Client-side: `epanet-js` (WASM) + TypeScript** | EPANET runs in the browser; wrapper + UI in TS. See §3. |
+| What this round delivers | This plan only | No software is being written yet. |
+| How you use it | An interactive page in a web browser | You asked for a hands-on, clickable picture. (Note: the rest of this project is a chat assistant with no web page, so that description will need updating once this is built.) |
+| How the water side is worked out | A proven, free irrigation/water-network calculator called **EPANET**, with a thin layer of our own around it | Far safer than writing the pressure-and-flow maths from scratch — EPANET is the standard tool for exactly this, well tested on the tricky situations. |
+| What can be broken | Any individual part, in the way that part really fails | Matches the existing fault list one-to-one. **Still to be reviewed** — see §8. |
+| Where it runs | Entirely inside the web browser | Nothing to install, no server to keep running — just open the page. |
 
-## 3. Stack recommendation
+## 3. Where it runs
 
-**Recommendation: a single static client-side app — `epanet-js` (the EPANET toolkit compiled to
-WASM) for the hydraulic solve, TypeScript for the wrapper, model generation, and UI, with
-`graph.yaml`/`catalog.yaml`/`context.yaml` baked in as JSON at build time.**
+The whole thing is a single web page you open in a browser. The system's facts are baked into the
+page, and the water calculations run right there on your computer — there's no server to set up or
+keep alive, which suits the short-lived environment these sessions run in.
 
-Rationale:
-- "Standalone" is best served by an artifact that runs anywhere with no server — open the page,
-  it works. The model data is static and small; there is no persistence or auth need.
-- The container these sessions run in is ephemeral; a static build avoids a process to keep alive.
-- EPANET runs entirely in the browser via WASM, so the robust standard solver is available with
-  no backend; we write only the wrapper (model gen, fault translation, result read-back) and UI.
+EPANET — the water-network calculator — has a version that runs inside a browser, so we get the
+proven calculations with nothing to install. We only write the parts EPANET doesn't cover: feeding
+it this system's layout, deciding which valves and the pump are actually on, applying any faults,
+and turning its answers back into the picture.
 
-**Trade-off / fallback.** EPANET also has a Python toolkit (`epyt` / OWA-EPANET, and WNTR), so if
-we later want the solve shared server-side with the diagnostic engine, the same `.inp` model can
-run under Python behind a thin API — no second solver implementation. The dependency cost is the
-WASM bundle (a few hundred KB), acceptable for this app.
+If we ever want the troubleshooting tool to share these same calculations, EPANET also has a version
+that runs the identical system description elsewhere — so there'd never be two separate sets of maths
+to keep in step.
 
-Proposed tooling: Vite + TypeScript, SVG for the diagram (DOM-addressable nodes/edges for cheap
-live restyle), no heavy framework required (vanilla + a small reactive state store is enough).
+## 4. Where the system's facts come from
 
-## 4. Data model & sources
+Everything the simulator needs already exists in the project files; it just reads them:
 
-The solver consumes the existing files unchanged:
+- **`graph.yaml`** — the full picture of the system: the well, the pump, every pipe and fitting, the
+  manifold in the valve box, the four automatic zones plus the hand-operated zone, and every sprinkler
+  head with its nozzle, spray angle, and height. It also records the wiring — controller, relay, and
+  the wires out to each valve's solenoid. Each part lists the ways it can fail.
+- **`catalog.yaml`** — the manufacturer's reference tables: how hard the pump pushes at different flows,
+  how much each valve and nozzle resists or sprays at different pressures. These are the real numbers
+  the simulator works from.
+- **`context.yaml`** — background details (where things are, when they were installed) used for labels.
 
-- **`graph.yaml` → `flow:`** — the system-level hydraulic network: ~70 placed nodes
-  (`well`, `pump`, `hose*`, `joint*`, `manifold`, `Z1..Z6` zone trees) each with a `kind`, a
-  `to:` adjacency list, an elevation `h_m`, and per-node params (`length_m`, `nozzle`, `arc`).
-- **`graph.yaml` → `kinds:`** — the hydraulic element model per `kind` (bore, roughness `ε`
-  (`roughness_mm`) for Darcy–Weisbach plus `hazen_williams_c` for cross-check,
-  `k_minor`, `bends`, valve `Kv`, pump `max_output_bar`, head regulation) **and** the
-  injectable `fail:` list per sub-part. The simulator reads element params here and derives its
-  fault catalog from the `fail:` lists.
-- **`graph.yaml` → `circuit:`** — `parts:` (controller, adapter, relay, pump, splice, solenoid
-  coils) and `wires:`. Drives the electrical resolver (§6).
-- **`catalog.yaml`** — `pump_curves` (pump Q–H), `valve_loss` (valve loss), `nozzle_i20`
-  and `nozzle_mp` flow-vs-pressure tables. The physical curves the solver interpolates.
-- **`context.yaml`** — non-physical metadata (locations, install dates); used for labels/tooltips.
+The water travels in one direction: up from the well, through the pump, along the main line to the
+manifold, then out into the separate zones, and finally out of the sprinkler heads. Nothing loops back
+on itself in the pipework — but, as the next section explains, that doesn't make the system simple.
 
-The **pipe routing** from the source out to the heads is acyclic: a single source (`well`) →
-`pump` → main line → `manifold`, which fans out into zone subtrees (`Z1`–`Z4` automatic, `Z5`
-manual, `Z6` a cap); tees branch but nothing reconverges. Terminal discharges are heads
-(`head.rotor`/`head.spray`), the `Z5` stream nozzle, and any injected leak (a leak is an extra
-discharge terminal on an interior node).
+## 5. How the water side works
 
-But the model as a whole is **not loop-free**, so the solver must not assume a pure tree
-traversal:
+### 5.1 What makes the water move (and what slows it down)
 
-- **Pilot-operated valves.** Inside each `valve.auto`, `inlet` reaches `outlet` by two parallel
-  paths — the main `inlet→diaphragm→seat→outlet` and the pilot
-  `inlet→metering_port→chamber→solenoid_entry→plunger→solenoid_exhaust→outlet`. That is a
-  genuine hydraulic loop, and a feedback one: the chamber pressure the pilot path sets up
-  controls whether the diaphragm lifts. This is the actuation mechanism the simulator must show,
-  and several faults live in it (clogged metering port, weeping seat, bleed left open).
-- **Electrical circuit.** The `circuit:` graph has cycles by construction — current returns
-  along the shared common chain (`com_1→…→com_4→c_2`). It is solved for continuity, not as a
-  tree (§6).
-- **Global hydraulic coupling.** Even on the acyclic pipe routing, the single pump curve plus
-  pressure-dependent discharge at every open head couple all branches; they cannot be solved
-  independently branch-by-branch.
+The simulator accounts for the same things a real plumber would:
 
-The tree structure of the pipe routing is still useful — as a natural node ordering and a good
-initial guess — but the solve is a general nodal one (§5.2), not a recursive tree pass.
+- **Pipes lose pressure to friction.** The faster the water flows, the more pressure it costs to push
+  it down a pipe. Narrower and longer pipes cost more.
+- **Height matters.** The pump has to lift water up from the well and out to heads that sit at
+  different heights; every metre up costs pressure.
+- **The pump has limits.** It can only push so hard, and the harder it has to push, the less water it
+  moves — that trade-off is the pump's "curve", taken straight from the manufacturer's table.
+- **Valves and fittings add resistance** when water passes through them.
+- **Sprinkler heads spray more when the pressure is higher** — exactly as much as the manufacturer's
+  nozzle tables say. The spray-type heads have a built-in regulator that holds them at about 2.76 bar,
+  so above a threshold they spray a steady amount regardless of supply pressure.
+- **Leaks** let water escape wherever one is present.
 
-## 5. Hydraulic solver (EPANET + wrapper)
+The key point is that everything is connected. Open another zone and the pressure everywhere changes;
+the heads already running will spray a little differently. The calculator settles all of this at once
+so that the books balance: the total water coming out of every head and leak equals what the pump is
+supplying.
 
-The hydraulic core is **EPANET**, embedded client-side via **`epanet-js`** (the official toolkit
-compiled to WASM, §3). EPANET's global gradient algorithm is exactly the nodal mass-balance solve
-this needs, hardened on the awkward cases (zero-flow branches, closed links, check valves, pump
-shutoff-head exceeded). Our **wrapper** owns everything EPANET doesn't: generating the EPANET
-network from `graph.yaml`, injecting actuation from the electrical resolver (§6), translating
-per-part faults (§8) into EPANET primitives, and reading EPANET's results back into the state
-schema (§5.3). EPANET is handed a *resolved* hydraulic state — it never sees the 24 V circuit.
+The simulator feeds all of the above into EPANET — pipes with their friction, the pump's curve, the
+valves, the heads' spray-vs-pressure behaviour, the regulators on the spray heads, and any leaks — and
+EPANET works out the pressure at every point and the flow through every pipe.
 
-### 5.1 Element → EPANET mapping
+### 5.2 Why it isn't just a simple chain
 
-| Our element | EPANET representation | Source data |
-|---|---|---|
-| Pipe (`hose.*`) | pipe link, **Darcy–Weisbach** headloss; roughness `ε = roughness_mm` (0.0015 mm, LDPE) | `inner_diameter_mm`, `length_m`, `roughness_mm` |
-| Fitting (`joint`/`tee`/`swing`/`manifold`) | minor-loss coefficient on the adjoining link | `k_minor`, `bends` |
-| Pump (`pump.well`) | pump link with a head (Q–H) curve | `catalog.yaml` `pump_curves` |
-| Automatic valve (`valve.auto`) | link status open/closed set by §6; open-loss as a TCV setting / minor loss fitted to the loss curve | `catalog.yaml` `valve_loss` + §6 actuation |
-| Manual valve (`valve.manual`, Z5) | TCV / open-closed link from the handle | `Kv` |
-| Spray regulator (`head.spray`, MP) | **PRV** set to `regulated_bar` (2.76) ahead of the head emitter | `catalog.yaml` `nozzle_mp` |
-| Head discharge (rotor / spray / stream) | **emitter** `q = C·pᵞ`, `C`,`γ` fitted to the nozzle flow-vs-pressure chart; stream nozzle via orifice `q = Cd·A·√(2ΔP/ρ)` | `nozzle_i20` / `nozzle_mp` / `bore_mm`,`cd` |
-| Injected leak | emitter at the affected node | §8 |
-| Elevation | node elevation | `h_m` (relative to well water level minus foot-valve depth) |
+The pipework runs one way with no loops, but three things stop the system being a simple feed-forward
+chain, and the calculator has to handle all of them together:
 
-Notes:
-- **Darcy–Weisbach** is the default headloss formula (the velocity-range argument that drove this
-  choice still holds); **Hazen-Williams** stays selectable via EPANET's headloss-formula option,
-  using `hazen_williams_c`, for cross-check.
-- The **pilot operation** of `valve.auto` is *not* simulated internally — EPANET sees a link
-  whose open/closed/throttle state the resolver sets. Pilot-side faults (clogged metering port,
-  weep, bleed-open) map to a valve setting or a small emitter; the "chamber bleeds → diaphragm
-  lifts" mechanism is a diagram-level annotation (§4), not part of the solve. `min_operating_bar`
-  (1.5) is checked post-solve from the valve's inlet pressure and flagged, not enforced as a gate.
-- A closed rotor flo-stop → emitter coefficient 0 (no discharge).
+- **The automatic valves open themselves using water pressure.** Water takes two routes through one of
+  these valves at once — the main way through, and a tiny side route that controls a chamber on top of
+  the rubber diaphragm. When the controller energises the solenoid (or you open the manual bleed), that
+  chamber is allowed to drain, the pressure on top drops, and the water pressure underneath lifts the
+  diaphragm open. So a valve isn't a simple on/off tap — it opens because of the pressures around it,
+  and several faults live in that little control circuit (a blocked control port, a weep, a bleed screw
+  left open).
+- **The wiring is a loop, not a line.** Electricity has to flow out to a solenoid and back again along a
+  shared return wire, so the electrical side forms loops by nature.
+- **Everything influences everything.** Because of the single pump and the way each head's spray depends
+  on pressure, you can't work out one branch on its own — they all have to be balanced together.
 
-### 5.2 Solve & wrapper responsibilities
+This is precisely why we're using EPANET rather than a home-grown calculation: it's built to settle all
+these interactions at once.
 
-EPANET's global gradient algorithm performs the actual nodal mass-balance solve — solving for the
-head at every node with each link's flow a function of the head difference across it, the pump as
-a head source, and emitters as pressure-dependent discharges. This conserves mass and finds the
-pump-curve / system-curve intersection by construction, and handles loops, closed links, and
-zero-flow subnetworks directly. Per state, the **wrapper**:
+### 5.3 Choosing how friction is calculated
 
-1. **Resolves actuation first** (§6): which valves open, whether the pump runs — EPANET receives
-   the outcome, not the circuit. A closed valve is a closed link (still pressurised upstream); a
-   weeping or bleed-open valve is a throttled link / small emitter so it can pass flow with no
-   signal.
-2. **Builds or patches the EPANET model:** link statuses, PRV/TCV settings, emitter coefficients,
-   pump curve (scaled down for a weak-pump fault), and any fault-derived minor losses / emitters
-   (§8).
-3. **Runs the single-period steady-state hydraulic solve** via the toolkit.
-4. **Reads results back** — node pressures, link flows/velocities, emitter outflows — into the
-   state schema (§5.3), computing the totals and `filled` flags.
-5. **Surfaces solver status:** EPANET warnings/errors (non-convergence, negative pressure,
-   disconnected node, pump beyond curve) plus our own flags (valve inlet below
-   `min_operating_bar`), never silently clamped.
+There are two standard ways to work out pipe friction. One (called Hazen–Williams) is the common
+shortcut in irrigation, but it's only reliable when water is moving at ordinary speeds. The other
+(Darcy–Weisbach) stays accurate whether the water is barely trickling or racing.
 
-### 5.3 Outputs (state schema)
+This system does both extremes. In normal use, the busy "trunk" pipes carrying a whole zone's water run
+at sensible speeds. But the many small pipes feeding a single head run very slowly, and the hand-zone's
+narrow hose-reel line can run extremely fast. On top of that, faults like clogs and throttled valves
+push pipes well outside ordinary speeds. So we use the method that stays accurate across the whole range.
 
-The wrapper returns a pure data structure, assembled from EPANET's node/link results (the
-renderer is a separate concern):
+(The slow little feed pipes barely lose any pressure either way, so the choice doesn't really change
+those — it matters most for the fast hose-reel line and for fault situations.)
 
-```
-{
-  solver:   { converged, iterations, residual, warnings[] },
-  pump:     { running, flow_m3h, head_m, outlet_bar },
-  nodes:    { <id>: { pressure_bar, elevation_m, filled: bool } },
-  edges:    { <id>: { flow_m3h, velocity_ms, head_loss_m, direction } },
-  outlets:  [ { id, kind, flow_m3h, type: "nozzle"|"leak"|"open_end" } ],
-  totals:   { supplied_m3h, discharged_m3h, leaked_m3h },
-  circuit:  <see §6>,
-}
-```
+This method needs to know how smooth each pipe is on the inside. The hoses are smooth plastic, so a
+standard smoothness value has been added for each hose in `graph.yaml`. The old shortcut value is kept
+alongside it in case we ever want to compare the two.
 
-`filled` distinguishes pressurised/wetted parts from empty/idle ones for the diagram.
+## 6. The electrical and control side
 
-## 6. Electrical / control model
+Before working out any water, the simulator first decides what is actually switched on:
 
-A separate **continuity resolver** over `circuit:` decides what actuates, *before* the
-hydraulics run:
+- **A valve opens** only if its solenoid actually gets power — meaning the controller is calling for that
+  zone *and* there's an unbroken path of wires all the way out to the coil and back. (Or if you've opened
+  that valve's manual bleed by hand.) A broken wire, a dead coil, or a controller that isn't sending the
+  signal will leave a valve shut even though it's been told to open.
+- **The pump runs** only if it's being called for *and* its relay gets that signal *and* there's mains
+  power to it. The relay is the switch that lets the controller turn the mains-powered pump on and off.
+- **The hand valve and the sprinkler flo-stops** are purely mechanical — no electricity involved.
 
-- **Energisation** = an intact conductive path exists from supply through the relevant control
-  contact to the load and back along the common/return, with no `broken`/`misconfigured` part or
-  wire on the path.
-- **Pump runs** iff commanded (controller `mv` / pump program) **and** the relay coil energises
-  (signal path intact + grid power) **and** the relay→pump power wiring is intact. The relay
-  (`coil_energized_closes: contact`) gates mains to the pump.
-- **Automatic valve opens** iff its solenoid coil energises (controller zone output → `signal_N`
-  → `splice.sig_N` → `coil` → common chain → `c_2` return, all intact) **or** its `bleed_screw`
-  is manually opened. A `dead solenoid` (coil `broken`), a `broken wire`, or a `no signal`
-  (controller output `broken`/`misconfigured`) leaves it shut despite the command.
-- **Manual valve (Z5)** and **rotor flo-stop** are purely mechanical positions, no circuit.
+In the picture this means we can show three different things at once for each wire and switch: what's
+being *asked* for, what's actually *getting power*, and *where a path is broken*.
 
-Circuit output for the diagram: per part/wire — `commanded`, `energised`, `broken` — so the UI
-can show "commanded on but not energised, path broken here."
+## 7. What you can control
 
-## 7. Controls (commandable state)
+You can set any combination of:
 
-The user can set, per the spec:
+- the **pump** (on/off),
+- the **four automatic zones** (on/off),
+- the **hand-operated zone's valve** (open/closed),
+- each **valve's flow-control** (the screw that throttles a valve down or shut),
+- each **rotor's flo-stop** (the feature that shuts off one sprinkler head),
+- and each **valve's bleed screw** (which opens a valve by hand, without the solenoid).
 
-- **Pump** — on/off command (subject to the relay/wiring resolving to actually running).
-- **Zone valves Z1–Z4** — controller zone command on/off (subject to solenoid energising).
-- **Z5 manual valve** — handle open/closed.
-- **Valve flow control** — the valve `flow_control` position (throttles/closes the diaphragm).
-- **Rotor flo-stop** — per-rotor open/closed.
-- **Valve bleed screw** — manual open (opens valve without the solenoid).
+The situation being simulated is simply: these settings, plus the position of every hand control, plus
+whatever faults you've switched on.
 
-State = these commands + every manual position + the injected fault set.
+## 8. What can go wrong (the faults — still to be reviewed)
 
-## 8. Fault vocabulary (per-part — *to review*)
+You can break any individual part in the way that part actually fails. The list of parts and their
+possible failures already exists in `graph.yaml`, and it lines up with the system's existing fault list.
+It's a long list, though, so **this is flagged for your review** — we may want to show only the common
+ones at first. Each kind of failure has a realistic effect:
 
-Faults are injected per part, drawn from each kind's `fail:` list in `graph.yaml`. This is rich
-and maps 1:1 to the F-code taxonomy, but the surface area is large — **flagged for your review**
-(you marked this "to be reviewed"). Each fail mode maps to a physical effect:
+- **A clog** restricts flow at that spot — and a fully blocked head or pipe stops water getting through.
+- **A break** either lets water escape (a leak) or stops a part working, depending on what breaks.
+- **A wrong setting** — a throttled flow-control, a bleed screw left open, a mis-set nozzle, mis-wiring.
+- **An electrical break** — a cut wire, dead coil, or controller fault — stops the valve or pump it feeds
+  from switching on.
+- **A weak pump** pushes less than it should.
 
-| Fail mode | Where it appears | Solver effect |
-|---|---|---|
-| `clogged` | supply, hoses, pump suction/impeller/diffuser, valve seat/metering/solenoid, nozzles, filters, gears | added/▲ resistance on that element (↓ effective bore / ↑ loss); a fully clogged terminal stops discharging |
-| `broken` (hydraulic) | hoses, caps, swing joints, valve body/diaphragm/seat, manifold body/seals, head body/riser | a leak (new discharge terminal) or a stuck/failed element depending on part |
-| `broken` (electrical) | grid/socket pins, adapter, controller outputs, relay coil/contact, solenoid coil, splice, wires | breaks the circuit path → pump/valve fails to actuate |
-| `misconfigured` | nozzle/arc, flow-control, bleed-screw, handle, controller logic/outputs, wiring | wrong setting: e.g. flow-control throttled, bleed left open, signal mis-wired |
-| weak pump | pump impeller/diffuser/seal/motor/capacitor | scaled-down Q–H curve (degraded head at given flow) |
+A couple of things to decide here (see §11): whether to show the full list or a curated short list at
+first, and whether to add a simple "leak somewhere along this pipe" option on top of the part-by-part
+breaks.
 
-**Review questions for you (§11):** expose the full per-part set in the UI from day one, or
-phase it (model everything; surface the common ones first)? And do we want a synthetic "leak
-anywhere on this segment" control in addition to the part-specific `broken` modes?
+## 9. The picture and how you use it
 
-## 9. UI / UX spec
+- **The diagram** lays out the whole system roughly the way it sits in real life — well and pump, the
+  main run out to the valve box, the four zones, and the hand zone — with the control wiring drawn as a
+  second layer over the top. Where we already have icons (pump, valve, rotor) we use them.
+- **Water is shown visually:** thicker, bolder lines where more water is flowing; colour for how much
+  pressure; and parts that are full and working shown differently from parts that are empty or idle.
+- **Every place water leaves** — each sprinkler head, the hand-zone nozzle, and any leak — is marked with
+  how much is coming out, plus a running total of how much the system is putting out altogether.
+- **The wiring shows** what's been switched on, what's actually getting power, and where a path is broken.
+- **Controls and fault switches** sit alongside the diagram: toggles for the pump, the zones, the hand
+  valve, the flo-stops, the flow-controls and bleeds, and a set of buttons to introduce or clear faults.
+- **It updates instantly** whenever you change anything, and shows a short note if something's off (for
+  example, the pump being asked for more than it can deliver, or a valve that won't open because the
+  pressure's too low to work it).
+- **Ready-made examples** let you jump straight to common situations — everything off, a single zone
+  running, or classic faults like a blocked nozzle, a split zone pipe, a dead solenoid, or a tired pump.
 
-- **Diagram (SVG).** The full system laid out roughly to its real geography (well → pump in
-  shed/well → main run → valve box manifold → four zone trees + Z5/Z6), with the control wiring
-  drawn as a second, overlaid layer (controller → relay → pump; controller → splice → solenoids).
-  Components use the existing media icons where available (`media/pump-icon.png`,
-  `valve-icon.png`, `head-rotor-icon.png`).
-- **Visual encodings.**
-  - *Water:* edge thickness/colour ∝ flow; node tint ∝ pressure; filled vs empty parts visually
-    distinct (saturated vs greyed).
-  - *Outlets:* every discharge point (each head's nozzle, the Z5 nozzle, any leak) annotated with
-    its flow (m³/h or L/min) and a spray glyph; total supplied/discharged/leaked shown.
-  - *Wiring:* commanded-on vs energised vs broken paths distinguished (e.g. solid-green energised,
-    dashed-amber commanded-not-energised, red break marker at the failed part).
-- **Control panel.** Toggles for pump, Z1–Z4, Z5 handle, per-rotor flo-stop, per-valve
-  flow-control and bleed; a fault palette to inject/clear per-part faults.
-- **Live update.** Any control or fault change re-runs the resolver+solver and restyles the
-  diagram in place (sub-100 ms target — the solve is small). A status line surfaces solver
-  warnings (non-convergence, pump curve exceeded, valve below `min_operating_bar`).
-- **Presets.** A few canned scenarios (all-off, single zone running, classic faults: clogged
-  nozzle, broken zone hose, dead solenoid, weak pump) for quick exploration.
+## 10. How we'd build it (once this plan is approved)
 
-## 10. Implementation plan (when approved)
+1. **Read the system files** and check they're complete — every part, nozzle, and model referenced should
+   have its matching reference data, with a clear error if anything's missing.
+2. **Turn the manufacturer tables into usable numbers** — the pump, valve, and nozzle behaviour — and
+   flag clearly if anything is ever asked for outside the range those tables cover.
+3. **Work out the electrical side** — for any set of commands and electrical faults, decide which valves
+   and the pump are actually on, and which paths are broken.
+4. **Hand the system to EPANET** — describe this system's layout to the water calculator (pipes, heights,
+   pump curve, the spray-head regulators, and how much each head sprays), and confirm a known simple case
+   matches the manufacturer's figures.
+5. **Add the controls and faults** — apply what's switched on and any faults, run the calculation, and
+   turn the results back into the form the picture needs.
+6. **Check it behaves sensibly** — the totals balance, height has the right effect, and running two zones
+   together affects each other correctly.
+7. **Build the page** — the diagram, the controls, the fault switches, the instant updates, the examples.
+8. **Tidy up the docs** — update the project notes (this adds a web page, which the project didn't have
+   before) and write a short how-to-run note.
 
-1. **Data layer** — YAML→JSON build step; typed model loader; validate `flow:`/`circuit:`
-   adjacency and that every `kind`/`nozzle`/`model` referenced resolves to params/curves.
-2. **Curve utilities** — interpolation for pump, valve-loss, and nozzle tables, with loud
-   validation/exceptions for out-of-range queries rather than fallback null/0.0 values.
-   (Note: some nozzle tables carry genuine below-operating-range `null` data points, which the
-   loader must represent as "no flow below threshold" rather than treat as an error.)
-3. **Electrical resolver** (§6) — continuity over `circuit:` → energised/commanded/broken per
-   element; pump-runs and per-valve-open booleans.
-4. **EPANET model generator** (§5.1) — emit a base EPANET network (`.inp` / toolkit calls) from
-   `graph.yaml`: junctions with `h_m`, Darcy–Weisbach pipes with `ε`, minor losses, the pump
-   curve, PRVs for the MP regulators, and emitter coefficients fitted from the nozzle charts.
-   Validate every referenced `kind`/`nozzle`/`model` resolves; verify a baseline solve matches
-   catalog points (single zone ≈ catalog flow).
-5. **Wrapper + fault translation** (§5.2, §8) — apply actuation from (3) and the fault catalog to
-   the model (statuses, settings, emitters, scaled pump curve), run `epanet-js`, read results
-   into the state schema (§5.3), surface solver status.
-6. **Validation** — sanity scenarios (mass balance; elevation effect; multi-zone interaction);
-   confirm the WASM and Python (`epyt`) toolkits agree on the same `.inp` as a parity check.
-7. **Web app** — SVG layout, state store, control panel, fault palette, live restyle, presets.
-8. **Docs** — update `CLAUDE.md` (the app changes the "no web app" premise) and add a short
-   usage note; wire a build/serve script.
+Steps 3–5 are the heart of it; step 7 is the biggest job but low-risk once the calculations are returning
+clean answers.
 
-Phases 3–5 are the load-bearing core (resolver + model + faults); 7 is the largest surface but
-low-risk once the wrapper returns a clean state object.
+## 11. Still to decide before building
 
-## 11. Open questions / to confirm before build
-
-1. **Fault granularity** (§8) — full per-part palette vs a curated/phased subset; add a generic
-   "leak on segment" injector? And: are any per-part fail modes **not** cleanly expressible as an
-   EPANET primitive (link status/setting, minor loss, emitter, scaled curve)? Any that aren't are
-   the cases that would need bespoke handling around EPANET.
-2. **Pilot-valve faithfulness** — is modelling `valve.auto` as an EPANET link with a resolver-set
-   status/throttle (pilot detail shown only as a diagram annotation) sufficient, or do you want
-   the chamber/diaphragm pilot loop represented more explicitly?
-4. **Diagram layout** — schematic (clean, legible) vs geographic (true-to-site)? Affects layout
-   effort; schematic recommended for a first cut.
-5. **Units** — pressure in bar, flow in m³/h to match `catalog.yaml`, or L/min for homeowner
-   readability (or both, toggle)?
-6. **Scope of "live"** — single-state explorer (set state → solve → view), or also time-stepped
-   animation of fill/drain transients? Spec reads as steady-state per state; recommend that.
-```
+1. **How many faults to show** — the full part-by-part list, or a shorter common set to start? And should
+   we add a simple "leak somewhere along this pipe" option? (There's also a practical question for us: a
+   handful of the part-by-part faults may be awkward to represent inside EPANET — those few are the only
+   ones that might need special handling.)
+2. **How much valve detail to show** — is it enough to treat each automatic valve as simply open, shut, or
+   throttled (with the self-opening mechanism explained only as a label on the diagram), or do you want
+   that inner workings shown more fully?
+3. **Diagram style** — a clean schematic (easiest to read) or a true-to-the-garden layout?
+4. **Units** — pressure in bar and flow in cubic-metres-per-hour to match the manufacturer tables, or
+   litres-per-minute (more familiar), or a switch between them?
+5. **How "live" it needs to be** — just "set it up and see the result", or also animate water filling and
+   draining over time? (The plan above assumes the simpler "see the result" version.)
