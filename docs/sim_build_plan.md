@@ -74,9 +74,9 @@ sim/
 Classify each `flow` node by `kind`:
 - **Links (2-port conduits):** `hose.*`→PIPE (D=`inner_diameter_mm`, len=`length_m`, roughness=`roughness_mm`);
   `swing.*`→short PIPE (D=`bore_mm`, tiny length, its `k_minor` as minor loss); `valve.auto`→**GPV** when
-  open using a headloss curve from `catalog.valve_loss[PGV-101G]` (loss_bar×10.197→m), STATUS CLOSED when
-  shut; `valve.manual`→**TCV** from `Kv=6.0`; `pump.well`→**PUMP** with HEAD curve from
-  `pump_curves[AQUAJET 132 M]`.
+  open using a headloss curve from the catalog `valve_loss` table (loss_bar×10.197→m), STATUS CLOSED when
+  shut; `valve.manual`→**TCV** from `Kv=6.0`; `pump.well`→**PUMP** with HEAD curve from the catalog
+  `pump_curves` table.
 - **Nodes:** `well`(water.level)→**RESERVOIR** at head=`h_m`; `joint`/`tee`/`manifold`→JUNCTION;
   `head.*`/`nozzle.stream`→**outlet JUNCTION** (demand-driven, no downstream); `cap`→dead-end junction.
 - **Edge-walk:** every link spans from its upstream node to `to[0]`; insert a synthetic junction if two
@@ -199,7 +199,7 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
 ## Verification
 - **Headless (primary):** `cd sim && npm install && npm test` runs `test/harness.mjs` over: (1) idle —
   all flows 0, downstream `filled=false`; (2) pump+Z1 — pumpPowered, Z1 valve open, head flows match
-  catalog within tolerance, Z2–Z4 = 0, mass balance < 1e-3 m³/h, operating point on the AQUAJET curve,
+  catalog within tolerance, Z2–Z4 = 0, mass balance < 1e-3 m³/h, operating point on the pump curve,
   MP sprays clamped at 2.76 bar; (3) clogged hose — branch heads → 0, no NaN, still converges;
   (4) broken wire — zone de-energised, valve stays closed, `commandedNotOpening` set, shared-return break
   disables the intended set. Asserts: converged, no NaN/negative on filled nodes, mass balance, catalog

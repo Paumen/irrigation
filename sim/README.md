@@ -14,7 +14,7 @@ so the engine is testable without a browser.
 
 `test/m0-smoke.mjs` is the M0 deliverable: it hand-writes a tiny INP (reservoir → pump → valve → demand)
 that exercises every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
-HEAD curve (the AQUAJET 132 M curve), and a GPV with a headloss curve (the PGV-101G `valve_loss` curve) —
+HEAD curve (the catalog pump curve), and a GPV with a headloss curve (the catalog `valve_loss` curve) —
 solves it, and asserts the results are finite and physically sane. Its purpose is to lock the `epanet-js`
 API surface (enum names, units, curve handling) before the real model code is written.
 

@@ -9,8 +9,8 @@
 //   - Workspace/Project lifecycle (loadModule, writeFile, open, solveH, close)
 //   - flow units CMH (m3/h, to match catalog.yaml tables directly)
 //   - Darcy-Weisbach headloss with roughness in mm
-//   - a PUMP with a HEAD curve (the AQUAJET 132 M curve from catalog.yaml)
-//   - a GPV valve with a headloss curve (the PGV-101G valve_loss curve)
+//   - a PUMP with a HEAD curve (the catalog pump curve from catalog.yaml)
+//   - a GPV valve with a headloss curve (the catalog valve_loss curve)
 //   - reading NodeProperty.Pressure (-> bar) and LinkProperty.Flow
 
 import {
@@ -68,7 +68,7 @@ M0 smoke test
  PCURVE  3.6   32.5
  PCURVE  4.2   30
  PCURVE  4.8   27.2
-;GPV headloss curve: flow m3/h vs head loss m (valve_loss PGV-101G, bar*10.197)
+;GPV headloss curve: flow m3/h vs head loss m (catalog valve_loss, bar*10.197)
  VCURVE  0.2   2.14
  VCURVE  1.1   2.86
  VCURVE  2.3   2.86
@@ -160,7 +160,7 @@ async function main() {
   if (!(pressureBar["VIN"] > pressureBar["HEAD"])) {
     fail(`valve did not drop head (VIN=${pressureBar["VIN"]}, HEAD=${pressureBar["HEAD"]})`);
   }
-  // At ~0.6 m3/h on the AQUAJET curve the shutoff-ish head is ~45 m (~4.4 bar);
+  // At ~0.6 m3/h on the catalog pump curve the shutoff-ish head is ~45 m (~4.4 bar);
   // after lift + friction + valve loss the head outlet should land in a sane
   // irrigation band, not absurd.
   if (!(pressureBar["HEAD"] > 0 && pressureBar["HEAD"] < 6)) {
