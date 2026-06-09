@@ -13,6 +13,10 @@ import { createHydraulics } from "../src/epanet-runner.js";
 import { solveSteady } from "../src/solver.js";
 import { solveElectrical } from "../src/electrical.js";
 import { outletDemandAt, interp } from "../src/outlets.js";
+import { computeLayout } from "../src/layout.js";
+import { buildScene, pressureColor, strokeWidth } from "../src/scene.js";
+import { fmtFlow } from "../src/units.js";
+import { CIRCUIT_BAND_GAP, DEAD_COLOR, STROKE_MIN_PX, STROKE_MAX_PX } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
 
@@ -54,12 +58,20 @@ const autoZoneHeads = [...model.flowNodes.values()]
   .map((n) => n.id);
 
 let z1Result = null; // stashed by the z1 case for cross-case monotonicity checks
+let z1Elec = null;
+let idleResult = null; // stashed for the M5 scene checks
+let idleElec = null;
+let s2Result = null; // broken-signal_2 case, for the M5 wiring-state checks
+let s2Elec = null;
 
 for (const c of cases) {
   console.log(`Case: ${c.name}`);
   const elec = solveElectrical(circuit, c.commands, c.blocked || new Set());
   const r = solveSteady(model, c.state, elec, hyd);
   reportTable(model, r);
+  if (c.kind === "idle") [idleResult, idleElec] = [r, elec];
+  if (c.kind === "z1") z1Elec = elec;
+  if (c.blocked?.has("signal_2")) [s2Result, s2Elec] = [r, elec];
 
   // shared invariants
   check(r.converged, "converged");
@@ -256,6 +268,156 @@ console.log("Case: electrical wire/port display states");
   check(noGrid.wires.pump_live.asked && !noGrid.wires.pump_live.powered && !noGrid.wires.pump_live.broken,
     "broken grid_live: rest of the pump run asked-but-dead, not broken");
   check(noGrid.wires.signal_relay.powered, "broken grid_live: relay coil loop still powered");
+}
+console.log("");
+
+// M5: elkjs layout + scene building. Positions depend only on the static graph and
+// must never move between states; per-frame visuals (width/color/dash/labels/wire
+// states) are asserted against the stashed solved cases.
+console.log("Case: M5 layout (elkjs)");
+const layout = await computeLayout(model, circuit);
+{
+  const inCanvas = ({ x, y }) =>
+    Number.isFinite(x) && Number.isFinite(y) && x >= 0 && x <= layout.width && y >= 0 && y <= layout.height;
+
+  let badNode = null;
+  let badEdge = null;
+  for (const n of model.flowNodes.values()) {
+    if (n.subkind === "hose" || n.subkind === "swing") {
+      const e = layout.flow.edges.get(n.id);
+      if (!e || e.points.length < 2 || !e.points.every(inCanvas)) badEdge = n.id;
+    } else {
+      const pos = layout.flow.nodes.get(n.id);
+      if (!pos || !inCanvas(pos)) badNode = n.id;
+    }
+  }
+  check(!badNode, `every non-pipe flow node placed in-canvas${badNode ? ` (${badNode})` : ""}`);
+  check(!badEdge, `every hose/swing routed as an edge with >= 2 in-canvas points${badEdge ? ` (${badEdge})` : ""}`);
+
+  const x = (id) => layout.flow.nodes.get(id).x;
+  check(
+    x("well") < x("pump") && x("pump") < x("manifold") && x("manifold") < x("Z1.valve") && x("Z1.valve") < x("Z1.head2"),
+    "direction=RIGHT: well < pump < manifold < Z1.valve < Z1.head2 in x",
+  );
+
+  const zoneIds = [...layout.flow.zones.keys()].sort();
+  check(zoneIds.join(",") === "Z1,Z2,Z3,Z4,Z5,Z6", `zone clusters Z1..Z6 (got ${zoneIds.join(",")})`);
+  const inBox = (pos, b) =>
+    pos.x >= b.x && pos.y >= b.y && pos.x + pos.w <= b.x + b.w && pos.y + pos.h <= b.y + b.h;
+  const z1box = layout.flow.zones.get("Z1");
+  let outOfZone = null;
+  for (const [id, pos] of layout.flow.nodes) {
+    if (/^Z1\./.test(id) && !inBox(pos, z1box)) outOfZone = id;
+  }
+  check(!outOfZone, `every Z1.* glyph inside the Z1 cluster box${outOfZone ? ` (${outOfZone})` : ""}`);
+  const overlap = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+  let zonesOverlap = false;
+  for (const a of zoneIds) {
+    for (const b of zoneIds) {
+      if (a < b && overlap(layout.flow.zones.get(a), layout.flow.zones.get(b))) zonesOverlap = true;
+    }
+  }
+  check(!zonesOverlap, "zone cluster boxes do not overlap");
+  check(
+    zoneIds.every((z) => layout.flow.zones.get(z).x > x("manifold")),
+    "every zone cluster sits right of the manifold",
+  );
+
+  const expectedParts = [...Object.keys(circuit.parts), "Z1.valve", "Z2.valve", "Z3.valve", "Z4.valve"];
+  check(
+    expectedParts.every((p) => layout.circuit.parts.has(p)),
+    "every circuit part (incl. the four solenoid coil boxes) placed",
+  );
+  check(
+    Object.keys(circuit.wires).every((w) => layout.circuit.wires.get(w)?.points.length >= 2),
+    "every wire routed as a polyline",
+  );
+  const flowBottom = Math.max(...[...layout.flow.nodes.values()].map((n) => n.y + n.h));
+  const circuitTop = Math.min(...[...layout.circuit.parts.values()].map((p) => p.y));
+  check(
+    circuitTop >= flowBottom + CIRCUIT_BAND_GAP - 1e-6,
+    `circuit band reserved below the hydraulics (gap ${(circuitTop - flowBottom).toFixed(0)} px)`,
+  );
+
+  const again = await computeLayout(model, circuit);
+  check(
+    JSON.stringify([...again.flow.nodes]) === JSON.stringify([...layout.flow.nodes]) &&
+      JSON.stringify([...again.circuit.wires]) === JSON.stringify([...layout.circuit.wires]),
+    "layout is deterministic (same graph -> same coordinates)",
+  );
+}
+console.log("");
+
+console.log("Case: M5 scene (visual attribute computation)");
+{
+  check(pressureColor(0) === "hsl(220, 80%, 45%)", "pressureColor(0 bar) is blue (hue 220)");
+  check(pressureColor(2.5) === "hsl(110, 80%, 45%)", "pressureColor(2.5 bar) is green (hue 110)");
+  check(
+    pressureColor(99) === pressureColor(5) && pressureColor(5) === "hsl(0, 80%, 45%)",
+    "pressureColor clamps to red (hue 0) at scale top",
+  );
+  check(strokeWidth(0) === STROKE_MIN_PX && strokeWidth(99) === STROKE_MAX_PX, "strokeWidth spans min..max");
+  check(strokeWidth(1) < strokeWidth(2), "strokeWidth monotone in |q|");
+
+  const idleScene = buildScene(model, layout, idleResult, idleElec);
+  const z1Scene = buildScene(model, layout, z1Result, z1Elec);
+  const byKey = (arr) => new Map(arr.map((p) => [p.key, p]));
+
+  const idlePipes = byKey(idleScene.pipes);
+  check(
+    [...idlePipes.values()].filter((p) => p.key !== "hose1" && p.key !== "well->pump").every((p) => p.dead && p.dashed && p.width === STROKE_MIN_PX),
+    "idle: every pipe downstream of the stopped pump is dead, dashed, min width",
+  );
+  check(
+    idleScene.labels.every((l) => l.text === "—"),
+    "idle: every outlet label shows — (no false flows)",
+  );
+  check(byKey(idleScene.nodes).get("pump").state === "off", "idle: pump glyph state off");
+
+  const z1Pipes = byKey(z1Scene.pipes);
+  check(
+    !z1Pipes.get("Z1.hose1").dead && z1Pipes.get("Z1.hose1").width > STROKE_MIN_PX && z1Pipes.get("Z1.hose1").color !== DEAD_COLOR,
+    "pump+Z1: Z1.hose1 live, bold, pressure-colored",
+  );
+  check(z1Pipes.get("Z2.hose1").dead && z1Pipes.get("Z2.hose1").color === DEAD_COLOR, "pump+Z1: Z2.hose1 dead grey");
+  check(
+    z1Pipes.get("Z1.valve->Z1.joint2").dead === false && z1Pipes.get("Z2.valve->Z2.joint2").dead === true,
+    "pump+Z1: half-edge downstream of a closed valve renders dead, open valve's doesn't",
+  );
+  const z1HeadLabel = byKey(z1Scene.labels).get("Z1.head1");
+  check(
+    z1HeadLabel.text === fmtFlow(z1Result.demands.get("Z1.head1"), false),
+    `pump+Z1: Z1.head1 label shows its discharge (${z1HeadLabel.text})`,
+  );
+  const z1SceneLmin = buildScene(model, layout, z1Result, z1Elec, { lmin: true });
+  check(
+    byKey(z1SceneLmin.labels).get("Z1.head1").text.endsWith("L/min"),
+    "lmin flag switches outlet labels to L/min",
+  );
+  const z1Nodes = byKey(z1Scene.nodes);
+  check(z1Nodes.get("Z1.valve").state === "open" && z1Nodes.get("Z2.valve").state === "closed", "valve glyph states open/closed");
+  check(z1Nodes.get("pump").state === "on", "pump glyph state on");
+
+  const s2Scene = buildScene(model, layout, s2Result, s2Elec);
+  const s2Wires = byKey(s2Scene.wires);
+  check(s2Wires.get("signal_2").state === "broken", "broken signal_2 wire shown broken");
+  check(
+    s2Wires.get("signal_1").state === "powered" && s2Wires.get("common_return").state === "powered",
+    "other zone wiring shown powered",
+  );
+  const idleWires = byKey(idleScene.wires);
+  check(idleWires.get("signal_1").state === "off", "idle: zone wire off");
+  check(idleWires.get("adapter_supply_1").state === "powered", "idle: controller supply still powered");
+
+  // R11 invariant: geometry comes from the one startup layout; only visual
+  // attributes may differ between states
+  const geomOf = (scene) =>
+    JSON.stringify([
+      scene.pipes.map((p) => [p.key, p.points]),
+      scene.nodes.map((n) => [n.key, n.x, n.y]),
+      scene.wires.map((w) => [w.key, w.points]),
+    ]);
+  check(geomOf(idleScene) === geomOf(z1Scene), "positions never move between states");
 }
 console.log("");
 
