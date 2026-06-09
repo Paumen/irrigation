@@ -3,8 +3,11 @@
 // instead each iteration sets every reachable outlet as a fixed EPANET demand computed
 // from its catalog law at the previous iteration's pressure, re-solves, damps toward
 // the new demands, and repeats to convergence. Auto-valves are actuated each iteration
-// from the inlet pressure (M2: open iff commanded AND inlet >= min operating pressure,
-// with hysteresis). Closed valves / a stopped pump become closed links, so dead
+// from the inlet pressure: open iff actuation-commanded AND inlet >= min operating
+// pressure, with hysteresis. An auto-valve is actuation-commanded when its zone's
+// solenoid is energised through healthy wiring (the M4 electrical solve) OR its bleed
+// screw is opened manually. The pump runs iff its circuit is powered (also the
+// electrical solve). Closed valves / a stopped pump become closed links, so dead
 // branches stay numerically stable; their demands are zeroed via a reachability sweep.
 
 import {
@@ -19,9 +22,15 @@ import {
 import { buildTopology } from "./network.js";
 import { toInp } from "./inp.js";
 import { solveInp } from "./epanet-runner.js";
-import { outletDemandAt } from "./outlets.js";
+import { outletDemandAt, streamEmitterCoeff } from "./outlets.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
+
+// "Z1.valve" -> 1, used to look up that valve's zone in the electrical result.
+const zoneOf = (flowId) => {
+  const m = flowId.match(/^Z(\d)\./);
+  return m ? Number(m[1]) : null;
+};
 
 // Which flow nodes does water actually reach, given pump and valve states? BFS from
 // the reservoir over the flow graph, refusing to cross a stopped pump or a shut valve.
@@ -51,14 +60,24 @@ export function computeReachable(model, pumpOn, valveOpen) {
   return reachable;
 }
 
-// state = { pumpOn, valveCommanded:{<valve flowId>:bool}, manualOpen:{<valve flowId>:bool} }
-export function solveSteady(model, state, hyd) {
+// state = { manualOpen:{<valve flowId>:bool}, bleedOpen:{<valve flowId>:bool} }  (the
+//   mechanical / positional inputs)
+// elec  = ElecResult from solveElectrical: { pumpPowered, zoneEnergised:{1..4}, … }
+//   (controller commands are routed through the wiring to produce this)
+export function solveSteady(model, state, elec, hyd) {
   const { flowNodes, curves } = model;
-  const pumpOn = !!state.pumpOn;
-  const valveCommanded = state.valveCommanded || {};
+  const pumpOn = !!(elec && elec.pumpPowered);
+  const zoneEnergised = (elec && elec.zoneEnergised) || {};
   const manualOpen = state.manualOpen || {};
+  const bleedOpen = state.bleedOpen || {};
 
   const outlets = [...flowNodes.values()].filter((n) => n.role === "outlet");
+  // Rotor/spray outlets obey table laws and are driven by the outer demand loop.
+  // Stream nozzles are open orifices: solved as EPANET emitters (q = C·√h) so EPANET
+  // resolves their near-zero-pressure discharge directly, where the demand loop would
+  // oscillate. Their emitter coefficient is constant; only reachability gates them.
+  const demandOutlets = outlets.filter((o) => o.subkind !== "stream");
+  const streamOutlets = outlets.filter((o) => o.subkind === "stream");
 
   // valveOpen tracks the live open/closed state of every valve. Manual valves are
   // mechanical: open exactly when their handle is opened. Auto valves start closed and
@@ -69,7 +88,7 @@ export function solveSteady(model, state, hyd) {
     if (n.role === "valve-manual") valveOpen[n.id] = !!manualOpen[n.id];
   }
 
-  const q_prev = new Map(outlets.map((o) => [o.id, 0]));
+  const q_prev = new Map(demandOutlets.map((o) => [o.id, 0]));
   let p_prev = {}; // epanet id -> bar (default 0)
   const demands = new Map(outlets.map((o) => [o.id, 0]));
   const commandedNotOpening = {};
@@ -85,9 +104,9 @@ export function solveSteady(model, state, hyd) {
     iters = iter;
     reachable = computeReachable(model, pumpOn, valveOpen);
 
-    // pressure-driven, damped demands
+    // pressure-driven, damped demands (rotor/spray table laws)
     let maxdq = 0;
-    for (const o of outlets) {
+    for (const o of demandOutlets) {
       const pAt = p_prev[epOf(o.id)] || 0;
       const target = reachable.has(o.id) ? outletDemandAt(o, pAt, curves) : 0;
       const prev = q_prev.get(o.id);
@@ -96,7 +115,14 @@ export function solveSteady(model, state, hyd) {
       maxdq = Math.max(maxdq, Math.abs(damped - prev));
     }
 
-    topo = buildTopology(model, { pumpOn, valveOpen, demands });
+    // stream nozzles: active emitter only while reachable (an isolated emitter on a
+    // dead branch would inject phantom flow), otherwise no discharge.
+    const emitters = new Map();
+    for (const o of streamOutlets) {
+      if (reachable.has(o.id)) emitters.set(o.id, streamEmitterCoeff(o.params));
+    }
+
+    topo = buildTopology(model, { pumpOn, valveOpen, demands, emitters });
     res = solveInp(hyd, toInp(topo), { nodeIds: topo.nodeIds, linkIds: topo.linkIds });
 
     // pressure convergence over reachable real nodes
@@ -113,7 +139,8 @@ export function solveSteady(model, state, hyd) {
     for (const v of topo.valves) {
       if (!v.isAuto) continue;
       const inletP = res.pressureBar[v.n1];
-      const commanded = !!valveCommanded[v.flowId];
+      // energised through healthy wiring, or its bleed screw opened by hand
+      const commanded = !!zoneEnergised[zoneOf(v.flowId)] || !!bleedOpen[v.flowId];
       let open = false;
       if (commanded && Number.isFinite(inletP)) {
         open = valveOpen[v.flowId] ? inletP >= VALVE_STAY_BAR : inletP >= VALVE_OPEN_BAR;
@@ -123,7 +150,7 @@ export function solveSteady(model, state, hyd) {
     }
 
     p_prev = res.pressureBar;
-    for (const o of outlets) q_prev.set(o.id, demands.get(o.id));
+    for (const o of demandOutlets) q_prev.set(o.id, demands.get(o.id));
 
     stable = maxdp < P_TOL_BAR && maxdq < Q_TOL_M3H ? stable + 1 : 0;
     if (stable >= STABLE_ITERS) {
@@ -137,8 +164,15 @@ export function solveSteady(model, state, hyd) {
   // is the negated sum over reservoirs — robust to gravity-fed or multi-pump networks.
   const totalInflow = topo.reservoirs.reduce((sum, r) => sum - res.demand[r.id], 0);
   const pumpFlow = topo.pumpLinkId ? res.flow[topo.pumpLinkId] : 0;
+  // Take every outlet's discharge from EPANET's node demand — uniform across table-law
+  // demands and emitter (stream) outlets, so emitter flow lands in both the reported
+  // map and the mass balance.
   let outSum = 0;
-  for (const o of outlets) if (reachable.has(o.id)) outSum += demands.get(o.id);
+  for (const o of outlets) {
+    const q = reachable.has(o.id) ? res.demand[epOf(o.id)] || 0 : 0;
+    demands.set(o.id, q);
+    if (reachable.has(o.id)) outSum += q;
+  }
 
   return {
     pressureBar: res.pressureBar, // raw EPANET pressures (mask with `filled`)

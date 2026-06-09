@@ -38,6 +38,7 @@ export function buildTopology(model, state) {
   const pumpOn = !!state.pumpOn;
   const valveOpen = state.valveOpen || {}; // flow id -> bool (auto + manual)
   const demands = state.demands || new Map(); // outlet flow id -> q (m3/h)
+  const emitters = state.emitters || new Map(); // outlet flow id -> emitter coeff (CMH/√m)
 
   // --- id mapping (EPANET ids may not contain '.') ---
   const toEpanet = new Map();
@@ -58,6 +59,7 @@ export function buildTopology(model, state) {
   const valves = [];
   const statusClosed = []; // link epanet ids forced closed
   const outletList = [];
+  const emitterList = []; // { id, coeff } for nodes solved as EPANET emitters
 
   // --- register every node-like vertex as an EPANET node ---
   for (const n of flowNodes.values()) {
@@ -73,6 +75,8 @@ export function buildTopology(model, state) {
         subkind: n.subkind, // rotor | spray | stream
         params: n.params,
       });
+      const coeff = emitters.get(n.id);
+      if (coeff) emitterList.push({ id: ep(n.id), coeff });
     }
   }
 
@@ -212,6 +216,7 @@ export function buildTopology(model, state) {
     pumps,
     valves,
     statusClosed,
+    emitters: emitterList,
     curves,
     outletList,
     pumpLinkId,

@@ -61,3 +61,15 @@ export function outletDemandAt(outlet, p_bar, curves) {
 
   throw new Error(`outlets: unknown outlet subkind "${subkind}"`);
 }
+
+// An open-orifice stream nozzle is a true EPANET emitter: q = C * h^0.5 with h in
+// metres of head (the default emitter exponent). Modelling it as an emitter lets EPANET
+// solve its discharge simultaneously with the network, which is essential because a
+// free hose end settles at near-zero pressure where the outer demand fixed point (q ∝
+// √p) turns singular and oscillates. Returns C in EPANET CMH/m units so that
+// q[m³/h] = C * sqrt(head_m); evaluating at head = p_bar*M_PER_BAR reproduces the
+// orifice law above exactly.
+export function streamEmitterCoeff(params) {
+  const A = (Math.PI / 4) * (params.bore_mm / 1000) ** 2; // m^2
+  return params.cd * A * Math.sqrt(2 * G) * 3600;
+}
