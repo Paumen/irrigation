@@ -147,8 +147,29 @@ const LEAD_ROUTES = {
   "lead:splice.sig_4": { to: "Z4.valve.coil@W" },
 };
 
-export const CIRCUIT_W = 1000;
-export const CIRCUIT_H = 1090;
+// The tables above keep the reference drawing's own coordinates; the whole diagram is
+// scaled down uniformly here so it doesn't dominate the page next to the hydraulic
+// schematic. Label padding and dot radii are applied AFTER scaling (in render.js and
+// labelSpec), so text stays readable at any scale.
+const SCALE = 0.7;
+const s = (v) => v * SCALE;
+for (const part of Object.values(PARTS)) {
+  part.x = s(part.x); part.y = s(part.y); part.w = s(part.w); part.h = s(part.h);
+  for (const a of part.anchors) {
+    if (a.x !== undefined) a.x = s(a.x);
+    if (a.y !== undefined) a.y = s(a.y);
+  }
+}
+for (const p of Object.values(SPLICES)) {
+  p.x = s(p.x);
+  p.y = s(p.y);
+}
+for (const r of [...Object.values(ROUTES), ...Object.values(LEAD_ROUTES)]) {
+  if (r.vias) r.vias = r.vias.map(([x, y]) => [s(x), s(y)]);
+}
+
+export const CIRCUIT_W = s(1000);
+export const CIRCUIT_H = s(1090);
 
 // --- assembly + validation ---
 

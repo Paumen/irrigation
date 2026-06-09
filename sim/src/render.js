@@ -93,14 +93,14 @@ export function createRenderer(svgEl, layout) {
     layers.parts.appendChild(
       el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 10, fill: "#f7f4ea", stroke: "#ddd8c8" }),
     );
-    // small boxes get the label near the top edge; roomy ones (the controller)
-    // center it like the reference diagram
+    // small boxes get the label near the top edge, above the first terminal row;
+    // roomy ones (the controller) center it like the reference diagram
     const t = el("text", {
       x: b.x + b.w / 2,
-      y: b.y + (b.h >= 300 ? b.h / 2 + 5 : Math.min(b.h / 2 + 5, 36)),
+      y: b.y + (b.h >= 200 ? b.h / 2 + 4 : Math.min(b.h / 2 + 4, 24)),
       "text-anchor": "middle",
       fill: "#3c4043",
-      "font-size": "15",
+      "font-size": "13",
       "font-weight": "600",
     });
     t.textContent = b.label;
@@ -112,7 +112,7 @@ export function createRenderer(svgEl, layout) {
     );
   }
   for (const l of layout.circuit.anchorLabels) {
-    const t = el("text", { x: l.x, y: l.y, "text-anchor": l.anchor, fill: "#5f6368", "font-size": "12" });
+    const t = el("text", { x: l.x, y: l.y, "text-anchor": l.anchor, fill: "#5f6368", "font-size": "10.5" });
     t.textContent = l.text;
     layers.terminals.appendChild(t);
   }
