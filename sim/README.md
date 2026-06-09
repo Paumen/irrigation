@@ -10,7 +10,8 @@ so the engine is testable without a browser.
 
 ## Status
 
-**M0–M2 — done.** The headless hydraulic core is built and verified; the UI (M3+) is not yet built.
+**M0–M4 — done.** The headless hydraulic **and** electrical core is built and verified; the UI (M5+) is
+not yet built.
 
 - **M0 (EPANET spike):** `test/m0-smoke.mjs` hand-writes a tiny INP (reservoir → pump → valve → demand)
   exercising every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
@@ -23,6 +24,18 @@ so the engine is testable without a browser.
 - **M2 (pressure-driven outlets + outer solver):** `src/outlets.js` holds the rotor/spray/orifice
   discharge laws; `src/solver.js` runs the outer fixed-point demand loop (pressure-driven outlets, damped,
   with auto-valve actuation, reachability-based dead-branch handling, and a mass-balance check).
+- **M3 (Z5 manual zone):** the hand-watering branch end-to-end — the `valve.manual` TCV (from its `Kv`)
+  and the `nozzle.stream` open hose end, opened by a manual handle (`state.manualOpen`). The open orifice
+  is modelled as an **EPANET emitter** (`q = C·√h`, the default 0.5 exponent) rather than an outer-loop
+  demand, because a free hose end settles at near-atmospheric pressure where the demand fixed point
+  (`q ∝ √p`, `p → 0`) turns singular; EPANET resolves the emitter directly and stably.
+- **M4 (electrical):** `src/electrical.js` solves continuity/energization over the `circuit` (parts +
+  wires). Controller commands route through the real wiring to decide what is powered: the adapter feeds
+  the controller, the controller's `mv` energises the relay coil which closes the contact to power the
+  pump, and each zone energises only through an unbroken loop down its signal lead, through its solenoid
+  coil, and back along the **shared common return** — so one break in the common can drop several zones.
+  `src/solver.js` actuates auto-valves and the pump from this result (`elec.zoneEnergised` / `pumpPowered`)
+  instead of raw command booleans; a valve also opens if its bleed screw is opened by hand.
 
 The physics modules in `src/` are plain ES modules with no browser dependency, so they run unchanged under
 Node. In the browser the same modules will load `epanet-js` from a CDN; the YAML is parsed at the edge
@@ -35,10 +48,19 @@ parsed.
 cd sim
 npm install      # installs epanet-js + js-yaml as dev dependencies (node_modules is git-ignored)
 npm run smoke    # M0: node test/m0-smoke.mjs
-npm test         # M1+M2: node test/harness.mjs
+npm test         # M1–M4: node test/harness.mjs
 ```
 
-`npm test` loads the real root YAMLs, builds the model, and solves two settled states — **idle** (pump off,
-everything dead) and **pump on + Z1** — asserting convergence, mass balance, catalog-fidelity of every Z1
-outlet, spray-regulator clamping at 2.76 bar, dead-branch isolation of Z2–Z5, and that the pump operating
-point lands on the catalog curve. It prints a per-case outlet table and exits non-zero on any failure.
+`npm test` loads the real root YAMLs, builds the model, and solves a set of settled states, each first run
+through the electrical solve and then the hydraulic loop:
+
+- **idle** (controller off) — everything dead, all flows zero;
+- **pump on + Z1** — convergence, mass balance, catalog-fidelity of every Z1 outlet, spray-regulator
+  clamping at 2.76 bar, dead-branch isolation of Z2–Z5, pump operating point on the catalog curve;
+- **pump on + Z5 manual** — the hand nozzle streams a friction-limited flow at near-atmospheric pressure,
+  with the emitter flow matching the orifice law;
+- **broken shared common return** — all four zones drop while the pump stays powered;
+- **broken signal_2** — only zone 2 drops;
+- plus electrical-only continuity spot checks (broken mains, broken adapter supply, single broken lead).
+
+It prints a per-case outlet table and exits non-zero on any failure.
