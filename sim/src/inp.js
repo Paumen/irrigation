@@ -64,6 +64,13 @@ export function toInp(topo) {
   }
   L.push("");
 
+  L.push("[EMITTERS]");
+  L.push(";Junction\tCoefficient");
+  for (const e of topo.emitters || []) {
+    L.push(` ${e.id}\t${num(e.coeff)}`);
+  }
+  L.push("");
+
   L.push("[STATUS]");
   L.push(";ID\tStatus");
   for (const id of topo.statusClosed) {
