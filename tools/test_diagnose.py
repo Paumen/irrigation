@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from diagnose_sim import DATA, DEPTH, ENG, FAULTS, PARENT, robustness_all, simulate_all
+from diagnose_sim import DATA, DEPTH, ENG, FAULTS, robustness_all, simulate_all
 
 BASELINE_PATH = Path(__file__).resolve().parent / "diagnose_baseline.json"
 

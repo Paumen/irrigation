@@ -5,7 +5,7 @@
 An agent-facing diagnostic toolkit for one homeowner's irrigation/rotor system. One **Claude skill backed by MCP tools** (there is no web app), covering two capabilities:
 
 - **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root failure modes. Driven by the `playbooks/troubleshoot.md` playbook via the `diagnose_irrigation` MCP tool.
-- **Hydraulics & general assistance** — how-it-works / identify / capacity / upgrade / maintenance playbooks.
+- **Hydraulics & general assistance** — how-it-works / identify / upgrade / maintenance playbooks.
 
 ## Session setup
 

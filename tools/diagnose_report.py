@@ -104,16 +104,8 @@ def minibar(frac: float, width: int = 5) -> str:
     return "█" * f + "·" * (width - f)
 
 
-def scope_label(n: int) -> str:
-    return "triage" if n >= 6 else "narrow" if n <= 2 else "mid"
-
-
 def force_label(m: float) -> str:
     return "hard" if m >= 1.5 else "firm" if m >= 0.9 else "nudge"
-
-
-def ruleout_label(x: float) -> str:
-    return "rules-out" if x >= 0.35 else "rules-in" if x <= 0.10 else "mixed"
 
 
 def shape_label(x: float) -> str:
