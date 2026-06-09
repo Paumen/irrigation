@@ -67,11 +67,30 @@ The solver consumes the existing files unchanged:
   and `nozzle_mp` flow-vs-pressure tables. The physical curves the solver interpolates.
 - **`context.yaml`** — non-physical metadata (locations, install dates); used for labels/tooltips.
 
-The network is effectively a **rooted tree**: a single source (`well`) → `pump` → main line →
-`manifold`, which fans out into independent zone subtrees (`Z1`–`Z4` automatic, `Z5` manual,
-`Z6` a cap). Terminal nodes are heads (`head.rotor`/`head.spray`), the `Z5` stream nozzle, the
-`Z6` cap, plus any injected leak. **No hydraulic loops** — which simplifies the solve (§5): a
-recursive tree traversal replaces a general loop-network (Hardy Cross) method.
+The **pipe routing** from the source out to the heads is acyclic: a single source (`well`) →
+`pump` → main line → `manifold`, which fans out into zone subtrees (`Z1`–`Z4` automatic, `Z5`
+manual, `Z6` a cap); tees branch but nothing reconverges. Terminal discharges are heads
+(`head.rotor`/`head.spray`), the `Z5` stream nozzle, and any injected leak (a leak is an extra
+discharge terminal on an interior node).
+
+But the model as a whole is **not loop-free**, so the solver must not assume a pure tree
+traversal:
+
+- **Pilot-operated valves.** Inside each `valve.auto`, `inlet` reaches `outlet` by two parallel
+  paths — the main `inlet→diaphragm→seat→outlet` and the pilot
+  `inlet→metering_port→chamber→solenoid_entry→plunger→solenoid_exhaust→outlet`. That is a
+  genuine hydraulic loop, and a feedback one: the chamber pressure the pilot path sets up
+  controls whether the diaphragm lifts. This is the actuation mechanism the simulator must show,
+  and several faults live in it (clogged metering port, weeping seat, bleed left open).
+- **Electrical circuit.** The `circuit:` graph has cycles by construction — current returns
+  along the shared common chain (`com_1→…→com_4→c_2`). It is solved for continuity, not as a
+  tree (§6).
+- **Global hydraulic coupling.** Even on the acyclic pipe routing, the single pump curve plus
+  pressure-dependent discharge at every open head couple all branches; they cannot be solved
+  independently branch-by-branch.
+
+The tree structure of the pipe routing is still useful — as a natural node ordering and a good
+initial guess — but the solve is a general nodal one (§5.2), not a recursive tree pass.
 
 ## 5. Hydraulic solver
 
@@ -82,9 +101,11 @@ recursive tree traversal replaces a general loop-network (Hardy Cross) method.
   `h_m = k_minor · v²/2g` for fittings (`joint`, `tee`, `swing`, `manifold`, `bends`).
 - **Pump (`pump.well`)** — head from the pump Q–H curve in `catalog.yaml`, interpolated
   at the operating flow; the solve finds the curve/system intersection (§5.2).
-- **Automatic valve (`valve.auto`)** — when open, loss from the `valve_loss` curve
-  (interpolated on flow); when closed, the subtree carries zero flow. `min_operating_bar` (1.5)
-  flags valves that won't reliably actuate below that inlet pressure.
+- **Automatic valve (`valve.auto`)** — pilot-operated (§4): the diaphragm lifts when the pilot
+  path bleeds the chamber (solenoid energised or bleed open), then the open valve's loss comes
+  from the `valve_loss` curve (interpolated on flow); a seated diaphragm passes only any pilot/
+  weep flow. `min_operating_bar` (1.5) flags valves that won't reliably actuate below that inlet
+  pressure — so actuation is pressure-dependent, part of the coupled solve, not a fixed switch.
 - **Manual valve (`valve.manual`, Z5)** — `Kv`-based loss; open/closed by its handle.
 - **Heads** —
   - *Rotor* (`head.rotor`): discharge from `nozzle_i20` flow-vs-pressure for the fitted
@@ -97,25 +118,32 @@ recursive tree traversal replaces a general loop-network (Hardy Cross) method.
   (`well.h_m` minus the foot-valve depth); the pump must lift water to each head's elevation in
   addition to overcoming friction.
 
-### 5.2 Solve method (tree fixed-point)
+### 5.2 Solve method (general nodal)
 
-Because the active network is a tree with one pumped source and many pressure-dependent
-terminal discharges, solve by **damped fixed-point iteration**:
+Solve for the **head `H` at every node** subject to mass balance, treating each element's flow
+as a function of the head difference across it (pipe friction, minor losses, valve loss, pilot
+path, nozzle discharge) and the pump as a head source on the `Q` through it. This formulation
+handles the pilot loops, parallel leak paths, and the global pump coupling uniformly — it does
+not depend on the network being a tree.
 
-1. Determine the **active subgraph**: prune subtrees behind closed valves / closed flo-stops /
-   closed manual valves; add leak terminals where injected.
-2. Initialise terminal pressures (e.g. to a nominal 2.5 bar).
-3. **Down-pass:** each terminal's discharge `q_i = f(P_i)` from its element law (§5.1).
-4. **Up-pass:** aggregate flows from terminals back to the root (each segment carries the sum of
-   its downstream terminal flows) → total pump flow `Q`.
-5. Read pump head `H(Q)` from the curve; **down-pass** again propagating node pressures =
-   `H(Q)` − cumulative (friction + minor + elevation) head to each node.
-6. Repeat 3–5 with under-relaxation until node pressures converge (‖ΔP‖ < ε).
+1. **Build the active element graph.** Resolve actuation first (§6): which valves are open and
+   whether the pump runs. Include closed valves as their leak/pilot state rather than deleting
+   them (a closed valve can still weep; a bleed-open valve passes flow with no signal). Add leak
+   terminals where injected.
+2. **Assemble nodal equations.** At each interior node, Σ(element flows in) = Σ(element flows
+   out); elevation enters as static head per node `h_m`. Terminal nodes discharge to atmosphere
+   by their element law (§5.1). The pump contributes `H(Q)` from the curve.
+3. **Solve the nonlinear system** by Newton–Raphson on nodal heads (Jacobian from the element
+   `dq/dH` slopes), with under-relaxation and a globalisation safeguard (line search / trust
+   region) for the strongly nonlinear nozzle and pilot terms. The acyclic pipe routing gives a
+   cheap, good initial guess (a single down-pass from an assumed pump head) and a natural
+   ordering, but is not relied on for the solve.
+4. Iterate to convergence (‖residual‖ < ε on the mass balances).
 
-This conserves mass by construction (total outflow = Σ terminal `q_i` = pump `Q`) and yields the
-pump-curve / system-curve intersection. (Newton-on-nodal-heads is a drop-in speed-up if the
-fixed-point converges slowly; not expected to be necessary on a tree this size.) Non-convergence
-or pump-curve-exceeded conditions are reported as a solver status, not silently clamped.
+Mass is conserved by the balance equations (total outflow = pump `Q` at convergence), yielding
+the pump-curve / system-curve intersection. Non-convergence, pump-curve-exceeded, or a valve
+below `min_operating_bar` are reported as solver status, not silently clamped. (For a network
+this small the dominant cost is curve interpolation, not the linear solves.)
 
 ### 5.3 Outputs (state schema)
 
