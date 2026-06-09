@@ -24,28 +24,27 @@ ground-truth generator for the diagnostic side, but that integration is out of s
 |---|---|---|
 | Deliverable this round | **Plan + this design doc only** | No code yet. |
 | UI form | **Standalone interactive web app** | Explicitly chosen over an MCP-tool/rendered-image approach; departs from the "no web app" line in `CLAUDE.md`, which should be updated when this lands. |
-| Hydraulics fidelity | **Full steady-state network solver** | Real Darcy–Weisbach + minor + elevation losses, pump Q–H curve, valve loss curves, nozzle flow-vs-pressure charts; mass-conserving (outflow = pump supply). |
-| Fault vocabulary | **Per-part fail modes from `graph.yaml`** | *To be reviewed* — see §8. Aligns 1:1 with the F-code taxonomy. |
-| Stack | **Recommended: client-side TS, solver ported to TS** | See §3 for the trade-off and the fallback. |
+| Hydraulics solver | **EPANET (global gradient algorithm) + wrapper** | Reuse the standard solver rather than hand-rolling; Darcy–Weisbach + minor + elevation, pump Q–H curve, PRV/TCV valves, pressure-dependent emitters; mass-conserving. See §5. |
+| Fault vocabulary | **Per-part fail modes from `graph.yaml`** | *To be reviewed* — see §8. Aligns 1:1 with the F-code taxonomy. Each maps to an EPANET primitive (§5.1, §8). |
+| Stack | **Client-side: `epanet-js` (WASM) + TypeScript** | EPANET runs in the browser; wrapper + UI in TS. See §3. |
 
 ## 3. Stack recommendation
 
-**Recommendation: a single static client-side app (TypeScript), solver ported to TS, with
+**Recommendation: a single static client-side app — `epanet-js` (the EPANET toolkit compiled to
+WASM) for the hydraulic solve, TypeScript for the wrapper, model generation, and UI, with
 `graph.yaml`/`catalog.yaml`/`context.yaml` baked in as JSON at build time.**
 
 Rationale:
 - "Standalone" is best served by an artifact that runs anywhere with no server — open the page,
   it works. The model data is static and small; there is no persistence or auth need.
 - The container these sessions run in is ephemeral; a static build avoids a process to keep alive.
-- The hydraulic solver is a self-contained numeric routine (curve interpolation + a nodal
-  Newton solve, §5). Porting it to TS is bounded and testable.
+- EPANET runs entirely in the browser via WASM, so the robust standard solver is available with
+  no backend; we write only the wrapper (model gen, fault translation, result read-back) and UI.
 
-**Trade-off / fallback.** The cost is maintaining the solver in TS rather than reusing Python.
-If we later want one solver shared with the diagnostic engine, the fallback is **Python solver +
-thin HTTP/WebSocket API + browser front-end**: keeps the numerics in `tools/`, but needs a
-running server, so it is no longer a static artifact. A middle path is to keep the canonical
-solver in Python, generate a golden set of solved states as fixtures, and assert the TS port
-matches them in CI — this lets the app stay static while pinning both implementations together.
+**Trade-off / fallback.** EPANET also has a Python toolkit (`epyt` / OWA-EPANET, and WNTR), so if
+we later want the solve shared server-side with the diagnostic engine, the same `.inp` model can
+run under Python behind a thin API — no second solver implementation. The dependency cost is the
+WASM bundle (a few hundred KB), acceptable for this app.
 
 Proposed tooling: Vite + TypeScript, SVG for the diagram (DOM-addressable nodes/edges for cheap
 live restyle), no heavy framework required (vanilla + a small reactive state store is enough).
@@ -93,68 +92,67 @@ traversal:
 The tree structure of the pipe routing is still useful — as a natural node ordering and a good
 initial guess — but the solve is a general nodal one (§5.2), not a recursive tree pass.
 
-## 5. Hydraulic solver
+## 5. Hydraulic solver (EPANET + wrapper)
 
-### 5.1 Elements (head loss / discharge laws)
+The hydraulic core is **EPANET**, embedded client-side via **`epanet-js`** (the official toolkit
+compiled to WASM, §3). EPANET's global gradient algorithm is exactly the nodal mass-balance solve
+this needs, hardened on the awkward cases (zero-flow branches, closed links, check valves, pump
+shutoff-head exceeded). Our **wrapper** owns everything EPANET doesn't: generating the EPANET
+network from `graph.yaml`, injecting actuation from the electrical resolver (§6), translating
+per-part faults (§8) into EPANET primitives, and reading EPANET's results back into the state
+schema (§5.3). EPANET is handed a *resolved* hydraulic state — it never sees the 24 V circuit.
 
-- **Pipe (`hose.*`)** — Darcy–Weisbach friction (default):
-  `h_f = f · (L/d) · v²/2g`, with the friction factor `f` from an explicit Colebrook
-  approximation (Swamee–Jain) over Reynolds number `Re = v·d/ν` and relative roughness `ε/d`
-  (ε = `roughness_mm`, 0.0015 mm for the LDPE hoses). This is valid across the full velocity
-  range the system spans — from near-stagnant throttled/clogged branches up to the ~19 m/s in
-  the Z5 hose-reel line — where the empirical Hazen-Williams law (kept as `hazen_williams_c` for
-  cross-check, valid only ~0.6–3 m/s) would drift at both ends. The friction law is a swappable
-  element so H-W can be selected for comparison. Minor losses
-  `h_m = k_minor · v²/2g` for fittings (`joint`, `tee`, `swing`, `manifold`, `bends`).
-- **Pump (`pump.well`)** — head from the pump Q–H curve in `catalog.yaml`, interpolated
-  at the operating flow; the solve finds the curve/system intersection (§5.2).
-- **Automatic valve (`valve.auto`)** — pilot-operated (§4): the diaphragm lifts when the pilot
-  path bleeds the chamber (solenoid energised or bleed open), then the open valve's loss comes
-  from the `valve_loss` curve (interpolated on flow); a seated diaphragm passes only any pilot/
-  weep flow. `min_operating_bar` (1.5) flags valves that won't reliably actuate below that inlet
-  pressure — so actuation is pressure-dependent, part of the coupled solve, not a fixed switch.
-- **Manual valve (`valve.manual`, Z5)** — `Kv`-based loss; open/closed by its handle.
-- **Heads** —
-  - *Rotor* (`head.rotor`): discharge from `nozzle_i20` flow-vs-pressure for the fitted
-    nozzle code (e.g. "4.0 blue" → "4.0"); a closed flo-stop sets discharge to 0.
-  - *Spray* (`head.spray`, MP rotators): pressure-regulated to `regulated_bar` (2.76);
-    discharge from `nozzle_mp` flow-vs-pressure-by-arc for the fitted nozzle+arc, clamped to the
-    regulated point above the regulator's threshold.
-  - *Stream nozzle* (`nozzle.stream`, Z5): orifice discharge `q = Cd·A·√(2ΔP/ρ)` from `bore_mm`/`cd`.
-- **Elevation** — each node's `h_m` contributes static head relative to the well water level
-  (`well.h_m` minus the foot-valve depth); the pump must lift water to each head's elevation in
-  addition to overcoming friction.
+### 5.1 Element → EPANET mapping
 
-### 5.2 Solve method (general nodal)
+| Our element | EPANET representation | Source data |
+|---|---|---|
+| Pipe (`hose.*`) | pipe link, **Darcy–Weisbach** headloss; roughness `ε = roughness_mm` (0.0015 mm, LDPE) | `inner_diameter_mm`, `length_m`, `roughness_mm` |
+| Fitting (`joint`/`tee`/`swing`/`manifold`) | minor-loss coefficient on the adjoining link | `k_minor`, `bends` |
+| Pump (`pump.well`) | pump link with a head (Q–H) curve | `catalog.yaml` `pump_curves` |
+| Automatic valve (`valve.auto`) | link status open/closed set by §6; open-loss as a TCV setting / minor loss fitted to the loss curve | `catalog.yaml` `valve_loss` + §6 actuation |
+| Manual valve (`valve.manual`, Z5) | TCV / open-closed link from the handle | `Kv` |
+| Spray regulator (`head.spray`, MP) | **PRV** set to `regulated_bar` (2.76) ahead of the head emitter | `catalog.yaml` `nozzle_mp` |
+| Head discharge (rotor / spray / stream) | **emitter** `q = C·pᵞ`, `C`,`γ` fitted to the nozzle flow-vs-pressure chart; stream nozzle via orifice `q = Cd·A·√(2ΔP/ρ)` | `nozzle_i20` / `nozzle_mp` / `bore_mm`,`cd` |
+| Injected leak | emitter at the affected node | §8 |
+| Elevation | node elevation | `h_m` (relative to well water level minus foot-valve depth) |
 
-Solve for the **head `H` at every node** subject to mass balance, treating each element's flow
-as a function of the head difference across it (pipe friction, minor losses, valve loss, pilot
-path, nozzle discharge) and the pump as a head source on the `Q` through it. This formulation
-handles the pilot loops, parallel leak paths, and the global pump coupling uniformly — it does
-not depend on the network being a tree.
+Notes:
+- **Darcy–Weisbach** is the default headloss formula (the velocity-range argument that drove this
+  choice still holds); **Hazen-Williams** stays selectable via EPANET's headloss-formula option,
+  using `hazen_williams_c`, for cross-check.
+- The **pilot operation** of `valve.auto` is *not* simulated internally — EPANET sees a link
+  whose open/closed/throttle state the resolver sets. Pilot-side faults (clogged metering port,
+  weep, bleed-open) map to a valve setting or a small emitter; the "chamber bleeds → diaphragm
+  lifts" mechanism is a diagram-level annotation (§4), not part of the solve. `min_operating_bar`
+  (1.5) is checked post-solve from the valve's inlet pressure and flagged, not enforced as a gate.
+- A closed rotor flo-stop → emitter coefficient 0 (no discharge).
 
-1. **Build the active element graph.** Resolve actuation first (§6): which valves are open and
-   whether the pump runs. Include closed valves as their leak/pilot state rather than deleting
-   them (a closed valve can still weep; a bleed-open valve passes flow with no signal). Add leak
-   terminals where injected.
-2. **Assemble nodal equations.** At each interior node, Σ(element flows in) = Σ(element flows
-   out); elevation enters as static head per node `h_m`. Terminal nodes discharge to atmosphere
-   by their element law (§5.1). The pump contributes `H(Q)` from the curve.
-3. **Solve the nonlinear system** by Newton–Raphson on nodal heads (Jacobian from the element
-   `dq/dH` slopes), with under-relaxation and a globalisation safeguard (line search / trust
-   region) for the strongly nonlinear nozzle and pilot terms. The acyclic pipe routing gives a
-   cheap, good initial guess (a single down-pass from an assumed pump head) and a natural
-   ordering, but is not relied on for the solve.
-4. Iterate to convergence (‖residual‖ < ε on the mass balances).
+### 5.2 Solve & wrapper responsibilities
 
-Mass is conserved by the balance equations (total outflow = pump `Q` at convergence), yielding
-the pump-curve / system-curve intersection. Non-convergence, pump-curve-exceeded, or a valve
-below `min_operating_bar` are reported as solver status, not silently clamped. (For a network
-this small the dominant cost is curve interpolation, not the linear solves.)
+EPANET's global gradient algorithm performs the actual nodal mass-balance solve — solving for the
+head at every node with each link's flow a function of the head difference across it, the pump as
+a head source, and emitters as pressure-dependent discharges. This conserves mass and finds the
+pump-curve / system-curve intersection by construction, and handles loops, closed links, and
+zero-flow subnetworks directly. Per state, the **wrapper**:
+
+1. **Resolves actuation first** (§6): which valves open, whether the pump runs — EPANET receives
+   the outcome, not the circuit. A closed valve is a closed link (still pressurised upstream); a
+   weeping or bleed-open valve is a throttled link / small emitter so it can pass flow with no
+   signal.
+2. **Builds or patches the EPANET model:** link statuses, PRV/TCV settings, emitter coefficients,
+   pump curve (scaled down for a weak-pump fault), and any fault-derived minor losses / emitters
+   (§8).
+3. **Runs the single-period steady-state hydraulic solve** via the toolkit.
+4. **Reads results back** — node pressures, link flows/velocities, emitter outflows — into the
+   state schema (§5.3), computing the totals and `filled` flags.
+5. **Surfaces solver status:** EPANET warnings/errors (non-convergence, negative pressure,
+   disconnected node, pump beyond curve) plus our own flags (valve inlet below
+   `min_operating_bar`), never silently clamped.
 
 ### 5.3 Outputs (state schema)
 
-The solver returns a pure data structure (the renderer is a separate concern):
+The wrapper returns a pure data structure, assembled from EPANET's node/link results (the
+renderer is a separate concern):
 
 ```
 {
@@ -253,25 +251,32 @@ anywhere on this segment" control in addition to the part-specific `broken` mode
    loader must represent as "no flow below threshold" rather than treat as an error.)
 3. **Electrical resolver** (§6) — continuity over `circuit:` → energised/commanded/broken per
    element; pump-runs and per-valve-open booleans.
-4. **Hydraulic solver** (§5) — element laws, active element graph, nodal Newton solve, state
-   schema (§5.3). Unit-test each element law against `catalog.yaml` points first.
-5. **Validation** — sanity scenarios (single zone at known nozzle/pressure ≈ catalog flow;
-   mass balance; elevation effect); if we keep a Python reference, golden-fixture parity in CI.
-6. **Web app** — SVG layout, state store, control panel, fault palette, live restyle, presets.
-7. **Docs** — update `CLAUDE.md` (the app changes the "no web app" premise) and add a short
+4. **EPANET model generator** (§5.1) — emit a base EPANET network (`.inp` / toolkit calls) from
+   `graph.yaml`: junctions with `h_m`, Darcy–Weisbach pipes with `ε`, minor losses, the pump
+   curve, PRVs for the MP regulators, and emitter coefficients fitted from the nozzle charts.
+   Validate every referenced `kind`/`nozzle`/`model` resolves; verify a baseline solve matches
+   catalog points (single zone ≈ catalog flow).
+5. **Wrapper + fault translation** (§5.2, §8) — apply actuation from (3) and the fault catalog to
+   the model (statuses, settings, emitters, scaled pump curve), run `epanet-js`, read results
+   into the state schema (§5.3), surface solver status.
+6. **Validation** — sanity scenarios (mass balance; elevation effect; multi-zone interaction);
+   confirm the WASM and Python (`epyt`) toolkits agree on the same `.inp` as a parity check.
+7. **Web app** — SVG layout, state store, control panel, fault palette, live restyle, presets.
+8. **Docs** — update `CLAUDE.md` (the app changes the "no web app" premise) and add a short
    usage note; wire a build/serve script.
 
-Phases 1–4 are the load-bearing core (the physics); 6 is the largest surface but low-risk once
-the solver returns a clean state object.
+Phases 3–5 are the load-bearing core (resolver + model + faults); 7 is the largest surface but
+low-risk once the wrapper returns a clean state object.
 
 ## 11. Open questions / to confirm before build
 
 1. **Fault granularity** (§8) — full per-part palette vs a curated/phased subset; add a generic
-   "leak on segment" injector?
-2. **Stack** (§3) — confirm client-side TS port, or prefer the Python-backend / shared-solver
-   fallback (which keeps one solver but needs a server)?
-3. **Solved-state parity** — do you want a Python reference solver kept in `tools/` for CI parity
-   with the TS port, or TS as the single implementation?
+   "leak on segment" injector? And: are any per-part fail modes **not** cleanly expressible as an
+   EPANET primitive (link status/setting, minor loss, emitter, scaled curve)? Any that aren't are
+   the cases that would need bespoke handling around EPANET.
+2. **Pilot-valve faithfulness** — is modelling `valve.auto` as an EPANET link with a resolver-set
+   status/throttle (pilot detail shown only as a diagram annotation) sufficient, or do you want
+   the chamber/diaphragm pilot loop represented more explicitly?
 4. **Diagram layout** — schematic (clean, legible) vs geographic (true-to-site)? Affects layout
    effort; schematic recommended for a first cut.
 5. **Units** — pressure in bar, flow in m³/h to match `catalog.yaml`, or L/min for homeowner
