@@ -25,6 +25,19 @@ export function interp(xs, ys, x) {
   return last[1];
 }
 
+// Catalog tables start well above zero (rotors at 1.7 bar, sprays at 1.72). Below the
+// lowest tabulated point a nozzle's discharge must keep falling with pressure (an
+// orifice-like √p), not hold the lowest row flat — otherwise a starved head would
+// "discharge" its full minimum-table flow at near-zero pressure.
+function tableFlow(pressures, row, p) {
+  let i0 = 0;
+  while (i0 < pressures.length && row[i0] == null) i0++;
+  if (i0 >= pressures.length) return 0;
+  const pMin = pressures[i0];
+  if (p < pMin) return row[i0] * Math.sqrt(p / pMin);
+  return interp(pressures, row, p);
+}
+
 // outlet = { subkind, params:{nozzle, arc, bore_mm, cd, …} }; p_bar = inlet pressure.
 export function outletDemandAt(outlet, p_bar, curves) {
   if (!(p_bar > 0)) return 0;
@@ -37,7 +50,7 @@ export function outletDemandAt(outlet, p_bar, curves) {
     const size = match[0];
     const row = curves.nozzleI20.flow_m3h[size];
     if (!row) throw new Error(`outlets: no nozzle_i20 row for "${params.nozzle}"`);
-    return interp(curves.nozzleI20.pressure_bar, row, p_bar);
+    return tableFlow(curves.nozzleI20.pressure_bar, row, p_bar);
   }
 
   if (subkind === "spray") {
@@ -48,7 +61,7 @@ export function outletDemandAt(outlet, p_bar, curves) {
     if (!arcRow) throw new Error(`outlets: no nozzle_mp nozzle "${params.nozzle}"`);
     const row = arcRow[String(params.arc)];
     if (!row) throw new Error(`outlets: no nozzle_mp arc ${params.arc} for ${params.nozzle}`);
-    return interp(curves.nozzleMp.pressure_bar, row, pLook);
+    return tableFlow(curves.nozzleMp.pressure_bar, row, pLook);
   }
 
   if (subkind === "stream") {

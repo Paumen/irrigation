@@ -10,9 +10,17 @@ export const MAX_ITERS = 60;
 export const STABLE_ITERS = 2; // consecutive within-tolerance iterations required
 
 // Auto-valve actuation. A diaphragm valve needs at least min_operating_bar at its
-// inlet to lift even when energised; hysteresis stops flapping right at the threshold.
-export const VALVE_OPEN_BAR = 1.5; // open when inlet rises to this (matches valve.auto min_operating_bar)
-export const VALVE_STAY_BAR = 1.4; // stay open while inlet stays above this
+// inlet to LIFT even when energised — but once lifted, the drained control chamber
+// holds the diaphragm open at much lower inlet pressure; the spring only re-seats it
+// near zero (or when de-energised). The wide lift/stay asymmetry is therefore physical,
+// and it is also what keeps the fixed point from flapping when several open zones pull
+// the manifold down close to the lift threshold.
+export const VALVE_OPEN_BAR = 1.5; // lift threshold; fallback when graph.yaml has no min_operating_bar
+export const VALVE_STAY_BAR = 0.3; // stay open while inlet stays above this
+// Safety net against actuation flapping: in the last iterations of the outer loop the
+// valve states are frozen so the demand fixed point can settle (build plan: "freeze
+// valve states for the last few iters"). Rarely engages; result.valvesFrozen reports it.
+export const VALVE_FREEZE_TAIL = 12;
 
 // MP-rotator spray heads have a built-in pressure regulator.
 export const SPRAY_CLAMP_BAR = 2.76;
