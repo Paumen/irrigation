@@ -139,6 +139,10 @@ export function buildTopology(model, state) {
   let pumpLinkId = null;
   for (const L of flowNodes.values()) {
     if (!isLink(L)) continue;
+    if (L.to.length > 1) {
+      // a 2-port conduit cannot branch; silently using to[0] would drop a subtree
+      throw new Error(`network: link "${L.id}" has ${L.to.length} downstream nodes`);
+    }
     const n1 = resolveEndpoint(parentOf.get(L.id), L, true);
     const n2 = resolveEndpoint(L.to[0], L, false);
     if (!n1) throw new Error(`network: link "${L.id}" has no upstream node`);
