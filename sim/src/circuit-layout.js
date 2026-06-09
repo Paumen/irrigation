@@ -21,92 +21,108 @@ export function wireClass(name, wire) {
 }
 
 // --- geometry tables (band-local coordinates; origin shifts below the hydraulics) ---
+//
+// The controller's terminals follow the real device (see
+// .claude/skills/irrigation/media/controller-product-rainmachine-similar.jpg and
+// controller-instruction-wiring-diagram-12zone.png): everything sits on ONE bottom
+// strip — the 24 VAC block on the left, then C | 1 2 3 4 | … | C left-to-right — and
+// the zone wires drop downward to the solenoids below, commons chained along a bus
+// under them.
 
-const ZONE_Y = { 1: 733, 2: 807, 3: 881, 4: 955 };
+// bottom-strip terminal x positions (24 VAC block, then C 1 2 3 4 MV C)
+const STRIP = { ac_1: 380, ac_2: 420, c_1: 480, z1: 520, z2: 560, z3: 600, z4: 640, mv: 680, c_2: 720 };
+const STRIP_Y = 680; // controller bottom edge
+const VALVE_X = { 1: 430, 2: 570, 3: 710, 4: 850 }; // solenoid centers, row below
+const VALVE_TOP = 840;
+const COM_BUS_Y = 925;
 
 // Boxes with their terminal anchors. side: which edge the dot sits on (label goes
 // just inside). Anchor key defaults to the port id; parts with one terminal serving
 // two wires on opposite edges (the relay's N and PE) declare @W/@E variants.
 const PARTS = {
   grid_socket: {
-    x: 130, y: 70, w: 200, h: 190, label: "Grid socket",
+    x: 130, y: 70, w: 170, h: 160, label: "Grid socket",
     anchors: [
-      { port: "grid_socket.l", side: "E", y: 145, label: "L" },
-      { port: "grid_socket.n", side: "E", y: 190, label: "N" },
-      { port: "grid_socket.pe", side: "E", y: 235, label: "PE" },
+      { port: "grid_socket.l", side: "E", y: 140, label: "L" },
+      { port: "grid_socket.n", side: "E", y: 180, label: "N" },
+      { port: "grid_socket.pe", side: "E", y: 220, label: "PE" },
     ],
   },
   relay: {
-    x: 430, y: 70, w: 230, h: 215, label: "Relay",
+    x: 430, y: 70, w: 200, h: 185, label: "Relay",
     anchors: [
-      { port: "relay.line_in", side: "W", y: 145, label: "line in" },
-      { port: "relay.neutral", key: "relay.neutral@W", side: "W", y: 190, label: "N" },
-      { port: "relay.earth", key: "relay.earth@W", side: "W", y: 235, label: "PE" },
-      { port: "relay.load_out", side: "E", y: 145, label: "load out" },
-      { port: "relay.neutral", key: "relay.neutral@E", side: "E", y: 190, label: "N" },
-      { port: "relay.earth", key: "relay.earth@E", side: "E", y: 235, label: "PE" },
-      { port: "relay.coil_com", side: "S", x: 505, label: "com" },
-      { port: "relay.coil_in", side: "S", x: 608, label: "coil in" },
+      { port: "relay.line_in", side: "W", y: 140, label: "line in" },
+      { port: "relay.neutral", key: "relay.neutral@W", side: "W", y: 180, label: "N" },
+      { port: "relay.earth", key: "relay.earth@W", side: "W", y: 220, label: "PE" },
+      { port: "relay.load_out", side: "E", y: 140, label: "load out" },
+      { port: "relay.neutral", key: "relay.neutral@E", side: "E", y: 180, label: "N" },
+      { port: "relay.earth", key: "relay.earth@E", side: "E", y: 220, label: "PE" },
+      { port: "relay.coil_com", side: "S", x: 495, label: "com" },
+      { port: "relay.coil_in", side: "S", x: 585, label: "coil in" },
     ],
   },
   pump: {
-    x: 800, y: 70, w: 180, h: 190, label: "Pump",
+    x: 780, y: 70, w: 170, h: 160, label: "Pump",
     anchors: [
-      { port: "pump.l", side: "W", y: 145, label: "L" },
-      { port: "pump.n", side: "W", y: 190, label: "N" },
-      { port: "pump.pe", side: "W", y: 235, label: "PE" },
+      { port: "pump.l", side: "W", y: 140, label: "L" },
+      { port: "pump.n", side: "W", y: 180, label: "N" },
+      { port: "pump.pe", side: "W", y: 220, label: "PE" },
     ],
   },
   adapter_socket: {
-    x: 130, y: 430, w: 200, h: 145, label: "Adapter socket",
+    x: 120, y: 360, w: 150, h: 120, label: "Adapter socket",
     anchors: [
-      { port: "adapter_socket.l", side: "E", y: 485, label: "L" },
-      { port: "adapter_socket.n", side: "E", y: 530, label: "N" },
+      { port: "adapter_socket.l", side: "E", y: 410, label: "L" },
+      { port: "adapter_socket.n", side: "E", y: 445, label: "N" },
     ],
   },
   adapter: {
-    x: 420, y: 430, w: 200, h: 135, label: "24 VAC adapter",
+    x: 300, y: 360, w: 150, h: 120, label: "24 VAC adapter",
     anchors: [
-      { port: "adapter.ac_l", side: "W", y: 485, label: "L" },
-      { port: "adapter.ac_n", side: "W", y: 530, label: "N" },
-      { port: "adapter.out_1", side: "S", x: 475, label: "1" },
-      { port: "adapter.out_2", side: "S", x: 550, label: "2" },
+      { port: "adapter.ac_l", side: "W", y: 410, label: "L" },
+      { port: "adapter.ac_n", side: "W", y: 445, label: "N" },
+      { port: "adapter.out_1", side: "S", x: 315, label: "1" },
+      { port: "adapter.out_2", side: "S", x: 340, label: "2" },
     ],
   },
   controller: {
-    x: 400, y: 685, w: 300, h: 320, label: "Controller",
+    x: 350, y: 500, w: 380, h: 180, label: "Controller",
     anchors: [
-      { port: "controller.ac_1", side: "N", x: 475, label: "AC1" },
-      { port: "controller.ac_2", side: "N", x: 550, label: "AC2" },
-      { port: "controller.zone_1", side: "E", y: ZONE_Y[1], label: "zone 1" },
-      { port: "controller.zone_2", side: "E", y: ZONE_Y[2], label: "zone 2" },
-      { port: "controller.zone_3", side: "E", y: ZONE_Y[3], label: "zone 3" },
-      { port: "controller.zone_4", side: "E", y: ZONE_Y[4], label: "zone 4" },
-      { port: "controller.mv", side: "S", x: 460, label: "MV" },
-      { port: "controller.c_1", side: "S", x: 535, label: "C1" },
-      { port: "controller.c_2", side: "S", x: 640, label: "C2" },
+      { port: "controller.ac_1", side: "S", x: STRIP.ac_1, label: "AC1" },
+      { port: "controller.ac_2", side: "S", x: STRIP.ac_2, label: "AC2" },
+      { port: "controller.c_1", side: "S", x: STRIP.c_1, label: "C" },
+      { port: "controller.zone_1", side: "S", x: STRIP.z1, label: "1" },
+      { port: "controller.zone_2", side: "S", x: STRIP.z2, label: "2" },
+      { port: "controller.zone_3", side: "S", x: STRIP.z3, label: "3" },
+      { port: "controller.zone_4", side: "S", x: STRIP.z4, label: "4" },
+      { port: "controller.mv", side: "S", x: STRIP.mv, label: "MV" },
+      { port: "controller.c_2", side: "S", x: STRIP.c_2, label: "C" },
     ],
   },
 };
-// the four solenoids, one small box per zone
+// the four solenoids, one small box per zone in a row below the controller
 for (let n = 1; n <= 4; n++) {
   PARTS[`Z${n}.valve`] = {
-    x: 845, y: ZONE_Y[n] - 23, w: 100, h: 46, label: `Z${n}`,
+    x: VALVE_X[n] - 50, y: VALVE_TOP, w: 100, h: 46, label: `Z${n}`,
     anchors: [
-      { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@W`, side: "W", y: ZONE_Y[n] },
-      { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@E`, side: "E", y: ZONE_Y[n] },
+      { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@N`, side: "N", x: VALVE_X[n] },
+      { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@S`, side: "S", x: VALVE_X[n] },
     ],
   };
 }
 
 // Field splices: bare dots sitting on the wire run (the wire nuts in the valve box).
-// sig_N sits on the zone run between controller and solenoid; com_N sits on the
-// common bus at x=968.
+// sig_N sits on the zone drop above its solenoid; com_N sits on the common bus
+// running under the solenoid row.
 const SPLICES = {};
 for (let n = 1; n <= 4; n++) {
-  SPLICES[`splice.sig_${n}`] = { x: 782, y: ZONE_Y[n] };
-  SPLICES[`splice.com_${n}`] = { x: 968, y: ZONE_Y[n] };
+  SPLICES[`splice.sig_${n}`] = { x: VALVE_X[n], y: 810 };
+  SPLICES[`splice.com_${n}`] = { x: VALVE_X[n], y: COM_BUS_Y };
 }
+
+// per-zone escape rails between the strip and the splices (staggered so drops and
+// rails never collide)
+const ZONE_RAIL = { 1: 762, 2: 748, 3: 734, 4: 720 };
 
 // Route per wire: optional intermediate via points (segments must stay orthogonal)
 // and, where a port has several anchors, which anchor each end attaches to.
@@ -119,32 +135,32 @@ const ROUTES = {
   pump_earth: { from: "relay.earth@E" },
   adapter_socket_live: {},
   adapter_socket_neutral: {},
-  adapter_supply_1: {},
-  adapter_supply_2: {},
-  // MV and C1 loop around the left side of the page to the relay coil, like the
-  // physical 10 m cable run from house to shed
-  signal_relay: { vias: [[460, 1045], [122, 1045], [122, 330], [608, 330]] },
-  relay_return: { vias: [[505, 350], [100, 350], [100, 1075], [535, 1075]] },
-  signal_1: {},
-  signal_2: {},
-  signal_3: {},
-  signal_4: {},
-  common_lead_1: { from: "Z1.valve.coil@E" },
-  common_lead_2: { from: "Z2.valve.coil@E" },
-  common_lead_3: { from: "Z3.valve.coil@E" },
-  common_lead_4: { from: "Z4.valve.coil@E" },
+  adapter_supply_1: { vias: [[315, 695], [STRIP.ac_1, 695]] },
+  adapter_supply_2: { vias: [[340, 705], [STRIP.ac_2, 705]] },
+  // MV runs right and up the page edge to the relay coil; C1 loops around the left —
+  // like the physical 10 m cable run from house to shed
+  signal_relay: { vias: [[STRIP.mv, 690], [985, 690], [985, 330], [585, 330]] },
+  relay_return: { vias: [[495, 330], [100, 330], [100, 718], [STRIP.c_1, 718]] },
+  signal_1: { vias: [[STRIP.z1, ZONE_RAIL[1]], [VALVE_X[1], ZONE_RAIL[1]]] },
+  signal_2: { vias: [[STRIP.z2, ZONE_RAIL[2]], [VALVE_X[2], ZONE_RAIL[2]]] },
+  signal_3: { vias: [[STRIP.z3, ZONE_RAIL[3]], [VALVE_X[3], ZONE_RAIL[3]]] },
+  signal_4: { vias: [[STRIP.z4, ZONE_RAIL[4]], [VALVE_X[4], ZONE_RAIL[4]]] },
+  common_lead_1: { from: "Z1.valve.coil@S" },
+  common_lead_2: { from: "Z2.valve.coil@S" },
+  common_lead_3: { from: "Z3.valve.coil@S" },
+  common_lead_4: { from: "Z4.valve.coil@S" },
   common_chain_12: {},
   common_chain_23: {},
   common_chain_34: {},
-  common_return: { vias: [[968, 1040], [640, 1040]] },
+  common_return: { vias: [[960, COM_BUS_Y], [960, 700], [STRIP.c_2, 700]] },
 };
 // solenoid leads (splice.sig_N -> coil): intra-part `to:` continuity in the model,
-// drawn as the short run from the splice into the solenoid
+// drawn as the short drop from the splice into the solenoid
 const LEAD_ROUTES = {
-  "lead:splice.sig_1": { to: "Z1.valve.coil@W" },
-  "lead:splice.sig_2": { to: "Z2.valve.coil@W" },
-  "lead:splice.sig_3": { to: "Z3.valve.coil@W" },
-  "lead:splice.sig_4": { to: "Z4.valve.coil@W" },
+  "lead:splice.sig_1": { to: "Z1.valve.coil@N" },
+  "lead:splice.sig_2": { to: "Z2.valve.coil@N" },
+  "lead:splice.sig_3": { to: "Z3.valve.coil@N" },
+  "lead:splice.sig_4": { to: "Z4.valve.coil@N" },
 };
 
 // The tables above keep the reference drawing's own coordinates; the whole diagram is
@@ -169,7 +185,7 @@ for (const r of [...Object.values(ROUTES), ...Object.values(LEAD_ROUTES)]) {
 }
 
 export const CIRCUIT_W = s(1000);
-export const CIRCUIT_H = s(1090);
+export const CIRCUIT_H = s(960);
 
 // --- assembly + validation ---
 
