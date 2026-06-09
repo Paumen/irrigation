@@ -10,20 +10,35 @@ so the engine is testable without a browser.
 
 ## Status
 
-**M0 (EPANET spike) — done.** Everything else (M1–M8) is planned but not yet built.
+**M0–M2 — done.** The headless hydraulic core is built and verified; the UI (M3+) is not yet built.
 
-`test/m0-smoke.mjs` is the M0 deliverable: it hand-writes a tiny INP (reservoir → pump → valve → demand)
-that exercises every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
-HEAD curve (the catalog pump curve), and a GPV with a headloss curve (the catalog `valve_loss` curve) —
-solves it, and asserts the results are finite and physically sane. Its purpose is to lock the `epanet-js`
-API surface (enum names, units, curve handling) before the real model code is written.
+- **M0 (EPANET spike):** `test/m0-smoke.mjs` hand-writes a tiny INP (reservoir → pump → valve → demand)
+  exercising every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
+  HEAD curve, and a GPV with a headloss curve — and asserts the results are finite and sane. It locked the
+  `epanet-js` API surface before the real model code was written.
+- **M1 (model → network → INP → solve):** `src/model.js` normalizes the root YAMLs; `src/network.js`
+  performs the edge-walk that turns the flow graph into an EPANET node/link topology (synthetic connector
+  pipes for direct node→node adjacencies like manifold→zone, minor-loss folding, GPV/TCV/pump curves);
+  `src/inp.js` renders INP text; `src/epanet-runner.js` wraps the `epanet-js` lifecycle.
+- **M2 (pressure-driven outlets + outer solver):** `src/outlets.js` holds the rotor/spray/orifice
+  discharge laws; `src/solver.js` runs the outer fixed-point demand loop (pressure-driven outlets, damped,
+  with auto-valve actuation, reachability-based dead-branch handling, and a mass-balance check).
 
-## Run the M0 smoke test
+The physics modules in `src/` are plain ES modules with no browser dependency, so they run unchanged under
+Node. In the browser the same modules will load `epanet-js` from a CDN; the YAML is parsed at the edge
+(`test/yaml-node.mjs` for Node, a fetch-based loader for the browser) and passed to `buildModel` already
+parsed.
+
+## Run the tests
 
 ```sh
 cd sim
-npm install      # installs epanet-js as a dev dependency (node_modules is git-ignored)
-npm run smoke    # node test/m0-smoke.mjs
+npm install      # installs epanet-js + js-yaml as dev dependencies (node_modules is git-ignored)
+npm run smoke    # M0: node test/m0-smoke.mjs
+npm test         # M1+M2: node test/harness.mjs
 ```
 
-It prints node pressures (bar) and link flows (m³/h) and exits non-zero on any failed assertion.
+`npm test` loads the real root YAMLs, builds the model, and solves two settled states — **idle** (pump off,
+everything dead) and **pump on + Z1** — asserting convergence, mass balance, catalog-fidelity of every Z1
+outlet, spray-regulator clamping at 2.76 bar, dead-branch isolation of Z2–Z5, and that the pump operating
+point lands on the catalog curve. It prints a per-case outlet table and exits non-zero on any failure.
