@@ -67,10 +67,12 @@ are not yet built.
 - **M6 (controls + live updates):** `src/controls.js` builds the control panel — every user-commandable
   control of spec R15 except M8's fault toggles: pump + per-zone controller commands, the Z5 manual
   handle, a **flow-control screw** (0–100% slider) and **bleed screw** per auto valve, a **flo-stop**
-  per rotor head, and the m³/h ↔ L/min display toggle. The panel is **per-equipment**: clicking a part
-  in the schematic (pump, valve, head, nozzle glyphs — padded invisible hit areas for touch — or the
-  controller / pump / valve boxes in the wiring band) highlights it and shows just that part's
-  controls; parts without controls get an info line. `panelFor()` (which widgets a clicked part
+  per rotor head, and the m³/h ↔ L/min display toggle (always visible in the header). The panel is
+  **per-equipment**: clicking a part in the schematic (pump, valve, head, nozzle glyphs — padded
+  invisible hit areas for touch — or the controller / pump / valve boxes in the wiring band)
+  highlights it and slides up a **bottom sheet** with just that part's controls (full-width on phones,
+  a docked card on wide screens; ✕, a click on empty schematic, or Escape dismisses it); parts without
+  controls get an info line. `panelFor()` (which widgets a clicked part
   exposes, each addressing its UI-state slot by path), `controlSpec()` (which controls exist), and the
   UI state (`initialUiState()`, which **is** the solver input shape `{ commands, state, lmin }`) are
   pure and harness-gated; only the DOM half is browser-only. Any
