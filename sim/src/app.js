@@ -72,8 +72,14 @@ function requestRender(ui, { unitsOnly = false } = {}) {
   clearTimeout(pending);
   pending = setTimeout(() => {
     say("solving…");
-    const steady = renderState(ui.commands, ui.state, { lmin: ui.lmin });
-    say(statusText(steady, last.elec, ui.lmin));
+    try {
+      const steady = renderState(ui.commands, ui.state, { lmin: ui.lmin });
+      say(statusText(steady, last.elec, ui.lmin));
+    } catch (err) {
+      // an uncaught throw in the timer would leave the status stuck on "solving…"
+      say(`solve failed: ${err.message}`);
+      console.error(err);
+    }
   }, DEBOUNCE_MS);
 }
 

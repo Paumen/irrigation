@@ -15,13 +15,16 @@ export function controlSpec(model) {
   const nodes = [...model.flowNodes.values()];
   const ids = (pred) => nodes.filter(pred).map((n) => n.id);
   const autoValves = ids((n) => n.role === "valve-auto");
-  const zones = autoValves
-    .map((id) => {
-      const m = id.match(/^Z(\d+)\./);
-      if (!m) throw new Error(`controls: auto valve "${id}" has no Zn. zone prefix`);
-      return Number(m[1]);
-    })
-    .sort((a, b) => a - b);
+  // dedupe: one controller command per zone even if a zone ever grows a second valve
+  const zones = [
+    ...new Set(
+      autoValves.map((id) => {
+        const m = id.match(/^Z(\d+)\./);
+        if (!m) throw new Error(`controls: auto valve "${id}" has no Zn. zone prefix`);
+        return Number(m[1]);
+      }),
+    ),
+  ].sort((a, b) => a - b);
   return {
     zones, // controller zone numbers (zone n drives Zn.valve)
     autoValves,
