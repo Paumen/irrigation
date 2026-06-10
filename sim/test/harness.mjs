@@ -465,8 +465,10 @@ console.log("Case: M5 scene (visual attribute computation)");
   const byKey = (arr) => new Map(arr.map((p) => [p.key, p]));
 
   const idlePipes = byKey(idleScene.pipes);
+  // the suction side (well -> foot valve -> hose1 -> pump) stays wet with the pump off
+  const suctionKeys = new Set(["hose1", "well->footvalve", "footvalve->pump", "well->pump"]);
   check(
-    [...idlePipes.values()].filter((p) => p.key !== "hose1" && p.key !== "well->pump").every((p) => p.dead && p.dashed && p.width === STROKE_MIN_PX),
+    [...idlePipes.values()].filter((p) => !suctionKeys.has(p.key)).every((p) => p.dead && p.dashed && p.width === STROKE_MIN_PX),
     "idle: every pipe downstream of the stopped pump is dead, dashed, min width",
   );
   check(

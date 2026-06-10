@@ -7,7 +7,9 @@
 export function roleOf(kind) {
   if (kind === "water.level") return "reservoir";
   if (kind === "pump.well") return "pump";
-  if (kind === "joint" || kind === "tee" || kind === "manifold") return "junction";
+  // valve.foot is a passive check valve: hydraulically a junction whose k_minor
+  // folds onto the suction hose (its holds-the-prime behaviour is quasi-time, M7+).
+  if (kind === "joint" || kind === "tee" || kind === "manifold" || kind === "valve.foot") return "junction";
   if (kind === "valve.auto") return "valve-auto";
   if (kind === "valve.manual") return "valve-manual";
   if (kind.startsWith("hose.") || kind.startsWith("swing.")) return "pipe";

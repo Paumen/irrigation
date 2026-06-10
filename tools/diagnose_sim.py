@@ -135,6 +135,41 @@ CTX = {
     "F9.4":   {"Q10": {"rotor": "right"}},
 }
 
+# Pump-side checks added after the no-foot-valve case: Q26 needs the pump running,
+# so faults where it never starts (controller logic dead, relay) carry '-'.
+T4_COLS = ["Q26", "Q27"]
+T4 = {
+    "F1.5":   "a a",
+    "F1.8":   "a a",
+    "F2.1":   "- a",
+    "F2.5":   "a a",
+    "F2.6":   "a a",
+    "F2.8":   "- a",
+    "F3.1.1": "a a",
+    "F3.1.2": "a a",
+    "F3.1.3": "a a",
+    "F3.4":   "a a",
+    "F4.1":   "- a",
+    "F4.4":   "- a",
+    "F5.1":   "d a",   # dead wet end: nothing out, body still full
+    "F5.3":   "c b",   # burst then nothing; level dropped while it ran
+    "F5.8":   "b b",
+    "F6.1":   "a a",
+    "F6.3":   "a a",
+    "F7.1.1": "a a",
+    "F7.1.2": "a a",
+    "F7.1.3": "a a",
+    "F7.3.1": "a a",
+    "F7.3.2": "a a",
+    "F7.4":   "a a",
+    "F8.1":   "a a",
+    "F8.3":   "a a",
+    "F9.1.1": "a a",
+    "F9.1.2": "a a",
+    "F9.3":   "a a",
+    "F9.4":   "a a",
+}
+
 LET = {"a": 0, "b": 1, "c": 2, "d": 3}
 
 # letter -> ticked option indices. The "neither" code (Q18 'd', Q22 'd', Q23 'a')
@@ -166,6 +201,9 @@ def build_key(fault: str) -> dict:
         else:
             key[col] = LET[let]
     for col, let in zip(T3_COLS, T3.get(fault, "").split()):
+        if let != "-":
+            key[col] = LET[let]
+    for col, let in zip(T4_COLS, T4.get(fault, "").split()):
         if let != "-":
             key[col] = LET[let]
     key.update(CTX[fault])
