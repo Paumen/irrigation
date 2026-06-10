@@ -3,7 +3,7 @@ system_metadata:
 location_descriptions:
   house: indoor — main residence
   shed: indoor — outbuilding housing the pump start relay
-  well: outdoor — underground water-supply shaft; the surface pump sits on a platform roughly halfway down, above the water line, drawing up through the suction hose (open hose end in the water — no foot valve fitted, so the suction hose drains back when the pump stops)
+  well: outdoor — underground water-supply shaft; the surface pump sits on a platform roughly halfway down, above the water line, drawing up through the suction hose. A brass foot valve + strainer was bought 2026-06 for the hose end (NOT yet confirmed fitted); before that the hose end was open and drained back on every pump stop, losing prime
   valve_box: outdoor — in-ground enclosure containing the manifold and 4 zone solenoid valves
   in_ground: outdoor — buried in lawn/garden
 control_paths:
@@ -32,6 +32,14 @@ equipment:
     installed: 2023-06
     location: well
     price_eur: 350
+  valve.foot:
+    installed: 2026-06   # bought June 2026; owner has not yet confirmed it is mounted
+    location: well
+    price_eur: 18.50
+  hose.suction:
+    installed: 2023-06   # assumed fitted with the pump; owner identified the type (IrriTech 1" spiral, 25 mm bore) 2026-06
+    location: well
+    price_eu_m: 4
   hose:
     installed: 2020-08
     location: in_ground
