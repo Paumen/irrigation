@@ -21,7 +21,5 @@
 
 **Geometry**
 
-13. Schematic geometry — hydraulic and electrical — comes from a hand-authored, checked-in coordinates module (`sim/src/geometry.js`): an x,y for every flow node, per-port pin positions for every circuit part, and route points for every wire. No auto-layout. A Node test fails when anything in `graph.yaml` lacks a position (or the geometry names something `graph.yaml` doesn't have).
-14. The schematic draws everything in `graph.yaml`: all flow nodes, and the complete circuit — every part with its labelled terminals and drawn internals (controller terminal strip, adapter winding, relay coil + contact, the splice's 8 ports, pump motor, each valve's coil pin) and all 24 wires individually pin-to-pin. Only `kinds` subparts stay off the schematic; they live in the bottom sheet (§9).
-15. Layout concept: a logical schematic fitted to a phone-portrait screen — wiring band on top, the manifold as a vertical bar with stacked ports, each zone as its own left-to-right row (valve → hoses/tees/swings → heads with their arc wedges), the Z5 manual row, the Z6 cap stub, and the supply chain (well → footvalve → suction hose → pump → trunk) at the bottom; low-voltage wires run in one channel beside the manifold, mains down the edge.
-
+13. Schematic geometry — hydraulic and electrical — is hand-authored.
+14. The schematic draws everything in `graph.yaml`.
