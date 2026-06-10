@@ -11,7 +11,7 @@ Two things for one homeowner's irrigation/rotor system:
 
 ## Simulator (`sim/`)
 
-A **headless** physics engine for the system's hydraulics **and** control wiring — Node-only plain ES modules, **no UI of any kind**. Spec history: `docs/Sim_spec.md`, `docs/sim_implementation_plan.md`, `docs/sim_build_plan.md`.
+A physics engine for the system's hydraulics **and** control wiring — Node-only plain ES modules. Spec history: `docs/Sim_spec.md`, `docs/sim_implementation_plan.md`, `docs/sim_build_plan.md`.
 
 - **Inputs** are the three root YAMLs: `graph.yaml` (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:` lists), `catalog.yaml` (pump curve, valve-loss, nozzle tables), `context.yaml` (labels). Single source of truth — no copies.
 - **Hydraulics = EPANET** via `epanet-js` (EPANET 2.2 wasm), wrapped by our own outer fixed-point demand loop (`solver.js`): pressure-driven outlets from the catalog laws, auto-valve actuation with lift/stay hysteresis through the real wiring solve (`electrical.js`), reachability-based dead-branch handling, mass balance. `faults.js` compiles any combination of graph.yaml's ~400 `fail:` entries into solver/network mutations (clog severities → restricted/sealed links, valve-seat clogs scale the valve's loss curve since EPANET ignores GPV minor losses, leak emitters at the nearest junction, weak/dead pump, stuck-open/disabled valves, outlet-law rewrites, electrical cuts). Starved table outlets hand off to EPANET emitters below their lowest catalog point and every fed-back quantity uses adaptive damping (step halves on sign flips), so extreme severities settle.
