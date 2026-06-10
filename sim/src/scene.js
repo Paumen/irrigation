@@ -16,6 +16,10 @@ import {
   STROKE_MIN_PX,
   STROKE_MAX_PX,
   DEAD_COLOR,
+  EQUIP_ON_STROKE,
+  EQUIP_ON_FILL,
+  EQUIP_CMD_STROKE,
+  EQUIP_CMD_FILL,
 } from "./config.js";
 import { fmtFlow, fmtPressure } from "./units.js";
 
@@ -100,6 +104,23 @@ export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
     }
     const p = nodePressure(id, model, steady);
     const pText = isDead || p === null ? "—" : fmtPressure(p);
+    // Equipment glyphs (pump/valves) have no node pressure, so they encode state
+    // instead: green = running/open, amber = commanded-but-not-opening, white/grey =
+    // off/closed. fill is always set for them so a state change can revert it.
+    let color = isDead || p === null ? DEAD_COLOR : pressureColor(p);
+    let fill; // undefined -> the glyph keeps its static fill (heads, well, joints)
+    if (fn.role === "pump" || fn.role.startsWith("valve")) {
+      if (state === "on" || state === "open") {
+        color = EQUIP_ON_STROKE;
+        fill = EQUIP_ON_FILL;
+      } else if (state === "commanded") {
+        color = EQUIP_CMD_STROKE;
+        fill = EQUIP_CMD_FILL;
+      } else {
+        color = DEAD_COLOR;
+        fill = "#fff";
+      }
+    }
     nodes.push({
       key: id,
       x: n.x,
@@ -110,7 +131,8 @@ export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
       zone: n.zone,
       dead: isDead,
       state,
-      color: isDead || p === null ? DEAD_COLOR : pressureColor(p),
+      color,
+      fill,
       title: `${id} (${fn.kind})${state ? ` ${state}` : ""} — ${pText}`,
     });
     if (fn.role === "outlet") {

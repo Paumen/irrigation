@@ -203,8 +203,8 @@ export function createRenderer(svgEl, layout, { onSelect } = {}) {
           node.setAttribute("stroke", n.color);
           node.setAttribute("stroke-width", n.state === "open" || n.state === "on" ? 3 : 1.5);
           node.setAttribute("stroke-dasharray", n.dead ? "3 2" : "");
-          // a commanded-but-not-opening valve flags amber: asked for, not delivering
-          if (n.state === "commanded") node.setAttribute("stroke", "#f9a825");
+          // scene provides a fill only for state-carrying equipment glyphs
+          if (n.fill) node.setAttribute("fill", n.fill);
           title.textContent = n.title;
         },
       );

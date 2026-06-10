@@ -23,6 +23,10 @@ import {
   STROKE_MIN_PX,
   STROKE_MAX_PX,
   M_PER_BAR,
+  EQUIP_ON_STROKE,
+  EQUIP_ON_FILL,
+  EQUIP_CMD_STROKE,
+  EQUIP_CMD_FILL,
 } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -70,6 +74,8 @@ let idleResult = null; // stashed for the M5 scene checks
 let idleElec = null;
 let s2Result = null; // broken-signal_2 case, for the M5 wiring-state checks
 let s2Elec = null;
+let noResult = null; // commanded-but-not-opening case, for the equipment-state checks
+let noElec = null;
 
 for (const c of cases) {
   console.log(`Case: ${c.name}`);
@@ -78,6 +84,7 @@ for (const c of cases) {
   reportTable(model, r);
   if (c.kind === "idle") [idleResult, idleElec] = [r, elec];
   if (c.kind === "z1") z1Elec = elec;
+  if (c.kind === "notopening") [noResult, noElec] = [r, elec];
   if (c.blocked?.has("signal_2")) [s2Result, s2Elec] = [r, elec];
 
   // shared invariants
@@ -491,6 +498,33 @@ console.log("Case: M5 scene (visual attribute computation)");
   const z1Nodes = byKey(z1Scene.nodes);
   check(z1Nodes.get("Z1.valve").state === "open" && z1Nodes.get("Z2.valve").state === "closed", "valve glyph states open/closed");
   check(z1Nodes.get("pump").state === "on", "pump glyph state on");
+
+  // equipment glyphs encode state visually: green = on/open, amber = commanded-but-
+  // not-opening, white/grey = off/closed (they have no node pressure to color by)
+  check(
+    z1Nodes.get("pump").color === EQUIP_ON_STROKE && z1Nodes.get("pump").fill === EQUIP_ON_FILL,
+    "running pump drawn green-filled",
+  );
+  check(
+    z1Nodes.get("Z1.valve").color === EQUIP_ON_STROKE && z1Nodes.get("Z1.valve").fill === EQUIP_ON_FILL,
+    "open valve drawn green-filled",
+  );
+  check(
+    z1Nodes.get("Z2.valve").color === DEAD_COLOR && z1Nodes.get("Z2.valve").fill === "#fff",
+    "closed valve drawn white-filled grey",
+  );
+  const idleNodes = byKey(idleScene.nodes);
+  check(
+    idleNodes.get("pump").color === DEAD_COLOR && idleNodes.get("pump").fill === "#fff",
+    "stopped pump drawn white-filled grey",
+  );
+  const noScene = buildScene(model, layout, noResult, noElec);
+  const noValve = byKey(noScene.nodes).get("Z1.valve");
+  check(
+    noValve.state === "commanded" && noValve.color === EQUIP_CMD_STROKE && noValve.fill === EQUIP_CMD_FILL,
+    "commanded-but-not-opening valve drawn amber",
+  );
+  check(byKey(noScene.nodes).get("Z1.head1").fill === undefined, "heads keep their static fill (no state fill)");
 
   const z1Splices = byKey(z1Scene.splices);
   check(
