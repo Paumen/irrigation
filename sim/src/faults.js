@@ -16,8 +16,11 @@ const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
 // UI metadata: `inert` = declared but no steady-state effect; `threshold` = severities
 // below it leave the settled state unchanged. Derived from SPECIAL/RULES so the UI never
 // duplicates rule knowledge.
+const specialKeyOf = (node, sub, type) =>
+  sub ? `${node.kind}.${sub}:${type}` : `${node.kind}:${type}`;
+
 function metaOf(node, sub, type) {
-  const specialKey = `${node.kind}.${sub}:${type}`;
+  const specialKey = specialKeyOf(node, sub, type);
   if (SPECIAL[specialKey]) return INERT_SPECIALS.has(specialKey) ? { inert: true } : {};
   const cell = `${groupOf(node, sub)}:${type}`;
   if (!RULES[cell]) return { inert: true };
@@ -260,7 +263,7 @@ export function compileFaults(model, active = {}) {
       continue;
     }
     const node = model.flowNodes.get(f.target);
-    const rule = SPECIAL[`${node.kind}.${f.sub}:${f.type}`] ?? RULES[`${groupOf(node, f.sub)}:${f.type}`];
+    const rule = SPECIAL[specialKeyOf(node, f.sub, f.type)] ?? RULES[`${groupOf(node, f.sub)}:${f.type}`];
     rule?.({ fx, model, node, sev });
   }
   return fx;

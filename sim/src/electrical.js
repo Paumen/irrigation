@@ -52,6 +52,20 @@ export function buildContinuityGraph(circuit, { contactClosed = false, blocked =
 
 const edgeKey = (a, b) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
+// edge -> wireName lookup; depends only on the static wiring, so cache per circuit.
+const wireOfByCircuit = new WeakMap();
+function wireOfCache(circuit) {
+  let m = wireOfByCircuit.get(circuit);
+  if (!m) {
+    m = new Map();
+    for (const [wireName, w] of Object.entries(circuit.wires)) {
+      m.set(edgeKey(w.from, w.to), wireName);
+    }
+    wireOfByCircuit.set(circuit, m);
+  }
+  return m;
+}
+
 // Wires carrying current = wires on at least one simple path between a closed loop's
 // terminals. Reachability is not enough: a dead-end stub off the loop is at potential
 // but carries nothing. DFS path enumeration is fine at this graph's size.
@@ -135,10 +149,7 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
       reachable(g, `controller.zone_${n}`, "controller.c_2");
   }
 
-  const wireOf = new Map();
-  for (const [wireName, w] of Object.entries(circuit.wires)) {
-    wireOf.set(edgeKey(w.from, w.to), wireName);
-  }
+  const wireOf = wireOfCache(circuit);
   const energisedWires = new Set();
   if (primaryEnergised) wiresOnPaths(g, wireOf, "adapter_socket.l", "adapter_socket.n", energisedWires);
   if (controllerPowered) {
