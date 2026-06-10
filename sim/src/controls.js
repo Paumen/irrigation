@@ -74,7 +74,7 @@ export function panelFor(model, id) {
   }
   const n = model.flowNodes.get(id);
   if (!n) throw new Error(`controls: no panel target "${id}"`);
-  const title = `${id}${n.params.model ? ` — ${n.params.model}` : ""}`;
+  const title = `${id}${n.params?.model ? ` — ${n.params.model}` : ""}`;
 
   if (n.role === "pump") {
     return {
@@ -135,16 +135,6 @@ export function panelFor(model, id) {
 
 // ---- DOM half (browser only) ----
 
-function section(container, title) {
-  const div = document.createElement("div");
-  div.className = "ctl-section";
-  const h = document.createElement("h3");
-  h.textContent = title;
-  div.appendChild(h);
-  container.appendChild(div);
-  return div;
-}
-
 function checkbox(parent, text, checked, onSet) {
   const label = document.createElement("label");
   const input = document.createElement("input");
@@ -182,21 +172,33 @@ function slider(parent, text, value, onSet) {
   parent.appendChild(label);
 }
 
-// Build the panel scaffolding into `container` and return { ui, select }: `ui` is the
-// live UI state the widgets mutate, `select(id)` swaps the panel to that equipment's
-// controls (render.js calls it from glyph clicks). The display toggle stays put.
-export function buildControls(container, model, onChange) {
+// Build the slide-up bottom sheet into `container` and return { ui, select, close }:
+// `ui` is the live UI state the widgets mutate, `select(id)` fills the sheet with that
+// equipment's controls and slides it up (render.js calls it from glyph clicks),
+// `close()` slides it away and reports through onClose (app.js clears the selection
+// highlight there). The L/min display toggle is built into `displayEl` — somewhere
+// always visible — so it doesn't depend on the sheet being open.
+export function buildControls(container, model, onChange, { displayEl, onClose } = {}) {
   const spec = controlSpec(model);
   const ui = initialUiState(spec);
   const changed = () => onChange(ui, { unitsOnly: false });
 
   container.textContent = "";
+  const bar = document.createElement("div");
+  bar.className = "sheet-bar";
+  const grabber = document.createElement("span");
+  grabber.className = "grabber";
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "sheet-close";
+  closeBtn.type = "button";
+  closeBtn.setAttribute("aria-label", "Close controls");
+  closeBtn.textContent = "✕";
+  bar.append(grabber, closeBtn);
   const panel = document.createElement("div");
   panel.className = "ctl-panel";
-  container.appendChild(panel);
+  container.append(bar, panel);
 
-  const display = section(container, "Display");
-  checkbox(display, "Flows in L/min", ui.lmin, (on) => {
+  checkbox(displayEl || container, "L/min", ui.lmin, (on) => {
     ui.lmin = on;
     onChange(ui, { unitsOnly: true });
   });
@@ -205,6 +207,12 @@ export function buildControls(container, model, onChange) {
   const setPath = (path, v) => {
     path.slice(0, -1).reduce((o, k) => o[k], ui)[path[path.length - 1]] = v;
   };
+
+  function close() {
+    container.classList.remove("open");
+    onClose?.();
+  }
+  closeBtn.addEventListener("click", close);
 
   function select(id) {
     const desc = panelFor(model, id);
@@ -231,14 +239,9 @@ export function buildControls(container, model, onChange) {
         });
       }
     }
+    container.classList.add("open");
     return desc;
   }
 
-  const hint = document.createElement("p");
-  hint.className = "ctl-hint";
-  hint.textContent =
-    "Click a part in the diagram — the pump, a valve, a head, or the controller — to see and work its controls.";
-  panel.appendChild(hint);
-
-  return { ui, select };
+  return { ui, select, close };
 }
