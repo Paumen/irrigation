@@ -1,7 +1,7 @@
 // Verification cases (settled states fed through the electrical solve, then the
 // hydraulic outer loop). Each case carries:
 //   commands : controller outputs { mv, zones:{1..4} } -> solveElectrical
-//   state    : mechanical inputs   { manualOpen, bleedOpen } -> solveSteady
+//   state    : mechanical inputs { manualOpen, bleedOpen, floStop, throttle } -> solveSteady
 //   blocked  : optional Set of open-circuit port ids / wire names (electrical faults)
 //   kind     : which assertion block the harness runs
 //   expect   : (electrical cases) which zones should be open/closed and pump state
@@ -52,5 +52,25 @@ export const cases = [
     state: { manualOpen: {} },
     blocked: new Set(["signal_2"]),
     expect: { zonesOpen: [1, 3, 4], zonesClosed: [2], pump: true },
+  },
+  // M6 mechanical controls — these three reuse the pump+Z1 state and are compared
+  // against the stashed plain-Z1 result, so they must run after the "z1" case.
+  {
+    name: "pump on + Z1 with Z1.head2 flo-stop closed",
+    kind: "flostop",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {}, floStop: { "Z1.head2": true } },
+  },
+  {
+    name: "pump on + Z1 with Z1.valve flow control at 40%",
+    kind: "throttle",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {}, throttle: { "Z1.valve": 0.4 } },
+  },
+  {
+    name: "pump on + Z1 with Z1.valve flow control fully seated",
+    kind: "throttle0",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {}, throttle: { "Z1.valve": 0 } },
   },
 ];
