@@ -106,9 +106,10 @@ not continuity. Reusable `reachable(graph, from, to, blocked)`. Fixpoint (relay 
 coil loop energises): controller `mv`→relay coil loop→contact closes→`pumpPowered` via
 grid→line_in→contact→load_out→pump→neutral. Each zone N: `zoneCmd[N]` AND continuity
 `zone_N→signal_N→splice.sig_N→ZN.valve.coil→common_lead→com chain→common_return→controller`. The
-**shared common return** means one break can disable several zones — falls out naturally. Three display
-states per wire/part: **asked-for** (path with faults disabled), **powered** (real solve with
-`blocked=electrical faults`), **broken** (faulted, or first asked-but-dead gap).
+**shared common return** means one break can disable several zones — falls out naturally. Per-wire
+display state (superseding the earlier asked/powered/broken trichotomy, per `docs/Sim_ui.md` §5):
+`solveElectrical` returns `energisedWires`, the set of wires on a closed current-carrying path —
+wires merely at potential stay unlit.
 
 ### Faults (`faults.js`)
 Toggle list = every `fail:` in `graph.yaml` (`kinds.*.parts.*.fail` + `circuit.parts.*.*.fail`), keyed
@@ -122,18 +123,17 @@ map overrides a handful (e.g. `bleed_screw:misconfigured`=stuck-open forces valv
 ### Layout + render (`layout.js`, `render.js`)
 elkjs `layered`, `direction=RIGHT`, zones clustered by `Zn.` prefix; separate ELK graph for the circuit
 in a reserved band. Coordinates computed **once** at startup (depend only on the static graph) and
-reused every frame. `render.js` only updates stroke width (∝ |flow|), color (∝ pressure, blue→green→red),
-idle=grey/dashed, every outlet/leak labeled with flow (bar↔L/min toggle), wiring colored
-asked/powered/broken. Optional small `layout.overrides` map for awkward anchors (pump/well/manifold).
+reused every frame. `render.js` only updates stroke width (∝ |flow|), color (red→green against the
+no-fault baseline, per `docs/Sim_ui.md` §3), idle=grey/dashed, every outlet/leak labeled with flow
+(m³/h everywhere, no unit toggle, per `docs/Sim_ui.md` §2), wiring particle-traced from
+`energisedWires`. Optional small `layout.overrides` map for awkward anchors (pump/well/manifold).
 
-### Controls + quasi-time
+### Controls
 `controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
-flo-stop; valve bleed screw; Z5 manual handle; fault toggles. Any change → debounced
-`electrical → compile faults → solveSteady → renderScene`. `quasitime.js`: a **time-ordered** sequence of
-command-states (time is the axis of this mode — each entry has a timestamp; the user places/plays/steps
-along the timeline), each entry solved as a settled state and rendered. The controller's specific
-`pump_lead_s` value is **not** hard-coded as a modelled lead — but the timeline itself is real: the user
-drives the progression and can order pump-on before a zone, etc.
+flo-stop; valve bleed screw; Z5 manual handle; grid/adapter plug toggles; fault toggles. Any change →
+debounced `electrical → compile faults → solveSteady → renderScene`. The quasi-time module
+(`quasitime.js`, a time-ordered sequence of command-states played along a timeline) is **dropped**:
+`docs/Sim_ui.md` §1 specifies a single unified live view with no mode switching.
 
 ## Execution scope (this round)
 
@@ -158,12 +158,12 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
 - **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
 - **M5:** `layout.js` (elkjs) + `render.js` — static schematic with flow/pressure encoding.
-- **M6:** `controls.js` + `app.js` wiring + units toggle (live update); pump, zones, Z5 manual handle,
-  rotor flo-stop, valve flow-control.
-- **M7:** `quasitime.js` (step through a sequence of settled command-states).
+- **M6:** `controls.js` + `app.js` wiring (live update, m³/h fixed — no units toggle); pump, zones,
+  Z5 manual handle, rotor flo-stop, valve flow-control, plug toggles.
+- **M7:** ~~`quasitime.js`~~ dropped per `docs/Sim_ui.md` §1 (single live view, no mode switching).
 - **M8 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
-- **M9:** polish — wiring asked/powered/broken styling, labels, `commandedNotOpening`,
+- **M9:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
   max-pressure warnings; `.github/workflows/pages.yml` + `sim/README.md`.
 
 ## Requirement → milestone traceability

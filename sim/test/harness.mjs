@@ -378,6 +378,42 @@ console.log("Case: electrical-only continuity checks");
   check(lead3.zoneEnergised[3] === false &&
     [1, 2, 4].every((z) => lead3.zoneEnergised[z]),
     "broken common_lead_3 drops only zone 3 (its own return lead)");
+
+  // Per-wire energization: wires on a closed current path light, wires merely at
+  // potential (or on dead-end stubs) stay dark.
+  const ew = healthy.energisedWires;
+  for (const w of ["adapter_socket_live", "adapter_supply_1", "adapter_supply_2",
+    "signal_relay", "relay_return", "grid_live", "pump_live", "grid_neutral",
+    "pump_neutral", "signal_1", "common_lead_1", "common_return"]) {
+    check(ew.has(w), `healthy all-on: ${w} carries current`);
+  }
+  check(!ew.has("grid_earth") && !ew.has("pump_earth"), "earth wires never carry current");
+
+  const z4only = solveElectrical(circuit, { zones: { 4: true } });
+  check(z4only.energisedWires.has("signal_4") && z4only.energisedWires.has("common_lead_4") &&
+    z4only.energisedWires.has("common_return"),
+    "zone 4 alone lights its signal, lead, and the shared return");
+  check(!z4only.energisedWires.has("common_chain_34") && !z4only.energisedWires.has("common_lead_1"),
+    "zone 4 returns through com_4 directly — upstream chain/lead wires stay dark");
+  check(!z4only.energisedWires.has("grid_live"),
+    "grid_live at potential behind the open relay contact stays dark");
+
+  const z1only = solveElectrical(circuit, { zones: { 1: true } });
+  check(["common_chain_12", "common_chain_23", "common_chain_34", "common_return"].every(
+    (w) => z1only.energisedWires.has(w)),
+    "zone 1's return current traverses the whole splice chain");
+
+  // Plug toggles are commands, not faults.
+  const noAdapter = solveElectrical(circuit, { ...all, adapterPower: false });
+  check(noAdapter.controllerPowered === false && noAdapter.pumpPowered === false &&
+    noAdapter.energisedWires.size === 0,
+    "adapter unplugged: controller dead, nothing energised");
+  const noGridPlug = solveElectrical(circuit, { ...all, gridPower: false });
+  check(noGridPlug.pumpPowered === false && noGridPlug.relayCoil === true &&
+    [1, 2, 3, 4].every((z) => noGridPlug.zoneEnergised[z]),
+    "grid unplugged: pump dead, low-voltage side unaffected");
+  check(noGridPlug.energisedWires.has("signal_1") && !noGridPlug.energisedWires.has("grid_live"),
+    "...zone wires lit, pump loop dark");
 }
 console.log("");
 
@@ -409,6 +445,21 @@ console.log("Case: M8 fault list + compiled effects");
     faults.every((f) => f.severity === (f.type === "clogged")),
     "exactly the clogs carry a 0..1 severity",
   );
+
+  // inert/threshold metadata: the UI greys these without duplicating rule knowledge
+  const byMetaKey = new Map(faults.map((f) => [f.key, f]));
+  check(byMetaKey.get("Z1.head2.gear:broken").inert === true, "cosmetic rotor gear fault reported inert");
+  check(byMetaKey.get("Z1.valve.flow_control:broken").inert === true,
+    "broken flow-control stem reported inert at steady state");
+  check(byMetaKey.get("Z1.valve.metering_port:clogged").threshold === 0.5,
+    "pilot-fill clog carries its acting threshold");
+  check(byMetaKey.get("Z1.valve.plunger:clogged").threshold === 0.5,
+    "pilot-drain clog carries its acting threshold");
+  check(!byMetaKey.get("Z1.hose1:clogged").inert && byMetaKey.get("Z1.hose1:clogged").threshold == null,
+    "ordinary clog carries no inert/threshold flags");
+  check(byMetaKey.get("Z1.valve.bleed_screw:misconfigured").inert == null,
+    "acting SPECIAL fault not marked inert");
+  check(byMetaKey.get("controller.zone_2:broken").inert == null, "circuit faults always act");
 
   const full = compileFaults(model, { "Z1.hose1:clogged": 1 });
   check(full.closedLinks.has("Z1.hose1") && !full.linkK.has("Z1.hose1"), "full clog seals the link");

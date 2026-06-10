@@ -50,6 +50,48 @@ export function buildContinuityGraph(circuit, { contactClosed = false, blocked =
   return adj;
 }
 
+const edgeKey = (a, b) => (a < b ? `${a}|${b}` : `${b}|${a}`);
+
+// edge -> wireName lookup; depends only on the static wiring, so cache per circuit.
+const wireOfByCircuit = new WeakMap();
+function wireOfCache(circuit) {
+  let m = wireOfByCircuit.get(circuit);
+  if (!m) {
+    m = new Map();
+    for (const [wireName, w] of Object.entries(circuit.wires)) {
+      m.set(edgeKey(w.from, w.to), wireName);
+    }
+    wireOfByCircuit.set(circuit, m);
+  }
+  return m;
+}
+
+// Wires carrying current = wires on at least one simple path between a closed loop's
+// terminals. Reachability is not enough: a dead-end stub off the loop is at potential
+// but carries nothing. DFS path enumeration is fine at this graph's size.
+function wiresOnPaths(adj, wireOf, from, to, out) {
+  const visited = new Set([from]);
+  const path = [];
+  const dfs = (curr) => {
+    if (curr === to) {
+      for (const e of path) {
+        const w = wireOf.get(e);
+        if (w) out.add(w);
+      }
+      return;
+    }
+    for (const next of adj.get(curr) || []) {
+      if (visited.has(next)) continue;
+      visited.add(next);
+      path.push(edgeKey(curr, next));
+      dfs(next);
+      path.pop();
+      visited.delete(next);
+    }
+  };
+  dfs(from);
+}
+
 // Every referenced port is registered (even blocked ones), so an unknown endpoint is a typo,
 // not a fault state — throw instead of returning false.
 export function reachable(adj, from, to) {
@@ -75,7 +117,12 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
   const mv = !!commands.mv;
   const zones = commands.zones || {};
 
-  const g = buildContinuityGraph(circuit, { contactClosed: false, blocked });
+  // Unplugged supplies are commands (UI plug toggles), not faults: block the live pin.
+  const eff = new Set(blocked);
+  if (commands.gridPower === false) eff.add("grid_socket.l");
+  if (commands.adapterPower === false) eff.add("adapter_socket.l");
+
+  const g = buildContinuityGraph(circuit, { contactClosed: false, blocked: eff });
 
   // Secondaries are coupled, not wired: controller is powered only when the primary loop is
   // closed AND the low-voltage wires reach it.
@@ -89,7 +136,7 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
 
   // Grid L->N is the only galvanic pump path, so it needs both the closed contact and an intact motor.
   const pumpGraph = relayCoil
-    ? buildContinuityGraph(circuit, { contactClosed: true, blocked })
+    ? buildContinuityGraph(circuit, { contactClosed: true, blocked: eff })
     : g;
   const pumpPowered = relayCoil && reachable(pumpGraph, "grid_socket.l", "grid_socket.n");
 
@@ -102,5 +149,18 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
       reachable(g, `controller.zone_${n}`, "controller.c_2");
   }
 
-  return { primaryEnergised, controllerPowered, relayCoil, pumpPowered, zoneEnergised };
+  const wireOf = wireOfCache(circuit);
+  const energisedWires = new Set();
+  if (primaryEnergised) wiresOnPaths(g, wireOf, "adapter_socket.l", "adapter_socket.n", energisedWires);
+  if (controllerPowered) {
+    wiresOnPaths(g, wireOf, "adapter.out_1", "controller.ac_1", energisedWires);
+    wiresOnPaths(g, wireOf, "adapter.out_2", "controller.ac_2", energisedWires);
+  }
+  if (relayCoil) wiresOnPaths(g, wireOf, "controller.mv", "controller.c_2", energisedWires);
+  if (pumpPowered) wiresOnPaths(pumpGraph, wireOf, "grid_socket.l", "grid_socket.n", energisedWires);
+  for (let n = 1; n <= 4; n++) {
+    if (zoneEnergised[n]) wiresOnPaths(g, wireOf, `controller.zone_${n}`, "controller.c_2", energisedWires);
+  }
+
+  return { primaryEnergised, controllerPowered, relayCoil, pumpPowered, zoneEnergised, energisedWires };
 }

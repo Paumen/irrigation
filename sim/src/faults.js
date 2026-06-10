@@ -13,6 +13,20 @@ import { streamEmitterCoeff } from "./outlets.js";
 
 const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
 
+// UI metadata: `inert` = declared but no steady-state effect; `threshold` = severities
+// below it leave the settled state unchanged. Derived from SPECIAL/RULES so the UI never
+// duplicates rule knowledge.
+const specialKeyOf = (node, sub, type) =>
+  sub ? `${node.kind}.${sub}:${type}` : `${node.kind}:${type}`;
+
+function metaOf(node, sub, type) {
+  const specialKey = specialKeyOf(node, sub, type);
+  if (SPECIAL[specialKey]) return INERT_SPECIALS.has(specialKey) ? { inert: true } : {};
+  const cell = `${groupOf(node, sub)}:${type}`;
+  if (!RULES[cell]) return { inert: true };
+  return cell in THRESHOLDS ? { threshold: THRESHOLDS[cell] } : {};
+}
+
 // A part can appear on both flow and circuit sides (e.g. pump motor); first wins.
 export function listFaults(model) {
   const out = [];
@@ -27,11 +41,11 @@ export function listFaults(model) {
     const kindDef = model.kinds[n.kind];
     if (!kindDef) continue;
     for (const t of kindDef.fail || []) {
-      push({ key: `${n.id}:${t}`, target: n.id, sub: null, type: t, side: "flow" });
+      push({ key: `${n.id}:${t}`, target: n.id, sub: null, type: t, side: "flow", ...metaOf(n, null, t) });
     }
     for (const [sub, def] of Object.entries(kindDef.parts || {})) {
       for (const t of def.fail || []) {
-        push({ key: `${n.id}.${sub}:${t}`, target: n.id, sub, type: t, side: "flow" });
+        push({ key: `${n.id}.${sub}:${t}`, target: n.id, sub, type: t, side: "flow", ...metaOf(n, sub, t) });
       }
     }
   }
@@ -199,6 +213,15 @@ const RULES = {
   },
 };
 
+// Severity steps below these only slow actuation; the settled state is unchanged.
+const THRESHOLDS = {
+  "pilotFill:clogged": PILOT_CLOG_BLOCKS,
+  "pilotDrain:clogged": PILOT_CLOG_BLOCKS,
+};
+
+// SPECIAL entries that are deliberate steady-state no-ops.
+const INERT_SPECIALS = new Set(["valve.auto.flow_control:broken"]);
+
 // Part-specific overrides, keyed `<kind>.<sub>:<type>`, consulted before the table.
 const SPECIAL = {
   // bleeds the chamber but pressure gating still applies, hence bleedForcedOpen
@@ -240,7 +263,7 @@ export function compileFaults(model, active = {}) {
       continue;
     }
     const node = model.flowNodes.get(f.target);
-    const rule = SPECIAL[`${node.kind}.${f.sub}:${f.type}`] ?? RULES[`${groupOf(node, f.sub)}:${f.type}`];
+    const rule = SPECIAL[specialKeyOf(node, f.sub, f.type)] ?? RULES[`${groupOf(node, f.sub)}:${f.type}`];
     rule?.({ fx, model, node, sev });
   }
   return fx;
