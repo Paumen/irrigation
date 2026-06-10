@@ -39,7 +39,8 @@ function tableFlow(pressures, row, p) {
 }
 
 // outlet = { subkind, params:{nozzle, arc, bore_mm, cd, …} }; p_bar = inlet pressure.
-export function outletDemandAt(outlet, p_bar, curves) {
+// opts.noClamp drops the spray head's regulator clamp (M8: regulator broken).
+export function outletDemandAt(outlet, p_bar, curves, { noClamp = false } = {}) {
   if (!(p_bar > 0)) return 0;
   const { subkind, params } = outlet;
 
@@ -56,7 +57,7 @@ export function outletDemandAt(outlet, p_bar, curves) {
   if (subkind === "spray") {
     // MP rotator: built-in regulator clamps the nozzle inlet to <= 2.76 bar, then
     // read the raw nozzle table for the fitted nozzle + arc.
-    const pLook = Math.min(p_bar, SPRAY_CLAMP_BAR);
+    const pLook = noClamp ? p_bar : Math.min(p_bar, SPRAY_CLAMP_BAR);
     const arcRow = curves.nozzleMp.flow_m3h_by_arc[params.nozzle];
     if (!arcRow) throw new Error(`outlets: no nozzle_mp nozzle "${params.nozzle}"`);
     const row = arcRow[String(params.arc)];
@@ -73,6 +74,30 @@ export function outletDemandAt(outlet, p_bar, curves) {
   }
 
   throw new Error(`outlets: unknown outlet subkind "${subkind}"`);
+}
+
+// The lowest tabulated point of a table outlet's law: below pMin_bar the discharge
+// is exactly qMin*sqrt(p/pMin) (see tableFlow) — an emitter law. The solver swaps a
+// starved outlet to an EPANET emitter there, because the demand fixed point turns
+// singular as p -> 0 (dq/dp -> infinity) and no fixed damping converges.
+export function outletTableMin(outlet, curves) {
+  const { subkind, params } = outlet;
+  let pressures, row;
+  if (subkind === "rotor") {
+    const size = String(params.nozzle ?? "").match(/[\d.]+/)?.[0];
+    pressures = curves.nozzleI20.pressure_bar;
+    row = curves.nozzleI20.flow_m3h[size];
+  } else if (subkind === "spray") {
+    pressures = curves.nozzleMp.pressure_bar;
+    row = curves.nozzleMp.flow_m3h_by_arc[params.nozzle]?.[String(params.arc)];
+  } else {
+    return null; // stream nozzles are full-range emitters already
+  }
+  if (!row) throw new Error(`outlets: no catalog row for ${outlet.id ?? subkind}`);
+  let i0 = 0;
+  while (i0 < pressures.length && row[i0] == null) i0++;
+  if (i0 >= pressures.length) return null;
+  return { pMin_bar: pressures[i0], qMin: row[i0] };
 }
 
 // An open-orifice stream nozzle is a true EPANET emitter: q = C * h^0.5 with h in

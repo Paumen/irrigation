@@ -1,8 +1,9 @@
-// Headless verification of the M1–M4 physics core. Loads the real root YAMLs, builds
-// the model, solves each case (electrical -> hydraulic), and asserts convergence, mass
-// balance, catalog fidelity, dead-branch handling, the Z5 manual hand-watering branch,
-// and electrical actuation (pump power + zone energisation incl. shared-return breaks).
-// Exits non-zero on any failure.
+// Headless verification of the M1–M8 physics core. Loads the real root YAMLs, builds
+// the model, solves each case (faults -> electrical -> hydraulic), and asserts
+// convergence, mass balance, catalog fidelity, dead-branch handling, the Z5 manual
+// hand-watering branch, electrical actuation (pump power + zone energisation incl.
+// shared-return breaks), fault effects (clogs, leaks, weak pump, stuck valves), and
+// the quasi-time core. Exits non-zero on any failure.
 //
 // Run: node test/harness.mjs   (from sim/, via `npm test`)
 
@@ -12,6 +13,8 @@ import { buildModel } from "../src/model.js";
 import { createHydraulics } from "../src/epanet-runner.js";
 import { solveSteady } from "../src/solver.js";
 import { solveElectrical } from "../src/electrical.js";
+import { listFaults, compileFaults } from "../src/faults.js";
+import { snapshotUi, addEntry, entryIndexAt, spanOf } from "../src/quasitime.js";
 import { outletDemandAt, interp } from "../src/outlets.js";
 import { computeLayout } from "../src/layout.js";
 import { buildScene, pressureColor, strokeWidth } from "../src/scene.js";
@@ -76,15 +79,21 @@ let s2Result = null; // broken-signal_2 case, for the M5 wiring-state checks
 let s2Elec = null;
 let noResult = null; // commanded-but-not-opening case, for the equipment-state checks
 let noElec = null;
+let leakResult = null; // burst-hose case, for the M8 scene (leak marker / ✕) checks
+let leakElec = null;
+let leakFx = null;
 
 for (const c of cases) {
   console.log(`Case: ${c.name}`);
-  const elec = solveElectrical(circuit, c.commands, c.blocked || new Set());
-  const r = solveSteady(model, c.state, elec, hyd);
+  const fx = c.faults ? compileFaults(model, c.faults) : undefined;
+  const blocked = new Set([...(c.blocked || []), ...(fx ? fx.elecBlocked : [])]);
+  const elec = solveElectrical(circuit, c.commands, blocked);
+  const r = solveSteady(model, c.state, elec, hyd, fx);
   reportTable(model, r);
   if (c.kind === "idle") [idleResult, idleElec] = [r, elec];
   if (c.kind === "z1") z1Elec = elec;
   if (c.kind === "notopening") [noResult, noElec] = [r, elec];
+  if (c.kind === "leak") [leakResult, leakElec, leakFx] = [r, elec, fx];
   if (c.blocked?.has("signal_2")) [s2Result, s2Elec] = [r, elec];
 
   // shared invariants
@@ -253,6 +262,87 @@ for (const c of cases) {
       Math.abs(lossM - want) < 0.3,
       `valve headloss matches the scaled catalog law (${lossM.toFixed(2)} m vs ${want.toFixed(2)} m at ${q.toFixed(3)} m3/h)`,
     );
+  } else if (c.kind === "clogfull") {
+    // M8: a fully clogged hose seals the branch — heads dry, no NaN, still converges.
+    check(r.valveOpen["Z1.valve"] === true, "Z1 valve still opens (clog is downstream)");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) === 0 && !r.reachable.has(id), `${id} dry beyond the full clog`);
+    }
+    check(Math.abs(r.pumpFlow) < 0.02, "pump dead-heads (no path for water)");
+  } else if (c.kind === "clogpartial") {
+    // M8: a partial clog restricts: everything still discharges, at reduced rates.
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) > 0, `${id} still discharges past the partial clog`);
+    }
+    check(
+      r.demands.get("Z1.head2") < z1Result.demands.get("Z1.head2"),
+      "the unregulated rotor's discharge drops",
+    );
+    const pNow = r.pressureBar[epOf("Z1.head2")];
+    const pAlone = z1Result.pressureBar[epOf("Z1.head2")];
+    check(pNow < pAlone, `head pressure drops past the clog (${pNow.toFixed(3)} < ${pAlone.toFixed(3)} bar)`);
+    check(r.pumpFlow < z1Result.pumpFlow, "total pump flow drops");
+  } else if (c.kind === "leak") {
+    // M8: a burst hose escapes water at its downstream junction; the heads keep
+    // discharging at lower pressure and the leak is part of the mass balance.
+    const leakQ = r.leakFlows.get("Z1.joint3");
+    check(leakQ > 0.3, `leak escapes at Z1.joint3 (${(leakQ ?? NaN).toFixed(4)} m3/h)`);
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) > 0, `${id} still discharges`);
+    }
+    const pNow = r.pressureBar[epOf("Z1.head1")];
+    const pAlone = z1Result.pressureBar[epOf("Z1.head1")];
+    check(pNow < pAlone, `pressure at the head past the leak drops (${pNow.toFixed(3)} < ${pAlone.toFixed(3)} bar)`);
+    check(r.pumpFlow > z1Result.pumpFlow, "pump delivers more in total (the leak is extra discharge)");
+    const headSum = ["Z1.head1", "Z1.head2", "Z1.head3"].reduce((a, id) => a + r.demands.get(id), 0);
+    check(
+      Math.abs(r.outSum - (headSum + leakQ)) < 1e-6,
+      "total outflow = heads + leak",
+    );
+  } else if (c.kind === "bleedstuck") {
+    // M8 special: a bleed screw stuck open runs the zone without any controller command.
+    check(elec.zoneEnergised[1] === false, "zone 1 not energised (controller never asked)");
+    check(r.valveOpen["Z1.valve"] === true, "Z1 valve lifts off the stuck-open bleed");
+    check(r.commandedNotOpening["Z1.valve"] === false, "not flagged commanded-but-not-opening");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) > 0, `${id} waters`);
+    }
+    for (const id of ["Z2.valve", "Z3.valve", "Z4.valve"]) {
+      check(r.valveOpen[id] === false, `${id} stays closed`);
+    }
+  } else if (c.kind === "weakpump") {
+    // M8: a half-clogged impeller scales the head curve down — everything still runs,
+    // weaker.
+    check(r.valveOpen["Z1.valve"] === true, "Z1 valve still opens");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) > 0, `${id} still discharges`);
+    }
+    check(r.pumpFlow < z1Result.pumpFlow, "weak pump moves less water");
+    check(
+      r.demands.get("Z1.head2") < z1Result.demands.get("Z1.head2"),
+      "the unregulated rotor's discharge drops",
+    );
+  } else if (c.kind === "pumpdead") {
+    // M8: a broken motor (one fault key, shared by the hydraulic and circuit sides)
+    // kills the pump even though the wiring would deliver power.
+    check(elec.pumpPowered === true, "relay/wiring would power the pump");
+    check(Math.abs(r.pumpFlow) < 1e-6, "broken motor: no flow");
+    check(!r.reachable.has("Z1.head1"), "nothing downstream is wetted");
+    check(r.commandedNotOpening["Z1.valve"] === true, "Z1 reported commanded-but-not-opening");
+  } else if (c.kind === "noclamp") {
+    // M8 special: with the regulator broken the spray follows the raw nozzle table
+    // at its full inlet pressure instead of the 2.76 bar clamp.
+    const o = model.flowNodes.get("Z1.head1");
+    const inlet = r.pressureBar[epOf("Z1.head1")];
+    const law = outletDemandAt(o, inlet, model.curves, { noClamp: true });
+    const got = r.demands.get("Z1.head1");
+    check(Math.abs(got - law) < 1e-3, `unregulated spray matches the raw table law (${got.toFixed(4)} vs ${law.toFixed(4)})`);
+    if (inlet > 2.76) {
+      check(
+        got > z1Result.demands.get("Z1.head1"),
+        `above 2.76 bar it discharges more than the regulated head (${got.toFixed(4)} > ${z1Result.demands.get("Z1.head1").toFixed(4)})`,
+      );
+    }
   } else if (c.kind === "throttle0") {
     // M6: a fully-seated flow control pins the diaphragm shut — energised or not.
     check(elec.zoneEnergised[1] === true, "zone 1 energised (wiring healthy)");
@@ -336,6 +426,92 @@ console.log("Case: electrical wire/port display states");
   check(noGrid.wires.pump_live.asked && !noGrid.wires.pump_live.powered && !noGrid.wires.pump_live.broken,
     "broken grid_live: rest of the pump run asked-but-dead, not broken");
   check(noGrid.wires.signal_relay.powered, "broken grid_live: relay coil loop still powered");
+}
+console.log("");
+
+// M8: the fault model's pure half — the toggle list enumerates every fail: entry in
+// graph.yaml, and the grouped (role x failtype) dispatch emits the right effects.
+console.log("Case: M8 fault list + compiled effects");
+{
+  const faults = listFaults(model);
+  const keys = new Set(faults.map((f) => f.key));
+  check(keys.size === faults.length, `fault keys unique (${faults.length} faults)`);
+  check(faults.length > 300, `every fail: entry enumerated (got ${faults.length})`);
+  for (const k of [
+    "Z1.hose1:clogged",
+    "Z1.valve.diaphragm:broken",
+    "pump.impeller:clogged",
+    "Z3.head2.nozzle:misconfigured",
+    "Z5.nozzle:clogged",
+    "controller.zone_2:broken",
+    "splice.com_3:broken",
+    "Z6.cap:broken",
+  ]) {
+    check(keys.has(k), `fault list includes ${k}`);
+  }
+  check(
+    faults.filter((f) => f.key === "pump.motor:broken").length === 1,
+    "the pump motor (in both kinds and circuit) is one fault, not two",
+  );
+  check(
+    faults.every((f) => f.severity === (f.type === "clogged")),
+    "exactly the clogs carry a 0..1 severity",
+  );
+
+  const full = compileFaults(model, { "Z1.hose1:clogged": 1 });
+  check(full.closedLinks.has("Z1.hose1") && !full.linkK.has("Z1.hose1"), "full clog seals the link");
+  const part = compileFaults(model, { "Z1.hose1:clogged": 0.5 });
+  check(!part.closedLinks.has("Z1.hose1") && part.linkK.get("Z1.hose1") > 0, "partial clog adds minor loss");
+  const burst = compileFaults(model, { "Z1.hose2:broken": true });
+  check(burst.leaks.get("Z1.joint3") > 0, "burst hose leaks at its downstream junction");
+  check(compileFaults(model, { "hose1:broken": true }).pumpDisabled, "suction-side break loses prime");
+  check(
+    compileFaults(model, { "Z3.valve.coil:broken": true }).elecBlocked.has("Z3.valve.coil"),
+    "broken solenoid coil becomes an electrical cut",
+  );
+  check(
+    compileFaults(model, { "Z1.valve.flow_control:misconfigured": true }).valveDisabled.has("Z1.valve"),
+    "seated flow-control screw pins the valve shut",
+  );
+  check(
+    compileFaults(model, { "Z2.valve.diaphragm:broken": true }).valveForcedOpen.has("Z2.valve"),
+    "torn diaphragm sticks the valve open",
+  );
+  check(
+    compileFaults(model, { "Z1.valve.plunger:broken": true }).valveDisabled.has("Z1.valve"),
+    "broken solenoid plunger: valve cannot lift",
+  );
+  check(compileFaults(model, { "pump.priming_cap:misconfigured": true }).pumpDisabled, "loose priming cap loses prime");
+  check(
+    compileFaults(model, { "Z1.head2.nozzle:misconfigured": true }).outletMods.get("Z1.head2").nozzle === "8.0",
+    "rotor wrong-nozzle swaps to another catalog size",
+  );
+  check(
+    compileFaults(model, { "Z1.head1.nozzle:misconfigured": true }).outletMods.get("Z1.head1").nozzle === "MP2000",
+    "spray wrong-nozzle swaps to a family that has the same arc",
+  );
+  check(
+    !!compileFaults(model, { "Z4.head2.flush_plug:misconfigured": true }).outletMods.get("Z4.head2").asOrifice,
+    "flush plug left in: the head dumps as an open orifice",
+  );
+  const circ = compileFaults(model, { "controller.zone_2:broken": true });
+  check(circ.elecBlocked.has("controller.zone_2"), "circuit fault becomes a blocked port");
+  const e2 = solveElectrical(circuit, { mv: true, zones: { 1: true, 2: true } }, circ.elecBlocked);
+  check(
+    e2.zoneEnergised[2] === false && e2.zoneEnergised[1] === true,
+    "...which drops exactly that zone",
+  );
+  let threw = false;
+  try {
+    compileFaults(model, { "no.such.part:broken": true });
+  } catch {
+    threw = true;
+  }
+  check(threw, "unknown fault key throws (a typo is a bug, not a fault)");
+  check(
+    compileFaults(model, { "Z1.hose1:clogged": 0, "Z1.valve.coil:broken": false }).faulted.size === 0,
+    "falsy values (toggle off, severity 0) are healthy",
+  );
 }
 console.log("");
 
@@ -564,6 +740,17 @@ console.log("Case: M5 scene (visual attribute computation)");
       scene.splices.map((s) => [s.key, s.x, s.y]),
     ]);
   check(geomOf(idleScene) === geomOf(z1Scene), "positions never move between states");
+
+  // M8 scene: a faulted element wears an ✕, an active leak is marked with its flow
+  check(z1Scene.faultMarks.length === 0 && z1Scene.leaks.length === 0, "healthy scene: no fault marks, no leaks");
+  const leakScene = buildScene(model, layout, leakResult, leakElec, { faults: leakFx });
+  check(
+    leakScene.leaks.length === 1 && leakScene.leaks[0].key === "Z1.joint3" &&
+      leakScene.leaks[0].text === fmtFlow(leakResult.leakFlows.get("Z1.joint3"), false),
+    "burst hose: leak marker at Z1.joint3 labelled with the escaping flow",
+  );
+  const hoseMark = leakScene.faultMarks.find((m) => m.key === "Z1.hose2");
+  check(!!hoseMark && Number.isFinite(hoseMark.x) && /broken/.test(hoseMark.title), "the burst hose itself wears an ✕ on its polyline");
 }
 console.log("");
 
@@ -602,6 +789,11 @@ console.log("Case: M6 control spec + initial UI state");
     "initial state: handles shut, flo-stops open",
   );
   check(ui.lmin === false, "flows default to m³/h");
+  check(
+    spec.faults.length > 300 &&
+      spec.faults.every((f) => ui.faults[f.key] === (f.severity ? 0 : false)),
+    "initial state: every fault healthy (toggles off, clog severities 0)",
+  );
 
   // the UI state feeds the solvers directly and the boot state is idle
   const elec = solveElectrical(circuit, ui.commands);
@@ -651,6 +843,30 @@ console.log("Case: M6 control spec + initial UI state");
     panelFor(model, "Z5.nozzle").widgets.length === 0,
     "stream nozzle panel: info only",
   );
+  // M8 fault widgets: each equipment panel carries its own failures, addressed into
+  // ui.faults; the master "__faults__" panel groups every failure by part
+  const vF = panelFor(model, "Z1.valve").faults;
+  const vCount = spec.faults.filter((f) => f.target === "Z1.valve").length;
+  check(
+    vF.length === vCount && vCount > 0 && vF.every((w) => pathOk(w.path)),
+    `auto-valve panel lists its ${vCount} faults`,
+  );
+  check(vF.some((w) => w.kind === "slider"), "clog faults expose a severity slider");
+  check(
+    panelFor(model, "controller").faults.length ===
+      spec.faults.filter((f) => f.target === "controller").length,
+    "controller panel lists its circuit faults",
+  );
+  const master = panelFor(model, "__faults__");
+  const masterCount = master.groups.reduce((a, g) => a + g.widgets.length, 0);
+  check(
+    masterCount === spec.faults.length && master.groups.every((g) => g.widgets.length > 0),
+    `master fault panel covers all ${spec.faults.length} failures, grouped by part`,
+  );
+  check(
+    master.groups.flatMap((g) => g.widgets).every((w) => pathOk(w.path)),
+    "every master-panel fault widget addresses a seeded ui.faults slot",
+  );
   // every clickable target resolves to a panel without throwing
   let panelErr = null;
   for (const n of model.flowNodes.values()) {
@@ -662,6 +878,87 @@ console.log("Case: M6 control spec + initial UI state");
     }
   }
   check(!panelErr, `every clickable glyph has a panel${panelErr ? ` (${panelErr})` : ""}`);
+}
+console.log("");
+
+// M7: quasi-time — the pure timeline core, then a physically meaningful sequence:
+// the user orders pump-on 5 s before zone 1 (the controller's pump-lead, driven by
+// the timeline, not hard-coded), so between entries the pump runs dead-headed.
+console.log("Case: M7 quasi-time (timeline core + pump-lead sequence)");
+{
+  let tl = addEntry([], { at_s: 30, snap: "c" });
+  tl = addEntry(tl, { at_s: 0, snap: "a" });
+  tl = addEntry(tl, { at_s: 10, snap: "b" });
+  check(tl.map((e) => e.at_s).join(",") === "0,10,30", "entries kept sorted by time");
+  check(
+    entryIndexAt(tl, -1) === -1 &&
+      entryIndexAt(tl, 0) === 0 &&
+      entryIndexAt(tl, 9.5) === 0 &&
+      entryIndexAt(tl, 10) === 1 &&
+      entryIndexAt(tl, 1e6) === 2,
+    "entryIndexAt picks the entry in effect at t (initial state before the first)",
+  );
+  check(spanOf([]) > 0 && spanOf(tl) === 30 + spanOf([]), "scrub span = last entry + tail");
+  const tl2 = addEntry(tl, { at_s: 10, snap: "b2" });
+  check(tl2[entryIndexAt(tl2, 10)].snap === "b2", "re-capturing a time supersedes the old entry");
+
+  const liveUi = {
+    commands: { mv: false, zones: { 1: false } },
+    state: { manualOpen: {}, bleedOpen: {}, floStop: {}, throttle: { "Z1.valve": 1 } },
+    faults: { "Z1.hose1:clogged": 0 },
+    lmin: true,
+  };
+  const snap = snapshotUi(liveUi);
+  liveUi.commands.mv = true;
+  liveUi.commands.zones[1] = true;
+  liveUi.state.manualOpen["Z5.valve"] = true;
+  liveUi.state.throttle["Z1.valve"] = 0.2;
+  liveUi.faults["Z1.hose1:clogged"] = 1;
+  check(
+    snap.commands.mv === false &&
+      snap.commands.zones[1] === false &&
+      !snap.state.manualOpen["Z5.valve"] &&
+      snap.state.throttle["Z1.valve"] === 1 &&
+      snap.faults["Z1.hose1:clogged"] === 0 &&
+      !("lmin" in snap),
+    "snapshots deep-copy exactly the solver inputs (later edits don't bleed in)",
+  );
+
+  const seq = [
+    { at_s: 0, snap: { commands: { mv: true, zones: {} }, state: { manualOpen: {} } } },
+    { at_s: 5, snap: { commands: { mv: true, zones: { 1: true } }, state: { manualOpen: {} } } },
+    { at_s: 300, snap: { commands: { mv: false, zones: {} }, state: { manualOpen: {} } } },
+  ];
+  let stl = [];
+  for (const e of seq) stl = addEntry(stl, e);
+  const atT = (t) => {
+    const i = entryIndexAt(stl, t);
+    if (i < 0) return null;
+    const elec = solveElectrical(circuit, stl[i].snap.commands);
+    return { elec, steady: solveSteady(model, stl[i].snap.state, elec, hyd) };
+  };
+  check(atT(-0.5) === null, "before the first entry: the initial (idle) state shows");
+  const lead = atT(2);
+  check(lead.steady.converged, "t=2s (pump lead): converges");
+  check(
+    lead.elec.pumpPowered === true && Math.abs(lead.steady.pumpFlow) < 0.02,
+    "t=2s: pump runs dead-headed against the closed valves",
+  );
+  check(
+    lead.steady.pressureBar.manifold > 3.5,
+    `t=2s: manifold holds near shutoff pressure (${lead.steady.pressureBar.manifold.toFixed(2)} bar)`,
+  );
+  check(!lead.steady.reachable.has("Z1.head1"), "t=2s: no head wetted yet");
+  const watering = atT(7);
+  check(
+    watering.steady.demands.get("Z1.head1") > 0 && watering.steady.pumpFlow > 0.5,
+    "t=7s: zone 1 waters once its entry takes effect",
+  );
+  const off = atT(1000);
+  check(
+    off.elec.pumpPowered === false && off.steady.outSum < 1e-9,
+    "t=300s+: everything back to idle",
+  );
 }
 console.log("");
 
