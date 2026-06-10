@@ -15,7 +15,7 @@ import { solveElectrical } from "../src/electrical.js";
 import { outletDemandAt, interp } from "../src/outlets.js";
 import { computeLayout } from "../src/layout.js";
 import { buildScene, pressureColor, strokeWidth } from "../src/scene.js";
-import { controlSpec, initialUiState } from "../src/controls.js";
+import { controlSpec, initialUiState, panelFor } from "../src/controls.js";
 import { fmtFlow } from "../src/units.js";
 import {
   CIRCUIT_BAND_GAP,
@@ -574,6 +574,58 @@ console.log("Case: M6 control spec + initial UI state");
     r.converged && Math.abs(r.pumpFlow) < 1e-9 && Math.abs(r.outSum) < 1e-9,
     "initial UI state solves straight to idle (no flow)",
   );
+
+  // per-equipment panels (click-to-select): every widget path must address a slot
+  // that initialUiState created, so a clicked panel can never write outside ui
+  const pathOk = (path) => {
+    let o = ui;
+    for (const k of path.slice(0, -1)) o = o?.[k];
+    return o != null && path[path.length - 1] in o;
+  };
+  const ctlPanel = panelFor(model, "controller");
+  check(
+    ctlPanel.widgets.length === 5 && ctlPanel.widgets.every((w) => w.kind === "toggle" && pathOk(w.path)),
+    "controller panel: pump + 4 zone commands",
+  );
+  const vPanel = panelFor(model, "Z1.valve");
+  check(
+    vPanel.widgets.map((w) => w.kind).join(",") === "toggle,slider,toggle" &&
+      JSON.stringify(vPanel.widgets[1].path) === '["state","throttle","Z1.valve"]' &&
+      JSON.stringify(vPanel.widgets[2].path) === '["state","bleedOpen","Z1.valve"]' &&
+      vPanel.widgets.every((w) => pathOk(w.path)),
+    "auto-valve panel: zone command + flow-control slider + bleed screw",
+  );
+  check(
+    JSON.stringify(panelFor(model, "pump").widgets[0].path) === '["commands","mv"]',
+    "pump panel: the master-valve command",
+  );
+  check(
+    JSON.stringify(panelFor(model, "Z5.valve").widgets[0].path) === '["state","manualOpen","Z5.valve"]',
+    "manual valve panel: the handle",
+  );
+  check(
+    JSON.stringify(panelFor(model, "Z1.head2").widgets[0].path) === '["state","floStop","Z1.head2"]',
+    "rotor panel: the flo-stop",
+  );
+  check(
+    panelFor(model, "Z1.head1").widgets.length === 0 && !!panelFor(model, "Z1.head1").info,
+    "spray panel: info only (regulated, no manual control)",
+  );
+  check(
+    panelFor(model, "Z5.nozzle").widgets.length === 0,
+    "stream nozzle panel: info only",
+  );
+  // every clickable target resolves to a panel without throwing
+  let panelErr = null;
+  for (const n of model.flowNodes.values()) {
+    if (!["pump", "valve-auto", "valve-manual", "outlet"].includes(n.role)) continue;
+    try {
+      panelFor(model, n.id);
+    } catch (e) {
+      panelErr = `${n.id}: ${e.message}`;
+    }
+  }
+  check(!panelErr, `every clickable glyph has a panel${panelErr ? ` (${panelErr})` : ""}`);
 }
 console.log("");
 
