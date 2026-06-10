@@ -82,6 +82,9 @@ let noElec = null;
 let leakResult = null; // burst-hose case, for the M8 scene (leak marker / ✕) checks
 let leakElec = null;
 let leakFx = null;
+let pdResult = null; // broken-motor case, for the M8 powered-but-dead pump glyph check
+let pdElec = null;
+let pdFx = null;
 
 for (const c of cases) {
   console.log(`Case: ${c.name}`);
@@ -94,6 +97,7 @@ for (const c of cases) {
   if (c.kind === "z1") z1Elec = elec;
   if (c.kind === "notopening") [noResult, noElec] = [r, elec];
   if (c.kind === "leak") [leakResult, leakElec, leakFx] = [r, elec, fx];
+  if (c.kind === "pumpdead") [pdResult, pdElec, pdFx] = [r, elec, fx];
   if (c.blocked?.has("signal_2")) [s2Result, s2Elec] = [r, elec];
 
   // shared invariants
@@ -790,6 +794,13 @@ console.log("Case: M5 scene (visual attribute computation)");
   );
   const hoseMark = leakScene.faultMarks.find((m) => m.key === "Z1.hose2");
   check(!!hoseMark && Number.isFinite(hoseMark.x) && /broken/.test(hoseMark.title), "the burst hose itself wears an ✕ on its polyline");
+  // a pump that gets power but is hydraulically dead draws amber, not green "on"
+  const pdScene = buildScene(model, layout, pdResult, pdElec, { faults: pdFx });
+  const pdPump = pdScene.nodes.find((n) => n.key === "pump");
+  check(
+    pdPump.state === "commanded" && pdPump.color === EQUIP_CMD_STROKE && pdPump.fill === EQUIP_CMD_FILL,
+    "powered-but-dead pump (broken motor) drawn amber commanded, not green on",
+  );
 }
 console.log("");
 

@@ -99,7 +99,11 @@ export function buildScene(model, layout, steady, elec, { lmin = false, faults =
     const fn = model.flowNodes.get(id);
     const isDead = !steady.reachable.has(id);
     let state = "";
-    if (fn.role === "pump") state = elec.pumpPowered ? "on" : "off";
+    // a pump that gets power but is hydraulically dead (broken motor/impeller, lost
+    // prime) is commanded-but-not-delivering — amber, like a valve that cannot open
+    if (fn.role === "pump") {
+      state = !elec.pumpPowered ? "off" : faults?.pumpDisabled ? "commanded" : "on";
+    }
     else if (fn.role.startsWith("valve")) {
       if (steady.valveOpen[id]) state = "open";
       else if (steady.commandedNotOpening[id]) state = "commanded";
