@@ -4,6 +4,14 @@ export const M_PER_BAR = 10.197; // metres of water head per bar
 
 // Outer fixed-point demand loop (solver.js).
 export const ALPHA = 0.5; // demand damping: q_set = q_prev + ALPHA*(q_target - q_prev)
+// When an outlet's update keeps flipping sign the local pressure->flow gain is too
+// steep for ALPHA (e.g. behind a nearly-sealed clog): its step is halved per flip,
+// down to this floor, and recovers gently while updates stay monotone.
+export const ALPHA_MIN = 0.05;
+// Starved-outlet and leak emitters fade out linearly below this pressure, so a point
+// above the hydraulic grade line settles at zero flow instead of an unphysical
+// negative emitter flow (EPANET emitters would suck water IN at negative pressure).
+export const EMITTER_GATE_BAR = 0.02;
 export const P_TOL_BAR = 1e-3; // convergence: max |Δpressure| over filled nodes
 export const Q_TOL_M3H = 1e-4; // convergence: max |Δdemand| over outlets
 export const MAX_ITERS = 60;
@@ -73,3 +81,31 @@ export const EQUIP_CMD_FILL = "#feefc3";
 // Control panel changes re-solve after this quiet period, so a slider drag coalesces
 // into one solve instead of one per tick (app.js).
 export const DEBOUNCE_MS = 150;
+
+// --- fault model (faults.js) ---
+
+// A clog's 0..1 severity is the blocked area fraction. At/above CLOG_FULL the line is
+// sealed (closed link / dead pump); below, it becomes a sharp-orifice minor loss.
+export const CLOG_FULL = 0.99;
+// A clogged pilot port (metering port / solenoid path) only changes the settled state
+// once it is substantially blocked — below this it merely slows actuation.
+export const PILOT_CLOG_BLOCKS = 0.5;
+// Pump-path clogs (suction/impeller/diffuser) scale the whole head curve down:
+// scale = 1 - PUMP_CLOG_LOSS * severity (full clog kills the pump instead).
+export const PUMP_CLOG_LOSS = 0.6;
+// Representative escape orifices: a structural break gushes, a bad seal / loose
+// thread weeps. Solved as EPANET emitters at the nearest real junction.
+export const LEAK_BORE_MM = 6;
+export const DRIP_BORE_MM = 2;
+export const LEAK_CD = 0.62;
+// A spray head with its flush plug left in (no nozzle) dumps as an open orifice.
+export const FLUSH_BORE_MM = 5;
+export const FLUSH_CD = 0.8;
+// A mis-fitted stream nozzle: wrong (narrower) bore.
+export const WRONG_STREAM_BORE_SCALE = 0.6;
+
+// --- quasi-time (quasitime.js) ---
+
+export const TL_TAIL_S = 30; // scrubbable span beyond the last timeline entry
+export const TL_TICK_MS = 250; // play timer resolution
+export const TL_RATE = 4; // timeline seconds advanced per real second of play
