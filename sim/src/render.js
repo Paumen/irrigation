@@ -94,10 +94,11 @@ export function createRenderer(svgEl, layout) {
       el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 10, fill: "#f7f4ea", stroke: "#ddd8c8" }),
     );
     // small boxes get the label near the top edge, above the first terminal row;
-    // roomy ones (the controller) center it like the reference diagram
+    // roomy ones (the controller) center it; labelDy overrides (e.g. the relay's
+    // title clears its top-edge coil terminals)
     const t = el("text", {
       x: b.x + b.w / 2,
-      y: b.y + (b.h >= 200 ? b.h / 2 + 4 : Math.min(b.h / 2 + 4, 24)),
+      y: b.y + (b.labelDy ?? (b.h >= 200 ? b.h / 2 + 4 : Math.min(b.h / 2 + 4, 24))),
       "text-anchor": "middle",
       fill: "#3c4043",
       "font-size": "12",

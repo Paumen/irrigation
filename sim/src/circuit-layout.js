@@ -1,7 +1,8 @@
-// Fixed, hand-drawn layout of the control circuit, mirroring the owner's wiring
-// diagram: Grid socket -> Relay -> Pump mains row up top, the 24 VAC adapter feeding
-// the controller below, zone outputs running right through field splices to the
-// solenoids, and the shared common chained down a bus on the far right back to C2.
+// Fixed, hand-drawn layout of the control circuit, top-to-bottom by causality: the
+// controller on top (fed by its 24 VAC adapter), zone outputs dropping through field
+// splices to the solenoid row with the shared common chained beneath, MV + C falling
+// straight into the relay's coil terminals, and the actuated mains row (grid socket
+// -> relay -> pump) along the bottom.
 //
 // The circuit is small and static, so an auto-layouter only ever produced a
 // topologically-correct but physically meaningless arrangement; these coordinates ARE
@@ -22,71 +23,30 @@ export function wireClass(name, wire) {
 
 // --- geometry tables (band-local coordinates; origin shifts below the hydraulics) ---
 //
-// The controller's terminals follow the real device (see
+// Top-to-bottom causality: the CONTROLLER sits on top, commanding everything below.
+// Its terminals follow the real device (see
 // .claude/skills/irrigation/media/controller-product-rainmachine-similar.jpg and
-// controller-instruction-wiring-diagram-12zone.png): everything sits on ONE bottom
-// strip — the 24 VAC block on the left, then C | 1 2 3 4 | … | C left-to-right — and
-// the zone wires drop downward to the solenoids below, commons chained along a bus
-// under them.
+// controller-instruction-wiring-diagram-12zone.png): one bottom strip — the 24 VAC
+// block, then MV + its common, then 1 2 3 4 + their common. The zone wires drop
+// through field splices to the solenoid row, the shared common chains along a bus
+// under it, and MV + C drop as two dead-straight verticals into the relay's coil
+// terminals; the mains row (grid socket -> relay -> pump) is the actuated bottom.
 
-// bottom-strip terminal x positions (24 VAC block, then C 1 2 3 4 MV C)
+// bottom-strip terminal x positions (24 VAC block | MV C | 1 2 3 4 C)
 const STRIP = { ac_1: 380, ac_2: 420, mv: 470, c_1: 510, z1: 560, z2: 600, z3: 640, z4: 680, c_2: 720 };
-const STRIP_Y = 680; // controller bottom edge
-const VALVE_X = { 1: 430, 2: 570, 3: 710, 4: 850 }; // solenoid centers, row below
-const VALVE_TOP = 840;
-const COM_BUS_Y = 925;
+const STRIP_Y = 250; // controller bottom edge
+const VALVE_X = { 1: 560, 2: 680, 3: 800, 4: 920 }; // solenoid centers (Z1 under zone 1)
+const VALVE_TOP = 330;
+const SIG_SPLICE_Y = 300;
+const COM_BUS_Y = 415;
+const MAINS_Y = 520; // grid socket / relay / pump row
 
 // Boxes with their terminal anchors. side: which edge the dot sits on (label goes
 // just inside). Anchor key defaults to the port id; parts with one terminal serving
 // two wires on opposite edges (the relay's N and PE) declare @W/@E variants.
 const PARTS = {
-  grid_socket: {
-    x: 130, y: 70, w: 170, h: 160, label: "Grid socket",
-    anchors: [
-      { port: "grid_socket.l", side: "E", y: 140, label: "L" },
-      { port: "grid_socket.n", side: "E", y: 180, label: "N" },
-      { port: "grid_socket.pe", side: "E", y: 220, label: "PE" },
-    ],
-  },
-  relay: {
-    x: 430, y: 70, w: 200, h: 185, label: "Relay",
-    anchors: [
-      { port: "relay.line_in", side: "W", y: 140, label: "line in" },
-      { port: "relay.neutral", key: "relay.neutral@W", side: "W", y: 180, label: "N" },
-      { port: "relay.earth", key: "relay.earth@W", side: "W", y: 220, label: "PE" },
-      { port: "relay.load_out", side: "E", y: 140, label: "load out" },
-      { port: "relay.neutral", key: "relay.neutral@E", side: "E", y: 180, label: "N" },
-      { port: "relay.earth", key: "relay.earth@E", side: "E", y: 220, label: "PE" },
-      { port: "relay.coil_com", side: "S", x: 495, label: "com" },
-      { port: "relay.coil_in", side: "S", x: 585, label: "coil in" },
-    ],
-  },
-  pump: {
-    x: 780, y: 70, w: 170, h: 160, label: "Pump",
-    anchors: [
-      { port: "pump.l", side: "W", y: 140, label: "L" },
-      { port: "pump.n", side: "W", y: 180, label: "N" },
-      { port: "pump.pe", side: "W", y: 220, label: "PE" },
-    ],
-  },
-  adapter_socket: {
-    x: 55, y: 360, w: 140, h: 120, label: "Adapter socket",
-    anchors: [
-      { port: "adapter_socket.l", side: "E", y: 410, label: "L" },
-      { port: "adapter_socket.n", side: "E", y: 445, label: "N" },
-    ],
-  },
-  adapter: {
-    x: 240, y: 360, w: 130, h: 120, label: "24 VAC adapter",
-    anchors: [
-      { port: "adapter.ac_l", side: "W", y: 410, label: "L" },
-      { port: "adapter.ac_n", side: "W", y: 445, label: "N" },
-      { port: "adapter.out_1", side: "S", x: 280, label: "1" },
-      { port: "adapter.out_2", side: "S", x: 305, label: "2" },
-    ],
-  },
   controller: {
-    x: 350, y: 500, w: 380, h: 180, label: "Controller",
+    x: 350, y: 60, w: 380, h: 190, label: "Controller",
     anchors: [
       { port: "controller.ac_1", side: "S", x: STRIP.ac_1, label: "AC1" },
       { port: "controller.ac_2", side: "S", x: STRIP.ac_2, label: "AC2" },
@@ -99,11 +59,57 @@ const PARTS = {
       { port: "controller.c_2", side: "S", x: STRIP.c_2, label: "C" },
     ],
   },
+  adapter_socket: {
+    x: 55, y: 70, w: 140, h: 120, label: "Adapter socket",
+    anchors: [
+      { port: "adapter_socket.l", side: "E", y: 120, label: "L" },
+      { port: "adapter_socket.n", side: "E", y: 155, label: "N" },
+    ],
+  },
+  adapter: {
+    x: 240, y: 70, w: 130, h: 120, label: "24 VAC adapter",
+    anchors: [
+      { port: "adapter.ac_l", side: "W", y: 120, label: "L" },
+      { port: "adapter.ac_n", side: "W", y: 155, label: "N" },
+      { port: "adapter.out_1", side: "S", x: 280, label: "1" },
+      { port: "adapter.out_2", side: "S", x: 305, label: "2" },
+    ],
+  },
+  grid_socket: {
+    x: 130, y: MAINS_Y, w: 170, h: 160, label: "Grid socket",
+    anchors: [
+      { port: "grid_socket.l", side: "E", y: MAINS_Y + 70, label: "L" },
+      { port: "grid_socket.n", side: "E", y: MAINS_Y + 110, label: "N" },
+      { port: "grid_socket.pe", side: "E", y: MAINS_Y + 150, label: "PE" },
+    ],
+  },
+  relay: {
+    // coil terminals on the top edge, exactly under the controller's MV and C
+    x: 430, y: MAINS_Y, w: 200, h: 185, label: "Relay", labelDy: 62,
+    anchors: [
+      { port: "relay.coil_in", side: "N", x: STRIP.mv, label: "coil" },
+      { port: "relay.coil_com", side: "N", x: STRIP.c_1, label: "com" },
+      { port: "relay.line_in", side: "W", y: MAINS_Y + 70, label: "line in" },
+      { port: "relay.neutral", key: "relay.neutral@W", side: "W", y: MAINS_Y + 110, label: "N" },
+      { port: "relay.earth", key: "relay.earth@W", side: "W", y: MAINS_Y + 150, label: "PE" },
+      { port: "relay.load_out", side: "E", y: MAINS_Y + 70, label: "load out" },
+      { port: "relay.neutral", key: "relay.neutral@E", side: "E", y: MAINS_Y + 110, label: "N" },
+      { port: "relay.earth", key: "relay.earth@E", side: "E", y: MAINS_Y + 150, label: "PE" },
+    ],
+  },
+  pump: {
+    x: 780, y: MAINS_Y, w: 170, h: 160, label: "Pump",
+    anchors: [
+      { port: "pump.l", side: "W", y: MAINS_Y + 70, label: "L" },
+      { port: "pump.n", side: "W", y: MAINS_Y + 110, label: "N" },
+      { port: "pump.pe", side: "W", y: MAINS_Y + 150, label: "PE" },
+    ],
+  },
 };
-// the four solenoids, one small box per zone in a row below the controller
+// the four solenoids, one small box per zone in a row below the controller strip
 for (let n = 1; n <= 4; n++) {
   PARTS[`Z${n}.valve`] = {
-    x: VALVE_X[n] - 50, y: VALVE_TOP, w: 100, h: 46, label: `Z${n}`,
+    x: VALVE_X[n] - 45, y: VALVE_TOP, w: 90, h: 46, label: `Z${n}`,
     anchors: [
       { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@N`, side: "N", x: VALVE_X[n] },
       { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@S`, side: "S", x: VALVE_X[n] },
@@ -116,13 +122,13 @@ for (let n = 1; n <= 4; n++) {
 // running under the solenoid row.
 const SPLICES = {};
 for (let n = 1; n <= 4; n++) {
-  SPLICES[`splice.sig_${n}`] = { x: VALVE_X[n], y: 810 };
+  SPLICES[`splice.sig_${n}`] = { x: VALVE_X[n], y: SIG_SPLICE_Y };
   SPLICES[`splice.com_${n}`] = { x: VALVE_X[n], y: COM_BUS_Y };
 }
 
 // per-zone escape rails between the strip and the splices (staggered so drops and
-// rails never collide)
-const ZONE_RAIL = { 1: 762, 2: 748, 3: 734, 4: 720 };
+// rails never collide; zone 1 drops dead straight onto its valve)
+const ZONE_RAIL = { 2: 285, 3: 278, 4: 271 };
 
 // Route per wire: optional intermediate via points (segments must stay orthogonal)
 // and, where a port has several anchors, which anchor each end attaches to.
@@ -135,14 +141,13 @@ const ROUTES = {
   pump_earth: { from: "relay.earth@E" },
   adapter_socket_live: {},
   adapter_socket_neutral: {},
-  adapter_supply_1: { vias: [[280, 650], [STRIP.ac_1, 650]] },
-  adapter_supply_2: { vias: [[305, 658], [STRIP.ac_2, 658]] },
-  // MV and its common leave the strip together and run as a nested 2-wire bundle
-  // around the left margin up into the relay coil terminals — the physical 10 m
-  // house->shed cable
-  signal_relay: { vias: [[STRIP.mv, 700], [40, 700], [40, 305], [585, 305]] },
-  relay_return: { vias: [[495, 295], [30, 295], [30, 708], [STRIP.c_1, 708]] },
-  signal_1: { vias: [[STRIP.z1, ZONE_RAIL[1]], [VALVE_X[1], ZONE_RAIL[1]]] },
+  adapter_supply_1: { vias: [[280, 262], [STRIP.ac_1, 262]] },
+  adapter_supply_2: { vias: [[305, 270], [STRIP.ac_2, 270]] },
+  // MV and its common drop dead straight into the relay coil terminals aligned
+  // directly beneath them — the 10 m house->shed cable
+  signal_relay: {},
+  relay_return: {},
+  signal_1: {},
   signal_2: { vias: [[STRIP.z2, ZONE_RAIL[2]], [VALVE_X[2], ZONE_RAIL[2]]] },
   signal_3: { vias: [[STRIP.z3, ZONE_RAIL[3]], [VALVE_X[3], ZONE_RAIL[3]]] },
   signal_4: { vias: [[STRIP.z4, ZONE_RAIL[4]], [VALVE_X[4], ZONE_RAIL[4]]] },
@@ -153,7 +158,7 @@ const ROUTES = {
   common_chain_12: {},
   common_chain_23: {},
   common_chain_34: {},
-  common_return: { vias: [[960, COM_BUS_Y], [960, 700], [STRIP.c_2, 700]] },
+  common_return: { vias: [[990, COM_BUS_Y], [990, 265], [STRIP.c_2, 265]] },
 };
 // solenoid leads (splice.sig_N -> coil): intra-part `to:` continuity in the model,
 // drawn as the short drop from the splice into the solenoid
@@ -185,8 +190,8 @@ for (const r of [...Object.values(ROUTES), ...Object.values(LEAD_ROUTES)]) {
   if (r.vias) r.vias = r.vias.map(([x, y]) => [s(x), s(y)]);
 }
 
-export const CIRCUIT_W = s(1000);
-export const CIRCUIT_H = s(960);
+export const CIRCUIT_W = s(1020);
+export const CIRCUIT_H = s(730);
 
 // --- assembly + validation ---
 
@@ -222,7 +227,7 @@ export function computeCircuitLayout(circuit, offsetY) {
   const anchorDots = []; // open terminal circles on the boxes
   const anchorLabels = [];
   for (const [partId, part] of Object.entries(PARTS)) {
-    parts.set(partId, { x: part.x, y: part.y + offsetY, w: part.w, h: part.h, label: part.label });
+    parts.set(partId, { x: part.x, y: part.y + offsetY, w: part.w, h: part.h, label: part.label, labelDy: part.labelDy });
     for (const a of part.anchors) {
       const key = a.key || a.port;
       const p = anchorPoint(part, a);
