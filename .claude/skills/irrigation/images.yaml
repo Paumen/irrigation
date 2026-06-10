@@ -359,6 +359,30 @@ images:
     relates: identify an MP Rotator by its multi-stream pattern (vs a fixed spray's solid sheet); pairs with IMG.nozzle-rotator-product-mp2000
     used_in: [playbooks/identify.md]
 
+  # ── pump ────────────────────────────────────────────────────────────────────
+  # PLACEHOLDERS — the F5 area has no images yet (found during the June 2026
+  # no-foot-valve case: three moments wanted a picture and had none). Kept as
+  # comments, NOT live entries: a live entry with a missing file makes
+  # SendUserFile fail silently. Uncomment + drop the photo in media/ to activate.
+  #
+  # IMG.pump-instruction-priming-cap:
+  #   file: media/pump-instruction-priming-cap.jpg
+  #   wanted: the filler/priming cap on the AquaJet 132 M body, open, showing the
+  #     fill-to-the-brim water level ("full at the cap" is not the same as primed)
+  #   subjects: [pump]   failure_modes: [F5]   questions: [Q27]
+  #
+  # IMG.fitting-product-foot-valve:
+  #   file: media/fitting-product-foot-valve.jpg
+  #   wanted: the brass 1" foot valve + strainer mounted on the suction-hose end,
+  #     photographed before lowering into the well
+  #   subjects: [pump, hose]   failure_modes: [F5]   questions: [Q26]
+  #
+  # IMG.pump-breakdown-pressure-tank:
+  #   file: media/pump-breakdown-pressure-tank.jpg
+  #   wanted: 20 L tank cutaway/diagram — butyl bladder, air pre-charge side,
+  #     Schrader valve (pairs with the pre-charge check in knowledge/pump.md §12)
+  #   subjects: [pump]   failure_modes: [F5]
+
   # ── relay ───────────────────────────────────────────────────────────────────
   IMG.relay-breakdown-enclosure-cutaway:
     file: media/relay-breakdown-enclosure-cutaway.png
