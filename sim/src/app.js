@@ -125,8 +125,9 @@ try {
   const idleSnap = snapshotUi(ui); // shown for timeline positions before the first entry
 
   // M7: the quasi-time footer. Each entry is a settled state, solved once and cached;
-  // scrubbing and playing just repaint cached results.
-  const tlCache = new Map(); // snapshot -> { steady, elec, fx }
+  // scrubbing and playing just repaint cached results. Weakly keyed so snapshots the
+  // timeline drops (cleared or superseded entries) can be collected with their solves.
+  const tlCache = new WeakMap(); // snapshot -> { steady, elec, fx }
   timeline = buildTimeline(document.getElementById("timeline"), {
     capture: () => snapshotUi(ui),
     show: (snap, t, idx, n) => {
