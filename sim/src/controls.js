@@ -1,7 +1,8 @@
 // Control panel: every user-commandable control (spec R15, minus M8's fault toggles)
-// and the UI state it holds. Split in two so the Node harness can gate it:
-// controlSpec() / initialUiState() are pure derivations from the model;
-// buildControls() is the DOM half, browser-only.
+// and the UI state it holds. The panel is per-equipment: clicking a part in the
+// schematic shows just that part's controls (panelFor builds the descriptor). Split so
+// the Node harness can gate it: controlSpec() / initialUiState() / panelFor() are pure
+// derivations from the model; buildControls() is the DOM half, browser-only.
 //
 // The UI state IS the solver input shape — { commands, state, lmin } where `commands`
 // feeds solveElectrical and `state` feeds solveSteady — so app.js passes it straight
@@ -50,17 +51,89 @@ export function initialUiState(spec) {
   return ui;
 }
 
-// ---- DOM half (browser only) ----
+// The per-equipment panel descriptor: which widgets a clicked part exposes, each
+// widget addressing its UI-state slot by path (e.g. ["state","throttle","Z1.valve"]).
+// Parts without controls return an info line and an empty widget list. `id` is a
+// flow-node id, or "controller" for the circuit's controller box.
+export function panelFor(model, id) {
+  if (id === "controller") {
+    const part = model.circuit?.parts?.controller;
+    return {
+      id,
+      title: `Controller${part?.model ? ` — ${part.model}` : ""}`,
+      info: "Commands route through the real wiring — a broken wire stops them acting.",
+      widgets: [
+        { kind: "toggle", label: "Pump (master valve)", path: ["commands", "mv"] },
+        ...controlSpec(model).zones.map((z) => ({
+          kind: "toggle",
+          label: `Zone ${z} → Z${z}.valve`,
+          path: ["commands", "zones", z],
+        })),
+      ],
+    };
+  }
+  const n = model.flowNodes.get(id);
+  if (!n) throw new Error(`controls: no panel target "${id}"`);
+  const title = `${id}${n.params?.model ? ` — ${n.params.model}` : ""}`;
 
-function section(container, title) {
-  const div = document.createElement("div");
-  div.className = "ctl-section";
-  const h = document.createElement("h3");
-  h.textContent = title;
-  div.appendChild(h);
-  container.appendChild(div);
-  return div;
+  if (n.role === "pump") {
+    return {
+      id,
+      title,
+      info: "Runs only when the controller's master-valve output closes the relay through healthy wiring.",
+      widgets: [{ kind: "toggle", label: "Pump (master valve)", path: ["commands", "mv"] }],
+    };
+  }
+  if (n.role === "valve-auto") {
+    const m = id.match(/^Z(\d+)\./);
+    if (!m) throw new Error(`controls: auto valve "${id}" has no Zn. zone prefix`);
+    const z = Number(m[1]);
+    return {
+      id,
+      title,
+      info: "Lifts when energised (or bled) with enough inlet pressure.",
+      widgets: [
+        { kind: "toggle", label: `Zone ${z} command (controller)`, path: ["commands", "zones", z] },
+        { kind: "slider", label: "Flow-control screw", path: ["state", "throttle", id] },
+        { kind: "toggle", label: "Bleed screw open", path: ["state", "bleedOpen", id] },
+      ],
+    };
+  }
+  if (n.role === "valve-manual") {
+    return {
+      id,
+      title,
+      widgets: [{ kind: "toggle", label: "Handle open", path: ["state", "manualOpen", id] }],
+    };
+  }
+  if (n.role === "outlet") {
+    if (n.subkind === "rotor") {
+      return {
+        id,
+        title,
+        info: `Nozzle ${n.params.nozzle}, arc ${n.params.arc}°.`,
+        widgets: [{ kind: "toggle", label: "Flo-stop closed", path: ["state", "floStop", id] }],
+      };
+    }
+    if (n.subkind === "spray") {
+      return {
+        id,
+        title,
+        info: `Nozzle ${n.params.nozzle}, arc ${n.params.arc}° — pressure-regulated, no manual control on the head.`,
+        widgets: [],
+      };
+    }
+    return {
+      id,
+      title,
+      info: "Open hose-end nozzle — flow is set by the Z5 hand valve.",
+      widgets: [],
+    };
+  }
+  return { id, title: `${id} (${n.kind})`, info: "No user controls on this part.", widgets: [] };
 }
+
+// ---- DOM half (browser only) ----
 
 function checkbox(parent, text, checked, onSet) {
   const label = document.createElement("label");
@@ -99,58 +172,76 @@ function slider(parent, text, value, onSet) {
   parent.appendChild(label);
 }
 
-// Build the widgets into `container` and return the live UI state they mutate.
-// Every change calls onChange(ui, { unitsOnly }).
-export function buildControls(container, model, onChange) {
+// Build the slide-up bottom sheet into `container` and return { ui, select, close }:
+// `ui` is the live UI state the widgets mutate, `select(id)` fills the sheet with that
+// equipment's controls and slides it up (render.js calls it from glyph clicks),
+// `close()` slides it away and reports through onClose (app.js clears the selection
+// highlight there). The L/min display toggle is built into `displayEl` — somewhere
+// always visible — so it doesn't depend on the sheet being open.
+export function buildControls(container, model, onChange, { displayEl, onClose } = {}) {
   const spec = controlSpec(model);
   const ui = initialUiState(spec);
   const changed = () => onChange(ui, { unitsOnly: false });
 
-  const ctl = section(container, "Controller");
-  checkbox(ctl, "Pump (master valve)", ui.commands.mv, (on) => {
-    ui.commands.mv = on;
-    changed();
-  });
-  for (const z of spec.zones) {
-    checkbox(ctl, `Zone ${z} → Z${z}.valve`, ui.commands.zones[z], (on) => {
-      ui.commands.zones[z] = on;
-      changed();
-    });
-  }
+  container.textContent = "";
+  const bar = document.createElement("div");
+  bar.className = "sheet-bar";
+  const grabber = document.createElement("span");
+  grabber.className = "grabber";
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "sheet-close";
+  closeBtn.type = "button";
+  closeBtn.setAttribute("aria-label", "Close controls");
+  closeBtn.textContent = "✕";
+  bar.append(grabber, closeBtn);
+  const panel = document.createElement("div");
+  panel.className = "ctl-panel";
+  container.append(bar, panel);
 
-  const hand = section(container, "Hand-watering");
-  for (const v of spec.manualValves) {
-    checkbox(hand, `${v} handle open`, ui.state.manualOpen[v], (on) => {
-      ui.state.manualOpen[v] = on;
-      changed();
-    });
-  }
-
-  const valves = section(container, "Zone valves");
-  for (const v of spec.autoValves) {
-    slider(valves, `${v} flow control`, ui.state.throttle[v], (t) => {
-      ui.state.throttle[v] = t;
-      changed();
-    });
-    checkbox(valves, `${v} bleed screw open`, ui.state.bleedOpen[v], (on) => {
-      ui.state.bleedOpen[v] = on;
-      changed();
-    });
-  }
-
-  const rotors = section(container, "Rotor flo-stops");
-  for (const r of spec.rotors) {
-    checkbox(rotors, `${r} flo-stop closed`, ui.state.floStop[r], (on) => {
-      ui.state.floStop[r] = on;
-      changed();
-    });
-  }
-
-  const display = section(container, "Display");
-  checkbox(display, "Flows in L/min", ui.lmin, (on) => {
+  checkbox(displayEl || container, "L/min", ui.lmin, (on) => {
     ui.lmin = on;
     onChange(ui, { unitsOnly: true });
   });
 
-  return ui;
+  const getPath = (path) => path.reduce((o, k) => o[k], ui);
+  const setPath = (path, v) => {
+    path.slice(0, -1).reduce((o, k) => o[k], ui)[path[path.length - 1]] = v;
+  };
+
+  function close() {
+    container.classList.remove("open");
+    onClose?.();
+  }
+  closeBtn.addEventListener("click", close);
+
+  function select(id) {
+    const desc = panelFor(model, id);
+    panel.textContent = "";
+    const h = document.createElement("h2");
+    h.textContent = desc.title;
+    panel.appendChild(h);
+    if (desc.info) {
+      const p = document.createElement("p");
+      p.className = "ctl-info";
+      p.textContent = desc.info;
+      panel.appendChild(p);
+    }
+    for (const w of desc.widgets) {
+      if (w.kind === "toggle") {
+        checkbox(panel, w.label, !!getPath(w.path), (on) => {
+          setPath(w.path, on);
+          changed();
+        });
+      } else if (w.kind === "slider") {
+        slider(panel, w.label, getPath(w.path), (t) => {
+          setPath(w.path, t);
+          changed();
+        });
+      }
+    }
+    container.classList.add("open");
+    return desc;
+  }
+
+  return { ui, select, close };
 }

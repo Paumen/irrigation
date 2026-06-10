@@ -67,8 +67,24 @@ function createGlyph(n) {
   }
 }
 
-export function createRenderer(svgEl, layout) {
+// Glyphs the user can click to open that equipment's control panel (controls.js
+// panelFor). Joints/tees/caps stay inert — they have no controls and tiny targets.
+const CLICKABLE_GLYPHS = new Set(["pump", "valve", "head", "nozzle"]);
+const CLICKABLE_CIRCUIT_PART = (name) => name === "controller" || name === "pump" || /^Z\d+\.valve$/.test(name);
+
+export function createRenderer(svgEl, layout, { onSelect } = {}) {
   svgEl.setAttribute("viewBox", `-10 -10 ${layout.width + 20} ${layout.height + 20}`);
+
+  // selection: key -> highlightable elements (a hydraulic glyph and a circuit box can
+  // share a key, e.g. "pump" / "Z1.valve" — both light up)
+  const selectable = new Map();
+  let selectedKey = null;
+  const registerSelectable = (key, highlightEl, hitEl = highlightEl) => {
+    if (!selectable.has(key)) selectable.set(key, []);
+    selectable.get(key).push(highlightEl);
+    hitEl.classList.add("hit");
+    hitEl.addEventListener("click", () => onSelect?.(key));
+  };
 
   // layer order: zone frames under pipes under glyphs under labels; circuit boxes
   // under wires so terminal dots and splices sit on top of the wire ends
@@ -89,10 +105,10 @@ export function createRenderer(svgEl, layout) {
     t.textContent = zone;
     layers.zones.appendChild(t);
   }
-  for (const b of layout.circuit.parts.values()) {
-    layers.parts.appendChild(
-      el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 10, fill: "#f7f4ea", stroke: "#ddd8c8" }),
-    );
+  for (const [name, b] of layout.circuit.parts) {
+    const box = el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 10, fill: "#f7f4ea", stroke: "#ddd8c8" });
+    layers.parts.appendChild(box);
+    if (CLICKABLE_CIRCUIT_PART(name)) registerSelectable(name, box);
     // small boxes get the label near the top edge, above the first terminal row;
     // roomy ones (the controller) center it; labelDy overrides (e.g. the relay's
     // title clears its top-edge coil terminals)
@@ -118,6 +134,12 @@ export function createRenderer(svgEl, layout) {
     layers.terminals.appendChild(t);
   }
 
+  const setSelected = (key) => {
+    if (selectedKey) for (const e of selectable.get(selectedKey) || []) e.classList.remove("selected");
+    selectedKey = selectable.has(key) ? key : null;
+    if (selectedKey) for (const e of selectable.get(selectedKey)) e.classList.add("selected");
+  };
+
   const els = new Map(); // "<kind>:<key>" -> { node: element, title?: <title> }
 
   const join = (prims, kind, create, update) => {
@@ -133,6 +155,7 @@ export function createRenderer(svgEl, layout) {
   };
 
   return {
+    setSelected,
     update(scene) {
       join(
         scene.pipes,
@@ -162,14 +185,26 @@ export function createRenderer(svgEl, layout) {
           const title = el("title");
           glyph.appendChild(title);
           layers.nodes.appendChild(glyph);
+          if (CLICKABLE_GLYPHS.has(n.glyph)) {
+            // a transparent padded circle takes the clicks: the glyphs themselves are
+            // thin shapes and far too small a touch target on a phone
+            const hit = el("circle", {
+              cx: n.x + n.w / 2,
+              cy: n.y + n.h / 2,
+              r: Math.max(n.w, n.h) / 2 + 9,
+              fill: "transparent",
+            });
+            layers.nodes.appendChild(hit);
+            registerSelectable(n.key, glyph, hit);
+          }
           return { node: glyph, title };
         },
         ({ node, title }, n) => {
           node.setAttribute("stroke", n.color);
           node.setAttribute("stroke-width", n.state === "open" || n.state === "on" ? 3 : 1.5);
           node.setAttribute("stroke-dasharray", n.dead ? "3 2" : "");
-          // a commanded-but-not-opening valve flags amber: asked for, not delivering
-          if (n.state === "commanded") node.setAttribute("stroke", "#f9a825");
+          // scene provides a fill only for state-carrying equipment glyphs
+          if (n.fill) node.setAttribute("fill", n.fill);
           title.textContent = n.title;
         },
       );

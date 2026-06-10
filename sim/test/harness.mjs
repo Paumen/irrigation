@@ -15,7 +15,7 @@ import { solveElectrical } from "../src/electrical.js";
 import { outletDemandAt, interp } from "../src/outlets.js";
 import { computeLayout } from "../src/layout.js";
 import { buildScene, pressureColor, strokeWidth } from "../src/scene.js";
-import { controlSpec, initialUiState } from "../src/controls.js";
+import { controlSpec, initialUiState, panelFor } from "../src/controls.js";
 import { fmtFlow } from "../src/units.js";
 import {
   CIRCUIT_BAND_GAP,
@@ -23,6 +23,10 @@ import {
   STROKE_MIN_PX,
   STROKE_MAX_PX,
   M_PER_BAR,
+  EQUIP_ON_STROKE,
+  EQUIP_ON_FILL,
+  EQUIP_CMD_STROKE,
+  EQUIP_CMD_FILL,
 } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -70,6 +74,8 @@ let idleResult = null; // stashed for the M5 scene checks
 let idleElec = null;
 let s2Result = null; // broken-signal_2 case, for the M5 wiring-state checks
 let s2Elec = null;
+let noResult = null; // commanded-but-not-opening case, for the equipment-state checks
+let noElec = null;
 
 for (const c of cases) {
   console.log(`Case: ${c.name}`);
@@ -78,6 +84,7 @@ for (const c of cases) {
   reportTable(model, r);
   if (c.kind === "idle") [idleResult, idleElec] = [r, elec];
   if (c.kind === "z1") z1Elec = elec;
+  if (c.kind === "notopening") [noResult, noElec] = [r, elec];
   if (c.blocked?.has("signal_2")) [s2Result, s2Elec] = [r, elec];
 
   // shared invariants
@@ -492,6 +499,33 @@ console.log("Case: M5 scene (visual attribute computation)");
   check(z1Nodes.get("Z1.valve").state === "open" && z1Nodes.get("Z2.valve").state === "closed", "valve glyph states open/closed");
   check(z1Nodes.get("pump").state === "on", "pump glyph state on");
 
+  // equipment glyphs encode state visually: green = on/open, amber = commanded-but-
+  // not-opening, white/grey = off/closed (they have no node pressure to color by)
+  check(
+    z1Nodes.get("pump").color === EQUIP_ON_STROKE && z1Nodes.get("pump").fill === EQUIP_ON_FILL,
+    "running pump drawn green-filled",
+  );
+  check(
+    z1Nodes.get("Z1.valve").color === EQUIP_ON_STROKE && z1Nodes.get("Z1.valve").fill === EQUIP_ON_FILL,
+    "open valve drawn green-filled",
+  );
+  check(
+    z1Nodes.get("Z2.valve").color === DEAD_COLOR && z1Nodes.get("Z2.valve").fill === "#fff",
+    "closed valve drawn white-filled grey",
+  );
+  const idleNodes = byKey(idleScene.nodes);
+  check(
+    idleNodes.get("pump").color === DEAD_COLOR && idleNodes.get("pump").fill === "#fff",
+    "stopped pump drawn white-filled grey",
+  );
+  const noScene = buildScene(model, layout, noResult, noElec);
+  const noValve = byKey(noScene.nodes).get("Z1.valve");
+  check(
+    noValve.state === "commanded" && noValve.color === EQUIP_CMD_STROKE && noValve.fill === EQUIP_CMD_FILL,
+    "commanded-but-not-opening valve drawn amber",
+  );
+  check(byKey(noScene.nodes).get("Z1.head1").fill === undefined, "heads keep their static fill (no state fill)");
+
   const z1Splices = byKey(z1Scene.splices);
   check(
     z1Splices.get("splice.sig_1").state === "powered" && z1Splices.get("splice.com_4").state === "powered",
@@ -574,6 +608,58 @@ console.log("Case: M6 control spec + initial UI state");
     r.converged && Math.abs(r.pumpFlow) < 1e-9 && Math.abs(r.outSum) < 1e-9,
     "initial UI state solves straight to idle (no flow)",
   );
+
+  // per-equipment panels (click-to-select): every widget path must address a slot
+  // that initialUiState created, so a clicked panel can never write outside ui
+  const pathOk = (path) => {
+    let o = ui;
+    for (const k of path.slice(0, -1)) o = o?.[k];
+    return o != null && path[path.length - 1] in o;
+  };
+  const ctlPanel = panelFor(model, "controller");
+  check(
+    ctlPanel.widgets.length === 5 && ctlPanel.widgets.every((w) => w.kind === "toggle" && pathOk(w.path)),
+    "controller panel: pump + 4 zone commands",
+  );
+  const vPanel = panelFor(model, "Z1.valve");
+  check(
+    vPanel.widgets.map((w) => w.kind).join(",") === "toggle,slider,toggle" &&
+      JSON.stringify(vPanel.widgets[1].path) === '["state","throttle","Z1.valve"]' &&
+      JSON.stringify(vPanel.widgets[2].path) === '["state","bleedOpen","Z1.valve"]' &&
+      vPanel.widgets.every((w) => pathOk(w.path)),
+    "auto-valve panel: zone command + flow-control slider + bleed screw",
+  );
+  check(
+    JSON.stringify(panelFor(model, "pump").widgets[0].path) === '["commands","mv"]',
+    "pump panel: the master-valve command",
+  );
+  check(
+    JSON.stringify(panelFor(model, "Z5.valve").widgets[0].path) === '["state","manualOpen","Z5.valve"]',
+    "manual valve panel: the handle",
+  );
+  check(
+    JSON.stringify(panelFor(model, "Z1.head2").widgets[0].path) === '["state","floStop","Z1.head2"]',
+    "rotor panel: the flo-stop",
+  );
+  check(
+    panelFor(model, "Z1.head1").widgets.length === 0 && !!panelFor(model, "Z1.head1").info,
+    "spray panel: info only (regulated, no manual control)",
+  );
+  check(
+    panelFor(model, "Z5.nozzle").widgets.length === 0,
+    "stream nozzle panel: info only",
+  );
+  // every clickable target resolves to a panel without throwing
+  let panelErr = null;
+  for (const n of model.flowNodes.values()) {
+    if (!["pump", "valve-auto", "valve-manual", "outlet"].includes(n.role)) continue;
+    try {
+      panelFor(model, n.id);
+    } catch (e) {
+      panelErr = `${n.id}: ${e.message}`;
+    }
+  }
+  check(!panelErr, `every clickable glyph has a panel${panelErr ? ` (${panelErr})` : ""}`);
 }
 console.log("");
 

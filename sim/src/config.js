@@ -62,6 +62,14 @@ export const CIRCUIT_BAND_GAP = 60;
 // Unfilled (dead-branch) and idle elements render in this grey, dashed.
 export const DEAD_COLOR = "#9aa0a6";
 
+// Equipment (pump/valve) glyphs have no node pressure to color by, so they encode
+// their STATE instead: stroke + fill pairs for running/open and commanded-but-not-
+// opening; off/closed stays white-filled grey.
+export const EQUIP_ON_STROKE = "#1e8e3e";
+export const EQUIP_ON_FILL = "#ceead6";
+export const EQUIP_CMD_STROKE = "#f9a825";
+export const EQUIP_CMD_FILL = "#feefc3";
+
 // Control panel changes re-solve after this quiet period, so a slider drag coalesces
 // into one solve instead of one per tick (app.js).
 export const DEBOUNCE_MS = 150;

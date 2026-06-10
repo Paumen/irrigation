@@ -93,14 +93,37 @@ try {
 
   say("computing layout…");
   const layout = await computeLayout(model, graph.circuit);
-  const renderer = createRenderer(document.getElementById("schematic"), layout);
+  let controls = null; // assigned synchronously below, before any click can land
+  const svg = document.getElementById("schematic");
+  const renderer = createRenderer(svg, layout, {
+    onSelect: (id) => {
+      if (!controls) throw new Error("app: glyph selected before controls initialised");
+      controls.select(id);
+      renderer.setSelected(id);
+    },
+  });
   ctx = { model, circuit: graph.circuit, hyd, layout, renderer };
 
-  const ui = buildControls(document.getElementById("controls"), model, requestRender);
+  controls = buildControls(document.getElementById("sheet"), model, requestRender, {
+    displayEl: document.getElementById("display-ctl"),
+    onClose: () => renderer.setSelected(null),
+  });
+  const ui = controls.ui;
+
+  // clicking empty schematic (or pressing Escape) slides the sheet away
+  svg.addEventListener("click", (e) => {
+    if (!e.target.closest(".hit")) controls.close();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") controls.close();
+  });
 
   say("solving…");
   const steady = renderState(ui.commands, ui.state, { lmin: ui.lmin });
-  say(`${statusText(steady, last.elec, ui.lmin)} (epanet ${hyd.version})`);
+  say(
+    `${statusText(steady, last.elec, ui.lmin)} (epanet ${hyd.version}) — ` +
+      "click a part in the diagram to control it",
+  );
 } catch (err) {
   // a blank page hides CDN/wasm failures; surface them where the user looks
   say(`failed to start: ${err.message}`);

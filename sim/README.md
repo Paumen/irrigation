@@ -67,9 +67,15 @@ are not yet built.
 - **M6 (controls + live updates):** `src/controls.js` builds the control panel — every user-commandable
   control of spec R15 except M8's fault toggles: pump + per-zone controller commands, the Z5 manual
   handle, a **flow-control screw** (0–100% slider) and **bleed screw** per auto valve, a **flo-stop**
-  per rotor head, and the m³/h ↔ L/min display toggle. The widget list is derived from the model
-  (`controlSpec()`), and the UI state (`initialUiState()`) **is** the solver input shape
-  `{ commands, state, lmin }` — both pure and harness-gated; only the DOM half is browser-only. Any
+  per rotor head, and the m³/h ↔ L/min display toggle (always visible in the header). The panel is
+  **per-equipment**: clicking a part in the schematic (pump, valve, head, nozzle glyphs — padded
+  invisible hit areas for touch — or the controller / pump / valve boxes in the wiring band)
+  highlights it and slides up a **bottom sheet** with just that part's controls (full-width on phones,
+  a docked card on wide screens; ✕, a click on empty schematic, or Escape dismisses it); parts without
+  controls get an info line. `panelFor()` (which widgets a clicked part
+  exposes, each addressing its UI-state slot by path), `controlSpec()` (which controls exist), and the
+  UI state (`initialUiState()`, which **is** the solver input shape `{ commands, state, lmin }`) are
+  pure and harness-gated; only the DOM half is browser-only. Any
   change re-solves after a short debounce (slider drags coalesce into one solve) and repaints via the
   M5 data-join (R16); the units toggle only repaints the cached result. Two controls grew physics in
   the core: a closed **flo-stop** (`state.floStop`) zeroes that head's discharge while the branch stays
@@ -137,7 +143,9 @@ through the electrical solve and then the hydraulic loop:
   (broken `signal_2` shown broken, the rest powered), and geometry identical across states (positions
   never move; only visual attributes change);
 - **M6 control spec** — the pure half of the control panel: one flow-control + bleed per auto valve,
-  zones derived from the valves, the Z5 handle, a flo-stop per rotor head, and the initial UI state
-  (everything off, flow controls factory-open) feeding the solvers directly and settling to idle.
+  zones derived from the valves, the Z5 handle, a flo-stop per rotor head, the initial UI state
+  (everything off, flow controls factory-open) feeding the solvers directly and settling to idle, and
+  the per-equipment panels (controller / pump / valves / heads) with every widget path addressing a
+  slot the initial UI state created.
 
 It prints a per-case outlet table and exits non-zero on any failure.

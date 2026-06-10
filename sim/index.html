@@ -17,27 +17,21 @@
 }
 </script>
 <style>
-  /* Desktop: a fixed app shell (header + legend + panel|schematic filling the
-     viewport, panel scrolls internally). The flex column replaces the old
-     hard-coded calc(100vh - 110px), so a wrapping header can't clip the page. */
+  /* App shell: header + legend + full-page schematic filling the viewport. The
+     controls live in a slide-up bottom sheet (#sheet) overlaying the schematic. */
   html, body { height: 100%; }
   body { margin: 0; font: 14px system-ui, sans-serif; color: #202124;
     display: flex; flex-direction: column; }
   header { padding: 10px 16px; border-bottom: 1px solid #dadce0; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; flex: none; }
   h1 { font-size: 16px; margin: 0; }
   #status { color: #5f6368; font-size: 13px; }
+  #display-ctl { margin-left: auto; }
+  #display-ctl label { display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: #5f6368; cursor: pointer; touch-action: manipulation; }
   #main { display: flex; align-items: stretch; flex: 1; min-height: 0; }
-  #controls { width: 280px; flex: none; overflow-y: auto; box-sizing: border-box;
-    padding: 4px 14px 20px; border-right: 1px solid #dadce0; }
-  #controls h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
-    color: #5f6368; margin: 16px 0 4px; }
-  #controls label { display: flex; align-items: center; gap: 8px; padding: 3px 0;
-    font-size: 13px; cursor: pointer; touch-action: manipulation; }
-  #controls input[type=checkbox] { width: 16px; height: 16px; flex: none; }
-  #controls .ctl-slider input[type=range] { flex: 1; min-width: 60px; }
-  #controls .ctl-slider .val { color: #5f6368; min-width: 38px; text-align: right;
-    font-variant-numeric: tabular-nums; }
   #schematic { flex: 1; height: 100%; display: block; min-width: 0; }
+  #schematic .hit { cursor: pointer; }
+  #schematic .selected { filter: drop-shadow(0 0 2px #1a73e8) drop-shadow(0 0 5px rgba(26,115,232,.7)); }
   .legend { display: flex; gap: 18px; padding: 6px 16px; font-size: 12px; color: #5f6368; align-items: center; flex-wrap: wrap; flex: none; }
   .legend .ramp { width: 90px; height: 10px; border-radius: 5px;
     background: linear-gradient(to right, hsl(220,80%,45%), hsl(110,80%,45%), hsl(0,80%,45%)); }
@@ -45,32 +39,46 @@
   .legend > span { white-space: nowrap; }
   .swatch { display: inline-block; width: 14px; height: 3px; vertical-align: middle; }
 
-  /* Phones / narrow screens: the page scrolls naturally, the schematic sticks to
-     the top while the control list scrolls beneath it — so toggling a control
-     never scrolls the picture out of view. The legend collapses to one
-     side-scrollable line. */
+  /* The bottom sheet: hidden below the viewport, slides up when a part is selected.
+     Full-width on phones; a docked card on wider screens. */
+  #sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    background: #fff; border: 1px solid #dadce0; border-bottom: none;
+    border-radius: 14px 14px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,.18);
+    max-height: 55vh; overflow-y: auto; box-sizing: border-box;
+    padding: 4px 18px calc(14px + env(safe-area-inset-bottom));
+    transform: translateY(105%); transition: transform .25s ease; }
+  #sheet.open { transform: translateY(0); }
+  @media (min-width: 821px) {
+    #sheet { left: auto; right: 24px; width: 360px; }
+  }
+  .sheet-bar { display: flex; align-items: center; min-height: 26px; }
+  .sheet-bar .grabber { flex: 1; height: 4px; max-width: 44px; margin: 0 auto;
+    border-radius: 2px; background: #dadce0; }
+  .sheet-close { position: absolute; top: 6px; right: 10px; border: none;
+    background: none; font-size: 16px; color: #5f6368; cursor: pointer;
+    padding: 4px 8px; border-radius: 8px; }
+  .sheet-close:hover { background: #f1f3f4; }
+  #sheet label { display: flex; align-items: center; gap: 8px; padding: 3px 0;
+    font-size: 13px; cursor: pointer; touch-action: manipulation; }
+  #sheet input[type=checkbox] { width: 16px; height: 16px; flex: none; }
+  #sheet .ctl-slider input[type=range] { flex: 1; min-width: 60px; }
+  #sheet .ctl-slider .val { color: #5f6368; min-width: 38px; text-align: right;
+    font-variant-numeric: tabular-nums; }
+  #sheet .ctl-panel h2 { font-size: 14px; margin: 4px 0 2px; padding-right: 28px; }
+  #sheet .ctl-info { color: #5f6368; font-size: 12.5px; line-height: 1.45;
+    margin: 4px 0 8px; }
+
+  /* Narrow screens: the legend collapses to one side-scrollable line. */
   @media (max-width: 820px) {
-    html, body { height: auto; }
-    body { display: block; }
     .legend { flex-wrap: nowrap; overflow-x: auto; gap: 14px;
       -webkit-overflow-scrolling: touch; }
-    #main { flex-direction: column; height: auto; }
-    /* flex: none — in a column flexbox `flex: 1` would size the height and silently
-       override the 44vh, growing the svg over the panel */
-    #schematic { order: -1; flex: none; position: sticky; top: 0; z-index: 2;
-      width: 100%; height: 44vh; background: #fff; border-bottom: 1px solid #dadce0; }
-    #controls { width: 100%; border-right: none; overflow: visible;
-      padding: 4px 16px 28px; }
-    /* focus/anchor scrolls must land below the sticky picture, not under it —
-       on the inputs too: keyboard focus scrolls to the input, not its label */
-    #controls label, #controls input { scroll-margin-top: calc(44vh + 8px); }
   }
 
   /* Touch devices: finger-sized targets regardless of screen width. */
   @media (pointer: coarse) {
-    #controls label { padding: 8px 0; font-size: 15px; }
-    #controls input[type=checkbox] { width: 20px; height: 20px; }
-    #controls .ctl-slider input[type=range] { height: 28px; }
+    #sheet label { padding: 8px 0; font-size: 15px; }
+    #sheet input[type=checkbox], #display-ctl input[type=checkbox] { width: 20px; height: 20px; }
+    #sheet .ctl-slider input[type=range] { height: 28px; }
   }
 </style>
 </head>
@@ -78,11 +86,16 @@
 <header>
   <h1>Irrigation simulator</h1>
   <div id="status">booting…</div>
+  <span id="display-ctl"></span>
 </header>
 <div class="legend">
   <span>pressure: 0 bar <span class="ramp"></span> 5 bar</span>
   <span>flow: <svg width="60" height="12"><line x1="0" y1="9" x2="18" y2="9" stroke="#444" stroke-width="1.5"/><line x1="26" y1="7" x2="58" y2="7" stroke="#444" stroke-width="8" stroke-linecap="round"/></svg> more</span>
   <span><span class="swatch" style="background:#9aa0a6"></span> unfilled/idle</span>
+  <span>equipment:
+    <svg width="14" height="13"><circle cx="7" cy="7" r="5" fill="#ceead6" stroke="#1e8e3e" stroke-width="2"/></svg> on/open ·
+    <svg width="14" height="13"><circle cx="7" cy="7" r="5" fill="#feefc3" stroke="#f9a825" stroke-width="2"/></svg> commanded, not opening ·
+    <svg width="14" height="13"><circle cx="7" cy="7" r="5" fill="#fff" stroke="#9aa0a6" stroke-width="1.5"/></svg> off/closed</span>
   <span>wiring: <span class="swatch" style="background:#d6524b"></span> 230 V live
     <span class="swatch" style="background:#4f86d4"></span> neutral
     <span class="swatch" style="background:#76a23c"></span> earth
@@ -93,9 +106,9 @@
     <svg width="26" height="10"><line x1="0" y1="6" x2="26" y2="6" stroke="#c62828" stroke-width="2" stroke-dasharray="4 3"/></svg> broken</span>
 </div>
 <div id="main">
-  <aside id="controls"></aside>
   <svg id="schematic" xmlns="http://www.w3.org/2000/svg"></svg>
 </div>
+<div id="sheet"></div>
 <script type="module" src="src/app.js"></script>
 </body>
 </html>
