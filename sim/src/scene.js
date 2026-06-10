@@ -64,10 +64,13 @@ function wireState(s) {
 //   wires:   [{key, points, cls, state}]            // cls: live|neutral|earth|lv
 //   leads:   [{key, points, cls, state}]            // solenoid leads (splice -> coil)
 //   splices: [{key, x, y, state}]                   // field-splice dots on the wire
+//   faultMarks: [{key, x, y, title}]                // ✕ on every faulted element (M8)
+//   leaks:   [{key, x, y, text}]                    // active fault leaks + flow (M8)
 // }
 // Circuit boxes, terminal dots and labels are static chrome drawn by render.js
 // straight from the layout; only wires, leads and splices carry live state.
-export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
+// `faults` is the compiled FaultEffects of this solve (faults.js), or absent.
+export function buildScene(model, layout, steady, elec, { lmin = false, faults = null } = {}) {
   // wetIds are real flow ids (pipes carry their own id; node->node edges carry both
   // endpoints, so the half-edge downstream of a closed valve renders dead)
   const dead = (ids) => !ids.every((id) => steady.reachable.has(id));
@@ -169,5 +172,36 @@ export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
     splices.push({ key: portId, x: p.x, y: p.y, state: wireState(elec.ports[portId]) });
   }
 
-  return { pipes, nodes, labels, wires, leads, splices };
+  // Faulted hydraulic elements get an ✕ at their glyph (nodes/equipment) or at the
+  // hose polyline's midpoint (links). Circuit-side faults already display through
+  // the wire/port `broken` states above.
+  const faultMarks = [];
+  if (faults) {
+    for (const [id, faultLabels] of faults.faulted) {
+      let x, y;
+      const n = layout.flow.nodes.get(id);
+      if (n) {
+        x = n.x + n.w / 2;
+        y = n.y - 2;
+      } else {
+        const e = layout.flow.edges.get(id);
+        if (!e) continue; // a circuit part — shown by the wiring states instead
+        const mid = e.points[Math.floor(e.points.length / 2)];
+        x = mid.x;
+        y = mid.y;
+      }
+      faultMarks.push({ key: id, x, y, title: `${id}: ${faultLabels.join(", ")}` });
+    }
+  }
+
+  // Active leaks (R14: every place water leaves, with how much). Leaks sharing a
+  // head's junction report through that head's own label instead.
+  const leaks = [];
+  for (const [id, q] of steady.leakFlows || []) {
+    const n = layout.flow.nodes.get(id);
+    if (!n) continue;
+    leaks.push({ key: id, x: n.x + n.w / 2, y: n.y + n.h / 2, text: fmtFlow(q, lmin) });
+  }
+
+  return { pipes, nodes, labels, wires, leads, splices, faultMarks, leaks };
 }

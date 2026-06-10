@@ -3,6 +3,7 @@
 //   commands : controller outputs { mv, zones:{1..4} } -> solveElectrical
 //   state    : mechanical inputs { manualOpen, bleedOpen, floStop, throttle } -> solveSteady
 //   blocked  : optional Set of open-circuit port ids / wire names (electrical faults)
+//   faults   : optional { faultKey: true|severity } -> compileFaults (M8)
 //   kind     : which assertion block the harness runs
 //   expect   : (electrical cases) which zones should be open/closed and pump state
 
@@ -72,5 +73,64 @@ export const cases = [
     kind: "throttle0",
     commands: { mv: true, zones: { 1: true } },
     state: { manualOpen: {}, throttle: { "Z1.valve": 0 } },
+  },
+  // M8 faults — injected via compileFaults. Several compare against the stashed
+  // plain-Z1 result, so they must run after the "z1" case.
+  {
+    name: "pump on + Z1 with Z1.hose1 fully clogged",
+    kind: "clogfull",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "Z1.hose1:clogged": 1 },
+  },
+  {
+    name: "pump on + Z1 with Z1.hose1 80% clogged",
+    kind: "clogpartial",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "Z1.hose1:clogged": 0.8 },
+  },
+  {
+    name: "pump on + Z1 with Z1.hose2 burst (leak)",
+    kind: "leak",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "Z1.hose2:broken": true },
+  },
+  {
+    name: "all zones commanded, Z2 solenoid coil broken (fault key)",
+    kind: "electrical",
+    commands: { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } },
+    state: { manualOpen: {} },
+    faults: { "Z2.valve.coil:broken": true },
+    expect: { zonesOpen: [1, 3, 4], zonesClosed: [2], pump: true },
+  },
+  {
+    name: "pump on, no zone commanded, Z1 bleed screw stuck open",
+    kind: "bleedstuck",
+    commands: { mv: true, zones: {} },
+    state: { manualOpen: {} },
+    faults: { "Z1.valve.bleed_screw:misconfigured": true },
+  },
+  {
+    name: "pump on + Z1 with a half-clogged impeller (weak pump)",
+    kind: "weakpump",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "pump.impeller:clogged": 0.5 },
+  },
+  {
+    name: "pump and Z1 commanded but the pump motor is broken",
+    kind: "pumpdead",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "pump.motor:broken": true },
+  },
+  {
+    name: "pump on + Z1 with Z1.head1's pressure regulator broken",
+    kind: "noclamp",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "Z1.head1.regulator:broken": true },
   },
 ];
