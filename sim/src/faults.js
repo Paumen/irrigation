@@ -1,4 +1,4 @@
-// M8 fault model. The toggle list is every `fail:` entry in graph.yaml — simple kinds
+// M8 fault model. The fault set is every `fail:` entry in graph.yaml — simple kinds
 // fail as a whole (`Z1.hose1:clogged`), compound kinds per sub-part
 // (`Z1.valve.diaphragm:broken`), circuit parts per port (`controller.zone_2:broken`).
 // compileFaults() turns the active set into FaultEffects the solver/network consume:
@@ -9,7 +9,7 @@
 // Dispatch is a grouped (role x failtype) table: each faultable (node, sub-part) pair
 // maps to a small behaviour group, and SPECIAL overrides a handful of part-specific
 // cases (stuck-open bleed screw, seated flow-control, lost prime, ...). Clogs carry a
-// 0..1 severity (blocked area fraction); everything else is a plain toggle.
+// 0..1 severity (blocked area fraction); everything else is a plain boolean.
 
 import {
   CLOG_FULL,
@@ -27,10 +27,10 @@ import { streamEmitterCoeff } from "./outlets.js";
 const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
 
 // Every injectable fault, derived from the model so a YAML change propagates.
-// {key, target, sub, type, side, severity, label}; `severity` flags a 0..1 slider
-// (clogs), everything else is boolean. Keys collide where graph.yaml describes the
-// same physical part on both sides (the pump motor is in `kinds.pump.well` AND
-// `circuit.parts.pump`) — first definition wins, one toggle.
+// {key, target, sub, type, side, severity}; `severity` flags a 0..1 value (clogs),
+// everything else is boolean. Keys collide where graph.yaml describes the same
+// physical part on both sides (the pump motor is in `kinds.pump.well` AND
+// `circuit.parts.pump`) — first definition wins, one fault.
 export function listFaults(model) {
   const out = [];
   const seen = new Set();
@@ -38,7 +38,6 @@ export function listFaults(model) {
     if (seen.has(f.key)) return;
     seen.add(f.key);
     f.severity = f.type === "clogged";
-    f.label = `${f.sub ? `${f.sub} ` : ""}${f.type}`;
     out.push(f);
   };
   for (const n of model.flowNodes.values()) {
@@ -77,7 +76,6 @@ export function emptyEffects() {
     leaks: new Map(), // node flow id -> emitter coeff (CMH/sqrt(m)), summed
     outletMods: new Map(), // outlet id -> {nozzle, arc, noClamp, flowScale, bore_mm, asOrifice}
     elecBlocked: new Set(), // circuit port ids -> solveElectrical blocked
-    faulted: new Map(), // flow id (node or link) -> [labels], for display
   };
 }
 
@@ -171,7 +169,7 @@ function groupOf(node, sub) {
 }
 
 // The grouped (role x failtype) table. Each cell mutates fx; missing cells are
-// declared-but-inert faults (displayed, no settled-state effect).
+// declared-but-inert faults (no settled-state effect).
 const RULES = {
   "conduit:clogged": ({ fx, node, sev }) => restrictLink(fx, node.id, sev),
   "conduit:broken": ({ fx, model, node }) => addLeak(fx, model, node.id, LEAK_BORE_MM),
@@ -257,7 +255,7 @@ const SPECIAL = {
   },
 };
 
-// active = { faultKey: true | 0..1 }. Falsy values (toggle off, clog severity 0) are
+// active = { faultKey: true | 0..1 }. Falsy values (false, clog severity 0) are
 // healthy. Unknown keys throw — a typo is a bug, not a fault state.
 export function compileFaults(model, active = {}) {
   const fx = emptyEffects();
@@ -274,8 +272,6 @@ export function compileFaults(model, active = {}) {
     const node = model.flowNodes.get(f.target);
     const rule = SPECIAL[`${node.kind}.${f.sub}:${f.type}`] ?? RULES[`${groupOf(node, f.sub)}:${f.type}`];
     rule?.({ fx, model, node, sev });
-    if (!fx.faulted.has(f.target)) fx.faulted.set(f.target, []);
-    fx.faulted.get(f.target).push(f.label);
   }
   return fx;
 }

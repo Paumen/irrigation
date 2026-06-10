@@ -54,8 +54,9 @@ export const cases = [
     blocked: new Set(["signal_2"]),
     expect: { zonesOpen: [1, 3, 4], zonesClosed: [2], pump: true },
   },
-  // M6 mechanical controls — these three reuse the pump+Z1 state and are compared
-  // against the stashed plain-Z1 result, so they must run after the "z1" case.
+  // Mechanical inputs (flo-stop, flow-control screw) — these three reuse the pump+Z1
+  // state and are compared against the stashed plain-Z1 result, so they must run
+  // after the "z1" case.
   {
     name: "pump on + Z1 with Z1.head2 flo-stop closed",
     kind: "flostop",
