@@ -3,7 +3,7 @@ system_metadata:
 location_descriptions:
   house: indoor — main residence
   shed: indoor — outbuilding housing the pump start relay
-  well: outdoor — underground water-supply shaft; the surface pump sits on a platform roughly halfway down, above the water line, drawing up through the suction hose (foot valve down in the water)
+  well: outdoor — underground water-supply shaft; the surface pump sits on a platform roughly halfway down, above the water line, drawing up through the suction hose (open hose end in the water — no foot valve fitted, so the suction hose drains back when the pump stops)
   valve_box: outdoor — in-ground enclosure containing the manifold and 4 zone solenoid valves
   in_ground: outdoor — buried in lawn/garden
 control_paths:
