@@ -1,13 +1,11 @@
-// Render an EPANET Topology to INP text. Section format mirrors test/m0-smoke.mjs,
-// which locked the dialect epanet-js accepts. Numbers are written in fixed notation
-// (never scientific — the parser dislikes "1.5e-3").
+// Section format mirrors the dialect epanet-js accepts. Numbers must be fixed notation,
+// never scientific — the parser rejects "1.5e-3".
 
 import { EPANET_TRIALS, EPANET_ACCURACY } from "./config.js";
 
 function num(x) {
   if (!Number.isFinite(x)) throw new Error(`inp: non-finite number ${x}`);
   if (Number.isInteger(x)) return String(x);
-  // up to 6 decimals, trailing zeros trimmed, no exponent
   return x.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
 }
 

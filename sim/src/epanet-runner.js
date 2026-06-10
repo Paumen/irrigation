@@ -1,8 +1,4 @@
-// Thin wrapper over epanet-js. Mirrors the lifecycle locked in test/m0-smoke.mjs:
-// load the wasm Workspace once (the slow part), then per solve write the INP, open a
-// fresh Project, solveH, read results, and close it. The solver rebuilds the INP and
-// calls solveInp every iteration; reusing the warm Workspace keeps that sub-ms.
-
+// Load the wasm Workspace once (the slow part); reuse it across every solveInp call.
 import { Workspace, Project, NodeProperty, LinkProperty } from "epanet-js";
 import { M_PER_BAR } from "./config.js";
 
@@ -12,8 +8,6 @@ export async function createHydraulics() {
   return { ws, version: ws.version };
 }
 
-// Solve one INP and read back results for the requested ids.
-// Returns { pressureBar, headM, demand, flow, status } keyed by EPANET id.
 export function solveInp(hyd, inpText, { nodeIds, linkIds }) {
   const { ws } = hyd;
   ws.writeFile("net.inp", inpText);
@@ -24,9 +18,8 @@ export function solveInp(hyd, inpText, { nodeIds, linkIds }) {
   try {
     p.solveH();
   } catch (err) {
-    // Disconnected dead branches raise non-fatal warnings; results are still
-    // readable. Capture and continue; a genuinely fatal open/read failure below
-    // will throw on its own.
+    // Dead branches raise non-fatal warnings; results stay readable, so continue.
+    // A truly fatal open/read failure throws below.
     solveWarning = err;
   }
 
