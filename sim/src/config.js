@@ -54,37 +54,6 @@ export const CONNECTOR_LEN_M = 0.1;
 export const CONNECTOR_DIAM_MM = 25;
 export const DEFAULT_ROUGHNESS_MM = 0.0015;
 
-// --- schematic display (layout.js / scene.js) ---
-
-// Pressure color scale tops out near the pump's dead-head (48.3 m ~ 4.7 bar), so the
-// red end of the ramp means "as high as this system can go". Green is anchored at the
-// normal operating pressure, so a healthy running system reads green, a starved one
-// trends blue, and only above-normal pressure (zones shut, dead-heading) trends warm.
-export const P_COLOR_MAX_BAR = 5.0;
-export const P_COLOR_GREEN_BAR = 3.5;
-// Stroke width ramps from idle to the pump curve's last point (its max flow), so the
-// boldest line means "everything the pump can deliver runs through here".
-export const Q_STROKE_MAX_M3H = 4.8;
-export const STROKE_MIN_PX = 1.5;
-export const STROKE_MAX_PX = 8;
-// The electrical schematic is laid out independently and drawn in a reserved band
-// this far below the hydraulic schematic.
-export const CIRCUIT_BAND_GAP = 60;
-// Unfilled (dead-branch) and idle elements render in this grey, dashed.
-export const DEAD_COLOR = "#9aa0a6";
-
-// Equipment (pump/valve) glyphs have no node pressure to color by, so they encode
-// their STATE instead: stroke + fill pairs for running/open and commanded-but-not-
-// opening; off/closed stays white-filled grey.
-export const EQUIP_ON_STROKE = "#1e8e3e";
-export const EQUIP_ON_FILL = "#ceead6";
-export const EQUIP_CMD_STROKE = "#f9a825";
-export const EQUIP_CMD_FILL = "#feefc3";
-
-// Control panel changes re-solve after this quiet period, so a slider drag coalesces
-// into one solve instead of one per tick (app.js).
-export const DEBOUNCE_MS = 150;
-
 // --- fault model (faults.js) ---
 
 // A clog's 0..1 severity is the blocked area fraction. At/above CLOG_FULL the line is
@@ -106,9 +75,3 @@ export const FLUSH_BORE_MM = 5;
 export const FLUSH_CD = 0.8;
 // A mis-fitted stream nozzle: wrong (narrower) bore.
 export const WRONG_STREAM_BORE_SCALE = 0.6;
-
-// --- quasi-time (quasitime.js) ---
-
-export const TL_TAIL_S = 30; // scrubbable span beyond the last timeline entry
-export const TL_TICK_MS = 250; // play timer resolution
-export const TL_RATE = 4; // timeline seconds advanced per real second of play
