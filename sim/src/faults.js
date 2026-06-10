@@ -1,16 +1,3 @@
-// M8 fault model. The fault set is every `fail:` entry in graph.yaml — simple kinds
-// fail as a whole (`Z1.hose1:clogged`), compound kinds per sub-part
-// (`Z1.valve.diaphragm:broken`), circuit parts per port (`controller.zone_2:broken`).
-// compileFaults() turns the active set into FaultEffects the solver/network consume:
-// hydraulic mutations (closed/restricted links, weak or dead pump, stuck-open or
-// disabled valves), leak emitters at the nearest real junction, outlet-law mods
-// (wrong nozzle, lost regulator clamp, flush plug), and electrical open-circuits.
-//
-// Dispatch is a grouped (role x failtype) table: each faultable (node, sub-part) pair
-// maps to a small behaviour group, and SPECIAL overrides a handful of part-specific
-// cases (stuck-open bleed screw, seated flow-control, lost prime, ...). Clogs carry a
-// 0..1 severity (blocked area fraction); everything else is a plain boolean.
-
 import {
   CLOG_FULL,
   PILOT_CLOG_BLOCKS,
@@ -26,11 +13,7 @@ import { streamEmitterCoeff } from "./outlets.js";
 
 const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
 
-// Every injectable fault, derived from the model so a YAML change propagates.
-// {key, target, sub, type, side, severity}; `severity` flags a 0..1 value (clogs),
-// everything else is boolean. Keys collide where graph.yaml describes the same
-// physical part on both sides (the pump motor is in `kinds.pump.well` AND
-// `circuit.parts.pump`) — first definition wins, one fault.
+// A part can appear on both flow and circuit sides (e.g. pump motor); first wins.
 export function listFaults(model) {
   const out = [];
   const seen = new Set();
@@ -42,7 +25,7 @@ export function listFaults(model) {
   };
   for (const n of model.flowNodes.values()) {
     const kindDef = model.kinds[n.kind];
-    if (!kindDef) continue; // water.level (the well surface) has no kinds entry
+    if (!kindDef) continue;
     for (const t of kindDef.fail || []) {
       push({ key: `${n.id}:${t}`, target: n.id, sub: null, type: t, side: "flow" });
     }
@@ -67,28 +50,27 @@ export function emptyEffects() {
   return {
     pumpDisabled: false,
     pumpHeadScale: 1,
-    closedLinks: new Set(), // link flow ids forced shut (full clogs)
-    linkK: new Map(), // link flow id -> extra minor-loss K (partial clogs)
-    valveDisabled: new Set(), // cannot open no matter what
-    valveForcedOpen: new Set(), // mechanically stuck open
-    valveLossScale: new Map(), // valve flow id -> loss-curve scale factor (seat clogs)
-    bleedForcedOpen: new Set(), // bleed screw stuck open = permanently commanded
-    leaks: new Map(), // node flow id -> emitter coeff (CMH/sqrt(m)), summed
-    outletMods: new Map(), // outlet id -> {nozzle, arc, noClamp, flowScale, bore_mm, asOrifice}
-    elecBlocked: new Set(), // circuit port ids -> solveElectrical blocked
+    closedLinks: new Set(),
+    linkK: new Map(),
+    valveDisabled: new Set(),
+    valveForcedOpen: new Set(),
+    valveLossScale: new Map(),
+    bleedForcedOpen: new Set(),
+    leaks: new Map(),
+    outletMods: new Map(),
+    elecBlocked: new Set(),
   };
 }
 
-// Sharp-orifice minor loss for a clog blocking `sev` of the area, expressed on the
-// full pipe velocity: K = (1/a^2 - 1)^2 with a = open-area fraction.
+// Sharp-orifice minor-loss K on the full pipe velocity; a = open-area fraction.
 function clogK(sev) {
   const a = 1 - sev;
   return (1 / (a * a) - 1) ** 2;
 }
 
-// Walk downstream from a faulted element to the first real (EPANET-junction) vertex —
-// where its escaping water is injected. Crossing the pump means the fault sits on the
-// suction side: a break there draws air, not water (the pump loses prime).
+// First real (EPANET-junction) vertex downstream of a faulted element, where its
+// escaping water is injected. Crossing the pump means a suction-side fault, which
+// loses prime instead of leaking: return {suction:true}.
 function anchorDownstream(model, id) {
   let n = model.flowNodes.get(id);
   while (n && !NODE_ROLES.has(n.role)) {
@@ -102,7 +84,7 @@ function addLeak(fx, model, fromId, bore_mm) {
   const a = anchorDownstream(model, fromId);
   if (!a) return;
   if (a.suction) {
-    fx.pumpDisabled = true; // suction-side break: pump loses prime
+    fx.pumpDisabled = true;
     return;
   }
   const coeff = streamEmitterCoeff({ bore_mm, cd: LEAK_CD });
@@ -119,9 +101,8 @@ function modOf(fx, outletId) {
   return fx.outletMods.get(outletId);
 }
 
-// The wrong nozzle fitted: swap the catalog row, deterministically. Rotors get the
-// largest other size; sprays the first other nozzle family that has the same arc row
-// (arcs differ per family, and the arc is set by the install, not the nozzle).
+// Rotors swap to the largest other size; sprays to the first other family carrying
+// the same arc (arc is fixed by install, so the swapped nozzle must keep it).
 function wrongNozzle(fx, model, node) {
   const mod = modOf(fx, node.id);
   if (node.subkind === "rotor") {
@@ -138,13 +119,11 @@ function wrongNozzle(fx, model, node) {
   }
 }
 
-// Behaviour group of one faultable (node, sub) pair. Anything not matched is treated
-// as a fitting (a generic body/thread whose failure leaks).
 function groupOf(node, sub) {
   if (!sub) {
     if (node.role === "pipe") return "conduit";
     if (node.subkind === "stream") return "streamNozzle";
-    return "fitting"; // joint, tee, cap
+    return "fitting";
   }
   if (node.role === "pump") {
     if (["suction", "impeller", "diffuser"].includes(sub)) return "pumpPath";
@@ -157,19 +136,18 @@ function groupOf(node, sub) {
     if (sub === "metering_port") return "pilotFill";
     if (["solenoid_entry", "plunger", "solenoid_exhaust"].includes(sub)) return "pilotDrain";
     if (sub === "coil") return "valveCoil";
-    return "fitting"; // inlet_thread, outlet_nut, bonnet, body
+    return "fitting";
   }
   if (node.role === "outlet") {
     if (["filter", "nozzle"].includes(sub)) return "outletPath";
     if (["check_valve", "retract_spring", "gear", "arc"].includes(sub)) return "cosmetic";
     if (["riser_seal", "wiper_seal"].includes(sub)) return "shellSeal";
-    return "fitting"; // inlet_thread, body, cap
+    return "fitting";
   }
-  return "fitting"; // manifold seals/body and anything else
+  return "fitting";
 }
 
-// The grouped (role x failtype) table. Each cell mutates fx; missing cells are
-// declared-but-inert faults (no settled-state effect).
+// A missing (group x failtype) cell is a declared-but-inert fault.
 const RULES = {
   "conduit:clogged": ({ fx, node, sev }) => restrictLink(fx, node.id, sev),
   "conduit:broken": ({ fx, model, node }) => addLeak(fx, model, node.id, LEAK_BORE_MM),
@@ -188,9 +166,7 @@ const RULES = {
   },
   "valveSeal:broken": ({ fx, node }) => fx.valveForcedOpen.add(node.id),
   "valveSeal:clogged": ({ fx, node, sev }) => {
-    // EPANET ignores minor losses on GPVs, so a seat clog scales the valve's LOSS
-    // CURVE by 1/a² (like the flow-control screw); a fully packed seat seals the
-    // valve and reports commanded-but-not-opening instead of green-open.
+    // EPANET ignores minor losses on GPVs, so scale the loss curve, not linkK.
     if (sev >= CLOG_FULL) {
       fx.closedLinks.add(node.id);
       fx.valveDisabled.add(node.id);
@@ -200,11 +176,11 @@ const RULES = {
     }
   },
   "pilotFill:clogged": ({ fx, node, sev }) => {
-    // chamber can't pressurise -> the diaphragm can't be pushed shut
+    // chamber can't pressurise -> diaphragm can't be pushed shut
     if (sev >= PILOT_CLOG_BLOCKS) fx.valveForcedOpen.add(node.id);
   },
   "pilotDrain:clogged": ({ fx, node, sev }) => {
-    // chamber can't drain -> the diaphragm can't lift
+    // chamber can't drain -> diaphragm can't lift, so the valve stays shut
     if (sev >= PILOT_CLOG_BLOCKS) fx.valveDisabled.add(node.id);
   },
   "pilotDrain:broken": ({ fx, node }) => fx.valveDisabled.add(node.id),
@@ -225,21 +201,17 @@ const RULES = {
 
 // Part-specific overrides, keyed `<kind>.<sub>:<type>`, consulted before the table.
 const SPECIAL = {
-  // bleed screw left open: the chamber vents permanently, the valve runs as if
-  // commanded (pressure gating still applies)
+  // bleeds the chamber but pressure gating still applies, hence bleedForcedOpen
+  // (not valveForcedOpen)
   "valve.auto.bleed_screw:misconfigured": ({ fx, node }) => fx.bleedForcedOpen.add(node.id),
-  // snapped bleed screw: the chamber can't hold pressure (valve stuck open) and
-  // water weeps from the bonnet whenever the inlet is live
   "valve.auto.bleed_screw:broken": ({ fx, model, node }) => {
     fx.valveForcedOpen.add(node.id);
     addLeak(fx, model, node.id, DRIP_BORE_MM);
   },
-  // flow-control screw run all the way down pins the diaphragm shut
   "valve.auto.flow_control:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
-  // a broken flow-control stem can no longer adjust anything: inert at steady state
+  // broken flow-control stem is inert at steady state
   "valve.auto.flow_control:broken": () => {},
   "valve.manual.handle:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
-  // priming cap off or loose: the pump loses prime either way
   "pump.well.priming_cap:broken": ({ fx }) => {
     fx.pumpDisabled = true;
   },
@@ -249,14 +221,12 @@ const SPECIAL = {
   "head.spray.regulator:broken": ({ fx, node }) => {
     modOf(fx, node.id).noClamp = true;
   },
-  // flush plug left in (no nozzle): the head dumps as an open orifice
   "head.spray.flush_plug:misconfigured": ({ fx, node }) => {
     modOf(fx, node.id).asOrifice = { bore_mm: FLUSH_BORE_MM, cd: FLUSH_CD };
   },
 };
 
-// active = { faultKey: true | 0..1 }. Falsy values (false, clog severity 0) are
-// healthy. Unknown keys throw — a typo is a bug, not a fault state.
+// active = { faultKey: true | 0..1 }; falsy = healthy. Unknown keys throw.
 export function compileFaults(model, active = {}) {
   const fx = emptyEffects();
   const byKey = new Map(listFaults(model).map((f) => [f.key, f]));

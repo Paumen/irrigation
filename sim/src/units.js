@@ -1,6 +1,3 @@
-// Unit conversions and formatters. Internal physics is always in m3/h (flow) and
-// metres of head (pressure); conversion happens only at IO boundaries.
-
 import { M_PER_BAR, G } from "./config.js";
 
 export function barToM(bar) {
@@ -19,15 +16,9 @@ export function lminToM3h(q) {
   return (q * 60) / 1000;
 }
 
-// EPANET TCV minor-loss coefficient K from a valve's Kv rating.
-//
-// Kv is the flow (m3/h) that produces a 1 bar drop, so the valve obeys
-// dP[bar] = (Q/Kv)^2  ->  headloss h[m] = M_PER_BAR*(Q/Kv)^2.
-// EPANET's TCV models headloss as h = K * V^2/(2g) with V = Q/A. Equating the two
-// (the Q^2 cancels) gives a flow-independent K that depends on the link diameter:
-//   K = 2*g*h*A^2 / Q^2   evaluated at the Kv reference point (Q=Kv, h=M_PER_BAR).
-// K scales with A^2 ~ diam^4, so it MUST be computed from the same diameter declared
-// on the TCV link.
+// EPANET TCV minor-loss coefficient K from a valve's Kv rating, at the Kv reference
+// point (Q=Kv, h=M_PER_BAR). K scales with A^2 ~ diam^4, so it MUST be computed from
+// the same diameter declared on the TCV link.
 export function kvToTcvK(kv_m3h, diam_mm) {
   if (kv_m3h <= 0) return 1e9; // a non-positive Kv is an effectively shut/invalid valve
   const d = diam_mm / 1000; // m
