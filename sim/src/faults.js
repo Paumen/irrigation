@@ -72,6 +72,7 @@ export function emptyEffects() {
     linkK: new Map(), // link flow id -> extra minor-loss K (partial clogs)
     valveDisabled: new Set(), // cannot open no matter what
     valveForcedOpen: new Set(), // mechanically stuck open
+    valveLossScale: new Map(), // valve flow id -> loss-curve scale factor (seat clogs)
     bleedForcedOpen: new Set(), // bleed screw stuck open = permanently commanded
     leaks: new Map(), // node flow id -> emitter coeff (CMH/sqrt(m)), summed
     outletMods: new Map(), // outlet id -> {nozzle, arc, noClamp, flowScale, bore_mm, asOrifice}
@@ -188,7 +189,18 @@ const RULES = {
     fx.pumpDisabled = true;
   },
   "valveSeal:broken": ({ fx, node }) => fx.valveForcedOpen.add(node.id),
-  "valveSeal:clogged": ({ fx, node, sev }) => restrictLink(fx, node.id, sev),
+  "valveSeal:clogged": ({ fx, node, sev }) => {
+    // EPANET ignores minor losses on GPVs, so a seat clog scales the valve's LOSS
+    // CURVE by 1/a² (like the flow-control screw); a fully packed seat seals the
+    // valve and reports commanded-but-not-opening instead of green-open.
+    if (sev >= CLOG_FULL) {
+      fx.closedLinks.add(node.id);
+      fx.valveDisabled.add(node.id);
+    } else {
+      const a = 1 - sev;
+      fx.valveLossScale.set(node.id, (fx.valveLossScale.get(node.id) ?? 1) / (a * a));
+    }
+  },
   "pilotFill:clogged": ({ fx, node, sev }) => {
     // chamber can't pressurise -> the diaphragm can't be pushed shut
     if (sev >= PILOT_CLOG_BLOCKS) fx.valveForcedOpen.add(node.id);

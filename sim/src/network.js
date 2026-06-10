@@ -44,6 +44,7 @@ export function buildTopology(model, state) {
   const closedLinks = state.closedLinks || new Set(); // fault: link flow ids sealed shut
   const linkK = state.linkK || new Map(); // fault: link flow id -> extra minor-loss K
   const pumpHeadScale = state.pumpHeadScale ?? 1; // fault: weak pump
+  const valveLossScale = state.valveLossScale || new Map(); // fault: seat clogs
 
   // --- id mapping (EPANET ids may not contain '.') ---
   const toEpanet = new Map();
@@ -137,9 +138,14 @@ export function buildTopology(model, state) {
   // A clogged pump path scales the whole catalog head curve down (weak pump).
   const pump = model.curves.pump;
   const vloss = model.curves.valveLoss;
+  // The catalog valve-loss table starts above zero flow; anchor the curve at the
+  // origin (no flow -> no loss), otherwise EPANET extrapolates the first segment and
+  // a starved branch behind a heavily scaled curve reads deeply negative pressures.
+  const vpts = vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]);
+  if (vpts[0][0] > 0) vpts.unshift([0, 0]);
   const curves = {
     PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i] * pumpHeadScale]),
-    VCURVE: vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]),
+    VCURVE: vpts,
   };
 
   // --- emit one EPANET link per link-like vertex ---
@@ -188,13 +194,16 @@ export function buildTopology(model, state) {
       // The flow-control screw limits diaphragm lift: opening fraction t scales the
       // effective Kv to t·Kv, so the catalog loss curve scales by 1/t² (loss ∝ (Q/Kv)²).
       // A seated screw (t <= THROTTLE_MIN) is held shut by the solver and never solves
-      // open; the clamp here only keeps the scaled curve finite.
+      // open; the clamp here only keeps the scaled curve finite. A partial seat clog
+      // multiplies its own loss scale in the same way — it must ride on the curve,
+      // because EPANET ignores the minor-loss column on GPVs.
       const t = throttle[L.id] ?? 1;
+      const lossScale = valveLossScale.get(L.id) ?? 1;
       let setting = "VCURVE";
-      if (t < 1) {
+      if (t < 1 || lossScale !== 1) {
         const tt = Math.max(t, THROTTLE_MIN);
         setting = `VC_${ep(L.id)}`;
-        curves[setting] = curves.VCURVE.map(([q, h]) => [q, h / (tt * tt)]);
+        curves[setting] = curves.VCURVE.map(([q, h]) => [q, (h * lossScale) / (tt * tt)]);
       }
       valves.push({
         id: ep(L.id),
@@ -209,6 +218,7 @@ export function buildTopology(model, state) {
       });
       if (!valveOpen[L.id]) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-manual") {
+      // a TCV's headloss IS its setting (K), so a seat clog scales the setting
       const diam = L.params.bore_mm || 16;
       valves.push({
         id: ep(L.id),
@@ -217,7 +227,7 @@ export function buildTopology(model, state) {
         n2,
         diam_mm: diam,
         type: "TCV",
-        setting: kvToTcvK(L.params.Kv, diam),
+        setting: kvToTcvK(L.params.Kv, diam) * (valveLossScale.get(L.id) ?? 1),
         mloss,
         isAuto: false,
       });
