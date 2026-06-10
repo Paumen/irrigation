@@ -323,17 +323,50 @@ const layout = await computeLayout(model, circuit);
     "every zone cluster sits right of the manifold",
   );
 
-  const expectedParts = [...Object.keys(circuit.parts), "Z1.valve", "Z2.valve", "Z3.valve", "Z4.valve"];
+  // the splice part renders as per-port field-splice dots; every other part is a box
+  const expectedParts = [
+    ...Object.keys(circuit.parts).filter((p) => p !== "splice"),
+    "Z1.valve", "Z2.valve", "Z3.valve", "Z4.valve",
+  ];
   check(
-    expectedParts.every((p) => layout.circuit.parts.has(p)),
-    "every circuit part (incl. the four solenoid coil boxes) placed",
+    expectedParts.every((p) => layout.circuit.parts.has(p)) && !layout.circuit.parts.has("splice"),
+    "every circuit part placed as a box, splice as field-splice dots",
+  );
+  const spliceDots = Object.keys(circuit.parts.splice).map((p) => `splice.${p}`);
+  check(
+    spliceDots.every((p) => layout.circuit.splices.has(p) && inCanvas(layout.circuit.splices.get(p))),
+    `all ${spliceDots.length} splice ports placed as field-splice dots`,
   );
   check(
-    Object.keys(circuit.wires).every((w) => layout.circuit.wires.get(w)?.points.length >= 2),
-    "every wire routed as a polyline",
+    ["splice.sig_1", "splice.sig_2", "splice.sig_3", "splice.sig_4"].every(
+      (p) => layout.circuit.leads.get(`lead:${p}`)?.points.length >= 2,
+    ),
+    "the four splice->coil leads routed as polylines",
+  );
+  // every wire drawn, all segments orthogonal (circuit-layout validates and throws,
+  // but pin the invariant here too), conductor class assigned
+  const orthogonal = (pts) =>
+    pts.every((p, i) => i === 0 || p.x === pts[i - 1].x || p.y === pts[i - 1].y);
+  check(
+    Object.keys(circuit.wires).every((w) => {
+      const e = layout.circuit.wires.get(w);
+      return e && e.points.length >= 2 && orthogonal(e.points) && e.cls;
+    }),
+    "every wire routed as an orthogonal polyline with a conductor class",
+  );
+  check(
+    layout.circuit.wires.get("grid_live").cls === "live" &&
+      layout.circuit.wires.get("pump_neutral").cls === "neutral" &&
+      layout.circuit.wires.get("grid_earth").cls === "earth" &&
+      layout.circuit.wires.get("signal_2").cls === "lv" &&
+      layout.circuit.wires.get("common_return").cls === "lv",
+    "conductor classes: live / neutral / earth / 24 VAC",
   );
   const flowBottom = Math.max(...[...layout.flow.nodes.values()].map((n) => n.y + n.h));
-  const circuitTop = Math.min(...[...layout.circuit.parts.values()].map((p) => p.y));
+  const circuitTop = Math.min(
+    ...[...layout.circuit.parts.values()].map((p) => p.y),
+    ...[...layout.circuit.splices.values()].map((p) => p.y),
+  );
   check(
     circuitTop >= flowBottom + CIRCUIT_BAND_GAP - 1e-6,
     `circuit band reserved below the hydraulics (gap ${(circuitTop - flowBottom).toFixed(0)} px)`,
@@ -398,12 +431,26 @@ console.log("Case: M5 scene (visual attribute computation)");
   check(z1Nodes.get("Z1.valve").state === "open" && z1Nodes.get("Z2.valve").state === "closed", "valve glyph states open/closed");
   check(z1Nodes.get("pump").state === "on", "pump glyph state on");
 
+  const z1Splices = byKey(z1Scene.splices);
+  check(
+    z1Splices.get("splice.sig_1").state === "powered" && z1Splices.get("splice.com_4").state === "powered",
+    "pump+Z1: zone-1 signal splice and shared-return splice powered",
+  );
+  check(z1Splices.get("splice.sig_2").state === "off", "pump+Z1: zone-2 signal splice off");
+  const z1Leads = byKey(z1Scene.leads);
+  check(z1Leads.get("lead:splice.sig_1").state === "powered", "pump+Z1: zone-1 solenoid lead powered");
+  check(z1Leads.get("lead:splice.sig_2").state === "off", "pump+Z1: zone-2 solenoid lead off");
+
   const s2Scene = buildScene(model, layout, s2Result, s2Elec);
   const s2Wires = byKey(s2Scene.wires);
   check(s2Wires.get("signal_2").state === "broken", "broken signal_2 wire shown broken");
   check(
     s2Wires.get("signal_1").state === "powered" && s2Wires.get("common_return").state === "powered",
     "other zone wiring shown powered",
+  );
+  check(
+    byKey(s2Scene.leads).get("lead:splice.sig_2").state !== "broken",
+    "broken signal_2: the lead beyond the gap is dead, not itself broken",
   );
   const idleWires = byKey(idleScene.wires);
   check(idleWires.get("signal_1").state === "off", "idle: zone wire off");
@@ -416,6 +463,8 @@ console.log("Case: M5 scene (visual attribute computation)");
       scene.pipes.map((p) => [p.key, p.points]),
       scene.nodes.map((n) => [n.key, n.x, n.y]),
       scene.wires.map((w) => [w.key, w.points]),
+      scene.leads.map((l) => [l.key, l.points]),
+      scene.splices.map((s) => [s.key, s.x, s.y]),
     ]);
   check(geomOf(idleScene) === geomOf(z1Scene), "positions never move between states");
 }
