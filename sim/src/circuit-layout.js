@@ -32,32 +32,34 @@ export function wireClass(name, wire) {
 // under it, and MV + C drop as two dead-straight verticals into the relay's coil
 // terminals; the mains row (grid socket -> relay -> pump) is the actuated bottom.
 
-// bottom-strip terminal x positions (24 VAC block | MV C | 1 2 3 4 C)
-const STRIP = { ac_1: 380, ac_2: 420, mv: 470, c_1: 510, z1: 560, z2: 600, z3: 640, z4: 680, c_2: 720 };
+// bottom-strip terminal x positions (24 VAC block | 1 2 3 4 C | MV C — the relay
+// pair on the rightmost slots, directly above the relay)
+const STRIP = { ac_1: 380, ac_2: 420, z1: 470, z2: 550, z3: 630, z4: 710, c_2: 760, mv: 800, c_1: 840 };
 const STRIP_Y = 250; // controller bottom edge
-const VALVE_X = { 1: 560, 2: 680, 3: 800, 4: 920 }; // solenoid centers (Z1 under zone 1)
+// each solenoid directly under its zone terminal: straight drops, no fan
+const VALVE_X = { 1: STRIP.z1, 2: STRIP.z2, 3: STRIP.z3, 4: STRIP.z4 };
 const VALVE_TOP = 330;
 const SIG_SPLICE_Y = 300;
 const COM_BUS_Y = 415;
 const MAINS_Y = 520; // grid socket / relay / pump row
-const RELAY_COIL = { coil_in: 660, coil_com: 700 }; // relay top-edge terminals
+const RELAY_COIL = { coil_in: STRIP.mv, coil_com: STRIP.c_1 }; // aligned under MV and C
 
 // Boxes with their terminal anchors. side: which edge the dot sits on (label goes
 // just inside). Anchor key defaults to the port id; parts with one terminal serving
 // two wires on opposite edges (the relay's N and PE) declare @W/@E variants.
 const PARTS = {
   controller: {
-    x: 350, y: 60, w: 380, h: 190, label: "Controller",
+    x: 350, y: 60, w: 540, h: 190, label: "Controller",
     anchors: [
       { port: "controller.ac_1", side: "S", x: STRIP.ac_1, label: "AC1" },
       { port: "controller.ac_2", side: "S", x: STRIP.ac_2, label: "AC2" },
-      { port: "controller.mv", side: "S", x: STRIP.mv, label: "MV" },
-      { port: "controller.c_1", side: "S", x: STRIP.c_1, label: "C" },
       { port: "controller.zone_1", side: "S", x: STRIP.z1, label: "1" },
       { port: "controller.zone_2", side: "S", x: STRIP.z2, label: "2" },
       { port: "controller.zone_3", side: "S", x: STRIP.z3, label: "3" },
       { port: "controller.zone_4", side: "S", x: STRIP.z4, label: "4" },
       { port: "controller.c_2", side: "S", x: STRIP.c_2, label: "C" },
+      { port: "controller.mv", side: "S", x: STRIP.mv, label: "MV" },
+      { port: "controller.c_1", side: "S", x: STRIP.c_1, label: "C" },
     ],
   },
   adapter_socket: {
@@ -78,7 +80,7 @@ const PARTS = {
     ],
   },
   grid_socket: {
-    x: 320, y: MAINS_Y, w: 170, h: 160, label: "Grid socket",
+    x: 430, y: MAINS_Y, w: 170, h: 160, label: "Grid socket",
     anchors: [
       { port: "grid_socket.l", side: "E", y: MAINS_Y + 70, label: "L" },
       { port: "grid_socket.n", side: "E", y: MAINS_Y + 110, label: "N" },
@@ -88,7 +90,7 @@ const PARTS = {
   relay: {
     // on the right, coil terminals on the top edge; MV + C step over to them
     // underneath the solenoid row
-    x: 620, y: MAINS_Y, w: 200, h: 185, label: "Relay", labelDy: 62,
+    x: 720, y: MAINS_Y, w: 200, h: 185, label: "Relay", labelDy: 62,
     anchors: [
       { port: "relay.coil_in", side: "N", x: RELAY_COIL.coil_in, label: "coil" },
       { port: "relay.coil_com", side: "N", x: RELAY_COIL.coil_com, label: "com" },
@@ -101,7 +103,7 @@ const PARTS = {
     ],
   },
   pump: {
-    x: 900, y: MAINS_Y, w: 170, h: 160, label: "Pump",
+    x: 980, y: MAINS_Y, w: 170, h: 160, label: "Pump",
     anchors: [
       { port: "pump.l", side: "W", y: MAINS_Y + 70, label: "L" },
       { port: "pump.n", side: "W", y: MAINS_Y + 110, label: "N" },
@@ -112,7 +114,7 @@ const PARTS = {
 // the four solenoids, one small box per zone in a row below the controller strip
 for (let n = 1; n <= 4; n++) {
   PARTS[`Z${n}.valve`] = {
-    x: VALVE_X[n] - 45, y: VALVE_TOP, w: 90, h: 46, label: `Z${n}`,
+    x: VALVE_X[n] - 35, y: VALVE_TOP, w: 70, h: 46, label: `Z${n}`,
     anchors: [
       { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@N`, side: "N", x: VALVE_X[n] },
       { port: `Z${n}.valve.coil`, key: `Z${n}.valve.coil@S`, side: "S", x: VALVE_X[n] },
@@ -129,10 +131,6 @@ for (let n = 1; n <= 4; n++) {
   SPLICES[`splice.com_${n}`] = { x: VALVE_X[n], y: COM_BUS_Y };
 }
 
-// per-zone escape rails between the strip and the splices (staggered so drops and
-// rails never collide; zone 1 drops dead straight onto its valve)
-const ZONE_RAIL = { 2: 285, 3: 278, 4: 271 };
-
 // Route per wire: optional intermediate via points (segments must stay orthogonal)
 // and, where a port has several anchors, which anchor each end attaches to.
 const ROUTES = {
@@ -147,14 +145,14 @@ const ROUTES = {
   // nested L-shapes up into the strip: the inner wire turns at the shallower row
   adapter_supply_1: { vias: [[STRIP.ac_1, 335]] },
   adapter_supply_2: { vias: [[STRIP.ac_2, 385]] },
-  // MV and its common drop past the valve row, step right underneath it as a pair,
-  // and rise into the relay coil terminals — the 10 m house->shed cable
-  signal_relay: { vias: [[STRIP.mv, 458], [RELAY_COIL.coil_in, 458]] },
-  relay_return: { vias: [[RELAY_COIL.coil_com, 450], [STRIP.c_1, 450]] },
+  // MV and its common drop dead straight into the relay coil terminals aligned
+  // directly beneath them — the 10 m house->shed cable
+  signal_relay: {},
+  relay_return: {},
   signal_1: {},
-  signal_2: { vias: [[STRIP.z2, ZONE_RAIL[2]], [VALVE_X[2], ZONE_RAIL[2]]] },
-  signal_3: { vias: [[STRIP.z3, ZONE_RAIL[3]], [VALVE_X[3], ZONE_RAIL[3]]] },
-  signal_4: { vias: [[STRIP.z4, ZONE_RAIL[4]], [VALVE_X[4], ZONE_RAIL[4]]] },
+  signal_2: {},
+  signal_3: {},
+  signal_4: {},
   common_lead_1: { from: "Z1.valve.coil@S" },
   common_lead_2: { from: "Z2.valve.coil@S" },
   common_lead_3: { from: "Z3.valve.coil@S" },
@@ -162,7 +160,7 @@ const ROUTES = {
   common_chain_12: {},
   common_chain_23: {},
   common_chain_34: {},
-  common_return: { vias: [[990, COM_BUS_Y], [990, 265], [STRIP.c_2, 265]] },
+  common_return: { vias: [[770, COM_BUS_Y], [770, 265], [STRIP.c_2, 265]] },
 };
 // solenoid leads (splice.sig_N -> coil): intra-part `to:` continuity in the model,
 // drawn as the short drop from the splice into the solenoid
@@ -194,7 +192,7 @@ for (const r of [...Object.values(ROUTES), ...Object.values(LEAD_ROUTES)]) {
   if (r.vias) r.vias = r.vias.map(([x, y]) => [s(x), s(y)]);
 }
 
-export const CIRCUIT_W = s(1100);
+export const CIRCUIT_W = s(1180);
 export const CIRCUIT_H = s(730);
 
 // --- assembly + validation ---
