@@ -19,6 +19,7 @@ import {
   VALVE_OPEN_BAR,
   VALVE_STAY_BAR,
   VALVE_FREEZE_TAIL,
+  THROTTLE_MIN,
 } from "./config.js";
 import { buildTopology } from "./network.js";
 import { toInp } from "./inp.js";
@@ -61,8 +62,12 @@ export function computeReachable(model, pumpOn, valveOpen) {
   return reachable;
 }
 
-// state = { manualOpen:{<valve flowId>:bool}, bleedOpen:{<valve flowId>:bool} }  (the
-//   mechanical / positional inputs)
+// state = the mechanical / positional inputs:
+//   { manualOpen:{<valve flowId>:bool}, bleedOpen:{<valve flowId>:bool},
+//     floStop:{<rotor flowId>:bool}     — rotor flo-stop closed: head stays filled
+//                                         (pressure displays) but discharges nothing,
+//     throttle:{<valve flowId>:0..1}    — auto-valve flow-control screw opening,
+//                                         1 = factory-open, <=THROTTLE_MIN = seated shut }
 // elec  = ElecResult from solveElectrical: { pumpPowered, zoneEnergised:{1..4}, … }
 //   (controller commands are routed through the wiring to produce this)
 export function solveSteady(model, state, elec, hyd) {
@@ -74,6 +79,8 @@ export function solveSteady(model, state, elec, hyd) {
   const zoneEnergised = elec.zoneEnergised;
   const manualOpen = state.manualOpen || {};
   const bleedOpen = state.bleedOpen || {};
+  const floStop = state.floStop || {};
+  const throttle = state.throttle || {};
   const liftBar = model.minOperatingBar ?? VALVE_OPEN_BAR;
 
   const outlets = [...flowNodes.values()].filter((n) => n.role === "outlet");
@@ -114,7 +121,10 @@ export function solveSteady(model, state, elec, hyd) {
     let maxdq = 0;
     for (const o of demandOutlets) {
       const pAt = p_prev[epOf(o.id)] || 0;
-      const target = reachable.has(o.id) ? outletDemandAt(o, pAt, curves) : 0;
+      // a flo-stopped head stays on a filled branch (its pressure displays) but its
+      // nozzle is mechanically shut: zero discharge regardless of pressure
+      const target =
+        reachable.has(o.id) && !floStop[o.id] ? outletDemandAt(o, pAt, curves) : 0;
       const prev = q_prev.get(o.id);
       const damped = prev + ALPHA * (target - prev);
       demands.set(o.id, damped);
@@ -125,10 +135,10 @@ export function solveSteady(model, state, elec, hyd) {
     // dead branch would inject phantom flow), otherwise no discharge.
     const emitters = new Map();
     for (const o of streamOutlets) {
-      if (reachable.has(o.id)) emitters.set(o.id, streamEmitterCoeff(o.params));
+      if (reachable.has(o.id) && !floStop[o.id]) emitters.set(o.id, streamEmitterCoeff(o.params));
     }
 
-    topo = buildTopology(model, { pumpOn, valveOpen, demands, emitters });
+    topo = buildTopology(model, { pumpOn, valveOpen, demands, emitters, throttle });
     res = solveInp(hyd, toInp(topo), { nodeIds: topo.nodeIds, linkIds: topo.linkIds });
 
     // pressure convergence over reachable real nodes
@@ -155,8 +165,10 @@ export function solveSteady(model, state, elec, hyd) {
         // a valve on a dead branch cannot lift no matter what EPANET reports there —
         // never trust pressures on disconnected nodes
         const wet = reachable.has(v.flowId);
+        // a fully-seated flow-control screw pins the diaphragm down mechanically
+        const screwShut = (throttle[v.flowId] ?? 1) <= THROTTLE_MIN;
         let open = false;
-        if (commanded && wet && Number.isFinite(inletP)) {
+        if (commanded && wet && !screwShut && Number.isFinite(inletP)) {
           open = valveOpen[v.flowId] ? inletP >= VALVE_STAY_BAR : inletP >= liftBar;
         }
         valveOpen[v.flowId] = open;
