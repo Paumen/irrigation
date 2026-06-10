@@ -86,19 +86,23 @@ settled states (M7), and every part-by-part failure from `graph.yaml` can be inj
   mechanically (reported `commandedNotOpening` when energised). The status line summarises each solve
   (pump flow → outlet flow, iterations, any valve commanded-but-not-opening).
 - **M7 (quasi-time):** `src/quasitime.js` — a **time-ordered sequence of command-states**, each solved
-  as a settled steady state. The pure half (sorted entries, `entryIndexAt`, deep `snapshotUi` copies of
-  the solver inputs) is harness-gated; the DOM half is a footer strip: **⏺ capture** snapshots the
-  current controls (commands + mechanical state + faults) as the state from time t on, and the user
-  scrubs / steps (⏮ ⏭) / plays (▶) along the timeline — each position shows the settled state in
-  effect there (solved once, cached; before the first entry the initial idle state shows). Time is the
-  user's axis: ordering pump-on a few seconds before a zone reproduces the controller's pump lead
-  without hard-coding it. Touching any live control drops back out of timeline mode.
+  as a settled steady state. The pure half (time-sorted transitions, one per timestamp, `entryIndexAt`,
+  deep `snapshotUi` copies of the solver inputs) is harness-gated; the DOM half is a footer strip with
+  a time cursor: **every control change is recorded automatically as the transition at the cursor's
+  time** (consecutive changes at one position collapse into the final state — no capture button).
+  Drag the cursor and change controls to place transitions; scrub / step (⏮ ⏭) / play (▶) shows the
+  settled state in effect at each time (solved once, cached; before the first transition the initial
+  idle state shows) and **checks it out into the live controls**, so edits made while scrubbed back
+  build on that state. Time is the user's axis: turning the pump on, dragging to t=5 s and opening a
+  zone reproduces the controller's pump lead without hard-coding it.
 - **M8 (faults):** `src/faults.js` — the toggle list is **every `fail:` entry in `graph.yaml`**
   (simple kinds per node, compound kinds per sub-part, circuit parts per port; ~400 faults), surfaced
   in each equipment's panel and in a master **"⚠ faults"** sheet (header button, grouped by part).
   A grouped **(role × failtype)** dispatch table compiles the active set into solver/network
   mutations — clogs carry a 0–1 severity (partial → sharp-orifice minor loss `K=(1/a²−1)²`, full →
-  sealed link / dead pump), structural breaks become representative **leak emitters** at the nearest
+  sealed link / dead pump; a clogged valve **seat** instead scales the valve's loss curve by 1/a²,
+  because EPANET ignores minor losses on GPVs, and a fully packed seat reports
+  commanded-but-not-opening), structural breaks become representative **leak emitters** at the nearest
   real junction (a suction-side break instead costs the pump its prime), pump-path clogs scale the
   head curve, valve faults pin the diaphragm open (torn diaphragm, vented chamber, clogged metering
   port) or shut (jammed pilot, seated flow-control), a broken coil becomes an electrical cut, and
@@ -174,7 +178,9 @@ through the electrical solve and then the hydraulic loop:
   settling to idle, and the per-equipment panels (controller / pump / valves / heads) with every
   widget path addressing a slot the initial UI state created;
 - **M8 fault cases** — a fully clogged hose seals its branch (heads dry, still converges), an 80% clog
-  restricts (everything discharges less), a burst hose leaks at its downstream junction (heads keep
+  restricts (everything discharges less), a 60% valve-seat clog throttles progressively (headloss
+  matches the catalog curve scaled by 1/a²) while a fully packed seat shows commanded-but-not-opening
+  with the branch dry, a burst hose leaks at its downstream junction (heads keep
   running at lower pressure, leak counted in the mass balance and total outflow), a broken solenoid
   coil drops exactly its zone, a stuck-open bleed screw runs the zone with no controller command, a
   half-clogged impeller weakens the whole system, a broken pump motor stops everything despite healthy
@@ -185,9 +191,10 @@ through the electrical solve and then the hydraulic loop:
   lost prime from suction-side breaks, electrical cuts, nozzle-row swaps, unknown keys throw);
 - **M8 scene** — faulted elements wear an ✕ (nodes and hose polylines), active leaks are marked with
   their flow, healthy scenes carry neither;
-- **M7 quasi-time** — entries stay time-sorted (re-capturing a time supersedes), `entryIndexAt` picks
-  the state in effect, snapshots are deep copies, and a pump-lead sequence (pump at t=0, zone 1 at
-  t=5, all-off at t=300) shows the pump dead-heading at shutoff pressure between entries, the zone
-  watering once its entry takes effect, and idle after the shutdown entry.
+- **M7 quasi-time** — transitions stay time-sorted (recording at an existing time replaces that
+  transition), `entryIndexAt` picks the state in effect, snapshots are deep copies, and a pump-lead
+  sequence (pump at t=0, zone 1 at t=5, all-off at t=300) shows the pump dead-heading at shutoff
+  pressure between transitions, the zone watering once its transition takes effect, and idle after
+  the shutdown.
 
 It prints a per-case outlet table and exits non-zero on any failure.

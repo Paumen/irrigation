@@ -230,6 +230,7 @@ export function solveSteady(model, state, elec, hyd, faults) {
       closedLinks: fx.closedLinks,
       linkK: fx.linkK,
       pumpHeadScale: fx.pumpHeadScale,
+      valveLossScale: fx.valveLossScale,
     });
     res = solveInp(hyd, toInp(topo), { nodeIds: topo.nodeIds, linkIds: topo.linkIds });
 

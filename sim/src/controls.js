@@ -266,11 +266,24 @@ export function buildControls(container, model, onChange, { displayEl, onClose }
     path.slice(0, -1).reduce((o, k) => o[k], ui)[path[path.length - 1]] = v;
   };
 
+  let currentId = null; // equipment whose panel is showing, for re-renders
+
   function close() {
     container.classList.remove("open");
+    currentId = null;
     onClose?.();
   }
   closeBtn.addEventListener("click", close);
+
+  // Check a snapshot out into the live UI state (quasi-time scrubbing): replace the
+  // solver inputs and re-render the open panel so its widgets show the loaded values.
+  // The `ui` object itself keeps its identity — widgets and app resolve through it.
+  function loadUi(snap) {
+    ui.commands = structuredClone(snap.commands);
+    ui.state = structuredClone(snap.state);
+    ui.faults = structuredClone(snap.faults);
+    if (currentId && container.classList.contains("open")) select(currentId);
+  }
 
   function renderWidgets(parent, widgets) {
     for (const w of widgets) {
@@ -289,6 +302,7 @@ export function buildControls(container, model, onChange, { displayEl, onClose }
   }
 
   function select(id) {
+    currentId = id;
     const desc = panelFor(model, id);
     panel.textContent = "";
     const h = document.createElement("h2");
@@ -320,5 +334,5 @@ export function buildControls(container, model, onChange, { displayEl, onClose }
     return desc;
   }
 
-  return { ui, select, close };
+  return { ui, select, close, loadUi };
 }

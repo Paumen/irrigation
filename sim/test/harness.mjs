@@ -282,6 +282,37 @@ for (const c of cases) {
     const pAlone = z1Result.pressureBar[epOf("Z1.head2")];
     check(pNow < pAlone, `head pressure drops past the clog (${pNow.toFixed(3)} < ${pAlone.toFixed(3)} bar)`);
     check(r.pumpFlow < z1Result.pumpFlow, "total pump flow drops");
+  } else if (c.kind === "seatclog") {
+    // M8: a partial seat clog must restrict PROGRESSIVELY (the loss curve scales by
+    // 1/a²) — not sit inert until 100% (EPANET ignores GPV minor losses).
+    check(r.valveOpen["Z1.valve"] === true, "valve still lifts past a partial seat clog");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) > 0, `${id} still discharges`);
+    }
+    check(
+      r.demands.get("Z1.head2") < z1Result.demands.get("Z1.head2"),
+      "the unregulated rotor's discharge drops",
+    );
+    check(r.pumpFlow < z1Result.pumpFlow, "total pump flow drops");
+    // the valve's headloss is the catalog loss scaled by 1/(1-0.6)² at the solved flow
+    const v = r.topo.valves.find((x) => x.flowId === "Z1.valve");
+    const q = r.flow[epOf("Z1.valve")];
+    const lossM = r.headM[v.n1] - r.headM[v.n2];
+    const vl = model.curves.valveLoss;
+    const want = (interp(vl.flow_m3h, vl.loss_bar, q) * M_PER_BAR) / (0.4 * 0.4);
+    check(
+      Math.abs(lossM - want) < 0.3,
+      `valve headloss matches the scaled catalog law (${lossM.toFixed(2)} m vs ${want.toFixed(2)} m at ${q.toFixed(3)} m3/h)`,
+    );
+  } else if (c.kind === "seatfull") {
+    // M8: a fully packed seat passes nothing — shown commanded-but-not-opening, not
+    // green-open over a dead branch.
+    check(r.valveOpen["Z1.valve"] === false, "fully packed valve does not show open");
+    check(r.commandedNotOpening["Z1.valve"] === true, "reported commanded-but-not-opening");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) === 0 && !r.reachable.has(id), `${id} dry`);
+    }
+    check(Math.abs(r.pumpFlow) < 0.02, "pump dead-heads");
   } else if (c.kind === "leak") {
     // M8: a burst hose escapes water at its downstream junction; the heads keep
     // discharging at lower pressure and the leak is part of the mass balance.
@@ -464,6 +495,16 @@ console.log("Case: M8 fault list + compiled effects");
   check(!part.closedLinks.has("Z1.hose1") && part.linkK.get("Z1.hose1") > 0, "partial clog adds minor loss");
   const burst = compileFaults(model, { "Z1.hose2:broken": true });
   check(burst.leaks.get("Z1.joint3") > 0, "burst hose leaks at its downstream junction");
+  const seatHalf = compileFaults(model, { "Z1.valve.seat:clogged": 0.5 });
+  check(
+    Math.abs(seatHalf.valveLossScale.get("Z1.valve") - 4) < 1e-9 && !seatHalf.linkK.has("Z1.valve"),
+    "partial seat clog scales the valve's loss curve by 1/a² (GPV minor losses are ignored by EPANET)",
+  );
+  const seatFull = compileFaults(model, { "Z1.valve.seat:clogged": 1 });
+  check(
+    seatFull.closedLinks.has("Z1.valve") && seatFull.valveDisabled.has("Z1.valve"),
+    "fully packed seat seals the valve and reports it commanded-but-not-opening",
+  );
   check(compileFaults(model, { "hose1:broken": true }).pumpDisabled, "suction-side break loses prime");
   check(
     compileFaults(model, { "Z3.valve.coil:broken": true }).elecBlocked.has("Z3.valve.coil"),
@@ -898,7 +939,10 @@ console.log("Case: M7 quasi-time (timeline core + pump-lead sequence)");
   );
   check(spanOf([]) > 0 && spanOf(tl) === 30 + spanOf([]), "scrub span = last entry + tail");
   const tl2 = addEntry(tl, { at_s: 10, snap: "b2" });
-  check(tl2[entryIndexAt(tl2, 10)].snap === "b2", "re-capturing a time supersedes the old entry");
+  check(
+    tl2.length === 3 && tl2[entryIndexAt(tl2, 10)].snap === "b2",
+    "recording at an existing time replaces that transition (one per time)",
+  );
 
   const liveUi = {
     commands: { mv: false, zones: { 1: false } },
