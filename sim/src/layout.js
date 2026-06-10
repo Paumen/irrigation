@@ -1,11 +1,11 @@
-// elkjs auto-layout: static graph structure -> node/part coordinates, computed ONCE
-// at startup and reused for every frame (positions never move; render.js only updates
-// visual attributes).
+// Schematic layout: static graph structure -> coordinates, computed ONCE at startup
+// and reused for every frame (positions never move; render.js only updates visual
+// attributes).
 //
-// Two independent ELK graphs:
-//   - the hydraulic flow graph, layered left-to-right, with each irrigation zone
-//     (`Zn.` id prefix) clustered in its own compound node;
-//   - the control circuit, laid out in a reserved band BELOW the hydraulics.
+// The hydraulic flow graph is auto-laid-out with elkjs (layered, left-to-right, each
+// irrigation zone clustered in its own compound node). The control circuit is a
+// fixed, hand-drawn wiring diagram (circuit-layout.js) in a reserved band BELOW the
+// hydraulics, validated against graph.yaml at startup.
 //
 // The flow graph mixes node-like vertices with link-like ones (see network.js). The
 // schematic draws a different split than EPANET does: hoses and swing joints become
@@ -26,6 +26,7 @@
 // which a one-shot ~100-node layout does not warrant.
 import ELK from "elkjs/lib/elk.bundled.js";
 import { CIRCUIT_BAND_GAP } from "./config.js";
+import { computeCircuitLayout, CIRCUIT_W, CIRCUIT_H } from "./circuit-layout.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
 const zoneOf = (id) => {
@@ -165,61 +166,9 @@ function buildFlowElkGraph(model) {
   return { graph, nodes, edges };
 }
 
-// --- circuit graph -> ELK ---
-
-// "grid_socket.l" belongs to part "grid_socket"; "Z1.valve.coil" to the synthetic
-// coil box "Z1.valve" (the solenoid's electrical face — wires target hydraulic-part
-// ports that have no entry in circuit.parts).
-function partOf(portId, circuit) {
-  const dot = portId.lastIndexOf(".");
-  // a wire endpoint is always "<part>.<port>"; anything else is malformed graph.yaml
-  if (dot < 0) throw new Error(`layout: wire endpoint "${portId}" has no part prefix`);
-  const root = portId.slice(0, portId.indexOf("."));
-  return circuit.parts[root] ? root : portId.slice(0, dot);
-}
-
-function buildCircuitElkGraph(circuit) {
-  // only ports actually referenced by wires get drawn (and laid out)
-  const portsByPart = new Map(); // partId -> Set of port ids
-  for (const w of Object.values(circuit.wires)) {
-    for (const portId of [w.from, w.to]) {
-      const part = partOf(portId, circuit);
-      if (!portsByPart.has(part)) portsByPart.set(part, new Set());
-      portsByPart.get(part).add(portId);
-    }
-  }
-  // every declared part appears even if nothing wires into it
-  for (const partId of Object.keys(circuit.parts)) {
-    if (!portsByPart.has(partId)) portsByPart.set(partId, new Set());
-  }
-
-  const children = [...portsByPart.entries()].map(([partId, ports]) => ({
-    id: `part:${partId}`,
-    width: Math.max(64, partId.length * 8 + 20, ports.size * 18 + 12),
-    height: 34,
-    ports: [...ports].map((p) => ({ id: p, width: 5, height: 5 })),
-  }));
-
-  const edges = Object.entries(circuit.wires).map(([name, w]) => ({
-    id: name,
-    sources: [w.from],
-    targets: [w.to],
-  }));
-
-  const graph = {
-    id: "circuit",
-    layoutOptions: {
-      "elk.algorithm": "layered",
-      "elk.direction": "RIGHT",
-      "elk.layered.spacing.nodeNodeBetweenLayers": "50",
-      "elk.spacing.nodeNode": "28",
-      "elk.spacing.edgeNode": "12",
-    },
-    children,
-    edges,
-  };
-  return { graph };
-}
+// --- circuit ---
+// The control circuit is NOT auto-laid-out: it is a fixed, hand-drawn wiring diagram
+// (see circuit-layout.js), validated against graph.yaml's wires at startup.
 
 // --- shared helpers ---
 
@@ -239,18 +188,16 @@ function sectionPoints(edge, containerOffsets) {
 //   flow: { nodes:    Map<id, {x,y,w,h,glyph,zone}>,          // absolute top-left
 //           edges:    Map<key, {points, epLinkId, wetIds, u, v}>,
 //           zones:    Map<"Z1".., {x,y,w,h}> },
-//   circuit: { parts: Map<partId, {x,y,w,h}>,
-//              ports: Map<portId, {x,y}>,                     // port centers
-//              wires: Map<wireName, {points}> },
+//   circuit: { parts:   Map<partId, {x,y,w,h,label}>,         // enclosure boxes
+//              splices: Map<portId, {x,y}>,                   // field-splice dots
+//              wires:   Map<wireName, {points, cls}>,         // cls: live|neutral|earth|lv
+//              leads:   Map<"lead:<port>", {points, cls, from, to}>,
+//              anchorDots: [{x,y}], anchorLabels: [{x,y,anchor,text}] },
 // }
 export async function computeLayout(model, circuit) {
   const elk = new ELK();
   const flowBuild = buildFlowElkGraph(model);
-  const circuitBuild = buildCircuitElkGraph(circuit);
-  const [flowOut, circuitOut] = await Promise.all([
-    elk.layout(flowBuild.graph),
-    elk.layout(circuitBuild.graph),
-  ]);
+  const flowOut = await elk.layout(flowBuild.graph);
 
   // flatten the flow hierarchy: container-relative -> absolute coordinates
   const flowNodes = new Map();
@@ -313,28 +260,12 @@ export async function computeLayout(model, circuit) {
 
   // circuit band sits below the hydraulics
   const bandY = flowOut.height + CIRCUIT_BAND_GAP;
-  const parts = new Map();
-  const ports = new Map();
-  for (const child of circuitOut.children) {
-    const partId = child.id.slice("part:".length);
-    parts.set(partId, { x: child.x, y: child.y + bandY, w: child.width, h: child.height });
-    for (const p of child.ports || []) {
-      ports.set(p.id, {
-        x: child.x + p.x + p.width / 2,
-        y: child.y + p.y + p.height / 2 + bandY,
-      });
-    }
-  }
-  const bandOffsets = new Map([["circuit", { x: 0, y: bandY }]]);
-  const wires = new Map();
-  for (const e of circuitOut.edges) {
-    wires.set(e.id, { points: sectionPoints(e, bandOffsets) });
-  }
+  const circuitLayout = computeCircuitLayout(circuit, bandY);
 
   return {
-    width: Math.max(flowOut.width, circuitOut.width),
-    height: bandY + circuitOut.height,
+    width: Math.max(flowOut.width, CIRCUIT_W),
+    height: bandY + CIRCUIT_H,
     flow: { nodes: flowNodes, edges: flowEdges, zones },
-    circuit: { parts, ports, wires },
+    circuit: circuitLayout,
   };
 }

@@ -9,12 +9,26 @@ import { DEAD_COLOR } from "./config.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-const WIRE_STYLE = {
-  powered: { stroke: "#2e7d32", width: 2.5, dash: "" },
-  asked: { stroke: "#f9a825", width: 1.5, dash: "" },
-  broken: { stroke: "#c62828", width: 1.5, dash: "4 3" },
-  off: { stroke: "#b0bec5", width: 1, dash: "" },
+// Conductor colors by FUNCTION (matching the owner's wiring diagram); the live state
+// is layered on top: powered = full strength, off = faded, asked-but-dead = dashed,
+// broken = red dashed.
+export const CONDUCTOR_COLOR = {
+  live: "#d6524b", // 230 V live
+  neutral: "#4f86d4",
+  earth: "#76a23c",
+  lv: "#c08a2e", // 24 VAC control wiring
 };
+
+function conductorStyle(cls, state) {
+  if (state === "broken") return { stroke: "#c62828", width: 2, dash: "4 3", opacity: 1 };
+  const color = CONDUCTOR_COLOR[cls];
+  // earth never carries loop current, so it has no meaningful off/powered state —
+  // draw it solid (it IS connected) unless broken
+  if (cls === "earth") return { stroke: color, width: 1.5, dash: "", opacity: 1 };
+  if (state === "powered") return { stroke: color, width: 2.5, dash: "", opacity: 1 };
+  if (state === "asked") return { stroke: color, width: 2, dash: "5 3", opacity: 1 };
+  return { stroke: color, width: 1.5, dash: "", opacity: 0.35 }; // off
+}
 
 function el(name, attrs = {}) {
   const e = document.createElementNS(SVG_NS, name);
@@ -56,14 +70,17 @@ function createGlyph(n) {
 export function createRenderer(svgEl, layout) {
   svgEl.setAttribute("viewBox", `-10 -10 ${layout.width + 20} ${layout.height + 20}`);
 
-  // layer order: zone frames under pipes under glyphs under labels
+  // layer order: zone frames under pipes under glyphs under labels; circuit boxes
+  // under wires so terminal dots and splices sit on top of the wire ends
   const layers = {};
-  for (const name of ["zones", "pipes", "nodes", "labels", "wires", "parts", "ports"]) {
+  for (const name of ["zones", "pipes", "nodes", "labels", "parts", "wires", "leads", "terminals", "splices"]) {
     layers[name] = el("g", { class: name });
     svgEl.appendChild(layers[name]);
   }
 
-  // static chrome: zone frames + titles, circuit part boxes (state never changes them)
+  // static chrome (state never changes any of it): zone frames + titles on the
+  // hydraulic side; boxes, big part labels, terminal dots and terminal labels on
+  // the circuit side
   for (const [zone, b] of layout.flow.zones) {
     layers.zones.appendChild(
       el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 8, fill: "none", stroke: "#dadce0" }),
@@ -72,19 +89,33 @@ export function createRenderer(svgEl, layout) {
     t.textContent = zone;
     layers.zones.appendChild(t);
   }
-  for (const [partId, b] of layout.circuit.parts) {
+  for (const b of layout.circuit.parts.values()) {
     layers.parts.appendChild(
-      el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 4, fill: "#f8f9fa", stroke: "#80868b" }),
+      el("rect", { x: b.x, y: b.y, width: b.w, height: b.h, rx: 10, fill: "#f7f4ea", stroke: "#ddd8c8" }),
     );
+    // small boxes get the label near the top edge, above the first terminal row;
+    // roomy ones (the controller) center it; labelDy overrides (e.g. the relay's
+    // title clears its top-edge coil terminals)
     const t = el("text", {
       x: b.x + b.w / 2,
-      y: b.y + b.h / 2 + 4,
+      y: b.y + (b.labelDy ?? (b.h >= 200 ? b.h / 2 + 4 : Math.min(b.h / 2 + 4, 24))),
       "text-anchor": "middle",
       fill: "#3c4043",
-      "font-size": "11",
+      "font-size": "12",
+      "font-weight": "600",
     });
-    t.textContent = partId;
+    t.textContent = b.label;
     layers.parts.appendChild(t);
+  }
+  for (const d of layout.circuit.anchorDots) {
+    layers.terminals.appendChild(
+      el("circle", { cx: d.x, cy: d.y, r: 3.5, fill: "#fff", stroke: "#9a958a" }),
+    );
+  }
+  for (const l of layout.circuit.anchorLabels) {
+    const t = el("text", { x: l.x, y: l.y, "text-anchor": l.anchor, fill: "#5f6368", "font-size": "10.5" });
+    t.textContent = l.text;
+    layers.terminals.appendChild(t);
   }
 
   const els = new Map(); // "<kind>:<key>" -> { node: element, title?: <title> }
@@ -157,32 +188,42 @@ export function createRenderer(svgEl, layout) {
         },
       );
 
-      join(
-        scene.wires,
-        "wire",
-        (w) => {
-          const line = el("polyline", { points: pointsAttr(w.points), fill: "none" });
-          layers.wires.appendChild(line);
-          return { node: line };
-        },
-        ({ node }, w) => {
-          const s = WIRE_STYLE[w.state];
-          node.setAttribute("stroke", s.stroke);
-          node.setAttribute("stroke-width", s.width);
-          node.setAttribute("stroke-dasharray", s.dash);
-        },
-      );
+      const applyConductor = ({ node }, c) => {
+        const s = conductorStyle(c.cls, c.state);
+        node.setAttribute("stroke", s.stroke);
+        node.setAttribute("stroke-width", s.width);
+        node.setAttribute("stroke-dasharray", s.dash);
+        node.setAttribute("stroke-opacity", s.opacity);
+      };
+      const conductorLine = (layer) => (c) => {
+        const line = el("polyline", {
+          points: pointsAttr(c.points),
+          fill: "none",
+          "stroke-linejoin": "round",
+        });
+        const title = el("title");
+        title.textContent = c.key;
+        line.appendChild(title);
+        layer.appendChild(line);
+        return { node: line };
+      };
+      join(scene.wires, "wire", conductorLine(layers.wires), applyConductor);
+      join(scene.leads, "lead", conductorLine(layers.leads), applyConductor);
 
       join(
-        scene.ports,
-        "port",
-        (p) => {
-          const dot = el("circle", { cx: p.x, cy: p.y, r: 3 });
-          layers.ports.appendChild(dot);
+        scene.splices,
+        "splice",
+        (s) => {
+          const dot = el("circle", { cx: s.x, cy: s.y, r: 4.5 });
+          const title = el("title");
+          title.textContent = `${s.key} (field splice)`;
+          dot.appendChild(title);
+          layers.splices.appendChild(dot);
           return { node: dot };
         },
-        ({ node }, p) => {
-          node.setAttribute("fill", WIRE_STYLE[p.state].stroke);
+        ({ node }, s) => {
+          node.setAttribute("fill", s.state === "broken" ? "#c62828" : CONDUCTOR_COLOR.lv);
+          node.setAttribute("fill-opacity", s.state === "off" ? 0.35 : 1);
         },
       );
     },

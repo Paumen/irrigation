@@ -46,18 +46,24 @@ schematic renders in the browser; controls/live updates (M6+) are not yet built.
   `asked` (on a commanded path with faults disabled), `powered` (on a live path in the faulted solve),
   `broken` (faulted itself, or the first dead gap on an asked-but-dead path) — as `elec.wires` /
   `elec.ports`.
-- **M5 (static schematic):** `src/layout.js` lays the system out with **elkjs** (layered,
-  left-to-right, each `Zn.` zone clustered in its own frame, the control circuit in a reserved band
-  below) — computed **once** at startup, since coordinates depend only on the static graph. Hoses and
-  swing joints become the drawn edges whose stroke encodes flow; pump and valves (EPANET *links*) are
-  drawn as glyphs because they carry displayable state. `src/scene.js` is the pure half of rendering:
-  solved results + layout → primitives with every visual attribute computed (stroke width ∝ |flow|,
-  color ∝ pressure blue→green→red, unfilled branches grey/dashed with pressures shown as "—", every
-  outlet labeled with its discharge in m³/h or L/min, wires colored powered/asked/broken/off) — this
-  half is what the Node harness gates. `src/render.js` applies a scene to SVG with a vanilla keyed
-  data-join: geometry is set once, updates only touch visual attributes. `index.html` + `src/app.js`
-  boot the page (CDN importmap → `epanet-js`, `js-yaml`, `elkjs`) and render one representative state
-  (pump on + zone 1); `renderState()` is the hook M6's controls will drive.
+- **M5 (static schematic):** `src/layout.js` lays the hydraulics out with **elkjs** (layered,
+  left-to-right, each `Zn.` zone clustered in its own frame) — computed **once** at startup, since
+  coordinates depend only on the static graph. Hoses and swing joints become the drawn edges whose
+  stroke encodes flow; pump and valves (EPANET *links*) are drawn as glyphs because they carry
+  displayable state. The control circuit is **not** auto-laid-out: `src/circuit-layout.js` is a fixed,
+  hand-drawn wiring diagram (mains row Grid socket → Relay → Pump, the 24 VAC adapter feeding the
+  controller, zone runs through **field-splice dots** to the solenoids, the shared common chained down
+  a bus back to C2), validated loudly against `graph.yaml`'s wires at startup so the model and the
+  drawing cannot drift apart. Conductors are colored by **function** (230 V live / neutral / earth /
+  24 VAC) with the live state layered on top (solid = powered, faded = off, dashed = asked-but-dead,
+  red dashed = broken). `src/scene.js` is the pure half of rendering: solved results + layout →
+  primitives with every visual attribute computed (stroke width ∝ |flow|, color ∝ pressure
+  blue→green→red, unfilled branches grey/dashed with pressures shown as "—", every outlet labeled with
+  its discharge in m³/h or L/min) — this half is what the Node harness gates. `src/render.js` applies
+  a scene to SVG with a vanilla keyed data-join: geometry is set once, updates only touch visual
+  attributes. `index.html` + `src/app.js` boot the page (CDN importmap → `epanet-js`, `js-yaml`,
+  `elkjs`) and render one representative state (pump on + zone 1); `renderState()` is the hook M6's
+  controls will drive.
 
 The physics modules in `src/` are plain ES modules with no browser dependency, so they run unchanged under
 Node. In the browser the same modules load `epanet-js` from a CDN; the YAML is parsed at the edge

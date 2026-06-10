@@ -54,13 +54,15 @@ function wireState(s) {
 }
 
 // Scene = {
-//   pipes:  [{key, points, width, color, dashed, dead}]
-//   nodes:  [{key, x, y, w, h, glyph, zone, dead, state, color, title}]
-//   labels: [{key, x, y, text, dead}]            // outlet discharge labels
-//   wires:  [{key, points, state}]
-//   parts:  [{key, x, y, w, h, label}]
-//   ports:  [{key, x, y, state}]
+//   pipes:   [{key, points, width, color, dashed, dead}]
+//   nodes:   [{key, x, y, w, h, glyph, zone, dead, state, color, title}]
+//   labels:  [{key, x, y, text, dead}]              // outlet discharge labels
+//   wires:   [{key, points, cls, state}]            // cls: live|neutral|earth|lv
+//   leads:   [{key, points, cls, state}]            // solenoid leads (splice -> coil)
+//   splices: [{key, x, y, state}]                   // field-splice dots on the wire
 // }
+// Circuit boxes, terminal dots and labels are static chrome drawn by render.js
+// straight from the layout; only wires, leads and splices carry live state.
 export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
   // wetIds are real flow ids (pipes carry their own id; node->node edges carry both
   // endpoints, so the half-edge downstream of a closed valve renders dead)
@@ -124,18 +126,26 @@ export function buildScene(model, layout, steady, elec, { lmin = false } = {}) {
 
   const wires = [];
   for (const [name, w] of layout.circuit.wires) {
-    wires.push({ key: name, points: w.points, state: wireState(elec.wires[name]) });
+    wires.push({ key: name, points: w.points, cls: w.cls, state: wireState(elec.wires[name]) });
   }
 
-  const parts = [];
-  for (const [partId, b] of layout.circuit.parts) {
-    parts.push({ key: partId, x: b.x, y: b.y, w: b.w, h: b.h, label: partId });
+  // a lead is intra-part continuity in the model, so it has no wire state of its
+  // own — combine its two endpoint ports (live only when current crosses both)
+  const leads = [];
+  for (const [key, l] of layout.circuit.leads) {
+    const a = elec.ports[l.from] || {};
+    const b = elec.ports[l.to] || {};
+    const state = a.broken || b.broken ? "broken"
+      : a.powered && b.powered ? "powered"
+      : a.asked && b.asked ? "asked"
+      : "off";
+    leads.push({ key, points: l.points, cls: l.cls, state });
   }
 
-  const ports = [];
-  for (const [portId, p] of layout.circuit.ports) {
-    ports.push({ key: portId, x: p.x, y: p.y, state: wireState(elec.ports[portId]) });
+  const splices = [];
+  for (const [portId, p] of layout.circuit.splices) {
+    splices.push({ key: portId, x: p.x, y: p.y, state: wireState(elec.ports[portId]) });
   }
 
-  return { pipes, nodes, labels, wires, parts, ports };
+  return { pipes, nodes, labels, wires, leads, splices };
 }
