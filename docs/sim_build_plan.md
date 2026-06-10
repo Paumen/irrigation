@@ -15,7 +15,10 @@ lists), `catalog.yaml` (pump curve, valve-loss table, rotor `nozzle_i20`, spray 
 `context.yaml` (labels).
 
 **Decisions locked with the user:** dependencies loaded from **CDN** via importmap (no vendoring);
-schematic via **elkjs** auto-layout; hosted on **GitHub Pages**; plain ES modules, **no bundler**.
+schematic geometry **hand-authored** in a checked-in coordinates module — **no auto-layout, no
+elkjs**; UI is **vanilla JS + hand-rolled SVG/DOM** (no framework, no d3); solver runs in a
+**Web Worker** per `docs/Sim_ui.md` §12, falling back to the main thread if CDN wasm inside the
+worker proves broken; hosted on **GitHub Pages**; plain ES modules, **no bundler**.
 
 ## Approach
 
@@ -33,7 +36,7 @@ open/closed (open iff energised-through-good-wiring **or** bleed open, **and** i
 1.5, **and** no disabling fault); closed valves become closed links so dead branches stay stable.
 
 ### Hosting / deps
-- `sim/index.html` uses an **importmap** → `epanet-js`, `js-yaml`, `elkjs` from a CDN (esm.sh/jsdelivr).
+- `sim/index.html` uses an **importmap** → `epanet-js`, `js-yaml` from a CDN (esm.sh/jsdelivr).
 - App fetches the **existing root YAMLs** via relative paths (`../graph.yaml`, `../catalog.yaml`,
   `../context.yaml`) — single source of truth, no copies.
 - `.github/workflows/pages.yml` deploys the **whole repo** as the Pages artifact (app entry
@@ -59,12 +62,12 @@ sim/
     solver.js           OUTER fixed-point loop  <- core
     electrical.js       continuity/energization solver over circuit.parts+wires
     faults.js           grouped (role x failtype) fault-effect model + specials
-    layout.js           elkjs auto-layout -> node/part coordinates (computed once)
+    geometry.js         hand-authored coordinates: every flow node, circuit-part port pin, wire route
+    scene.js            model + geometry -> static scene graph (pipe/wire paths, glyph descriptors)
     render.js           data-join SVG update from a solved result (positions never move)
     controls.js         control + fault widgets, hold UI state
-    quasitime.js        stepped sequence of settled states
     units.js            bar<->L/min<->m3h conversions + formatting
-    app.js              glue: load->model->hydraulics->layout->controls; debounced re-solve
+    app.js              glue: load->model->hydraulics->geometry->controls; debounced re-solve
   test/
     harness.mjs         headless Node verification (node test/harness.mjs)
     cases.mjs           idle / pump+Z1 / clogged hose / broken wire
@@ -120,13 +123,21 @@ map overrides a handful (e.g. `bleed_screw:misconfigured`=stuck-open forces valv
 `priming_cap:misconfigured`=pump loses prime; `nozzle/arc:misconfigured`=swap table row). Clogs take a
 0..1 severity (partial→addK, full→closeLink); structural breaks default to a representative orifice.
 
-### Layout + render (`layout.js`, `render.js`)
-elkjs `layered`, `direction=RIGHT`, zones clustered by `Zn.` prefix; separate ELK graph for the circuit
-in a reserved band. Coordinates computed **once** at startup (depend only on the static graph) and
-reused every frame. `render.js` only updates stroke width (∝ |flow|), color (red→green against the
-no-fault baseline, per `docs/Sim_ui.md` §3), idle=grey/dashed, every outlet/leak labeled with flow
-(m³/h everywhere, no unit toggle, per `docs/Sim_ui.md` §2), wiring particle-traced from
-`energisedWires`. Optional small `layout.overrides` map for awkward anchors (pump/well/manifold).
+### Geometry + render (`geometry.js`, `scene.js`, `render.js`)
+No auto-layout (decision superseding the earlier elkjs plan): `geometry.js` is a hand-authored,
+checked-in coordinates module — an x,y for every flow node, per-port pin positions for every
+circuit part, and route points for every wire — validated by a Node completeness test that fails
+when anything in `graph.yaml` lacks a position (or vice versa). The schematic draws **everything
+in graph.yaml** (per `docs/Sim_ui.md` §14): all flow nodes, every circuit part with labelled
+terminals and drawn internals (controller terminal strip, adapter winding, relay coil + contact,
+the splice's 8 ports, pump motor, valve coil pins), and all 24 wires individually pin-to-pin.
+Layout concept per `docs/Sim_ui.md` §15: phone-portrait logical schematic — wiring band on top,
+manifold as a vertical bar with stacked ports, each zone as its own left-to-right row ending in
+its heads, Z5 manual row, Z6 cap stub, supply chain at the bottom. `scene.js` turns model +
+geometry into static paths/glyphs once; `render.js` only updates stroke width (∝ |flow|), color
+(red→green against the no-fault baseline, per `docs/Sim_ui.md` §3), idle=grey/dashed, every
+outlet/leak labeled with flow (m³/h everywhere, no unit toggle, per `docs/Sim_ui.md` §2), wiring
+particle-traced from `energisedWires`.
 
 ### Controls
 `controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
@@ -157,14 +168,18 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   (pump + Z5 open → orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV,
   orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
 - **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
-- **M5:** `layout.js` (elkjs) + `render.js` — static schematic with flow/pressure encoding.
-- **M6:** `controls.js` + `app.js` wiring (live update, m³/h fixed — no units toggle); pump, zones,
-  Z5 manual handle, rotor flo-stop, valve flow-control, plug toggles.
+- **M5:** `geometry.js` (hand-authored coordinates + Node completeness test) + `scene.js` +
+  `render.js` — static schematic with flow/pressure encoding, full graph.yaml coverage
+  (`docs/Sim_ui.md` §13–§15).
+- **M6:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
+  worker solver client (`docs/Sim_ui.md` §12) + `app.js` wiring (live update, m³/h fixed — no
+  units toggle); pump, zones, Z5 manual handle, rotor flo-stop, valve flow-control, plug toggles.
 - **M7:** ~~`quasitime.js`~~ dropped per `docs/Sim_ui.md` §1 (single live view, no mode switching).
 - **M8 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
 - **M9:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
-  max-pressure warnings; `.github/workflows/pages.yml` + `sim/README.md`.
+  max-pressure warnings, the keep-last-good solver-failure badge (`docs/Sim_ui.md` §12);
+  `.github/workflows/pages.yml` + `sim/README.md`.
 
 ## Requirement → milestone traceability
 
@@ -211,5 +226,6 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
   disables the intended set. Asserts: converged, no NaN/negative on filled nodes, mass balance, catalog
   fidelity, monotonicity (second zone open → per-head pressure drops). Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
-  inject a clog/leak/broken wire, confirm live schematic (flow widths, pressure colors, outlet labels,
-  wiring asked/powered/broken), bar↔L/min toggle, and quasi-time stepping. Confirm Pages deploy after push.
+  inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
+  (flow widths, pressure colors, outlet labels in m³/h — no unit toggle, per-wire energised traces).
+  Confirm Pages deploy after push.
