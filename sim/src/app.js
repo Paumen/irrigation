@@ -93,10 +93,17 @@ try {
 
   say("computing layout…");
   const layout = await computeLayout(model, graph.circuit);
-  const renderer = createRenderer(document.getElementById("schematic"), layout);
+  let controls = null; // assigned right below; clicks can't arrive before then
+  const renderer = createRenderer(document.getElementById("schematic"), layout, {
+    onSelect: (id) => {
+      controls.select(id);
+      renderer.setSelected(id);
+    },
+  });
   ctx = { model, circuit: graph.circuit, hyd, layout, renderer };
 
-  const ui = buildControls(document.getElementById("controls"), model, requestRender);
+  controls = buildControls(document.getElementById("controls"), model, requestRender);
+  const ui = controls.ui;
 
   say("solving…");
   const steady = renderState(ui.commands, ui.state, { lmin: ui.lmin });
