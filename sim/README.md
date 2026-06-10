@@ -60,7 +60,9 @@ settled states (M7), and every part-by-part failure from `graph.yaml` can be inj
   24 VAC) with the live state layered on top (solid = powered, faded = off, dashed = asked-but-dead,
   red dashed = broken). `src/scene.js` is the pure half of rendering: solved results + layout →
   primitives with every visual attribute computed (stroke width ∝ |flow|, color ∝ pressure
-  blue→green→red, unfilled branches grey/dashed with pressures shown as "—", every outlet labeled with
+  blue→green→red with green anchored at the ~3.5 bar normal operating band — so healthy reads green,
+  starved trends blue, and above-normal/dead-heading trends warm —, unfilled branches grey/dashed with
+  pressures shown as "—", every outlet labeled with
   its discharge in m³/h or L/min) — this half is what the Node harness gates. `src/render.js` applies
   a scene to SVG with a vanilla keyed data-join: geometry is set once, updates only touch visual
   attributes. `index.html` + `src/app.js` boot the page (CDN importmap → `epanet-js`, `js-yaml`,
