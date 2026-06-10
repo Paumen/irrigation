@@ -10,6 +10,7 @@ kinds:
   hose.32:       {outer_diameter_mm: 32, wall_thickness_mm: 3,   inner_diameter_mm: 26,   material: LDPE, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 6.3, fail: [broken, clogged]}
   hose.25:       {outer_diameter_mm: 25, wall_thickness_mm: 2.7, inner_diameter_mm: 19.6, material: LDPE, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 6,   fail: [broken, clogged]}
   hose.16:       {outer_diameter_mm: 16, wall_thickness_mm: 3,   inner_diameter_mm: 10,   material: LDPE, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 6.3, fail: [broken, clogged]}
+  hose.suction:  {outer_diameter_mm: 30, wall_thickness_mm: 2.4, inner_diameter_mm: 25,   material: PVC spiral-reinforced, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 4, fail: [broken, clogged]}
   cap:           {max_pressure_bar: 10, fail: [broken]}
   nozzle.stream: {bore_mm: 10, cd: 0.97, discharge: open_hose_end, fail: [clogged, misconfigured]}
 
@@ -72,6 +73,15 @@ kinds:
       outlet_nut:      {to: [], fail: [broken, misconfigured]}
       outlet:          {}
 
+  valve.foot:
+    max_pressure_bar: 10
+    k_minor: 2.5
+    model: 'brass foot valve 1" with strainer'
+    parts:
+      strainer: {to: [seat], fail: [clogged]}
+      seat:     {to: [], fail: [broken, clogged]}
+      spring:   {acts: [seat], fail: [broken]}
+
   valve.manual:
     in: inlet
     out: outlet
@@ -117,8 +127,9 @@ kinds:
       nozzle:         {to: [], fail: [clogged, misconfigured]}
 
 flow:
-  well:      {kind: water.level, to: [hose1], h_m: 5.5}
-  hose1:     {kind: hose.25, to: [pump], length_m: 4.5, h_m: 4.8}
+  well:      {kind: water.level, to: [footvalve], h_m: 5.5}
+  footvalve: {kind: valve.foot, to: [hose1], h_m: 4.8}
+  hose1:     {kind: hose.suction, to: [pump], length_m: 4.5, h_m: 4.8}
   pump:      {kind: pump.well, to: [joint1], h_m: 8.2}
   joint1:    {kind: joint, to: [hose2], h_m: 8.2}
   hose2:     {kind: hose.32, to: [joint2], length_m: 1, h_m: 8.2}
