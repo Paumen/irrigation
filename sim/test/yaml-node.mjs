@@ -1,6 +1,5 @@
-// Node-side YAML loader for the headless harness. The browser loads the same root
-// YAMLs via fetch; here we read them off disk. Keeps model.js pure (it only ever sees
-// already-parsed objects).
+// Node-side YAML loader for the headless harness: reads the repo-root YAMLs off
+// disk. Keeps model.js pure (it only ever sees already-parsed objects).
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

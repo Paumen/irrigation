@@ -3,13 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Browser-based irrigation system simulator (hydraulics + control wiring). Browser loads deps from CDN; this package.json exists only for the headless Node test harness.",
+  "description": "Headless irrigation system simulator (hydraulics + control wiring + faults), solved with EPANET under Node.",
   "scripts": {
     "smoke": "node test/m0-smoke.mjs",
     "test": "node test/harness.mjs"
   },
   "devDependencies": {
-    "elkjs": "^0.11.0",
     "epanet-js": "^0.8.0",
     "js-yaml": "^4.2.0"
   }

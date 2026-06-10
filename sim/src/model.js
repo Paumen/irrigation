@@ -1,6 +1,6 @@
 // Normalize the raw graph.yaml + catalog.yaml into a Model the rest of the core
-// consumes. Pure: takes already-parsed JS objects (the browser and the Node harness
-// each load YAML their own way and pass the parsed objects in). No EPANET here.
+// consumes. Pure: takes already-parsed JS objects (callers load YAML their own way
+// and pass the parsed objects in). No EPANET here.
 
 // Map a flow-node `kind` to a hydraulic role. network.js keeps the original `kind`
 // too, so it can fold the right k_minor and pick the right diameter.
