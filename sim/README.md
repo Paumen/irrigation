@@ -10,9 +10,10 @@ so the engine is testable without a browser.
 
 ## Status
 
-**M0–M6 — done.** The headless hydraulic **and** electrical core is built and verified, the schematic
-renders in the browser, and a live control panel drives it; quasi-time (M7) and fault injection (M8)
-are not yet built.
+**M0–M8 — done.** The headless hydraulic **and** electrical core is built and verified, the schematic
+renders in the browser, a live control panel drives it, a quasi-time footer steps through sequences of
+settled states (M7), and every part-by-part failure from `graph.yaml` can be injected (M8); M9 (polish
++ Pages workflow refinements) remains.
 
 - **M0 (EPANET spike):** `test/m0-smoke.mjs` hand-writes a tiny INP (reservoir → pump → valve → demand)
   exercising every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
@@ -84,6 +85,31 @@ are not yet built.
   catalog loss scaled by 1/t², and a seated screw (t ≤ `THROTTLE_MIN`) holds the valve shut
   mechanically (reported `commandedNotOpening` when energised). The status line summarises each solve
   (pump flow → outlet flow, iterations, any valve commanded-but-not-opening).
+- **M7 (quasi-time):** `src/quasitime.js` — a **time-ordered sequence of command-states**, each solved
+  as a settled steady state. The pure half (sorted entries, `entryIndexAt`, deep `snapshotUi` copies of
+  the solver inputs) is harness-gated; the DOM half is a footer strip: **⏺ capture** snapshots the
+  current controls (commands + mechanical state + faults) as the state from time t on, and the user
+  scrubs / steps (⏮ ⏭) / plays (▶) along the timeline — each position shows the settled state in
+  effect there (solved once, cached; before the first entry the initial idle state shows). Time is the
+  user's axis: ordering pump-on a few seconds before a zone reproduces the controller's pump lead
+  without hard-coding it. Touching any live control drops back out of timeline mode.
+- **M8 (faults):** `src/faults.js` — the toggle list is **every `fail:` entry in `graph.yaml`**
+  (simple kinds per node, compound kinds per sub-part, circuit parts per port; ~400 faults), surfaced
+  in each equipment's panel and in a master **"⚠ faults"** sheet (header button, grouped by part).
+  A grouped **(role × failtype)** dispatch table compiles the active set into solver/network
+  mutations — clogs carry a 0–1 severity (partial → sharp-orifice minor loss `K=(1/a²−1)²`, full →
+  sealed link / dead pump), structural breaks become representative **leak emitters** at the nearest
+  real junction (a suction-side break instead costs the pump its prime), pump-path clogs scale the
+  head curve, valve faults pin the diaphragm open (torn diaphragm, vented chamber, clogged metering
+  port) or shut (jammed pilot, seated flow-control), a broken coil becomes an electrical cut, and
+  outlet faults rewrite the discharge law (wrong nozzle = swapped catalog row, broken spray regulator
+  = no 2.76 bar clamp, flush plug = open orifice) — plus a `SPECIAL` map for the handful of
+  part-specific cases. Circuit faults block their port in the electrical solve and display through the
+  existing asked/powered/broken wire states; hydraulic faults wear a red **✕** on the schematic and
+  active leaks show a red drop labelled with the escaping flow (counted in the mass balance). Starved
+  table outlets (e.g. behind a nearly-sealed clog) hand off to an EPANET emitter below their lowest
+  catalog point — the demand fixed point is singular as p → 0 — and all fed-back quantities use
+  per-quantity adaptive damping (step halves on each sign flip), so even extreme severities settle.
 
 The physics modules in `src/` are plain ES modules with no browser dependency, so they run unchanged under
 Node. In the browser the same modules load `epanet-js` from a CDN; the YAML is parsed at the edge
@@ -98,7 +124,7 @@ Headless tests:
 cd sim
 npm install      # installs epanet-js + js-yaml + elkjs as dev dependencies (node_modules is git-ignored)
 npm run smoke    # M0: node test/m0-smoke.mjs
-npm test         # M1–M6: node test/harness.mjs
+npm test         # M1–M8: node test/harness.mjs
 ```
 
 Browser (the page fetches `../graph.yaml` etc., so serve from the **repo root**):
@@ -144,8 +170,24 @@ through the electrical solve and then the hydraulic loop:
   never move; only visual attributes change);
 - **M6 control spec** — the pure half of the control panel: one flow-control + bleed per auto valve,
   zones derived from the valves, the Z5 handle, a flo-stop per rotor head, the initial UI state
-  (everything off, flow controls factory-open) feeding the solvers directly and settling to idle, and
-  the per-equipment panels (controller / pump / valves / heads) with every widget path addressing a
-  slot the initial UI state created.
+  (everything off, flow controls factory-open, every fault healthy) feeding the solvers directly and
+  settling to idle, and the per-equipment panels (controller / pump / valves / heads) with every
+  widget path addressing a slot the initial UI state created;
+- **M8 fault cases** — a fully clogged hose seals its branch (heads dry, still converges), an 80% clog
+  restricts (everything discharges less), a burst hose leaks at its downstream junction (heads keep
+  running at lower pressure, leak counted in the mass balance and total outflow), a broken solenoid
+  coil drops exactly its zone, a stuck-open bleed screw runs the zone with no controller command, a
+  half-clogged impeller weakens the whole system, a broken pump motor stops everything despite healthy
+  wiring, and a broken spray regulator follows the raw nozzle table above 2.76 bar;
+- **M8 fault model (pure)** — the fault list enumerates every `fail:` entry uniquely (the pump motor,
+  defined on both the hydraulic and circuit sides, is one fault), clogs carry severities, and the
+  dispatch table emits the right effects (sealed vs restricted links, leaks at the right junction,
+  lost prime from suction-side breaks, electrical cuts, nozzle-row swaps, unknown keys throw);
+- **M8 scene** — faulted elements wear an ✕ (nodes and hose polylines), active leaks are marked with
+  their flow, healthy scenes carry neither;
+- **M7 quasi-time** — entries stay time-sorted (re-capturing a time supersedes), `entryIndexAt` picks
+  the state in effect, snapshots are deep copies, and a pump-lead sequence (pump at t=0, zone 1 at
+  t=5, all-off at t=300) shows the pump dead-heading at shutoff pressure between entries, the zone
+  watering once its entry takes effect, and idle after the shutdown entry.
 
 It prints a per-case outlet table and exits non-zero on any failure.

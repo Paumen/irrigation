@@ -39,8 +39,11 @@ export function buildTopology(model, state) {
   const pumpOn = !!state.pumpOn;
   const valveOpen = state.valveOpen || {}; // flow id -> bool (auto + manual)
   const demands = state.demands || new Map(); // outlet flow id -> q (m3/h)
-  const emitters = state.emitters || new Map(); // outlet flow id -> emitter coeff (CMH/√m)
+  const emitters = state.emitters || new Map(); // node flow id -> emitter coeff (CMH/√m)
   const throttle = state.throttle || {}; // auto-valve flow id -> 0..1 opening (1 = factory-open)
+  const closedLinks = state.closedLinks || new Set(); // fault: link flow ids sealed shut
+  const linkK = state.linkK || new Map(); // fault: link flow id -> extra minor-loss K
+  const pumpHeadScale = state.pumpHeadScale ?? 1; // fault: weak pump
 
   // --- id mapping (EPANET ids may not contain '.') ---
   const toEpanet = new Map();
@@ -77,9 +80,12 @@ export function buildTopology(model, state) {
         subkind: n.subkind, // rotor | spray | stream
         params: n.params,
       });
-      const coeff = emitters.get(n.id);
-      if (coeff) emitterList.push({ id: ep(n.id), coeff });
     }
+  }
+
+  // pressure-driven emitters: open-orifice outlets and fault leaks, on any junction
+  for (const [flowId, coeff] of emitters) {
+    if (coeff > 0) emitterList.push({ id: ep(flowId), coeff });
   }
 
   // synthetic junctions inserted between two adjacent links (the pump inlet)
@@ -128,10 +134,11 @@ export function buildTopology(model, state) {
   }
 
   // --- shared head curves (a throttled valve adds its own scaled copy below) ---
+  // A clogged pump path scales the whole catalog head curve down (weak pump).
   const pump = model.curves.pump;
   const vloss = model.curves.valveLoss;
   const curves = {
-    PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i]]),
+    PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i] * pumpHeadScale]),
     VCURVE: vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]),
   };
 
@@ -157,7 +164,9 @@ export function buildTopology(model, state) {
     const n2 = resolveEndpoint(L.to[0], L, false);
     if (!n1) throw new Error(`network: link "${L.id}" has no upstream node`);
     if (!n2) throw new Error(`network: link "${L.id}" has no downstream node`);
-    const mloss = foldedK.get(L.id) || 0;
+    // partial-clog faults ride on the link as extra minor loss; full clogs seal it
+    const mloss = (foldedK.get(L.id) || 0) + (linkK.get(L.id) || 0);
+    if (closedLinks.has(L.id)) statusClosed.push(ep(L.id));
 
     if (L.role === "pipe") {
       const isSwing = L.subkind === "swing";

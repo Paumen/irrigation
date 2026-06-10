@@ -87,9 +87,10 @@ export function createRenderer(svgEl, layout, { onSelect } = {}) {
   };
 
   // layer order: zone frames under pipes under glyphs under labels; circuit boxes
-  // under wires so terminal dots and splices sit on top of the wire ends
+  // under wires so terminal dots and splices sit on top of the wire ends; leak and
+  // fault markers on top of everything
   const layers = {};
-  for (const name of ["zones", "pipes", "nodes", "labels", "parts", "wires", "leads", "terminals", "splices"]) {
+  for (const name of ["zones", "pipes", "nodes", "labels", "parts", "wires", "leads", "terminals", "splices", "leaks", "faults"]) {
     layers[name] = el("g", { class: name });
     svgEl.appendChild(layers[name]);
   }
@@ -140,17 +141,27 @@ export function createRenderer(svgEl, layout, { onSelect } = {}) {
     if (selectedKey) for (const e of selectable.get(selectedKey)) e.classList.add("selected");
   };
 
-  const els = new Map(); // "<kind>:<key>" -> { node: element, title?: <title> }
+  const els = new Map(); // kind -> Map<key, { node: element, title?: <title> }>
 
+  // Keyed data-join. The graph itself is static, but M8 primitives (fault marks,
+  // leaks) come and go between states, so entries absent from this scene are hidden
+  // (never destroyed — a re-toggled fault reuses its element).
   const join = (prims, kind, create, update) => {
+    if (!els.has(kind)) els.set(kind, new Map());
+    const byKey = els.get(kind);
+    const seen = new Set();
     for (const prim of prims) {
-      const k = `${kind}:${prim.key}`;
-      let entry = els.get(k);
+      let entry = byKey.get(prim.key);
       if (!entry) {
         entry = create(prim);
-        els.set(k, entry);
+        byKey.set(prim.key, entry);
       }
+      entry.node.removeAttribute("display");
       update(entry, prim);
+      seen.add(prim.key);
+    }
+    for (const [key, entry] of byKey) {
+      if (!seen.has(key)) entry.node.setAttribute("display", "none");
     }
   };
 
@@ -259,6 +270,56 @@ export function createRenderer(svgEl, layout, { onSelect } = {}) {
         ({ node }, s) => {
           node.setAttribute("fill", s.state === "broken" ? "#c62828" : CONDUCTOR_COLOR.lv);
           node.setAttribute("fill-opacity", s.state === "off" ? 0.35 : 1);
+        },
+      );
+
+      // M8: active leaks — a red drop with the escaping flow alongside
+      join(
+        scene.leaks || [],
+        "leak",
+        (l) => {
+          const g = el("g");
+          g.appendChild(el("circle", { cx: l.x, cy: l.y, r: 5, fill: "#c62828", "fill-opacity": 0.85 }));
+          const t = el("text", {
+            x: l.x + 8,
+            y: l.y + 4,
+            "font-size": "11",
+            fill: "#c62828",
+            "font-weight": "600",
+          });
+          g.appendChild(t);
+          const title = el("title");
+          title.textContent = `${l.key} leak`;
+          g.appendChild(title);
+          layers.leaks.appendChild(g);
+          return { node: g, text: t };
+        },
+        ({ text }, l) => {
+          text.textContent = `💧 ${l.text}`;
+        },
+      );
+
+      // M8: every faulted hydraulic element wears an ✕
+      join(
+        scene.faultMarks || [],
+        "fault",
+        (f) => {
+          const t = el("text", {
+            x: f.x,
+            y: f.y,
+            "text-anchor": "middle",
+            "font-size": "13",
+            "font-weight": "700",
+            fill: "#c62828",
+          });
+          t.textContent = "✕";
+          const title = el("title");
+          t.appendChild(title);
+          layers.faults.appendChild(t);
+          return { node: t, title };
+        },
+        ({ title }, f) => {
+          title.textContent = f.title;
         },
       );
     },
