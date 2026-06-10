@@ -23,6 +23,7 @@ import {
   CONNECTOR_LEN_M,
   CONNECTOR_DIAM_MM,
   DEFAULT_ROUGHNESS_MM,
+  THROTTLE_MIN,
 } from "./config.js";
 import { kvToTcvK } from "./units.js";
 
@@ -39,6 +40,7 @@ export function buildTopology(model, state) {
   const valveOpen = state.valveOpen || {}; // flow id -> bool (auto + manual)
   const demands = state.demands || new Map(); // outlet flow id -> q (m3/h)
   const emitters = state.emitters || new Map(); // outlet flow id -> emitter coeff (CMH/√m)
+  const throttle = state.throttle || {}; // auto-valve flow id -> 0..1 opening (1 = factory-open)
 
   // --- id mapping (EPANET ids may not contain '.') ---
   const toEpanet = new Map();
@@ -125,6 +127,14 @@ export function buildTopology(model, state) {
     }
   }
 
+  // --- shared head curves (a throttled valve adds its own scaled copy below) ---
+  const pump = model.curves.pump;
+  const vloss = model.curves.valveLoss;
+  const curves = {
+    PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i]]),
+    VCURVE: vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]),
+  };
+
   // --- emit one EPANET link per link-like vertex ---
   const resolveEndpoint = (neighborId, self, isUpstream) => {
     if (!neighborId) return null;
@@ -166,6 +176,17 @@ export function buildTopology(model, state) {
       pumps.push({ id: ep(L.id), n1, n2, curveId: "PCURVE" });
       if (!pumpOn) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-auto") {
+      // The flow-control screw limits diaphragm lift: opening fraction t scales the
+      // effective Kv to t·Kv, so the catalog loss curve scales by 1/t² (loss ∝ (Q/Kv)²).
+      // A seated screw (t <= THROTTLE_MIN) is held shut by the solver and never solves
+      // open; the clamp here only keeps the scaled curve finite.
+      const t = throttle[L.id] ?? 1;
+      let setting = "VCURVE";
+      if (t < 1) {
+        const tt = Math.max(t, THROTTLE_MIN);
+        setting = `VC_${ep(L.id)}`;
+        curves[setting] = curves.VCURVE.map(([q, h]) => [q, h / (tt * tt)]);
+      }
       valves.push({
         id: ep(L.id),
         flowId: L.id,
@@ -173,7 +194,7 @@ export function buildTopology(model, state) {
         n2,
         diam_mm: CONNECTOR_DIAM_MM,
         type: "GPV",
-        setting: "VCURVE",
+        setting,
         mloss,
         isAuto: true,
       });
@@ -194,14 +215,6 @@ export function buildTopology(model, state) {
       if (!valveOpen[L.id]) statusClosed.push(ep(L.id));
     }
   }
-
-  // --- shared head curves ---
-  const pump = model.curves.pump;
-  const vloss = model.curves.valveLoss;
-  const curves = {
-    PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i]]),
-    VCURVE: vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]),
-  };
 
   const nodeIds = [
     ...reservoirs.map((r) => r.id),

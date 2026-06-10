@@ -25,6 +25,11 @@ export const VALVE_FREEZE_TAIL = 12;
 // MP-rotator spray heads have a built-in pressure regulator.
 export const SPRAY_CLAMP_BAR = 2.76;
 
+// An auto-valve's flow-control screw scales its effective opening: 1 = factory-open,
+// smaller = throttled. At or below this fraction the screw is seated and the valve is
+// mechanically shut (and the 1/t² loss scaling stays finite).
+export const THROTTLE_MIN = 0.05;
+
 // Swing joints are modelled as a very short pipe carrying their k_minor; the
 // length is physical-ish (riser height) and small enough that friction is negligible.
 export const SWING_LEN_M = 0.3;
@@ -56,3 +61,7 @@ export const STROKE_MAX_PX = 8;
 export const CIRCUIT_BAND_GAP = 60;
 // Unfilled (dead-branch) and idle elements render in this grey, dashed.
 export const DEAD_COLOR = "#9aa0a6";
+
+// Control panel changes re-solve after this quiet period, so a slider drag coalesces
+// into one solve instead of one per tick (app.js).
+export const DEBOUNCE_MS = 150;
