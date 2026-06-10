@@ -91,6 +91,20 @@ export const cases = [
     faults: { "Z1.hose1:clogged": 0.8 },
   },
   {
+    name: "pump on + Z1 with Z1.valve seat 60% clogged",
+    kind: "seatclog",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "Z1.valve.seat:clogged": 0.6 },
+  },
+  {
+    name: "pump on + Z1 with Z1.valve seat fully packed",
+    kind: "seatfull",
+    commands: { mv: true, zones: { 1: true } },
+    state: { manualOpen: {} },
+    faults: { "Z1.valve.seat:clogged": 1 },
+  },
+  {
     name: "pump on + Z1 with Z1.hose2 burst (leak)",
     kind: "leak",
     commands: { mv: true, zones: { 1: true } },

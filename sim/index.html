@@ -86,6 +86,7 @@
   #timeline button:hover:not(:disabled) { background: #f1f3f4; }
   #timeline button:disabled { opacity: .4; cursor: default; }
   #timeline input[type=range] { flex: 1; min-width: 80px; }
+  #timeline .tl-label { color: #5f6368; font-weight: 600; cursor: help; }
   #timeline .tl-readout { color: #5f6368; white-space: nowrap;
     font-variant-numeric: tabular-nums; }
 
@@ -110,7 +111,7 @@
   <span id="display-ctl"></span>
 </header>
 <div class="legend">
-  <span>pressure: 0 bar <span class="ramp"></span> 5 bar</span>
+  <span>pressure: 0 bar <span class="ramp"></span> 5 bar · green ≈ normal (3.5)</span>
   <span>flow: <svg width="60" height="12"><line x1="0" y1="9" x2="18" y2="9" stroke="#444" stroke-width="1.5"/><line x1="26" y1="7" x2="58" y2="7" stroke="#444" stroke-width="8" stroke-linecap="round"/></svg> more</span>
   <span><span class="swatch" style="background:#9aa0a6"></span> unfilled/idle</span>
   <span>equipment:

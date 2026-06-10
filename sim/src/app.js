@@ -71,7 +71,7 @@ export function renderState(commands, state = { manualOpen: {} }, opts = {}) {
   return last.steady;
 }
 
-let timeline = null; // assigned at boot; deactivated whenever a live control changes
+let timeline = null; // assigned at boot; every control change records a transition
 let pending = 0;
 function requestRender(ui, { unitsOnly = false } = {}) {
   if (unitsOnly) {
@@ -81,7 +81,9 @@ function requestRender(ui, { unitsOnly = false } = {}) {
     }
     return;
   }
-  timeline?.deactivate(); // a touched control means the live state is showing again
+  // the changed controls become (or update) the transition at the timeline cursor;
+  // slider drags record repeatedly at one time and collapse into the final state
+  timeline?.record(snapshotUi(ui));
   clearTimeout(pending);
   pending = setTimeout(() => {
     say("solving…");
@@ -124,26 +126,27 @@ try {
   const ui = controls.ui;
   const idleSnap = snapshotUi(ui); // shown for timeline positions before the first entry
 
-  // M7: the quasi-time footer. Each entry is a settled state, solved once and cached;
-  // scrubbing and playing just repaint cached results. Weakly keyed so snapshots the
-  // timeline drops (cleared or superseded entries) can be collected with their solves.
+  // M7: the quasi-time footer. Every control change records a transition at the
+  // cursor; scrubbing/stepping/playing shows the settled state in effect at each time
+  // (solved once, cached) and checks it out into the live controls, so edits made
+  // while scrubbed-back build on that state. Weakly keyed so snapshots the timeline
+  // drops (cleared or replaced transitions) can be collected with their solves.
   const tlCache = new WeakMap(); // snapshot -> { steady, elec, fx }
   timeline = buildTimeline(document.getElementById("timeline"), {
-    capture: () => snapshotUi(ui),
     show: (snap, t, idx, n) => {
       const s = snap ?? idleSnap;
       try {
         if (!tlCache.has(s)) tlCache.set(s, solveAll(s.commands, s.state, s.faults));
         last = tlCache.get(s);
+        controls.loadUi(s);
         repaint(ui.lmin);
-        const which = idx < 0 ? "initial state" : `state ${idx + 1}/${n}`;
+        const which = idx < 0 ? "initial state" : `transition ${idx + 1}/${n}`;
         say(`t = ${Math.round(t)} s (${which}) · ${statusText(last.steady, last.elec, ui.lmin)}`);
       } catch (err) {
         say(`solve failed: ${err.message}`);
         console.error(err);
       }
     },
-    exit: () => requestRender(ui),
   });
 
   // clicking empty schematic (or pressing Escape) slides the sheet away
