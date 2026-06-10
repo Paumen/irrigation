@@ -10,8 +10,9 @@ so the engine is testable without a browser.
 
 ## Status
 
-**M0–M5 — done.** The headless hydraulic **and** electrical core is built and verified, and the static
-schematic renders in the browser; controls/live updates (M6+) are not yet built.
+**M0–M6 — done.** The headless hydraulic **and** electrical core is built and verified, the schematic
+renders in the browser, and a live control panel drives it; quasi-time (M7) and fault injection (M8)
+are not yet built.
 
 - **M0 (EPANET spike):** `test/m0-smoke.mjs` hand-writes a tiny INP (reservoir → pump → valve → demand)
   exercising every EPANET feature the build relies on — CMH flow units, Darcy–Weisbach headloss, a pump
@@ -62,8 +63,21 @@ schematic renders in the browser; controls/live updates (M6+) are not yet built.
   its discharge in m³/h or L/min) — this half is what the Node harness gates. `src/render.js` applies
   a scene to SVG with a vanilla keyed data-join: geometry is set once, updates only touch visual
   attributes. `index.html` + `src/app.js` boot the page (CDN importmap → `epanet-js`, `js-yaml`,
-  `elkjs`) and render one representative state (pump on + zone 1); `renderState()` is the hook M6's
-  controls will drive.
+  `elkjs`) and render the solved state; `renderState()` is the synchronous solve-and-paint entry point.
+- **M6 (controls + live updates):** `src/controls.js` builds the control panel — every user-commandable
+  control of spec R15 except M8's fault toggles: pump + per-zone controller commands, the Z5 manual
+  handle, a **flow-control screw** (0–100% slider) and **bleed screw** per auto valve, a **flo-stop**
+  per rotor head, and the m³/h ↔ L/min display toggle. The widget list is derived from the model
+  (`controlSpec()`), and the UI state (`initialUiState()`) **is** the solver input shape
+  `{ commands, state, lmin }` — both pure and harness-gated; only the DOM half is browser-only. Any
+  change re-solves after a short debounce (slider drags coalesce into one solve) and repaints via the
+  M5 data-join (R16); the units toggle only repaints the cached result. Two controls grew physics in
+  the core: a closed **flo-stop** (`state.floStop`) zeroes that head's discharge while the branch stays
+  filled (pressure still displays), and the **flow-control** screw (`state.throttle`, opening fraction
+  t) scales the valve's effective Kv to t·Kv — `network.js` emits a per-valve GPV curve with the
+  catalog loss scaled by 1/t², and a seated screw (t ≤ `THROTTLE_MIN`) holds the valve shut
+  mechanically (reported `commandedNotOpening` when energised). The status line summarises each solve
+  (pump flow → outlet flow, iterations, any valve commanded-but-not-opening).
 
 The physics modules in `src/` are plain ES modules with no browser dependency, so they run unchanged under
 Node. In the browser the same modules load `epanet-js` from a CDN; the YAML is parsed at the edge
@@ -78,7 +92,7 @@ Headless tests:
 cd sim
 npm install      # installs epanet-js + js-yaml + elkjs as dev dependencies (node_modules is git-ignored)
 npm run smoke    # M0: node test/m0-smoke.mjs
-npm test         # M1–M5: node test/harness.mjs
+npm test         # M1–M6: node test/harness.mjs
 ```
 
 Browser (the page fetches `../graph.yaml` etc., so serve from the **repo root**):
@@ -109,6 +123,11 @@ through the electrical solve and then the hydraulic loop:
   with the emitter flow matching the orifice law;
 - **broken shared common return** — all four zones drop while the pump stays powered;
 - **broken signal_2** — only zone 2 drops;
+- **Z1 with a rotor flo-stop closed** — the head stays filled (pressure displays) but discharges
+  nothing, the rest of the zone re-balances;
+- **Z1 with the valve flow control at 40% / fully seated** — throttled: every head still discharges at
+  lower pressure and the valve's headloss matches the catalog law scaled by 1/t²; seated: the valve is
+  held shut and reported `commandedNotOpening`;
 - plus electrical-only continuity spot checks (broken mains, broken adapter supply, single broken lead)
   and wire/port display-state checks (asked / powered / broken, gap attribution);
 - **M5 layout** — every flow node placed in-canvas, hoses routed as polylines, left-to-right ordering,
@@ -116,6 +135,9 @@ through the electrical solve and then the hydraulic loop:
 - **M5 scene** — color/width scale pins, idle = all grey/dashed with "—" labels, pump+Z1 = bold colored
   Z1 pipes with catalog-matching labels and the closed-valve half-edge dead, wiring states
   (broken `signal_2` shown broken, the rest powered), and geometry identical across states (positions
-  never move; only visual attributes change).
+  never move; only visual attributes change);
+- **M6 control spec** — the pure half of the control panel: one flow-control + bleed per auto valve,
+  zones derived from the valves, the Z5 handle, a flo-stop per rotor head, and the initial UI state
+  (everything off, flow controls factory-open) feeding the solvers directly and settling to idle.
 
 It prints a per-case outlet table and exits non-zero on any failure.

@@ -15,8 +15,15 @@ import { solveElectrical } from "../src/electrical.js";
 import { outletDemandAt, interp } from "../src/outlets.js";
 import { computeLayout } from "../src/layout.js";
 import { buildScene, pressureColor, strokeWidth } from "../src/scene.js";
+import { controlSpec, initialUiState } from "../src/controls.js";
 import { fmtFlow } from "../src/units.js";
-import { CIRCUIT_BAND_GAP, DEAD_COLOR, STROKE_MIN_PX, STROKE_MAX_PX } from "../src/config.js";
+import {
+  CIRCUIT_BAND_GAP,
+  DEAD_COLOR,
+  STROKE_MIN_PX,
+  STROKE_MAX_PX,
+  M_PER_BAR,
+} from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
 
@@ -194,6 +201,60 @@ for (const c of cases) {
       check(elec.zoneEnergised[z] === false, `zone ${z} de-energised (broken wiring)`);
       check(r.valveOpen[`Z${z}.valve`] === false, `Z${z}.valve stays closed`);
     }
+  } else if (c.kind === "flostop") {
+    // M6: a rotor flo-stop is mechanically shut — the head stays on a filled branch
+    // (pressure displays) but discharges nothing, and the zone re-balances.
+    check(r.valveOpen["Z1.valve"] === true, "Z1 valve open");
+    check(r.reachable.has("Z1.head2"), "flo-stopped rotor still filled (pressure displays)");
+    check(r.demands.get("Z1.head2") === 0, "flo-stopped rotor discharges nothing");
+    const pStopped = r.pressureBar[epOf("Z1.head2")];
+    const pAlone = z1Result.pressureBar[epOf("Z1.head2")];
+    check(
+      pStopped > pAlone,
+      `pressure at the stopped rotor rises vs plain Z1 (${pStopped.toFixed(3)} > ${pAlone.toFixed(3)} bar)`,
+    );
+    for (const id of ["Z1.head1", "Z1.head3"]) {
+      check(
+        r.demands.get(id) >= z1Result.demands.get(id) - 1e-6,
+        `${id} discharge not reduced by the stopped rotor`,
+      );
+    }
+    check(r.pumpFlow < z1Result.pumpFlow, "total pump flow drops with the rotor stopped");
+  } else if (c.kind === "throttle") {
+    // M6: the flow-control screw throttles but does not shut — the valve still lifts,
+    // every head still discharges, at lower pressure/flow than factory-open.
+    check(r.valveOpen["Z1.valve"] === true, "throttled valve still opens");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) > 0, `${id} still discharges`);
+      const pNow = r.pressureBar[epOf(id)];
+      const pAlone = z1Result.pressureBar[epOf(id)];
+      check(pNow < pAlone, `${id} pressure drops vs factory-open (${pNow.toFixed(3)} < ${pAlone.toFixed(3)} bar)`);
+    }
+    check(
+      r.demands.get("Z1.head2") < z1Result.demands.get("Z1.head2"),
+      "the unregulated rotor's discharge drops",
+    );
+    check(r.pumpFlow < z1Result.pumpFlow, "total pump flow drops");
+    // catalog fidelity: at 40% opening the valve's headloss is the catalog loss
+    // scaled by 1/0.4² at the solved flow
+    const v = r.topo.valves.find((x) => x.flowId === "Z1.valve");
+    const q = r.flow[epOf("Z1.valve")];
+    const lossM = r.headM[v.n1] - r.headM[v.n2];
+    const vl = model.curves.valveLoss;
+    const want = (interp(vl.flow_m3h, vl.loss_bar, q) * M_PER_BAR) / (0.4 * 0.4);
+    check(
+      Math.abs(lossM - want) < 0.3,
+      `valve headloss matches the scaled catalog law (${lossM.toFixed(2)} m vs ${want.toFixed(2)} m at ${q.toFixed(3)} m3/h)`,
+    );
+  } else if (c.kind === "throttle0") {
+    // M6: a fully-seated flow control pins the diaphragm shut — energised or not.
+    check(elec.zoneEnergised[1] === true, "zone 1 energised (wiring healthy)");
+    check(r.valveOpen["Z1.valve"] === false, "fully-seated flow control holds the valve shut");
+    check(r.commandedNotOpening["Z1.valve"] === true, "reported commanded-but-not-opening");
+    for (const id of ["Z1.head1", "Z1.head2", "Z1.head3"]) {
+      check(r.demands.get(id) === 0 && !r.reachable.has(id), `${id} dry`);
+    }
+    check(Math.abs(r.outSum) < 1e-9, "no outflow anywhere");
   }
   console.log("");
 }
@@ -467,6 +528,52 @@ console.log("Case: M5 scene (visual attribute computation)");
       scene.splices.map((s) => [s.key, s.x, s.y]),
     ]);
   check(geomOf(idleScene) === geomOf(z1Scene), "positions never move between states");
+}
+console.log("");
+
+// M6: the control panel's pure half — which widgets exist and what state they hold.
+// The DOM half (buildControls) is browser-only; the UI state shape it mutates is
+// asserted here to BE the solver input shape.
+console.log("Case: M6 control spec + initial UI state");
+{
+  const spec = controlSpec(model);
+  check(
+    spec.autoValves.join(",") === "Z1.valve,Z2.valve,Z3.valve,Z4.valve",
+    `one flow-control + bleed per auto valve (${spec.autoValves.join(",")})`,
+  );
+  check(spec.zones.join(",") === "1,2,3,4", `controller zones derived from the valves (${spec.zones.join(",")})`);
+  check(spec.manualValves.join(",") === "Z5.valve", "the Z5 manual handle");
+  const rotors = [...model.flowNodes.values()]
+    .filter((n) => n.role === "outlet" && n.subkind === "rotor")
+    .map((n) => n.id);
+  check(
+    spec.rotors.join(",") === rotors.join(",") && rotors.length === 5,
+    `a flo-stop per rotor head (${spec.rotors.join(",")})`,
+  );
+
+  const ui = initialUiState(spec);
+  check(
+    ui.commands.mv === false && spec.zones.every((z) => ui.commands.zones[z] === false),
+    "initial commands: controller all off",
+  );
+  check(
+    spec.autoValves.every((v) => ui.state.throttle[v] === 1 && ui.state.bleedOpen[v] === false),
+    "initial state: flow controls factory-open, bleed screws shut",
+  );
+  check(
+    spec.manualValves.every((v) => ui.state.manualOpen[v] === false) &&
+      spec.rotors.every((id) => ui.state.floStop[id] === false),
+    "initial state: handles shut, flo-stops open",
+  );
+  check(ui.lmin === false, "flows default to m³/h");
+
+  // the UI state feeds the solvers directly and the boot state is idle
+  const elec = solveElectrical(circuit, ui.commands);
+  const r = solveSteady(model, ui.state, elec, hyd);
+  check(
+    r.converged && Math.abs(r.pumpFlow) < 1e-9 && Math.abs(r.outSum) < 1e-9,
+    "initial UI state solves straight to idle (no flow)",
+  );
 }
 console.log("");
 
