@@ -17,26 +17,61 @@
 }
 </script>
 <style>
-  body { margin: 0; font: 14px system-ui, sans-serif; color: #202124; }
-  header { padding: 10px 16px; border-bottom: 1px solid #dadce0; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+  /* Desktop: a fixed app shell (header + legend + panel|schematic filling the
+     viewport, panel scrolls internally). The flex column replaces the old
+     hard-coded calc(100vh - 110px), so a wrapping header can't clip the page. */
+  html, body { height: 100%; }
+  body { margin: 0; font: 14px system-ui, sans-serif; color: #202124;
+    display: flex; flex-direction: column; }
+  header { padding: 10px 16px; border-bottom: 1px solid #dadce0; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; flex: none; }
   h1 { font-size: 16px; margin: 0; }
   #status { color: #5f6368; font-size: 13px; }
-  #main { display: flex; align-items: stretch; height: calc(100vh - 110px); }
+  #main { display: flex; align-items: stretch; flex: 1; min-height: 0; }
   #controls { width: 280px; flex: none; overflow-y: auto; box-sizing: border-box;
     padding: 4px 14px 20px; border-right: 1px solid #dadce0; }
   #controls h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
     color: #5f6368; margin: 16px 0 4px; }
   #controls label { display: flex; align-items: center; gap: 8px; padding: 3px 0;
-    font-size: 13px; cursor: pointer; }
+    font-size: 13px; cursor: pointer; touch-action: manipulation; }
+  #controls input[type=checkbox] { width: 16px; height: 16px; flex: none; }
   #controls .ctl-slider input[type=range] { flex: 1; min-width: 60px; }
   #controls .ctl-slider .val { color: #5f6368; min-width: 38px; text-align: right;
     font-variant-numeric: tabular-nums; }
-  #schematic { flex: 1; height: 100%; display: block; }
-  .legend { display: flex; gap: 18px; padding: 6px 16px; font-size: 12px; color: #5f6368; align-items: center; flex-wrap: wrap; }
+  #schematic { flex: 1; height: 100%; display: block; min-width: 0; }
+  .legend { display: flex; gap: 18px; padding: 6px 16px; font-size: 12px; color: #5f6368; align-items: center; flex-wrap: wrap; flex: none; }
   .legend .ramp { width: 90px; height: 10px; border-radius: 5px;
     background: linear-gradient(to right, hsl(220,80%,45%), hsl(110,80%,45%), hsl(0,80%,45%)); }
   .legend svg { vertical-align: middle; }
+  .legend > span { white-space: nowrap; }
   .swatch { display: inline-block; width: 14px; height: 3px; vertical-align: middle; }
+
+  /* Phones / narrow screens: the page scrolls naturally, the schematic sticks to
+     the top while the control list scrolls beneath it — so toggling a control
+     never scrolls the picture out of view. The legend collapses to one
+     side-scrollable line. */
+  @media (max-width: 820px) {
+    html, body { height: auto; }
+    body { display: block; }
+    .legend { flex-wrap: nowrap; overflow-x: auto; gap: 14px;
+      -webkit-overflow-scrolling: touch; }
+    #main { flex-direction: column; height: auto; }
+    /* flex: none — in a column flexbox `flex: 1` would size the height and silently
+       override the 44vh, growing the svg over the panel */
+    #schematic { order: -1; flex: none; position: sticky; top: 0; z-index: 2;
+      width: 100%; height: 44vh; background: #fff; border-bottom: 1px solid #dadce0; }
+    #controls { width: 100%; border-right: none; overflow: visible;
+      padding: 4px 16px 28px; }
+    /* focus/anchor scrolls must land below the sticky picture, not under it —
+       on the inputs too: keyboard focus scrolls to the input, not its label */
+    #controls label, #controls input { scroll-margin-top: calc(44vh + 8px); }
+  }
+
+  /* Touch devices: finger-sized targets regardless of screen width. */
+  @media (pointer: coarse) {
+    #controls label { padding: 8px 0; font-size: 15px; }
+    #controls input[type=checkbox] { width: 20px; height: 20px; }
+    #controls .ctl-slider input[type=range] { height: 28px; }
+  }
 </style>
 </head>
 <body>
