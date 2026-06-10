@@ -1,14 +1,7 @@
-// Normalize the raw graph.yaml + catalog.yaml into a Model the rest of the core
-// consumes. Pure: takes already-parsed JS objects (callers load YAML their own way
-// and pass the parsed objects in). No EPANET here.
-
-// Map a flow-node `kind` to a hydraulic role. network.js keeps the original `kind`
-// too, so it can fold the right k_minor and pick the right diameter.
 export function roleOf(kind) {
   if (kind === "water.level") return "reservoir";
   if (kind === "pump.well") return "pump";
-  // valve.foot is a passive check valve: hydraulically a junction whose k_minor
-  // folds onto the suction hose (its holds-the-prime behaviour is quasi-time, M7+).
+  // valve.foot is a passive check valve, treated hydraulically as a junction.
   if (kind === "joint" || kind === "tee" || kind === "manifold" || kind === "valve.foot") return "junction";
   if (kind === "valve.auto") return "valve-auto";
   if (kind === "valve.manual") return "valve-manual";
@@ -18,8 +11,6 @@ export function roleOf(kind) {
   throw new Error(`model: unknown kind "${kind}"`);
 }
 
-// The subkind distinguishes outlet discharge laws (outlets.js) and lets network.js
-// treat a swing as a pipe with its own k_minor.
 function subkindOf(kind) {
   if (kind === "head.rotor") return "rotor";
   if (kind === "head.spray") return "spray";
@@ -43,16 +34,15 @@ export function buildModel(rawGraph, rawCatalog) {
     const kind = node.kind;
     if (!kind) throw new Error(`model: flow node "${id}" has no kind`);
     const kindDef = kinds[kind];
-    // water.level is a virtual kind (the well surface); it has no kinds entry.
     if (!kindDef && kind !== "water.level") {
       throw new Error(`model: flow node "${id}" references unknown kind "${kind}"`);
     }
     const role = roleOf(kind);
-    // params = kind fields, then node-level fields override (length_m, nozzle, arc, …).
+    // node-level fields override kind fields
     const params = { ...(kindDef || {}), ...node };
     delete params.kind;
     delete params.to;
-    delete params.parts; // structural sub-part tree, not hydraulic params
+    delete params.parts;
     flowNodes.set(id, {
       id,
       kind,
@@ -64,7 +54,6 @@ export function buildModel(rawGraph, rawCatalog) {
     });
   }
 
-  // Validate edges point somewhere real.
   for (const n of flowNodes.values()) {
     for (const t of n.to) {
       if (!flowNodes.has(t)) {
@@ -73,7 +62,6 @@ export function buildModel(rawGraph, rawCatalog) {
     }
   }
 
-  // Resolve catalog curves now so a missing definition or table fails fast.
   const pumpKind = kinds["pump.well"];
   if (!pumpKind) throw new Error('model: missing "pump.well" kind definition');
   const pumpModel = pumpKind.model;
@@ -92,9 +80,8 @@ export function buildModel(rawGraph, rawCatalog) {
   return {
     flowNodes,
     kinds,
-    circuit: rawGraph.circuit, // consumed by electrical.js (solveElectrical)
-    // The diaphragm lift threshold comes from the data, not a constant, so a YAML
-    // change propagates; solver falls back to config VALVE_OPEN_BAR when absent.
+    circuit: rawGraph.circuit,
+    // lift threshold from data; solver falls back to config VALVE_OPEN_BAR when absent
     minOperatingBar: valveKind.min_operating_bar,
     curves: {
       pump: pumpCurve, // {flow_m3h:[…], head_m:[…]}
