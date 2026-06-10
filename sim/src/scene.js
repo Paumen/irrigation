@@ -12,6 +12,7 @@
 
 import {
   P_COLOR_MAX_BAR,
+  P_COLOR_GREEN_BAR,
   Q_STROKE_MAX_M3H,
   STROKE_MIN_PX,
   STROKE_MAX_PX,
@@ -25,11 +26,17 @@ import { fmtFlow, fmtPressure } from "./units.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
 
-// Pressure -> hue ramp: 220° (blue) at 0 bar through green to 0° (red) at the scale
-// top. The system's working band (1.7-3.8 bar at the nozzles) lands in the
-// cyan->green->yellow middle, where adjacent pressures are easiest to tell apart.
+// Pressure -> hue ramp: 220° (blue) at 0 bar, 110° (green) anchored at the NORMAL
+// operating pressure, 0° (red) at the scale top. Anchoring green at normal makes
+// color agree with intuition: a healthy running system reads green, a starved one
+// trends cyan/blue, and above-normal pressure (zones shut, pump dead-heading) trends
+// yellow/orange toward red — instead of healthy reading orange on a plain 0..max ramp.
 export function pressureColor(p_bar) {
-  const t = Math.min(1, Math.max(0, p_bar / P_COLOR_MAX_BAR));
+  const p = Math.min(P_COLOR_MAX_BAR, Math.max(0, p_bar));
+  const t =
+    p <= P_COLOR_GREEN_BAR
+      ? 0.5 * (p / P_COLOR_GREEN_BAR)
+      : 0.5 + 0.5 * ((p - P_COLOR_GREEN_BAR) / (P_COLOR_MAX_BAR - P_COLOR_GREEN_BAR));
   const hue = 220 * (1 - t);
   return `hsl(${hue.toFixed(0)}, 80%, 45%)`;
 }

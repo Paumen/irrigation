@@ -57,8 +57,11 @@ export const DEFAULT_ROUGHNESS_MM = 0.0015;
 // --- schematic display (layout.js / scene.js) ---
 
 // Pressure color scale tops out near the pump's dead-head (48.3 m ~ 4.7 bar), so the
-// red end of the ramp means "as high as this system can go".
+// red end of the ramp means "as high as this system can go". Green is anchored at the
+// normal operating pressure, so a healthy running system reads green, a starved one
+// trends blue, and only above-normal pressure (zones shut, dead-heading) trends warm.
 export const P_COLOR_MAX_BAR = 5.0;
+export const P_COLOR_GREEN_BAR = 3.5;
 // Stroke width ramps from idle to the pump curve's last point (its max flow), so the
 // boldest line means "everything the pump can deliver runs through here".
 export const Q_STROKE_MAX_M3H = 4.8;

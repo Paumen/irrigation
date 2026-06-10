@@ -673,7 +673,15 @@ console.log("");
 console.log("Case: M5 scene (visual attribute computation)");
 {
   check(pressureColor(0) === "hsl(220, 80%, 45%)", "pressureColor(0 bar) is blue (hue 220)");
-  check(pressureColor(2.5) === "hsl(110, 80%, 45%)", "pressureColor(2.5 bar) is green (hue 110)");
+  check(
+    pressureColor(3.5) === "hsl(110, 80%, 45%)",
+    "pressureColor anchors green (hue 110) at the normal operating pressure (3.5 bar)",
+  );
+  const hueOf = (c) => Number(c.match(/^hsl\((\d+)/)[1]);
+  check(
+    hueOf(pressureColor(2)) > 110 && hueOf(pressureColor(4.2)) < 110,
+    "below normal trends blue, above normal (dead-heading) trends warm",
+  );
   check(
     pressureColor(99) === pressureColor(5) && pressureColor(5) === "hsl(0, 80%, 45%)",
     "pressureColor clamps to red (hue 0) at scale top",
