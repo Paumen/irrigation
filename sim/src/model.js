@@ -1,13 +1,16 @@
 export function roleOf(kind) {
-  if (kind === "water.level") return "reservoir";
-  if (kind === "pump.well") return "pump";
-  // valve.foot is a passive check valve, treated hydraulically as a junction.
-  if (kind === "joint" || kind === "tee" || kind === "manifold" || kind === "valve.foot") return "junction";
+  if (kind === "supply") return "reservoir";
+  if (kind === "pump") return "pump";
+  // valve.foot is a passive check valve, and the pressure tank a dead-end accumulator;
+  // both are treated hydraulically as junctions.
+  if (kind === "fitting.joint" || kind === "fitting.tee" || kind === "manifold" || kind === "valve.foot" || kind === "tank") {
+    return "junction";
+  }
   if (kind === "valve.auto") return "valve-auto";
   if (kind === "valve.manual") return "valve-manual";
-  if (kind.startsWith("hose.") || kind.startsWith("swing.")) return "pipe";
+  if (kind.startsWith("hose.") || kind.startsWith("fitting.swing.")) return "pipe";
   if (kind === "head.rotor" || kind === "head.spray" || kind === "nozzle.stream") return "outlet";
-  if (kind === "cap") return "cap";
+  if (kind === "fitting.cap") return "cap";
   throw new Error(`model: unknown kind "${kind}"`);
 }
 
@@ -15,7 +18,7 @@ function subkindOf(kind) {
   if (kind === "head.rotor") return "rotor";
   if (kind === "head.spray") return "spray";
   if (kind === "nozzle.stream") return "stream";
-  if (kind.startsWith("swing.")) return "swing";
+  if (kind.startsWith("fitting.swing.")) return "swing";
   if (kind.startsWith("hose.")) return "hose";
   return kind;
 }
@@ -62,10 +65,10 @@ export function buildModel(rawGraph, rawCatalog) {
     }
   }
 
-  const pumpKind = kinds["pump.well"];
-  if (!pumpKind) throw new Error('model: missing "pump.well" kind definition');
+  const pumpKind = kinds["pump"];
+  if (!pumpKind) throw new Error('model: missing "pump" kind definition');
   const pumpModel = pumpKind.model;
-  if (!pumpModel) throw new Error('model: "pump.well" kind has no "model"');
+  if (!pumpModel) throw new Error('model: "pump" kind has no "model"');
   const pumpCurve = rawCatalog.pump_curves[pumpModel];
   if (!pumpCurve) throw new Error(`model: no pump curve for model "${pumpModel}"`);
 

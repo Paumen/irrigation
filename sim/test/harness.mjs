@@ -48,7 +48,6 @@ function reportTable(model, result) {
 
 const rawGraph = loadGraph();
 const model = buildModel(rawGraph, loadCatalog());
-const circuit = rawGraph.circuit;
 const hyd = await createHydraulics();
 console.log(`epanet-js engine version: ${hyd.version}\n`);
 
@@ -62,7 +61,7 @@ for (const c of cases) {
   console.log(`Case: ${c.name}`);
   const fx = c.faults ? compileFaults(model, c.faults) : undefined;
   const blocked = new Set([...(c.blocked || []), ...(fx ? fx.elecBlocked : [])]);
-  const elec = solveElectrical(circuit, c.commands, blocked);
+  const elec = solveElectrical(model, c.commands, blocked);
   const r = solveSteady(model, c.state, elec, hyd, fx);
   reportTable(model, r);
 
@@ -361,20 +360,20 @@ for (const c of cases) {
 console.log("Case: electrical-only continuity checks");
 {
   const all = { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } };
-  const healthy = solveElectrical(circuit, all);
+  const healthy = solveElectrical(model, all);
   check(healthy.pumpPowered && [1, 2, 3, 4].every((z) => healthy.zoneEnergised[z]),
     "healthy wiring: pump + all four zones energised");
 
-  const noGrid = solveElectrical(circuit, { mv: true, zones: { 1: true } }, new Set(["grid_live"]));
+  const noGrid = solveElectrical(model, { mv: true, zones: { 1: true } }, new Set(["grid_live"]));
   check(noGrid.pumpPowered === false, "broken grid_live de-powers the pump");
   check(noGrid.zoneEnergised[1] === true, "...but the low-voltage zone circuit is unaffected");
 
-  const noController = solveElectrical(circuit, all, new Set(["adapter_supply_1"]));
+  const noController = solveElectrical(model, all, new Set(["adapter_supply_1"]));
   check(noController.controllerPowered === false, "broken adapter supply de-powers the controller");
   check(noController.pumpPowered === false && [1, 2, 3, 4].every((z) => !noController.zoneEnergised[z]),
     "...so nothing actuates");
 
-  const lead3 = solveElectrical(circuit, all, new Set(["common_lead_3"]));
+  const lead3 = solveElectrical(model, all, new Set(["common_lead_3"]));
   check(lead3.zoneEnergised[3] === false &&
     [1, 2, 4].every((z) => lead3.zoneEnergised[z]),
     "broken common_lead_3 drops only zone 3 (its own return lead)");
@@ -389,7 +388,7 @@ console.log("Case: electrical-only continuity checks");
   }
   check(!ew.has("grid_earth") && !ew.has("pump_earth"), "earth wires never carry current");
 
-  const z4only = solveElectrical(circuit, { zones: { 4: true } });
+  const z4only = solveElectrical(model, { zones: { 4: true } });
   check(z4only.energisedWires.has("signal_4") && z4only.energisedWires.has("common_lead_4") &&
     z4only.energisedWires.has("common_return"),
     "zone 4 alone lights its signal, lead, and the shared return");
@@ -398,17 +397,17 @@ console.log("Case: electrical-only continuity checks");
   check(!z4only.energisedWires.has("grid_live"),
     "grid_live at potential behind the open relay contact stays dark");
 
-  const z1only = solveElectrical(circuit, { zones: { 1: true } });
+  const z1only = solveElectrical(model, { zones: { 1: true } });
   check(["common_chain_12", "common_chain_23", "common_chain_34", "common_return"].every(
     (w) => z1only.energisedWires.has(w)),
     "zone 1's return current traverses the whole splice chain");
 
   // Plug toggles are commands, not faults.
-  const noAdapter = solveElectrical(circuit, { ...all, adapterPower: false });
+  const noAdapter = solveElectrical(model, { ...all, adapterPower: false });
   check(noAdapter.controllerPowered === false && noAdapter.pumpPowered === false &&
     noAdapter.energisedWires.size === 0,
     "adapter unplugged: controller dead, nothing energised");
-  const noGridPlug = solveElectrical(circuit, { ...all, gridPower: false });
+  const noGridPlug = solveElectrical(model, { ...all, gridPower: false });
   check(noGridPlug.pumpPowered === false && noGridPlug.relayCoil === true &&
     [1, 2, 3, 4].every((z) => noGridPlug.zoneEnergised[z]),
     "grid unplugged: pump dead, low-voltage side unaffected");
@@ -428,7 +427,7 @@ console.log("Case: M8 fault list + compiled effects");
   for (const k of [
     "Z1.hose1:clogged",
     "Z1.valve.diaphragm:broken",
-    "pump.impeller:clogged",
+    "pump.hydraulic_end.impeller:clogged",
     "Z3.head2.nozzle:misconfigured",
     "Z5.nozzle:clogged",
     "controller.zone_2:broken",
@@ -439,7 +438,7 @@ console.log("Case: M8 fault list + compiled effects");
   }
   check(
     faults.filter((f) => f.key === "pump.motor:broken").length === 1,
-    "the pump motor (in both kinds and circuit) is one fault, not two",
+    "the pump motor is a single fault (it lives once, in the pump kind)",
   );
   check(
     faults.every((f) => f.severity === (f.type === "clogged")),
@@ -449,15 +448,15 @@ console.log("Case: M8 fault list + compiled effects");
   // inert/threshold metadata: the UI greys these without duplicating rule knowledge
   const byMetaKey = new Map(faults.map((f) => [f.key, f]));
   check(byMetaKey.get("Z1.head2.gear:broken").inert === true, "cosmetic rotor gear fault reported inert");
-  check(byMetaKey.get("Z1.valve.flow_control:broken").inert === true,
+  check(byMetaKey.get("Z1.valve.bonnet.flow_control:broken").inert === true,
     "broken flow-control stem reported inert at steady state");
-  check(byMetaKey.get("Z1.valve.metering_port:clogged").threshold === 0.5,
+  check(byMetaKey.get("Z1.valve.diaphragm.metering_port:clogged").threshold === 0.5,
     "pilot-fill clog carries its acting threshold");
-  check(byMetaKey.get("Z1.valve.plunger:clogged").threshold === 0.5,
+  check(byMetaKey.get("Z1.valve.solenoid.plunger:clogged").threshold === 0.5,
     "pilot-drain clog carries its acting threshold");
   check(!byMetaKey.get("Z1.hose1:clogged").inert && byMetaKey.get("Z1.hose1:clogged").threshold == null,
     "ordinary clog carries no inert/threshold flags");
-  check(byMetaKey.get("Z1.valve.bleed_screw:misconfigured").inert == null,
+  check(byMetaKey.get("Z1.valve.bonnet.bleed_screw:misconfigured").inert == null,
     "acting SPECIAL fault not marked inert");
   check(byMetaKey.get("controller.zone_2:broken").inert == null, "circuit faults always act");
 
@@ -467,23 +466,23 @@ console.log("Case: M8 fault list + compiled effects");
   check(!part.closedLinks.has("Z1.hose1") && part.linkK.get("Z1.hose1") > 0, "partial clog adds minor loss");
   const burst = compileFaults(model, { "Z1.hose2:broken": true });
   check(burst.leaks.get("Z1.joint3") > 0, "burst hose leaks at its downstream junction");
-  const seatHalf = compileFaults(model, { "Z1.valve.seat:clogged": 0.5 });
+  const seatHalf = compileFaults(model, { "Z1.valve.body.seat:clogged": 0.5 });
   check(
     Math.abs(seatHalf.valveLossScale.get("Z1.valve") - 4) < 1e-9 && !seatHalf.linkK.has("Z1.valve"),
     "partial seat clog scales the valve's loss curve by 1/a² (GPV minor losses are ignored by EPANET)",
   );
-  const seatFull = compileFaults(model, { "Z1.valve.seat:clogged": 1 });
+  const seatFull = compileFaults(model, { "Z1.valve.body.seat:clogged": 1 });
   check(
     seatFull.closedLinks.has("Z1.valve") && seatFull.valveDisabled.has("Z1.valve"),
     "fully packed seat seals the valve and reports it commanded-but-not-opening",
   );
   check(compileFaults(model, { "hose1:broken": true }).pumpDisabled, "suction-side break loses prime");
   check(
-    compileFaults(model, { "Z3.valve.coil:broken": true }).elecBlocked.has("Z3.valve.coil"),
+    compileFaults(model, { "Z3.valve.solenoid.coil:broken": true }).elecBlocked.has("Z3.valve.solenoid.coil"),
     "broken solenoid coil becomes an electrical cut",
   );
   check(
-    compileFaults(model, { "Z1.valve.flow_control:misconfigured": true }).valveDisabled.has("Z1.valve"),
+    compileFaults(model, { "Z1.valve.bonnet.flow_control:misconfigured": true }).valveDisabled.has("Z1.valve"),
     "seated flow-control screw pins the valve shut",
   );
   check(
@@ -491,10 +490,24 @@ console.log("Case: M8 fault list + compiled effects");
     "torn diaphragm sticks the valve open",
   );
   check(
-    compileFaults(model, { "Z1.valve.plunger:broken": true }).valveDisabled.has("Z1.valve"),
+    compileFaults(model, { "Z1.valve.solenoid.plunger:broken": true }).valveDisabled.has("Z1.valve"),
     "broken solenoid plunger: valve cannot lift",
   );
-  check(compileFaults(model, { "pump.priming_cap:misconfigured": true }).pumpDisabled, "loose priming cap loses prime");
+  check(compileFaults(model, { "pump.hydraulic_end.priming_cap:misconfigured": true }).pumpDisabled, "loose priming cap loses prime");
+  // pump sub-assemblies: venturi/thermal protector are nested fault nodes
+  check(compileFaults(model, { "pump.hydraulic_end.venturi:clogged": 0.5 }).pumpHeadScale < 1,
+    "a clogged venturi weakens the pump head curve");
+  check(compileFaults(model, { "pump.motor.thermal_protector:broken": true }).pumpDisabled,
+    "a tripped thermal protector stops the pump");
+  // 20 L pressure tank: only a split shell is visible to the steady-state solve (a leak);
+  // a burst bladder / wrong pre-charge are cycling faults, inert here.
+  check(compileFaults(model, { "tank.shell:broken": true }).leaks.get("tank") > 0,
+    "a split tank shell weeps at the tank");
+  const tankBladder = compileFaults(model, { "tank.bladder:broken": true });
+  check(tankBladder.leaks.size === 0 && !tankBladder.pumpDisabled,
+    "a burst tank bladder is inert at steady state");
+  check(byMetaKey.get("tank.bladder:broken").inert === true, "tank bladder fault reported inert");
+  check(byMetaKey.get("tank.shell:broken").inert == null, "tank shell leak is an acting fault");
   check(
     compileFaults(model, { "Z1.head2.nozzle:misconfigured": true }).outletMods.get("Z1.head2").nozzle === "8.0",
     "rotor wrong-nozzle swaps to another catalog size",
@@ -509,7 +522,7 @@ console.log("Case: M8 fault list + compiled effects");
   );
   const circ = compileFaults(model, { "controller.zone_2:broken": true });
   check(circ.elecBlocked.has("controller.zone_2"), "circuit fault becomes a blocked port");
-  const e2 = solveElectrical(circuit, { mv: true, zones: { 1: true, 2: true } }, circ.elecBlocked);
+  const e2 = solveElectrical(model, { mv: true, zones: { 1: true, 2: true } }, circ.elecBlocked);
   check(
     e2.zoneEnergised[2] === false && e2.zoneEnergised[1] === true,
     "...which drops exactly that zone",
@@ -521,7 +534,7 @@ console.log("Case: M8 fault list + compiled effects");
     threw = true;
   }
   check(threw, "unknown fault key throws (a typo is a bug, not a fault)");
-  const off = compileFaults(model, { "Z1.hose1:clogged": 0, "Z1.valve.coil:broken": false });
+  const off = compileFaults(model, { "Z1.hose1:clogged": 0, "Z1.valve.solenoid.coil:broken": false });
   check(
     off.closedLinks.size === 0 && off.linkK.size === 0 && off.leaks.size === 0 &&
       off.elecBlocked.size === 0 && !off.pumpDisabled,

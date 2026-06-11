@@ -27,7 +27,18 @@ function metaOf(node, sub, type) {
   return cell in THRESHOLDS ? { threshold: THRESHOLDS[cell] } : {};
 }
 
-// A part can appear on both flow and circuit sides (e.g. pump motor); first wins.
+// Walk a `parts:` tree depth-first, yielding every sub-node by its dotted path. A
+// sub-assembly node is its own component (may carry `fail:`) AND nests further parts.
+function walkParts(parts, prefix, cb) {
+  for (const [name, def] of Object.entries(parts || {})) {
+    if (def === null || typeof def !== "object" || Array.isArray(def)) continue;
+    const path = prefix ? `${prefix}.${name}` : name;
+    cb(path, def);
+    if (def.parts) walkParts(def.parts, path, cb);
+  }
+}
+
+// A part can appear on both flow and circuit sides (e.g. the pump motor); first wins.
 export function listFaults(model) {
   const out = [];
   const seen = new Set();
@@ -37,25 +48,37 @@ export function listFaults(model) {
     f.severity = f.type === "clogged";
     out.push(f);
   };
+
   for (const n of model.flowNodes.values()) {
     const kindDef = model.kinds[n.kind];
     if (!kindDef) continue;
     for (const t of kindDef.fail || []) {
       push({ key: `${n.id}:${t}`, target: n.id, sub: null, type: t, side: "flow", ...metaOf(n, null, t) });
     }
-    for (const [sub, def] of Object.entries(kindDef.parts || {})) {
+    walkParts(kindDef.parts, "", (sub, def) => {
       for (const t of def.fail || []) {
         push({ key: `${n.id}.${sub}:${t}`, target: n.id, sub, type: t, side: "flow", ...metaOf(n, sub, t) });
       }
-    }
+    });
   }
-  for (const [part, subs] of Object.entries(model.circuit?.parts || {})) {
-    for (const [sub, def] of Object.entries(subs)) {
-      if (def === null || typeof def !== "object" || Array.isArray(def)) continue;
-      for (const t of def.fail || []) {
-        push({ key: `${part}.${sub}:${t}`, target: part, sub, type: t, side: "circuit" });
-      }
+
+  const circuit = model.circuit || {};
+  for (const [partName, part] of Object.entries(circuit.parts || {})) {
+    // a kind-backed component expands its kind's parts; an inline block (the
+    // common-return splice) is its own parts map.
+    const partsDef = part && part.kind ? model.kinds[part.kind]?.parts : part;
+    if (!partsDef || typeof partsDef !== "object") {
+      throw new Error(`faults: circuit part "${partName}" has no resolvable parts`);
     }
+    walkParts(partsDef, "", (sub, def) => {
+      for (const t of def.fail || []) {
+        push({ key: `${partName}.${sub}:${t}`, target: partName, sub, type: t, side: "circuit" });
+      }
+    });
+  }
+  // each named cable is its own open-circuit fault, blocked by wire name
+  for (const wireName of Object.keys(circuit.wires || {})) {
+    push({ key: `${wireName}:broken`, target: wireName, sub: null, type: "broken", side: "wire" });
   }
   return out;
 }
@@ -133,30 +156,41 @@ function wrongNozzle(fx, model, node) {
   }
 }
 
+// Maps (role, dotted sub) to the rule group. The leaf name carries the function; the
+// path disambiguates only where a leaf repeats across sub-assemblies.
 function groupOf(node, sub) {
   if (!sub) {
     if (node.role === "pipe") return "conduit";
     if (node.subkind === "stream") return "streamNozzle";
     return "fitting";
   }
+  const leaf = sub.split(".").pop();
   if (node.role === "pump") {
-    if (["suction", "impeller", "diffuser"].includes(sub)) return "pumpPath";
-    if (["motor", "capacitor"].includes(sub)) return "pumpPower";
-    if (sub === "mech_seal") return "shellSeal";
-    return "fitting";
+    // venturi/impeller/diffuser all sit on the pumped path; a clog weakens the head curve
+    if (["venturi", "impeller", "diffuser"].includes(leaf)) return "pumpPath";
+    if (["motor", "winding", "capacitor", "thermal_protector", "l", "n"].includes(leaf)) {
+      return "pumpPower";
+    }
+    if (leaf === "mech_seal") return "shellSeal";
+    if (leaf === "pe") return "cosmetic"; // motor earth: no functional effect
+    return "fitting"; // hydraulic_end casing, priming_cap (SPECIAL)
   }
   if (node.role === "valve-auto" || node.role === "valve-manual") {
-    if (["diaphragm", "seat", "spring"].includes(sub)) return "valveSeal";
-    if (sub === "metering_port") return "pilotFill";
-    if (["solenoid_entry", "plunger", "solenoid_exhaust"].includes(sub)) return "pilotDrain";
-    if (sub === "coil") return "valveCoil";
+    if (["diaphragm", "seat", "spring"].includes(leaf)) return "valveSeal";
+    if (leaf === "metering_port") return "pilotFill";
+    if (["entry", "plunger", "exhaust"].includes(leaf)) return "pilotDrain";
+    if (["coil", "lead_1", "lead_2"].includes(leaf)) return "valveElec";
     return "fitting";
   }
   if (node.role === "outlet") {
-    if (["filter", "nozzle"].includes(sub)) return "outletPath";
-    if (["check_valve", "retract_spring", "gear", "arc"].includes(sub)) return "cosmetic";
-    if (["riser_seal", "wiper_seal"].includes(sub)) return "shellSeal";
+    if (["filter", "nozzle"].includes(leaf)) return "outletPath";
+    if (["check_valve", "retract_spring", "gear", "arc"].includes(leaf)) return "cosmetic";
+    if (["riser_seal", "wiper_seal"].includes(leaf)) return "shellSeal";
     return "fitting";
+  }
+  if (node.kind === "tank") {
+    if (leaf === "shell") return "fitting"; // a split shell weeps -> leak
+    return "cosmetic"; // bladder/pre_charge are cycling faults, inert at steady state
   }
   return "fitting";
 }
@@ -176,6 +210,9 @@ const RULES = {
     fx.pumpDisabled = true;
   },
   "pumpPower:broken": ({ fx }) => {
+    fx.pumpDisabled = true;
+  },
+  "pumpPower:misconfigured": ({ fx }) => {
     fx.pumpDisabled = true;
   },
   "valveSeal:broken": ({ fx, node }) => fx.valveForcedOpen.add(node.id),
@@ -198,7 +235,8 @@ const RULES = {
     if (sev >= PILOT_CLOG_BLOCKS) fx.valveDisabled.add(node.id);
   },
   "pilotDrain:broken": ({ fx, node }) => fx.valveDisabled.add(node.id),
-  "valveCoil:broken": ({ fx, node }) => fx.elecBlocked.add(`${node.id}.coil`),
+  // a broken solenoid coil or lead is an open circuit on that port
+  "valveElec:broken": ({ fx, node, sub }) => fx.elecBlocked.add(`${node.id}.${sub}`),
   "outletPath:clogged": ({ fx, node, sev }) => {
     const mod = modOf(fx, node.id);
     mod.flowScale = (mod.flowScale ?? 1) * (1 - sev);
@@ -220,25 +258,25 @@ const THRESHOLDS = {
 };
 
 // SPECIAL entries that are deliberate steady-state no-ops.
-const INERT_SPECIALS = new Set(["valve.auto.flow_control:broken"]);
+const INERT_SPECIALS = new Set(["valve.auto.bonnet.flow_control:broken"]);
 
-// Part-specific overrides, keyed `<kind>.<sub>:<type>`, consulted before the table.
+// Part-specific overrides, keyed `<kind>.<dotted-sub>:<type>`, consulted before the table.
 const SPECIAL = {
   // bleeds the chamber but pressure gating still applies, hence bleedForcedOpen
   // (not valveForcedOpen)
-  "valve.auto.bleed_screw:misconfigured": ({ fx, node }) => fx.bleedForcedOpen.add(node.id),
-  "valve.auto.bleed_screw:broken": ({ fx, model, node }) => {
+  "valve.auto.bonnet.bleed_screw:misconfigured": ({ fx, node }) => fx.bleedForcedOpen.add(node.id),
+  "valve.auto.bonnet.bleed_screw:broken": ({ fx, model, node }) => {
     fx.valveForcedOpen.add(node.id);
     addLeak(fx, model, node.id, DRIP_BORE_MM);
   },
-  "valve.auto.flow_control:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
+  "valve.auto.bonnet.flow_control:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
   // broken flow-control stem is inert at steady state
-  "valve.auto.flow_control:broken": () => {},
+  "valve.auto.bonnet.flow_control:broken": () => {},
   "valve.manual.handle:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
-  "pump.well.priming_cap:broken": ({ fx }) => {
+  "pump.hydraulic_end.priming_cap:broken": ({ fx }) => {
     fx.pumpDisabled = true;
   },
-  "pump.well.priming_cap:misconfigured": ({ fx }) => {
+  "pump.hydraulic_end.priming_cap:misconfigured": ({ fx }) => {
     fx.pumpDisabled = true;
   },
   "head.spray.regulator:broken": ({ fx, node }) => {
@@ -258,13 +296,17 @@ export function compileFaults(model, active = {}) {
     const f = byKey.get(key);
     if (!f) throw new Error(`faults: unknown fault key "${key}"`);
     const sev = f.severity ? Math.min(Number(value), 1) : 1;
+    if (f.side === "wire") {
+      fx.elecBlocked.add(f.target);
+      continue;
+    }
     if (f.side === "circuit") {
       fx.elecBlocked.add(`${f.target}.${f.sub}`);
       continue;
     }
     const node = model.flowNodes.get(f.target);
     const rule = SPECIAL[specialKeyOf(node, f.sub, f.type)] ?? RULES[`${groupOf(node, f.sub)}:${f.type}`];
-    rule?.({ fx, model, node, sev });
+    rule?.({ fx, model, node, sev, sub: f.sub });
   }
   return fx;
 }

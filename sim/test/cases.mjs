@@ -96,14 +96,14 @@ export const cases = [
     kind: "seatclog",
     commands: { mv: true, zones: { 1: true } },
     state: { manualOpen: {} },
-    faults: { "Z1.valve.seat:clogged": 0.6 },
+    faults: { "Z1.valve.body.seat:clogged": 0.6 },
   },
   {
     name: "pump on + Z1 with Z1.valve seat fully packed",
     kind: "seatfull",
     commands: { mv: true, zones: { 1: true } },
     state: { manualOpen: {} },
-    faults: { "Z1.valve.seat:clogged": 1 },
+    faults: { "Z1.valve.body.seat:clogged": 1 },
   },
   {
     name: "pump on + Z1 with Z1.hose2 burst (leak)",
@@ -117,7 +117,7 @@ export const cases = [
     kind: "electrical",
     commands: { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } },
     state: { manualOpen: {} },
-    faults: { "Z2.valve.coil:broken": true },
+    faults: { "Z2.valve.solenoid.coil:broken": true },
     expect: { zonesOpen: [1, 3, 4], zonesClosed: [2], pump: true },
   },
   {
@@ -125,14 +125,14 @@ export const cases = [
     kind: "bleedstuck",
     commands: { mv: true, zones: {} },
     state: { manualOpen: {} },
-    faults: { "Z1.valve.bleed_screw:misconfigured": true },
+    faults: { "Z1.valve.bonnet.bleed_screw:misconfigured": true },
   },
   {
     name: "pump on + Z1 with a half-clogged impeller (weak pump)",
     kind: "weakpump",
     commands: { mv: true, zones: { 1: true } },
     state: { manualOpen: {} },
-    faults: { "pump.impeller:clogged": 0.5 },
+    faults: { "pump.hydraulic_end.impeller:clogged": 0.5 },
   },
   {
     name: "pump and Z1 commanded but the pump motor is broken",

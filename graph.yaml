@@ -1,41 +1,64 @@
 
+# In a parts tree, a node without `fail:` is a void (fluid/electrical state); a node
+# with `fail:` is a solid replaceable part. Cross-sub-assembly refs use the dotted path;
+# top-level bus voids are bare names.
 
 kinds:
 
   supply:        {fail: [clogged]}
-  joint:         {max_pressure_bar: 10, k_minor: 0.1, fail: [broken, misconfigured]}
   splice:        {fail: [broken, misconfigured]}
   wire:          {fail: [broken]}
-  tee:           {max_pressure_bar: 10, bends: 1, k_minor: 0.9, fail: [broken, misconfigured]}
-  swing.34x34:   {max_pressure_bar: 10.2, bore_mm: 19, bends: 4, k_minor: 2.5, model: "Hunter SJ 3/4x3/4", fail: [broken]}
-  swing.34x12:   {max_pressure_bar: 10.2, bore_mm: 13, bends: 4, k_minor: 3.5, model: "Hunter SJ 3/4x1/2", fail: [broken]}
+
+  # joint/tee/cap are zero-length junctions; swing joints are hydraulically pipes.
+  fitting.joint:       {max_pressure_bar: 10, k_minor: 0.1, fail: [broken, misconfigured]}
+  fitting.tee:         {max_pressure_bar: 10, bends: 1, k_minor: 0.9, fail: [broken, misconfigured]}
+  fitting.cap:         {max_pressure_bar: 10, fail: [broken]}
+  fitting.swing.34x34: {max_pressure_bar: 10.2, bore_mm: 19, bends: 4, k_minor: 2.5, model: "Hunter SJ 3/4x3/4", fail: [broken]}
+  fitting.swing.34x12: {max_pressure_bar: 10.2, bore_mm: 13, bends: 4, k_minor: 3.5, model: "Hunter SJ 3/4x1/2", fail: [broken]}
+
   hose.32:       {outer_diameter_mm: 32, wall_thickness_mm: 3,   inner_diameter_mm: 26,   material: LDPE, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 6.3, fail: [broken, clogged]}
   hose.25:       {outer_diameter_mm: 25, wall_thickness_mm: 2.7, inner_diameter_mm: 19.6, material: LDPE, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 6,   fail: [broken, clogged]}
   hose.16:       {outer_diameter_mm: 16, wall_thickness_mm: 3,   inner_diameter_mm: 10,   material: LDPE, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 6.3, fail: [broken, clogged]}
   hose.suction:  {outer_diameter_mm: 30, wall_thickness_mm: 2.4, inner_diameter_mm: 25,   material: PVC spiral-reinforced, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 4, fail: [broken, clogged]}
-  cap:           {max_pressure_bar: 10, fail: [broken]}
   nozzle.stream: {bore_mm: 10, cd: 0.97, discharge: open_hose_end, fail: [clogged, misconfigured]}
 
-  pump.body:
+  pump:
     in: suction
     out: outlet
     model: AQUAJET 132 M
     max_output_bar: 4.7
     parts:
-      suction:     {to: [impeller], fail: [clogged]}
-      impeller:    {to: [diffuser], fail: [broken, clogged]}
-      diffuser:    {to: [outlet], fail: [broken, clogged]}
-      mech_seal:   {to: [], acts: [impeller], fail: [broken]}
-      priming_cap: {to: [], acts: [suction], fail: [broken, misconfigured]}
-      outlet:      {}
-      motor: 
+      suction:  {to: [hydraulic_end.venturi]}
+      outlet:   {}
+      hydraulic_end:
+        fail: [broken]
         parts:
-            l:         {to: [winding], fail: [broken, misconfigured]}
-            winding:   {to: [n], fail: [broken]}
-            capacitor: {acts: [winding], fail: [broken]}
-            n:         {fail: [broken, misconfigured]}
-            pe:        {fail: [broken]}
-  
+          venturi:     {to: [impeller], fail: [clogged]}
+          impeller:    {to: [diffuser], fail: [broken, clogged]}
+          diffuser:    {to: [outlet], fail: [broken, clogged]}
+          mech_seal:   {acts: [impeller], fail: [broken]}
+          priming_cap: {acts: [suction], fail: [broken, misconfigured]}
+      motor:
+        fail: [broken]
+        acts: [hydraulic_end.impeller]
+        parts:
+          l:                {to: [winding], fail: [broken, misconfigured]}
+          winding:          {to: [n], fail: [broken]}
+          capacitor:        {acts: [winding], fail: [broken]}
+          thermal_protector: {acts: [winding], fail: [broken, misconfigured]}
+          n:                {fail: [broken, misconfigured]}
+          pe:               {fail: [broken]}
+
+  # Only shell:broken is visible to a steady-state solve; bladder/pre_charge are cycling effects.
+  tank:
+    model: 20 L diaphragm tank
+    parts:
+      water_side: {}
+      air_charge: {acts: [bladder]}
+      shell:      {fail: [broken]}
+      bladder:    {acts: [air_charge], fail: [broken]}
+      pre_charge: {fail: [broken, misconfigured]}
+
   manifold:
     in: inlet
     out: [out_1, out_2, out_3, out_4, out_5, out_6]
@@ -48,14 +71,14 @@ kinds:
     connection: '1" swivel nut female thread'
     parts:
       inlet:       {to: [out_1, out_2, out_3, out_4, out_5, out_6, body, inlet_seal]}
-      inlet_seal:  {to: [], acts: [inlet], fail: [broken, misconfigured]}
-      port_seal_1: {to: [], acts: [out_1], fail: [broken, misconfigured]}
-      port_seal_2: {to: [], acts: [out_2], fail: [broken, misconfigured]}
-      port_seal_3: {to: [], acts: [out_3], fail: [broken, misconfigured]}
-      port_seal_4: {to: [], acts: [out_4], fail: [broken, misconfigured]}
-      port_seal_5: {to: [], acts: [out_5], fail: [broken, misconfigured]}
-      port_seal_6: {to: [], acts: [out_6], fail: [broken, misconfigured]}
-      body:        {to: [], fail: [broken]}
+      inlet_seal:  {acts: [inlet], fail: [broken, misconfigured]}
+      port_seal_1: {acts: [out_1], fail: [broken, misconfigured]}
+      port_seal_2: {acts: [out_2], fail: [broken, misconfigured]}
+      port_seal_3: {acts: [out_3], fail: [broken, misconfigured]}
+      port_seal_4: {acts: [out_4], fail: [broken, misconfigured]}
+      port_seal_5: {acts: [out_5], fail: [broken, misconfigured]}
+      port_seal_6: {acts: [out_6], fail: [broken, misconfigured]}
+      body:        {fail: [broken]}
       out_1:       {}
       out_2:       {}
       out_3:       {}
@@ -110,6 +133,7 @@ kinds:
       neutral:  {fail: [broken, misconfigured]}
       earth:    {fail: [broken]}
 
+  # Solenoid leads are reached from the circuit as Z*.valve.solenoid.lead_1 / .lead_2.
   valve.auto:
     in: inlet
     out: outlet
@@ -118,20 +142,29 @@ kinds:
     Kv: 6.0
     model: Hunter PGV-101G
     parts:
-      inlet:           {to: [diaphragm, metering_port, inlet_thread, body]}
-      inlet_thread:    {to: [], fail: [broken, misconfigured]}
-      diaphragm:       {to: [seat], fail: [broken]}
-      seat:            {to: [outlet], fail: [broken, clogged]}
-      metering_port:   {to: [chamber], fail: [clogged]}
-      chamber:         {to: [sol_port, bleed_screw], acts: [diaphragm]}
-      bleed_screw:     {to: [], fail: [broken, misconfigured]}
-      sol_port:        {}
-      spring:          {acts: [diaphragm], fail: [broken]}
-      flow_control:    {acts: [diaphragm], fail: [broken, misconfigured]}
-      bonnet:          {to: [], acts: [chamber], fail: [broken, misconfigured]}
-      body:            {to: [], acts: [seat], fail: [broken]}
-      outlet_nut:      {to: [], fail: [broken, misconfigured]}
-      outlet:          {}
+      inlet:    {to: [diaphragm, diaphragm.metering_port, body.inlet_thread]}
+      chamber:  {to: [sol_port, bonnet.bleed_screw], acts: [diaphragm]}
+      sol_port: {to: [solenoid.entry]}
+      outlet:   {}
+      body:
+        fail: [broken]
+        acts: [seat]
+        parts:
+          seat:         {to: [outlet], fail: [broken, clogged]}
+          inlet_thread: {fail: [broken, misconfigured]}
+          outlet_nut:   {fail: [broken, misconfigured]}
+      diaphragm:
+        to: [body.seat]
+        fail: [broken]
+        parts:
+          spring:        {acts: [diaphragm], fail: [broken]}
+          metering_port: {to: [chamber], fail: [clogged]}
+      bonnet:
+        acts: [chamber]
+        fail: [broken, misconfigured]
+        parts:
+          bleed_screw:  {fail: [broken, misconfigured]}
+          flow_control: {acts: [diaphragm], fail: [broken, misconfigured]}
       solenoid:
         in: entry
         out: exhaust
@@ -139,11 +172,11 @@ kinds:
         parts:
           entry:   {to: [plunger], fail: [clogged]}
           plunger: {to: [exhaust], fail: [broken, clogged]}
-          exhaust: {fail: [clogged]}
+          exhaust: {to: [outlet], fail: [clogged]}
           lead_1:  {to: [coil], fail: [broken]}
           coil:    {ohm: [20, 60], to: [lead_2], acts: [plunger], fail: [broken]}
           lead_2:  {fail: [broken]}
-          
+
   valve.foot:
     in: strainer
     out: outlet
@@ -161,12 +194,14 @@ kinds:
     out: outlet
     Kv: 6.0
     parts:
-      inlet:        {to: [seat, inlet_thread, body]}
-      inlet_thread: {to: [], fail: [broken, misconfigured]}
-      seat:         {to: [outlet], fail: [broken, clogged]}
-      handle:       {acts: [seat], fail: [misconfigured]}
-      body:         {to: [], fail: [broken]}
-      outlet:       {}
+      inlet:    {to: [body.seat, body.inlet_thread]}
+      outlet:   {}
+      body:
+        fail: [broken]
+        parts:
+          seat:         {to: [outlet], fail: [broken, clogged]}
+          inlet_thread: {fail: [broken, misconfigured]}
+      handle:   {acts: [body.seat], fail: [misconfigured]}
 
   head.rotor:
     in: inlet_thread
@@ -174,13 +209,13 @@ kinds:
     parts:
       inlet_thread:   {to: [body], fail: [broken, misconfigured]}
       body:           {to: [riser, check_valve], fail: [broken]}
-      check_valve:    {to: [], fail: [broken]}
+      check_valve:    {fail: [broken]}
       riser:          {to: [filter]}
-      riser_seal:     {to: [], acts: [riser], fail: [broken]}
+      riser_seal:     {acts: [riser], fail: [broken]}
       retract_spring: {acts: [riser], fail: [broken]}
       gear:           {acts: [riser], fail: [broken, clogged]}
       filter:         {to: [nozzle], fail: [clogged]}
-      nozzle:         {to: [], fail: [clogged, misconfigured]}
+      nozzle:         {fail: [clogged, misconfigured]}
       arc:            {acts: [nozzle], fail: [misconfigured]}
       flow_stop:      {acts: [nozzle]}
 
@@ -191,149 +226,144 @@ kinds:
     parts:
       inlet_thread:   {to: [body], fail: [broken, misconfigured]}
       body:           {to: [regulator, check_valve, cap], fail: [broken]}
-      cap:            {to: [], fail: [broken]}
-      check_valve:    {to: [], fail: [broken]}
+      cap:            {fail: [broken]}
+      check_valve:    {fail: [broken]}
       regulator:      {to: [riser], fail: [broken]}
       riser:          {to: [nozzle]}
-      wiper_seal:     {to: [], acts: [riser], fail: [broken]}
+      wiper_seal:     {acts: [riser], fail: [broken]}
       retract_spring: {acts: [riser], fail: [broken]}
       flush_plug:     {acts: [nozzle], fail: [misconfigured]}
-      nozzle:         {to: [], fail: [clogged, misconfigured]}
+      nozzle:         {fail: [clogged, misconfigured]}
 
 flow:
   well:      {kind: supply, to: [footvalve], h_m: 5.5}
   footvalve: {kind: valve.foot, to: [hose1], h_m: 4.8}
   hose1:     {kind: hose.suction, to: [pump], length_m: 4.5, h_m: 4.8}
-  pump:      {kind: pump.well, to: [joint1], h_m: 8.2}
-  joint1:    {kind: joint, to: [hose2], h_m: 8.2}
+  pump:      {kind: pump, to: [joint1], h_m: 8.2}
+  joint1:    {kind: fitting.tee, to: [tank, hose2], h_m: 8.2}
+  tank:      {kind: tank, h_m: 8.2}
   hose2:     {kind: hose.32, to: [joint2], length_m: 1, h_m: 8.2}
-  joint2:    {kind: joint, to: [hose3], h_m: 8.2}
+  joint2:    {kind: fitting.joint, to: [hose3], h_m: 8.2}
   hose3:     {kind: hose.32, to: [joint3], length_m: 20, h_m: 8.2}
-  joint3:    {kind: joint, to: [manifold], h_m: 11.2}
-  manifold:
-    kind: manifold
-    to: {out_1: Z1.joint1, out_2: Z2.joint1, out_3: Z3.joint1, out_4: Z4.joint1, out_5: Z5.joint1, out_6: Z6.cap}
-    h_m: 11.2
+  joint3:    {kind: fitting.joint, to: [manifold], h_m: 11.2}
+  manifold:  {kind: manifold, to: [Z1.joint1, Z2.joint1, Z3.joint1, Z4.joint1, Z5.joint1, Z6.cap], h_m: 11.2}
 
-  Z1.joint1: {kind: joint, to: [Z1.valve], h_m: 11.2}
-  Z1.valve:  {kind: valve.auto, to: {outlet: Z1.joint2, sol_port: Z1.sol}, h_m: 11.2}
-  Z1.joint2: {kind: joint, to: [Z1.hose1], h_m: 11.2}
+  Z1.joint1: {kind: fitting.joint, to: [Z1.valve], h_m: 11.2}
+  Z1.valve:  {kind: valve.auto, to: [Z1.joint2], h_m: 11.2}
+  Z1.joint2: {kind: fitting.joint, to: [Z1.hose1], h_m: 11.2}
   Z1.hose1:  {kind: hose.25, to: [Z1.tee1], length_m: 8, h_m: 11.2}
-  Z1.tee1:   {kind: tee, to: [Z1.hose2, Z1.hose3], h_m: 11.19}
+  Z1.tee1:   {kind: fitting.tee, to: [Z1.hose2, Z1.hose3], h_m: 11.19}
   Z1.hose2:  {kind: hose.25, to: [Z1.joint3], length_m: 7, h_m: 10.66}
-  Z1.joint3: {kind: joint, to: [Z1.swing1], h_m: 10.5}
-  Z1.swing1: {kind: swing.34x12, to: [Z1.head1], h_m: 10.5}
+  Z1.joint3: {kind: fitting.joint, to: [Z1.swing1], h_m: 10.5}
+  Z1.swing1: {kind: fitting.swing.34x12, to: [Z1.head1], h_m: 10.5}
   Z1.head1:  {kind: head.spray, nozzle: MP3000, arc: 270, h_m: 10.5}
   Z1.hose3:  {kind: hose.25, to: [Z1.tee2], length_m: 3, h_m: 11.41}
-  Z1.tee2:   {kind: tee, to: [Z1.swing2, Z1.hose4], h_m: 11.44}
-  Z1.swing2: {kind: swing.34x34, to: [Z1.head2], h_m: 11.6}
+  Z1.tee2:   {kind: fitting.tee, to: [Z1.swing2, Z1.hose4], h_m: 11.44}
+  Z1.swing2: {kind: fitting.swing.34x34, to: [Z1.head2], h_m: 11.6}
   Z1.head2:  {kind: head.rotor, nozzle: "4.0 blue", arc: 170, h_m: 11.6}
   Z1.hose4:  {kind: hose.25, to: [Z1.joint4], length_m: 17, h_m: 11.34}
-  Z1.joint4: {kind: joint, to: [Z1.swing3], h_m: 11.4}
-  Z1.swing3: {kind: swing.34x12, to: [Z1.head3], h_m: 11.4}
+  Z1.joint4: {kind: fitting.joint, to: [Z1.swing3], h_m: 11.4}
+  Z1.swing3: {kind: fitting.swing.34x12, to: [Z1.head3], h_m: 11.4}
   Z1.head3:  {kind: head.spray, nozzle: MP2000, arc: 180, h_m: 11.4}
 
-  Z2.joint1: {kind: joint, to: [Z2.valve], h_m: 11.2}
-  Z2.valve:  {kind: valve.auto, to: {outlet: Z2.joint2, sol_port: Z2.sol}, h_m: 11.2}
-  Z2.joint2: {kind: joint, to: [Z2.hose1], h_m: 11.2}
+  Z2.joint1: {kind: fitting.joint, to: [Z2.valve], h_m: 11.2}
+  Z2.valve:  {kind: valve.auto, to: [Z2.joint2], h_m: 11.2}
+  Z2.joint2: {kind: fitting.joint, to: [Z2.hose1], h_m: 11.2}
   Z2.hose1:  {kind: hose.25, to: [Z2.tee1], length_m: 2, h_m: 11.18}
-  Z2.tee1:   {kind: tee, to: [Z2.hose2, Z2.hose3], h_m: 11.17}
+  Z2.tee1:   {kind: fitting.tee, to: [Z2.hose2, Z2.hose3], h_m: 11.17}
   Z2.hose2:  {kind: hose.25, to: [Z2.joint3], length_m: 1, h_m: 11.12}
-  Z2.joint3: {kind: joint, to: [Z2.swing1], h_m: 11.1}
-  Z2.swing1: {kind: swing.34x34, to: [Z2.head1], h_m: 11.1}
+  Z2.joint3: {kind: fitting.joint, to: [Z2.swing1], h_m: 11.1}
+  Z2.swing1: {kind: fitting.swing.34x34, to: [Z2.head1], h_m: 11.1}
   Z2.head1:  {kind: head.rotor, nozzle: "2.5 blue", arc: 150, h_m: 11.1}
   Z2.hose3:  {kind: hose.25, to: [Z2.joint4], length_m: 9, h_m: 11.2}
-  Z2.joint4: {kind: joint, to: [Z2.swing2], h_m: 11.2}
-  Z2.swing2: {kind: swing.34x34, to: [Z2.head2], h_m: 11.2}
+  Z2.joint4: {kind: fitting.joint, to: [Z2.swing2], h_m: 11.2}
+  Z2.swing2: {kind: fitting.swing.34x34, to: [Z2.head2], h_m: 11.2}
   Z2.head2:  {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 11.2}
 
-  Z3.joint1: {kind: joint, to: [Z3.valve], h_m: 11.2}
-  Z3.valve:  {kind: valve.auto, to: {outlet: Z3.joint2, sol_port: Z3.sol}, h_m: 11.2}
-  Z3.joint2: {kind: joint, to: [Z3.hose1], h_m: 11.2}
+  Z3.joint1: {kind: fitting.joint, to: [Z3.valve], h_m: 11.2}
+  Z3.valve:  {kind: valve.auto, to: [Z3.joint2], h_m: 11.2}
+  Z3.joint2: {kind: fitting.joint, to: [Z3.hose1], h_m: 11.2}
   Z3.hose1:  {kind: hose.25, to: [Z3.tee1], length_m: 20, h_m: 10.87}
-  Z3.tee1:   {kind: tee, to: [Z3.hose2, Z3.hose3], h_m: 10.55}
+  Z3.tee1:   {kind: fitting.tee, to: [Z3.hose2, Z3.hose3], h_m: 10.55}
   Z3.hose2:  {kind: hose.25, to: [Z3.joint3], length_m: 3, h_m: 10.27}
-  Z3.joint3: {kind: joint, to: [Z3.swing1], h_m: 10.2}
-  Z3.swing1: {kind: swing.34x34, to: [Z3.head1], h_m: 10.2}
+  Z3.joint3: {kind: fitting.joint, to: [Z3.swing1], h_m: 10.2}
+  Z3.swing1: {kind: fitting.swing.34x34, to: [Z3.head1], h_m: 10.2}
   Z3.head1:  {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 10.2}
   Z3.hose3:  {kind: hose.25, to: [Z3.joint4], length_m: 12, h_m: 10.63}
-  Z3.joint4: {kind: joint, to: [Z3.swing2], h_m: 10.5}
-  Z3.swing2: {kind: swing.34x34, to: [Z3.head2], h_m: 10.5}
+  Z3.joint4: {kind: fitting.joint, to: [Z3.swing2], h_m: 10.5}
+  Z3.swing2: {kind: fitting.swing.34x34, to: [Z3.head2], h_m: 10.5}
   Z3.head2:  {kind: head.rotor, nozzle: "2.5 blue", arc: 180, h_m: 10.5}
 
-  Z4.joint1: {kind: joint, to: [Z4.valve], h_m: 11.2}
-  Z4.valve:  {kind: valve.auto, to: {outlet: Z4.joint2, sol_port: Z4.sol}, h_m: 11.2}
-  Z4.joint2: {kind: joint, to: [Z4.hose1], h_m: 11.2}
+  Z4.joint1: {kind: fitting.joint, to: [Z4.valve], h_m: 11.2}
+  Z4.valve:  {kind: valve.auto, to: [Z4.joint2], h_m: 11.2}
+  Z4.joint2: {kind: fitting.joint, to: [Z4.hose1], h_m: 11.2}
   Z4.hose1:  {kind: hose.25, to: [Z4.tee1], length_m: 9, h_m: 11.3}
-  Z4.tee1:   {kind: tee, to: [Z4.hose2, Z4.hose3], h_m: 11.4}
+  Z4.tee1:   {kind: fitting.tee, to: [Z4.hose2, Z4.hose3], h_m: 11.4}
   Z4.hose2:  {kind: hose.25, to: [Z4.joint3], length_m: 2, h_m: 11.29}
-  Z4.joint3: {kind: joint, to: [Z4.swing1], h_m: 11.3}
-  Z4.swing1: {kind: swing.34x12, to: [Z4.head1], h_m: 11.3}
+  Z4.joint3: {kind: fitting.joint, to: [Z4.swing1], h_m: 11.3}
+  Z4.swing1: {kind: fitting.swing.34x12, to: [Z4.head1], h_m: 11.3}
   Z4.head1:  {kind: head.spray, nozzle: MP3000, arc: 270, h_m: 11.3}
   Z4.hose3:  {kind: hose.25, to: [Z4.tee2], length_m: 8, h_m: 11.57}
-  Z4.tee2:   {kind: tee, to: [Z4.hose4, Z4.hose5], h_m: 11.68}
+  Z4.tee2:   {kind: fitting.tee, to: [Z4.hose4, Z4.hose5], h_m: 11.68}
   Z4.hose4:  {kind: hose.25, to: [Z4.swing2], length_m: 6, h_m: 11.9}
-  Z4.swing2: {kind: swing.34x12, to: [Z4.head2], h_m: 12.0}
+  Z4.swing2: {kind: fitting.swing.34x12, to: [Z4.head2], h_m: 12.0}
   Z4.head2:  {kind: head.spray, nozzle: MP1000, arc: 210, h_m: 12.0}
   Z4.hose5:  {kind: hose.25, to: [Z4.joint4], length_m: 19, h_m: 11.79}
-  Z4.joint4: {kind: joint, to: [Z4.swing3], h_m: 12.0}
-  Z4.swing3: {kind: swing.34x12, to: [Z4.head3], h_m: 12.0}
+  Z4.joint4: {kind: fitting.joint, to: [Z4.swing3], h_m: 12.0}
+  Z4.swing3: {kind: fitting.swing.34x12, to: [Z4.head3], h_m: 12.0}
   Z4.head3:  {kind: head.spray, nozzle: MP2000, arc: 270, h_m: 12.0}
 
-  Z5.joint1: {kind: joint, to: [Z5.hose1], h_m: 11.2}
+  Z5.joint1: {kind: fitting.joint, to: [Z5.hose1], h_m: 11.2}
   Z5.hose1:  {kind: hose.16, to: [Z5.joint2], length_m: 10, h_m: 11.45}
-  Z5.joint2: {kind: joint, to: [Z5.hose2], h_m: 11.7}
+  Z5.joint2: {kind: fitting.joint, to: [Z5.hose2], h_m: 11.7}
   Z5.hose2:  {kind: hose.16, to: [Z5.valve], length_m: 10, h_m: 11.95}
   Z5.valve:  {kind: valve.manual, to: [Z5.hose3], h_m: 12.2}
   Z5.hose3:  {kind: hose.16, to: [Z5.nozzle], length_m: 10, h_m: 12.2}
   Z5.nozzle: {kind: nozzle.stream, h_m: 12.2}
 
-  Z6.cap:    {kind: cap, h_m: 11.2}
+  Z6.cap:    {kind: fitting.cap, h_m: 11.2}
 
+# `acts:` is control coupling, never galvanic - never a wire.
 circuit:
+  parts:
+    grid_socket:    {kind: socket.earthed}
+    adapter_socket: {kind: socket}
+    adapter:        {kind: adapter}
+    controller:     {kind: controller}
+    relay:          {kind: relay}
+    splice:
+      com_1: {fail: [broken]}
+      com_2: {fail: [broken]}
+      com_3: {fail: [broken]}
+      com_4: {fail: [broken]}
 
-  grid_socket: {kind: socket.earthed, to: {l: wire1, n: wire2, pe: wire3}}
-  wire1:       {kind: wire, voltage: high, to: [relay.line_in]}
-  wire2:       {kind: wire, voltage: high, to: [relay.neutral]}
-  wire3:       {kind: wire, voltage: high, to: [relay.earth]}
-  relay:       {kind: relay, to: {load_out: wire4, neutral: wire5, earth: wire6, coil_com: wire12}}
-  wire4:       {kind: wire, voltage: high, to: [pump_motor.l]}
-  wire5:       {kind: wire, voltage: high, to: [pump_motor.n]}
-  wire6:       {kind: wire, voltage: high, to: [pump_motor.pe]}
+  wires:
+    grid_live:            {from: grid_socket.l,  to: relay.line_in}
+    grid_neutral:         {from: grid_socket.n,  to: relay.neutral}
+    grid_earth:           {from: grid_socket.pe, to: relay.earth}
 
-  pump_motor:  {kind: motor.pump, acts: [pump.impeller], h_m: 8.2}
+    pump_live:            {from: relay.load_out, to: pump.motor.l}
+    pump_neutral:         {from: relay.neutral,  to: pump.motor.n}
+    pump_earth:           {from: relay.earth,    to: pump.motor.pe}
 
-  adapter_socket: {kind: socket, to: {l: wire7, n: wire8}}
-  wire7:       {kind: wire, voltage: high, to: [adapter.ac_l]}
-  wire8:       {kind: wire, voltage: high, to: [adapter.ac_n]}
-  adapter:     {kind: adapter, to: {out_1: wire9, out_2: wire10}}
-  wire9:       {kind: wire, voltage: low, to: [controller.ac_1]}
-  wire10:      {kind: wire, voltage: low, to: [controller.ac_2]}
+    adapter_socket_live:  {from: adapter_socket.l, to: adapter.ac_l}
+    adapter_socket_neut:  {from: adapter_socket.n, to: adapter.ac_n}
+    adapter_supply_1:     {from: adapter.out_1,    to: controller.ac_1}
+    adapter_supply_2:     {from: adapter.out_2,    to: controller.ac_2}
 
-  controller:  {kind: controller, to: {mv: wire11, zone_1: wire13, zone_2: wire14, zone_3: wire15, zone_4: wire16, c_2: wire17}}
-  wire11:      {kind: wire, voltage: low, port: controller.bottom, to: [relay.coil_in]}
-  wire12:      {kind: wire, voltage: low, port: controller.bottom, to: [controller.c_1]}
+    signal_relay:         {from: controller.mv,      to: relay.coil_in}
+    relay_return:         {from: relay.coil_com,     to: controller.c_1}
 
-  wire13:      {kind: wire, voltage: low, to: [splice1]}
-  wire14:      {kind: wire, voltage: low, to: [splice2]}
-  wire15:      {kind: wire, voltage: low, to: [splice3]}
-  wire16:      {kind: wire, voltage: low, to: [splice4]}
+    signal_1:             {from: controller.zone_1,  to: Z1.valve.solenoid.lead_1}
+    signal_2:             {from: controller.zone_2,  to: Z2.valve.solenoid.lead_1}
+    signal_3:             {from: controller.zone_3,  to: Z3.valve.solenoid.lead_1}
+    signal_4:             {from: controller.zone_4,  to: Z4.valve.solenoid.lead_1}
 
-  splice1:     {kind: splice, to: [Z1.sol.lead_1]}
-  splice2:     {kind: splice, to: [Z2.sol.lead_1]}
-  splice3:     {kind: splice, to: [Z3.sol.lead_1]}
-  splice4:     {kind: splice, to: [Z4.sol.lead_1]}
-
-  Z1.sol:      {kind: solenoid, to: [Z1.valve.outlet], h_m: 11.2}
-  Z2.sol:      {kind: solenoid, to: [Z2.valve.outlet], h_m: 11.2}
-  Z3.sol:      {kind: solenoid, to: [Z3.valve.outlet], h_m: 11.2}
-  Z4.sol:      {kind: solenoid, to: [Z4.valve.outlet], h_m: 11.2}
-
-  wire17:      {kind: wire, voltage: low, to: [splice5]}
-  splice5:     {kind: splice, to: [Z1.sol.lead_2, wire18]}
-  wire18:      {kind: wire, voltage: low, to: [splice6]}
-  splice6:     {kind: splice, to: [Z2.sol.lead_2, wire19]}
-  wire19:      {kind: wire, voltage: low, to: [splice7]}
-  splice7:     {kind: splice, to: [Z3.sol.lead_2, wire20]}
-  wire20:      {kind: wire, voltage: low, to: [splice8]}
-  splice8:     {kind: splice, to: [Z4.sol.lead_2]}
+    common_return:        {from: controller.c_2,           to: splice.com_4}
+    common_chain_34:      {from: splice.com_4,             to: splice.com_3}
+    common_chain_23:      {from: splice.com_3,             to: splice.com_2}
+    common_chain_12:      {from: splice.com_2,             to: splice.com_1}
+    common_lead_1:        {from: splice.com_1,             to: Z1.valve.solenoid.lead_2}
+    common_lead_2:        {from: splice.com_2,             to: Z2.valve.solenoid.lead_2}
+    common_lead_3:        {from: splice.com_3,             to: Z3.valve.solenoid.lead_2}
+    common_lead_4:        {from: splice.com_4,             to: Z4.valve.solenoid.lead_2}
