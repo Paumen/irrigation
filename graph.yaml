@@ -1,9 +1,9 @@
-
-
 kinds:
 
   supply:        {fail: [clogged]}
   joint:         {max_pressure_bar: 10, k_minor: 0.1, fail: [broken, misconfigured]}
+  splice:        {fail: [broken, misconfigured]}
+  wire:          {fail: [broken]}
   tee:           {max_pressure_bar: 10, bends: 1, k_minor: 0.9, fail: [broken, misconfigured]}
   swing.34x34:   {max_pressure_bar: 10.2, bore_mm: 19, bends: 4, k_minor: 2.5, model: "Hunter SJ 3/4x3/4", fail: [broken]}
   swing.34x12:   {max_pressure_bar: 10.2, bore_mm: 13, bends: 4, k_minor: 3.5, model: "Hunter SJ 3/4x1/2", fail: [broken]}
@@ -25,13 +25,16 @@ kinds:
       diffuser:    {to: [outlet], fail: [broken, clogged]}
       mech_seal:   {to: [], acts: [impeller], fail: [broken]}
       priming_cap: {to: [], acts: [suction], fail: [broken, misconfigured]}
-      motor:       {acts: [impeller], fail: [broken]}
+      motor:       {to: [n], acts: [impeller], fail: [broken]}
       capacitor:   {acts: [motor], fail: [broken]}
+      l:           {to: [motor], fail: [broken, misconfigured]}
+      n:           {fail: [broken, misconfigured]}
+      pe:          {fail: [broken]}
       outlet:      {}
 
   manifold:
     in: inlet
-    out: outlet
+    out: [out_1, out_2, out_3, out_4, out_5, out_6]
     bore_mm: 25
     max_pressure_bar: 10
     bends: 1
@@ -40,12 +43,68 @@ kinds:
     material: hard plastic
     connection: '1" swivel nut female thread'
     parts:
-      inlet:      {to: [outlet, body, inlet_seal, port_seal]}
-      inlet_seal: {to: [], fail: [broken, misconfigured]}
-      port_seal:  {to: [], fail: [broken, misconfigured]}
-      oring:           {to: [], acts: [], fail: [broken]}
-      body:       {to: [], fail: [broken]}
-      outlet:     {}
+      inlet:       {to: [out_1, out_2, out_3, out_4, out_5, out_6, body, inlet_seal]}
+      inlet_seal:  {to: [], acts: [inlet], fail: [broken, misconfigured]}
+      port_seal_1: {to: [], acts: [out_1], fail: [broken, misconfigured]}
+      port_seal_2: {to: [], acts: [out_2], fail: [broken, misconfigured]}
+      port_seal_3: {to: [], acts: [out_3], fail: [broken, misconfigured]}
+      port_seal_4: {to: [], acts: [out_4], fail: [broken, misconfigured]}
+      port_seal_5: {to: [], acts: [out_5], fail: [broken, misconfigured]}
+      port_seal_6: {to: [], acts: [out_6], fail: [broken, misconfigured]}
+      body:        {to: [], fail: [broken]}
+      out_1:       {}
+      out_2:       {}
+      out_3:       {}
+      out_4:       {}
+      out_5:       {}
+      out_6:       {}
+
+  socket.earthed:
+    parts:
+      l:  {fail: [broken]}
+      n:  {fail: [broken]}
+      pe: {fail: [broken]}
+
+  socket:
+    parts:
+      l: {fail: [broken]}
+      n: {fail: [broken]}
+
+  adapter:
+    parts:
+      ac_l:    {to: [winding], fail: [broken, misconfigured]}
+      ac_n:    {fail: [broken, misconfigured]}
+      winding: {to: [ac_n], acts: [out_1, out_2], fail: [broken]}
+      out_1:   {fail: [broken]}
+      out_2:   {fail: [broken]}
+
+  controller:
+    model: RainMachine HD-16 TOUCH
+    pump_lead_s: 5
+    parts:
+      ac_1:   {to: [logic], fail: [broken, misconfigured]}
+      ac_2:   {to: [logic], fail: [broken, misconfigured]}
+      logic:  {to: [zone_1, zone_2, zone_3, zone_4, mv], fail: [broken, misconfigured]}
+      zone_1: {fail: [broken, misconfigured]}
+      zone_2: {fail: [broken, misconfigured]}
+      zone_3: {fail: [broken, misconfigured]}
+      zone_4: {fail: [broken, misconfigured]}
+      mv:     {fail: [broken, misconfigured]}
+      c_1:    {to: [c_2], fail: [broken, misconfigured]}
+      c_2:    {fail: [broken, misconfigured]}
+
+  relay:
+    model: Hunter PSR-22
+    coil_energized_closes: contact
+    parts:
+      coil_in:  {to: [coil],     fail: [broken, misconfigured]}
+      coil:     {to: [coil_com], acts: [contact], fail: [broken]}
+      coil_com: {fail: [broken, misconfigured]}
+      contact:  {to: [load_out], fail: [broken]}
+      line_in:  {to: [contact],  fail: [broken, misconfigured]}
+      load_out: {fail: [broken, misconfigured]}
+      neutral:  {fail: [broken, misconfigured]}
+      earth:    {fail: [broken]}
 
   valve.auto:
     in: inlet
@@ -74,13 +133,16 @@ kinds:
       outlet:          {}
 
   valve.foot:
+    in: strainer
+    out: outlet
     max_pressure_bar: 10
     k_minor: 2.5
     model: 'brass foot valve 1" with strainer'
     parts:
       strainer: {to: [seat], fail: [clogged]}
-      seat:     {to: [], fail: [broken, clogged]}
+      seat:     {to: [outlet], fail: [broken, clogged]}
       spring:   {acts: [seat], fail: [broken]}
+      outlet:   {}
 
   valve.manual:
     in: inlet
@@ -127,7 +189,7 @@ kinds:
       nozzle:         {to: [], fail: [clogged, misconfigured]}
 
 flow:
-  well:      {kind: water.level, to: [footvalve], h_m: 5.5}
+  well:      {kind: supply, to: [footvalve], h_m: 5.5}
   footvalve: {kind: valve.foot, to: [hose1], h_m: 4.8}
   hose1:     {kind: hose.suction, to: [pump], length_m: 4.5, h_m: 4.8}
   pump:      {kind: pump.well, to: [joint1], h_m: 8.2}
@@ -136,7 +198,10 @@ flow:
   joint2:    {kind: joint, to: [hose3], h_m: 8.2}
   hose3:     {kind: hose.32, to: [joint3], length_m: 20, h_m: 8.2}
   joint3:    {kind: joint, to: [manifold], h_m: 11.2}
-  manifold:  {kind: manifold, to: [Z1.joint1, Z2.joint1, Z3.joint1, Z4.joint1, Z5.joint1, Z6.cap], h_m: 11.2}
+  manifold:
+    kind: manifold
+    to: {out_1: Z1.joint1, out_2: Z2.joint1, out_3: Z3.joint1, out_4: Z4.joint1, out_5: Z5.joint1, out_6: Z6.cap}
+    h_m: 11.2
 
   Z1.joint1: {kind: joint, to: [Z1.valve], h_m: 11.2}
   Z1.valve:  {kind: valve.auto, to: [Z1.joint2], h_m: 11.2}
@@ -215,93 +280,41 @@ flow:
 
 circuit:
 
-  parts:
-    grid_socket:
-      l:  {fail: [broken]}
-      n:  {fail: [broken]}
-      pe: {fail: [broken]}
-      
-    adapter_socket:
-      l: {fail: [broken]}
-      n: {fail: [broken]}
-      
-    adapter:
-      ac_l:    {to: [winding], fail: [broken, misconfigured]}
-      ac_n:    {fail: [broken, misconfigured]}
-      winding: {to: [ac_n], acts: [out_1, out_2], fail: [broken]}
-      out_1:   {fail: [broken]}
-      out_2:   {fail: [broken]}
-      
-    controller:
-      model: RainMachine HD-16 TOUCH
-      pump_lead_s: 5
-      ac_1:   {to: [logic], fail: [broken, misconfigured]}
-      ac_2:   {to: [logic], fail: [broken, misconfigured]}
-      logic:  {to: [zone_1, zone_2, zone_3, zone_4, mv], fail: [broken, misconfigured]}
-      zone_1: {fail: [broken, misconfigured]}
-      zone_2: {fail: [broken, misconfigured]}
-      zone_3: {fail: [broken, misconfigured]}
-      zone_4: {fail: [broken, misconfigured]}
-      mv:     {fail: [broken, misconfigured]}
-      c_1:    {to: [c_2], fail: [broken, misconfigured]}
-      c_2:    {fail: [broken, misconfigured]}
-      
-    relay:
-      model: Hunter PSR-22
-      coil_energized_closes: contact
-      coil_in:  {to: [coil],     fail: [broken, misconfigured]}
-      coil:     {to: [coil_com], acts: [contact], fail: [broken]}
-      coil_com: {fail: [broken, misconfigured]}
-      contact:  {to: [load_out], fail: [broken]}
-      line_in:  {to: [contact],  fail: [broken, misconfigured]}
-      load_out: {fail: [broken, misconfigured]}
-      neutral:  {fail: [broken, misconfigured]}
-      earth:    {fail: [broken]}
-      
-    pump:
-      l:     {to: [motor], fail: [broken, misconfigured]}
-      motor: {to: [n],     fail: [broken]}
-      n:     {fail: [broken, misconfigured]}
-      pe:    {fail: [broken]}
-      
-    splice:
-      sig_1: {to: [Z1.valve.coil], fail: [broken, misconfigured]}
-      sig_2: {to: [Z2.valve.coil], fail: [broken, misconfigured]}
-      sig_3: {to: [Z3.valve.coil], fail: [broken, misconfigured]}
-      sig_4: {to: [Z4.valve.coil], fail: [broken, misconfigured]}
-      com_1: {to: [com_2],         fail: [broken, misconfigured]}
-      com_2: {to: [com_3],         fail: [broken, misconfigured]}
-      com_3: {to: [com_4],         fail: [broken, misconfigured]}
-      com_4: {to: [],              fail: [broken, misconfigured]}
+  grid_socket:    {kind: socket.earthed, to: {l: wire1, n: wire2, pe: wire3}}
+  wire1:      {kind: wire, voltage: high, to: [relay.line_in]}
+  wire2:   {kind: wire, voltage: high, to: [relay.neutral]}
+  wire3:     {kind: wire, voltage: high, to: [relay.earth]}
+  relay:          {kind: relay, to: {load_out: wire4, neutral: wire5, earth: wire6, coil_com: wire12}}
+  wire4:      {kind: wire, voltage: high, to: [pump.l]}
+  wire5:   {kind: wire, voltage: high, to: [pump.n]}
+  wire6:     {kind: wire, voltage: high, to: [pump.pe]}
 
-  wires:
-    grid_live:    {from: grid_socket.l,  to: relay.line_in, voltage: high}
-    pump_live:    {from: relay.load_out, to: pump.l,        voltage: high}
-    grid_neutral: {from: grid_socket.n,  to: relay.neutral, voltage: high}
-    pump_neutral: {from: relay.neutral,  to: pump.n,        voltage: high}
-    grid_earth:   {from: grid_socket.pe, to: relay.earth,   voltage: high}
-    pump_earth:   {from: relay.earth,    to: pump.pe,       voltage: high}
-    
-    adapter_socket_live:    {from: adapter_socket.l, to: adapter.ac_l, voltage: high}
-    adapter_socket_neutral: {from: adapter_socket.n, to: adapter.ac_n, voltage: high}
-    
-    adapter_supply_1: {from: adapter.out_1, to: controller.ac_1, voltage: low}
-    adapter_supply_2: {from: adapter.out_2, to: controller.ac_2, voltage: low}
-    
-    signal_relay: {from: controller.mv,  to: relay.coil_in, voltage: low, port: controller.bottom}
-    relay_return: {from: relay.coil_com, to: controller.c_1,  voltage: low, port: controller.bottom}
-    
-    signal_1: {from: controller.zone_1, to: splice.sig_1, voltage: low}
-    signal_2: {from: controller.zone_2, to: splice.sig_2, voltage: low}
-    signal_3: {from: controller.zone_3, to: splice.sig_3, voltage: low}
-    signal_4: {from: controller.zone_4, to: splice.sig_4, voltage: low}
-    
-    common_lead_1: {from: Z1.valve.coil, to: splice.com_1, voltage: low}
-    common_lead_2: {from: Z2.valve.coil, to: splice.com_2, voltage: low}
-    common_lead_3: {from: Z3.valve.coil, to: splice.com_3, voltage: low}
-    common_lead_4: {from: Z4.valve.coil, to: splice.com_4, voltage: low}
-    
-    common_chain_12: {from: splice.com_1, to: splice.com_2, voltage: low}
-    common_chain_23: {from: splice.com_2, to: splice.com_3, voltage: low}
-    common_chain_34: {from: splice.com_3, to: splice.com_4, voltage: low}
-    common_return:   {from: splice.com_4, to: controller.c_2, voltage: low}
+  adapter_socket:         {kind: socket, to: {l: wire7, n: wire8}}
+  wire7:    {kind: wire, voltage: high, to: [adapter.ac_l]}
+  wire8: {kind: wire, voltage: high, to: [adapter.ac_n]}
+  adapter:                {kind: adapter, to: {out_1: wire9, out_2: wire10}}
+  wire9:       {kind: wire, voltage: low, to: [controller.ac_1]}
+  wire10:       {kind: wire, voltage: low, to: [controller.ac_2]}
+
+  controller:   {kind: controller, to: {mv: wire11, zone_1: wire13, zone_2: wire14, zone_3: wire15, zone_4: wire16, c_2: wire17}}
+  wire11: {kind: wire, voltage: low, port: controller.bottom, to: [relay.coil_in]}
+  wire12: {kind: wire, voltage: low, port: controller.bottom, to: [controller.c_1]}
+
+  wire13: {kind: wire, voltage: low, to: [splice1]}
+  wire14: {kind: wire, voltage: low, to: [splice2]}
+  wire15: {kind: wire, voltage: low, to: [splice3]}
+  wire16: {kind: wire, voltage: low, to: [splice4]}
+
+  splice1: {kind: splice, to: [Z1.valve.coil]}
+  splice2: {kind: splice, to: [Z2.valve.coil]}
+  splice3: {kind: splice, to: [Z3.valve.coil]}
+  splice4: {kind: splice, to: [Z4.valve.coil]}
+
+  wire17:    {kind: wire, voltage: low, to: [splice5]}
+  splice5:   {kind: splice, to: [Z1.valve.coil, wire18]}
+  wire18: {kind: wire, voltage: low, to: [splice6]}
+  splice6:   {kind: splice, to: [Z2.valve.coil, wire19]}
+  wire19: {kind: wire, voltage: low, to: [splice7]}
+  splice7:   {kind: splice, to: [Z3.valve.coil, wire20]}
+  wire20: {kind: wire, voltage: low, to: [splice8]}
+  splice8:   {kind: splice, to: [Z4.valve.coil]}
