@@ -1,3 +1,11 @@
+media:
+  water:     [supply, joint, tee, swing.34x34, swing.34x12, hose.32, hose.25,
+              hose.16, hose.suction, cap, nozzle.stream, pump.well, manifold,
+              valve.auto, valve.foot, valve.manual, head.rotor, head.spray]
+  conductor: [wire, splice, socket.earthed, socket, adapter, controller,
+              relay, motor.pump]
+  mixed:     [solenoid]
+
 kinds:
 
   supply:        {fail: [clogged]}
@@ -25,12 +33,28 @@ kinds:
       diffuser:    {to: [outlet], fail: [broken, clogged]}
       mech_seal:   {to: [], acts: [impeller], fail: [broken]}
       priming_cap: {to: [], acts: [suction], fail: [broken, misconfigured]}
-      motor:       {to: [n], acts: [impeller], fail: [broken]}
-      capacitor:   {acts: [motor], fail: [broken]}
-      l:           {to: [motor], fail: [broken, misconfigured]}
-      n:           {fail: [broken, misconfigured]}
-      pe:          {fail: [broken]}
       outlet:      {}
+
+  motor.pump:
+    model: AQUAJET 132 M motor unit
+    parts:
+      l:         {to: [winding], fail: [broken, misconfigured]}
+      winding:   {to: [n], fail: [broken]}
+      capacitor: {acts: [winding], fail: [broken]}
+      n:         {fail: [broken, misconfigured]}
+      pe:        {fail: [broken]}
+
+  solenoid:
+    in: entry
+    out: exhaust
+    model: Hunter 458200 (24 VAC)
+    parts:
+      entry:   {medium: water, to: [plunger], fail: [clogged]}
+      plunger: {medium: water, to: [exhaust], fail: [broken, clogged]}
+      exhaust: {medium: water, fail: [clogged]}
+      lead_1:  {medium: conductor, to: [coil], fail: [broken]}
+      coil:    {medium: conductor, ohm: [20, 60], to: [lead_2], acts: [plunger], fail: [broken]}
+      lead_2:  {medium: conductor, fail: [broken]}
 
   manifold:
     in: inlet
@@ -119,12 +143,9 @@ kinds:
       diaphragm:       {to: [seat], fail: [broken]}
       seat:            {to: [outlet], fail: [broken, clogged]}
       metering_port:   {to: [chamber], fail: [clogged]}
-      chamber:         {to: [solenoid_entry, bleed_screw], acts: [diaphragm]}
+      chamber:         {to: [sol_port, bleed_screw], acts: [diaphragm]}
       bleed_screw:     {to: [], fail: [broken, misconfigured]}
-      solenoid_entry:  {to: [plunger], fail: [clogged]}
-      plunger:         {to: [solenoid_exhaust], fail: [broken, clogged]}
-      solenoid_exhaust: {to: [outlet], fail: [clogged]}
-      coil:            {ohm: [20, 60], acts: [plunger], fail: [broken]}
+      sol_port:        {}
       spring:          {acts: [diaphragm], fail: [broken]}
       flow_control:    {acts: [diaphragm], fail: [broken, misconfigured]}
       bonnet:          {to: [], acts: [chamber], fail: [broken, misconfigured]}
@@ -170,7 +191,7 @@ kinds:
       filter:         {to: [nozzle], fail: [clogged]}
       nozzle:         {to: [], fail: [clogged, misconfigured]}
       arc:            {acts: [nozzle], fail: [misconfigured]}
-      flow_stop:   {acts: [nozzle]}
+      flow_stop:      {acts: [nozzle]}
 
   head.spray:
     in: inlet_thread
@@ -204,7 +225,7 @@ flow:
     h_m: 11.2
 
   Z1.joint1: {kind: joint, to: [Z1.valve], h_m: 11.2}
-  Z1.valve:  {kind: valve.auto, to: [Z1.joint2], h_m: 11.2}
+  Z1.valve:  {kind: valve.auto, to: {outlet: Z1.joint2, sol_port: Z1.sol}, h_m: 11.2}
   Z1.joint2: {kind: joint, to: [Z1.hose1], h_m: 11.2}
   Z1.hose1:  {kind: hose.25, to: [Z1.tee1], length_m: 8, h_m: 11.2}
   Z1.tee1:   {kind: tee, to: [Z1.hose2, Z1.hose3], h_m: 11.19}
@@ -222,7 +243,7 @@ flow:
   Z1.head3:  {kind: head.spray, nozzle: MP2000, arc: 180, h_m: 11.4}
 
   Z2.joint1: {kind: joint, to: [Z2.valve], h_m: 11.2}
-  Z2.valve:  {kind: valve.auto, to: [Z2.joint2], h_m: 11.2}
+  Z2.valve:  {kind: valve.auto, to: {outlet: Z2.joint2, sol_port: Z2.sol}, h_m: 11.2}
   Z2.joint2: {kind: joint, to: [Z2.hose1], h_m: 11.2}
   Z2.hose1:  {kind: hose.25, to: [Z2.tee1], length_m: 2, h_m: 11.18}
   Z2.tee1:   {kind: tee, to: [Z2.hose2, Z2.hose3], h_m: 11.17}
@@ -236,7 +257,7 @@ flow:
   Z2.head2:  {kind: head.rotor, nozzle: "5.0 blue", arc: 270, h_m: 11.2}
 
   Z3.joint1: {kind: joint, to: [Z3.valve], h_m: 11.2}
-  Z3.valve:  {kind: valve.auto, to: [Z3.joint2], h_m: 11.2}
+  Z3.valve:  {kind: valve.auto, to: {outlet: Z3.joint2, sol_port: Z3.sol}, h_m: 11.2}
   Z3.joint2: {kind: joint, to: [Z3.hose1], h_m: 11.2}
   Z3.hose1:  {kind: hose.25, to: [Z3.tee1], length_m: 20, h_m: 10.87}
   Z3.tee1:   {kind: tee, to: [Z3.hose2, Z3.hose3], h_m: 10.55}
@@ -250,7 +271,7 @@ flow:
   Z3.head2:  {kind: head.rotor, nozzle: "2.5 blue", arc: 180, h_m: 10.5}
 
   Z4.joint1: {kind: joint, to: [Z4.valve], h_m: 11.2}
-  Z4.valve:  {kind: valve.auto, to: [Z4.joint2], h_m: 11.2}
+  Z4.valve:  {kind: valve.auto, to: {outlet: Z4.joint2, sol_port: Z4.sol}, h_m: 11.2}
   Z4.joint2: {kind: joint, to: [Z4.hose1], h_m: 11.2}
   Z4.hose1:  {kind: hose.25, to: [Z4.tee1], length_m: 9, h_m: 11.3}
   Z4.tee1:   {kind: tee, to: [Z4.hose2, Z4.hose3], h_m: 11.4}
@@ -280,41 +301,48 @@ flow:
 
 circuit:
 
-  grid_socket:    {kind: socket.earthed, to: {l: wire1, n: wire2, pe: wire3}}
-  wire1:      {kind: wire, voltage: high, to: [relay.line_in]}
-  wire2:   {kind: wire, voltage: high, to: [relay.neutral]}
-  wire3:     {kind: wire, voltage: high, to: [relay.earth]}
-  relay:          {kind: relay, to: {load_out: wire4, neutral: wire5, earth: wire6, coil_com: wire12}}
-  wire4:      {kind: wire, voltage: high, to: [pump.l]}
-  wire5:   {kind: wire, voltage: high, to: [pump.n]}
-  wire6:     {kind: wire, voltage: high, to: [pump.pe]}
+  grid_socket: {kind: socket.earthed, to: {l: wire1, n: wire2, pe: wire3}}
+  wire1:       {kind: wire, voltage: high, to: [relay.line_in]}
+  wire2:       {kind: wire, voltage: high, to: [relay.neutral]}
+  wire3:       {kind: wire, voltage: high, to: [relay.earth]}
+  relay:       {kind: relay, to: {load_out: wire4, neutral: wire5, earth: wire6, coil_com: wire12}}
+  wire4:       {kind: wire, voltage: high, to: [pump_motor.l]}
+  wire5:       {kind: wire, voltage: high, to: [pump_motor.n]}
+  wire6:       {kind: wire, voltage: high, to: [pump_motor.pe]}
 
-  adapter_socket:         {kind: socket, to: {l: wire7, n: wire8}}
-  wire7:    {kind: wire, voltage: high, to: [adapter.ac_l]}
-  wire8: {kind: wire, voltage: high, to: [adapter.ac_n]}
-  adapter:                {kind: adapter, to: {out_1: wire9, out_2: wire10}}
+  pump_motor:  {kind: motor.pump, acts: [pump.impeller], h_m: 8.2}
+
+  adapter_socket: {kind: socket, to: {l: wire7, n: wire8}}
+  wire7:       {kind: wire, voltage: high, to: [adapter.ac_l]}
+  wire8:       {kind: wire, voltage: high, to: [adapter.ac_n]}
+  adapter:     {kind: adapter, to: {out_1: wire9, out_2: wire10}}
   wire9:       {kind: wire, voltage: low, to: [controller.ac_1]}
-  wire10:       {kind: wire, voltage: low, to: [controller.ac_2]}
+  wire10:      {kind: wire, voltage: low, to: [controller.ac_2]}
 
-  controller:   {kind: controller, to: {mv: wire11, zone_1: wire13, zone_2: wire14, zone_3: wire15, zone_4: wire16, c_2: wire17}}
-  wire11: {kind: wire, voltage: low, port: controller.bottom, to: [relay.coil_in]}
-  wire12: {kind: wire, voltage: low, port: controller.bottom, to: [controller.c_1]}
+  controller:  {kind: controller, to: {mv: wire11, zone_1: wire13, zone_2: wire14, zone_3: wire15, zone_4: wire16, c_2: wire17}}
+  wire11:      {kind: wire, voltage: low, port: controller.bottom, to: [relay.coil_in]}
+  wire12:      {kind: wire, voltage: low, port: controller.bottom, to: [controller.c_1]}
 
-  wire13: {kind: wire, voltage: low, to: [splice1]}
-  wire14: {kind: wire, voltage: low, to: [splice2]}
-  wire15: {kind: wire, voltage: low, to: [splice3]}
-  wire16: {kind: wire, voltage: low, to: [splice4]}
+  wire13:      {kind: wire, voltage: low, to: [splice1]}
+  wire14:      {kind: wire, voltage: low, to: [splice2]}
+  wire15:      {kind: wire, voltage: low, to: [splice3]}
+  wire16:      {kind: wire, voltage: low, to: [splice4]}
 
-  splice1: {kind: splice, to: [Z1.valve.coil]}
-  splice2: {kind: splice, to: [Z2.valve.coil]}
-  splice3: {kind: splice, to: [Z3.valve.coil]}
-  splice4: {kind: splice, to: [Z4.valve.coil]}
+  splice1:     {kind: splice, to: [Z1.sol.lead_1]}
+  splice2:     {kind: splice, to: [Z2.sol.lead_1]}
+  splice3:     {kind: splice, to: [Z3.sol.lead_1]}
+  splice4:     {kind: splice, to: [Z4.sol.lead_1]}
 
-  wire17:    {kind: wire, voltage: low, to: [splice5]}
-  splice5:   {kind: splice, to: [Z1.valve.coil, wire18]}
-  wire18: {kind: wire, voltage: low, to: [splice6]}
-  splice6:   {kind: splice, to: [Z2.valve.coil, wire19]}
-  wire19: {kind: wire, voltage: low, to: [splice7]}
-  splice7:   {kind: splice, to: [Z3.valve.coil, wire20]}
-  wire20: {kind: wire, voltage: low, to: [splice8]}
-  splice8:   {kind: splice, to: [Z4.valve.coil]}
+  Z1.sol:      {kind: solenoid, to: [Z1.valve.outlet], h_m: 11.2}
+  Z2.sol:      {kind: solenoid, to: [Z2.valve.outlet], h_m: 11.2}
+  Z3.sol:      {kind: solenoid, to: [Z3.valve.outlet], h_m: 11.2}
+  Z4.sol:      {kind: solenoid, to: [Z4.valve.outlet], h_m: 11.2}
+
+  wire17:      {kind: wire, voltage: low, to: [splice5]}
+  splice5:     {kind: splice, to: [Z1.sol.lead_2, wire18]}
+  wire18:      {kind: wire, voltage: low, to: [splice6]}
+  splice6:     {kind: splice, to: [Z2.sol.lead_2, wire19]}
+  wire19:      {kind: wire, voltage: low, to: [splice7]}
+  splice7:     {kind: splice, to: [Z3.sol.lead_2, wire20]}
+  wire20:      {kind: wire, voltage: low, to: [splice8]}
+  splice8:     {kind: splice, to: [Z4.sol.lead_2]}
