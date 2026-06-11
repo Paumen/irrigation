@@ -27,8 +27,12 @@ const VALVE_LOSS_ALIAS = {
 
 // `to:` is a list on 2-port nodes but a {port: target} map on fan-out nodes
 // (the manifold). Hydraulically only the target set matters, so flatten to a list.
-const toList = (to) =>
-  Array.isArray(to) ? to : to && typeof to === "object" ? Object.values(to) : [];
+const toList = (to) => {
+  if (to == null) return [];
+  if (Array.isArray(to)) return to;
+  if (typeof to === "object") return Object.values(to);
+  throw new Error(`model: invalid "to" field (expected list or map, got ${typeof to})`);
+};
 
 export function buildModel(rawGraph, rawCatalog) {
   const kinds = rawGraph.kinds || {};

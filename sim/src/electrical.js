@@ -16,11 +16,12 @@ const resolveInternal = (component, target) =>
 // pump's winding (l->motor->n) lives on the flow side, so it is pulled in for any flow
 // port the circuit references.
 export function buildContinuityGraph(model, { contactClosed = false, blocked = new Set() } = {}) {
+  if (!model || typeof model !== "object" || !model.circuit ||
+      typeof model.circuit !== "object" || !model.kinds || !model.flowNodes) {
+    throw new Error("electrical: invalid or missing model structure (need circuit, kinds, and flowNodes)");
+  }
   const circuit = model.circuit;
   const kinds = model.kinds;
-  if (!circuit || typeof circuit !== "object") {
-    throw new Error("electrical: invalid or missing circuit structure");
-  }
   const adj = new Map();
   const node = (p) => {
     if (!adj.has(p)) adj.set(p, new Set());
