@@ -1,10 +1,4 @@
-media:
-  water:     [supply, joint, tee, swing.34x34, swing.34x12, hose.32, hose.25,
-              hose.16, hose.suction, cap, nozzle.stream, pump.well, manifold,
-              valve.auto, valve.foot, valve.manual, head.rotor, head.spray]
-  conductor: [wire, splice, socket.earthed, socket, adapter, controller,
-              relay, motor.pump]
-  mixed:     [solenoid]
+
 
 kinds:
 
