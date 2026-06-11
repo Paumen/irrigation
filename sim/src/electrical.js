@@ -1,18 +1,23 @@
 // `acts:` relations are control couplings, NOT galvanic continuity — never add them as graph edges.
 
-const META_KEYS = new Set(["model", "pump_lead_s", "coil_energized_closes"]);
-
 // Excluding controller outputs stops reachability hopping zone->logic->mv and bypassing a zone's
 // own coil. The common bus (c_1<->c_2) is passive and must stay reachable.
 const CONTROLLER_ACTIVE = new Set(["ac_1", "ac_2", "logic"]);
 
 const RELAY_CONTACT = "relay.contact";
 
+// The pump motor and the zone solenoids live on the flow side (inside the pump / valve
+// kinds). Only their electrical sub-parts belong in the continuity graph: the whole
+// motor is electrical, but a solenoid also has a hydraulic path (entry/plunger/exhaust)
+// that must stay out of it.
+const SOLENOID_ELEC = new Set(["lead_1", "coil", "lead_2"]);
+
 function resolveTarget(part, target) {
   return target.includes(".") ? target : `${part}.${target}`;
 }
 
-export function buildContinuityGraph(circuit, { contactClosed = false, blocked = new Set() } = {}) {
+export function buildContinuityGraph(model, { contactClosed = false, blocked = new Set() } = {}) {
+  const circuit = model.circuit;
   if (!circuit || typeof circuit !== "object" || !circuit.parts || !circuit.wires) {
     throw new Error("electrical: invalid or missing circuit structure (need parts + wires)");
   }
@@ -31,14 +36,34 @@ export function buildContinuityGraph(circuit, { contactClosed = false, blocked =
     adj.get(b).add(a);
   };
 
+  // dedicated circuit components: a part is either a kind reference (expand its parts) or
+  // an inline terminal block (the common-return splice).
   for (const [partName, part] of Object.entries(circuit.parts)) {
-    for (const [subName, sub] of Object.entries(part)) {
-      if (META_KEYS.has(subName)) continue;
+    const partsDef = part && part.kind ? model.kinds[part.kind]?.parts || {} : part;
+    for (const [subName, sub] of Object.entries(partsDef)) {
       if (sub === null || typeof sub !== "object" || Array.isArray(sub)) continue;
       const id = `${partName}.${subName}`;
       node(id);
       if (partName === "controller" && CONTROLLER_ACTIVE.has(subName)) continue;
       for (const t of sub.to || []) edge(id, resolveTarget(partName, t));
+    }
+  }
+
+  // flow-side electrical sub-assemblies: the pump motor (fully electrical) and each
+  // auto-valve solenoid (electrical leads + coil only).
+  const injectElec = (prefix, parts, elecSet) => {
+    const inSet = (name) => !elecSet || elecSet.has(name);
+    for (const [name, def] of Object.entries(parts || {})) {
+      if (!inSet(name)) continue;
+      node(`${prefix}.${name}`);
+      for (const t of def.to || []) if (inSet(t)) edge(`${prefix}.${name}`, `${prefix}.${t}`);
+    }
+  };
+  for (const n of model.flowNodes.values()) {
+    if (n.role === "pump") {
+      injectElec(`${n.id}.motor`, model.kinds[n.kind]?.parts?.motor?.parts, null);
+    } else if (n.role === "valve-auto") {
+      injectElec(`${n.id}.solenoid`, model.kinds[n.kind]?.parts?.solenoid?.parts, SOLENOID_ELEC);
     }
   }
 
@@ -113,7 +138,8 @@ export function reachable(adj, from, to) {
   return false;
 }
 
-export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
+export function solveElectrical(model, commands = {}, blocked = new Set()) {
+  const circuit = model.circuit;
   const mv = !!commands.mv;
   const zones = commands.zones || {};
 
@@ -122,7 +148,7 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
   if (commands.gridPower === false) eff.add("grid_socket.l");
   if (commands.adapterPower === false) eff.add("adapter_socket.l");
 
-  const g = buildContinuityGraph(circuit, { contactClosed: false, blocked: eff });
+  const g = buildContinuityGraph(model, { contactClosed: false, blocked: eff });
 
   // Secondaries are coupled, not wired: controller is powered only when the primary loop is
   // closed AND the low-voltage wires reach it.
@@ -136,7 +162,7 @@ export function solveElectrical(circuit, commands = {}, blocked = new Set()) {
 
   // Grid L->N is the only galvanic pump path, so it needs both the closed contact and an intact motor.
   const pumpGraph = relayCoil
-    ? buildContinuityGraph(circuit, { contactClosed: true, blocked: eff })
+    ? buildContinuityGraph(model, { contactClosed: true, blocked: eff })
     : g;
   const pumpPowered = relayCoil && reachable(pumpGraph, "grid_socket.l", "grid_socket.n");
 
