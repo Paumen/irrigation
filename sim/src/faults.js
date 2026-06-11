@@ -49,11 +49,18 @@ export function listFaults(model) {
       }
     }
   }
-  for (const [part, subs] of Object.entries(model.circuit?.parts || {})) {
-    for (const [sub, def] of Object.entries(subs)) {
-      if (def === null || typeof def !== "object" || Array.isArray(def)) continue;
-      for (const t of def.fail || []) {
-        push({ key: `${part}.${sub}:${t}`, target: part, sub, type: t, side: "circuit" });
+  // The circuit is a flat node map; faults come off each node's kind exactly like the flow
+  // side — node-level `fail:` (wire, splice) plus per-part `fail:` (sockets, relay, …).
+  for (const [id, def] of Object.entries(model.circuit || {})) {
+    if (!def || typeof def !== "object") continue;
+    const kindDef = model.kinds[def.kind];
+    if (!kindDef) continue;
+    for (const t of kindDef.fail || []) {
+      push({ key: `${id}:${t}`, target: id, sub: null, type: t, side: "circuit" });
+    }
+    for (const [sub, sdef] of Object.entries(kindDef.parts || {})) {
+      for (const t of sdef.fail || []) {
+        push({ key: `${id}.${sub}:${t}`, target: id, sub, type: t, side: "circuit" });
       }
     }
   }
@@ -259,7 +266,7 @@ export function compileFaults(model, active = {}) {
     if (!f) throw new Error(`faults: unknown fault key "${key}"`);
     const sev = f.severity ? Math.min(Number(value), 1) : 1;
     if (f.side === "circuit") {
-      fx.elecBlocked.add(`${f.target}.${f.sub}`);
+      fx.elecBlocked.add(f.sub ? `${f.target}.${f.sub}` : f.target);
       continue;
     }
     const node = model.flowNodes.get(f.target);

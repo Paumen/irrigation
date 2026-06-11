@@ -48,7 +48,6 @@ function reportTable(model, result) {
 
 const rawGraph = loadGraph();
 const model = buildModel(rawGraph, loadCatalog());
-const circuit = rawGraph.circuit;
 const hyd = await createHydraulics();
 console.log(`epanet-js engine version: ${hyd.version}\n`);
 
@@ -62,7 +61,7 @@ for (const c of cases) {
   console.log(`Case: ${c.name}`);
   const fx = c.faults ? compileFaults(model, c.faults) : undefined;
   const blocked = new Set([...(c.blocked || []), ...(fx ? fx.elecBlocked : [])]);
-  const elec = solveElectrical(circuit, c.commands, blocked);
+  const elec = solveElectrical(model, c.commands, blocked);
   const r = solveSteady(model, c.state, elec, hyd, fx);
   reportTable(model, r);
 
@@ -361,58 +360,67 @@ for (const c of cases) {
 console.log("Case: electrical-only continuity checks");
 {
   const all = { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } };
-  const healthy = solveElectrical(circuit, all);
+  const healthy = solveElectrical(model, all);
   check(healthy.pumpPowered && [1, 2, 3, 4].every((z) => healthy.zoneEnergised[z]),
     "healthy wiring: pump + all four zones energised");
 
-  const noGrid = solveElectrical(circuit, { mv: true, zones: { 1: true } }, new Set(["grid_live"]));
-  check(noGrid.pumpPowered === false, "broken grid_live de-powers the pump");
+  // wire1 = grid live (grid_socket.l -> relay.line_in)
+  const noGrid = solveElectrical(model, { mv: true, zones: { 1: true } }, new Set(["wire1"]));
+  check(noGrid.pumpPowered === false, "broken grid live wire de-powers the pump");
   check(noGrid.zoneEnergised[1] === true, "...but the low-voltage zone circuit is unaffected");
 
-  const noController = solveElectrical(circuit, all, new Set(["adapter_supply_1"]));
+  // wire9 = adapter.out_1 -> controller.ac_1 (a controller supply lead)
+  const noController = solveElectrical(model, all, new Set(["wire9"]));
   check(noController.controllerPowered === false, "broken adapter supply de-powers the controller");
   check(noController.pumpPowered === false && [1, 2, 3, 4].every((z) => !noController.zoneEnergised[z]),
     "...so nothing actuates");
 
-  const lead3 = solveElectrical(circuit, all, new Set(["common_lead_3"]));
-  check(lead3.zoneEnergised[3] === false &&
-    [1, 2, 4].every((z) => lead3.zoneEnergised[z]),
-    "broken common_lead_3 drops only zone 3 (its own return lead)");
+  // wire15 = controller.zone_3 -> splice3 (zone 3's own signal lead)
+  const sig3 = solveElectrical(model, all, new Set(["wire15"]));
+  check(sig3.zoneEnergised[3] === false &&
+    [1, 2, 4].every((z) => sig3.zoneEnergised[z]),
+    "broken zone-3 signal wire drops only zone 3");
+
+  // wire19 sits mid-chain (splice7 -> splice8), so breaking it drops zone 3 and everything
+  // downstream of its tap, but leaves the zones nearer the controller common intact.
+  const chain = solveElectrical(model, all, new Set(["wire19"]));
+  check(chain.zoneEnergised[3] === false && chain.zoneEnergised[4] === false &&
+    chain.zoneEnergised[1] === true && chain.zoneEnergised[2] === true,
+    "broken common-chain wire drops its zone and all downstream of the tap");
 
   // Per-wire energization: wires on a closed current path light, wires merely at
-  // potential (or on dead-end stubs) stay dark.
+  // potential (or on dead-end stubs) stay dark. wire3/wire6 are the earth conductors.
   const ew = healthy.energisedWires;
-  for (const w of ["adapter_socket_live", "adapter_supply_1", "adapter_supply_2",
-    "signal_relay", "relay_return", "grid_live", "pump_live", "grid_neutral",
-    "pump_neutral", "signal_1", "common_lead_1", "common_return"]) {
+  for (const w of ["wire7", "wire8", "wire9", "wire10", "wire11", "wire12",
+    "wire1", "wire2", "wire4", "wire5", "wire13", "wire17"]) {
     check(ew.has(w), `healthy all-on: ${w} carries current`);
   }
-  check(!ew.has("grid_earth") && !ew.has("pump_earth"), "earth wires never carry current");
+  check(!ew.has("wire3") && !ew.has("wire6"), "earth wires never carry current");
 
-  const z4only = solveElectrical(circuit, { zones: { 4: true } });
-  check(z4only.energisedWires.has("signal_4") && z4only.energisedWires.has("common_lead_4") &&
-    z4only.energisedWires.has("common_return"),
-    "zone 4 alone lights its signal, lead, and the shared return");
-  check(!z4only.energisedWires.has("common_chain_34") && !z4only.energisedWires.has("common_lead_1"),
-    "zone 4 returns through com_4 directly — upstream chain/lead wires stay dark");
-  check(!z4only.energisedWires.has("grid_live"),
-    "grid_live at potential behind the open relay contact stays dark");
+  // The common bus daisy-chains from the controller out to zone 4, so zone 4 alone returns
+  // through the entire chain while zone 1 returns through only the nearest segment.
+  const z4only = solveElectrical(model, { zones: { 4: true } });
+  check(z4only.energisedWires.has("wire16") &&
+    ["wire17", "wire18", "wire19", "wire20"].every((w) => z4only.energisedWires.has(w)),
+    "zone 4 alone lights its signal and the full shared-return chain");
+  check(!z4only.energisedWires.has("wire13") && !z4only.energisedWires.has("wire1"),
+    "...other zone signals and the pump loop stay dark");
 
-  const z1only = solveElectrical(circuit, { zones: { 1: true } });
-  check(["common_chain_12", "common_chain_23", "common_chain_34", "common_return"].every(
-    (w) => z1only.energisedWires.has(w)),
-    "zone 1's return current traverses the whole splice chain");
+  const z1only = solveElectrical(model, { zones: { 1: true } });
+  check(z1only.energisedWires.has("wire13") && z1only.energisedWires.has("wire17") &&
+    ["wire18", "wire19", "wire20"].every((w) => !z1only.energisedWires.has(w)),
+    "zone 1 returns through the nearest splice — the rest of the chain stays dark");
 
   // Plug toggles are commands, not faults.
-  const noAdapter = solveElectrical(circuit, { ...all, adapterPower: false });
+  const noAdapter = solveElectrical(model, { ...all, adapterPower: false });
   check(noAdapter.controllerPowered === false && noAdapter.pumpPowered === false &&
     noAdapter.energisedWires.size === 0,
     "adapter unplugged: controller dead, nothing energised");
-  const noGridPlug = solveElectrical(circuit, { ...all, gridPower: false });
+  const noGridPlug = solveElectrical(model, { ...all, gridPower: false });
   check(noGridPlug.pumpPowered === false && noGridPlug.relayCoil === true &&
     [1, 2, 3, 4].every((z) => noGridPlug.zoneEnergised[z]),
     "grid unplugged: pump dead, low-voltage side unaffected");
-  check(noGridPlug.energisedWires.has("signal_1") && !noGridPlug.energisedWires.has("grid_live"),
+  check(noGridPlug.energisedWires.has("wire13") && !noGridPlug.energisedWires.has("wire1"),
     "...zone wires lit, pump loop dark");
 }
 console.log("");
@@ -432,7 +440,8 @@ console.log("Case: M8 fault list + compiled effects");
     "Z3.head2.nozzle:misconfigured",
     "Z5.nozzle:clogged",
     "controller.zone_2:broken",
-    "splice.com_3:broken",
+    "splice3:broken",
+    "wire1:broken",
     "Z6.cap:broken",
   ]) {
     check(keys.has(k), `fault list includes ${k}`);
@@ -509,7 +518,7 @@ console.log("Case: M8 fault list + compiled effects");
   );
   const circ = compileFaults(model, { "controller.zone_2:broken": true });
   check(circ.elecBlocked.has("controller.zone_2"), "circuit fault becomes a blocked port");
-  const e2 = solveElectrical(circuit, { mv: true, zones: { 1: true, 2: true } }, circ.elecBlocked);
+  const e2 = solveElectrical(model, { mv: true, zones: { 1: true, 2: true } }, circ.elecBlocked);
   check(
     e2.zoneEnergised[2] === false && e2.zoneEnergised[1] === true,
     "...which drops exactly that zone",

@@ -39,19 +39,19 @@ export const cases = [
     state: { manualOpen: { "Z5.valve": true } },
   },
   {
-    name: "all zones commanded, broken shared common return",
+    name: "all zones commanded, broken shared common return (wire17)",
     kind: "electrical",
     commands: { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } },
     state: { manualOpen: {} },
-    blocked: new Set(["common_return"]),
+    blocked: new Set(["wire17"]),
     expect: { zonesOpen: [], zonesClosed: [1, 2, 3, 4], pump: true },
   },
   {
-    name: "all zones commanded, broken signal_2 wire",
+    name: "all zones commanded, broken zone-2 signal wire (wire14)",
     kind: "electrical",
     commands: { mv: true, zones: { 1: true, 2: true, 3: true, 4: true } },
     state: { manualOpen: {} },
-    blocked: new Set(["signal_2"]),
+    blocked: new Set(["wire14"]),
     expect: { zonesOpen: [1, 3, 4], zonesClosed: [2], pump: true },
   },
   // Mechanical inputs (flo-stop, flow-control screw) — these three reuse the pump+Z1

@@ -1,5 +1,5 @@
 export function roleOf(kind) {
-  if (kind === "water.level") return "reservoir";
+  if (kind === "water.level" || kind === "supply") return "reservoir";
   if (kind === "pump.well") return "pump";
   // valve.foot is a passive check valve, treated hydraulically as a junction.
   if (kind === "joint" || kind === "tee" || kind === "manifold" || kind === "valve.foot") return "junction";
@@ -25,6 +25,11 @@ const VALVE_LOSS_ALIAS = {
   "Hunter PGV-101G": "PGV-101G",
 };
 
+// `to:` is a list on 2-port nodes but a {port: target} map on fan-out nodes
+// (the manifold). Hydraulically only the target set matters, so flatten to a list.
+const toList = (to) =>
+  Array.isArray(to) ? to : to && typeof to === "object" ? Object.values(to) : [];
+
 export function buildModel(rawGraph, rawCatalog) {
   const kinds = rawGraph.kinds || {};
   const flow = rawGraph.flow || {};
@@ -49,7 +54,7 @@ export function buildModel(rawGraph, rawCatalog) {
       role,
       subkind: subkindOf(kind),
       elevation_m: node.h_m,
-      to: node.to || [],
+      to: toList(node.to),
       params,
     });
   }
