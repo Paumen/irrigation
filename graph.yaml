@@ -1,14 +1,7 @@
 
-# Single source of truth for the sim. Three sections:
-#   kinds   - component types. Leaf kinds are atomic; assembly kinds carry a `parts:`
-#             tree. In an assembly, a sub-node is EITHER a void (a fluid/electrical
-#             state - has no `fail:`) OR a part (solid, replaceable - carries `fail:`).
-#             A sub-assembly node is its own major component (carries its `fail:`/`acts:`)
-#             and nests the serviceable parts inside it. Cross-sub-assembly references
-#             use the dotted path; bus voids at the kind's top level are bare names.
-#   flow    - the hydraulic network (array `to:` edges, tree rooted at the well).
-#   circuit - the electrical network as { parts, wires }: parts are multi-terminal
-#             components with internal continuity; wires are the cables between ports.
+# In a parts tree, a node without `fail:` is a void (fluid/electrical state); a node
+# with `fail:` is a solid replaceable part. Cross-sub-assembly refs use the dotted path;
+# top-level bus voids are bare names.
 
 kinds:
 
@@ -16,8 +9,7 @@ kinds:
   splice:        {fail: [broken, misconfigured]}
   wire:          {fail: [broken]}
 
-  # fittings: passive plumbing connectors. joint/tee/cap are zero-length (junctions);
-  # the swing joints are short flexible risers (hydraulically pipes).
+  # joint/tee/cap are zero-length junctions; swing joints are hydraulically pipes.
   fitting.joint:       {max_pressure_bar: 10, k_minor: 0.1, fail: [broken, misconfigured]}
   fitting.tee:         {max_pressure_bar: 10, bends: 1, k_minor: 0.9, fail: [broken, misconfigured]}
   fitting.cap:         {max_pressure_bar: 10, fail: [broken]}
@@ -30,9 +22,6 @@ kinds:
   hose.suction:  {outer_diameter_mm: 30, wall_thickness_mm: 2.4, inner_diameter_mm: 25,   material: PVC spiral-reinforced, roughness_mm: 0.0015, hazen_williams_c: 150, max_pressure_bar: 4, fail: [broken, clogged]}
   nozzle.stream: {bore_mm: 10, cd: 0.97, discharge: open_hose_end, fail: [clogged, misconfigured]}
 
-  # The jet pump: a wet end (hydraulic_end) and a dry end (motor), siblings under one
-  # assembly. suction/outlet are the hydraulic bus voids. The single dry/wet coupling is
-  # motor -> hydraulic_end.impeller (the shaft spins the impeller).
   pump:
     in: suction
     out: outlet
@@ -60,9 +49,7 @@ kinds:
           n:                {fail: [broken, misconfigured]}
           pe:               {fail: [broken]}
 
-  # 20 L diaphragm pressure tank, tee'd off the discharge. water_side/air_charge are
-  # voids (states); only shell:broken is visible to a steady-state solve (a leak) -
-  # bladder/pre_charge faults are cycling effects.
+  # Only shell:broken is visible to a steady-state solve; bladder/pre_charge are cycling effects.
   tank:
     model: 20 L diaphragm tank
     parts:
@@ -146,10 +133,7 @@ kinds:
       neutral:  {fail: [broken, misconfigured]}
       earth:    {fail: [broken]}
 
-  # The automatic valve. inlet/chamber/sol_port/outlet are the hydraulic bus voids; the
-  # solid parts (body, diaphragm, bonnet, solenoid) bound and act on them. The solenoid
-  # is the pilot cartridge - its own subsystem, with its electrical leads reached from
-  # the circuit as Z*.valve.solenoid.lead_1 / .lead_2.
+  # Solenoid leads are reached from the circuit as Z*.valve.solenoid.lead_1 / .lead_2.
   valve.auto:
     in: inlet
     out: outlet
@@ -339,11 +323,7 @@ flow:
 
   Z6.cap:    {kind: fitting.cap, h_m: 11.2}
 
-# Electrical network. parts = multi-terminal components (internal continuity via each
-# port's `to:`); wires = named cables between ports (`from`/`to`). The four zone
-# solenoids live inside their valves (flow side) and are reached here as
-# Z*.valve.solenoid.lead_1 (feed) / .lead_2 (common return). The pump motor likewise is
-# pump.motor.{l,n,pe}. `acts:` is control coupling, never galvanic - never a wire.
+# `acts:` is control coupling, never galvanic - never a wire.
 circuit:
   parts:
     grid_socket:    {kind: socket.earthed}
@@ -351,7 +331,6 @@ circuit:
     adapter:        {kind: adapter}
     controller:     {kind: controller}
     relay:          {kind: relay}
-    # common-return terminal block: one tap per zone, bridged only by the chain wires
     splice:
       com_1: {fail: [broken]}
       com_2: {fail: [broken]}
