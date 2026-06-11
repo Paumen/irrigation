@@ -16,7 +16,7 @@ kinds:
   cap:           {max_pressure_bar: 10, fail: [broken]}
   nozzle.stream: {bore_mm: 10, cd: 0.97, discharge: open_hose_end, fail: [clogged, misconfigured]}
 
-  pump.well:
+  pump.body:
     in: suction
     out: outlet
     model: AQUAJET 132 M
@@ -28,28 +28,14 @@ kinds:
       mech_seal:   {to: [], acts: [impeller], fail: [broken]}
       priming_cap: {to: [], acts: [suction], fail: [broken, misconfigured]}
       outlet:      {}
-
-  motor.pump:
-    model: AQUAJET 132 M motor unit
-    parts:
-      l:         {to: [winding], fail: [broken, misconfigured]}
-      winding:   {to: [n], fail: [broken]}
-      capacitor: {acts: [winding], fail: [broken]}
-      n:         {fail: [broken, misconfigured]}
-      pe:        {fail: [broken]}
-
-  solenoid:
-    in: entry
-    out: exhaust
-    model: Hunter 458200 (24 VAC)
-    parts:
-      entry:   {medium: water, to: [plunger], fail: [clogged]}
-      plunger: {medium: water, to: [exhaust], fail: [broken, clogged]}
-      exhaust: {medium: water, fail: [clogged]}
-      lead_1:  {medium: conductor, to: [coil], fail: [broken]}
-      coil:    {medium: conductor, ohm: [20, 60], to: [lead_2], acts: [plunger], fail: [broken]}
-      lead_2:  {medium: conductor, fail: [broken]}
-
+      motor: 
+        parts:
+            l:         {to: [winding], fail: [broken, misconfigured]}
+            winding:   {to: [n], fail: [broken]}
+            capacitor: {acts: [winding], fail: [broken]}
+            n:         {fail: [broken, misconfigured]}
+            pe:        {fail: [broken]}
+  
   manifold:
     in: inlet
     out: [out_1, out_2, out_3, out_4, out_5, out_6]
@@ -146,7 +132,18 @@ kinds:
       body:            {to: [], acts: [seat], fail: [broken]}
       outlet_nut:      {to: [], fail: [broken, misconfigured]}
       outlet:          {}
-
+      solenoid:
+        in: entry
+        out: exhaust
+        model: Hunter 458200 (24 VAC)
+        parts:
+          entry:   {to: [plunger], fail: [clogged]}
+          plunger: {to: [exhaust], fail: [broken, clogged]}
+          exhaust: {fail: [clogged]}
+          lead_1:  {to: [coil], fail: [broken]}
+          coil:    {ohm: [20, 60], to: [lead_2], acts: [plunger], fail: [broken]}
+          lead_2:  {fail: [broken]}
+          
   valve.foot:
     in: strainer
     out: outlet
