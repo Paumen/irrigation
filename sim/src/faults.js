@@ -64,21 +64,17 @@ export function listFaults(model) {
 
   const circuit = model.circuit || {};
   for (const [partName, part] of Object.entries(circuit.parts || {})) {
-    if (part && part.kind) {
-      // a circuit component defined by a kind: expand that kind's parts
-      walkParts(model.kinds[part.kind]?.parts, "", (sub, def) => {
-        for (const t of def.fail || []) {
-          push({ key: `${partName}.${sub}:${t}`, target: partName, sub, type: t, side: "circuit" });
-        }
-      });
-    } else if (part && typeof part === "object") {
-      // inline terminal block (the common-return splice)
-      walkParts(part, "", (sub, def) => {
-        for (const t of def.fail || []) {
-          push({ key: `${partName}.${sub}:${t}`, target: partName, sub, type: t, side: "circuit" });
-        }
-      });
+    // a kind-backed component expands its kind's parts; an inline block (the
+    // common-return splice) is its own parts map.
+    const partsDef = part && part.kind ? model.kinds[part.kind]?.parts : part;
+    if (!partsDef || typeof partsDef !== "object") {
+      throw new Error(`faults: circuit part "${partName}" has no resolvable parts`);
     }
+    walkParts(partsDef, "", (sub, def) => {
+      for (const t of def.fail || []) {
+        push({ key: `${partName}.${sub}:${t}`, target: partName, sub, type: t, side: "circuit" });
+      }
+    });
   }
   // each named cable is its own open-circuit fault, blocked by wire name
   for (const wireName of Object.keys(circuit.wires || {})) {
@@ -172,7 +168,7 @@ function groupOf(node, sub) {
   if (node.role === "pump") {
     // venturi/impeller/diffuser all sit on the pumped path; a clog weakens the head curve
     if (["venturi", "impeller", "diffuser"].includes(leaf)) return "pumpPath";
-    if (sub === "motor" || ["winding", "capacitor", "thermal_protector", "l", "n"].includes(leaf)) {
+    if (["motor", "winding", "capacitor", "thermal_protector", "l", "n"].includes(leaf)) {
       return "pumpPower";
     }
     if (leaf === "mech_seal") return "shellSeal";

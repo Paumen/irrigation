@@ -39,12 +39,12 @@ kinds:
     model: AQUAJET 132 M
     max_output_bar: 4.7
     parts:
-      suction:  {to: [hydraulic_end.venturi, hydraulic_end.impeller]}
+      suction:  {to: [hydraulic_end.venturi]}
       outlet:   {}
       hydraulic_end:
         fail: [broken]
         parts:
-          venturi:     {to: [suction], fail: [clogged]}
+          venturi:     {to: [impeller], fail: [clogged]}
           impeller:    {to: [diffuser], fail: [broken, clogged]}
           diffuser:    {to: [outlet], fail: [broken, clogged]}
           mech_seal:   {acts: [impeller], fail: [broken]}
