@@ -28,7 +28,7 @@ cable_runs:
   controller_to_valve_box: 10
   controller_to_relay: 10
 equipment:
-  pump.well:
+  pump.jet:
     installed: 2023-06
     location: well
     price_eur: 350
@@ -40,15 +40,15 @@ equipment:
     installed: 2023-06   # assumed fitted with the pump; owner identified the type (IrriTech 1" spiral, 25 mm bore) 2026-06
     location: well
     price_eu_m: 4
-  hose:
+  hose:                  # blended LDPE poly run — graph.yaml hose.ldpe16/ldpe25/ldpe32
     installed: 2020-08
     location: in_ground
     price_eu_m: 2
-  swing:
+  swing:                 # swing joints — graph.yaml fitting.sj34x12/sj34x34
     installed: 2020-08
     location: in_ground
     price_eur: 5
-  manifold:
+  fitting.manifold:
     installed: 2020-08
     location: valve_box
     price_eur: 150
@@ -56,21 +56,21 @@ equipment:
     installed: 2020-08
     location: valve_box
     price_eur: 25
-  head.rotor:
+  emitter.rotor:
     installed: 2020-08
     location: in_ground
     price_eur: 25
     inlet: 3/4"
-  head.spray:
+  emitter.spray:
     installed: 2020-08
     location: in_ground
     price_eur: 25
     inlet: 1/2"
-  controller:
+  control.controller:
     installed: 2020-08
     location: house
     price_eur: 200
-  relay:
+  relay.pumpstart:
     installed: 2020-08
     location: shed
     price_eur: 100
