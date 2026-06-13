@@ -96,7 +96,6 @@ components:
     k: 1.5
     model: "LEV 6-way distributor"
     material: "hard plastic"
-    connection: '1" swivel nut female thread'
     inlet_conn:  {size: '1"', gender: F, type: swivel-union, sealant: flat-washer}
     outlet_conn:  {size: '1"', gender: F, type: swivel-union, sealant: flat-washer}
     parts:
@@ -214,8 +213,8 @@ components:
   hose.ldpe16: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 16, wall_mm: 3, inner_diameter_mm: 10, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "16 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "16 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}}
   hose.ldpe25: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 25, wall_mm: 2.7, inner_diameter_mm: 19.6, max_bar: 6, fail: [broken, clogged], inlet_conn: {size: "25 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "25 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}}
   hose.ldpe32: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 32, wall_mm: 3, inner_diameter_mm: 26, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "32 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "32 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.suction: {ports: [inlet, outlet], outer_diameter_mm: 25, wall_mm: 1.0, inner_diameter_mm: 24, material: "PVC spiral-reinforced", roughness_mm: 0.0015, hz_c: 150, max_bar: 5, fail: [broken, clogged, misconfigured], inlet_conn: {size: "25 mm barb", gender: slip, type: hose-over-barb, sealant: hose-clamp}, outlet_conn: {size: "25 mm barb", gender: slip, type: hose-over-barb, sealant: hose-clamp}}
-  hose.metal: {ports: [inlet, outlet], material: "stainless steel braided flex", roughness_mm: 0.015, hz_c: 130, outer_diameter_mm: 32, wall_mm: 1.5, inner_diameter_mm: 25, max_bar: 10, fail: [broken, clogged], inlet_conn: {size: '1"', gender: swivel-F, type: swivel-union, sealant: flat-washer}, outlet_conn: {size: '1"', gender: swivel-F, type: swivel-union, sealant: flat-washer}}
+  hose.suction: {ports: [inlet, outlet], outer_diameter_mm: 25, wall_mm: 0.5, inner_diameter_mm: 24, material: "PVC spiral-reinforced", roughness_mm: 0.0015, hz_c: 150, max_bar: 5, fail: [broken, clogged, misconfigured], inlet_conn: {size: "25 mm barb", gender: slip, type: hose-over-barb, sealant: hose-clamp}, outlet_conn: {size: "25 mm barb", gender: slip, type: hose-over-barb, sealant: hose-clamp}}
+  hose.metal: {ports: [inlet, outlet], material: "stainless steel braided flex", roughness_mm: 0.015, hz_c: 130, outer_diameter_mm: 32, wall_mm: 3.5, inner_diameter_mm: 25, max_bar: 10, fail: [broken, clogged], inlet_conn: {size: '1"', gender: swivel-F, type: swivel-union, sealant: flat-washer}, outlet_conn: {size: '1"', gender: swivel-F, type: swivel-union, sealant: flat-washer}}
 
   pump.jet:
     ports: [suction, outlet, inlet_tank, motor/line, motor/neutral, motor/earth]
@@ -224,7 +223,7 @@ components:
     max_outlet_bar: 4.7
     parts:
       suction: {to: [body/venturi], conn: {size: '1"', gender: F, type: BSP, sealant: teflon}}
-      inlet_tank: {to: [outlet], conn: {size: '1"', gender: F, type: BSP, sealant: teflon}}
+      inlet_tank: {to: [outlet], conn: {size: '1"', gender: M, type: BSP, sealant: flat-washer}}
       outlet: {conn: {size: '1"', gender: F, type: BSP, sealant: teflon}}
       body:
         fail: [broken]
@@ -348,6 +347,7 @@ components:
 
   valve.manual:
     ports: [inlet, outlet]
+    max_bar: 10
     Kv: 6.0
     inlet_conn:  {size: '1/2"', gender: F, type: BSP, sealant: teflon}
     outlet_conn: {size: '1/2"', gender: F, type: BSP, sealant: teflon}
