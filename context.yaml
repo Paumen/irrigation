@@ -35,7 +35,7 @@ equipment:
   valve.foot:
     installed: 2026-06   # bought June 2026; owner has not yet confirmed it is mounted
     location: well
-    price_eur: 18.50
+    price_eur: 20
   hose.suction:
     installed: 2023-06   # assumed fitted with the pump; owner identified the type (IrriTech 1" spiral, 25 mm bore) 2026-06
     location: well
