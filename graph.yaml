@@ -197,7 +197,7 @@ components:
 
   fitting.hosetail_plastic:
     ports: [inlet, outlet]
-    material: "PP (polypropylene)"
+    material: PP
     max_bar: 6
     k: 0.9
     note: "hose tail: suction hose -> pump suction (suction side, must be air-tight)"
@@ -210,11 +210,11 @@ components:
       body: {fail: [broken]}
       outlet: {}
 
-  hose.ldpe16: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 16, wall_mm: 3, inner_diameter_mm: 10, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "∅16", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅16", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.ldpe25: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 25, wall_mm: 2.7, inner_diameter_mm: 19.6, max_bar: 6, fail: [broken, clogged], inlet_conn: {size: "∅25", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅25", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.ldpe32: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 32, wall_mm: 3, inner_diameter_mm: 26, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "∅32", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅32", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.suction: {ports: [inlet, outlet], outer_diameter_mm: 25, wall_mm: 0.5, inner_diameter_mm: 24, material: "PVC spiral-reinforced", roughness_mm: 0.0015, hz_c: 150, max_bar: 5, fail: [broken, clogged, misconfigured], inlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}, outlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}}
-  hose.metal: {ports: [inlet, outlet], material: "stainless steel braided flex", roughness_mm: 0.015, hz_c: 130, outer_diameter_mm: 32, wall_mm: 3.5, inner_diameter_mm: 25, max_bar: 10, fail: [broken, clogged], inlet_conn: {size: G1, gender: swivel-F, type: swivel-union, sealant: flat-washer}, outlet_conn: {size: G1, gender: swivel-F, type: swivel-union, sealant: flat-washer}}
+  hose.ldpe16: {ports: [inlet, outlet], material: LDPE, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 16, wall_mm: 3, inner_diameter_mm: 10, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "∅16", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅16", gender: slip, type: compression-insert, sealant: compression-ring}}
+  hose.ldpe25: {ports: [inlet, outlet], material: LDPE, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 25, wall_mm: 2.7, inner_diameter_mm: 19.6, max_bar: 6, fail: [broken, clogged], inlet_conn: {size: "∅25", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅25", gender: slip, type: compression-insert, sealant: compression-ring}}
+  hose.ldpe32: {ports: [inlet, outlet], material: LDPE, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 32, wall_mm: 3, inner_diameter_mm: 26, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "∅32", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅32", gender: slip, type: compression-insert, sealant: compression-ring}}
+  hose.suction: {ports: [inlet, outlet], outer_diameter_mm: 25, wall_mm: 0.5, inner_diameter_mm: 24, material: PVC, roughness_mm: 0.0015, hz_c: 150, max_bar: 5, fail: [broken, clogged, misconfigured], inlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}, outlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}}
+  hose.metal: {ports: [inlet, outlet], material: "stainless steel", roughness_mm: 0.015, hz_c: 130, outer_diameter_mm: 32, wall_mm: 3.5, inner_diameter_mm: 25, max_bar: 10, fail: [broken, clogged], inlet_conn: {size: G1, gender: swivel-F, type: swivel-union, sealant: flat-washer}, outlet_conn: {size: G1, gender: swivel-F, type: swivel-union, sealant: flat-washer}}
 
   pump.jet:
     ports: [suction, outlet, inlet_tank, motor/line, motor/neutral, motor/earth]
