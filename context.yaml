@@ -31,20 +31,20 @@ equipment:
   pump.jet:
     installed: 2023-06
     location: well
-    price_eur: 350                # bundle: tank + braided connector are parts of pump.jet in graph.yaml
+    price_eur: 350
   valve.foot:
-    installed: 2026-06   # bought June 2026; owner has not yet confirmed it is mounted
+    installed: 2026-06
     location: well
     price_eur: 20
   hose.suction:
-    installed: 2023-06   # assumed fitted with the pump; owner identified the type (IrriTech 1" spiral, 25 mm bore) 2026-06
+    installed: 2023-06
     location: well
     price_eu_m: 4
-  hose:                  # blended LDPE poly run — graph.yaml hose.ldpe16/ldpe25/ldpe32
+  hose:
     installed: 2020-08
     location: in_ground
     price_eu_m: 2
-  swing:                 # swing joints — graph.yaml fitting.sj34x12/sj34x34
+  swing:
     installed: 2020-08
     location: in_ground
     price_eur: 5
@@ -69,18 +69,16 @@ equipment:
   control.controller:
     installed: 2020-08
     location: house
-    price_eur: 200               # bundle: 24 VAC transformer is a part of control.controller in graph.yaml
+    price_eur: 200
   relay.pumpstart:
     installed: 2020-08
     location: shed
     price_eur: 100
-  # ── rough guesstimates (EUR) for the remaining graph.yaml kinds: connective
-  #    hardware, source nodes and wiring. Order-of-magnitude only, not quotes.
-  source.well:                 # the well shaft itself — no purchased-equipment cost
+  source.well:
     installed: 2020-08
     location: well
     price_eur: 0
-  fitting.strainer_basket:     # submerged foot strainer, with the foot valve
+  fitting.strainer_basket:
     installed: 2026-06
     location: well
     price_eur: 10
@@ -92,62 +90,37 @@ equipment:
     installed: 2023-06
     location: well
     price_eur: 3
-  # couplings take the fitting.coupling default price (see price_defaults below)
-  fitting.coupling_c32c32:
-    installed: 2020-08
-    location: well
-  fitting.coupling_bm1c32:
-    installed: 2020-08
-    location: well
-  fitting.coupling_c32sm1:     # brass
-    installed: 2020-08
-    location: valve_box
-  fitting.coupling_sm1bm1:     # brass, manifold outlet → zone valve
-    installed: 2020-08
-    location: valve_box
-  fitting.coupling_bm1c25:     # zone valve → poly run
-    installed: 2020-08
-    location: valve_box
-  fitting.coupling_c25bf34:    # poly run → swing joint at the heads
-    installed: 2020-08
-    location: in_ground
-  fitting.coupling_sm1c16:     # brass, manifold outlet → 16 mm manual line
-    installed: 2020-08
-    location: valve_box
-  fitting.coupling_c16c16:
-    installed: 2020-08
-    location: in_ground
   fitting.tee:
     installed: 2020-08
     location: in_ground
     price_eur: 5
-  fitting.cap:                 # capped spare manifold outlet
+  fitting.cap:
     installed: 2020-08
     location: valve_box
     price_eur: 2
-  valve.manual:                # hand valve on the Z5/Z1 manual line
+  valve.manual:
     installed: 2020-08
     location: in_ground
     price_eur: 5
-  emitter.stream:              # open stream/bubbler nozzle on the manual line
+  emitter.stream:
     installed: 2020-08
     location: in_ground
     price_eur: 5
-  source.socket:               # existing mains wall socket (per outlet)
+  source.socket:
     installed: 2020-08
     location: house
     price_eur: 5
-  wiring.230v:                 # mains cable, pump-start chain
+  wiring.230v:
     installed: 2020-08
     location: shed
     price_eu_m: 2
-  wiring.24v:                  # multicore solenoid cable, controller → valves
+  wiring.24v:
     installed: 2020-08
     location: in_ground
     price_eu_m: 1.5
-  wiring.splice:               # waterproof gel-filled connector (per splice)
+  wiring.splice:
     installed: 2020-08
     location: valve_box
     price_eur: 1
-price_defaults:                # EUR fallback by kind, used where an equipment entry omits its price
-  fitting.coupling: 5          # any coupling variant (fitting.coupling_*)
+price_defaults:
+  fitting.coupling: 5
