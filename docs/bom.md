@@ -1,9 +1,13 @@
 # Irrigation system — Bill of Materials
 
-Human-readable rendering of `graph.yaml`. This tree and `graph.yaml` are kept
-in lock-step: every physical part here has a counterpart in `graph.yaml`'s
-`components` tree, and vice-versa. `graph.yaml` remains the single source of
-truth — if the two ever disagree, fix `graph.yaml` first, then re-render here.
+Physical-items view of the system. `graph.yaml` is the source of truth, but it
+is a hydraulic + electrical **flow graph**, not a BOM: it also carries nodes
+that are not physical items — ports (`inlet`, `outlet`, `sol_port`), internal
+flow passages (`entry`, `exhaust`, `metering_port`), and conceptual zones. This
+document lists only the physical parts, so the mapping is one-way: every item
+here corresponds to a part in `graph.yaml`, but not every `graph.yaml` node is a
+BOM item. Flow-feature notes are shown in `[ … ]` and are not counted as parts.
+If the two disagree on a physical part, fix `graph.yaml` first, then re-render.
 
 Legend: 💧 wetted / hydraulic · 🌐 230 V mains · 💡 24 V control ·
 `[ … ]` = functional note / flow feature (not a discrete part).
