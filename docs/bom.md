@@ -10,12 +10,13 @@ electrical, but it is a **flow graph**, not a BOM, so the two deliberately do
 - This BOM adds presentational grouping nodes (e.g. `Wet end`, `Pipework`,
   `Terminal block`, the riser bundles, `Diaphragm assembly`) that have no single
   graph part.
-- This BOM also lists non-functional structure the flow graph omits entirely —
-  the valve **Box housing / Enclosure / Lid** (priced via `context.yaml`'s
-  `box_housing`), which has **no** `graph.yaml` counterpart.
+- Non-functional structure (the valve **Box housing / Enclosure / Lid**) is
+  modeled in graph.yaml as `enclosure.valvebox` — a structural component with no
+  water/electrical routing — and priced via `context.yaml`'s `enclosure.valvebox`.
 
-Every hydraulic/electrical part in graph.yaml does appear here (directly or as a
-bracketed note); fix graph.yaml first for those, then re-render.
+Every part in graph.yaml appears here (directly or as a bracketed note), and
+every physical BOM item maps to a graph component; fix graph.yaml first, then
+re-render.
 
 Legend: 💧 wetted / hydraulic · 🌐 230 V mains · 💡 24 V control ·
 `[ … ]` = functional note / flow feature (not a discrete part).
@@ -117,7 +118,7 @@ IRRIGATION SYSTEM
 │
 ├─ 2. DISTRIBUTE ASSY   (manifold + supply line + harness; zone valves under their zones)
 │   ├─ Supply line — Hose LDPE ∅32, 20 m 💧
-│   ├─ Box housing
+│   ├─ Box housing — valve box XL              [enclosure.valvebox — structural, no flow]
 │   │   ├─ Enclosure
 │   │   └─ Lid
 │   ├─ Manifold assembly 💧

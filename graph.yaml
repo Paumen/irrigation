@@ -1,5 +1,6 @@
 category:
   emitter: {requires_one: [nozzle, bore_mm]}
+  enclosure: {}
   fitting: {loss: k, requires: [k, max_bar], optional: [bends, bore_mm]}
   hose: {loss: hz, requires: [inner_diameter_mm, hz_c, max_bar], instance_requires: [l_m]}
   pump: {requires: [max_outlet_bar]}
@@ -90,6 +91,14 @@ components:
     material: plastic
     fail: [clogged, misconfigured]
     inlet_conn: {size: G1/2, gender: F, type: BSP, thread: parallel, sealant: teflon}
+
+  enclosure.valvebox:
+    model: "valve box XL"
+    material: plastic
+    note: "structural; houses the manifold + zone valves; no flow/electrical role"
+    parts:
+      enclosure: {fail: [broken]}
+      lid: {fail: [broken, misconfigured]}
 
   fitting.cap:
     ports: [inlet]
