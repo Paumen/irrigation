@@ -54,15 +54,15 @@ components:
         fail: [broken]
         material: plastic
         parts:
-          check_valve: {fail: [broken]}
+          check_valve: {fail: [broken], note: "drain-check — stops low-head puddling"}
           riser: {to: [body/filter], material: stainless steel}
           riser_seal: {seal: [body/riser], criticality: high, fail: [broken], material: rubber}
           retract_spring: {drive: [body/riser], fail: [broken], material: stainless steel}
-          gear: {drive: [body/riser], fail: [broken, clogged], material: plastic}
-          filter: {to: [body/nozzle], fail: [clogged]}
-          nozzle: {fail: [clogged, misconfigured], material: plastic}
-          arc: {condition: [body/nozzle], fail: [misconfigured]}
-          flo_stop: {fail: [misconfigured]}
+          gear: {drive: [body/riser], fail: [broken, clogged], material: plastic, note: "water-driven gear train → rotation"}
+          filter: {to: [body/nozzle], fail: [clogged], note: "inlet debris screen"}
+          nozzle: {fail: [clogged, misconfigured], material: plastic, note: "orifice — sets radius / flow"}
+          arc: {condition: [body/nozzle], fail: [misconfigured], note: "sets the sweep arc"}
+          flo_stop: {fail: [misconfigured], note: "pull-up shut-off for servicing"}
 
   emitter.spray:
     ports: [inlet_thread]
@@ -76,13 +76,13 @@ components:
         material: plastic
         parts:
           cap: {fail: [broken]}
-          check_valve: {fail: [broken]}
-          regulator: {to: [body/riser], fail: [broken]}
+          check_valve: {fail: [broken], note: "drain-check — stops low-head puddling"}
+          regulator: {to: [body/riser], fail: [broken], note: "PRS — regulates outlet to ~40 psi / 2.8 bar"}
           riser: {to: [body/nozzle]}
           wiper_seal: {seal: [body/riser], criticality: high, fail: [broken], material: rubber}
           retract_spring: {drive: [body/riser], fail: [broken], material: stainless steel}
           flush_plug: {seal: [body/nozzle], fail: [misconfigured]}
-          nozzle: {fail: [clogged, misconfigured], material: plastic}
+          nozzle: {fail: [clogged, misconfigured], material: plastic, note: "orifice — sets radius / flow"}
 
   emitter.stream:
     ports: [inlet]
@@ -261,6 +261,7 @@ components:
       outlet_5_washer: {seal: [outlet_5], fail: [broken, misconfigured], material: rubber}
       outlet_6_washer: {seal: [outlet_6], fail: [broken, misconfigured], material: rubber}
       body: {fail: [broken]}
+      distribution_gallery: {feature: true, note: "common header feeding all six outlets"}
       outlet_1: {}
       outlet_2: {}
       outlet_3: {}
@@ -439,21 +440,25 @@ components:
         volume_l: 20
         criticality: high
         parts:
-          air_charge: {drive: [tank/bladder]}
           shell: {fail: [broken], material: steel}
-          bladder: {drive: [tank/air_charge], criticality: high, fail: [broken], material: rubber}
-          pre_charge: {fail: [broken, misconfigured]}
+          bladder: {drive: [tank/air_charge], criticality: high, fail: [broken], material: rubber, note: "separates pre-charge air from water"}
+          pre_charge: {fail: [broken, misconfigured], note: "Schrader — sets pre-charge pressure"}
+          air_charge: {drive: [tank/bladder], feature: true, note: "air pre-charge cushion above the bladder"}
+          draw_down: {feature: true, note: "water stored between pump cut-in / cut-out"}
       body:
         fail: [broken]
         material: plastic
         parts:
-          venturi: {to: [body/impeller], fail: [clogged]}
-          impeller: {to: [body/diffuser], fail: [broken, clogged], material: plastic}
-          diffuser: {to: [outlet], fail: [broken, clogged], material: plastic}
-          mech_seal: {seal: [body/impeller], criticality: high, fail: [broken], material: ceramic}
+          venturi: {to: [body/impeller], fail: [clogged], note: "jet nozzle — drives suction"}
+          impeller: {to: [body/diffuser], fail: [broken, clogged], material: plastic, note: "adds head"}
+          diffuser: {to: [outlet], fail: [broken, clogged], material: plastic, note: "velocity → pressure recovery"}
+          mech_seal: {seal: [body/impeller], criticality: high, fail: [broken], material: ceramic, note: "shaft seal — water/air boundary"}
+          body_oring: {seal: [body], fail: [broken, misconfigured], material: rubber, note: "casing joint seal"}
           priming_cap: {seal: [suction], fail: [broken, misconfigured]}
-          body_oring: {seal: [body], fail: [broken, misconfigured], material: rubber}
           priming_cap_oring: {seal: [body/priming_cap], fail: [broken, misconfigured], material: rubber}
+          venturi_throat: {feature: true, note: "low-pressure suction zone"}
+          recirculation_passage: {feature: true, note: "diffuser → venturi nozzle (self-prime loop)"}
+          priming_chamber: {feature: true, note: "fill volume held in by the foot valve"}
       motor:
         drive: [body/impeller]
         fail: [broken]
@@ -494,6 +499,7 @@ components:
     min_bar: 1.5
     Kv: 6.0
     model: "Hunter PGV-101G"
+    note: "energizing the coil (or opening the bleed screw) vents the control chamber downstream faster than the metering port refills it, so inlet pressure lifts the diaphragm off the seat and the zone flows"
     inlet_conn:  {size: G1, gender: F, type: BSP, thread: parallel, sealant: teflon}
     outlet_conn: {size: G1, gender: F, type: BSP, thread: parallel, sealant: teflon}
     parts:
@@ -504,9 +510,11 @@ components:
         fail: [broken]
         material: plastic
         parts:
-          seat: {to: [outlet], fail: [broken, clogged]}
+          seat: {to: [outlet], fail: [broken, clogged], note: "diaphragm seals here when closed"}
           inlet_thread: {fail: [broken, misconfigured]}
           outlet_nut: {fail: [broken, misconfigured]}
+          inlet_chamber: {feature: true, note: "upstream of seat, at line pressure"}
+          outlet_chamber: {feature: true, note: "downstream of seat, to the zone"}
       diaphragm:
         to: [body/seat]
         criticality: high
@@ -514,13 +522,13 @@ components:
         material: rubber
         parts:
           spring: {drive: [diaphragm], fail: [broken], material: stainless steel}
-          metering_port: {to: [bonnet/chamber], fail: [clogged]}
+          metering_port: {to: [bonnet/chamber], fail: [clogged], feature: true, note: "bleed orifice: inlet → control chamber"}
       bonnet:
         criticality: high
         fail: [broken, misconfigured]
         material: plastic
         parts:
-          chamber: {to: [sol_port, bonnet/bleed_screw], drive: [diaphragm]}
+          chamber: {to: [sol_port, bonnet/bleed_screw], drive: [diaphragm], feature: true, note: "volume above diaphragm; pressure here holds it shut"}
           bleed_screw: {fail: [broken, misconfigured]}
           flow_control: {condition: [diaphragm], fail: [broken, misconfigured]}
           bonnet_cap: {fail: [broken]}
@@ -528,9 +536,10 @@ components:
       solenoid:
         model: "Hunter 458200 (24 VAC)"
         parts:
-          entry: {to: [solenoid/plunger], fail: [clogged]}
+          entry: {to: [solenoid/plunger], fail: [clogged], feature: true, note: "control chamber → solenoid"}
           plunger: {to: [solenoid/exhaust], fail: [broken, clogged], material: stainless steel}
-          exhaust: {to: [outlet], fail: [clogged]}
+          exhaust: {to: [outlet], fail: [clogged], feature: true, note: "solenoid → valve outlet"}
+          pilot_seat: {feature: true, note: "plunger seals it when de-energized"}
           24v_1: {to: [solenoid/coil], fail: [broken]}
           coil: {ohm: [20, 60], to: [solenoid/24v_2], drive: [solenoid/plunger], fail: [broken], material: copper}
           24v_2: {fail: [broken]}
@@ -546,9 +555,9 @@ components:
     parts:
       inlet: {to: [disc]}
       body: {fail: [broken]}
-      disc: {to: [outlet], fail: [broken, clogged]}
+      disc: {to: [outlet], fail: [broken, clogged], note: "check disc — seals on reverse flow"}
       spring: {drive: [disc], fail: [broken]}
-      seat_seal: {seal: [disc], fail: [broken], material: rubber}
+      seat_seal: {seal: [disc], fail: [broken], material: rubber, note: "sealing face when pump is off"}
       outlet: {}
 
   valve.manual:
@@ -564,12 +573,13 @@ components:
       body:
         fail: [broken]
         parts:
-          seat: {to: [outlet], fail: [broken, clogged]}
-          ball: {drive: [body/seat], fail: [broken, misconfigured]}
+          seat: {to: [outlet], fail: [broken, clogged], note: "bore seat"}
+          ball: {drive: [body/seat], fail: [broken, misconfigured], note: "bore — open / closed"}
           stem: {drive: [body/ball], fail: [broken]}
           stem_oring: {seal: [body/stem], fail: [broken, misconfigured], material: rubber}
           handle: {drive: [body/stem], fail: [misconfigured]}
           inlet_thread: {fail: [broken, misconfigured]}
+          through_bore: {feature: true, note: "flow path when open"}
 
   wiring.splice: {ports: [inlet, outlet_1, outlet_2], fail: [broken, misconfigured]}
   wiring.230v:
