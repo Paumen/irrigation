@@ -795,3 +795,38 @@ electrical:
   V1_wiring.24v_3: {to: [V1_wiring.splice_4]}
   V1_wiring.splice_4: {to: {outlet_1: [V1_wiring.24v_4]}}
   V1_wiring.24v_4: {to: [H1_control.controller/common_2]}
+
+# Level-3 BOM sub-assemblies: named bundles that group instances *across* the
+# W1_/S1_/V1_/Z*/P1_ prefixes, so they cannot be inferred from prefixes or flow.
+# Sections (supply/distribute/deliver/orchestrate) and zones (Z#) stay
+# renderer-derived; standalone components (pump, controller, …) are placed
+# directly under their section. Consumed by tools/render_bom.py.
+assemblies:
+  suction_assembly:
+    title: "Suction assembly"
+    section: supply
+    members:
+      - title: "Foot-valve assembly"
+        members: [W1_valve.foot, W1_fitting.strainer_basket, W1_fitting.hosetail_brass]
+      - W1_hose.suction
+      - W1_fitting.hosetail_plastic
+  pump_discharge:
+    title: "Pump discharge"
+    section: supply
+    members: [W1_fitting.coupling_bm1c32, W1_hose.ldpe32, W1_fitting.coupling_c32c32]
+  pump_power_assembly:
+    title: "Pump power assembly"
+    section: supply
+    members: [S1_relay.pumpstart, S1_source.socket, W1_source.socket, S1_wiring.230v_1, S1_wiring.230v_2, S1_wiring.24v_1, S1_wiring.24v_2]
+  manifold_assembly:
+    title: "Manifold assembly"
+    section: distribute
+    members: [V1_fitting.manifold, V1_fitting.coupling_c32sm1, Z6_fitting.cap]
+  solenoid_wiring:
+    title: "Solenoid wiring"
+    section: distribute
+    members: [V1_wiring.splice_1, V1_wiring.splice_2, V1_wiring.splice_3, V1_wiring.splice_4, Z2_wiring.splice, Z3_wiring.splice, Z4_wiring.splice, Z5_wiring.splice, V1_wiring.24v_1, V1_wiring.24v_2, V1_wiring.24v_3]
+  zone_valve_cable:
+    title: "Zone valve cable assembly (controller → valve box, in conduit)"
+    section: orchestrate
+    members: [P1_wiring.24v_1, P1_wiring.24v_2, P1_wiring.24v_4, P1_wiring.24v_3, V1_wiring.24v_4]
