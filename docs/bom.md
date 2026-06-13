@@ -16,28 +16,27 @@ Legend: 💧 wetted / hydraulic · 🌐 230 V mains · 💡 24 V control ·
 IRRIGATION SYSTEM
 ├─ 1. WELL ASSEMBLY
 │   ├─ Well water source 💧                 [aquifer — source.well]
-│   ├─ Pump assembly
-│   │   ├─ Jet pump — DAB AQUAJET 132 M
-│   │   │   ├─ Wet end 💧
-│   │   │   │   ├─ Pump body 💧             [volute / suction chamber]
-│   │   │   │   ├─ Venturi nozzle 💧         [jet nozzle — drives suction]
-│   │   │   │   ├─ Impeller 💧               [adds head]
-│   │   │   │   ├─ Diffuser 💧               [velocity → pressure recovery]
-│   │   │   │   ├─ Mechanical seal           [shaft seal — water/air boundary]
-│   │   │   │   ├─ Body O-ring               [casing joint seal]
-│   │   │   │   ├─ Priming cap
-│   │   │   │   ├─ Priming cap O-ring
-│   │   │   │   ├─ [venturi throat — low-pressure suction zone]
-│   │   │   │   ├─ [recirculation passage — diffuser → venturi nozzle (self-prime loop)]
-│   │   │   │   └─ [priming chamber — fill volume held in by the foot valve]
-│   │   │   └─ Motor 🌐
-│   │   │       ├─ Stator winding 🌐
-│   │   │       ├─ Run capacitor
-│   │   │       ├─ Thermal protector
-│   │   │       └─ Terminal block 🌐
-│   │   │           ├─ Line terminal 🌐
-│   │   │           ├─ Neutral terminal 🌐
-│   │   │           └─ Earth terminal
+│   ├─ Jet pump — DAB AQUAJET 132 M           [AQUAJET = JET 132 M pump + pressure tank + tank hose]
+│   │   ├─ Wet end 💧                          [the JET 132 M pump proper]
+│   │   │   ├─ Pump body 💧             [volute / suction chamber]
+│   │   │   ├─ Venturi nozzle 💧         [jet nozzle — drives suction]
+│   │   │   ├─ Impeller 💧               [adds head]
+│   │   │   ├─ Diffuser 💧               [velocity → pressure recovery]
+│   │   │   ├─ Mechanical seal           [shaft seal — water/air boundary]
+│   │   │   ├─ Body O-ring               [casing joint seal]
+│   │   │   ├─ Priming cap
+│   │   │   ├─ Priming cap O-ring
+│   │   │   ├─ [venturi throat — low-pressure suction zone]
+│   │   │   ├─ [recirculation passage — diffuser → venturi nozzle (self-prime loop)]
+│   │   │   └─ [priming chamber — fill volume held in by the foot valve]
+│   │   ├─ Motor 🌐
+│   │   │   ├─ Stator winding 🌐
+│   │   │   ├─ Run capacitor
+│   │   │   ├─ Thermal protector
+│   │   │   └─ Terminal block 🌐
+│   │   │       ├─ Line terminal 🌐
+│   │   │       ├─ Neutral terminal 🌐
+│   │   │       └─ Earth terminal
 │   │   ├─ Pressure tank — DAB 20 L diaphragm
 │   │   │   ├─ Steel shell 💧
 │   │   │   ├─ Bladder 💧                    [separates pre-charge air from water]
