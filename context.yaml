@@ -70,7 +70,8 @@ equipment:
   control.controller:
     installed: 2020-08
     location: house
-    price_eur: 200
+    price_eur: 200               # bundle: RainMachine HD-12 ships with its 24 VAC plug transformer
+    parts: [transform.plug]
   relay.pumpstart:
     installed: 2020-08
     location: shed
@@ -93,38 +94,31 @@ equipment:
     installed: 2023-06
     location: well
     price_eur: 3
+  # couplings take the fitting.coupling default price (see price_defaults below)
   fitting.coupling_c32c32:
     installed: 2020-08
     location: well
-    price_eur: 5
   fitting.coupling_bm1c32:
     installed: 2020-08
     location: well
-    price_eur: 5
   fitting.coupling_c32sm1:     # brass
     installed: 2020-08
     location: valve_box
-    price_eur: 8
   fitting.coupling_sm1bm1:     # brass, manifold outlet → zone valve
     installed: 2020-08
     location: valve_box
-    price_eur: 7
   fitting.coupling_bm1c25:     # zone valve → poly run
     installed: 2020-08
     location: valve_box
-    price_eur: 4
   fitting.coupling_c25bf34:    # poly run → swing joint at the heads
     installed: 2020-08
     location: in_ground
-    price_eur: 4
   fitting.coupling_sm1c16:     # brass, manifold outlet → 16 mm manual line
     installed: 2020-08
     location: valve_box
-    price_eur: 6
   fitting.coupling_c16c16:
     installed: 2020-08
     location: in_ground
-    price_eur: 2
   fitting.tee:
     installed: 2020-08
     location: in_ground
@@ -145,10 +139,6 @@ equipment:
     installed: 2020-08
     location: house
     price_eur: 5
-  transform.plug:              # 24 VAC plug-in transformer for the controller
-    installed: 2020-08
-    location: house
-    price_eur: 15
   wiring.230v:                 # mains cable, pump-start chain
     installed: 2020-08
     location: shed
@@ -161,3 +151,5 @@ equipment:
     installed: 2020-08
     location: valve_box
     price_eur: 1
+price_defaults:                # EUR fallback by kind, used where an equipment entry omits its price
+  fitting.coupling: 5          # any coupling variant (fitting.coupling_*)
