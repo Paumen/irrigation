@@ -31,8 +31,7 @@ equipment:
   pump.jet:
     installed: 2023-06
     location: well
-    price_eur: 350                # bundle: includes the diaphragm tank + braided connector hose
-    parts: [tank.diaphragm, hose.metal]
+    price_eur: 350                # bundle: tank.diaphragm + hose.metal (graph.yaml pump.jet includes)
   valve.foot:
     installed: 2026-06   # bought June 2026; owner has not yet confirmed it is mounted
     location: well
@@ -70,8 +69,7 @@ equipment:
   control.controller:
     installed: 2020-08
     location: house
-    price_eur: 200               # bundle: RainMachine HD-12 ships with its 24 VAC plug transformer
-    parts: [transform.plug]
+    price_eur: 200               # bundle: transform.plug (graph.yaml control.controller includes)
   relay.pumpstart:
     installed: 2020-08
     location: shed

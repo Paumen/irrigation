@@ -15,6 +15,7 @@ components:
   control.controller:
     ports: [ac_line_1, ac_line_2, common_1, port_1, port_2, port_3, port_4, port_5, port_6, common_2, port_7, port_8, port_9, port_10, port_11, port_12]
     model: "RainMachine HD-12 TOUCH"
+    includes: [transform.plug]   # 24 VAC plug transformer ships in the box; one purchased unit
     parts:
       ac_line_1: {fail: [broken, misconfigured]}
       ac_line_2: {fail: [broken, misconfigured]}
@@ -388,6 +389,7 @@ components:
   pump.jet:
     ports: [suction, outlet, inlet_tank, motor/line, motor/neutral, motor/earth]
     model: "DAB AQUAJET 132 M"
+    includes: [tank.diaphragm, hose.metal]   # diaphragm tank + braided connector ship as one assembly
     protection_class: I
     max_outlet_bar: 4.7
     suction_conn:    {size: G1, gender: F, type: BSP, thread: parallel, sealant: teflon}
