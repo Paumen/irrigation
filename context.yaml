@@ -74,3 +74,97 @@ equipment:
     installed: 2020-08
     location: shed
     price_eur: 100
+  # ── rough guesstimates (EUR) for the remaining graph.yaml kinds: connective
+  #    hardware, source nodes and wiring. Order-of-magnitude only, not quotes.
+  source.well:                 # the well shaft itself — no purchased-equipment cost
+    installed: 2020-08
+    location: well
+    price_eur: 0
+  tank.diaphragm:              # DAB 20 L pressure tank, fitted with the pump
+    installed: 2023-06
+    location: well
+    price_eur: 60
+  hose.metal:                  # short braided stainless pump→tank connector
+    installed: 2023-06
+    location: well
+    price_eu_m: 30
+  fitting.strainer_basket:     # submerged foot strainer, with the foot valve
+    installed: 2026-06
+    location: well
+    price_eur: 10
+  fitting.hosetail_brass:
+    installed: 2023-06
+    location: well
+    price_eur: 6
+  fitting.hosetail_plastic:
+    installed: 2023-06
+    location: well
+    price_eur: 3
+  fitting.coupling_c32c32:
+    installed: 2020-08
+    location: well
+    price_eur: 5
+  fitting.coupling_bm1c32:
+    installed: 2020-08
+    location: well
+    price_eur: 5
+  fitting.coupling_c32sm1:     # brass
+    installed: 2020-08
+    location: valve_box
+    price_eur: 8
+  fitting.coupling_sm1bm1:     # brass, manifold outlet → zone valve
+    installed: 2020-08
+    location: valve_box
+    price_eur: 7
+  fitting.coupling_bm1c25:     # zone valve → poly run
+    installed: 2020-08
+    location: valve_box
+    price_eur: 4
+  fitting.coupling_c25bf34:    # poly run → swing joint at the heads
+    installed: 2020-08
+    location: in_ground
+    price_eur: 4
+  fitting.coupling_sm1c16:     # brass, manifold outlet → 16 mm manual line
+    installed: 2020-08
+    location: valve_box
+    price_eur: 6
+  fitting.coupling_c16c16:
+    installed: 2020-08
+    location: in_ground
+    price_eur: 2
+  fitting.tee:
+    installed: 2020-08
+    location: in_ground
+    price_eur: 5
+  fitting.cap:                 # capped spare manifold outlet
+    installed: 2020-08
+    location: valve_box
+    price_eur: 2
+  valve.manual:                # hand valve on the Z5/Z1 manual line
+    installed: 2020-08
+    location: in_ground
+    price_eur: 5
+  emitter.stream:              # open stream/bubbler nozzle on the manual line
+    installed: 2020-08
+    location: in_ground
+    price_eur: 5
+  source.socket:               # existing mains wall socket (per outlet)
+    installed: 2020-08
+    location: house
+    price_eur: 5
+  transform.plug:              # 24 VAC plug-in transformer for the controller
+    installed: 2020-08
+    location: house
+    price_eur: 15
+  wiring.230v:                 # mains cable, pump-start chain
+    installed: 2020-08
+    location: shed
+    price_eu_m: 2
+  wiring.24v:                  # multicore solenoid cable, controller → valves
+    installed: 2020-08
+    location: in_ground
+    price_eu_m: 1.5
+  wiring.splice:               # waterproof gel-filled connector (per splice)
+    installed: 2020-08
+    location: valve_box
+    price_eur: 1
