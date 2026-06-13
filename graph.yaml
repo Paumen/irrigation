@@ -385,7 +385,7 @@ water:
   W1_fitting.coupling_2: {to: [W1_hose.ldpe32], h_m: 8.2}
   W1_fitting.coupling_1: {to: [P1_hose.ldpe32], h_m: 8.2}
 
-  P1_hose.ldpe32: {to: [P1_fitting.coupling], l_m: 20, h_m: 8.2}
+  P1_hose.ldpe32: {to: [V1_fitting.coupling], l_m: 20, h_m: 8.2}
 
   V1_fitting.coupling: {to: [V1_fitting.manifold], h_m: 11.2}
   V1_fitting.manifold:
@@ -447,7 +447,7 @@ water:
   Z4_emitter.spray_1: {nozzle: MP3000, arc: 270, h_m: 11.3}
   Z4_emitter.spray_2: {nozzle: MP1000, arc: 210, h_m: 12.0}
   Z4_emitter.spray_3: {nozzle: MP2000, arc: 270, h_m: 12.0}
-  Z4_emitter.spray_4: {nozzle: MP2000, arc: 120, h_m: 11.9}
+  Z4_emitter.spray_4: {nozzle: MP2000, arc: 180, h_m: 11.9}
   Z4_fitting.coupling_1: {to: [Z4_valve.auto], h_m: 11.2}
   Z4_fitting.coupling_2: {to: [Z4_hose.ldpe25_1], h_m: 11.2}
   Z4_fitting.coupling_3: {to: [Z4_fitting.sj34x12_1], h_m: 11.3}

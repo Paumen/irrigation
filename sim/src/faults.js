@@ -10,6 +10,7 @@ import {
   WRONG_STREAM_BORE_SCALE,
 } from "./config.js";
 import { streamEmitterCoeff } from "./outlets.js";
+import { typeOf } from "./model.js";
 
 const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
 
@@ -50,6 +51,7 @@ export function listFaults(model) {
   };
 
   for (const n of model.flowNodes.values()) {
+    if (n.synthetic) continue; // solver-inserted junctions are not real parts
     const kindDef = model.kinds[n.kind];
     if (!kindDef) continue;
     for (const t of kindDef.fail || []) {
@@ -62,23 +64,20 @@ export function listFaults(model) {
     });
   }
 
-  const circuit = model.circuit || {};
-  for (const [partName, part] of Object.entries(circuit.parts || {})) {
-    // a kind-backed component expands its kind's parts; an inline block (the
-    // common-return splice) is its own parts map.
-    const partsDef = part && part.kind ? model.kinds[part.kind]?.parts : part;
-    if (!partsDef || typeof partsDef !== "object") {
-      throw new Error(`faults: circuit part "${partName}" has no resolvable parts`);
+  // Dedicated circuit components (controller, relay, transformer, sockets, wiring, splices):
+  // every fail: entry is an open-circuit fault. The pump motor / valve solenoids also appear
+  // here as electrical keys but were already enumerated flow-side — `seen` keeps the first.
+  for (const [nid, def] of Object.entries(model.electrical || {})) {
+    const kindDef = model.kinds[typeOf(nid)];
+    if (!kindDef) continue;
+    for (const t of kindDef.fail || []) {
+      push({ key: `${nid}:${t}`, target: nid, sub: null, type: t, side: "circuit" });
     }
-    walkParts(partsDef, "", (sub, def) => {
-      for (const t of def.fail || []) {
-        push({ key: `${partName}.${sub}:${t}`, target: partName, sub, type: t, side: "circuit" });
+    walkParts(kindDef.parts, "", (sub, d) => {
+      for (const t of d.fail || []) {
+        push({ key: `${nid}.${sub}:${t}`, target: nid, sub, type: t, side: "circuit" });
       }
     });
-  }
-  // each named cable is its own open-circuit fault, blocked by wire name
-  for (const wireName of Object.keys(circuit.wires || {})) {
-    push({ key: `${wireName}:broken`, target: wireName, sub: null, type: "broken", side: "wire" });
   }
   return out;
 }
@@ -105,15 +104,23 @@ function clogK(sev) {
   return (1 / (a * a) - 1) ** 2;
 }
 
-// First real (EPANET-junction) vertex downstream of a faulted element, where its
-// escaping water is injected. Crossing the pump means a suction-side fault, which
-// loses prime instead of leaking: return {suction:true}.
+// Where a faulted element's escaping water is injected. A pump anywhere downstream means
+// the element is on the suction side, which loses prime instead of leaking ({suction:true}).
+// Otherwise return the first real (EPANET-junction) vertex downstream.
 function anchorDownstream(model, id) {
-  let n = model.flowNodes.get(id);
-  while (n && !NODE_ROLES.has(n.role)) {
-    if (n.role === "pump" && n.id !== id) return { suction: true };
-    n = model.flowNodes.get(n.to[0]);
+  const stack = [id];
+  const seen = new Set();
+  while (stack.length) {
+    const x = stack.pop();
+    if (seen.has(x)) continue;
+    seen.add(x);
+    const nx = model.flowNodes.get(x);
+    if (!nx) continue;
+    if (nx.role === "pump" && x !== id) return { suction: true };
+    for (const t of nx.to) stack.push(t);
   }
+  let n = model.flowNodes.get(id);
+  while (n && !NODE_ROLES.has(n.role)) n = model.flowNodes.get(n.to[0]);
   return n ? { node: n.id } : null;
 }
 
@@ -168,27 +175,27 @@ function groupOf(node, sub) {
   if (node.role === "pump") {
     // venturi/impeller/diffuser all sit on the pumped path; a clog weakens the head curve
     if (["venturi", "impeller", "diffuser"].includes(leaf)) return "pumpPath";
-    if (["motor", "winding", "capacitor", "thermal_protector", "l", "n"].includes(leaf)) {
+    if (["motor", "winding", "capacitor", "thermal_protector", "line", "neutral"].includes(leaf)) {
       return "pumpPower";
     }
     if (leaf === "mech_seal") return "shellSeal";
-    if (leaf === "pe") return "cosmetic"; // motor earth: no functional effect
-    return "fitting"; // hydraulic_end casing, priming_cap (SPECIAL)
+    if (leaf === "earth") return "cosmetic"; // motor earth: no functional effect
+    return "fitting"; // body casing, priming_cap (SPECIAL)
   }
   if (node.role === "valve-auto" || node.role === "valve-manual") {
     if (["diaphragm", "seat", "spring"].includes(leaf)) return "valveSeal";
     if (leaf === "metering_port") return "pilotFill";
     if (["entry", "plunger", "exhaust"].includes(leaf)) return "pilotDrain";
-    if (["coil", "lead_1", "lead_2"].includes(leaf)) return "valveElec";
+    if (["coil", "24v_1", "24v_2"].includes(leaf)) return "valveElec";
     return "fitting";
   }
   if (node.role === "outlet") {
     if (["filter", "nozzle"].includes(leaf)) return "outletPath";
-    if (["check_valve", "retract_spring", "gear", "arc"].includes(leaf)) return "cosmetic";
+    if (["check_valve", "retract_spring", "gear", "arc", "flo_stop"].includes(leaf)) return "cosmetic";
     if (["riser_seal", "wiper_seal"].includes(leaf)) return "shellSeal";
     return "fitting";
   }
-  if (node.kind === "tank") {
+  if (node.kind === "tank.diaphragm") {
     if (leaf === "shell") return "fitting"; // a split shell weeps -> leak
     return "cosmetic"; // bladder/pre_charge are cycling faults, inert at steady state
   }
@@ -236,7 +243,7 @@ const RULES = {
   },
   "pilotDrain:broken": ({ fx, node }) => fx.valveDisabled.add(node.id),
   // a broken solenoid coil or lead is an open circuit on that port
-  "valveElec:broken": ({ fx, node, sub }) => fx.elecBlocked.add(`${node.id}.${sub}`),
+  "valveElec:broken": ({ fx, node, sub }) => fx.elecBlocked.add(`${node.id}/${sub.replace(/\./g, "/")}`),
   "outletPath:clogged": ({ fx, node, sev }) => {
     const mod = modOf(fx, node.id);
     mod.flowScale = (mod.flowScale ?? 1) * (1 - sev);
@@ -272,17 +279,17 @@ const SPECIAL = {
   "valve.auto.bonnet.flow_control:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
   // broken flow-control stem is inert at steady state
   "valve.auto.bonnet.flow_control:broken": () => {},
-  "valve.manual.handle:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
-  "pump.hydraulic_end.priming_cap:broken": ({ fx }) => {
+  "valve.manual.body.handle:misconfigured": ({ fx, node }) => fx.valveDisabled.add(node.id),
+  "pump.jet.body.priming_cap:broken": ({ fx }) => {
     fx.pumpDisabled = true;
   },
-  "pump.hydraulic_end.priming_cap:misconfigured": ({ fx }) => {
+  "pump.jet.body.priming_cap:misconfigured": ({ fx }) => {
     fx.pumpDisabled = true;
   },
-  "head.spray.regulator:broken": ({ fx, node }) => {
+  "emitter.spray.body.regulator:broken": ({ fx, node }) => {
     modOf(fx, node.id).noClamp = true;
   },
-  "head.spray.flush_plug:misconfigured": ({ fx, node }) => {
+  "emitter.spray.body.flush_plug:misconfigured": ({ fx, node }) => {
     modOf(fx, node.id).asOrifice = { bore_mm: FLUSH_BORE_MM, cd: FLUSH_CD };
   },
 };
@@ -296,12 +303,9 @@ export function compileFaults(model, active = {}) {
     const f = byKey.get(key);
     if (!f) throw new Error(`faults: unknown fault key "${key}"`);
     const sev = f.severity ? Math.min(Number(value), 1) : 1;
-    if (f.side === "wire") {
-      fx.elecBlocked.add(f.target);
-      continue;
-    }
     if (f.side === "circuit") {
-      fx.elecBlocked.add(`${f.target}.${f.sub}`);
+      // electrical port id uses `/` separators; a top-level fail blocks the whole instance
+      fx.elecBlocked.add(f.sub ? `${f.target}/${f.sub.replace(/\./g, "/")}` : f.target);
       continue;
     }
     const node = model.flowNodes.get(f.target);
