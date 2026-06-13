@@ -31,7 +31,7 @@ equipment:
   pump.jet:
     installed: 2023-06
     location: well
-    price_eur: 350                # bundle: tank.diaphragm + hose.metal (graph.yaml pump.jet includes)
+    price_eur: 350                # bundle: tank + braided connector are parts of pump.jet in graph.yaml
   valve.foot:
     installed: 2026-06   # bought June 2026; owner has not yet confirmed it is mounted
     location: well
@@ -69,7 +69,7 @@ equipment:
   control.controller:
     installed: 2020-08
     location: house
-    price_eur: 200               # bundle: transform.plug (graph.yaml control.controller includes)
+    price_eur: 200               # bundle: 24 VAC transformer is a part of control.controller in graph.yaml
   relay.pumpstart:
     installed: 2020-08
     location: shed

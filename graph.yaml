@@ -5,18 +5,26 @@ category:
   pump: {requires: [max_outlet_bar]}
   relay: {}
   source: {}
-  tank: {requires: [volume_l]}
-  transform: {requires: [v_outlet]}
   valve: {loss: Kv_else_k, requires_one: [Kv, k]}
   wiring: {}
 
 components:
 
   control.controller:
-    ports: [ac_line_1, ac_line_2, common_1, port_1, port_2, port_3, port_4, port_5, port_6, common_2, port_7, port_8, port_9, port_10, port_11, port_12]
+    ports: [line, neutral, common_1, port_1, port_2, port_3, port_4, port_5, port_6, common_2, port_7, port_8, port_9, port_10, port_11, port_12]
     model: "RainMachine HD-12 TOUCH"
-    includes: [transform.plug]   # 24 VAC plug transformer ships in the box; one purchased unit
     parts:
+      line: {to: [transform/line], fail: [broken, misconfigured]}
+      neutral: {to: [transform/neutral], fail: [broken, misconfigured]}
+      transform:
+        v_outlet: 24
+        protection_class: II
+        parts:
+          line: {to: [transform/winding], fail: [broken, misconfigured]}
+          neutral: {fail: [broken, misconfigured]}
+          winding: {to: [transform/neutral], condition: [transform/outlet_1, transform/outlet_2], fail: [broken]}
+          outlet_1: {to: [ac_line_1], fail: [broken]}
+          outlet_2: {to: [ac_line_2], fail: [broken]}
       ac_line_1: {fail: [broken, misconfigured]}
       ac_line_2: {fail: [broken, misconfigured]}
       common_1: {fail: [broken, misconfigured]}
@@ -373,32 +381,31 @@ components:
     fail: [broken, clogged, misconfigured]
     inlet_conn:  {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}
     outlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}
-  hose.metal:
-    ports: [inlet, outlet]
-    material: "stainless steel"
-    roughness_mm: 0.015
-    hz_c: 130
-    outer_diameter_mm: 32
-    wall_mm: 3.5
-    inner_diameter_mm: 25
-    max_bar: 10
-    fail: [broken, clogged]
-    inlet_conn:  {size: G1, gender: swivel-F, type: swivel-union, thread: parallel, sealant: flat-washer}
-    outlet_conn: {size: G1, gender: swivel-F, type: swivel-union, thread: parallel, sealant: flat-washer}
 
   pump.jet:
-    ports: [suction, outlet, inlet_tank, motor/line, motor/neutral, motor/earth]
+    ports: [suction, outlet, motor/line, motor/neutral, motor/earth]
     model: "DAB AQUAJET 132 M"
-    includes: [tank.diaphragm, hose.metal]   # diaphragm tank + braided connector ship as one assembly
     protection_class: I
     max_outlet_bar: 4.7
     suction_conn:    {size: G1, gender: F, type: BSP, thread: parallel, sealant: teflon}
-    inlet_tank_conn: {size: G1, gender: M, type: swivel-union, thread: parallel, sealant: flat-washer}
     outlet_conn:     {size: G1, gender: F, type: BSP, thread: parallel, sealant: teflon}
     parts:
       suction: {to: [body/venturi]}
-      inlet_tank: {to: [outlet]}
+      inlet_tank: {to: [tank_hose]}
       outlet: {}
+      tank_hose:
+        to: [tank]
+        material: "stainless steel"
+        fail: [broken, clogged]
+      tank:
+        model: "DAB 20 L diaphragm tank"
+        volume_l: 20
+        criticality: high
+        parts:
+          air_charge: {drive: [tank/bladder]}
+          shell: {fail: [broken], material: steel}
+          bladder: {drive: [tank/air_charge], criticality: high, fail: [broken], material: rubber}
+          pre_charge: {fail: [broken, misconfigured]}
       body:
         fail: [broken]
         material: plastic
@@ -441,29 +448,6 @@ components:
       earth: {fail: [broken]}
 
   source.well: {ports: [outlet], fail: [clogged, depleted]}
-
-  tank.diaphragm:
-    ports: [outlet]
-    model: "DAB 20 L diaphragm tank"
-    volume_l: 20
-    outlet_conn: {size: G1, gender: M, type: swivel-union, thread: parallel, sealant: flat-washer}
-    parts:
-      outlet: {}
-      air_charge: {drive: [bladder]}
-      shell: {fail: [broken], material: steel}
-      bladder: {drive: [air_charge], criticality: high, fail: [broken], material: rubber}
-      pre_charge: {fail: [broken, misconfigured]}
-
-  transform.plug:
-    ports: [line, neutral, outlet_1, outlet_2]
-    v_outlet: 24
-    protection_class: II
-    parts:
-      line: {to: [winding], fail: [broken, misconfigured]}
-      neutral: {fail: [broken, misconfigured]}
-      winding: {to: [neutral], condition: [outlet_1, outlet_2], fail: [broken]}
-      outlet_1: {fail: [broken]}
-      outlet_2: {fail: [broken]}
 
   valve.auto:
     ports: [inlet, outlet, solenoid/24v_1, solenoid/24v_2]
@@ -558,12 +542,8 @@ water:
   W1_fitting.hosetail_plastic: {to: [W1_pump.jet/suction], h_m: 8.2}
   W1_hose.ldpe32: {to: [W1_fitting.coupling_c32c32], l_m: 1, h_m: 8.2}
   W1_pump.jet:
-    to:
-      outlet: [W1_fitting.coupling_bm1c32]
-      inlet_tank: [W1_hose.metal]
+    to: {outlet: [W1_fitting.coupling_bm1c32]}
     h_m: 8.2
-  W1_hose.metal: {to: [W1_tank.diaphragm/outlet], l_m: 0.5, h_m: 8.2}
-  W1_tank.diaphragm: {h_m: 8.2}
   W1_fitting.coupling_bm1c32: {to: [W1_hose.ldpe32], h_m: 8.2}
   W1_fitting.coupling_c32c32: {to: [P1_hose.ldpe32], h_m: 8.2}
 
@@ -723,14 +703,8 @@ electrical:
       neutral: [H1_wiring.230v_1/neutral/inlet]
   H1_wiring.230v_1:
     to:
-      line/outlet: [H1_transform.plug/line]
-      neutral/outlet: [H1_transform.plug/neutral]
-  H1_transform.plug:
-    to:
-      outlet_1: [H1_wiring.24v_1]
-      outlet_2: [H1_wiring.24v_2]
-  H1_wiring.24v_1: {to: [H1_control.controller/ac_line_1]}
-  H1_wiring.24v_2: {to: [H1_control.controller/ac_line_2]}
+      line/outlet: [H1_control.controller/line]
+      neutral/outlet: [H1_control.controller/neutral]
 
   H1_control.controller:
     to:
