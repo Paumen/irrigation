@@ -29,7 +29,7 @@ components:
   emitter.rotor:
     ports: [inlet_thread]
     model: "Hunter I-20-04-SS"
-    inlet_thread_conn: {size: '3/4"', gender: F, type: BSP, sealant: teflon}
+    inlet_thread_conn: {size: G3/4, gender: F, type: BSP, sealant: teflon}
     parts:
       inlet_thread: {to: [body/riser, body/check_valve], fail: [broken, misconfigured]}
       body:
@@ -49,7 +49,7 @@ components:
     ports: [inlet_thread]
     regulated_bar: 2.76
     model: "Hunter Pro-Spray PRS40"
-    inlet_thread_conn: {size: '1/2"', gender: F, type: BSP, sealant: teflon}
+    inlet_thread_conn: {size: G1/2, gender: F, type: BSP, sealant: teflon}
     parts:
       inlet_thread: {to: [body/regulator, body/check_valve, body/cap], fail: [broken, misconfigured]}
       body:
@@ -64,13 +64,13 @@ components:
           flush_plug: {seal: [body/nozzle], fail: [misconfigured]}
           nozzle: {fail: [clogged, misconfigured]}
 
-  emitter.stream: {ports: [inlet], bore_mm: 12, cd: 0.97, fail: [clogged, misconfigured], inlet_conn: {size: '1/2"', gender: F, type: BSP, sealant: teflon}}
+  emitter.stream: {ports: [inlet], bore_mm: 12, cd: 0.97, fail: [clogged, misconfigured], inlet_conn: {size: G1/2, gender: F, type: BSP, sealant: teflon}}
 
   fitting.cap:
     ports: [inlet]
     k: 0
     max_bar: 10
-    inlet_conn: {size: '1"', gender: M, type: BSP, sealant: teflon}   # CONFIRM (matches manifold outlet)
+    inlet_conn: {size: G1, gender: M, type: BSP, sealant: teflon}   # CONFIRM (matches manifold outlet)
     parts:
       inlet: {}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -96,8 +96,8 @@ components:
     k: 1.5
     model: "LEV 6-way distributor"
     material: "hard plastic"
-    inlet_conn:  {size: '1"', gender: F, type: swivel-union, sealant: flat-washer}
-    outlet_conn:  {size: '1"', gender: F, type: swivel-union, sealant: flat-washer}
+    inlet_conn:  {size: G1, gender: F, type: swivel-union, sealant: flat-washer}
+    outlet_conn:  {size: G1, gender: F, type: swivel-union, sealant: flat-washer}
     parts:
       inlet: {to: [outlet_1, outlet_2, outlet_3, outlet_4, outlet_5, outlet_6]}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -123,8 +123,8 @@ components:
     inlet_thread: '3/4"'
     outlet_thread: '1/2"'
     model: "Hunter sj 3/4x1/2"
-    inlet_conn:  {size: '3/4"', gender: M, type: BSP, sealant: teflon}
-    outlet_conn: {size: '1/2"', gender: M, type: BSP, sealant: teflon}
+    inlet_conn:  {size: G3/4, gender: M, type: BSP, sealant: teflon}
+    outlet_conn: {size: G1/2, gender: M, type: BSP, sealant: teflon}
     parts:
       inlet: {to: [outlet]}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -140,8 +140,8 @@ components:
     inlet_thread: '3/4"'
     outlet_thread: '3/4"'
     model: "Hunter sj 3/4x3/4"
-    inlet_conn:  {size: '3/4"', gender: M, type: BSP, sealant: teflon}
-    outlet_conn: {size: '3/4"', gender: M, type: BSP, sealant: teflon}
+    inlet_conn:  {size: G3/4, gender: M, type: BSP, sealant: teflon}
+    outlet_conn: {size: G3/4, gender: M, type: BSP, sealant: teflon}
     parts:
       inlet: {to: [outlet]}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -154,9 +154,9 @@ components:
     bends: 1
     k: 0.9
     note: "LDPE compression tee; end size = pipe OD per instance"
-    inlet_conn:    {size: "LDPE OD", gender: compression, type: compression, sealant: compression-ring}
-    outlet_1_conn: {size: "LDPE OD", gender: compression, type: compression, sealant: compression-ring}
-    outlet_2_conn: {size: "LDPE OD", gender: compression, type: compression, sealant: compression-ring}
+    inlet_conn:    {size: varies, gender: compression, type: compression, sealant: compression-ring}
+    outlet_1_conn: {size: varies, gender: compression, type: compression, sealant: compression-ring}
+    outlet_2_conn: {size: varies, gender: compression, type: compression, sealant: compression-ring}
     parts:
       inlet: {to: [outlet_1, outlet_2]}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -186,8 +186,8 @@ components:
     max_bar: 10
     k: 0.9
     note: "hose tail: foot-valve outlet -> suction hose (suction side, must be air-tight)"
-    inlet_conn:  {size: '1"', gender: M, type: BSP, sealant: teflon}
-    outlet_conn: {size: "25 mm", gender: barb, type: hose-tail, sealant: hose-clamp}
+    inlet_conn:  {size: G1, gender: M, type: BSP, sealant: teflon}
+    outlet_conn: {size: "∅25", gender: barb, type: hose-tail, sealant: hose-clamp}
     parts:
       inlet: {to: [outlet]}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -201,8 +201,8 @@ components:
     max_bar: 6
     k: 0.9
     note: "hose tail: suction hose -> pump suction (suction side, must be air-tight)"
-    inlet_conn:  {size: "25 mm", gender: barb, type: hose-tail, sealant: hose-clamp}
-    outlet_conn: {size: '1"', gender: M, type: BSP, sealant: teflon}
+    inlet_conn:  {size: "∅25", gender: barb, type: hose-tail, sealant: hose-clamp}
+    outlet_conn: {size: G1, gender: M, type: BSP, sealant: teflon}
     parts:
       inlet: {to: [outlet]}
       inlet_seal: {seal: [inlet], fail: [broken, misconfigured]}
@@ -210,11 +210,11 @@ components:
       body: {fail: [broken]}
       outlet: {}
 
-  hose.ldpe16: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 16, wall_mm: 3, inner_diameter_mm: 10, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "16 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "16 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.ldpe25: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 25, wall_mm: 2.7, inner_diameter_mm: 19.6, max_bar: 6, fail: [broken, clogged], inlet_conn: {size: "25 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "25 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.ldpe32: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 32, wall_mm: 3, inner_diameter_mm: 26, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "32 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "32 mm OD", gender: slip, type: compression-insert, sealant: compression-ring}}
-  hose.suction: {ports: [inlet, outlet], outer_diameter_mm: 25, wall_mm: 0.5, inner_diameter_mm: 24, material: "PVC spiral-reinforced", roughness_mm: 0.0015, hz_c: 150, max_bar: 5, fail: [broken, clogged, misconfigured], inlet_conn: {size: "25 mm barb", gender: slip, type: hose-over-barb, sealant: hose-clamp}, outlet_conn: {size: "25 mm barb", gender: slip, type: hose-over-barb, sealant: hose-clamp}}
-  hose.metal: {ports: [inlet, outlet], material: "stainless steel braided flex", roughness_mm: 0.015, hz_c: 130, outer_diameter_mm: 32, wall_mm: 3.5, inner_diameter_mm: 25, max_bar: 10, fail: [broken, clogged], inlet_conn: {size: '1"', gender: swivel-F, type: swivel-union, sealant: flat-washer}, outlet_conn: {size: '1"', gender: swivel-F, type: swivel-union, sealant: flat-washer}}
+  hose.ldpe16: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 16, wall_mm: 3, inner_diameter_mm: 10, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "∅16", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅16", gender: slip, type: compression-insert, sealant: compression-ring}}
+  hose.ldpe25: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 25, wall_mm: 2.7, inner_diameter_mm: 19.6, max_bar: 6, fail: [broken, clogged], inlet_conn: {size: "∅25", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅25", gender: slip, type: compression-insert, sealant: compression-ring}}
+  hose.ldpe32: {ports: [inlet, outlet], material: ldpe, roughness_mm: 0.0015, hz_c: 150, outer_diameter_mm: 32, wall_mm: 3, inner_diameter_mm: 26, max_bar: 6.3, fail: [broken, clogged], inlet_conn: {size: "∅32", gender: slip, type: compression-insert, sealant: compression-ring}, outlet_conn: {size: "∅32", gender: slip, type: compression-insert, sealant: compression-ring}}
+  hose.suction: {ports: [inlet, outlet], outer_diameter_mm: 25, wall_mm: 0.5, inner_diameter_mm: 24, material: "PVC spiral-reinforced", roughness_mm: 0.0015, hz_c: 150, max_bar: 5, fail: [broken, clogged, misconfigured], inlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}, outlet_conn: {size: "∅25", gender: slip, type: hose-over-barb, sealant: hose-clamp}}
+  hose.metal: {ports: [inlet, outlet], material: "stainless steel braided flex", roughness_mm: 0.015, hz_c: 130, outer_diameter_mm: 32, wall_mm: 3.5, inner_diameter_mm: 25, max_bar: 10, fail: [broken, clogged], inlet_conn: {size: G1, gender: swivel-F, type: swivel-union, sealant: flat-washer}, outlet_conn: {size: G1, gender: swivel-F, type: swivel-union, sealant: flat-washer}}
 
   pump.jet:
     ports: [suction, outlet, inlet_tank, motor/line, motor/neutral, motor/earth]
@@ -222,9 +222,9 @@ components:
     protection_class: I
     max_outlet_bar: 4.7
     parts:
-      suction: {to: [body/venturi], conn: {size: '1"', gender: F, type: BSP, sealant: teflon}}
-      inlet_tank: {to: [outlet], conn: {size: '1"', gender: M, type: BSP, sealant: flat-washer}}
-      outlet: {conn: {size: '1"', gender: F, type: BSP, sealant: teflon}}
+      suction: {to: [body/venturi], conn: {size: G1, gender: F, type: BSP, sealant: teflon}}
+      inlet_tank: {to: [outlet], conn: {size: G1, gender: M, type: BSP, sealant: flat-washer}}
+      outlet: {conn: {size: G1, gender: F, type: BSP, sealant: teflon}}
       body:
         fail: [broken]
         parts:
@@ -272,7 +272,7 @@ components:
     model: "20 L diaphragm tank"
     volume_l: 20
     parts:
-      outlet: {conn: {size: '1"', gender: M, type: BSP, sealant: flat-washer}}
+      outlet: {conn: {size: G1, gender: M, type: BSP, sealant: flat-washer}}
       air_charge: {drive: [bladder]}
       shell: {fail: [broken]}
       bladder: {drive: [air_charge], water: pressurized, fail: [broken]}
@@ -295,8 +295,8 @@ components:
     min_bar: 1.5
     Kv: 6.0
     model: "Hunter PGV-101G"
-    inlet_conn:  {size: '1"', gender: F, type: BSP, sealant: teflon}
-    outlet_conn: {size: '1"', gender: F, type: BSP, sealant: teflon}
+    inlet_conn:  {size: G1, gender: F, type: BSP, sealant: teflon}
+    outlet_conn: {size: G1, gender: F, type: BSP, sealant: teflon}
     parts:
       inlet: {to: [diaphragm, diaphragm/metering_port]}
       sol_port: {to: [solenoid/entry], water: pressurized}
@@ -338,7 +338,7 @@ components:
     model: 'brass foot valve 1" with strainer'
     material: brass
     strainer_conn: {size: "open brass strainer", gender: none, type: submerged, sealant: none}
-    outlet_conn:   {size: '1"', gender: F, type: BSP, sealant: teflon}
+    outlet_conn:   {size: G1, gender: F, type: BSP, sealant: teflon}
     parts:
       strainer: {to: [seat], fail: [clogged]}
       seat: {to: [outlet], fail: [broken, clogged]}
@@ -349,8 +349,8 @@ components:
     ports: [inlet, outlet]
     max_bar: 10
     Kv: 6.0
-    inlet_conn:  {size: '1/2"', gender: F, type: BSP, sealant: teflon}
-    outlet_conn: {size: '1/2"', gender: F, type: BSP, sealant: teflon}
+    inlet_conn:  {size: G1/2, gender: F, type: BSP, sealant: teflon}
+    outlet_conn: {size: G1/2, gender: F, type: BSP, sealant: teflon}
     parts:
       inlet: {to: [body/seat]}
       outlet: {}
