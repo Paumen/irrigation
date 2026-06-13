@@ -494,7 +494,7 @@ electrical:
       load_outlet: [S1_wiring.230v_2/line/inlet]
       neutral: [S1_wiring.230v_2/neutral/inlet]
       earth: [S1_wiring.230v_2/earth/inlet]
-      coil_common: [S1_wiring.24v_7]
+      coil_common: [S1_wiring.24v_2]
   S1_wiring.230v_2:
     to:
       line/outlet: [W1_source.socket/line]
