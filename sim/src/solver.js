@@ -25,7 +25,7 @@ import { emptyEffects } from "./faults.js";
 const epOf = (id) => id.replace(/\./g, "_");
 
 const zoneOf = (flowId) => {
-  const m = flowId.match(/^Z(\d+)\./);
+  const m = flowId.match(/^Z(\d+)_/);
   return m ? Number(m[1]) : null;
 };
 

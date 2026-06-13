@@ -74,16 +74,20 @@ export function buildTopology(model, state) {
     if (coeff > 0) emitterList.push({ id: ep(flowId), coeff });
   }
 
+  // Synthetic connector ids must stay under EPANET's 31-char id limit; the flow ids are long
+  // and concatenating two would overflow, so allocate short sequential ids (never looked up
+  // by the solver, which only queries real flow-node ids).
   const synthetic = new Map();
   const getSyntheticJunction = (upperFlowId, lowerNode) => {
     const key = `sj__${upperFlowId}__${lowerNode.id}`;
     if (!synthetic.has(key)) {
-      const id = `SJ_${ep(upperFlowId)}__${ep(lowerNode.id)}`;
+      const id = `SJ${synthetic.size + 1}`;
       junctions.push({ id, elev: lowerNode.elevation_m, demand: 0 });
       synthetic.set(key, id);
     }
     return synthetic.get(key);
   };
+  let connSeq = 0;
 
   // flow graph is a tree rooted at the reservoir
   const parentOf = new Map();
@@ -100,7 +104,7 @@ export function buildTopology(model, state) {
       const child = flowNodes.get(childId);
       if (NODE_ROLES.has(u.role) && NODE_ROLES.has(child.role)) {
         pipes.push({
-          id: `CONN_${ep(u.id)}__${ep(child.id)}`,
+          id: `CONN${++connSeq}`,
           n1: ep(u.id),
           n2: ep(child.id),
           length_m: CONNECTOR_LEN_M,
