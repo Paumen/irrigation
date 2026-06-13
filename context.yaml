@@ -80,14 +80,14 @@ equipment:
     installed: 2020-08
     location: well
     price_eur: 0
-  tank.diaphragm:              # DAB 20 L pressure tank, fitted with the pump
+  tank.diaphragm:              # bundled in the DAB AQUAJET 132 M package (pump.jet)
     installed: 2023-06
     location: well
-    price_eur: 60
-  hose.metal:                  # short braided stainless pump→tank connector
+    price_eur: 0
+  hose.metal:                  # bundled in the DAB AQUAJET 132 M package (pump.jet)
     installed: 2023-06
     location: well
-    price_eu_m: 30
+    price_eu_m: 0
   fitting.strainer_basket:     # submerged foot strainer, with the foot valve
     installed: 2026-06
     location: well
