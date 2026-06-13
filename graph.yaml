@@ -95,7 +95,7 @@ components:
     bends: 1
     k: 1.5
     model: "LEV 6-way distributor"
-    material: "hard plastic"
+    material: plastic
     inlet_conn:  {size: G1, gender: F, type: swivel-union, sealant: flat-washer}
     outlet_conn:  {size: G1, gender: F, type: swivel-union, sealant: flat-washer}
     parts:
@@ -197,7 +197,7 @@ components:
 
   fitting.hosetail_plastic:
     ports: [inlet, outlet]
-    material: PP
+    material: polypropylene
     max_bar: 6
     k: 0.9
     note: "hose tail: suction hose -> pump suction (suction side, must be air-tight)"
