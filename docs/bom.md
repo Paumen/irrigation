@@ -1,20 +1,28 @@
 # Irrigation system — Bill of Materials
 
-Physical-items view of the system. `graph.yaml` is the source of truth, but it
-is a hydraulic + electrical **flow graph**, not a BOM: it also carries nodes
-that are not physical items — ports (`inlet`, `outlet`, `sol_port`), internal
-flow passages (`entry`, `exhaust`, `metering_port`), and conceptual zones. This
-document lists only the physical parts, so the mapping is one-way: every item
-here corresponds to a part in `graph.yaml`, but not every `graph.yaml` node is a
-BOM item. Flow-feature notes are shown in `[ … ]` and are not counted as parts.
-If the two disagree on a physical part, fix `graph.yaml` first, then re-render.
+Physical-items view. `graph.yaml` is authoritative for anything hydraulic or
+electrical, but it is a **flow graph**, not a BOM, so the two deliberately do
+**not** match 1:1:
+
+- graph.yaml carries non-BOM nodes — ports (`inlet`, `outlet`, `sol_port`) and
+  internal flow passages (`entry`, `exhaust`, `metering_port`, `chamber`,
+  `air_charge`). Those appear here only as `[bracketed notes]`, not as parts.
+- This BOM adds presentational grouping nodes (e.g. `Wet end`, `Pipework`,
+  `Terminal block`, the riser bundles, `Diaphragm assembly`) that have no single
+  graph part.
+- This BOM also lists non-functional structure the flow graph omits entirely —
+  the valve **Box housing / Enclosure / Lid** (priced via `context.yaml`'s
+  `box_housing`), which has **no** `graph.yaml` counterpart.
+
+Every hydraulic/electrical part in graph.yaml does appear here (directly or as a
+bracketed note); fix graph.yaml first for those, then re-render.
 
 Legend: 💧 wetted / hydraulic · 🌐 230 V mains · 💡 24 V control ·
 `[ … ]` = functional note / flow feature (not a discrete part).
 
 ```
 IRRIGATION SYSTEM
-├─ 1. WELL ASSEMBLY
+├─ 1. SUPPLY ASSY   (well → pump → tank → pressure to the supply line)
 │   ├─ Well water source 💧                 [aquifer — source.well]
 │   ├─ Jet pump — DAB AQUAJET 132 M           [AQUAJET = JET 132 M pump + pressure tank + tank hose]
 │   │   ├─ Wet end 💧                          [the JET 132 M pump proper]
@@ -107,7 +115,7 @@ IRRIGATION SYSTEM
 │       ├─ Cable 24 V: controller → relay coil 💡
 │       └─ Cable 24 V: relay coil → controller common 💡
 │
-├─ 2. VALVE BOX ASSEMBLY   (manifold + supply + harness; zone valves under their zones)
+├─ 2. DISTRIBUTE ASSY   (manifold + supply line + harness; zone valves under their zones)
 │   ├─ Supply line — Hose LDPE ∅32, 20 m 💧
 │   ├─ Box housing
 │   │   ├─ Enclosure
@@ -130,7 +138,7 @@ IRRIGATION SYSTEM
 │       ├─ Waterproof wire connector ×8 💡   [4 zone-side + 4 common-side splices]
 │       └─ Common jumper wire ×3 💡          [bond the 4 valve commons in-box; home run is in §4]
 │
-├─ 3. ZONE PIPING
+├─ 3. DELIVER ASSY   (zone piping → risers → emitters)
 │   │
 │   ├─ Zone 1 — stream / bubbler (manual)
 │   │   ├─ Tap coupling swivel-G1″→∅16 (manifold outlet 5) 💧
@@ -585,7 +593,7 @@ IRRIGATION SYSTEM
 │               ├─ Flo-stop                 [pull-up shut-off for servicing]
 │               └─ Nozzle 💧                 [orifice — sets radius / flow]
 │
-└─ 4. CONTROLLER ASSEMBLY
+└─ 4. ORCHESTRATE ASSY   (controller + 24 V harness — schedules and drives the zones)
     ├─ House socket (controller supply) 🌐   [line, neutral — class-II, earth unused]
     │   ├─ Line 🌐
     │   └─ Neutral 🌐
