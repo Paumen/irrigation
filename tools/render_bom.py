@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render docs/bom.generated.md from graph.yaml.
+"""Render docs/bom.generated.md from system.yaml.
 
 Design (per the answers in the build thread):
 - NO renaming. Lines carry the raw graph keys: a component line is its type key
@@ -18,7 +18,7 @@ import sys, os, re, collections
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-G = yaml.safe_load(open(os.path.join(ROOT, "graph.yaml")))
+G = yaml.safe_load(open(os.path.join(ROOT, "system.yaml")))
 
 # ---- type defs + the assembly path each type sits under in items: -----------
 TYPES, TYPE_PATH = {}, {}
@@ -186,7 +186,7 @@ def main():
     out = [
         "# Irrigation system — Bill of Materials (generated)",
         "",
-        "GENERATED from graph.yaml by tools/render_bom.py. Lines are raw graph keys.",
+        "GENERATED from system.yaml by tools/render_bom.py. Lines are raw graph keys.",
         "Sections + zone(Z#) are prefix buckets; assemblies/parts come from the items: tree.",
         "",
         "```",

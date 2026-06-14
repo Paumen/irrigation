@@ -13,10 +13,13 @@ function load(name) {
   return yaml.load(readFileSync(resolve(repoRoot, name), "utf8"));
 }
 
+// graph.yaml + catalog.yaml + context.yaml were merged into system.yaml; the
+// graph and catalog top-level keys now live side by side in the one document, so
+// both loaders return the same parsed object.
 export function loadGraph() {
-  return load("graph.yaml");
+  return load("system.yaml");
 }
 
 export function loadCatalog() {
-  return load("catalog.yaml");
+  return load("system.yaml");
 }

@@ -2,7 +2,7 @@
 
 The user describes something wrong — won't start, a zone's weak, a head won't turn, weeping when off. Your job is to point them at the right **area(s) to investigate or test**, not to pronounce the failure mode. Let them find the actual failure mode.
 
-You drive a question-and-answer loop backed by a scoring engine, the `diagnose_irrigation` MCP tool. Each round: call it with the answers so far, ask the user the most useful next question(s) at the lowest effort that still moves things forward, feed the reply back. Stop when it has nothing useful left to ask. (Shared rules — audience, vocabulary, safety, images, `graph.yaml`-first — are in `SKILL.md`.)
+You drive a question-and-answer loop backed by a scoring engine, the `diagnose_irrigation` MCP tool. Each round: call it with the answers so far, ask the user the most useful next question(s) at the lowest effort that still moves things forward, feed the reply back. Stop when it has nothing useful left to ask. (Shared rules — audience, vocabulary, safety, images, `system.yaml`-first — are in `SKILL.md`.)
 
 Hold your own certainty loosely: the score is a re-ranked heuristic, not a verdict; the question/failure mode catalogue may be incomplete; no single answer is decisive — a failure mode is only a working hypothesis once **multiple** answers point at it.
 
@@ -17,7 +17,7 @@ The question text and every answer label come from the tool already phrased in t
 - **High effort** — hands-on tests: multimeter readings, swapping in a known-good valve, opening valve internals, fitting a flow gauge. (Lowest `effort` factor.)
 
 ## The loop
-1. **Read `graph.yaml`** for this system's actual models, zones, hose sizes, wiring (and `context.yaml` for install dates, locations, design choices).
+1. **Read `system.yaml`** for this system's actual models, zones, hose sizes, wiring (and `system.yaml` for install dates, locations, design choices).
 2. **Bootstrap** — call the tool with empty `answers` for the initial ranking and first questions.
 2b. **User opened with a full story instead of a bare symptom?** Map the story onto the catalogue before asking anything: an answer the user *observed* ("no water came out anywhere") goes straight into `answers`; an answer you *inferred* (progression, what a test covered, which control path they used) does not steer the score silently — present that question and your inferred answer verbatim for a one-tap confirm in the next round, alongside any genuinely new questions. Never re-ask what the story already answered, and never let more than one un-confirmed inference ride on the ranking at a time. When the story contains strong evidence no question can hold (this happens — e.g. a test the catalogue lacks), say so to yourself: the engine ranking is advisory and the knowledge docs carry the rest.
 3. **Open with four of the lowest-effort questions — always** (when there's no story to mine; after a full story, ask only the unanswered ones). Three are the one-trip-outside observers (run a zone and watch the heads, walk the yard, listen at the pump) that pin scope, routing, and origin; the fourth is a no-cost recall question (e.g. how the problem progressed) that needs no trip. The picker holds four — fill it. Batch them as one prompt and feed all four back before continuing.
@@ -34,10 +34,10 @@ The question text and every answer label come from the tool already phrased in t
    - **Confirm before committing to a leader:** read its `knowledge/<area>.md` and confirm with two checks — one low/mid-effort, one stronger physical test — but report only the leader, not the reading-by-reading walkthrough.
    - If a later turn lands the fix (they ran the check and it's working), close with a single **🎉**.
 
-If the loop dead-ends with no clear leader: share what you *know* vs *interpreted* vs *assumed* vs *don't know*, re-read `graph.yaml`, and let the user correct you. If the signal's conflicting, re-ask to resolve it; if it's just thin and no useful engine questions remain, read the narrowed area's `knowledge/` doc end-to-end, fall back per `sources.md`, then ask your own targeted question.
+If the loop dead-ends with no clear leader: share what you *know* vs *interpreted* vs *assumed* vs *don't know*, re-read `system.yaml`, and let the user correct you. If the signal's conflicting, re-ask to resolve it; if it's just thin and no useful engine questions remain, read the narrowed area's `knowledge/` doc end-to-end, fall back per `sources.md`, then ask your own targeted question.
 
 ## System facts & reasoning checks (internal — never restate; translate to plain words)
-These are *your* priors for reading the topology and the tool's output, not user-facing copy. They don't relax the ≤6-line cap, the verbatim-question rule, or "point at an area, don't pronounce a failure mode" — and never say their terms (wetted set, sibling, node, upstream) to the homeowner. Check specifics against `graph.yaml`; it's the canonical record.
+These are *your* priors for reading the topology and the tool's output, not user-facing copy. They don't relax the ≤6-line cap, the verbatim-question rule, or "point at an area, don't pronounce a failure mode" — and never say their terms (wetted set, sibling, node, upstream) to the homeowner. Check specifics against `system.yaml`; it's the canonical record.
 
 - **Don't collapse the system to the valve box.** Each zone is a *physical run* with its own failure points along its whole length, not a valve sitting at the manifold. The classic miss: anchor on the head, walk back only as far as "a valve," stop there, and assume every valve lives together at the manifold. They don't — run lengths differ, and things can fail anywhere along a run.
 - **Z5 is the manual odd-one-out, and it's long.** No solenoid — a hand valve only — so the pump must be *running* for it to flow (its start chain, not a zone signal). Its manual valve sits ~20 m of 16 mm hose + two joints *downstream* of the manifold (not in the valve box with Z1–Z4). So the whole manifold→Z5-valve run is pressurised whenever the pump's on, valve shut or not — a leak or a weeping joint anywhere along it bleeds the shared supply, far from where anyone would look.
@@ -62,7 +62,7 @@ The interactive question tool holds up to four questions per call, each with ≤
 - **`options`** — single choice; pass `options[].label` through unchanged.
 - **`multi`** (`multiselect: true`) — same list, several picks; send back the list of chosen indices.
 - **`matrix`** — multiselect the rows, then ask `columns` as options for each selected row.
-- **`ages`** — for each row, read the equipment's model from `graph.yaml` and its `installed` date from `context.yaml`'s `equipment:` section (the canonical records — the tool no longer stores them), convert the install date to the matching age bucket using today's date, show that as the current value, and ask whether it's still right.
+- **`ages`** — for each row, read the equipment's model from `system.yaml` and its `installed` date from `system.yaml`'s `equipment:` section (the canonical records — the tool no longer stores them), convert the install date to the matching age bucket using today's date, show that as the current value, and ask whether it's still right.
 
 "I don't know" / "skip" → `skipped[question_id] = true`, never `answers`.
 

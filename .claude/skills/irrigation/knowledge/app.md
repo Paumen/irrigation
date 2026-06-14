@@ -18,7 +18,7 @@ contents:
 # App / control — RainMachine HD-16 (app, WebUI, cloud)
 
 The hardware lives in `controller.md`; this file is the **software** — the watering logic and how you
-drive it. `context.yaml`'s `control_paths` records **three control paths** to the same controller:
+drive it. `system.yaml`'s `control_paths` records **three control paths** to the same controller:
 
 - **Touchscreen** on the unit itself.
 - **Mobile app over home Wi-Fi** (phone on the same network — local/Direct access).
@@ -86,7 +86,7 @@ way to confirm a valve actually opens, and the first move in the zone-won't-turn
 ## Sensor software setup
 
 Wiring and the one-sensor-at-a-time / 2 Hz limits are in `controller.md`; this is the *software* you
-set after wiring one in. **Neither sensor is fitted on this system** (deliberate, per `context.yaml`'s `system_design_choices`) —
+set after wiring one in. **Neither sensor is fitted on this system** (deliberate, per `system.yaml`'s `system_design_choices`) —
 reference only.
 
 **Flow meter** (WebUI: Settings → Sensors → *Flow Meter Sensor*; or in the app under Sensors → Flow

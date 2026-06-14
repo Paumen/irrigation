@@ -5,7 +5,7 @@
 // breaks), and fault effects (clogs, leaks, weak pump, stuck valves). Exits non-zero on
 // any failure.
 //
-// graph.yaml's auto zones are Z2/Z3/Z4/Z5; Z2's heads (rotor + two sprays) are the test's
+// system.yaml's auto zones are Z2/Z3/Z4/Z5; Z2's heads (rotor + two sprays) are the test's
 // reference zone. Z1 is the manual stream branch.
 //
 // Run: node test/harness.mjs   (from sim/, via `npm test`)
@@ -430,7 +430,7 @@ console.log("Case: electrical-only continuity checks");
 console.log("");
 
 // M8: the fault model's pure half — the fault set enumerates every fail: entry in
-// graph.yaml, and the grouped (role x failtype) dispatch emits the right effects.
+// system.yaml, and the grouped (role x failtype) dispatch emits the right effects.
 console.log("Case: M8 fault list + compiled effects");
 {
   const faults = listFaults(model);

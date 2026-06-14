@@ -1,21 +1,21 @@
 # Irrigation system — Bill of Materials
 
-Physical-items view. `graph.yaml` is authoritative for anything hydraulic or
+Physical-items view. `system.yaml` is authoritative for anything hydraulic or
 electrical, but it is a **flow graph**, not a BOM, so the two deliberately do
 **not** match 1:1:
 
-- graph.yaml carries non-BOM nodes — ports (`inlet`, `outlet`, `sol_port`) and
+- system.yaml carries non-BOM nodes — ports (`inlet`, `outlet`, `sol_port`) and
   internal flow passages (`entry`, `exhaust`, `metering_port`, `chamber`,
   `air_charge`). Those appear here only as `[bracketed notes]`, not as parts.
 - This BOM adds presentational grouping nodes (e.g. `Wet end`, `Pipework`,
   `Terminal block`, the riser bundles, `Diaphragm assembly`) that have no single
   graph part.
 - Non-functional structure (the valve **Box housing / Enclosure / Lid**) is
-  modeled in graph.yaml as `enclosure.valvebox` — a structural component with no
-  water/electrical routing — and priced via `context.yaml`'s `enclosure.valvebox`.
+  modeled in system.yaml as `enclosure.valvebox` — a structural component with no
+  water/electrical routing — and priced via `system.yaml`'s `enclosure.valvebox`.
 
-Every part in graph.yaml appears here (directly or as a bracketed note), and
-every physical BOM item maps to a graph component; fix graph.yaml first, then
+Every part in system.yaml appears here (directly or as a bracketed note), and
+every physical BOM item maps to a graph component; fix system.yaml first, then
 re-render.
 
 Legend: 💧 wetted / hydraulic · 🌐 230 V mains · 💡 24 V control ·

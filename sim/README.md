@@ -6,10 +6,10 @@ browser, no UI. See `docs/Sim_spec.md` / `docs/sim_implementation_plan.md` for t
 `docs/sim_build_plan.md` for the design history.
 
 Water pressure and flow are computed by **EPANET** (via `epanet-js`, EPANET 2.2 compiled to wasm),
-wrapped by our own outer fixed-point demand loop. The inputs are the three repo-root YAMLs —
-`graph.yaml` (hydraulic network + electrical circuit + per-part failure lists), `catalog.yaml`
-(pump curve, valve-loss and nozzle tables), `context.yaml` (labels) — single source of truth, no
-copies.
+wrapped by our own outer fixed-point demand loop. The input is the repo-root `system.yaml` —
+a single document (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged) holding the
+hydraulic network + electrical circuit + per-part failure lists, the pump curve / valve-loss /
+nozzle tables, and the labels — single source of truth, no copies.
 
 ## What it computes
 
@@ -21,7 +21,7 @@ Given a command/state tuple —
   valve, per-valve bleed screws and flow-control screws (0..1 opening; the catalog GPV loss curve
   scales by 1/t², a seated screw holds the valve shut), rotor flo-stops;
 - `faults` `{ faultKey: true | 0..1 }` — any combination of the ~400 `fail:` entries in
-  `graph.yaml`, compiled by `faults.js` into solver/network mutations: clogs carry a 0–1 severity
+  `system.yaml`, compiled by `faults.js` into solver/network mutations: clogs carry a 0–1 severity
   (partial → sharp-orifice minor loss `K=(1/a²−1)²`, full → sealed link / dead pump; valve-seat
   clogs scale the valve's loss curve since EPANET ignores GPV minor losses), breaks become leak
   emitters at the nearest real junction (suction-side breaks cost the pump its prime), pump-path

@@ -18,7 +18,7 @@ contents:
 
 # Controller — RainMachine HD-16 TOUCH
 
-This homeowner runs a **RainMachine HD-16 TOUCH** (`graph.yaml`). RainMachine document the
+This homeowner runs a **RainMachine HD-16 TOUCH** (`system.yaml`). RainMachine document the
 **HD-12 and HD-16 together** — same board, same terminal layout, same wiring; the HD-16 just has
 16 zone terminals instead of 12. Everything below applies to the HD-16.
 
@@ -53,7 +53,7 @@ so it can drive either an inline master valve on the supply, or — through a re
 
 On *this* system there is no separate inline master-valve solenoid. Instead the master-valve output
 drives the **Hunter PSR-22 pump start relay** (`relay.md`), whose 24 V coil switches 230 V to the
-**DAB Aquajet 132M** well pump. The pump starting is what pressurises the line, and `graph.yaml`'s `circuit` records a
+**DAB Aquajet 132M** well pump. The pump starting is what pressurises the line, and `system.yaml`'s `circuit` records a
 **5-second pump-start-to-valve delay** (`controller.pump_lead_s`) so pressure is up before a zone opens. So the controller's
 "master valve" feature is in use here — it just starts the pump rather than opening a valve.
 
@@ -72,7 +72,7 @@ valve.
 > Connecting two can permanently damage them. The *software* side (enabling the flow meter, entering
 > clicks-per-m³, the rain-sensor normally-closed toggle) is in `app.md`.
 
-**Neither sensor is fitted on this system.** `context.yaml`'s `system_design_choices` record the flow meter and pressure meter as
+**Neither sensor is fitted on this system.** `system.yaml`'s `system_design_choices` record the flow meter and pressure meter as
 deliberate *opt-outs* (programs run one zone at a time, so their diagnostic value can be inferred
 elsewhere), and rain-skip already comes from the weather/ET data over Wi-Fi — no wired rain sensor
 needed. The wiring below is reference / upgrade material.

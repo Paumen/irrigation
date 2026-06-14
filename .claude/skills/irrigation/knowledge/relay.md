@@ -18,7 +18,7 @@ contents:
 The relay sits between the controller and the well pump: the controller sends a 24 V signal to
 the relay coil, and the relay switches 230 V power through to the pump. It is driven from the
 controller's P/MV (pump) output, ideally on a **dedicated** common separate from the zone-valve
-common. (See `graph.yaml` for this install's relay model and wiring, and `context.yaml` for its location.)
+common. (See `system.yaml` for this install's relay model and wiring, and `system.yaml` for its location.)
 
 > **⚠️ Safety — read first.** Everything on the power-supply side of the relay is 230 V work
 > (120/230 V). Connecting or opening the relay should be done by a licensed electrician following
@@ -75,12 +75,12 @@ from the vendor's AWG values; mm² are nearest-standard equivalents):
 
 Typical residential controller→relay runs sit comfortably within range on any sane gauge, so the
 table is useful mainly to **exclude** wire length as a failure mode. (Check the actual run length in
-`context.yaml`'s `cable_runs`.)
+`system.yaml`'s `cable_runs`.)
 
 ## Electrical specifications
 
 > **Re-check before relying on these numbers.** The figures in this section were sourced for the
-> **PSR-52** and have **not** yet been confirmed against the **PSR-22** that `graph.yaml` records as
+> **PSR-52** and have **not** yet been confirmed against the **PSR-22** that `system.yaml` records as
 > the installed unit. The PSR-22 is a different (smaller) relay; treat the HP/amp/coil values below
 > as PSR-52 placeholders until checked against Hunter's PSR-22 data.
 
@@ -110,7 +110,7 @@ installation or one that has worked for years?
 **New installation** → suspect undersized wire from controller to relay. Use a **separate common
 wire** from the controller to the relay; **never share the relay's common with the zone solenoids**.
 Clean every connection and follow the length/gauge table above.
-> If the install already uses a dedicated common (`graph.yaml`'s `circuit`) and a short run (`context.yaml`'s `cable_runs`), the
+> If the install already uses a dedicated common (`system.yaml`'s `circuit`) and a short run (`system.yaml`'s `cable_runs`), the
 > new-install wire-size failure mode is effectively ruled out.
 
 **Existing installation** (a relay in service for years) → suspect dirt or insects

@@ -9,10 +9,11 @@ and where/how much leaves. It is a **static page** (no backend), with water pres
 **EPANET** through our own layer that feeds it the network and reads results back.
 
 Nothing of this simulator exists yet. The Python files in `tools/` are the **unrelated** diagnostic
-scoring engine and are not touched. The simulator is a new `sim/` folder driven by the three existing
-root inputs: `graph.yaml` (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:`
-lists), `catalog.yaml` (pump curve, valve-loss table, rotor `nozzle_i20`, spray `nozzle_mp`),
-`context.yaml` (labels).
+scoring engine and are not touched. The simulator is a new `sim/` folder driven by the existing
+root input `system.yaml` (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged):
+the graph sections (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:`
+lists), the catalog sections (pump curve, valve-loss table, rotor `nozzle_i20`, spray `nozzle_mp`),
+and the context sections (labels).
 
 **Decisions locked with the user:** dependencies loaded from **CDN** via importmap (no vendoring);
 schematic geometry **hand-authored** in a checked-in coordinates module — **no auto-layout, no
@@ -37,8 +38,8 @@ open/closed (open iff energised-through-good-wiring **or** bleed open, **and** i
 
 ### Hosting / deps
 - `sim/index.html` uses an **importmap** → `epanet-js`, `js-yaml` from a CDN (esm.sh/jsdelivr).
-- App fetches the **existing root YAMLs** via relative paths (`../graph.yaml`, `../catalog.yaml`,
-  `../context.yaml`) — single source of truth, no copies.
+- App fetches the **existing root YAML** via a relative path (`../system.yaml`) — single source of
+  truth, no copies.
 - `.github/workflows/pages.yml` deploys the **whole repo** as the Pages artifact (app entry
   `sim/index.html`, so `../*.yaml` resolve). One-time manual step the user must do: repo
   **Settings → Pages → Source: GitHub Actions**. Note this in `sim/README.md`.
@@ -115,7 +116,7 @@ display state (superseding the earlier asked/powered/broken trichotomy, per `doc
 wires merely at potential stay unlit.
 
 ### Faults (`faults.js`)
-Toggle list = every `fail:` in `graph.yaml` (`kinds.*.parts.*.fail` + `circuit.parts.*.*.fail`), keyed
+Toggle list = every `fail:` in `system.yaml` (`kinds.*.parts.*.fail` + `circuit.parts.*.*.fail`), keyed
 `<node>.<subpart>:<failtype>`. A small **(role × failtype) dispatch table** (~15 cells) emits mutations:
 `hydMutations` (addKMinor / closeLink / scalePumpHead / disableValve), `leaks` (orifice outlets),
 `outletMods` (nozzle/arc override, flowScale, zeroFlow), `elecCuts` (ports → `blocked`). A `SPECIAL`
@@ -127,8 +128,8 @@ map overrides a handful (e.g. `bleed_screw:misconfigured`=stuck-open forces valv
 No auto-layout (decision superseding the earlier elkjs plan): `geometry.js` is a hand-authored,
 checked-in coordinates module — an x,y for every flow node, per-port pin positions for every
 circuit part, and route points for every wire — validated by a Node completeness test that fails
-when anything in `graph.yaml` lacks a position (or vice versa). The schematic draws **everything
-in graph.yaml** (per `docs/Sim_ui.md` §14): all flow nodes, every circuit part with labelled
+when anything in `system.yaml` lacks a position (or vice versa). The schematic draws **everything
+in system.yaml** (per `docs/Sim_ui.md` §14): all flow nodes, every circuit part with labelled
 terminals and drawn internals (controller terminal strip, adapter winding, relay coil + contact,
 the splice's 8 ports, pump motor, valve coil pins), and all 24 wires individually pin-to-pin.
 Layout concept per `docs/Sim_ui.md` §15: phone-portrait logical schematic — wiring band on top,
@@ -169,7 +170,7 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
 - **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
 - **M5:** `geometry.js` (hand-authored coordinates + Node completeness test) + `scene.js` +
-  `render.js` — static schematic with flow/pressure encoding, full graph.yaml coverage
+  `render.js` — static schematic with flow/pressure encoding, full system.yaml coverage
   (`docs/Sim_ui.md` §13–§15).
 - **M6:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
   worker solver client (`docs/Sim_ui.md` §12) + `app.js` wiring (live update, m³/h fixed — no
