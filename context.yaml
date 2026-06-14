@@ -52,6 +52,10 @@ equipment:
     installed: 2020-08
     location: valve_box
     price_eur: 150
+  enclosure.valvebox:  # valve box XL
+    installed: 2020-08
+    location: valve_box
+    price_eur: 150
   valve.auto:
     installed: 2020-08
     location: valve_box
