@@ -1,13 +1,7 @@
-// Control-wiring continuity solver for the rewritten (#216) electrical schema, where each
-// part is a single graph node whose `to:` lists its conductor neighbours — there are no
-// sub-ports any more. Energisation is "current flows through a load (coil / motor) back to
-// its source", so reachability never passes *through* a load (valve coil, pump motor, relay
-// coil, controller transformer); wires, splices and sockets are pass-through conductors.
-//
-// A device with two terminal conductors is energised iff, blocking each terminal in turn,
-// the source still reaches the device through the other — forcing both terminals (and the
-// device) to be intact. The relay's 24V coil and 230V contact share one node: the contact
-// only conducts (pump mains) once the coil loop closes.
+// Reachability never passes *through* a load (valve coil, pump motor, relay coil, controller
+// transformer); wires, splices and sockets are pass-through conductors. A two-terminal device
+// is energised iff the source reaches it via each terminal with the other blocked. The relay's
+// 24V coil and 230V contact share one node: the contact conducts only once the coil loop closes.
 
 import { typeOf } from "./model.js";
 
@@ -38,8 +32,7 @@ function buildAdj(electrical) {
   return adj;
 }
 
-// BFS predecessor map from `from`, never entering a node in `blocked`. The start node is always
-// traversable (we are physically at the source); a blocked target is unreachable.
+// Start node is always traversable even if blocked; a blocked target is unreachable.
 function bfs(adj, from, blocked) {
   const prev = new Map([[from, null]]);
   const q = [from];
@@ -65,14 +58,12 @@ function pathOf(adj, from, to, blocked) {
 
 const reachable = (adj, from, to, blocked) => pathOf(adj, from, to, blocked) != null;
 
-// Block every load except the ones named (the source/target of a continuity query).
 function blockLoadsExcept(allLoads, base, ...allow) {
   const s = new Set(base);
   for (const id of allLoads) if (!allow.includes(id)) s.add(id);
   return s;
 }
 
-// Energised iff source reaches device via termA-only (termB blocked) AND via termB-only.
 function throughBoth(adj, source, device, [termA, termB], base) {
   const b1 = new Set(base);
   b1.add(termB);
@@ -84,7 +75,7 @@ function throughBoth(adj, source, device, [termA, termB], base) {
 export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const electrical = model.electrical || {};
   const adj = buildAdj(electrical);
-  const ids = [...adj.keys()]; // every part, including those only referenced as a `to:` target
+  const ids = [...adj.keys()];
 
   const findType = (t) => ids.find((id) => typeOf(id) === t);
   const controllerId = findType("control.controller");
@@ -97,10 +88,8 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const allLoads = new Set(ids.filter(isLoad));
   const valves = ids.filter((id) => typeOf(id) === "valve.auto");
 
-  // Grid sockets are the source.sockets not wired straight into a load (a load-adjacent socket
-  // is just a device's local feed, e.g. the pump's). Which socket is the controller's grid entry
-  // is a static topological fact, so it is resolved against the unfaulted graph — a fault that
-  // cuts the feed must turn the controller off, not erase the socket and crash discovery.
+  // controllerGrid is resolved against the unfaulted graph: a fault cutting the feed must turn
+  // the controller off, not erase the socket and crash discovery.
   const sockets = ids.filter((id) => typeOf(id) === "source.socket");
   const gridSockets = sockets.filter((s) => ![...(adj.get(s) || [])].some(isLoad));
   const controllerGrid = gridSockets.find((s) =>
@@ -115,12 +104,10 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const gridPlugged = commands.gridPower !== false;
   const adapterPlugged = commands.adapterPower !== false;
 
-  // Controller (24V transformer) runs only while its adapter is plugged and its 230V feed is intact.
   const controllerPowered =
     adapterPlugged &&
     reachable(adj, controllerGrid, controllerId, blockLoadsExcept(allLoads, blocked, controllerId));
 
-  // Relay coil loop: controller drives the coil through its two 24V terminals.
   const relayCoilTerms = [...(adj.get(relayId) || [])].filter((n) => typeOf(n) === "wiring.24v");
   const relayCoil =
     controllerPowered &&
@@ -128,7 +115,6 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     relayCoilTerms.length === 2 &&
     throughBoth(adj, controllerId, relayId, relayCoilTerms, blockLoadsExcept(allLoads, blocked, relayId));
 
-  // Closed contact lets the relay pass 230V mains through to the pump.
   const pumpPowered =
     relayCoil &&
     gridPlugged &&
@@ -150,7 +136,6 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   }
   const pumpCommandedNotPowered = pumpStart && !pumpPowered;
 
-  // Light every wire on a live current path.
   const energisedWires = new Set();
   const light = (path) => {
     if (!path) return;
