@@ -28,7 +28,19 @@ IRRIGATION SYSTEM
 │   │   ├─ neutral
 │   │   └─ earth
 │   ├─ 24 V wire   €1.5
+│   │   └─ tube
+│   │       ├─ common
+│   │       ├─ signal 1
+│   │       ├─ signal 2
+│   │       ├─ signal 3
+│   │       └─ signal 4
 │   ├─ 24 V wire   €1.5
+│   │   └─ tube
+│   │       ├─ common
+│   │       ├─ signal 1
+│   │       ├─ signal 2
+│   │       ├─ signal 3
+│   │       └─ signal 4
 │   ├─ Coupling 💧  €5
 │   │   ├─ inlet thread
 │   │   ├─ body
@@ -116,9 +128,33 @@ IRRIGATION SYSTEM
 │   │   ├─ body
 │   │   └─ [distribution gallery]
 │   ├─ 24 V wire   €1.5
+│   │   └─ tube
+│   │       ├─ common
+│   │       ├─ signal 1
+│   │       ├─ signal 2
+│   │       ├─ signal 3
+│   │       └─ signal 4
 │   ├─ 24 V wire   €1.5
+│   │   └─ tube
+│   │       ├─ common
+│   │       ├─ signal 1
+│   │       ├─ signal 2
+│   │       ├─ signal 3
+│   │       └─ signal 4
 │   ├─ 24 V wire   €1.5
+│   │   └─ tube
+│   │       ├─ common
+│   │       ├─ signal 1
+│   │       ├─ signal 2
+│   │       ├─ signal 3
+│   │       └─ signal 4
 │   ├─ 24 V wire   €1.5
+│   │   └─ tube
+│   │       ├─ common
+│   │       ├─ signal 1
+│   │       ├─ signal 2
+│   │       ├─ signal 3
+│   │       └─ signal 4
 │   ├─ Waterproof connector   €1
 │   ├─ Waterproof connector   €1
 │   ├─ Waterproof connector   €1
@@ -636,7 +672,31 @@ IRRIGATION SYSTEM
     │   ├─ neutral
     │   └─ earth
     ├─ 24 V wire   €1.5
+    │   └─ tube
+    │       ├─ common
+    │       ├─ signal 1
+    │       ├─ signal 2
+    │       ├─ signal 3
+    │       └─ signal 4
     ├─ 24 V wire   €1.5
+    │   └─ tube
+    │       ├─ common
+    │       ├─ signal 1
+    │       ├─ signal 2
+    │       ├─ signal 3
+    │       └─ signal 4
     ├─ 24 V wire   €1.5
+    │   └─ tube
+    │       ├─ common
+    │       ├─ signal 1
+    │       ├─ signal 2
+    │       ├─ signal 3
+    │       └─ signal 4
     └─ 24 V wire   €1.5
+        └─ tube
+            ├─ common
+            ├─ signal 1
+            ├─ signal 2
+            ├─ signal 3
+            └─ signal 4
 ```
