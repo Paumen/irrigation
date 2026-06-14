@@ -138,6 +138,10 @@ export function buildTopology(model, state) {
   let pumpLinkId = null;
   for (const L of flowNodes.values()) {
     if (!isLink(L)) continue;
+    // A terminal link (e.g. a manual valve closing off a branch with no outlet beyond it) can
+    // carry no flow: skip it. Its upstream link still dead-ends at the synthetic junction
+    // resolveEndpoint mints for it — a zero-demand stub EPANET treats as no-flow.
+    if (L.to.length === 0) continue;
     if (L.to.length > 1) {
       throw new Error(`network: link "${L.id}" has ${L.to.length} downstream nodes`);
     }

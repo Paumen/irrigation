@@ -1,7 +1,7 @@
 // Normalise the raw system.yaml into the model the solver consumes.
 //
 // system.yaml schema: instance ids are `<PREFIX>_<type>[_<n>]` (e.g. W1_pump.jet,
-// Z2_emitter.spray_1). The type is the dotted middle. Component *type* definitions
+// Z2_head.spray_1). The type is the dotted middle. Component *type* definitions
 // (ports/parts/scalars) live in the nested `items:` tree; `category` holds the
 // loss/requirement metadata; `water`/`electrical` are the two topologies.
 //
@@ -24,7 +24,7 @@ export function roleOf(type) {
   if (type === "valve.manual") return "valve-manual";
   if (type === "valve.foot") return "junction"; // passive check valve -> junction
   if (type === "fitting.cap") return "cap";
-  if (type.startsWith("emitter.")) return "outlet";
+  if (type.startsWith("head.")) return "outlet";
   // swing joints are short pipes carrying their own k_minor
   if (type === "fitting.sj34x12" || type === "fitting.sj34x34") return "pipe";
   if (type.startsWith("hose.")) return "pipe";
@@ -33,17 +33,17 @@ export function roleOf(type) {
 }
 
 function subkindOf(type) {
-  if (type === "emitter.rotor") return "rotor";
-  if (type === "emitter.spray") return "spray";
-  if (type === "emitter.stream") return "stream";
+  if (type === "head.rotor") return "rotor";
+  if (type === "head.spray") return "spray";
+  if (type === "head.stream") return "stream";
   if (type === "fitting.sj34x12" || type === "fitting.sj34x34") return "swing";
   if (type.startsWith("hose.")) return "hose";
   return type;
 }
 
-// Catalog keys drop the brand prefix the YAML `model` string carries.
-const PUMP_CURVE_ALIAS = { "DAB AQUAJET 132 M": "AQUAJET 132 M" };
-const VALVE_LOSS_ALIAS = { "Hunter PGV-101G": "PGV-101G" };
+// Pump-curve catalog keys carry the full brand string the YAML `model` field uses, so no
+// aliasing is needed; the map is kept as an override hook for any future brand mismatches.
+const PUMP_CURVE_ALIAS = {};
 
 // Walk the nested `items:` tree and collect every component *type* definition: any key
 // containing a "." is a dotted type id (e.g. `valve.foot`, `fitting.coupling_c25bf34`,
@@ -145,14 +145,15 @@ export function buildModel(rawGraph, rawCatalog) {
   const pumpDef = components["pump.jet"];
   if (!pumpDef?.model) throw new Error('model: missing "pump.jet" or its "model"');
   const pumpKey = PUMP_CURVE_ALIAS[pumpDef.model] || pumpDef.model;
-  const pumpCurve = rawCatalog.pump_curves?.[pumpKey];
+  const pumpCurve = rawCatalog["pump.jet_curves"]?.[pumpKey];
   if (!pumpCurve) throw new Error(`model: no pump curve for "${pumpDef.model}"`);
 
+  // valve.auto_loss is a single flat {flow_m3h, loss_bar} table (the system has one auto-valve
+  // model), not a per-model map like the pump curves.
   const valveDef = components["valve.auto"];
-  if (!valveDef?.model) throw new Error('model: missing "valve.auto" or its "model"');
-  const valveKey = VALVE_LOSS_ALIAS[valveDef.model] || valveDef.model;
-  const valveLoss = rawCatalog.valve_loss?.[valveKey];
-  if (!valveLoss) throw new Error(`model: no valve_loss curve for "${valveDef.model}"`);
+  if (!valveDef) throw new Error('model: missing "valve.auto"');
+  const valveLoss = rawCatalog["valve.auto_loss"];
+  if (!valveLoss) throw new Error("model: no valve.auto_loss curve");
 
   return {
     flowNodes,
@@ -163,8 +164,8 @@ export function buildModel(rawGraph, rawCatalog) {
     curves: {
       pump: pumpCurve, // {flow_m3h:[…], head_m:[…]}
       valveLoss, // {flow_m3h:[…], loss_bar:[…]}
-      nozzleI20: rawCatalog.nozzle_i20,
-      nozzleMp: rawCatalog.nozzle_mp,
+      nozzleI20: rawCatalog["head.rotor/nozzle"],
+      nozzleMp: rawCatalog["head.spray/nozzle"],
     },
   };
 }

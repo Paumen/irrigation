@@ -28,14 +28,14 @@ function tableRows(outlet, curves) {
   if (outlet.subkind === "rotor") {
     const size = String(outlet.params.nozzle).split(/\s+/)[0]; // "4.0 blue" -> "4.0"
     const row = curves.nozzleI20.flow_m3h[size];
-    if (!row) throw new Error(`outlets: no nozzle_i20 row for size "${size}"`);
+    if (!row) throw new Error(`outlets: no head.rotor/nozzle row for size "${size}"`);
     return { pressures: curves.nozzleI20.pressure_bar, row };
   }
   if (outlet.subkind === "spray") {
     const fam = String(outlet.params.nozzle);
     const arc = outlet.params.arc;
     const row = curves.nozzleMp.flow_m3h_by_arc[fam]?.[arc];
-    if (!row) throw new Error(`outlets: no nozzle_mp row for "${fam}" arc ${arc}`);
+    if (!row) throw new Error(`outlets: no head.spray/nozzle row for "${fam}" arc ${arc}`);
     return { pressures: curves.nozzleMp.pressure_bar, row };
   }
   return null;
