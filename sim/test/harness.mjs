@@ -132,5 +132,15 @@ const noFaults = compileFaults(model, {});
   check(wetHeads.every((id) => r.demands.get(id) > 0), "Z4/Z5 heads flow");
 }
 
+{
+  // A fault that cuts the controller's 230V feed must turn it off gracefully (grid-socket
+  // discovery is static topology and must not depend on the fault set).
+  console.log("\nCASE cut controller feed wire (electrical fault)");
+  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } }, new Set(["H1_wiring.230v_1"]));
+  check(elec.controllerPowered === false, "controller de-powered by the cut feed");
+  check(elec.pumpPowered === false, "pump off (relay coil needs the controller)");
+  check(elec.zoneEnergised[2] === false, "Z2 de-energised");
+}
+
 console.log(`\n${failures === 0 ? "ALL CHECKS PASSED" : `${failures} CHECK(S) FAILED`}`);
 process.exit(failures === 0 ? 0 : 1);

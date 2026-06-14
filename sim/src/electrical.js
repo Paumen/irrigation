@@ -98,11 +98,13 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const valves = ids.filter((id) => typeOf(id) === "valve.auto");
 
   // Grid sockets are the source.sockets not wired straight into a load (a load-adjacent socket
-  // is just a device's local feed, e.g. the pump's). Of the two, one reaches the controller.
+  // is just a device's local feed, e.g. the pump's). Which socket is the controller's grid entry
+  // is a static topological fact, so it is resolved against the unfaulted graph — a fault that
+  // cuts the feed must turn the controller off, not erase the socket and crash discovery.
   const sockets = ids.filter((id) => typeOf(id) === "source.socket");
   const gridSockets = sockets.filter((s) => ![...(adj.get(s) || [])].some(isLoad));
   const controllerGrid = gridSockets.find((s) =>
-    reachable(adj, s, controllerId, blockLoadsExcept(allLoads, blocked, controllerId)),
+    reachable(adj, s, controllerId, blockLoadsExcept(allLoads, new Set(), controllerId)),
   );
   const pumpGrid = gridSockets.find((s) => s !== controllerGrid);
   if (!controllerGrid) throw new Error("solveElectrical: no grid socket feeds the controller");
