@@ -164,7 +164,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
       if (reachable.has(nodeId) && coeff > 0) emitters.set(nodeId, (emitters.get(nodeId) || 0) + coeff);
     }
 
-    // --- 3. build INP, solve, read back ---
     topo = buildTopology(model, {
       pumpOn,
       valveOpen,
@@ -178,11 +177,9 @@ export function solveSteady(model, state, elec, hyd, faults) {
     });
     res = solveInp(hyd, toInp(topo), { nodeIds: topo.nodeIds, linkIds: topo.linkIds });
 
-    // record valve inlet pressures for the next actuation pass
     valveInlet = {};
     for (const v of topo.valves) valveInlet[v.flowId] = res.pressureBar[v.n1] ?? 0;
 
-    // --- 4. convergence: pressures + demand steps stable for STABLE_ITERS ---
     let maxdp = 0;
     for (const o of outlets) {
       const ep = epOf(o.id);
@@ -193,7 +190,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
     prevP = { ...res.pressureBar };
     if (res && maxdp < P_TOL_BAR && maxStep < Q_TOL_M3H) {
       if (++stable >= STABLE_ITERS) {
-        // one more recompute already reflected; converged
         return finalize(model, state, fx, pumpOn, valveOpen, reachable, res, topo, commandedNotOpening, iters, true, valvesFrozen);
       }
     } else {
