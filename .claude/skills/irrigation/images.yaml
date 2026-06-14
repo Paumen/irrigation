@@ -1,6 +1,6 @@
 # Image manifest — every surfaceable picture in media/, keyed IMG.<filename-stem> (key always equals its file).
 #
-# Naming convention (image-side equipment families, aligned with graph.yaml's `kinds`):
+# Naming convention (image-side equipment families, aligned with system.yaml's `kinds`):
 #   <category>[-<type>]-<role>-<descriptor>
 #   • category — an equipment family (head, valve, nozzle, fitting, hose, pump, controller, relay)
 #                plus wiring, and the non-system buckets tool (gauge/multimeter), sensor, and
@@ -128,7 +128,7 @@ images:
 
   IMG.fitting-swing-product-sj712:
     file: media/fitting-swing-product-sj712.jpg
-    caption: Hunter SJ-712 swing joint (≈30 cm, male × male) — two pre-set 90° elbows on a straight riser; this is the swing-joint line the homeowner actually runs (graph.yaml's `swing.34x34`/`swing.34x12`, "Hunter SJ"), 3/4×3/4 under rotors and 3/4×1/2 under spray bodies.
+    caption: Hunter SJ-712 swing joint (≈30 cm, male × male) — two pre-set 90° elbows on a straight riser; this is the swing-joint line the homeowner actually runs (system.yaml's `swing.34x34`/`swing.34x12`, "Hunter SJ"), 3/4×3/4 under rotors and 3/4×1/2 under spray bodies.
     subjects: [heads, hoses]
     relates: closer match to this homeowner's swing joints than the generic IMG.fitting-swing-product; sets head height to grade and absorbs side load. From a retailer listing screenshot (phone/browser chrome visible).
     used_in: [playbooks/parts.md]
@@ -139,7 +139,7 @@ images:
     caption: Black poly double nipple — male thread on both ends with a hex middle; screws two female-thread fittings together (e.g. a manifold swivel-nut outlet to a valve inlet). A plain `joint` coupling, rated to ~10 bar.
     subjects: [hoses, valve]
     procedures: [valve_install]
-    relates: realises the many `joint` nodes in graph.yaml; spare for re-plumbing the valve box — the male × male nipple into the valve inlet (teflon on the thread)
+    relates: realises the many `joint` nodes in system.yaml; spare for re-plumbing the valve box — the male × male nipple into the valve inlet (teflon on the thread)
     used_in: [playbooks/parts.md]
 
   IMG.fitting-joint-product-compression-male:
@@ -162,7 +162,7 @@ images:
   # ── fitting · manifold ───────────────────────────────────────────────────────
   IMG.fitting-manifold-product-lev-6way:
     file: media/fitting-manifold-product-lev-6way.jpg
-    caption: LEV 6-way distributor manifold — a single barred header with six 1" swivel-nut female outlets (rubber sealing washers shown loose); the trunk feeds it and each outlet runs to one zone valve. This is the homeowner's manifold (graph.yaml's `manifold` kind).
+    caption: LEV 6-way distributor manifold — a single barred header with six 1" swivel-nut female outlets (rubber sealing washers shown loose); the trunk feeds it and each outlet runs to one zone valve. This is the homeowner's manifold (system.yaml's `manifold` kind).
     subjects: [valve, hoses]
     procedures: [valve_install]
     relates: the MAIN → Z1…Z6 fan-out point in the valve box; swivel nuts let a single valve come off without disturbing the others — the bare-thread (washer-sealed) inlet joint
@@ -304,7 +304,7 @@ images:
     file: media/head-spray-product-pro-spray-prs40.jpg
     caption: Hunter Pro-Spray PRS40 pop-up body — 4" black riser with a grey pressure-regulating cap (holds 2.8 bar at the nozzle) and an adjustable blue-top nozzle. This is the spray body on the homeowner's Z1 and Z4, carrying MP Rotator nozzles.
     subjects: [heads]
-    relates: the `head.spray` body in graph.yaml (takes an MP Rotator nozzle); the PRS40 regulation is what keeps MP Rotators at their design pressure. Rotor sibling is IMG.head-rotor-product-i20.
+    relates: the `head.spray` body in system.yaml (takes an MP Rotator nozzle); the PRS40 regulation is what keeps MP Rotators at their design pressure. Rotor sibling is IMG.head-rotor-product-i20.
     used_in: [playbooks/identify.md, playbooks/parts.md]
 
   # ── hose ────────────────────────────────────────────────────────────────────
@@ -444,7 +444,7 @@ images:
     caption: Two-wire (reed-type) flow sensor wired to the flow input — no polarity, it's a magnet-driven open/close switch. HD-12/16 captures pulses up to 2 Hz (3 clicks/second); above that it under-reports flow.
     subjects: [controller, wiring]
     failure_modes: [F2, F1]
-    relates: reference/upgrade wiring — NOT fitted on this system (flow meter is a deliberate opt-out in context.yaml's `system_design_choices`). One sensor at a time, rain OR flow. Software setup (clicks-per-m³) is in app.md. Vendor diagram is HD-12; applies to the HD-16.
+    relates: reference/upgrade wiring — NOT fitted on this system (flow meter is a deliberate opt-out in system.yaml's `system_design_choices`). One sensor at a time, rain OR flow. Software setup (clicks-per-m³) is in app.md. Vendor diagram is HD-12; applies to the HD-16.
     used_in: [controller.md]
 
   IMG.sensor-product-wind-clik:
@@ -516,9 +516,9 @@ images:
     file: media/tool-product-flow-totaliser.jpg
     caption: Inline multi-jet flow totaliser — blue body with brass union tailpieces and a sealed register (m³); plumbed into a line, it totalises flow so you can read a zone's real throughput.
     subjects: [hoses]
-    relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in graph.yaml — illustrative.
+    relates: measuring actual flow during capacity planning / diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in system.yaml — illustrative.
     used_in: []
-    relates: measuring actual flow during a flow/pressure check or diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in graph.yaml — illustrative.
+    relates: measuring actual flow during a flow/pressure check or diagnosis; an alternative to timing a bucket. Not part of this well-fed system as recorded in system.yaml — illustrative.
 
   # ── valve · auto ─────────────────────────────────────────────────────────────
   IMG.valve-auto-product-pgv-101g:

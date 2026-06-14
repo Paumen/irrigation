@@ -1,6 +1,6 @@
 # Irrigation system — Bill of Materials (generated)
 
-GENERATED from graph.yaml by tools/render_bom.py. Lines are raw graph keys.
+GENERATED from system.yaml by tools/render_bom.py. Lines are raw graph keys.
 Sections + zone(Z#) are prefix buckets; assemblies/parts come from the items: tree.
 
 ```

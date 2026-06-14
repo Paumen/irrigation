@@ -17,7 +17,7 @@ contents:
 
 This is the **zone-hose** neighbourhood: the polyethylene hoses that carry water from
 the valve manifold out to the heads on each zone. Each zone has its own buried
-hose (see `graph.yaml` for hose sizes, count, and the per-zone head mix).
+hose (see `system.yaml` for hose sizes, count, and the per-zone head mix).
 
 Read this when the engine narrows to the zone hoses, or when a head-side symptom (won't
 pop up, short radius, brown spots on the far end of a zone) doesn't match

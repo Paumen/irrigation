@@ -17,7 +17,7 @@ contents:
 
 **Coverage note.** No deeper splice-level or common-wire fault detail yet. On short residential
 runs, wire length is almost certainly *not* a failure mode — the table is useful mainly to
-positively exclude it. (Check the actual run lengths in `context.yaml`'s `cable_runs`.)
+positively exclude it. (Check the actual run lengths in `system.yaml`'s `cable_runs`.)
 
 ## Waterproof connectors (install + corrosion fault)
 

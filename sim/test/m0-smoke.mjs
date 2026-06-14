@@ -7,9 +7,9 @@
 //
 // What it locks down:
 //   - Workspace/Project lifecycle (loadModule, writeFile, open, solveH, close)
-//   - flow units CMH (m3/h, to match catalog.yaml tables directly)
+//   - flow units CMH (m3/h, to match system.yaml tables directly)
 //   - Darcy-Weisbach headloss with roughness in mm
-//   - a PUMP with a HEAD curve (the catalog pump curve from catalog.yaml)
+//   - a PUMP with a HEAD curve (the catalog pump curve from system.yaml)
 //   - a GPV valve with a headloss curve (the catalog valve_loss curve)
 //   - reading NodeProperty.Pressure (-> bar) and LinkProperty.Flow
 

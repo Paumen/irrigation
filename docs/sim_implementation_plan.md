@@ -1,13 +1,13 @@
 # Irrigation System Simulator — Build Spec
 
-**Inputs:** `graph.yaml` (layout, wiring, and each part's possible failures), `catalog.yaml` (pump/valve/nozzle tables), `context.yaml` (labels/background).
+**Inputs:** `system.yaml` (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged into one document) — its graph sections (layout, wiring, and each part's possible failures), its catalog sections (pump/valve/nozzle tables), and its context sections (labels/background).
 
 ## 1. What to build
 
 - An interactive page in a web browser, running fully in the browser — static page, no server.
 - Water pressure and flow computed by **EPANET**, with our own layer feeding it the system and reading results back.
-- Friction calculated by the Darcy–Weisbach method, using the per-hose smoothness value in `graph.yaml`.
-- Any individual part can be broken — the full part-by-part failure list from `graph.yaml`.
+- Friction calculated by the Darcy–Weisbach method, using the per-hose smoothness value in `system.yaml`.
+- Any individual part can be broken — the full part-by-part failure list from `system.yaml`.
 - Shows the settled (steady-state) result instantly, and also a quasi-time mode that steps through a
   sequence of settled states.
 - Pressures in bar and flows, with a litres-per-minute toggle.
@@ -18,9 +18,9 @@ The result must reflect:
 
 - Hose friction.
 - Height — the pump lifts water up to each head's elevation.
-- The pump curve from `catalog.yaml`.
+- The pump curve from `system.yaml`.
 - Valve and fitting resistance — the automatic valve's loss from the `valve_loss` table in
-  `catalog.yaml`; the hand valve from its `Kv` rating (it has no catalog loss curve).
+  `system.yaml`; the hand valve from its `Kv` rating (it has no catalog loss curve).
 - Outlet discharge depends on the pressure reaching each outlet, and the two head types differ:
   - **Rotors** (`head.rotor`, I-20) are unregulated — discharge follows the `nozzle_i20` table for the
     fitted nozzle size, rising with pressure.
@@ -72,7 +72,7 @@ rotor's flo-stop; each valve's bleed screw. The situation simulated is these set
 
 ## 5. Faults
 
-The full part-by-part failure list from `graph.yaml`.
+The full part-by-part failure list from `system.yaml`.
 Effects: a **clog** restricts flow (a full block stops it); a **break** either leaks or disables the part;
 a **wrong setting** (eg  mis-set nozzle, mis-wiring) misbehaves
 accordingly; an **electrical break** stops the valve or pump it feeds from switching on.

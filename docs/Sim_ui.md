@@ -14,7 +14,7 @@
 **Interaction**
 
 8. Tapping any component opens a bottom sheet that starts compact and expands to full screen on swipe-up.
-9. The bottom sheet contains, in one scroll: live values (pressure, flow, valve state including commanded-but-not-opening), the component's capability range where the catalog defines one (a head's flow span over its nozzle table, the pump curve's head/flow span, the valve's loss-curve range) so live values read in context, that component's actions, and its fault toggles from `listFaults`. The sheet is organised into per-subpart sections: each subpart of the tapped component (from `graph.yaml`'s `kinds.*.parts` / circuit parts) gets its own section holding that subpart's actions (bleed screw, flow-control throttle, flo-stop, handle) and that subpart's fault toggles; component-level actions and subpart-less faults sit in a top section.
+9. The bottom sheet contains, in one scroll: live values (pressure, flow, valve state including commanded-but-not-opening), the component's capability range where the catalog defines one (a head's flow span over its nozzle table, the pump curve's head/flow span, the valve's loss-curve range) so live values read in context, that component's actions, and its fault toggles from `listFaults`. The sheet is organised into per-subpart sections: each subpart of the tapped component (from `system.yaml`'s `kinds.*.parts` / circuit parts) gets its own section holding that subpart's actions (bleed screw, flow-control throttle, flo-stop, handle) and that subpart's fault toggles; component-level actions and subpart-less faults sit in a top section.
 10. Actions are per component type: auto valves — bleed screw, throttle stepper; the manual valve — handle; heads — floStop; controller — MV and zone 1–4 commands; power plugs — grid/adapter on-off (`solveElectrical`'s `gridPower`/`adapterPower` commands, not the fault channel).
 11. Faults are injected only by tapping a component, with no separate fault list or presets; clog severity in fixed steps of 25 / 50 / 75 / full (severity 1.0). Steps below a fault's acting threshold (e.g. pilot-port clogs under 50) and always-inert faults (e.g. a rotor's gear or check valve) are shown as inert rather than silently doing nothing, driven by the `threshold`/`inert` metadata on `listFaults` entries.
 12. The solver runs in a worker and re-runs debounced on every state change; on failure (non-convergence, `valvesFrozen`, or a thrown solve) it keeps the last good state and shows a badge revealing solver internals on tap. The badge copy states that the rendered state predates the failed change, since the kept state may reflect a different control/fault configuration than the current toggles.
@@ -22,4 +22,4 @@
 **Geometry**
 
 13. Schematic geometry — hydraulic and electrical — is hand-authored.
-14. The schematic draws everything in `graph.yaml`.
+14. The schematic draws everything in `system.yaml`.

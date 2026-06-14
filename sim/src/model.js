@@ -1,4 +1,4 @@
-// graph.yaml schema: instance ids are `<PREFIX>_<component>[_<n>]` (e.g. W1_pump.jet,
+// system.yaml schema: instance ids are `<PREFIX>_<component>[_<n>]` (e.g. W1_pump.jet,
 // Z2_emitter.spray_1). The component type is the dotted middle; `components` holds the
 // type definitions (ports/parts/scalars), `category` the loss/requirement metadata, and
 // `water`/`electrical` the two topologies. buildModel flattens this into the internal
@@ -67,7 +67,7 @@ function paramsOf(compDef, instance) {
     if (k === "to" || k === "h_m") continue;
     params[k] = v;
   }
-  // field aliases: graph.yaml uses k / l_m; the network layer reads k_minor / length_m.
+  // field aliases: system.yaml uses k / l_m; the network layer reads k_minor / length_m.
   if (params.k != null) params.k_minor = params.k;
   if (params.l_m != null) params.length_m = params.l_m;
   return params;

@@ -12,7 +12,7 @@ export const STABLE_ITERS = 2; // consecutive within-tolerance iterations requir
 // The wide lift/stay asymmetry is physical: a diaphragm valve needs min_operating_bar
 // to lift, but the drained chamber holds it open far lower until it nears zero. Do not
 // collapse the two thresholds.
-export const VALVE_OPEN_BAR = 1.5; // lift threshold; fallback when graph.yaml has no min_operating_bar
+export const VALVE_OPEN_BAR = 1.5; // lift threshold; fallback when system.yaml has no min_operating_bar
 export const VALVE_STAY_BAR = 0.3; // stay open while inlet stays above this
 // Freeze valve states for the last iters so the demand fixed point can settle.
 export const VALVE_FREEZE_TAIL = 12;

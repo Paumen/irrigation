@@ -47,7 +47,7 @@ def _summarize_question(
         out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]
     elif q["type"] == "ages":
         # Model + install date intentionally not emitted here; agent reads them
-        # from graph.yaml (model) and context.yaml (install date) per row id.
+        # from system.yaml (model) and its equipment section (install date) per row id.
         out["rows"] = [{"id": r["id"], "label": r["label"]} for r in q["rows"]]
         out["stepLabels"] = q.get("stepLabels", [])
     return out

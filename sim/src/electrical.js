@@ -1,4 +1,4 @@
-// Continuity over graph.yaml's `electrical` section. Nodes are component ports, addressed
+// Continuity over system.yaml's `electrical` section. Nodes are component ports, addressed
 // `<instanceId>/<portPath>` (e.g. H1_control.controller/port_1, Z2_valve.auto/solenoid/coil).
 // Each wiring/relay/transformer/motor/solenoid contributes hardcoded internal continuity;
 // the `to:` relations are the connections between components. `condition:`/`drive:` couplings

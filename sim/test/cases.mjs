@@ -1,5 +1,5 @@
 // Verification cases (settled states fed through the electrical solve, then the hydraulic
-// outer loop). graph.yaml's auto zones are Z2/Z3/Z4/Z5 (Z2 == the old Z1 head set: rotor +
+// outer loop). system.yaml's auto zones are Z2/Z3/Z4/Z5 (Z2 == the old Z1 head set: rotor +
 // two sprays); Z1 is the manual hand-watering branch (stream nozzle). Each case carries:
 //   commands : controller outputs { mv, zones:{2,3,4,5} } -> solveElectrical
 //   state    : mechanical inputs { manualOpen, bleedOpen, floStop, throttle } -> solveSteady
