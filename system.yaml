@@ -558,6 +558,24 @@ items:
           common:   {fail: [broken, misconfigured]}
           signal:   {fail: [broken, misconfigured], count: 4}
 
+  wiring.24v2:
+    installed: 2020-08
+    price_eu_m: 2
+    interfaces: [com_24v, sig_24v]
+    items:
+      tube:
+        fail: [broken, misconfigured]
+        items:
+          common: {fail: [broken, misconfigured]}
+          signal: {fail: [broken, misconfigured]}
+
+  wiring.common:
+    installed: 2020-08
+    price_eu_m: 2
+    interfaces: [com_24v, com_24v]
+    items:
+      common: {fail: [broken, misconfigured]}
+
 water:
   W1_source.well:            {to: [W1_fitting.strainer], h_m: 5.5}
   W1_fitting.strainer: {to: [W1_valve.foot], h_m: 4.3}
@@ -658,35 +676,59 @@ water:
 electrical:
   S1_source.socket:   {to: [S1_wiring.230v_1]}
   S1_wiring.230v_1:   {to: [S1_relay.pumpstart]}
-  S1_relay.pumpstart: {to: [S1_wiring.230v_2, S1_wiring.24v_2]}
+  S1_relay.pumpstart: {to: [S1_wiring.230v_2]}
   S1_wiring.230v_2:   {to: [W1_source.socket]}
   W1_source.socket:   {to: [W1_pump.jet]}
 
   H1_source.socket:   {to: [H1_wiring.230v_1]}
   H1_wiring.230v_1:   {to: [H1_control.controller]}
-  H1_control.controller:
-    to: [S1_wiring.24v_1, D1_wiring.24v]
-  S1_wiring.24v_1: {to: [S1_relay.pumpstart]}
-  S1_wiring.24v_2: {to: [H1_control.controller]}
 
+  # 24V control. The controller drives each zone over its own signal conductor (a child of the
+  # home-run trunk) and the relay over the pump-start lead; its common ties to the home-run
+  # common and the relay-cable common. Conductors are addressed as children (bundle/child) so a
+  # single conductor is a first-class node, not the whole 5-core cable.
+  H1_control.controller:
+    to: [D1_wiring.24v/signal_z2, D1_wiring.24v/signal_z3, D1_wiring.24v/signal_z4,
+         D1_wiring.24v/signal_z5, D1_wiring.24v/common,
+         S1_wiring.24v2/signal, S1_wiring.24v2/common]
+
+  # Relay / pump-start cable (2-core): the signal pulls in the coil, the common returns to the
+  # controller.
+  S1_wiring.24v2:
+    to:
+      signal: [S1_relay.pumpstart]
+      common: [S1_relay.pumpstart]
+
+  # Home-run trunk (5-core): four zone signals out to the valve-box splices, plus the shared
+  # common that lands on the controller-end common splice.
   D1_wiring.24v:
-    to: [Z2_wiring.splice, Z3_wiring.splice, Z5_wiring.splice, Z4_wiring.splice, H1_control.controller]
+    to:
+      signal_z2: [Z2_wiring.splice]
+      signal_z3: [Z3_wiring.splice]
+      signal_z4: [Z4_wiring.splice]
+      signal_z5: [Z5_wiring.splice]
+      common:    [D1_wiring.splice_4]
   Z2_wiring.splice: {to: [Z2_valve.auto]}
   Z3_wiring.splice: {to: [Z3_valve.auto]}
   Z5_wiring.splice: {to: [Z5_valve.auto]}
   Z4_wiring.splice: {to: [Z4_valve.auto]}
 
+  # Shared common return. Each valve's common lands on its splice; in-box jumpers daisy-chain the
+  # four commons toward the home-run common, so a mid-chain break disables every zone upstream of
+  # it (toward Z2) while the controller-side zones keep their return.
   Z2_valve.auto: {to: [D1_wiring.splice_1]}
   Z3_valve.auto: {to: [D1_wiring.splice_2]}
   Z5_valve.auto: {to: [D1_wiring.splice_3]}
   Z4_valve.auto: {to: [D1_wiring.splice_4]}
-  D1_wiring.splice_1: {to: [D1_wiring.24v_1]}
-  D1_wiring.24v_1:    {to: [D1_wiring.splice_2]}
-  D1_wiring.splice_2: {to: [D1_wiring.24v_2]}
-  D1_wiring.24v_2:    {to: [D1_wiring.splice_3]}
-  D1_wiring.splice_3: {to: [D1_wiring.24v_3]}
-  D1_wiring.24v_3:    {to: [D1_wiring.splice_4]}
-  D1_wiring.splice_4: {to: [D1_wiring.24v]}
+  D1_wiring.splice_1: {to: [D1_wiring.common_1]}
+  D1_wiring.common_1: {to: [D1_wiring.splice_2]}
+  D1_wiring.splice_2: {to: [D1_wiring.common_2]}
+  D1_wiring.common_2: {to: [D1_wiring.splice_3]}
+  D1_wiring.splice_3: {to: [D1_wiring.common_3]}
+  D1_wiring.common_3: {to: [D1_wiring.splice_4]}
+  # convergence connector: the home-run common (D1_wiring.24v/common) and Z4's common land here;
+  # it has no onward conductor, so it is a terminal node.
+  D1_wiring.splice_4: {}
 
 pump.jet_curves:
   DAB JET 102 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6], head_m: [53.8, 47, 41, 36.3, 32.4, 28.8, 25.8]}
