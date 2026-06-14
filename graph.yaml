@@ -590,7 +590,7 @@ items:
       earth: {fail: [broken, misconfigured]}
 
   wiring.24v:
-    ports: [tube/common/inlet, tube/common/outlet, tube/signal_1/inlet, tube/signal_1/outlet, tube/signal_2/inlet, tube/signal_2/outlet, tube/signal_3/inlet, tube/signal_3/outlet, tube/signal_4/inlet, tube/signal_4/outlet]
+    ports: [common/inlet, common/outlet, signal_1/inlet, signal_1/outlet, signal_2/inlet, signal_2/outlet, signal_3/inlet, signal_3/outlet, signal_4/inlet, signal_4/outlet]
     items:
       tube:
         fail: [broken, misconfigured]
