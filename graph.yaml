@@ -589,7 +589,15 @@ items:
       neutral: {fail: [broken, misconfigured]}
       earth: {fail: [broken, misconfigured]}
 
-  wiring.24v: {ports: [inlet, outlet], fail: [broken, misconfigured]}
+  wiring.24v:
+    ports: [common/inlet, common/outlet, signal_1/inlet, signal_1/outlet, signal_2/inlet, signal_2/outlet, signal_3/inlet, signal_3/outlet, signal_4/inlet, signal_4/outlet]
+    fail: [broken, misconfigured]
+    items:
+      common: {fail: [broken, misconfigured]}
+      signal_1: {fail: [broken, misconfigured]}
+      signal_2: {fail: [broken, misconfigured]}
+      signal_3: {fail: [broken, misconfigured]}
+      signal_4: {fail: [broken, misconfigured]}
 
 water:
   W1_source.well: {to: [W1_fitting.strainer_basket], h_m: 5.5}
