@@ -122,10 +122,12 @@ def render_parts(typedef, prefix, out):
         coll.append((k, v, cnt)); i = j
     for idx, (k, v, cnt) in enumerate(coll):
         last = idx == len(coll) - 1
+        # quantity = grouped repeats (numbered keys) × the part's own count: attr
+        qty = cnt * int(v.get("count", 1) or 1)
         key = re.sub(r"_\d+(_|$)", r"\1", k) if cnt > 1 else k
         txt = f"[{key}]" if v.get("feature") else key
-        if cnt > 1:
-            txt += f" ×{cnt}"
+        if qty > 1:
+            txt += f" ×{qty}"
         if v.get("model"):
             txt += f"  ({v['model']})"
         line(prefix, last, txt, out)

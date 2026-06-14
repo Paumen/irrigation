@@ -54,11 +54,11 @@ IRRIGATION SYSTEM
 │   ├─ wiring.24v
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal
+│   │       └─ signal ×4
 │   ├─ wiring.24v
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal
+│   │       └─ signal ×4
 │   ├─ suction_assembly
 │   │   ├─ foot_valve_assembly
 │   │   │   ├─ valve.foot
@@ -74,7 +74,7 @@ IRRIGATION SYSTEM
 │   │   │       └─ body
 │   │   ├─ hose.suction  (4 m)
 │   │   │   ├─ tube
-│   │   │   └─ clamp
+│   │   │   └─ clamp ×2
 │   │   └─ fitting.hosetail_plastic
 │   │       ├─ barb
 │   │       ├─ thread
@@ -88,9 +88,9 @@ IRRIGATION SYSTEM
 │   │   │   └─ nut
 │   │   └─ fitting.c32c32
 │   │       ├─ body
-│   │       ├─ oring
-│   │       ├─ grip
-│   │       └─ nut
+│   │       ├─ oring ×2
+│   │       ├─ grip ×2
+│   │       └─ nut ×2
 │   └─ pump_power_assembly
 │       └─ relay.pumpstart  (Hunter PSR-22)
 │           ├─ coil_in
@@ -107,25 +107,25 @@ IRRIGATION SYSTEM
 │   ├─ wiring.24v
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal
+│   │       └─ signal ×4
 │   ├─ wiring.24v
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal
+│   │       └─ signal ×4
 │   ├─ wiring.24v
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal
+│   │       └─ signal ×4
 │   ├─ wiring.24v
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal
+│   │       └─ signal ×4
 │   ├─ enclosure.valvebox  (valve box jumbo)
 │   │   ├─ enclosure
 │   │   └─ lid
 │   └─ manifold_assembly
 │       ├─ fitting.manifold  (LEV 6-way distributor)
-│       │   ├─ washer
+│       │   ├─ washer ×7
 │       │   ├─ body
 │       │   └─ [distribution_gallery]
 │       ├─ fitting.c32sm1
@@ -166,9 +166,9 @@ IRRIGATION SYSTEM
 │   │   │   └─ tube
 │   │   ├─ fitting.c16c16
 │   │   │   ├─ body
-│   │   │   ├─ oring
-│   │   │   ├─ grip
-│   │   │   └─ nut
+│   │   │   ├─ oring ×2
+│   │   │   ├─ grip ×2
+│   │   │   └─ nut ×2
 │   │   ├─ hose.ldpe16  (10 m)
 │   │   │   └─ tube
 │   │   └─ valve.manual
@@ -218,9 +218,9 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (8 m)
 │   │   │   └─ tube
 │   │   ├─ fitting.tee
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
+│   │   │   ├─ nut ×3
+│   │   │   ├─ grip ×3
+│   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (8 m)
 │   │   │   └─ tube
@@ -232,7 +232,7 @@ IRRIGATION SYSTEM
 │   │   │   │   ├─ body
 │   │   │   │   └─ thread
 │   │   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   │   ├─ thread
+│   │   │   │   ├─ thread ×2
 │   │   │   │   └─ body
 │   │   │   └─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ thread
@@ -248,14 +248,14 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (4 m)
 │   │   │   └─ tube
 │   │   ├─ fitting.tee_c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
+│   │   │   ├─ nut ×2
+│   │   │   ├─ grip ×2
+│   │   │   ├─ oring ×2
 │   │   │   ├─ thread
 │   │   │   └─ body
 │   │   ├─ riser_2
 │   │   │   ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
-│   │   │   │   ├─ thread
+│   │   │   │   ├─ thread ×2
 │   │   │   │   └─ body
 │   │   │   └─ head.rotor  (BL4.0, 170°)  (Hunter I-20-04-SS)
 │   │   │       ├─ thread
@@ -279,7 +279,7 @@ IRRIGATION SYSTEM
 │   │       │   ├─ body
 │   │       │   └─ thread
 │   │       ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
-│   │       │   ├─ thread
+│   │       │   ├─ thread ×2
 │   │       │   └─ body
 │   │       └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
 │   │           ├─ thread
@@ -332,9 +332,9 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (2 m)
 │   │   │   └─ tube
 │   │   ├─ fitting.tee
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
+│   │   │   ├─ nut ×3
+│   │   │   ├─ grip ×3
+│   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (2 m)
 │   │   │   └─ tube
@@ -346,7 +346,7 @@ IRRIGATION SYSTEM
 │   │   │   │   ├─ body
 │   │   │   │   └─ thread
 │   │   │   ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
-│   │   │   │   ├─ thread
+│   │   │   │   ├─ thread ×2
 │   │   │   │   └─ body
 │   │   │   └─ head.rotor  (BL2.5, 150°)  (Hunter I-20-04-SS)
 │   │   │       ├─ thread
@@ -370,7 +370,7 @@ IRRIGATION SYSTEM
 │   │       │   ├─ body
 │   │       │   └─ thread
 │   │       ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
-│   │       │   ├─ thread
+│   │       │   ├─ thread ×2
 │   │       │   └─ body
 │   │       └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
 │   │           ├─ thread
@@ -424,9 +424,9 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (10 m)
 │   │   │   └─ tube
 │   │   ├─ fitting.tee
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
+│   │   │   ├─ nut ×3
+│   │   │   ├─ grip ×3
+│   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (2 m)
 │   │   │   └─ tube
@@ -438,7 +438,7 @@ IRRIGATION SYSTEM
 │   │   │   │   ├─ body
 │   │   │   │   └─ thread
 │   │   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   │   ├─ thread
+│   │   │   │   ├─ thread ×2
 │   │   │   │   └─ body
 │   │   │   └─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ thread
@@ -454,15 +454,15 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (8 m)
 │   │   │   └─ tube
 │   │   ├─ fitting.tee
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
+│   │   │   ├─ nut ×3
+│   │   │   ├─ grip ×3
+│   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (6 m)
 │   │   │   └─ tube
 │   │   ├─ riser_2
 │   │   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   │   ├─ thread
+│   │   │   │   ├─ thread ×2
 │   │   │   │   └─ body
 │   │   │   └─ head.spray  (MP1000, 210°)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ thread
@@ -478,9 +478,9 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (20 m)
 │   │   │   └─ tube
 │   │   ├─ fitting.tee
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
+│   │   │   ├─ nut ×3
+│   │   │   ├─ grip ×3
+│   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ riser_3
 │   │   │   ├─ fitting.c25bf34
@@ -490,7 +490,7 @@ IRRIGATION SYSTEM
 │   │   │   │   ├─ body
 │   │   │   │   └─ thread
 │   │   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   │   ├─ thread
+│   │   │   │   ├─ thread ×2
 │   │   │   │   └─ body
 │   │   │   └─ head.spray  (MP2000, 270°)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ thread
@@ -507,7 +507,7 @@ IRRIGATION SYSTEM
 │   │   │   └─ tube
 │   │   └─ riser_4
 │   │       ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
-│   │       │   ├─ thread
+│   │       │   ├─ thread ×2
 │   │       │   └─ body
 │   │       └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
 │   │           ├─ thread
@@ -560,9 +560,9 @@ IRRIGATION SYSTEM
 │       ├─ hose.ldpe25  (20 m)
 │       │   └─ tube
 │       ├─ fitting.tee
-│       │   ├─ nut
-│       │   ├─ grip
-│       │   ├─ oring
+│       │   ├─ nut ×3
+│       │   ├─ grip ×3
+│       │   ├─ oring ×3
 │       │   └─ body
 │       ├─ hose.ldpe25  (4 m)
 │       │   └─ tube
@@ -574,7 +574,7 @@ IRRIGATION SYSTEM
 │       │   │   ├─ body
 │       │   │   └─ thread
 │       │   ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
-│       │   │   ├─ thread
+│       │   │   ├─ thread ×2
 │       │   │   └─ body
 │       │   └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
 │       │       ├─ thread
@@ -598,7 +598,7 @@ IRRIGATION SYSTEM
 │           │   ├─ body
 │           │   └─ thread
 │           ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
-│           │   ├─ thread
+│           │   ├─ thread ×2
 │           │   └─ body
 │           └─ head.rotor  (BL2.5, 180°)  (Hunter I-20-04-SS)
 │               ├─ thread
@@ -630,7 +630,7 @@ IRRIGATION SYSTEM
         │   ├─ neutral
         │   └─ winding
         └─ terminal-board
-            ├─ ac_line
-            ├─ common
-            └─ port
+            ├─ ac_line ×2
+            ├─ common ×2
+            └─ port ×12
 ```
