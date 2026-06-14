@@ -20,7 +20,17 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 G = yaml.safe_load(open(os.path.join(ROOT, "graph.yaml")))
 CTX = yaml.safe_load(open(os.path.join(ROOT, "context.yaml")))
-COMP = G["items"]
+def _flatten_types(node, acc):
+    # type defs are dotted keys (kind.subtype); assembly/group nodes are not and
+    # nest real types under their own items:. Collect every type wherever it lives.
+    for k, v in node.items():
+        if "." in k:
+            acc[k] = v
+        elif isinstance(v, dict) and "items" in v:
+            _flatten_types(v["items"], acc)
+    return acc
+
+COMP = _flatten_types(G["items"], {})
 EQUIP = CTX.get("equipment", {})
 PDEF = CTX.get("price_defaults", {})
 
