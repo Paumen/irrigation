@@ -1,34 +1,20 @@
-// Normalise the raw system.yaml into the model the solver consumes.
-//
-// system.yaml schema: instance ids are `<PREFIX>_<type>[_<n>]` (e.g. W1_pump.jet,
-// Z2_head.spray_1). The type is the dotted middle. Component *type* definitions
-// (ports/parts/scalars) live in the nested `items:` tree; `category` holds the
-// loss/requirement metadata; `water`/`electrical` are the two topologies.
-//
-// buildModel flattens this into: flowNodes (hydraulic graph), electrical (raw circuit
-// graph), kinds (the flattened type defs, for the fault walker and electrical internals),
-// and the resolved catalog curves.
-
-// type = the dotted middle of an instance id: strip the `W1_`/`Z2_`/… prefix and any
-// pure-numeric `_<n>` instance suffix (couplings like `coupling_bm1c32` keep their suffix
-// because it is not all digits).
+// Strips a leading prefix and a pure-numeric suffix only; `coupling_bm1c32` keeps its suffix.
 export function typeOf(id) {
   return id.replace(/^[A-Z]+[0-9]+_/, "").replace(/_[0-9]+$/, "");
 }
 
-// Hydraulic role of a water-graph node. Only ever called for ids present in `water:`.
 export function roleOf(type) {
   if (type === "source.well") return "reservoir";
   if (type === "pump.jet") return "pump";
   if (type === "valve.auto") return "valve-auto";
   if (type === "valve.manual") return "valve-manual";
-  if (type === "valve.foot") return "junction"; // passive check valve -> junction
+  if (type === "valve.foot") return "junction";
   if (type === "fitting.cap") return "cap";
   if (type.startsWith("head.")) return "outlet";
-  // swing joints are short pipes carrying their own k_minor
+  // swing joints model as short pipes carrying their own k_minor
   if (type === "fitting.sj34x12" || type === "fitting.sj34x34") return "pipe";
   if (type.startsWith("hose.")) return "pipe";
-  if (type.startsWith("fitting.")) return "junction"; // couplings, tee, manifold, strainer, hosetails
+  if (type.startsWith("fitting.")) return "junction";
   throw new Error(`model: unknown water component type "${type}"`);
 }
 
@@ -41,14 +27,9 @@ function subkindOf(type) {
   return type;
 }
 
-// Pump-curve catalog keys carry the full brand string the YAML `model` field uses, so no
-// aliasing is needed; the map is kept as an override hook for any future brand mismatches.
+// Override hook for pump brand mismatches; empty because catalog keys already match the YAML `model`.
 const PUMP_CURVE_ALIAS = {};
 
-// Walk the nested `items:` tree and collect every component *type* definition: any key
-// containing a "." is a dotted type id (e.g. `valve.foot`, `fitting.coupling_c25bf34`,
-// `hose.ldpe25`). Its own nested `items:` are its parts (un-dotted), kept on the def.
-// Type ids are globally unique; identical re-definitions are harmless (last wins).
 function flattenItems(items, out = {}) {
   if (!items || typeof items !== "object") return out;
   for (const [key, val] of Object.entries(items)) {
@@ -58,27 +39,22 @@ function flattenItems(items, out = {}) {
   return out;
 }
 
-// Scalar component fields the solver reads, normalised to the names network.js/outlets.js
-// expect. Connection/metadata blocks (ports, *_conn, items, nested objects) are dropped.
 function paramsOf(compDef, instance) {
   const params = {};
   for (const [k, v] of Object.entries(compDef || {})) {
     if (k === "ports" || k === "items") continue;
-    if (v !== null && typeof v === "object") continue; // *_conn, nested blocks
+    if (v !== null && typeof v === "object") continue;
     params[k] = v;
   }
   for (const [k, v] of Object.entries(instance || {})) {
     if (k === "to" || k === "h_m") continue;
     params[k] = v;
   }
-  // field aliases: system.yaml uses k / l_m; the network layer reads k_minor / length_m.
   if (params.k != null) params.k_minor = params.k;
   if (params.l_m != null) params.length_m = params.l_m;
   return params;
 }
 
-// `to:` is either a list of targets or a port-keyed map; either way collapse to the set of
-// downstream base node ids (strip any `/port` suffix).
 function downstreamOf(to) {
   const refs = [];
   if (Array.isArray(to)) refs.push(...to);
@@ -115,8 +91,7 @@ export function buildModel(rawGraph, rawCatalog) {
     });
   }
 
-  // EPANET links are strictly 2-port. If a pump (a link) fans its outlet out to more than
-  // one downstream node, splice a junction at its outlet to carry the fan-out.
+  // EPANET links are strictly 2-port: splice a junction for a pump's outlet fan-out.
   for (const n of [...flowNodes.values()]) {
     if (n.role === "pump" && n.to.length > 1) {
       const junctionId = `${n.id}__out`;
@@ -148,15 +123,12 @@ export function buildModel(rawGraph, rawCatalog) {
   const pumpCurve = rawCatalog["pump.jet_curves"]?.[pumpKey];
   if (!pumpCurve) throw new Error(`model: no pump curve for "${pumpDef.model}"`);
 
-  // valve.auto_loss is a single flat {flow_m3h, loss_bar} table (the system has one auto-valve
-  // model), not a per-model map like the pump curves.
+  // valve.auto_loss is one flat table, not a per-model map like the pump curves.
   const valveDef = components["valve.auto"];
   if (!valveDef) throw new Error('model: missing "valve.auto"');
   const valveLoss = rawCatalog["valve.auto_loss"];
   if (!valveLoss) throw new Error("model: no valve.auto_loss curve");
 
-  // Guard the nozzle tables here so a renamed/missing catalog key fails at build with a clear
-  // message, rather than a cryptic TypeError deep in the per-outlet demand law.
   const nozzleI20 = rawCatalog["head.rotor/nozzle"];
   if (!nozzleI20) throw new Error("model: no head.rotor/nozzle curve");
   const nozzleMp = rawCatalog["head.spray/nozzle"];
@@ -164,13 +136,13 @@ export function buildModel(rawGraph, rawCatalog) {
 
   return {
     flowNodes,
-    kinds: components, // type defs (parts/fail/ports) for the fault walker + electrical internals
+    kinds: components,
     components,
     electrical: rawGraph.electrical || {},
     minOperatingBar: valveDef.min_bar,
     curves: {
-      pump: pumpCurve, // {flow_m3h:[…], head_m:[…]}
-      valveLoss, // {flow_m3h:[…], loss_bar:[…]}
+      pump: pumpCurve,
+      valveLoss,
       nozzleI20,
       nozzleMp,
     },

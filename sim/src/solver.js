@@ -1,10 +1,5 @@
-// Outer fixed-point loop around EPANET. EPANET emitters allow only one global exponent, but
-// each outlet obeys its own catalog law, so each iteration sets every pressure-dependent
-// outlet as a fixed EPANET demand computed from its law at the previous pressure, re-solves,
-// damps, and repeats to convergence. The same loop actuates the auto valves (energised /
-// bleed-open AND inlet >= min_operating_bar, with lift/stay hysteresis) and zeroes dead
-// branches via reachability so the disconnected parts never carry false pressure.
-
+// EPANET emitters allow only one global exponent, but each outlet obeys its own catalog law,
+// so each iteration sets every outlet as a fixed demand from its law at the previous pressure.
 import {
   ALPHA,
   ALPHA_MIN,
@@ -30,8 +25,6 @@ const zoneOf = (id) => {
   return m ? Number(m[1]) : null;
 };
 
-// BFS from the reservoir through open links; nodes not reached are dead (zero demand, no
-// trustworthy pressure). A link is impassable when it is a closed pump/valve or a sealed clog.
 export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set()) {
   const { flowNodes } = model;
   const reachable = new Set();
@@ -39,7 +32,7 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
     if (closedLinks.has(n.id)) return false;
     if (n.role === "pump") return pumpOn;
     if (n.role === "valve-auto" || n.role === "valve-manual") return !!valveOpen[n.id];
-    return true; // pipes
+    return true;
   };
   const start = [...flowNodes.values()].find((n) => n.role === "reservoir");
   if (!start) throw new Error("computeReachable: no reservoir node in the model");
@@ -50,7 +43,6 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
     for (const cId of n.to) {
       if (reachable.has(cId)) continue;
       const c = flowNodes.get(cId);
-      // a closed link stops water here: neither the link node nor its subtree fills
       if (LINKish(c) && !linkPassable(c)) continue;
       reachable.add(cId);
       queue.push(cId);
@@ -76,25 +68,22 @@ export function solveSteady(model, state, elec, hyd, faults) {
   const autoValves = [...model.flowNodes.values()].filter((n) => n.role === "valve-auto");
   const manualValves = [...model.flowNodes.values()].filter((n) => n.role === "valve-manual");
 
-  // valve command (independent of inlet pressure): energised through good wiring, or bled open.
   const commandedAuto = (v) =>
     !fx.valveDisabled.has(v.id) &&
     (zoneEnergised[zoneOf(v.id)] === true || !!bleedOpen[v.id] || fx.bleedForcedOpen.has(v.id));
 
-  // persistent valve open state (hysteresis); start commanded autos optimistically open so the
-  // first solve can establish inlet pressure, then hold/close on the real pressure.
+  // start commanded autos open so the first solve can establish inlet pressure
   const valveOpen = {};
   for (const v of autoValves) valveOpen[v.id] = fx.valveForcedOpen.has(v.id) || commandedAuto(v);
   for (const v of manualValves) {
     valveOpen[v.id] = fx.valveForcedOpen.has(v.id) || (!!manualOpen[v.id] && !fx.valveDisabled.has(v.id));
   }
 
-  // per-outlet damping state
   const dmp = new Map();
   for (const o of outlets) dmp.set(o.id, { q: 0, sign: 0, alpha: ALPHA });
 
-  let prevP = {}; // epId -> bar, previous iteration
-  let valveInlet = {}; // flowId -> bar at the valve inlet node, previous iteration
+  let prevP = {}; // epId -> bar
+  let valveInlet = {}; // flowId -> bar at the valve inlet node
   let res = null;
   let topo = null;
   let stable = 0;
@@ -107,7 +96,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
     const freeze = it >= MAX_ITERS - VALVE_FREEZE_TAIL;
     if (freeze) valvesFrozen = true;
 
-    // --- 1. actuate valves from the previous inlet pressures (skip on the cold start) ---
     if (res && !freeze) {
       commandedNotOpening.clear();
       for (const v of autoValves) {
@@ -122,13 +110,12 @@ export function solveSteady(model, state, elec, hyd, faults) {
         } else if (valveOpen[v.id]) {
           valveOpen[v.id] = inlet >= VALVE_STAY_BAR; // hold open until nearly drained
         } else {
-          valveOpen[v.id] = inlet >= minLift; // need min_operating_bar to lift
+          valveOpen[v.id] = inlet >= minLift; // need min_operating_bar to lift (hysteresis)
         }
         if (cmd && !valveOpen[v.id]) commandedNotOpening.add(v.id);
       }
     }
 
-    // --- 2. reachability + outlet demands/emitters from the previous pressures ---
     const reachable = computeReachable(model, pumpOn, valveOpen, fx.closedLinks);
     const demands = new Map();
     const emitters = new Map();
@@ -144,25 +131,24 @@ export function solveSteady(model, state, elec, hyd, faults) {
       const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar; cold-start guess
       const mod = fx.outletMods.get(o.id) || {};
       const tableMin = outletTableMin(o, model.curves);
-      // Below the table's lowest point (or always, for the stream orifice) run as an emitter
-      // that fades to zero with pressure rather than extrapolating the table toward 0 bar.
+      // below the table's lowest point (or always, for the stream orifice) run as an emitter
+      // rather than extrapolating the table toward 0 bar
       if (tableMin == null || pPrev < tableMin.pMin_bar) {
         let coeff;
         if (tableMin == null) {
-          coeff = streamEmitterCoeff(o.params); // stream orifice: q = C*sqrt(head_m)
+          coeff = streamEmitterCoeff(o.params); // q = C*sqrt(head_m)
         } else {
           const headMin = tableMin.pMin_bar * M_PER_BAR;
           coeff = headMin > 0 ? tableMin.qMin / Math.sqrt(headMin) : 0;
         }
         coeff *= mod.flowScale ?? 1;
-        // gate to zero near/below zero pressure (EPANET emitters would otherwise suck water in)
+        // gate to zero near/below zero pressure, else EPANET emitters suck water in
         if (pPrev <= EMITTER_GATE_BAR) coeff = 0;
         if (coeff > 1e-9) emitters.set(o.id, coeff);
         st.q = 0;
         st.sign = 0;
         continue;
       }
-      // demand law with per-outlet adaptive damping
       let target = outletDemandAt(o, pPrev, model.curves) * (mod.flowScale ?? 1);
       if (mod.zeroFlow) target = 0;
       const delta = target - st.q;
@@ -174,7 +160,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
       st.q = qNew;
       demands.set(o.id, Math.max(qNew, 0));
     }
-    // leak emitters (none this milestone, but honour the channel)
     for (const [nodeId, coeff] of fx.leaks) {
       if (reachable.has(nodeId) && coeff > 0) emitters.set(nodeId, (emitters.get(nodeId) || 0) + coeff);
     }
