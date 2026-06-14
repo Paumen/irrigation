@@ -117,10 +117,6 @@ IRRIGATION SYSTEM
 │   │   └─ tube
 │   │       ├─ common
 │   │       └─ signal ×4
-│   ├─ wiring.24v
-│   │   └─ tube
-│   │       ├─ common
-│   │       └─ signal ×4
 │   ├─ enclosure.valvebox  (valve box XL)
 │   │   ├─ enclosure
 │   │   └─ lid
@@ -659,18 +655,6 @@ IRRIGATION SYSTEM
     │       ├─ port ×6
     │       ├─ common_2
     │       └─ port ×6
-    ├─ wiring.24v
-    │   └─ tube
-    │       ├─ common
-    │       └─ signal ×4
-    ├─ wiring.24v
-    │   └─ tube
-    │       ├─ common
-    │       └─ signal ×4
-    ├─ wiring.24v
-    │   └─ tube
-    │       ├─ common
-    │       └─ signal ×4
     └─ wiring.24v
         └─ tube
             ├─ common

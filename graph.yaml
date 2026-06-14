@@ -728,17 +728,21 @@ electrical:
   H1_control.controller:
     to:
       port_1: [S1_wiring.24v_1]
-      port_7: [P1_wiring.24v_1]
-      port_8: [P1_wiring.24v_2]
-      port_9: [P1_wiring.24v_3]
-      port_10: [P1_wiring.24v_4]
+      port_7: [P1_wiring.24v/signal_1/inlet]
+      port_8: [P1_wiring.24v/signal_2/inlet]
+      port_9: [P1_wiring.24v/signal_3/inlet]
+      port_10: [P1_wiring.24v/signal_4/inlet]
   S1_wiring.24v_1: {to: [S1_relay.pumpstart/coil_in]}
   S1_wiring.24v_2: {to: [H1_control.controller/common_1]}
 
-  P1_wiring.24v_1: {to: [Z2_wiring.splice]}
-  P1_wiring.24v_2: {to: [Z3_wiring.splice]}
-  P1_wiring.24v_3: {to: [Z5_wiring.splice]}
-  P1_wiring.24v_4: {to: [Z4_wiring.splice]}
+  # home-run bundle: 4 signal cores (1 per zone) + shared common, controller -> valve box
+  P1_wiring.24v:
+    to:
+      signal_1/outlet: [Z2_wiring.splice]
+      signal_2/outlet: [Z3_wiring.splice]
+      signal_3/outlet: [Z5_wiring.splice]
+      signal_4/outlet: [Z4_wiring.splice]
+      common/outlet: [H1_control.controller/common_2]
   Z2_wiring.splice: {to: {outlet_1: [Z2_valve.auto/solenoid/24v_2]}}
   Z3_wiring.splice: {to: {outlet_1: [Z3_valve.auto/solenoid/24v_2]}}
   Z5_wiring.splice: {to: {outlet_1: [Z5_valve.auto/solenoid/24v_2]}}
@@ -754,5 +758,4 @@ electrical:
   V1_wiring.24v_2: {to: [V1_wiring.splice_3]}
   V1_wiring.splice_3: {to: {outlet_1: [V1_wiring.24v_3]}}
   V1_wiring.24v_3: {to: [V1_wiring.splice_4]}
-  V1_wiring.splice_4: {to: {outlet_1: [V1_wiring.24v_4]}}
-  V1_wiring.24v_4: {to: [H1_control.controller/common_2]}
+  V1_wiring.splice_4: {to: {outlet_1: [P1_wiring.24v/common/inlet]}}
