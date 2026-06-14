@@ -22,12 +22,10 @@ items:
             material: brass
             outlet_conn: {size: G1, gender: F, joint: BSP, thread: parallel, sealant: teflon}
             items:
-              inlet: {to: [disc]}
               body: {fail: [broken]}
               disc: {to: [outlet], fail: [broken, clogged]}
               spring: {drive: [disc], fail: [broken]}
               seat_seal: {seal: [disc], fail: [broken], material: rubber}
-              outlet: {}
           fitting.strainer_basket:
             ports: [inlet, outlet]
             material: plastic
@@ -35,10 +33,8 @@ items:
             k: 1.0
             inlet_conn: {size: "open mesh", gender: none, joint: submerged-basket, sealant: none}
             items:
-              inlet: {to: [outlet]}
               mesh: {to: [outlet], fail: [clogged]}
               body: {fail: [broken]}
-              outlet: {}
           fitting.hosetail_brass:
             ports: [inlet, outlet]
             material: brass
@@ -47,11 +43,9 @@ items:
             inlet_conn:  {size: G1, gender: M, joint: BSP, thread: parallel, sealant: teflon}
             outlet_conn: {size: "∅25", gender: barb, joint: hose-tail, sealant: hose-clamp}
             items:
-              inlet: {to: [outlet]}
               inlet_thread: {seal: [inlet], fail: [broken, misconfigured]}
               barb: {seal: [outlet], fail: [broken, misconfigured]}
               body: {fail: [broken]}
-              outlet: {}
       hose.suction:
         ports: [inlet, outlet]
         material: PVC
@@ -75,11 +69,9 @@ items:
         inlet_conn:  {size: "∅25", gender: barb, joint: hose-tail, sealant: hose-clamp}
         outlet_conn: {size: G1, gender: M, joint: BSP, thread: parallel, sealant: teflon}
         items:
-          inlet: {to: [outlet]}
           barb: {seal: [inlet], fail: [broken, misconfigured]}
           outlet_thread: {seal: [outlet], fail: [broken, misconfigured]}
           body: {fail: [broken]}
-          outlet: {}
   pump_discharge:
     items:
       fitting.coupling_bm1c32:
@@ -90,13 +82,11 @@ items:
         inlet_conn:  {size: G1, gender: M, joint: BSP, thread: parallel, sealant: teflon}
         outlet_conn: {size: "∅32", gender: slip, joint: compression, sealant: compression-ring}
         items:
-          inlet: {to: [outlet]}
           inlet_thread: {seal: [inlet], fail: [broken, misconfigured]}
           body: {fail: [broken]}
           outlet_oring: {seal: [outlet], fail: [broken, misconfigured], material: rubber}
           outlet_grip: {fail: [broken, misconfigured]}
           outlet_nut: {fail: [broken, misconfigured]}
-          outlet: {}
       fitting.coupling_c32c32:
         ports: [inlet, outlet]
         max_bar: 10
@@ -105,7 +95,6 @@ items:
         inlet_conn:  {size: "∅32", gender: slip, joint: compression, sealant: compression-ring}
         outlet_conn: {size: "∅32", gender: slip, joint: compression, sealant: compression-ring}
         items:
-          inlet: {to: [outlet]}
           inlet_nut: {fail: [broken, misconfigured]}
           inlet_grip: {fail: [broken, misconfigured]}
           inlet_oring: {seal: [inlet], fail: [broken, misconfigured], material: rubber}
@@ -113,7 +102,6 @@ items:
           outlet_oring: {seal: [outlet], fail: [broken, misconfigured], material: rubber}
           outlet_grip: {fail: [broken, misconfigured]}
           outlet_nut: {fail: [broken, misconfigured]}
-          outlet: {}
   pump_power_assembly:
     items:
       relay.pumpstart:
@@ -142,7 +130,6 @@ items:
         inlet_conn:  {size: G1, gender: swivel-F, joint: swivel-union, thread: parallel, sealant: flat-washer}
         outlet_conn: {size: G1, gender: swivel-F, joint: swivel-union, thread: parallel, sealant: flat-washer}
         items:
-          inlet: {to: [outlet_1, outlet_2, outlet_3, outlet_4, outlet_5, outlet_6]}
           inlet_washer: {seal: [inlet], fail: [broken, misconfigured], material: rubber}
           outlet_1_washer: {seal: [outlet_1], fail: [broken, misconfigured], material: rubber}
           outlet_2_washer: {seal: [outlet_2], fail: [broken, misconfigured], material: rubber}
@@ -152,12 +139,6 @@ items:
           outlet_6_washer: {seal: [outlet_6], fail: [broken, misconfigured], material: rubber}
           body: {fail: [broken]}
           distribution_gallery: {feature: true}
-          outlet_1: {}
-          outlet_2: {}
-          outlet_3: {}
-          outlet_4: {}
-          outlet_5: {}
-          outlet_6: {}
       fitting.coupling_c32sm1:
         ports: [inlet, outlet]
         max_bar: 10
@@ -166,13 +147,11 @@ items:
         inlet_conn:  {size: "∅32", gender: slip, joint: compression, sealant: compression-ring}
         outlet_conn: {size: G1, gender: M, joint: swivel-union, thread: parallel, sealant: flat-washer}
         items:
-          inlet: {to: [outlet]}
           inlet_nut: {fail: [broken, misconfigured]}
           inlet_grip: {fail: [broken, misconfigured]}
           inlet_oring: {seal: [inlet], fail: [broken, misconfigured], material: rubber}
           body: {fail: [broken]}
           outlet_swivel_nut: {seal: [outlet], fail: [broken, misconfigured]}
-          outlet: {}
       fitting.cap:
         ports: [inlet]
         k: 0
@@ -180,7 +159,6 @@ items:
         material: plastic
         inlet_conn: {size: G1, gender: M, joint: swivel-union, thread: parallel, sealant: flat-washer}
         items:
-          inlet: {}
           inlet_swivel_nut: {seal: [inlet], fail: [broken, misconfigured]}
           body: {fail: [broken]}
   solenoid_wiring:
@@ -200,8 +178,6 @@ items:
           line: {to: [transformer/winding], fail: [broken, misconfigured]}
           neutral: {fail: [broken, misconfigured]}
           winding: {to: [transformer/neutral], condition: [transformer/outlet_1, transformer/outlet_2], fail: [broken]}
-          outlet_1: {to: [terminal-board/ac_line_1], fail: [broken]}
-          outlet_2: {to: [terminal-board/ac_line_2], fail: [broken]}
       terminal-board:
         fail: [broken]
         items:
@@ -285,7 +261,6 @@ items:
     inlet_conn:  {size: "∅16", gender: slip, joint: compression, sealant: compression-ring}
     outlet_conn: {size: "∅16", gender: slip, joint: compression, sealant: compression-ring}
     items:
-      inlet: {to: [outlet]}
       inlet_nut: {fail: [broken, misconfigured]}
       inlet_grip: {fail: [broken, misconfigured]}
       inlet_oring: {seal: [inlet], fail: [broken, misconfigured], material: rubber}
@@ -293,7 +268,6 @@ items:
       outlet_oring: {seal: [outlet], fail: [broken, misconfigured], material: rubber}
       outlet_grip: {fail: [broken, misconfigured]}
       outlet_nut: {fail: [broken, misconfigured]}
-      outlet: {}
 
   fitting.coupling_bm1c25:
     ports: [inlet, outlet]
@@ -303,13 +277,11 @@ items:
     inlet_conn:  {size: G1, gender: M, joint: BSP, thread: parallel, sealant: teflon}
     outlet_conn: {size: "∅25", gender: slip, joint: compression, sealant: compression-ring}
     items:
-      inlet: {to: [outlet]}
       inlet_thread: {seal: [inlet], fail: [broken, misconfigured]}
       body: {fail: [broken]}
       outlet_oring: {seal: [outlet], fail: [broken, misconfigured], material: rubber}
       outlet_grip: {fail: [broken, misconfigured]}
       outlet_nut: {fail: [broken, misconfigured]}
-      outlet: {}
 
   fitting.coupling_c25bf34:
     ports: [inlet, outlet]
@@ -319,13 +291,11 @@ items:
     inlet_conn:  {size: "∅25", gender: slip, joint: compression, sealant: compression-ring}
     outlet_conn: {size: G3/4, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      inlet: {to: [outlet]}
       inlet_nut: {fail: [broken, misconfigured]}
       inlet_grip: {fail: [broken, misconfigured]}
       inlet_oring: {seal: [inlet], fail: [broken, misconfigured], material: rubber}
       body: {fail: [broken]}
       outlet_thread: {seal: [outlet], fail: [broken, misconfigured]}
-      outlet: {}
 
   fitting.coupling_sm1bm1:
     ports: [inlet, outlet]
@@ -335,11 +305,9 @@ items:
     inlet_conn:  {size: G1, gender: M, joint: swivel-union, thread: parallel, sealant: flat-washer}
     outlet_conn: {size: G1, gender: M, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      inlet: {to: [outlet]}
       inlet_swivel_nut: {seal: [inlet], fail: [broken, misconfigured]}
       body: {fail: [broken]}
       outlet_thread: {seal: [outlet], fail: [broken, misconfigured]}
-      outlet: {}
 
   fitting.coupling_sm1c16:
     ports: [inlet, outlet]
@@ -349,13 +317,11 @@ items:
     inlet_conn:  {size: G1, gender: M, joint: swivel-union, thread: parallel, sealant: flat-washer}
     outlet_conn: {size: "∅16", gender: slip, joint: compression, sealant: compression-ring}
     items:
-      inlet: {to: [outlet]}
       inlet_swivel_nut: {seal: [inlet], fail: [broken, misconfigured]}
       body: {fail: [broken]}
       outlet_oring: {seal: [outlet], fail: [broken, misconfigured], material: rubber}
       outlet_grip: {fail: [broken, misconfigured]}
       outlet_nut: {fail: [broken, misconfigured]}
-      outlet: {}
 
   fitting.sj34x12:
     ports: [inlet, outlet]
@@ -368,11 +334,9 @@ items:
     inlet_conn:  {size: G3/4, gender: M, joint: BSP, thread: parallel, sealant: teflon}
     outlet_conn: {size: G1/2, gender: M, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      inlet: {to: [outlet]}
       inlet_thread: {seal: [inlet], fail: [broken, misconfigured]}
       outlet_thread: {seal: [outlet], fail: [broken, misconfigured]}
       body: {fail: [broken]}
-      outlet: {}
 
   fitting.sj34x34:
     ports: [inlet, outlet]
@@ -385,11 +349,9 @@ items:
     inlet_conn:  {size: G3/4, gender: M, joint: BSP, thread: parallel, sealant: teflon}
     outlet_conn: {size: G3/4, gender: M, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      inlet: {to: [outlet]}
       inlet_thread: {seal: [inlet], fail: [broken, misconfigured]}
       outlet_thread: {seal: [outlet], fail: [broken, misconfigured]}
       body: {fail: [broken]}
-      outlet: {}
 
   fitting.tee:
     ports: [inlet, outlet_1, outlet_2]
@@ -400,7 +362,6 @@ items:
     inlet_conn:  {size: varies, gender: slip, joint: compression, sealant: compression-ring}
     outlet_conn: {size: varies, gender: slip, joint: compression, sealant: compression-ring}
     items:
-      inlet: {to: [outlet_1, outlet_2]}
       inlet_nut: {fail: [broken, misconfigured]}
       inlet_grip: {fail: [broken, misconfigured]}
       inlet_oring: {seal: [inlet], fail: [broken, misconfigured], material: rubber}
@@ -411,8 +372,6 @@ items:
       outlet_2_oring: {seal: [outlet_2], fail: [broken, misconfigured], material: rubber}
       outlet_2_grip: {fail: [broken, misconfigured]}
       outlet_2_nut: {fail: [broken, misconfigured]}
-      outlet_1: {}
-      outlet_2: {}
 
   hose.ldpe16:
     ports: [inlet, outlet]
@@ -460,9 +419,6 @@ items:
     suction_conn:    {size: G1, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     outlet_conn:     {size: G1, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      suction: {to: [body/venturi]}
-      inlet_tank: {to: [tank_hose]}
-      outlet: {}
       tank_hose:
         to: [tank]
         material: "stainless steel"
@@ -519,9 +475,6 @@ items:
     inlet_conn:  {size: G1, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     outlet_conn: {size: G1, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      inlet: {to: [diaphragm, diaphragm/metering_port]}
-      sol_port: {to: [solenoid/entry]}
-      outlet: {}
       body:
         fail: [broken]
         material: plastic
@@ -568,8 +521,6 @@ items:
     inlet_conn:  {size: G1/2, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     outlet_conn: {size: G1/2, gender: F, joint: BSP, thread: parallel, sealant: teflon}
     items:
-      inlet: {to: [body/seat]}
-      outlet: {}
       body:
         fail: [broken]
         items:
