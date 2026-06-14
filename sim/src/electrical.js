@@ -13,6 +13,9 @@ const zoneOf = (id) => {
   return m ? Number(m[1]) : null;
 };
 
+// A bundle (`to:` keyed by port) splits into one node per child conductor — `pid/port` — so a
+// single conductor is a distinct node, not the whole multi-core cable. Plain `to:` arrays keep
+// the node as-is, and references carry their full `pid/port` id (no longer collapsed to the bundle).
 function buildAdj(electrical) {
   const adj = new Map();
   const ensure = (id) => {
@@ -24,10 +27,17 @@ function buildAdj(electrical) {
     ensure(b).add(a);
   };
   for (const [pid, def] of Object.entries(electrical)) {
-    ensure(pid);
     const to = def?.to;
-    const refs = Array.isArray(to) ? to : to && typeof to === "object" ? Object.values(to).flat() : [];
-    for (const r of refs) add(pid, String(r).split("/")[0]);
+    if (to && !Array.isArray(to) && typeof to === "object") {
+      for (const [port, refs] of Object.entries(to)) {
+        const src = `${pid}/${port}`;
+        ensure(src);
+        for (const r of Array.isArray(refs) ? refs : [refs]) add(src, String(r));
+      }
+    } else {
+      ensure(pid);
+      for (const r of Array.isArray(to) ? to : []) add(pid, String(r));
+    }
   }
   return adj;
 }
@@ -108,7 +118,7 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     adapterPlugged &&
     reachable(adj, controllerGrid, controllerId, blockLoadsExcept(allLoads, blocked, controllerId));
 
-  const relayCoilTerms = [...(adj.get(relayId) || [])].filter((n) => typeOf(n) === "wiring.24v");
+  const relayCoilTerms = [...(adj.get(relayId) || [])].filter((n) => typeOf(n).startsWith("wiring.24v"));
   const relayCoil =
     controllerPowered &&
     pumpStart &&

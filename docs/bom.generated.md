@@ -51,14 +51,10 @@ IRRIGATION SYSTEM
 │   │   ├─ line
 │   │   ├─ neutral
 │   │   └─ earth
-│   ├─ wiring.24v
+│   ├─ wiring.24v2
 │   │   └─ tube
 │   │       ├─ common
-│   │       └─ signal ×4
-│   ├─ wiring.24v
-│   │   └─ tube
-│   │       ├─ common
-│   │       └─ signal ×4
+│   │       └─ signal
 │   ├─ suction_assembly
 │   │   ├─ foot_valve_assembly
 │   │   │   ├─ valve.foot
@@ -108,18 +104,12 @@ IRRIGATION SYSTEM
 │   │   └─ tube
 │   │       ├─ common
 │   │       └─ signal ×4
-│   ├─ wiring.24v
-│   │   └─ tube
-│   │       ├─ common
-│   │       └─ signal ×4
-│   ├─ wiring.24v
-│   │   └─ tube
-│   │       ├─ common
-│   │       └─ signal ×4
-│   ├─ wiring.24v
-│   │   └─ tube
-│   │       ├─ common
-│   │       └─ signal ×4
+│   ├─ wiring.common
+│   │   └─ common
+│   ├─ wiring.common
+│   │   └─ common
+│   ├─ wiring.common
+│   │   └─ common
 │   ├─ enclosure.valvebox  (valve box jumbo)
 │   │   ├─ enclosure
 │   │   └─ lid

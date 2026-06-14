@@ -103,8 +103,8 @@ const noFaults = compileFaults(model, {});
   // chained common is cut between Z3's and Z5's return splices, so every zone whose return
   // current has to cross that break (Z2, Z3) cannot energise, while Z5/Z4 (downstream of the
   // break, still reaching the controller common) energise normally.
-  console.log("\nCASE pump+all zones, broken shared return (D1_wiring.24v_2)");
-  const blocked = new Set(["D1_wiring.24v_2"]);
+  console.log("\nCASE pump+all zones, broken shared return (D1_wiring.common_2)");
+  const blocked = new Set(["D1_wiring.common_2"]);
   const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true, 3: true, 4: true, 5: true } }, blocked);
   check(elec.pumpPowered === true, "pump still powered (separate 230V circuit)");
   check(elec.zoneEnergised[4] === true && elec.zoneEnergised[5] === true, "Z4/Z5 energised (return intact)");
