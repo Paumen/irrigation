@@ -1,11 +1,3 @@
-// Model + solver state -> EPANET topology (the shape inp.js renders).
-//
-// EPANET is strictly node-link-node:
-//   - two adjacent node-like vertices  -> insert a synthetic connector PIPE
-//   - two adjacent link-like vertices  -> insert a synthetic junction between them
-// Minor losses live on links, not nodes: a fitting's k_minor folds onto the link leaving it;
-// a multi-outlet fitting (tee/manifold) contributes its full k_minor to each downstream edge.
-
 import {
   M_PER_BAR,
   SWING_LEN_M,
@@ -26,7 +18,7 @@ export function buildTopology(model, state) {
   const valveOpen = state.valveOpen || {};
   const demands = state.demands || new Map(); // m3/h
   const emitters = state.emitters || new Map(); // coeff CMH/sqrt(m)
-  const throttle = state.throttle || {}; // 0..1 opening (1 = factory-open)
+  const throttle = state.throttle || {}; // 0..1 (1 = factory-open)
   const closedLinks = state.closedLinks || new Set();
   const linkK = state.linkK || new Map();
   const pumpHeadScale = state.pumpHeadScale ?? 1;
@@ -68,8 +60,7 @@ export function buildTopology(model, state) {
     if (coeff > 0) emitterList.push({ id: ep(flowId), coeff });
   }
 
-  // Synthetic vertices get short sequential ids (never queried back by the solver, which only
-  // reads real flow-node ids) to stay under EPANET's 31-char id limit.
+  // short ids stay under EPANET's 31-char id limit
   const synthetic = new Map();
   const getSyntheticJunction = (upperId, lowerNode) => {
     const key = `${upperId}>${lowerNode.id}`;
@@ -82,13 +73,11 @@ export function buildTopology(model, state) {
   };
   let connSeq = 0;
 
-  // The flow graph is a tree rooted at the reservoir.
   const parentOf = new Map();
   for (const n of flowNodes.values()) {
     for (const t of n.to) parentOf.set(t, n.id);
   }
 
-  // Fold each fitting's k_minor onto the link(s) leaving it.
   const foldedK = new Map();
   const addFold = (linkId, k) => foldedK.set(linkId, (foldedK.get(linkId) || 0) + k);
 
@@ -97,7 +86,6 @@ export function buildTopology(model, state) {
     for (const childId of u.to) {
       const child = flowNodes.get(childId);
       if (NODE_ROLES.has(u.role) && NODE_ROLES.has(child.role)) {
-        // node -> node: a synthetic connector pipe carries the upstream fitting's k_minor
         pipes.push({
           id: `CONN${++connSeq}`,
           n1: ep(u.id),
@@ -115,8 +103,7 @@ export function buildTopology(model, state) {
 
   const pump = model.curves.pump;
   const vloss = model.curves.valveLoss;
-  // Anchor the valve-loss curve at the origin; the catalog table starts above zero flow, and
-  // without this EPANET extrapolates the first segment to negative pressures on a starved branch.
+  // anchor at origin, else EPANET extrapolates to negative pressures on a starved branch
   const vpts = vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]);
   if (vpts.length === 0) throw new Error("network: valve_loss curve is empty");
   if (vpts[0][0] > 0) vpts.unshift([0, 0]);
@@ -129,15 +116,16 @@ export function buildTopology(model, state) {
     if (!neighborId) return null;
     const neighbor = flowNodes.get(neighborId);
     if (NODE_ROLES.has(neighbor.role)) return ep(neighborId);
-    // neighbour is itself a link -> share one synthetic junction between the two links
     return isUpstream
-      ? getSyntheticJunction(neighbor.id, self) // junction sits at self's elevation
-      : getSyntheticJunction(self.id, neighbor); // junction sits at neighbour's elevation
+      ? getSyntheticJunction(neighbor.id, self) // junction at self's elevation
+      : getSyntheticJunction(self.id, neighbor); // junction at neighbour's elevation
   };
 
   let pumpLinkId = null;
   for (const L of flowNodes.values()) {
     if (!isLink(L)) continue;
+    // terminal link (no downstream node) carries no flow
+    if (L.to.length === 0) continue;
     if (L.to.length > 1) {
       throw new Error(`network: link "${L.id}" has ${L.to.length} downstream nodes`);
     }
@@ -157,7 +145,6 @@ export function buildTopology(model, state) {
         length_m: isSwing ? SWING_LEN_M : L.params.length_m,
         diam_mm: isSwing ? L.params.bore_mm : L.params.inner_diameter_mm,
         rough_mm: L.params.roughness_mm || DEFAULT_ROUGHNESS_MM,
-        // a swing carries its own k_minor on top of anything folded from upstream
         mloss: mloss + (isSwing ? L.params.k_minor || 0 : 0),
       });
     } else if (L.role === "pump") {
@@ -165,8 +152,8 @@ export function buildTopology(model, state) {
       pumps.push({ id: ep(L.id), n1, n2, curveId: "PCURVE" });
       if (!pumpOn) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-auto") {
-      // Opening fraction t scales effective Kv to t*Kv, so loss ~ (Q/Kv)^2 scales by 1/t^2.
-      // A seat clog scales here too because EPANET ignores the minor-loss column on GPVs.
+      // t scales Kv to t*Kv, so loss ~(Q/Kv)^2 scales by 1/t^2; seat clog scales loss here
+      // because EPANET ignores the minor-loss column on GPVs
       const t = throttle[L.id] ?? 1;
       const lossScale = valveLossScale.get(L.id) ?? 1;
       let setting = "VCURVE";

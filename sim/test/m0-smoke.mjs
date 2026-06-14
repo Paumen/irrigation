@@ -1,18 +1,3 @@
-// M0 spike: prove the epanet-js API surface this simulator depends on before
-// any real model code exists. Hand-writes a tiny INP that exercises every
-// EPANET feature the build relies on, solves it, reads results back, and
-// asserts they are finite and physically sane. Exits non-zero on any failure.
-//
-// Run: node test/m0-smoke.mjs   (from sim/)
-//
-// What it locks down:
-//   - Workspace/Project lifecycle (loadModule, writeFile, open, solveH, close)
-//   - flow units CMH (m3/h, to match system.yaml tables directly)
-//   - Darcy-Weisbach headloss with roughness in mm
-//   - a PUMP with a HEAD curve (the catalog pump curve from system.yaml)
-//   - a GPV valve with a headloss curve (the catalog valve_loss curve)
-//   - reading NodeProperty.Pressure (-> bar) and LinkProperty.Flow
-
 import {
   Workspace,
   Project,
@@ -20,16 +5,8 @@ import {
   LinkProperty,
 } from "epanet-js";
 
-const M_PER_BAR = 10.197; // metres of water head per bar
+const M_PER_BAR = 10.197;
 
-// A minimal but representative network:
-//   WELL (reservoir, water surface 5.5 m)
-//     --SUCT (pipe)-->  PIN (pump inlet junction, 8.2 m)
-//     --PUMP (head curve)--> POUT (pump outlet junction, 8.2 m)
-//     --MAIN (pipe)--> VIN (valve inlet, 11.2 m)
-//     --VALVE (GPV, valve_loss curve)--> HEAD (outlet junction, 11.2 m, fixed demand)
-// All elevations and the demand are in the ballpark of the real system so the
-// solved numbers are sanity-checkable.
 const INP = `[TITLE]
 M0 smoke test
 
@@ -123,7 +100,6 @@ async function main() {
     flow[id] = model.getLinkValue(idx, LinkProperty.Flow);
   }
 
-  // ---- report ----
   console.log("\nNode pressures:");
   for (const id of nodes) {
     console.log(`  ${id.padEnd(5)} ${pressureBar[id].toFixed(3)} bar`);
@@ -133,15 +109,12 @@ async function main() {
     console.log(`  ${id.padEnd(5)} ${flow[id].toFixed(4)} m3/h`);
   }
 
-  // ---- assertions ----
   for (const id of nodes) {
     if (!isFiniteNum(pressureBar[id])) fail(`pressure at ${id} is not finite`);
   }
   for (const id of links) {
     if (!isFiniteNum(flow[id])) fail(`flow in ${id} is not finite`);
   }
-  // The single demand is 0.6 m3/h; in steady state the pump must supply it and
-  // it must travel the whole chain (mass balance on a series network).
   const demandIdx = model.getNodeIndex("HEAD");
   const headDemand = model.getNodeValue(demandIdx, NodeProperty.Demand);
   if (Math.abs(headDemand - 0.6) > 1e-3) {
@@ -152,17 +125,12 @@ async function main() {
       fail(`series flow in ${id} = ${flow[id]} m3/h, expected ~0.6`);
     }
   }
-  // Pump must add head: outlet pressure > inlet pressure.
   if (!(pressureBar["POUT"] > pressureBar["PIN"])) {
     fail(`pump did not add head (PIN=${pressureBar["PIN"]}, POUT=${pressureBar["POUT"]})`);
   }
-  // GPV must drop head across the valve: HEAD pressure < VIN pressure.
   if (!(pressureBar["VIN"] > pressureBar["HEAD"])) {
     fail(`valve did not drop head (VIN=${pressureBar["VIN"]}, HEAD=${pressureBar["HEAD"]})`);
   }
-  // At ~0.6 m3/h on the catalog pump curve the shutoff-ish head is ~45 m (~4.4 bar);
-  // after lift + friction + valve loss the head outlet should land in a sane
-  // irrigation band, not absurd.
   if (!(pressureBar["HEAD"] > 0 && pressureBar["HEAD"] < 6)) {
     fail(`HEAD pressure ${pressureBar["HEAD"]} bar out of sane 0-6 bar band`);
   }
