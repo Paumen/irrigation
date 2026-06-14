@@ -421,7 +421,7 @@ items:
     items:
       tank_hose:
         to: [tank]
-        material: "stainless steel"
+        material: stainless steel
         fail: [broken, clogged]
       tank:
         model: "DAB 20 L diaphragm tank"
