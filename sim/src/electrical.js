@@ -118,6 +118,10 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const controllerId = ids.find((id) => id.endsWith("control.controller"));
   const ctrlSocket = ids.find((id) => id.startsWith("H") && id.endsWith("source.socket"));
   const pumpSocket = ids.find((id) => id.startsWith("S") && id.endsWith("source.socket"));
+  // these are structurally required; a model missing any of them is invalid, not unpowered
+  if (!controllerId) throw new Error("solveElectrical: missing controller component");
+  if (!ctrlSocket) throw new Error("solveElectrical: missing controller power socket");
+  if (!pumpSocket) throw new Error("solveElectrical: missing pump power socket");
 
   const pumpStart = !!(commands.mv ?? commands.pumpStart);
   const zoneCmd = commands.zones || {};
@@ -131,8 +135,6 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const adjClosed = buildGraph(electrical, true);
 
   const controllerPowered =
-    !!controllerId &&
-    !!ctrlSocket &&
     reachable(adjOpen, `${ctrlSocket}/line`, `${controllerId}/line`, eff) &&
     reachable(adjOpen, `${ctrlSocket}/neutral`, `${controllerId}/neutral`, eff);
 
@@ -143,8 +145,7 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     controllerPowered && pumpStart && reachable(adjOpen, `${controllerId}/port_1`, `${controllerId}/common_1`, eff);
 
   // pump: with the contact closed, mains L must return to N through the motor winding
-  const pumpPowered =
-    relayCoil && !!pumpSocket && reachable(adjClosed, `${pumpSocket}/line`, `${pumpSocket}/neutral`, eff);
+  const pumpPowered = relayCoil && reachable(adjClosed, `${pumpSocket}/line`, `${pumpSocket}/neutral`, eff);
 
   const zp = zonePorts(electrical, controllerId);
   const zoneEnergised = {};

@@ -68,7 +68,9 @@ export function outletTableMin(outlet, curves) {
 // EPANET emitter coefficient C (CMH per sqrt(m)) for the stream open-orifice, so that
 // q_m3h = C*sqrt(head_m) reproduces Q = Cd*A*sqrt(2*g*h).
 export function streamEmitterCoeff(params) {
-  const d = (params.bore_mm || 0) / 1000; // m
+  const bore = params.bore_mm;
+  if (bore == null || bore <= 0) throw new Error("streamEmitterCoeff: missing or invalid bore_mm");
+  const d = bore / 1000; // m
   const A = (Math.PI / 4) * d * d; // m^2
   const cd = params.cd ?? 0.62;
   return 3600 * cd * A * Math.sqrt(2 * G); // *sqrt(h_m) -> m3/h

@@ -94,6 +94,8 @@ function downstreamOf(to) {
 }
 
 export function buildModel(rawGraph, rawCatalog) {
+  if (!rawGraph) throw new Error("buildModel: rawGraph is required");
+  if (!rawCatalog) throw new Error("buildModel: rawCatalog is required");
   const components = flattenItems(rawGraph.items);
   const water = rawGraph.water || {};
 

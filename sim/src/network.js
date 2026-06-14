@@ -118,6 +118,7 @@ export function buildTopology(model, state) {
   // Anchor the valve-loss curve at the origin; the catalog table starts above zero flow, and
   // without this EPANET extrapolates the first segment to negative pressures on a starved branch.
   const vpts = vloss.flow_m3h.map((q, i) => [q, vloss.loss_bar[i] * M_PER_BAR]);
+  if (vpts.length === 0) throw new Error("network: valve_loss curve is empty");
   if (vpts[0][0] > 0) vpts.unshift([0, 0]);
   const curves = {
     PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i] * pumpHeadScale]),

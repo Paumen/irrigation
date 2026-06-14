@@ -42,7 +42,7 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
     return true; // pipes
   };
   const start = [...flowNodes.values()].find((n) => n.role === "reservoir");
-  if (!start) return reachable;
+  if (!start) throw new Error("computeReachable: no reservoir node in the model");
   const queue = [start.id];
   reachable.add(start.id);
   while (queue.length) {
