@@ -6,7 +6,7 @@ part/feature/note/material from it and the price from context.yaml, so the BOM
 cannot drift from the model. Layout rules (sections, readable names) live here;
 data lives in graph.yaml.
 
-v1 scope: faithful per-component subtree (parts vs. `feature: true`, notes,
+v1 scope: faithful per-component subtree (items vs. `feature: true`, notes,
 materials, prices, ×N collapsing) grouped into the four functional sections by
 instance prefix. The artisanal sub-bundles (Pipework / riser bundles) are not
 yet reproduced — that's the next iteration.
@@ -20,7 +20,7 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 G = yaml.safe_load(open(os.path.join(ROOT, "graph.yaml")))
 CTX = yaml.safe_load(open(os.path.join(ROOT, "context.yaml")))
-COMP = G["components"]
+COMP = G["items"]
 EQUIP = CTX.get("equipment", {})
 PDEF = CTX.get("price_defaults", {})
 
@@ -105,8 +105,8 @@ def display_name(inst, attrs):
     return label
 
 def render_parts(node, t, prefix, out):
-    """Render a component definition's parts/features as an indented subtree."""
-    parts = node.get("parts", {}) if isinstance(node, dict) else {}
+    """Render a component definition's items/features as an indented subtree."""
+    parts = node.get("items", {}) if isinstance(node, dict) else {}
     items = [(k, v if isinstance(v, dict) else {}) for k, v in parts.items()
              if k not in PORTS and not re.match(r"port_\d+$", k)]
     # collapse identical-leaf siblings into xN (e.g. outlet_*_washer)

@@ -62,21 +62,21 @@ IRRIGATION SYSTEM
 │   │   ├─ tank hose  (stainless steel)
 │   │   ├─ tank
 │   │   │   ├─ shell  (steel)
-│   │   │   ├─ bladder  (rubber)  [separates pre-charge air from water]
-│   │   │   ├─ pre charge  [Schrader — sets pre-charge pressure]
-│   │   │   ├─ [air charge — air pre-charge cushion above the bladder]
-│   │   │   └─ [draw down — water stored between pump cut-in / cut-out]
+│   │   │   ├─ bladder  (rubber)
+│   │   │   ├─ pre charge
+│   │   │   ├─ [air charge]
+│   │   │   └─ [draw down]
 │   │   ├─ body  (plastic)
-│   │   │   ├─ venturi  [jet nozzle — drives suction]
-│   │   │   ├─ impeller  (plastic)  [adds head]
-│   │   │   ├─ diffuser  (plastic)  [velocity → pressure recovery]
-│   │   │   ├─ mech seal  (ceramic)  [shaft seal — water/air boundary]
-│   │   │   ├─ body oring  (rubber)  [casing joint seal]
+│   │   │   ├─ venturi
+│   │   │   ├─ impeller  (plastic)
+│   │   │   ├─ diffuser  (plastic)
+│   │   │   ├─ mech seal  (ceramic)
+│   │   │   ├─ body oring  (rubber)
 │   │   │   ├─ priming cap
 │   │   │   ├─ priming cap oring  (rubber)
-│   │   │   ├─ [venturi throat — low-pressure suction zone]
-│   │   │   ├─ [recirculation passage — diffuser → venturi nozzle (self-prime loop)]
-│   │   │   └─ [priming chamber — fill volume held in by the foot valve]
+│   │   │   ├─ [venturi throat]
+│   │   │   ├─ [recirculation passage]
+│   │   │   └─ [priming chamber]
 │   │   └─ motor
 │   │       ├─ line
 │   │       ├─ winding  (copper)
@@ -91,9 +91,9 @@ IRRIGATION SYSTEM
 │   ├─ Well water source 💧  (no price)
 │   └─ Foot valve 💧  €20
 │       ├─ body
-│       ├─ disc  [check disc — seals on reverse flow]
+│       ├─ disc
 │       ├─ spring
-│       └─ seat seal  (rubber)  [sealing face when pump is off]
+│       └─ seat seal  (rubber)
 ├─ 2. DISTRIBUTE ASSY   (manifold + supply line + harness; zone valves under their zones)
 │   ├─ Hose LDPE 20 m 💧  €2
 │   ├─ Box housing — valve box XL   €150
@@ -114,7 +114,7 @@ IRRIGATION SYSTEM
 │   │   ├─ outlet 5 washer  (rubber)
 │   │   ├─ outlet 6 washer  (rubber)
 │   │   ├─ body
-│   │   └─ [distribution gallery — common header feeding all six outlets]
+│   │   └─ [distribution gallery]
 │   ├─ 24 V wire   €1.5
 │   ├─ 24 V wire   €1.5
 │   ├─ 24 V wire   €1.5
@@ -144,47 +144,47 @@ IRRIGATION SYSTEM
 │   ├─ Hose LDPE 10 m 💧  €2
 │   ├─ Manual valve 💧  €5
 │   │   └─ body
-│   │       ├─ seat  [bore seat]
-│   │       ├─ ball  [bore — open / closed]
+│   │       ├─ seat
+│   │       ├─ ball
 │   │       ├─ stem
 │   │       ├─ stem oring  (rubber)
 │   │       ├─ handle
 │   │       ├─ inlet thread
-│   │       └─ [through bore — flow path when open]
+│   │       └─ [through bore]
 │   ├─ Rotor 4.0 blue, 170° — Hunter I-20-04-SS 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
+│   │       ├─ check valve
 │   │       ├─ riser  (stainless steel)
 │   │       ├─ riser seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
-│   │       ├─ gear  (plastic)  [water-driven gear train → rotation]
-│   │       ├─ filter  [inlet debris screen]
-│   │       ├─ nozzle  (plastic)  [orifice — sets radius / flow]
-│   │       ├─ arc  [sets the sweep arc]
-│   │       └─ flo stop  [pull-up shut-off for servicing]
+│   │       ├─ gear  (plastic)
+│   │       ├─ filter
+│   │       ├─ nozzle  (plastic)
+│   │       ├─ arc
+│   │       └─ flo stop
 │   ├─ Spray MP3000, 270° — Hunter Pro-Spray PRS40 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
 │   │       ├─ cap
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
-│   │       ├─ regulator  [PRS — regulates outlet to ~40 psi / 2.8 bar]
+│   │       ├─ check valve
+│   │       ├─ regulator
 │   │       ├─ riser
 │   │       ├─ wiper seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
 │   │       ├─ flush plug
-│   │       └─ nozzle  (plastic)  [orifice — sets radius / flow]
+│   │       └─ nozzle  (plastic)
 │   ├─ Spray MP2000, 180° — Hunter Pro-Spray PRS40 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
 │   │       ├─ cap
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
-│   │       ├─ regulator  [PRS — regulates outlet to ~40 psi / 2.8 bar]
+│   │       ├─ check valve
+│   │       ├─ regulator
 │   │       ├─ riser
 │   │       ├─ wiper seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
 │   │       ├─ flush plug
-│   │       └─ nozzle  (plastic)  [orifice — sets radius / flow]
+│   │       └─ nozzle  (plastic)
 │   ├─ Coupling 💧  €5
 │   │   ├─ inlet thread
 │   │   ├─ body
@@ -247,25 +247,25 @@ IRRIGATION SYSTEM
 │   ├─ Hose LDPE 17 m 💧  €2
 │   ├─ Zone valve — Hunter PGV-101G 💧  €25
 │   │   ├─ body  (plastic)
-│   │   │   ├─ seat  [diaphragm seals here when closed]
+│   │   │   ├─ seat
 │   │   │   ├─ inlet thread
 │   │   │   ├─ outlet nut
-│   │   │   ├─ [inlet chamber — upstream of seat, at line pressure]
-│   │   │   └─ [outlet chamber — downstream of seat, to the zone]
+│   │   │   ├─ [inlet chamber]
+│   │   │   └─ [outlet chamber]
 │   │   ├─ diaphragm  (rubber)
 │   │   │   ├─ spring  (stainless steel)
-│   │   │   └─ [metering port — bleed orifice: inlet → control chamber]
+│   │   │   └─ [metering port]
 │   │   ├─ bonnet  (plastic)
-│   │   │   ├─ [chamber — volume above diaphragm; pressure here holds it shut]
+│   │   │   ├─ [chamber]
 │   │   │   ├─ bleed screw
 │   │   │   ├─ flow control
 │   │   │   ├─ bonnet cap
 │   │   │   └─ bonnet screws
 │   │   └─ solenoid
-│   │       ├─ [entry — control chamber → solenoid]
+│   │       ├─ [entry]
 │   │       ├─ plunger  (stainless steel)
-│   │       ├─ [exhaust — solenoid → valve outlet]
-│   │       ├─ [pilot seat — plunger seals it when de-energized]
+│   │       ├─ [exhaust]
+│   │       ├─ [pilot seat]
 │   │       ├─ 24v 1
 │   │       ├─ coil  (copper)
 │   │       ├─ 24v 2
@@ -275,27 +275,27 @@ IRRIGATION SYSTEM
 │   ├─ Rotor 2.5 blue, 150° — Hunter I-20-04-SS 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
+│   │       ├─ check valve
 │   │       ├─ riser  (stainless steel)
 │   │       ├─ riser seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
-│   │       ├─ gear  (plastic)  [water-driven gear train → rotation]
-│   │       ├─ filter  [inlet debris screen]
-│   │       ├─ nozzle  (plastic)  [orifice — sets radius / flow]
-│   │       ├─ arc  [sets the sweep arc]
-│   │       └─ flo stop  [pull-up shut-off for servicing]
+│   │       ├─ gear  (plastic)
+│   │       ├─ filter
+│   │       ├─ nozzle  (plastic)
+│   │       ├─ arc
+│   │       └─ flo stop
 │   ├─ Rotor 5.0 blue, 270° — Hunter I-20-04-SS 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
+│   │       ├─ check valve
 │   │       ├─ riser  (stainless steel)
 │   │       ├─ riser seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
-│   │       ├─ gear  (plastic)  [water-driven gear train → rotation]
-│   │       ├─ filter  [inlet debris screen]
-│   │       ├─ nozzle  (plastic)  [orifice — sets radius / flow]
-│   │       ├─ arc  [sets the sweep arc]
-│   │       └─ flo stop  [pull-up shut-off for servicing]
+│   │       ├─ gear  (plastic)
+│   │       ├─ filter
+│   │       ├─ nozzle  (plastic)
+│   │       ├─ arc
+│   │       └─ flo stop
 │   ├─ Coupling 💧  €5
 │   │   ├─ inlet thread
 │   │   ├─ body
@@ -342,25 +342,25 @@ IRRIGATION SYSTEM
 │   ├─ Hose LDPE 9 m 💧  €2
 │   ├─ Zone valve — Hunter PGV-101G 💧  €25
 │   │   ├─ body  (plastic)
-│   │   │   ├─ seat  [diaphragm seals here when closed]
+│   │   │   ├─ seat
 │   │   │   ├─ inlet thread
 │   │   │   ├─ outlet nut
-│   │   │   ├─ [inlet chamber — upstream of seat, at line pressure]
-│   │   │   └─ [outlet chamber — downstream of seat, to the zone]
+│   │   │   ├─ [inlet chamber]
+│   │   │   └─ [outlet chamber]
 │   │   ├─ diaphragm  (rubber)
 │   │   │   ├─ spring  (stainless steel)
-│   │   │   └─ [metering port — bleed orifice: inlet → control chamber]
+│   │   │   └─ [metering port]
 │   │   ├─ bonnet  (plastic)
-│   │   │   ├─ [chamber — volume above diaphragm; pressure here holds it shut]
+│   │   │   ├─ [chamber]
 │   │   │   ├─ bleed screw
 │   │   │   ├─ flow control
 │   │   │   ├─ bonnet cap
 │   │   │   └─ bonnet screws
 │   │   └─ solenoid
-│   │       ├─ [entry — control chamber → solenoid]
+│   │       ├─ [entry]
 │   │       ├─ plunger  (stainless steel)
-│   │       ├─ [exhaust — solenoid → valve outlet]
-│   │       ├─ [pilot seat — plunger seals it when de-energized]
+│   │       ├─ [exhaust]
+│   │       ├─ [pilot seat]
 │   │       ├─ 24v 1
 │   │       ├─ coil  (copper)
 │   │       ├─ 24v 2
@@ -371,46 +371,46 @@ IRRIGATION SYSTEM
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
 │   │       ├─ cap
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
-│   │       ├─ regulator  [PRS — regulates outlet to ~40 psi / 2.8 bar]
+│   │       ├─ check valve
+│   │       ├─ regulator
 │   │       ├─ riser
 │   │       ├─ wiper seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
 │   │       ├─ flush plug
-│   │       └─ nozzle  (plastic)  [orifice — sets radius / flow]
+│   │       └─ nozzle  (plastic)
 │   ├─ Spray MP1000, 210° — Hunter Pro-Spray PRS40 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
 │   │       ├─ cap
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
-│   │       ├─ regulator  [PRS — regulates outlet to ~40 psi / 2.8 bar]
+│   │       ├─ check valve
+│   │       ├─ regulator
 │   │       ├─ riser
 │   │       ├─ wiper seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
 │   │       ├─ flush plug
-│   │       └─ nozzle  (plastic)  [orifice — sets radius / flow]
+│   │       └─ nozzle  (plastic)
 │   ├─ Spray MP2000, 270° — Hunter Pro-Spray PRS40 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
 │   │       ├─ cap
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
-│   │       ├─ regulator  [PRS — regulates outlet to ~40 psi / 2.8 bar]
+│   │       ├─ check valve
+│   │       ├─ regulator
 │   │       ├─ riser
 │   │       ├─ wiper seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
 │   │       ├─ flush plug
-│   │       └─ nozzle  (plastic)  [orifice — sets radius / flow]
+│   │       └─ nozzle  (plastic)
 │   ├─ Spray MP2000, 180° — Hunter Pro-Spray PRS40 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
 │   │       ├─ cap
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
-│   │       ├─ regulator  [PRS — regulates outlet to ~40 psi / 2.8 bar]
+│   │       ├─ check valve
+│   │       ├─ regulator
 │   │       ├─ riser
 │   │       ├─ wiper seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
 │   │       ├─ flush plug
-│   │       └─ nozzle  (plastic)  [orifice — sets radius / flow]
+│   │       └─ nozzle  (plastic)
 │   ├─ Coupling 💧  €5
 │   │   ├─ inlet thread
 │   │   ├─ body
@@ -490,25 +490,25 @@ IRRIGATION SYSTEM
 │   ├─ Hose LDPE 5 m 💧  €2
 │   ├─ Zone valve — Hunter PGV-101G 💧  €25
 │   │   ├─ body  (plastic)
-│   │   │   ├─ seat  [diaphragm seals here when closed]
+│   │   │   ├─ seat
 │   │   │   ├─ inlet thread
 │   │   │   ├─ outlet nut
-│   │   │   ├─ [inlet chamber — upstream of seat, at line pressure]
-│   │   │   └─ [outlet chamber — downstream of seat, to the zone]
+│   │   │   ├─ [inlet chamber]
+│   │   │   └─ [outlet chamber]
 │   │   ├─ diaphragm  (rubber)
 │   │   │   ├─ spring  (stainless steel)
-│   │   │   └─ [metering port — bleed orifice: inlet → control chamber]
+│   │   │   └─ [metering port]
 │   │   ├─ bonnet  (plastic)
-│   │   │   ├─ [chamber — volume above diaphragm; pressure here holds it shut]
+│   │   │   ├─ [chamber]
 │   │   │   ├─ bleed screw
 │   │   │   ├─ flow control
 │   │   │   ├─ bonnet cap
 │   │   │   └─ bonnet screws
 │   │   └─ solenoid
-│   │       ├─ [entry — control chamber → solenoid]
+│   │       ├─ [entry]
 │   │       ├─ plunger  (stainless steel)
-│   │       ├─ [exhaust — solenoid → valve outlet]
-│   │       ├─ [pilot seat — plunger seals it when de-energized]
+│   │       ├─ [exhaust]
+│   │       ├─ [pilot seat]
 │   │       ├─ 24v 1
 │   │       ├─ coil  (copper)
 │   │       ├─ 24v 2
@@ -518,27 +518,27 @@ IRRIGATION SYSTEM
 │   ├─ Rotor 5.0 blue, 270° — Hunter I-20-04-SS 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
+│   │       ├─ check valve
 │   │       ├─ riser  (stainless steel)
 │   │       ├─ riser seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
-│   │       ├─ gear  (plastic)  [water-driven gear train → rotation]
-│   │       ├─ filter  [inlet debris screen]
-│   │       ├─ nozzle  (plastic)  [orifice — sets radius / flow]
-│   │       ├─ arc  [sets the sweep arc]
-│   │       └─ flo stop  [pull-up shut-off for servicing]
+│   │       ├─ gear  (plastic)
+│   │       ├─ filter
+│   │       ├─ nozzle  (plastic)
+│   │       ├─ arc
+│   │       └─ flo stop
 │   ├─ Rotor 2.5 blue, 180° — Hunter I-20-04-SS 💧  €25
 │   │   ├─ inlet thread
 │   │   └─ body  (plastic)
-│   │       ├─ check valve  [drain-check — stops low-head puddling]
+│   │       ├─ check valve
 │   │       ├─ riser  (stainless steel)
 │   │       ├─ riser seal  (rubber)
 │   │       ├─ retract spring  (stainless steel)
-│   │       ├─ gear  (plastic)  [water-driven gear train → rotation]
-│   │       ├─ filter  [inlet debris screen]
-│   │       ├─ nozzle  (plastic)  [orifice — sets radius / flow]
-│   │       ├─ arc  [sets the sweep arc]
-│   │       └─ flo stop  [pull-up shut-off for servicing]
+│   │       ├─ gear  (plastic)
+│   │       ├─ filter
+│   │       ├─ nozzle  (plastic)
+│   │       ├─ arc
+│   │       └─ flo stop
 │   ├─ Coupling 💧  €5
 │   │   ├─ inlet thread
 │   │   ├─ body
@@ -585,25 +585,25 @@ IRRIGATION SYSTEM
 │   ├─ Hose LDPE 12 m 💧  €2
 │   ├─ Zone valve — Hunter PGV-101G 💧  €25
 │   │   ├─ body  (plastic)
-│   │   │   ├─ seat  [diaphragm seals here when closed]
+│   │   │   ├─ seat
 │   │   │   ├─ inlet thread
 │   │   │   ├─ outlet nut
-│   │   │   ├─ [inlet chamber — upstream of seat, at line pressure]
-│   │   │   └─ [outlet chamber — downstream of seat, to the zone]
+│   │   │   ├─ [inlet chamber]
+│   │   │   └─ [outlet chamber]
 │   │   ├─ diaphragm  (rubber)
 │   │   │   ├─ spring  (stainless steel)
-│   │   │   └─ [metering port — bleed orifice: inlet → control chamber]
+│   │   │   └─ [metering port]
 │   │   ├─ bonnet  (plastic)
-│   │   │   ├─ [chamber — volume above diaphragm; pressure here holds it shut]
+│   │   │   ├─ [chamber]
 │   │   │   ├─ bleed screw
 │   │   │   ├─ flow control
 │   │   │   ├─ bonnet cap
 │   │   │   └─ bonnet screws
 │   │   └─ solenoid
-│   │       ├─ [entry — control chamber → solenoid]
+│   │       ├─ [entry]
 │   │       ├─ plunger  (stainless steel)
-│   │       ├─ [exhaust — solenoid → valve outlet]
-│   │       ├─ [pilot seat — plunger seals it when de-energized]
+│   │       ├─ [exhaust]
+│   │       ├─ [pilot seat]
 │   │       ├─ 24v 1
 │   │       ├─ coil  (copper)
 │   │       ├─ 24v 2
@@ -615,17 +615,18 @@ IRRIGATION SYSTEM
 │       └─ body
 └─ 4. ORCHESTRATE ASSY   (controller + 24 V harness — schedules and drives the zones)
     ├─ Controller — RainMachine HD-12 TOUCH   €200
-    │   ├─ touchscreen
     │   ├─ line
     │   ├─ neutral
-    │   ├─ transform
+    │   ├─ screen
+    │   ├─ transformer
     │   │   ├─ line
     │   │   ├─ neutral
     │   │   └─ winding
-    │   ├─ ac line 1
-    │   ├─ ac line 2
-    │   ├─ common 1
-    │   └─ common 2
+    │   └─ terminal-board
+    │       ├─ ac line 1
+    │       ├─ ac line 2
+    │       ├─ common 1
+    │       └─ common 2
     ├─ Socket   €5
     │   ├─ line
     │   ├─ neutral
