@@ -155,6 +155,13 @@ export function buildModel(rawGraph, rawCatalog) {
   const valveLoss = rawCatalog["valve.auto_loss"];
   if (!valveLoss) throw new Error("model: no valve.auto_loss curve");
 
+  // Guard the nozzle tables here so a renamed/missing catalog key fails at build with a clear
+  // message, rather than a cryptic TypeError deep in the per-outlet demand law.
+  const nozzleI20 = rawCatalog["head.rotor/nozzle"];
+  if (!nozzleI20) throw new Error("model: no head.rotor/nozzle curve");
+  const nozzleMp = rawCatalog["head.spray/nozzle"];
+  if (!nozzleMp) throw new Error("model: no head.spray/nozzle curve");
+
   return {
     flowNodes,
     kinds: components, // type defs (parts/fail/ports) for the fault walker + electrical internals
@@ -164,8 +171,8 @@ export function buildModel(rawGraph, rawCatalog) {
     curves: {
       pump: pumpCurve, // {flow_m3h:[…], head_m:[…]}
       valveLoss, // {flow_m3h:[…], loss_bar:[…]}
-      nozzleI20: rawCatalog["head.rotor/nozzle"],
-      nozzleMp: rawCatalog["head.spray/nozzle"],
+      nozzleI20,
+      nozzleMp,
     },
   };
 }
