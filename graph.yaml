@@ -579,16 +579,16 @@ water:
       outlet_6: [Z6_fitting.cap]
     h_m: 11.2
 
-  Z2_emitter.rotor: {nozzle: "4.0 blue", arc: 170, h_m: 11.6}
-  Z2_emitter.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.5}
-  Z2_emitter.spray_2: {nozzle: "MP2000", arc: 180, h_m: 11.4}
+  Z2_emitter.rotor: {nozzle: "4.0 blue", arc: 170, h_m: 11.6, group: riser_2}
+  Z2_emitter.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.5, group: riser_1}
+  Z2_emitter.spray_2: {nozzle: "MP2000", arc: 180, h_m: 11.4, group: riser_3}
   Z2_fitting.coupling_sm1bm1: {to: [Z2_valve.auto], h_m: 11.2}
   Z2_fitting.coupling_bm1c25: {to: [Z2_hose.ldpe25_1], h_m: 11.2}
-  Z2_fitting.coupling_c25bf34_1: {to: [Z2_fitting.sj34x12_1], h_m: 10.5}
-  Z2_fitting.coupling_c25bf34_2: {to: [Z2_fitting.sj34x12_2], h_m: 11.4}
-  Z2_fitting.sj34x12_1: {to: [Z2_emitter.spray_1], h_m: 10.5}
-  Z2_fitting.sj34x12_2: {to: [Z2_emitter.spray_2], h_m: 11.4}
-  Z2_fitting.sj34x34: {to: [Z2_emitter.rotor], h_m: 11.6}
+  Z2_fitting.coupling_c25bf34_1: {to: [Z2_fitting.sj34x12_1], h_m: 10.5, group: riser_1}
+  Z2_fitting.coupling_c25bf34_2: {to: [Z2_fitting.sj34x12_2], h_m: 11.4, group: riser_3}
+  Z2_fitting.sj34x12_1: {to: [Z2_emitter.spray_1], h_m: 10.5, group: riser_1}
+  Z2_fitting.sj34x12_2: {to: [Z2_emitter.spray_2], h_m: 11.4, group: riser_3}
+  Z2_fitting.sj34x34: {to: [Z2_emitter.rotor], h_m: 11.6, group: riser_2}
   Z2_fitting.tee_1:
     to:
       outlet_1: [Z2_hose.ldpe25_2]
@@ -605,14 +605,14 @@ water:
   Z2_hose.ldpe25_4: {to: [Z2_fitting.coupling_c25bf34_2], l_m: 17, h_m: 11.3}
   Z2_valve.auto: {to: [Z2_fitting.coupling_bm1c25], h_m: 11.2}
 
-  Z3_emitter.rotor_1: {nozzle: "2.5 blue", arc: 150, h_m: 11.1}
-  Z3_emitter.rotor_2: {nozzle: "5.0 blue", arc: 270, h_m: 11.2}
+  Z3_emitter.rotor_1: {nozzle: "2.5 blue", arc: 150, h_m: 11.1, group: riser_1}
+  Z3_emitter.rotor_2: {nozzle: "5.0 blue", arc: 270, h_m: 11.2, group: riser_2}
   Z3_fitting.coupling_sm1bm1: {to: [Z3_valve.auto], h_m: 11.2}
   Z3_fitting.coupling_bm1c25: {to: [Z3_hose.ldpe25_1], h_m: 11.2}
-  Z3_fitting.coupling_c25bf34_1: {to: [Z3_fitting.sj34x34_1], h_m: 11.1}
-  Z3_fitting.coupling_c25bf34_2: {to: [Z3_fitting.sj34x34_2], h_m: 11.2}
-  Z3_fitting.sj34x34_1: {to: [Z3_emitter.rotor_1], h_m: 11.1}
-  Z3_fitting.sj34x34_2: {to: [Z3_emitter.rotor_2], h_m: 11.2}
+  Z3_fitting.coupling_c25bf34_1: {to: [Z3_fitting.sj34x34_1], h_m: 11.1, group: riser_1}
+  Z3_fitting.coupling_c25bf34_2: {to: [Z3_fitting.sj34x34_2], h_m: 11.2, group: riser_2}
+  Z3_fitting.sj34x34_1: {to: [Z3_emitter.rotor_1], h_m: 11.1, group: riser_1}
+  Z3_fitting.sj34x34_2: {to: [Z3_emitter.rotor_2], h_m: 11.2, group: riser_2}
   Z3_fitting.tee:
     to:
       outlet_1: [Z3_hose.ldpe25_2]
@@ -623,14 +623,14 @@ water:
   Z3_hose.ldpe25_3: {to: [Z3_fitting.coupling_c25bf34_2], l_m: 9, h_m: 11.2}
   Z3_valve.auto: {to: [Z3_fitting.coupling_bm1c25], h_m: 11.2}
 
-  Z5_emitter.rotor_1: {nozzle: "5.0 blue", arc: 270, h_m: 10.2}
-  Z5_emitter.rotor_2: {nozzle: "2.5 blue", arc: 180, h_m: 10.5}
+  Z5_emitter.rotor_1: {nozzle: "5.0 blue", arc: 270, h_m: 10.2, group: riser_1}
+  Z5_emitter.rotor_2: {nozzle: "2.5 blue", arc: 180, h_m: 10.5, group: riser_2}
   Z5_fitting.coupling_sm1bm1: {to: [Z5_valve.auto], h_m: 11.2}
   Z5_fitting.coupling_bm1c25: {to: [Z5_hose.ldpe25_1], h_m: 11.2}
-  Z5_fitting.coupling_c25bf34_1: {to: [Z5_fitting.sj34x34_1], h_m: 10.2}
-  Z5_fitting.coupling_c25bf34_2: {to: [Z5_fitting.sj34x34_2], h_m: 10.5}
-  Z5_fitting.sj34x34_1: {to: [Z5_emitter.rotor_1], h_m: 10.2}
-  Z5_fitting.sj34x34_2: {to: [Z5_emitter.rotor_2], h_m: 10.5}
+  Z5_fitting.coupling_c25bf34_1: {to: [Z5_fitting.sj34x34_1], h_m: 10.2, group: riser_1}
+  Z5_fitting.coupling_c25bf34_2: {to: [Z5_fitting.sj34x34_2], h_m: 10.5, group: riser_2}
+  Z5_fitting.sj34x34_1: {to: [Z5_emitter.rotor_1], h_m: 10.2, group: riser_1}
+  Z5_fitting.sj34x34_2: {to: [Z5_emitter.rotor_2], h_m: 10.5, group: riser_2}
   Z5_fitting.tee:
     to:
       outlet_1: [Z5_hose.ldpe25_2]
@@ -641,17 +641,17 @@ water:
   Z5_hose.ldpe25_3: {to: [Z5_fitting.coupling_c25bf34_2], l_m: 12, h_m: 10.6}
   Z5_valve.auto: {to: [Z5_fitting.coupling_bm1c25], h_m: 11.2}
 
-  Z4_emitter.spray_1: {nozzle: "MP3000", arc: 270, h_m: 11.3}
-  Z4_emitter.spray_2: {nozzle: "MP1000", arc: 210, h_m: 12.0}
-  Z4_emitter.spray_3: {nozzle: "MP2000", arc: 270, h_m: 12.0}
-  Z4_emitter.spray_4: {nozzle: "MP2000", arc: 180, h_m: 11.9}
+  Z4_emitter.spray_1: {nozzle: "MP3000", arc: 270, h_m: 11.3, group: riser_1}
+  Z4_emitter.spray_2: {nozzle: "MP1000", arc: 210, h_m: 12.0, group: riser_2}
+  Z4_emitter.spray_3: {nozzle: "MP2000", arc: 270, h_m: 12.0, group: riser_3}
+  Z4_emitter.spray_4: {nozzle: "MP2000", arc: 180, h_m: 11.9, group: riser_4}
   Z4_fitting.coupling_sm1bm1: {to: [Z4_valve.auto], h_m: 11.2}
   Z4_fitting.coupling_bm1c25: {to: [Z4_hose.ldpe25_1], h_m: 11.2}
-  Z4_fitting.coupling_c25bf34_1: {to: [Z4_fitting.sj34x12_1], h_m: 11.3}
-  Z4_fitting.coupling_c25bf34_2: {to: [Z4_fitting.sj34x12_3], h_m: 12.0}
-  Z4_fitting.sj34x12_1: {to: [Z4_emitter.spray_1], h_m: 11.3}
-  Z4_fitting.sj34x12_2: {to: [Z4_emitter.spray_2], h_m: 12.0}
-  Z4_fitting.sj34x12_3: {to: [Z4_emitter.spray_3], h_m: 12.0}
+  Z4_fitting.coupling_c25bf34_1: {to: [Z4_fitting.sj34x12_1], h_m: 11.3, group: riser_1}
+  Z4_fitting.coupling_c25bf34_2: {to: [Z4_fitting.sj34x12_3], h_m: 12.0, group: riser_3}
+  Z4_fitting.sj34x12_1: {to: [Z4_emitter.spray_1], h_m: 11.3, group: riser_1}
+  Z4_fitting.sj34x12_2: {to: [Z4_emitter.spray_2], h_m: 12.0, group: riser_2}
+  Z4_fitting.sj34x12_3: {to: [Z4_emitter.spray_3], h_m: 12.0, group: riser_3}
   Z4_fitting.tee_1:
     to:
       outlet_1: [Z4_hose.ldpe25_2]
@@ -673,7 +673,7 @@ water:
       outlet_2: [Z4_hose.ldpe25_6]
     h_m: 11.8
   Z4_hose.ldpe25_6: {to: [Z4_fitting.sj34x12_4], l_m: 5, h_m: 11.9}
-  Z4_fitting.sj34x12_4: {to: [Z4_emitter.spray_4], h_m: 11.9}
+  Z4_fitting.sj34x12_4: {to: [Z4_emitter.spray_4], h_m: 11.9, group: riser_4}
   Z4_valve.auto: {to: [Z4_fitting.coupling_bm1c25], h_m: 11.2}
 
   Z1_emitter.stream: {h_m: 12.2}

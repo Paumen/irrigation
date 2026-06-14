@@ -56,6 +56,8 @@ for sec in ("water", "electrical"):
         for a in ("l_m", "nozzle", "arc"):
             if a in v:
                 r["attrs"][a] = v[a]
+        if v.get("group"):
+            r["group"] = v["group"]
 INST.setdefault("V1_enclosure.valvebox", {"type": "enclosure.valvebox", "attrs": {}, "edges": []})
 
 TYPE_INST = collections.defaultdict(list)
@@ -152,6 +154,15 @@ def render_assembly(name, node, prefix, out):
             line(prefix, last, e[1], out)
             render_assembly(e[1], e[2], cp, out)
 
+# ---- one component instance: its type line + part subtree -------------------
+def render_component(inst, prefix, last, out):
+    t = INST[inst]["type"]
+    txt = t + attr_suffix(inst)
+    if TYPES.get(t, {}).get("model"):
+        txt += f"  ({TYPES[t]['model']})"
+    line(prefix, last, txt, out)
+    render_parts(TYPES.get(t, {}), prefix + ("    " if last else "│   "), out)
+
 # ---- zones (instances by prefix, flow-ordered) ------------------------------
 def flow_order(subset):
     s = set(subset)
@@ -211,14 +222,28 @@ def main():
                 line(sp, last, z, out)
                 zinsts = flow_order([i for i in INST if i.startswith(z + "_") and i not in claimed
                                      and not INST[i]["type"].startswith("wiring.")])
-                for zi, inst in enumerate(zinsts):
-                    zlast = zi == len(zinsts) - 1
-                    t = INST[inst]["type"]
-                    txt = t + attr_suffix(inst)
-                    if TYPES.get(t, {}).get("model"):
-                        txt += f"  ({TYPES[t]['model']})"
-                    line(cp, zlast, txt, out)
-                    render_parts(TYPES.get(t, {}), cp + ("    " if zlast else "│   "), out)
+                # fold grouped instances (risers) into one sub-node, placed at the
+                # flow position of the group's first member
+                zrows, buckets = [], {}
+                for inst in zinsts:
+                    g = INST[inst].get("group")
+                    if not g:
+                        zrows.append(("inst", inst))
+                    else:
+                        if g not in buckets:
+                            buckets[g] = []
+                            zrows.append(("grp", g))
+                        buckets[g].append(inst)
+                for zi, zr in enumerate(zrows):
+                    zlast = zi == len(zrows) - 1
+                    zcp = cp + ("    " if zlast else "│   ")
+                    if zr[0] == "inst":
+                        render_component(zr[1], cp, zlast, out)
+                    else:
+                        line(cp, zlast, zr[1], out)
+                        mem = buckets[zr[1]]
+                        for mi, inst in enumerate(mem):
+                            render_component(inst, zcp, mi == len(mem) - 1, out)
     out.append("```")
     text = "\n".join(out) + "\n"
 
