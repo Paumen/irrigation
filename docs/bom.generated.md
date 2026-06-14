@@ -1,653 +1,678 @@
 # Irrigation system — Bill of Materials (generated)
 
-GENERATED from graph.yaml + context.yaml by tools/render_bom.py — tracks docs/bom.md.
-Legend: 💧 wetted · 🌐 230 V mains · 💡 24 V control · `[ … ]` = flow feature, not a part.
+GENERATED from graph.yaml by tools/render_bom.py. Lines are raw graph keys.
+Sections + zone(Z#) are prefix buckets; assemblies/parts come from the items: tree.
 
 ```
 IRRIGATION SYSTEM
-├─ 1. SUPPLY ASSY   (well → pump → tank → pressure to the supply line)
-│   ├─ Well water source 💧
-│   ├─ Jet pump — DAB AQUAJET 132 M 💧
-│   │   ├─ Tank hose
-│   │   ├─ Tank — DAB 20 L diaphragm tank
-│   │   │   ├─ Shell
-│   │   │   ├─ Bladder
-│   │   │   ├─ Pre charge
-│   │   │   ├─ [air charge]
-│   │   │   └─ [draw down]
-│   │   ├─ Body
-│   │   │   ├─ Venturi
-│   │   │   ├─ Impeller
-│   │   │   ├─ Diffuser
-│   │   │   ├─ Mech seal
-│   │   │   ├─ Body O-ring
-│   │   │   ├─ Priming cap
-│   │   │   ├─ Priming cap O-ring
-│   │   │   ├─ [venturi throat]
-│   │   │   ├─ [recirculation passage]
-│   │   │   └─ [priming chamber]
-│   │   └─ Motor
-│   │       ├─ Line
-│   │       ├─ Winding
-│   │       ├─ Capacitor
-│   │       ├─ Thermal protector
-│   │       ├─ Neutral
-│   │       └─ Earth
-│   ├─ Suction assembly
-│   │   ├─ Foot-valve assembly 💧
-│   │   │   ├─ Foot valve 💧
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Disc
-│   │   │   │   ├─ Spring
-│   │   │   │   └─ Seat seal
-│   │   │   ├─ Strainer basket 💧
-│   │   │   │   ├─ Mesh
-│   │   │   │   └─ Body
-│   │   │   └─ Hose-tail, brass 💧
-│   │   │       ├─ Inlet thread
-│   │   │       ├─ Barb
-│   │   │       └─ Body
-│   │   ├─ Suction hose — PVC ∅25, 4.5 m 💧
-│   │   │   └─ Clamp ×2
-│   │   └─ Hose-tail, plastic 💧
-│   │       ├─ Barb
-│   │       ├─ Outlet thread
-│   │       └─ Body
-│   ├─ Pump discharge
-│   │   ├─ Coupling G1″M→∅32 💧
-│   │   │   ├─ Inlet thread
-│   │   │   ├─ Body
-│   │   │   ├─ Outlet O-ring
-│   │   │   ├─ Outlet grip
-│   │   │   └─ Outlet nut
-│   │   ├─ Hose LDPE ∅32, 1 m 💧
-│   │   └─ Coupling ∅32→∅32 💧
-│   │       ├─ Inlet nut
-│   │       ├─ Inlet grip
-│   │       ├─ Inlet O-ring
-│   │       ├─ Body
-│   │       ├─ Outlet O-ring
-│   │       ├─ Outlet grip
-│   │       └─ Outlet nut
-│   └─ Pump power assembly
-│       ├─ Pump-start relay — Hunter PSR-22 💡🌐
-│       │   ├─ Coil in
-│       │   ├─ Coil
-│       │   ├─ Coil common
-│       │   ├─ Contact
-│       │   ├─ Line
-│       │   ├─ Load outlet
-│       │   ├─ Neutral
-│       │   └─ Earth
-│       ├─ Relay supply socket 🌐
-│       │   ├─ Line
-│       │   ├─ Neutral
-│       │   └─ Earth
-│       ├─ Pump socket (switched) 🌐
-│       │   ├─ Line
-│       │   ├─ Neutral
-│       │   └─ Earth
-│       ├─ Cable 230 V: mains → relay 🌐
-│       │   ├─ Line
-│       │   ├─ Neutral
-│       │   └─ Earth
-│       ├─ Cable 230 V: relay → pump socket 🌐
-│       │   ├─ Line
-│       │   ├─ Neutral
-│       │   └─ Earth
-│       ├─ Cable 24 V: controller → relay coil 💡
-│       └─ Cable 24 V: relay coil → controller common 💡
-├─ 2. DISTRIBUTE ASSY   (manifold + supply line + harness; zone valves under their zones)
-│   ├─ Supply line — Hose LDPE ∅32, 20 m 💧
-│   ├─ Box housing — valve box XL
-│   │   ├─ Enclosure
-│   │   └─ Lid
-│   ├─ Manifold assembly 💧
-│   │   ├─ Manifold body — LEV 6-way distributor 💧
-│   │   │   ├─ Inlet washer
-│   │   │   ├─ Outlet washer ×6
-│   │   │   ├─ Body
-│   │   │   └─ [distribution gallery]
-│   │   ├─ Inlet coupling ∅32→swivel-G1″ 💧
-│   │   │   ├─ Inlet nut
-│   │   │   ├─ Inlet grip
-│   │   │   ├─ Inlet O-ring
-│   │   │   ├─ Body
-│   │   │   └─ Outlet swivel nut
-│   │   └─ End cap (outlet 6) 💧
-│   │       ├─ Inlet swivel nut
-│   │       └─ Body
-│   └─ Solenoid wiring 💡
-│       ├─ Waterproof wire connector ×8 💡
-│       └─ Common jumper wire ×3 💡
-├─ 3. DELIVER ASSY   (zone piping → risers → emitters)
-│   ├─ Zone 1 — stream / bubbler (manual)
-│   │   ├─ Coupling swivel-G1″→∅16 💧
-│   │   │   ├─ Inlet swivel nut
-│   │   │   ├─ Body
-│   │   │   ├─ Outlet O-ring
-│   │   │   ├─ Outlet grip
-│   │   │   └─ Outlet nut
-│   │   ├─ Pipework
-│   │   │   ├─ Hose LDPE ∅16, 10 m 💧
-│   │   │   ├─ Coupling ∅16→∅16 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅16, 10 m 💧
-│   │   │   └─ Hose LDPE ∅16, 10 m 💧
-│   │   ├─ Manual valve 💧
-│   │   │   └─ Body
-│   │   │       ├─ Seat
-│   │   │       ├─ Ball
-│   │   │       ├─ Stem
-│   │   │       ├─ Stem O-ring
-│   │   │       ├─ Handle
-│   │   │       ├─ Inlet thread
-│   │   │       └─ [through bore]
-│   │   └─ Stream emitter 💧
-│   ├─ Zone 2 — 1 rotor + 2 sprays
-│   │   ├─ Zone valve — Hunter PGV-101G 💧💡
-│   │   │   ├─ Inlet coupling
-│   │   │   │   ├─ Inlet swivel nut
-│   │   │   │   ├─ Body
-│   │   │   │   └─ Outlet thread
-│   │   │   ├─ Body
-│   │   │   │   ├─ Seat
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ [inlet chamber]
-│   │   │   │   └─ [outlet chamber]
-│   │   │   ├─ Diaphragm
-│   │   │   │   ├─ Spring
-│   │   │   │   └─ [metering port]
-│   │   │   ├─ Bonnet
+├─ 1. SUPPLY
+│   ├─ source.well
+│   ├─ hose.ldpe32  (1 m)
+│   ├─ pump.jet  (DAB AQUAJET 132 M)
+│   │   ├─ tank_hose
+│   │   ├─ tank  (DAB 20 L diaphragm tank)
+│   │   │   ├─ shell
+│   │   │   ├─ bladder
+│   │   │   ├─ pre_charge
+│   │   │   ├─ [air_charge]
+│   │   │   └─ [draw_down]
+│   │   ├─ body
+│   │   │   ├─ venturi
+│   │   │   ├─ impeller
+│   │   │   ├─ diffuser
+│   │   │   ├─ mech_seal
+│   │   │   ├─ body_oring
+│   │   │   ├─ priming_cap
+│   │   │   ├─ priming_cap_oring
+│   │   │   ├─ [venturi_throat]
+│   │   │   ├─ [recirculation_passage]
+│   │   │   └─ [priming_chamber]
+│   │   └─ motor
+│   │       ├─ line
+│   │       ├─ winding
+│   │       ├─ capacitor
+│   │       ├─ thermal_protector
+│   │       ├─ neutral
+│   │       └─ earth
+│   ├─ source.socket
+│   │   ├─ line
+│   │   ├─ neutral
+│   │   └─ earth
+│   ├─ wiring.230v
+│   │   ├─ line
+│   │   ├─ neutral
+│   │   └─ earth
+│   ├─ wiring.230v
+│   │   ├─ line
+│   │   ├─ neutral
+│   │   └─ earth
+│   ├─ source.socket
+│   │   ├─ line
+│   │   ├─ neutral
+│   │   └─ earth
+│   ├─ wiring.24v
+│   │   └─ tube
+│   │       ├─ common
+│   │       └─ signal ×4
+│   ├─ wiring.24v
+│   │   └─ tube
+│   │       ├─ common
+│   │       └─ signal ×4
+│   ├─ suction_assembly
+│   │   ├─ foot_valve_assembly
+│   │   │   ├─ valve.foot
+│   │   │   │   ├─ body
+│   │   │   │   ├─ disc
+│   │   │   │   ├─ spring
+│   │   │   │   └─ seat_seal
+│   │   │   ├─ fitting.strainer_basket
+│   │   │   │   ├─ mesh
+│   │   │   │   └─ body
+│   │   │   └─ fitting.hosetail_brass
+│   │   │       ├─ inlet_thread
+│   │   │       ├─ barb
+│   │   │       └─ body
+│   │   ├─ hose.suction  (4.5 m)
+│   │   │   └─ clamp ×2
+│   │   └─ fitting.hosetail_plastic
+│   │       ├─ barb
+│   │       ├─ outlet_thread
+│   │       └─ body
+│   ├─ pump_discharge
+│   │   ├─ fitting.coupling_bm1c32
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ body
+│   │   │   ├─ outlet_oring
+│   │   │   ├─ outlet_grip
+│   │   │   └─ outlet_nut
+│   │   └─ fitting.coupling_c32c32
+│   │       ├─ inlet_nut
+│   │       ├─ inlet_grip
+│   │       ├─ inlet_oring
+│   │       ├─ body
+│   │       ├─ outlet_oring
+│   │       ├─ outlet_grip
+│   │       └─ outlet_nut
+│   └─ pump_power_assembly
+│       └─ relay.pumpstart  (Hunter PSR-22)
+│           ├─ coil_in
+│           ├─ coil
+│           ├─ coil_common
+│           ├─ contact
+│           ├─ line
+│           ├─ load_outlet
+│           ├─ neutral
+│           └─ earth
+├─ 2. DISTRIBUTE
+│   ├─ hose.ldpe32  (20 m)
+│   ├─ wiring.24v
+│   │   └─ tube
+│   │       ├─ common
+│   │       └─ signal ×4
+│   ├─ wiring.24v
+│   │   └─ tube
+│   │       ├─ common
+│   │       └─ signal ×4
+│   ├─ wiring.24v
+│   │   └─ tube
+│   │       ├─ common
+│   │       └─ signal ×4
+│   ├─ wiring.24v
+│   │   └─ tube
+│   │       ├─ common
+│   │       └─ signal ×4
+│   ├─ enclosure.valvebox  (valve box XL)
+│   │   ├─ enclosure
+│   │   └─ lid
+│   └─ manifold_assembly
+│       ├─ fitting.manifold  (LEV 6-way distributor)
+│       │   ├─ inlet_washer
+│       │   ├─ outlet_washer ×6
+│       │   ├─ body
+│       │   └─ [distribution_gallery]
+│       ├─ fitting.coupling_c32sm1
+│       │   ├─ inlet_nut
+│       │   ├─ inlet_grip
+│       │   ├─ inlet_oring
+│       │   ├─ body
+│       │   └─ outlet_swivel_nut
+│       └─ fitting.cap
+│           ├─ inlet_swivel_nut
+│           └─ body
+├─ 3. DELIVER
+│   ├─ solenoid_wiring
+│   │   ├─ wiring.splice
+│   │   ├─ wiring.splice
+│   │   ├─ wiring.splice
+│   │   ├─ wiring.splice
+│   │   ├─ wiring.splice
+│   │   ├─ wiring.splice
+│   │   ├─ wiring.splice
+│   │   └─ wiring.splice
+│   ├─ Z1
+│   │   ├─ fitting.coupling_sm1c16
+│   │   │   ├─ inlet_swivel_nut
+│   │   │   ├─ body
+│   │   │   ├─ outlet_oring
+│   │   │   ├─ outlet_grip
+│   │   │   └─ outlet_nut
+│   │   ├─ hose.ldpe16  (10 m)
+│   │   ├─ fitting.coupling_c16c16
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_oring
+│   │   │   ├─ outlet_grip
+│   │   │   └─ outlet_nut
+│   │   ├─ hose.ldpe16  (10 m)
+│   │   ├─ valve.manual
+│   │   │   └─ body
+│   │   │       ├─ seat
+│   │   │       ├─ ball
+│   │   │       ├─ stem
+│   │   │       ├─ stem_oring
+│   │   │       ├─ handle
+│   │   │       ├─ inlet_thread
+│   │   │       └─ [through_bore]
+│   │   ├─ hose.ldpe16  (10 m)
+│   │   └─ emitter.stream
+│   ├─ Z2
+│   │   ├─ fitting.coupling_sm1bm1
+│   │   │   ├─ inlet_swivel_nut
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ valve.auto  (Hunter PGV-101G)
+│   │   │   ├─ body
+│   │   │   │   ├─ seat
+│   │   │   │   ├─ inlet_thread
+│   │   │   │   ├─ outlet_nut
+│   │   │   │   ├─ [inlet_chamber]
+│   │   │   │   └─ [outlet_chamber]
+│   │   │   ├─ diaphragm
+│   │   │   │   ├─ spring
+│   │   │   │   └─ [metering_port]
+│   │   │   ├─ bonnet
 │   │   │   │   ├─ [chamber]
-│   │   │   │   ├─ Bleed screw
-│   │   │   │   ├─ Flow control
-│   │   │   │   ├─ Bonnet cap
-│   │   │   │   └─ Bonnet screws
-│   │   │   └─ Solenoid — Hunter 458200 (24 VAC)
+│   │   │   │   ├─ bleed_screw
+│   │   │   │   ├─ flow_control
+│   │   │   │   ├─ bonnet_cap
+│   │   │   │   └─ bonnet_screws
+│   │   │   └─ solenoid  (Hunter 458200 (24 VAC))
 │   │   │       ├─ [entry]
-│   │   │       ├─ Plunger
+│   │   │       ├─ plunger
 │   │   │       ├─ [exhaust]
-│   │   │       ├─ [pilot seat]
-│   │   │       ├─ Lead wire
-│   │   │       ├─ Coil
-│   │   │       ├─ Lead wire
-│   │   │       ├─ Plunger spring
-│   │   │       └─ Solenoid O-ring
-│   │   ├─ Pipework
-│   │   │   ├─ Coupling G1″M→∅25 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 8 m 💧
-│   │   │   ├─ Tee 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 7 m 💧
-│   │   │   ├─ Hose LDPE ∅25, 3 m 💧
-│   │   │   ├─ Tee 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   └─ Hose LDPE ∅25, 17 m 💧
-│   │   ├─ Rotor riser — 4.0 blue 170° 💧
-│   │   │   ├─ Swing-joint riser ¾×¾ — Hunter sj 3/4x3/4 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet thread
-│   │   │   │   └─ Body
-│   │   │   └─ Rotor — Hunter I-20-04-SS 💧
-│   │   │       ├─ Inlet thread
-│   │   │       └─ Body
-│   │   │           ├─ Check valve
-│   │   │           ├─ Riser
-│   │   │           ├─ Riser seal
-│   │   │           ├─ Retract spring
-│   │   │           ├─ Gear
-│   │   │           ├─ Filter
-│   │   │           ├─ Nozzle
-│   │   │           ├─ Arc
-│   │   │           └─ Flo stop
-│   │   ├─ Spray riser — MP2000 180° 💧
-│   │   │   ├─ Coupling ∅25→G¾″F 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   └─ Outlet thread
-│   │   │   ├─ Swing-joint riser ¾×½ — Hunter sj 3/4x1/2 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet thread
-│   │   │   │   └─ Body
-│   │   │   └─ Spray — Hunter Pro-Spray PRS40 💧
-│   │   │       ├─ Inlet thread
-│   │   │       └─ Body
-│   │   │           ├─ Cap
-│   │   │           ├─ Check valve
-│   │   │           ├─ Regulator
-│   │   │           ├─ Riser
-│   │   │           ├─ Wiper seal
-│   │   │           ├─ Retract spring
-│   │   │           ├─ Flush plug
-│   │   │           └─ Nozzle
-│   │   └─ Spray riser — MP3000 270° 💧
-│   │       ├─ Coupling ∅25→G¾″F 💧
-│   │       │   ├─ Inlet nut
-│   │       │   ├─ Inlet grip
-│   │       │   ├─ Inlet O-ring
-│   │       │   ├─ Body
-│   │       │   └─ Outlet thread
-│   │       ├─ Swing-joint riser ¾×½ — Hunter sj 3/4x1/2 💧
-│   │       │   ├─ Inlet thread
-│   │       │   ├─ Outlet thread
-│   │       │   └─ Body
-│   │       └─ Spray — Hunter Pro-Spray PRS40 💧
-│   │           ├─ Inlet thread
-│   │           └─ Body
-│   │               ├─ Cap
-│   │               ├─ Check valve
-│   │               ├─ Regulator
-│   │               ├─ Riser
-│   │               ├─ Wiper seal
-│   │               ├─ Retract spring
-│   │               ├─ Flush plug
-│   │               └─ Nozzle
-│   ├─ Zone 3 — 2 rotors
-│   │   ├─ Zone valve — Hunter PGV-101G 💧💡
-│   │   │   ├─ Inlet coupling
-│   │   │   │   ├─ Inlet swivel nut
-│   │   │   │   ├─ Body
-│   │   │   │   └─ Outlet thread
-│   │   │   ├─ Body
-│   │   │   │   ├─ Seat
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ [inlet chamber]
-│   │   │   │   └─ [outlet chamber]
-│   │   │   ├─ Diaphragm
-│   │   │   │   ├─ Spring
-│   │   │   │   └─ [metering port]
-│   │   │   ├─ Bonnet
+│   │   │       ├─ [pilot_seat]
+│   │   │       ├─ 24v_1
+│   │   │       ├─ coil
+│   │   │       ├─ 24v_2
+│   │   │       ├─ plunger_spring
+│   │   │       └─ solenoid_oring
+│   │   ├─ fitting.coupling_bm1c25
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ body
+│   │   │   ├─ outlet_oring
+│   │   │   ├─ outlet_grip
+│   │   │   └─ outlet_nut
+│   │   ├─ hose.ldpe25  (8 m)
+│   │   ├─ fitting.tee
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_1_oring
+│   │   │   ├─ outlet_1_grip
+│   │   │   ├─ outlet_1_nut
+│   │   │   ├─ outlet_2_oring
+│   │   │   ├─ outlet_2_grip
+│   │   │   └─ outlet_2_nut
+│   │   ├─ hose.ldpe25  (7 m)
+│   │   ├─ fitting.coupling_c25bf34
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   ├─ emitter.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │   ├─ inlet_thread
+│   │   │   └─ body
+│   │   │       ├─ cap
+│   │   │       ├─ check_valve
+│   │   │       ├─ regulator
+│   │   │       ├─ riser
+│   │   │       ├─ wiper_seal
+│   │   │       ├─ retract_spring
+│   │   │       ├─ flush_plug
+│   │   │       └─ nozzle
+│   │   ├─ hose.ldpe25  (3 m)
+│   │   ├─ fitting.tee
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_1_oring
+│   │   │   ├─ outlet_1_grip
+│   │   │   ├─ outlet_1_nut
+│   │   │   ├─ outlet_2_oring
+│   │   │   ├─ outlet_2_grip
+│   │   │   └─ outlet_2_nut
+│   │   ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   ├─ emitter.rotor  (4.0 blue, 170°)  (Hunter I-20-04-SS)
+│   │   │   ├─ inlet_thread
+│   │   │   └─ body
+│   │   │       ├─ check_valve
+│   │   │       ├─ riser
+│   │   │       ├─ riser_seal
+│   │   │       ├─ retract_spring
+│   │   │       ├─ gear
+│   │   │       ├─ filter
+│   │   │       ├─ nozzle
+│   │   │       ├─ arc
+│   │   │       └─ flo_stop
+│   │   ├─ hose.ldpe25  (17 m)
+│   │   ├─ fitting.coupling_c25bf34
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   └─ emitter.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
+│   │       ├─ inlet_thread
+│   │       └─ body
+│   │           ├─ cap
+│   │           ├─ check_valve
+│   │           ├─ regulator
+│   │           ├─ riser
+│   │           ├─ wiper_seal
+│   │           ├─ retract_spring
+│   │           ├─ flush_plug
+│   │           └─ nozzle
+│   ├─ Z3
+│   │   ├─ fitting.coupling_sm1bm1
+│   │   │   ├─ inlet_swivel_nut
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ valve.auto  (Hunter PGV-101G)
+│   │   │   ├─ body
+│   │   │   │   ├─ seat
+│   │   │   │   ├─ inlet_thread
+│   │   │   │   ├─ outlet_nut
+│   │   │   │   ├─ [inlet_chamber]
+│   │   │   │   └─ [outlet_chamber]
+│   │   │   ├─ diaphragm
+│   │   │   │   ├─ spring
+│   │   │   │   └─ [metering_port]
+│   │   │   ├─ bonnet
 │   │   │   │   ├─ [chamber]
-│   │   │   │   ├─ Bleed screw
-│   │   │   │   ├─ Flow control
-│   │   │   │   ├─ Bonnet cap
-│   │   │   │   └─ Bonnet screws
-│   │   │   └─ Solenoid — Hunter 458200 (24 VAC)
+│   │   │   │   ├─ bleed_screw
+│   │   │   │   ├─ flow_control
+│   │   │   │   ├─ bonnet_cap
+│   │   │   │   └─ bonnet_screws
+│   │   │   └─ solenoid  (Hunter 458200 (24 VAC))
 │   │   │       ├─ [entry]
-│   │   │       ├─ Plunger
+│   │   │       ├─ plunger
 │   │   │       ├─ [exhaust]
-│   │   │       ├─ [pilot seat]
-│   │   │       ├─ Lead wire
-│   │   │       ├─ Coil
-│   │   │       ├─ Lead wire
-│   │   │       ├─ Plunger spring
-│   │   │       └─ Solenoid O-ring
-│   │   ├─ Pipework
-│   │   │   ├─ Coupling G1″M→∅25 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 2 m 💧
-│   │   │   ├─ Tee 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 1 m 💧
-│   │   │   └─ Hose LDPE ∅25, 9 m 💧
-│   │   ├─ Rotor riser — 5.0 blue 270° 💧
-│   │   │   ├─ Coupling ∅25→G¾″F 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   └─ Outlet thread
-│   │   │   ├─ Swing-joint riser ¾×¾ — Hunter sj 3/4x3/4 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet thread
-│   │   │   │   └─ Body
-│   │   │   └─ Rotor — Hunter I-20-04-SS 💧
-│   │   │       ├─ Inlet thread
-│   │   │       └─ Body
-│   │   │           ├─ Check valve
-│   │   │           ├─ Riser
-│   │   │           ├─ Riser seal
-│   │   │           ├─ Retract spring
-│   │   │           ├─ Gear
-│   │   │           ├─ Filter
-│   │   │           ├─ Nozzle
-│   │   │           ├─ Arc
-│   │   │           └─ Flo stop
-│   │   └─ Rotor riser — 2.5 blue 150° 💧
-│   │       ├─ Coupling ∅25→G¾″F 💧
-│   │       │   ├─ Inlet nut
-│   │       │   ├─ Inlet grip
-│   │       │   ├─ Inlet O-ring
-│   │       │   ├─ Body
-│   │       │   └─ Outlet thread
-│   │       ├─ Swing-joint riser ¾×¾ — Hunter sj 3/4x3/4 💧
-│   │       │   ├─ Inlet thread
-│   │       │   ├─ Outlet thread
-│   │       │   └─ Body
-│   │       └─ Rotor — Hunter I-20-04-SS 💧
-│   │           ├─ Inlet thread
-│   │           └─ Body
-│   │               ├─ Check valve
-│   │               ├─ Riser
-│   │               ├─ Riser seal
-│   │               ├─ Retract spring
-│   │               ├─ Gear
-│   │               ├─ Filter
-│   │               ├─ Nozzle
-│   │               ├─ Arc
-│   │               └─ Flo stop
-│   ├─ Zone 4 — 4 sprays
-│   │   ├─ Zone valve — Hunter PGV-101G 💧💡
-│   │   │   ├─ Inlet coupling
-│   │   │   │   ├─ Inlet swivel nut
-│   │   │   │   ├─ Body
-│   │   │   │   └─ Outlet thread
-│   │   │   ├─ Body
-│   │   │   │   ├─ Seat
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ [inlet chamber]
-│   │   │   │   └─ [outlet chamber]
-│   │   │   ├─ Diaphragm
-│   │   │   │   ├─ Spring
-│   │   │   │   └─ [metering port]
-│   │   │   ├─ Bonnet
+│   │   │       ├─ [pilot_seat]
+│   │   │       ├─ 24v_1
+│   │   │       ├─ coil
+│   │   │       ├─ 24v_2
+│   │   │       ├─ plunger_spring
+│   │   │       └─ solenoid_oring
+│   │   ├─ fitting.coupling_bm1c25
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ body
+│   │   │   ├─ outlet_oring
+│   │   │   ├─ outlet_grip
+│   │   │   └─ outlet_nut
+│   │   ├─ hose.ldpe25  (2 m)
+│   │   ├─ fitting.tee
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_1_oring
+│   │   │   ├─ outlet_1_grip
+│   │   │   ├─ outlet_1_nut
+│   │   │   ├─ outlet_2_oring
+│   │   │   ├─ outlet_2_grip
+│   │   │   └─ outlet_2_nut
+│   │   ├─ hose.ldpe25  (1 m)
+│   │   ├─ fitting.coupling_c25bf34
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   ├─ emitter.rotor  (2.5 blue, 150°)  (Hunter I-20-04-SS)
+│   │   │   ├─ inlet_thread
+│   │   │   └─ body
+│   │   │       ├─ check_valve
+│   │   │       ├─ riser
+│   │   │       ├─ riser_seal
+│   │   │       ├─ retract_spring
+│   │   │       ├─ gear
+│   │   │       ├─ filter
+│   │   │       ├─ nozzle
+│   │   │       ├─ arc
+│   │   │       └─ flo_stop
+│   │   ├─ hose.ldpe25  (9 m)
+│   │   ├─ fitting.coupling_c25bf34
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   └─ emitter.rotor  (5.0 blue, 270°)  (Hunter I-20-04-SS)
+│   │       ├─ inlet_thread
+│   │       └─ body
+│   │           ├─ check_valve
+│   │           ├─ riser
+│   │           ├─ riser_seal
+│   │           ├─ retract_spring
+│   │           ├─ gear
+│   │           ├─ filter
+│   │           ├─ nozzle
+│   │           ├─ arc
+│   │           └─ flo_stop
+│   ├─ Z4
+│   │   ├─ fitting.coupling_sm1bm1
+│   │   │   ├─ inlet_swivel_nut
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ valve.auto  (Hunter PGV-101G)
+│   │   │   ├─ body
+│   │   │   │   ├─ seat
+│   │   │   │   ├─ inlet_thread
+│   │   │   │   ├─ outlet_nut
+│   │   │   │   ├─ [inlet_chamber]
+│   │   │   │   └─ [outlet_chamber]
+│   │   │   ├─ diaphragm
+│   │   │   │   ├─ spring
+│   │   │   │   └─ [metering_port]
+│   │   │   ├─ bonnet
 │   │   │   │   ├─ [chamber]
-│   │   │   │   ├─ Bleed screw
-│   │   │   │   ├─ Flow control
-│   │   │   │   ├─ Bonnet cap
-│   │   │   │   └─ Bonnet screws
-│   │   │   └─ Solenoid — Hunter 458200 (24 VAC)
+│   │   │   │   ├─ bleed_screw
+│   │   │   │   ├─ flow_control
+│   │   │   │   ├─ bonnet_cap
+│   │   │   │   └─ bonnet_screws
+│   │   │   └─ solenoid  (Hunter 458200 (24 VAC))
 │   │   │       ├─ [entry]
-│   │   │       ├─ Plunger
+│   │   │       ├─ plunger
 │   │   │       ├─ [exhaust]
-│   │   │       ├─ [pilot seat]
-│   │   │       ├─ Lead wire
-│   │   │       ├─ Coil
-│   │   │       ├─ Lead wire
-│   │   │       ├─ Plunger spring
-│   │   │       └─ Solenoid O-ring
-│   │   ├─ Pipework
-│   │   │   ├─ Coupling G1″M→∅25 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 9 m 💧
-│   │   │   ├─ Tee 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 2 m 💧
-│   │   │   ├─ Hose LDPE ∅25, 8 m 💧
-│   │   │   ├─ Tee 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   ├─ Hose LDPE ∅25, 6 m 💧
-│   │   │   ├─ Hose LDPE ∅25, 19 m 💧
-│   │   │   ├─ Tee 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   ├─ Outlet nut
-│   │   │   │   ├─ Outlet O-ring
-│   │   │   │   ├─ Outlet grip
-│   │   │   │   └─ Outlet nut
-│   │   │   └─ Hose LDPE ∅25, 5 m 💧
-│   │   ├─ Spray riser — MP1000 210° 💧
-│   │   │   ├─ Swing-joint riser ¾×½ — Hunter sj 3/4x1/2 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet thread
-│   │   │   │   └─ Body
-│   │   │   └─ Spray — Hunter Pro-Spray PRS40 💧
-│   │   │       ├─ Inlet thread
-│   │   │       └─ Body
-│   │   │           ├─ Cap
-│   │   │           ├─ Check valve
-│   │   │           ├─ Regulator
-│   │   │           ├─ Riser
-│   │   │           ├─ Wiper seal
-│   │   │           ├─ Retract spring
-│   │   │           ├─ Flush plug
-│   │   │           └─ Nozzle
-│   │   ├─ Spray riser — MP2000 180° 💧
-│   │   │   ├─ Swing-joint riser ¾×½ — Hunter sj 3/4x1/2 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet thread
-│   │   │   │   └─ Body
-│   │   │   └─ Spray — Hunter Pro-Spray PRS40 💧
-│   │   │       ├─ Inlet thread
-│   │   │       └─ Body
-│   │   │           ├─ Cap
-│   │   │           ├─ Check valve
-│   │   │           ├─ Regulator
-│   │   │           ├─ Riser
-│   │   │           ├─ Wiper seal
-│   │   │           ├─ Retract spring
-│   │   │           ├─ Flush plug
-│   │   │           └─ Nozzle
-│   │   ├─ Spray riser — MP2000 270° 💧
-│   │   │   ├─ Coupling ∅25→G¾″F 💧
-│   │   │   │   ├─ Inlet nut
-│   │   │   │   ├─ Inlet grip
-│   │   │   │   ├─ Inlet O-ring
-│   │   │   │   ├─ Body
-│   │   │   │   └─ Outlet thread
-│   │   │   ├─ Swing-joint riser ¾×½ — Hunter sj 3/4x1/2 💧
-│   │   │   │   ├─ Inlet thread
-│   │   │   │   ├─ Outlet thread
-│   │   │   │   └─ Body
-│   │   │   └─ Spray — Hunter Pro-Spray PRS40 💧
-│   │   │       ├─ Inlet thread
-│   │   │       └─ Body
-│   │   │           ├─ Cap
-│   │   │           ├─ Check valve
-│   │   │           ├─ Regulator
-│   │   │           ├─ Riser
-│   │   │           ├─ Wiper seal
-│   │   │           ├─ Retract spring
-│   │   │           ├─ Flush plug
-│   │   │           └─ Nozzle
-│   │   └─ Spray riser — MP3000 270° 💧
-│   │       ├─ Coupling ∅25→G¾″F 💧
-│   │       │   ├─ Inlet nut
-│   │       │   ├─ Inlet grip
-│   │       │   ├─ Inlet O-ring
-│   │       │   ├─ Body
-│   │       │   └─ Outlet thread
-│   │       ├─ Swing-joint riser ¾×½ — Hunter sj 3/4x1/2 💧
-│   │       │   ├─ Inlet thread
-│   │       │   ├─ Outlet thread
-│   │       │   └─ Body
-│   │       └─ Spray — Hunter Pro-Spray PRS40 💧
-│   │           ├─ Inlet thread
-│   │           └─ Body
-│   │               ├─ Cap
-│   │               ├─ Check valve
-│   │               ├─ Regulator
-│   │               ├─ Riser
-│   │               ├─ Wiper seal
-│   │               ├─ Retract spring
-│   │               ├─ Flush plug
-│   │               └─ Nozzle
-│   └─ Zone 5 — 2 rotors
-│       ├─ Zone valve — Hunter PGV-101G 💧💡
-│       │   ├─ Inlet coupling
-│       │   │   ├─ Inlet swivel nut
-│       │   │   ├─ Body
-│       │   │   └─ Outlet thread
-│       │   ├─ Body
-│       │   │   ├─ Seat
-│       │   │   ├─ Inlet thread
-│       │   │   ├─ Outlet nut
-│       │   │   ├─ [inlet chamber]
-│       │   │   └─ [outlet chamber]
-│       │   ├─ Diaphragm
-│       │   │   ├─ Spring
-│       │   │   └─ [metering port]
-│       │   ├─ Bonnet
+│   │   │       ├─ [pilot_seat]
+│   │   │       ├─ 24v_1
+│   │   │       ├─ coil
+│   │   │       ├─ 24v_2
+│   │   │       ├─ plunger_spring
+│   │   │       └─ solenoid_oring
+│   │   ├─ fitting.coupling_bm1c25
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ body
+│   │   │   ├─ outlet_oring
+│   │   │   ├─ outlet_grip
+│   │   │   └─ outlet_nut
+│   │   ├─ hose.ldpe25  (9 m)
+│   │   ├─ fitting.tee
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_1_oring
+│   │   │   ├─ outlet_1_grip
+│   │   │   ├─ outlet_1_nut
+│   │   │   ├─ outlet_2_oring
+│   │   │   ├─ outlet_2_grip
+│   │   │   └─ outlet_2_nut
+│   │   ├─ hose.ldpe25  (2 m)
+│   │   ├─ fitting.coupling_c25bf34
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   ├─ emitter.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │   ├─ inlet_thread
+│   │   │   └─ body
+│   │   │       ├─ cap
+│   │   │       ├─ check_valve
+│   │   │       ├─ regulator
+│   │   │       ├─ riser
+│   │   │       ├─ wiper_seal
+│   │   │       ├─ retract_spring
+│   │   │       ├─ flush_plug
+│   │   │       └─ nozzle
+│   │   ├─ hose.ldpe25  (8 m)
+│   │   ├─ fitting.tee
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_1_oring
+│   │   │   ├─ outlet_1_grip
+│   │   │   ├─ outlet_1_nut
+│   │   │   ├─ outlet_2_oring
+│   │   │   ├─ outlet_2_grip
+│   │   │   └─ outlet_2_nut
+│   │   ├─ hose.ldpe25  (6 m)
+│   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   ├─ emitter.spray  (MP1000, 210°)  (Hunter Pro-Spray PRS40)
+│   │   │   ├─ inlet_thread
+│   │   │   └─ body
+│   │   │       ├─ cap
+│   │   │       ├─ check_valve
+│   │   │       ├─ regulator
+│   │   │       ├─ riser
+│   │   │       ├─ wiper_seal
+│   │   │       ├─ retract_spring
+│   │   │       ├─ flush_plug
+│   │   │       └─ nozzle
+│   │   ├─ hose.ldpe25  (19 m)
+│   │   ├─ fitting.tee
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   ├─ outlet_1_oring
+│   │   │   ├─ outlet_1_grip
+│   │   │   ├─ outlet_1_nut
+│   │   │   ├─ outlet_2_oring
+│   │   │   ├─ outlet_2_grip
+│   │   │   └─ outlet_2_nut
+│   │   ├─ fitting.coupling_c25bf34
+│   │   │   ├─ inlet_nut
+│   │   │   ├─ inlet_grip
+│   │   │   ├─ inlet_oring
+│   │   │   ├─ body
+│   │   │   └─ outlet_thread
+│   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   ├─ emitter.spray  (MP2000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │   ├─ inlet_thread
+│   │   │   └─ body
+│   │   │       ├─ cap
+│   │   │       ├─ check_valve
+│   │   │       ├─ regulator
+│   │   │       ├─ riser
+│   │   │       ├─ wiper_seal
+│   │   │       ├─ retract_spring
+│   │   │       ├─ flush_plug
+│   │   │       └─ nozzle
+│   │   ├─ hose.ldpe25  (5 m)
+│   │   ├─ fitting.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   ├─ inlet_thread
+│   │   │   ├─ outlet_thread
+│   │   │   └─ body
+│   │   └─ emitter.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
+│   │       ├─ inlet_thread
+│   │       └─ body
+│   │           ├─ cap
+│   │           ├─ check_valve
+│   │           ├─ regulator
+│   │           ├─ riser
+│   │           ├─ wiper_seal
+│   │           ├─ retract_spring
+│   │           ├─ flush_plug
+│   │           └─ nozzle
+│   └─ Z5
+│       ├─ fitting.coupling_sm1bm1
+│       │   ├─ inlet_swivel_nut
+│       │   ├─ body
+│       │   └─ outlet_thread
+│       ├─ valve.auto  (Hunter PGV-101G)
+│       │   ├─ body
+│       │   │   ├─ seat
+│       │   │   ├─ inlet_thread
+│       │   │   ├─ outlet_nut
+│       │   │   ├─ [inlet_chamber]
+│       │   │   └─ [outlet_chamber]
+│       │   ├─ diaphragm
+│       │   │   ├─ spring
+│       │   │   └─ [metering_port]
+│       │   ├─ bonnet
 │       │   │   ├─ [chamber]
-│       │   │   ├─ Bleed screw
-│       │   │   ├─ Flow control
-│       │   │   ├─ Bonnet cap
-│       │   │   └─ Bonnet screws
-│       │   └─ Solenoid — Hunter 458200 (24 VAC)
+│       │   │   ├─ bleed_screw
+│       │   │   ├─ flow_control
+│       │   │   ├─ bonnet_cap
+│       │   │   └─ bonnet_screws
+│       │   └─ solenoid  (Hunter 458200 (24 VAC))
 │       │       ├─ [entry]
-│       │       ├─ Plunger
+│       │       ├─ plunger
 │       │       ├─ [exhaust]
-│       │       ├─ [pilot seat]
-│       │       ├─ Lead wire
-│       │       ├─ Coil
-│       │       ├─ Lead wire
-│       │       ├─ Plunger spring
-│       │       └─ Solenoid O-ring
-│       ├─ Pipework
-│       │   ├─ Coupling G1″M→∅25 💧
-│       │   │   ├─ Inlet thread
-│       │   │   ├─ Body
-│       │   │   ├─ Outlet O-ring
-│       │   │   ├─ Outlet grip
-│       │   │   └─ Outlet nut
-│       │   ├─ Hose LDPE ∅25, 20 m 💧
-│       │   ├─ Tee 💧
-│       │   │   ├─ Inlet nut
-│       │   │   ├─ Inlet grip
-│       │   │   ├─ Inlet O-ring
-│       │   │   ├─ Body
-│       │   │   ├─ Outlet O-ring
-│       │   │   ├─ Outlet grip
-│       │   │   ├─ Outlet nut
-│       │   │   ├─ Outlet O-ring
-│       │   │   ├─ Outlet grip
-│       │   │   └─ Outlet nut
-│       │   ├─ Hose LDPE ∅25, 3 m 💧
-│       │   └─ Hose LDPE ∅25, 12 m 💧
-│       ├─ Rotor riser — 5.0 blue 270° 💧
-│       │   ├─ Coupling ∅25→G¾″F 💧
-│       │   │   ├─ Inlet nut
-│       │   │   ├─ Inlet grip
-│       │   │   ├─ Inlet O-ring
-│       │   │   ├─ Body
-│       │   │   └─ Outlet thread
-│       │   ├─ Swing-joint riser ¾×¾ — Hunter sj 3/4x3/4 💧
-│       │   │   ├─ Inlet thread
-│       │   │   ├─ Outlet thread
-│       │   │   └─ Body
-│       │   └─ Rotor — Hunter I-20-04-SS 💧
-│       │       ├─ Inlet thread
-│       │       └─ Body
-│       │           ├─ Check valve
-│       │           ├─ Riser
-│       │           ├─ Riser seal
-│       │           ├─ Retract spring
-│       │           ├─ Gear
-│       │           ├─ Filter
-│       │           ├─ Nozzle
-│       │           ├─ Arc
-│       │           └─ Flo stop
-│       └─ Rotor riser — 2.5 blue 180° 💧
-│           ├─ Coupling ∅25→G¾″F 💧
-│           │   ├─ Inlet nut
-│           │   ├─ Inlet grip
-│           │   ├─ Inlet O-ring
-│           │   ├─ Body
-│           │   └─ Outlet thread
-│           ├─ Swing-joint riser ¾×¾ — Hunter sj 3/4x3/4 💧
-│           │   ├─ Inlet thread
-│           │   ├─ Outlet thread
-│           │   └─ Body
-│           └─ Rotor — Hunter I-20-04-SS 💧
-│               ├─ Inlet thread
-│               └─ Body
-│                   ├─ Check valve
-│                   ├─ Riser
-│                   ├─ Riser seal
-│                   ├─ Retract spring
-│                   ├─ Gear
-│                   ├─ Filter
-│                   ├─ Nozzle
-│                   ├─ Arc
-│                   └─ Flo stop
-└─ 4. ORCHESTRATE ASSY   (controller + 24 V harness — schedules and drives the zones)
-    ├─ House socket (controller supply) 🌐
-    │   ├─ Line
-    │   ├─ Neutral
-    │   └─ Earth
-    ├─ Mains lead 230 V: socket → controller 🌐
-    │   ├─ Line
-    │   ├─ Neutral
-    │   └─ Earth
-    ├─ Controller — RainMachine HD-12 TOUCH 🌐💡
-    │   ├─ Line
-    │   ├─ Neutral
-    │   ├─ Screen
-    │   ├─ Transformer
-    │   │   ├─ Line
-    │   │   ├─ Neutral
-    │   │   └─ Winding
-    │   └─ Terminal-board
-    │       ├─ AC line ×2
-    │       └─ Common ×2
-    └─ Zone valve cable assembly (controller → valve box, in conduit) 💡
-        ├─ Zone 2 conductor 💡
-        ├─ Zone 3 conductor 💡
-        ├─ Zone 4 conductor 💡
-        ├─ Zone 5 conductor 💡
-        └─ Common conductor 💡
+│       │       ├─ [pilot_seat]
+│       │       ├─ 24v_1
+│       │       ├─ coil
+│       │       ├─ 24v_2
+│       │       ├─ plunger_spring
+│       │       └─ solenoid_oring
+│       ├─ fitting.coupling_bm1c25
+│       │   ├─ inlet_thread
+│       │   ├─ body
+│       │   ├─ outlet_oring
+│       │   ├─ outlet_grip
+│       │   └─ outlet_nut
+│       ├─ hose.ldpe25  (20 m)
+│       ├─ fitting.tee
+│       │   ├─ inlet_nut
+│       │   ├─ inlet_grip
+│       │   ├─ inlet_oring
+│       │   ├─ body
+│       │   ├─ outlet_1_oring
+│       │   ├─ outlet_1_grip
+│       │   ├─ outlet_1_nut
+│       │   ├─ outlet_2_oring
+│       │   ├─ outlet_2_grip
+│       │   └─ outlet_2_nut
+│       ├─ hose.ldpe25  (3 m)
+│       ├─ fitting.coupling_c25bf34
+│       │   ├─ inlet_nut
+│       │   ├─ inlet_grip
+│       │   ├─ inlet_oring
+│       │   ├─ body
+│       │   └─ outlet_thread
+│       ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
+│       │   ├─ inlet_thread
+│       │   ├─ outlet_thread
+│       │   └─ body
+│       ├─ emitter.rotor  (5.0 blue, 270°)  (Hunter I-20-04-SS)
+│       │   ├─ inlet_thread
+│       │   └─ body
+│       │       ├─ check_valve
+│       │       ├─ riser
+│       │       ├─ riser_seal
+│       │       ├─ retract_spring
+│       │       ├─ gear
+│       │       ├─ filter
+│       │       ├─ nozzle
+│       │       ├─ arc
+│       │       └─ flo_stop
+│       ├─ hose.ldpe25  (12 m)
+│       ├─ fitting.coupling_c25bf34
+│       │   ├─ inlet_nut
+│       │   ├─ inlet_grip
+│       │   ├─ inlet_oring
+│       │   ├─ body
+│       │   └─ outlet_thread
+│       ├─ fitting.sj34x34  (Hunter sj 3/4x3/4)
+│       │   ├─ inlet_thread
+│       │   ├─ outlet_thread
+│       │   └─ body
+│       └─ emitter.rotor  (2.5 blue, 180°)  (Hunter I-20-04-SS)
+│           ├─ inlet_thread
+│           └─ body
+│               ├─ check_valve
+│               ├─ riser
+│               ├─ riser_seal
+│               ├─ retract_spring
+│               ├─ gear
+│               ├─ filter
+│               ├─ nozzle
+│               ├─ arc
+│               └─ flo_stop
+└─ 4. ORCHESTRATE
+    ├─ source.socket
+    │   ├─ line
+    │   ├─ neutral
+    │   └─ earth
+    ├─ wiring.230v
+    │   ├─ line
+    │   ├─ neutral
+    │   └─ earth
+    ├─ control.controller  (RainMachine HD-12 TOUCH)
+    │   ├─ line
+    │   ├─ neutral
+    │   ├─ screen
+    │   ├─ transformer
+    │   │   ├─ line
+    │   │   ├─ neutral
+    │   │   └─ winding
+    │   └─ terminal-board
+    │       ├─ ac_line ×2
+    │       ├─ common_1
+    │       ├─ port ×6
+    │       ├─ common_2
+    │       └─ port ×6
+    ├─ wiring.24v
+    │   └─ tube
+    │       ├─ common
+    │       └─ signal ×4
+    ├─ wiring.24v
+    │   └─ tube
+    │       ├─ common
+    │       └─ signal ×4
+    ├─ wiring.24v
+    │   └─ tube
+    │       ├─ common
+    │       └─ signal ×4
+    └─ wiring.24v
+        └─ tube
+            ├─ common
+            └─ signal ×4
 ```
