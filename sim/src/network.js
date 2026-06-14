@@ -117,14 +117,13 @@ export function buildTopology(model, state) {
     const neighbor = flowNodes.get(neighborId);
     if (NODE_ROLES.has(neighbor.role)) return ep(neighborId);
     return isUpstream
-      ? getSyntheticJunction(neighbor.id, self) // junction at self's elevation
-      : getSyntheticJunction(self.id, neighbor); // junction at neighbour's elevation
+      ? getSyntheticJunction(neighbor.id, self)
+      : getSyntheticJunction(self.id, neighbor);
   };
 
   let pumpLinkId = null;
   for (const L of flowNodes.values()) {
     if (!isLink(L)) continue;
-    // terminal link (no downstream node) carries no flow
     if (L.to.length === 0) continue;
     if (L.to.length > 1) {
       throw new Error(`network: link "${L.id}" has ${L.to.length} downstream nodes`);
@@ -152,8 +151,7 @@ export function buildTopology(model, state) {
       pumps.push({ id: ep(L.id), n1, n2, curveId: "PCURVE" });
       if (!pumpOn) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-auto") {
-      // t scales Kv to t*Kv, so loss ~(Q/Kv)^2 scales by 1/t^2; seat clog scales loss here
-      // because EPANET ignores the minor-loss column on GPVs
+      // EPANET ignores the minor-loss column on GPVs, so throttle (1/t^2) and seat clog scale the curve
       const t = throttle[L.id] ?? 1;
       const lossScale = valveLossScale.get(L.id) ?? 1;
       let setting = "VCURVE";
@@ -165,7 +163,7 @@ export function buildTopology(model, state) {
       valves.push({ id: ep(L.id), flowId: L.id, n1, n2, diam_mm: CONNECTOR_DIAM_MM, type: "GPV", setting, mloss, isAuto: true });
       if (!valveOpen[L.id]) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-manual") {
-      // a TCV's headloss IS its setting (K), so a seat clog scales the setting
+      // a TCV's setting IS its loss K, so seat clog scales the setting
       const diam = L.params.bore_mm || 16;
       valves.push({
         id: ep(L.id),
