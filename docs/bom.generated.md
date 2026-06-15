@@ -64,16 +64,10 @@ IRRIGATION SYSTEM
 │   │   │   ├─ joint.strainer
 │   │   │   │   └─ mesh
 │   │   │   └─ joint.hosetail_brass
-│   │   │       ├─ thread
-│   │   │       ├─ barb
-│   │   │       └─ body
 │   │   ├─ hose.suction  (4 m)
 │   │   │   ├─ tube
 │   │   │   └─ clamp ×2
 │   │   └─ joint.hosetail_plastic
-│   │       ├─ barb
-│   │       ├─ thread
-│   │       └─ body
 │   ├─ pump_discharge
 │   │   ├─ joint.bm1c32
 │   │   │   ├─ thread
@@ -555,27 +549,18 @@ IRRIGATION SYSTEM
     │       ├─ ac_line ×2
     │       ├─ common ×2
     │       └─ port ×12
+    ├─ wiring.splice
+    ├─ wiring.splice
+    ├─ wiring.splice
+    ├─ wiring.splice
+    ├─ wiring.splice
     ├─ wiring.common
     │   └─ common
+    ├─ wiring.splice
     ├─ wiring.common
     │   └─ common
+    ├─ wiring.splice
     ├─ wiring.common
     │   └─ common
-    └─ solenoid_wiring
-        ├─ wiring.splice
-        │   └─ splice
-        ├─ wiring.splice
-        │   └─ splice
-        ├─ wiring.splice
-        │   └─ splice
-        ├─ wiring.splice
-        │   └─ splice
-        ├─ wiring.splice
-        │   └─ splice
-        ├─ wiring.splice
-        │   └─ splice
-        ├─ wiring.splice
-        │   └─ splice
-        └─ wiring.splice
-            └─ splice
+    └─ wiring.splice
 ```
