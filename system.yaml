@@ -91,10 +91,6 @@ items:
             material: brass
             k: 0.9
             interfaces: [bm1, barb25]
-            items:
-              thread: {}
-              barb: {}
-              body: {}
       hose.suction:
         installed: 2023-06
         price_eur_m: 5
@@ -113,10 +109,6 @@ items:
         max_bar: 6
         k: 0.9
         interfaces: [barb25, bm1]
-        items:
-          barb: {}
-          thread: {}
-          body: {}
 
   pump_discharge:
     items:
@@ -184,13 +176,11 @@ items:
         max_bar: 10
         interfaces: [sm1]
 
-  solenoid_wiring:
+  valve.auto/solenoid/24v:
     items:
       wiring.splice:
         price_eur: 1
         interfaces: [sig_24v, sig_24v, sig_24v]
-        items:
-          splice: {fail: [broken, misconfig]}
 
   control.controller:
     installed: 2020-08
@@ -309,7 +299,6 @@ items:
       oring: {}
       grip: {}
       nut: {}
-
 
   joint.sj34x12:
     bends: 4
@@ -632,15 +621,15 @@ electrical:
       signal_z4: [O1_wiring.splice_3]
       signal_z5: [O1_wiring.splice_4]
       common:    [O1_wiring.splice_8]
-  O1_wiring.splice_1: {to: [Z2_valve.auto]}   # zone-side: controller signal -> Z2 solenoid
-  O1_wiring.splice_2: {to: [Z3_valve.auto]}   # zone-side: controller signal -> Z3 solenoid
-  O1_wiring.splice_4: {to: [Z5_valve.auto]}   # zone-side: controller signal -> Z5 solenoid
-  O1_wiring.splice_3: {to: [Z4_valve.auto]}   # zone-side: controller signal -> Z4 solenoid
+  O1_wiring.splice_1: {to: [Z2_valve.auto]}  
+  O1_wiring.splice_2: {to: [Z3_valve.auto]}   
+  O1_wiring.splice_4: {to: [Z5_valve.auto]}   
+  O1_wiring.splice_3: {to: [Z4_valve.auto]}  
   Z2_valve.auto: {to: [O1_wiring.splice_5]}
   Z3_valve.auto: {to: [O1_wiring.splice_6]}
   Z5_valve.auto: {to: [O1_wiring.splice_7]}
   Z4_valve.auto: {to: [O1_wiring.splice_8]}
-  O1_wiring.splice_5: {to: [O1_wiring.common_1]}   # common-side: onto the in-box common bus
+  O1_wiring.splice_5: {to: [O1_wiring.common_1]}   
   O1_wiring.common_1: {to: [O1_wiring.splice_6]}
   O1_wiring.splice_6: {to: [O1_wiring.common_2]}
   O1_wiring.common_2: {to: [O1_wiring.splice_7]}
