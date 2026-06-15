@@ -80,8 +80,8 @@ items:
             items:
               body: {}
               disc:      {fail: [broken, clogged]}
-              spring: {drive: disc}
-              seat_seal: {seal: disc, material: rubber, fail: [broken]}
+              spring: {}
+              seat_seal: {material: rubber, fail: [broken]}
           joint.strainer:
             installed: 2026-06
             price_eur: 10
@@ -141,7 +141,7 @@ items:
         coil_energized_closes: contact
         items:
           coil_in:     {to: coil, fail: [broken, misconfig]}
-          coil: {drive: contact}
+          coil: {}
           coil_common: {fail: [broken, misconfig]}
           contact:     {fail: [broken]}
           line: {to: contact}
@@ -193,7 +193,7 @@ items:
         items:
           line: {to: transformer/winding}
           neutral: {}
-          winding: {condition: [transformer]}
+          winding: {}
       terminals:
         fail: [broken]
         items:
@@ -210,12 +210,12 @@ items:
     items:
       check_valve: {}
       riser:         {to: filter, material: stainless steel}
-      riser_seal:    {seal: riser, material: rubber, fail: [broken]}
-      retract_spring: {drive: riser, material: stainless steel, fail: [broken]}
-      gear:          {drive: riser, material: plastic, fail: [broken, clogged]}
+      riser_seal:    {material: rubber, fail: [broken]}
+      retract_spring: {material: stainless steel, fail: [broken]}
+      gear:          {material: plastic, fail: [broken, clogged]}
       filter:        {to: nozzle, fail: [broken, clogged]}
       nozzle: {}
-      arc:           {condition: [nozzle], fail: [broken, misconfig]}
+      arc:           {fail: [broken, misconfig]}
       flo_stop:      {fail: [broken, misconfig]}
 
   head.spray:
@@ -230,9 +230,9 @@ items:
       check_valve: {}
       regulator:      {to: riser, fail: [broken]}
       riser:          {to: nozzle}
-      wiper_seal:     {seal: riser, material: rubber, fail: [broken]}
-      spring: {drive: riser, material: stainless steel}
-      flush_plug:     {seal: nozzle, fail: [broken, misconfig]}
+      wiper_seal:     {material: rubber, fail: [broken]}
+      spring: {material: stainless steel}
+      flush_plug:     {fail: [broken, misconfig]}
       nozzle: {}
 
   enclosure.valvebox:
@@ -359,9 +359,9 @@ items:
         volume_l: 20
         items:
           shell:     {material: steel, fail: [broken]}
-          bladder:   {drive: tank/air_charge, material: rubber, fail: [broken]}
+          bladder:   {material: rubber, fail: [broken]}
           pre_charge: {fail: [broken, misconfig]}
-          air_charge: {drive: tank/bladder, feature: true}
+          air_charge: {feature: true}
           draw_down:  {feature: true}
       body:
         fail: [broken]
@@ -370,20 +370,19 @@ items:
           venturi:   {to: body/impeller, fail: [broken, clogged]}
           impeller:  {to: body/diffuser, material: plastic, fail: [broken, clogged]}
           diffuser:  {material: plastic, fail: [broken, clogged]}
-          mech_seal: {seal: body/impeller, material: ceramic, fail: [broken]}
-          body_oring: {seal: body, material: rubber, fail: [broken, misconfig]}
+          mech_seal: {material: ceramic, fail: [broken]}
+          body_oring: {material: rubber, fail: [broken, misconfig]}
           priming_cap: {fail: [broken, misconfig]}
-          priming_cap_oring: {seal: body/priming_cap, material: rubber, fail: [broken, misconfig]}
+          priming_cap_oring: {material: rubber, fail: [broken, misconfig]}
           recirculation_passage: {feature: true}
           priming_chamber:     {feature: true}
       motor:
-        drive: body/impeller
         fail: [broken]
         items:
           line: {to: motor/winding}
           winding: {to: motor/neutral, material: copper}
-          capacitor: {condition: [motor/winding], fail: [broken]}
-          thermal_protector: {condition: [motor/winding], fail: [broken, misconfig]}
+          capacitor: {fail: [broken]}
+          thermal_protector: {fail: [broken, misconfig]}
           neutral: {}
           earth: {}
 
@@ -420,15 +419,15 @@ items:
         fail: [broken]
         material: rubber
         items:
-          spring: {drive: diaphragm, material: stainless steel}
+          spring: {material: stainless steel}
           metering_port: {to: bonnet/chamber, feature: true, fail: [clogged]}
       bonnet:
         fail: [broken, misconfig]
         material: plastic
         items:
-          chamber:      {drive: diaphragm, feature: true}
+          chamber:      {feature: true}
           bleed_screw:  {fail: [broken, misconfig]}
-          flow_control: {condition: [diaphragm], fail: [broken, misconfig]}
+          flow_control: {fail: [broken, misconfig]}
           bonnet_cap:   {fail: [broken]}
           bonnet_screws: {fail: [broken, misconfig]}
       solenoid:
@@ -439,9 +438,9 @@ items:
           exhaust:  {feature: true, fail: [clogged]}
           pilot_seat: {feature: true}
           24v_1:    {to: solenoid/coil, fail: [broken]}
-          coil: {ohm: [20, 60], drive: solenoid/plunger, material: copper}
+          coil: {ohm: [20, 60], material: copper}
           24v_2:    {fail: [broken]}
-          plunger_spring: {drive: solenoid/plunger, material: stainless steel, fail: [broken]}
+          plunger_spring: {material: stainless steel, fail: [broken]}
           solenoid_oring: {material: rubber, fail: [broken, misconfig]}
 
   valve.manual:
@@ -453,10 +452,10 @@ items:
     interfaces: [bf12, bf12]
     items:
       seat: {}
-      ball:      {drive: seat, fail: [broken, misconfig]}
-      stem:      {drive: ball, fail: [broken]}
-      stem_oring: {seal: stem, material: rubber, fail: [broken, misconfig]}
-      handle:    {drive: stem, fail: [broken, misconfig]}
+      ball:      {fail: [broken, misconfig]}
+      stem:      {fail: [broken]}
+      stem_oring: {material: rubber, fail: [broken, misconfig]}
+      handle:    {fail: [broken, misconfig]}
 
   wiring.230v:
     interfaces: [ac_line, ac_neutral, ac_earth, ac_line, ac_neutral, ac_earth]
