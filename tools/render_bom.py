@@ -14,7 +14,7 @@ Design (per the answers in the build thread):
 
 Usage:  python tools/render_bom.py [--check]
 """
-import sys, os, re, collections
+import sys, os, re, collections, copy
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,10 +31,10 @@ def _apply_defaults(node):
             continue
         if "." in k:                                   # component: defaults by kind
             for dk, dv in ITEM_DEFAULTS.get(k.split(".", 1)[0], {}).items():
-                v.setdefault(dk, dv)
+                v.setdefault(dk, copy.deepcopy(dv))    # copy so parts don't share the default list
         else:                                          # part: defaults by base name
             for dk, dv in PART_DEFAULTS.get(re.sub(r"_\d+$", "", k), {}).items():
-                v.setdefault(dk, dv)
+                v.setdefault(dk, copy.deepcopy(dv))
         if "items" in v and isinstance(v["items"], dict):
             _apply_defaults(v["items"])
 _apply_defaults(G["items"])
