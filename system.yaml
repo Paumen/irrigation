@@ -480,14 +480,26 @@ items:
       common: {}
 
 water:
-  S1_source.well:            {to: [S1_joint.strainer], h_m: 5.6}
-  S1_joint.strainer: {to: [S1_valve.foot], h_m: 4.2}
-  S1_valve.foot:             {to: [S1_joint.hosetail_brass], h_m: 4.8}
-  S1_joint.hosetail_brass: {to: [S1_hose.suction], h_m: 4.2}
+  # Suction side: well -> strainer mesh -> foot check valve -> pump
+  S1_source.well:            {to: [S1_joint.strainer.mesh], h_m: 5.6}
+  S1_joint.strainer.mesh:    {to: [S1_valve.foot.disc], h_m: 4.2}
+  S1_valve.foot.disc:        {to: [S1_valve.foot.seat], h_m: 4.8}
+  S1_valve.foot.seat:        {to: [S1_joint.hosetail_brass], h_m: 4.8}
+  S1_joint.hosetail_brass:   {to: [S1_hose.suction], h_m: 4.2}
   S1_hose.suction:           {to: [S1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
-  S1_joint.hosetail_plastic: {to: [S1_pump.jet], h_m: 8.2}
-  S1_hose.ldpe32:            {to: [S1_joint.c32c32], l_m: 2, h_m: 8.2}
-  S1_pump.jet:               {to: [S1_joint.bm1c32], h_m: 8.2}
+  S1_joint.hosetail_plastic: {to: [S1_pump.jet.priming_chamber], h_m: 8.2}
+
+  # Jet pump wet path: priming chamber -> venturi -> impeller -> diffuser,
+  # with the venturi recirculation loop and the diaphragm tank teed off the discharge
+  S1_pump.jet.priming_chamber: {to: [S1_pump.jet.venturi], h_m: 8.2}
+  S1_pump.jet.venturi:         {to: [S1_pump.jet.impeller], h_m: 8.2}
+  S1_pump.jet.impeller:        {to: [S1_pump.jet.diffuser], h_m: 8.2}
+  S1_pump.jet.diffuser:        {to: [S1_joint.bm1c32, S1_pump.jet.recirc, S1_pump.jet.tank_hose], h_m: 8.2}
+  S1_pump.jet.recirc:          {to: [S1_pump.jet.venturi], h_m: 8.2}
+  S1_pump.jet.tank_hose:       {to: [S1_pump.jet.tank], h_m: 8.2}
+  S1_pump.jet.tank:            {h_m: 8.2}
+
+  S1_hose.ldpe32:  {to: [S1_joint.c32c32], l_m: 2, h_m: 8.2}
   S1_joint.bm1c32: {to: [S1_hose.ldpe32], h_m: 8.2}
   S1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.2}
 
@@ -499,63 +511,120 @@ water:
          Z4_joint.sm1bm1, Z1_joint.sm1c16, Z6_joint.cap]
     h_m: 11.2
 
-  Z2_head.rotor:   {nozzle: "BL4.0", arc: 170, h_m: 11.6, gr: riser_2}
-  Z2_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.6, gr: riser_1}
-  Z2_head.spray_2: {nozzle: "MP2000", arc: 180, h_m: 11.4, gr: riser_3}
-  Z2_joint.sm1bm1: {to: [Z2_valve.auto], h_m: 11.2}
+  # --- Zone 2 ---
+  # Auto valve internals: main seat path + pilot loop (metering port fills the bonnet
+  # chamber; solenoid pilot or bleed screw vents it to the downstream chamber)
+  Z2_joint.sm1bm1: {to: [Z2_valve.auto.upstream_chamber], h_m: 11.2}
+  Z2_valve.auto.upstream_chamber:   {to: [Z2_valve.auto.seat, Z2_valve.auto.metering_port], h_m: 11.2}
+  Z2_valve.auto.seat:               {to: [Z2_valve.auto.downstream_chamber], h_m: 11.2}
+  Z2_valve.auto.metering_port:      {to: [Z2_valve.auto.bonnet_chamber], h_m: 11.2}
+  Z2_valve.auto.bonnet_chamber:     {to: [Z2_valve.auto.sol_entry, Z2_valve.auto.bleed_screw], h_m: 11.2}
+  Z2_valve.auto.sol_entry:          {to: [Z2_valve.auto.sol_plunger], h_m: 11.2}
+  Z2_valve.auto.sol_plunger:        {to: [Z2_valve.auto.sol_exhaust], h_m: 11.2}
+  Z2_valve.auto.sol_exhaust:        {to: [Z2_valve.auto.downstream_chamber], h_m: 11.2}
+  Z2_valve.auto.bleed_screw:        {to: [Z2_valve.auto.downstream_chamber], h_m: 11.2}
+  Z2_valve.auto.downstream_chamber: {to: [Z2_joint.bm1c25], h_m: 11.2}
   Z2_joint.bm1c25: {to: [Z2_hose.ldpe25_1], h_m: 11.2}
   Z2_joint.c25bf34_1: {to: [Z2_joint.sj34x12_1], h_m: 10.6, gr: riser_1}
   Z2_joint.c25bf34_2: {to: [Z2_joint.sj34x12_2], h_m: 11.4, gr: riser_3}
-  Z2_joint.sj34x12_1: {to: [Z2_head.spray_1], h_m: 10.6, gr: riser_1}
-  Z2_joint.sj34x12_2: {to: [Z2_head.spray_2], h_m: 11.4, gr: riser_3}
-  Z2_joint.sj34x34:   {to: [Z2_head.rotor], h_m: 11.6, gr: riser_2}
+  Z2_joint.sj34x12_1: {to: [Z2_head.spray_1.check_valve], h_m: 10.6, gr: riser_1}
+  Z2_joint.sj34x12_2: {to: [Z2_head.spray_2.check_valve], h_m: 11.4, gr: riser_3}
+  Z2_joint.sj34x34:   {to: [Z2_head.rotor.check_valve], h_m: 11.6, gr: riser_2}
   Z2_joint.tee_1: {to: [Z2_hose.ldpe25_2, Z2_hose.ldpe25_3], h_m: 11.2}
   Z2_joint.tee_c25bf34: {to: [Z2_joint.sj34x34, Z2_hose.ldpe25_4], h_m: 11.4}
   Z2_hose.ldpe25_1: {to: [Z2_joint.tee_1], l_m: 8, h_m: 11.2}
   Z2_hose.ldpe25_2: {to: [Z2_joint.c25bf34_1], l_m: 8, h_m: 10.6}
   Z2_hose.ldpe25_3: {to: [Z2_joint.tee_c25bf34], l_m: 4, h_m: 11.4}
   Z2_hose.ldpe25_4: {to: [Z2_joint.c25bf34_2], l_m: 18, h_m: 11.2}
-  Z2_valve.auto:    {to: [Z2_joint.bm1c25], h_m: 11.2}
+  # Head internals: check valve -> riser -> (regulator) -> filter -> nozzle
+  Z2_head.rotor.check_valve: {to: [Z2_head.rotor.riser], h_m: 11.6, gr: riser_2}
+  Z2_head.rotor.riser:       {to: [Z2_head.rotor.filter], h_m: 11.6, gr: riser_2}
+  Z2_head.rotor.filter:      {to: [Z2_head.rotor.nozzle], h_m: 11.6, gr: riser_2}
+  Z2_head.rotor.nozzle:      {nozzle: "BL4.0", arc: 170, h_m: 11.6, gr: riser_2}
+  Z2_head.spray_1.check_valve: {to: [Z2_head.spray_1.regulator], h_m: 10.6, gr: riser_1}
+  Z2_head.spray_1.regulator:   {to: [Z2_head.spray_1.riser], h_m: 10.6, gr: riser_1}
+  Z2_head.spray_1.riser:       {to: [Z2_head.spray_1.nozzle], h_m: 10.6, gr: riser_1}
+  Z2_head.spray_1.nozzle:      {nozzle: "MP3000", arc: 270, h_m: 10.6, gr: riser_1}
+  Z2_head.spray_2.check_valve: {to: [Z2_head.spray_2.regulator], h_m: 11.4, gr: riser_3}
+  Z2_head.spray_2.regulator:   {to: [Z2_head.spray_2.riser], h_m: 11.4, gr: riser_3}
+  Z2_head.spray_2.riser:       {to: [Z2_head.spray_2.nozzle], h_m: 11.4, gr: riser_3}
+  Z2_head.spray_2.nozzle:      {nozzle: "MP2000", arc: 180, h_m: 11.4, gr: riser_3}
 
-  Z3_head.rotor_1: {nozzle: "BL2.5", arc: 150, h_m: 11.2, gr: riser_1}
-  Z3_head.rotor_2: {nozzle: "BL5.0", arc: 270, h_m: 11.2, gr: riser_2}
-  Z3_joint.sm1bm1: {to: [Z3_valve.auto], h_m: 11.2}
+  # --- Zone 3 ---
+  Z3_joint.sm1bm1: {to: [Z3_valve.auto.upstream_chamber], h_m: 11.2}
+  Z3_valve.auto.upstream_chamber:   {to: [Z3_valve.auto.seat, Z3_valve.auto.metering_port], h_m: 11.2}
+  Z3_valve.auto.seat:               {to: [Z3_valve.auto.downstream_chamber], h_m: 11.2}
+  Z3_valve.auto.metering_port:      {to: [Z3_valve.auto.bonnet_chamber], h_m: 11.2}
+  Z3_valve.auto.bonnet_chamber:     {to: [Z3_valve.auto.sol_entry, Z3_valve.auto.bleed_screw], h_m: 11.2}
+  Z3_valve.auto.sol_entry:          {to: [Z3_valve.auto.sol_plunger], h_m: 11.2}
+  Z3_valve.auto.sol_plunger:        {to: [Z3_valve.auto.sol_exhaust], h_m: 11.2}
+  Z3_valve.auto.sol_exhaust:        {to: [Z3_valve.auto.downstream_chamber], h_m: 11.2}
+  Z3_valve.auto.bleed_screw:        {to: [Z3_valve.auto.downstream_chamber], h_m: 11.2}
+  Z3_valve.auto.downstream_chamber: {to: [Z3_joint.bm1c25], h_m: 11.2}
   Z3_joint.bm1c25: {to: [Z3_hose.ldpe25_1], h_m: 11.2}
   Z3_joint.c25bf34_1: {to: [Z3_joint.sj34x34_1], h_m: 11.2, gr: riser_1}
   Z3_joint.c25bf34_2: {to: [Z3_joint.sj34x34_2], h_m: 11.2, gr: riser_2}
-  Z3_joint.sj34x34_1: {to: [Z3_head.rotor_1], h_m: 11.2, gr: riser_1}
-  Z3_joint.sj34x34_2: {to: [Z3_head.rotor_2], h_m: 11.2, gr: riser_2}
+  Z3_joint.sj34x34_1: {to: [Z3_head.rotor_1.check_valve], h_m: 11.2, gr: riser_1}
+  Z3_joint.sj34x34_2: {to: [Z3_head.rotor_2.check_valve], h_m: 11.2, gr: riser_2}
   Z3_joint.tee: {to: [Z3_hose.ldpe25_2, Z3_hose.ldpe25_3], h_m: 11.2}
   Z3_hose.ldpe25_1: {to: [Z3_joint.tee], l_m: 2, h_m: 11.2}
   Z3_hose.ldpe25_2: {to: [Z3_joint.c25bf34_1], l_m: 2, h_m: 11.2}
   Z3_hose.ldpe25_3: {to: [Z3_joint.c25bf34_2], l_m: 10, h_m: 11.2}
-  Z3_valve.auto:    {to: [Z3_joint.bm1c25], h_m: 11.2}
+  Z3_head.rotor_1.check_valve: {to: [Z3_head.rotor_1.riser], h_m: 11.2, gr: riser_1}
+  Z3_head.rotor_1.riser:       {to: [Z3_head.rotor_1.filter], h_m: 11.2, gr: riser_1}
+  Z3_head.rotor_1.filter:      {to: [Z3_head.rotor_1.nozzle], h_m: 11.2, gr: riser_1}
+  Z3_head.rotor_1.nozzle:      {nozzle: "BL2.5", arc: 150, h_m: 11.2, gr: riser_1}
+  Z3_head.rotor_2.check_valve: {to: [Z3_head.rotor_2.riser], h_m: 11.2, gr: riser_2}
+  Z3_head.rotor_2.riser:       {to: [Z3_head.rotor_2.filter], h_m: 11.2, gr: riser_2}
+  Z3_head.rotor_2.filter:      {to: [Z3_head.rotor_2.nozzle], h_m: 11.2, gr: riser_2}
+  Z3_head.rotor_2.nozzle:      {nozzle: "BL5.0", arc: 270, h_m: 11.2, gr: riser_2}
 
-  Z5_head.rotor_1: {nozzle: "BL5.0", arc: 270, h_m: 10.2, gr: riser_1}
-  Z5_head.rotor_2: {nozzle: "BL2.5", arc: 180, h_m: 10.6, gr: riser_2}
-  Z5_joint.sm1bm1: {to: [Z5_valve.auto], h_m: 11.2}
+  # --- Zone 5 ---
+  Z5_joint.sm1bm1: {to: [Z5_valve.auto.upstream_chamber], h_m: 11.2}
+  Z5_valve.auto.upstream_chamber:   {to: [Z5_valve.auto.seat, Z5_valve.auto.metering_port], h_m: 11.2}
+  Z5_valve.auto.seat:               {to: [Z5_valve.auto.downstream_chamber], h_m: 11.2}
+  Z5_valve.auto.metering_port:      {to: [Z5_valve.auto.bonnet_chamber], h_m: 11.2}
+  Z5_valve.auto.bonnet_chamber:     {to: [Z5_valve.auto.sol_entry, Z5_valve.auto.bleed_screw], h_m: 11.2}
+  Z5_valve.auto.sol_entry:          {to: [Z5_valve.auto.sol_plunger], h_m: 11.2}
+  Z5_valve.auto.sol_plunger:        {to: [Z5_valve.auto.sol_exhaust], h_m: 11.2}
+  Z5_valve.auto.sol_exhaust:        {to: [Z5_valve.auto.downstream_chamber], h_m: 11.2}
+  Z5_valve.auto.bleed_screw:        {to: [Z5_valve.auto.downstream_chamber], h_m: 11.2}
+  Z5_valve.auto.downstream_chamber: {to: [Z5_joint.bm1c25], h_m: 11.2}
   Z5_joint.bm1c25: {to: [Z5_hose.ldpe25_1], h_m: 11.2}
   Z5_joint.c25bf34_1: {to: [Z5_joint.sj34x34_1], h_m: 10.2, gr: riser_1}
   Z5_joint.c25bf34_2: {to: [Z5_joint.sj34x34_2], h_m: 10.6, gr: riser_2}
-  Z5_joint.sj34x34_1: {to: [Z5_head.rotor_1], h_m: 10.2, gr: riser_1}
-  Z5_joint.sj34x34_2: {to: [Z5_head.rotor_2], h_m: 10.6, gr: riser_2}
+  Z5_joint.sj34x34_1: {to: [Z5_head.rotor_1.check_valve], h_m: 10.2, gr: riser_1}
+  Z5_joint.sj34x34_2: {to: [Z5_head.rotor_2.check_valve], h_m: 10.6, gr: riser_2}
   Z5_joint.tee: {to: [Z5_hose.ldpe25_2, Z5_hose.ldpe25_3], h_m: 10.6}
   Z5_hose.ldpe25_1: {to: [Z5_joint.tee], l_m: 20, h_m: 10.8}
   Z5_hose.ldpe25_2: {to: [Z5_joint.c25bf34_1], l_m: 4, h_m: 10.2}
   Z5_hose.ldpe25_3: {to: [Z5_joint.c25bf34_2], l_m: 12, h_m: 10.6}
-  Z5_valve.auto:    {to: [Z5_joint.bm1c25], h_m: 11.2}
+  Z5_head.rotor_1.check_valve: {to: [Z5_head.rotor_1.riser], h_m: 10.2, gr: riser_1}
+  Z5_head.rotor_1.riser:       {to: [Z5_head.rotor_1.filter], h_m: 10.2, gr: riser_1}
+  Z5_head.rotor_1.filter:      {to: [Z5_head.rotor_1.nozzle], h_m: 10.2, gr: riser_1}
+  Z5_head.rotor_1.nozzle:      {nozzle: "BL5.0", arc: 270, h_m: 10.2, gr: riser_1}
+  Z5_head.rotor_2.check_valve: {to: [Z5_head.rotor_2.riser], h_m: 10.6, gr: riser_2}
+  Z5_head.rotor_2.riser:       {to: [Z5_head.rotor_2.filter], h_m: 10.6, gr: riser_2}
+  Z5_head.rotor_2.filter:      {to: [Z5_head.rotor_2.nozzle], h_m: 10.6, gr: riser_2}
+  Z5_head.rotor_2.nozzle:      {nozzle: "BL2.5", arc: 180, h_m: 10.6, gr: riser_2}
 
-  Z4_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 12.0, gr: riser_1}
-  Z4_head.spray_2: {nozzle: "MP1000", arc: 210, h_m: 12.0, gr: riser_2}
-  Z4_head.spray_3: {nozzle: "MP2000", arc: 270, h_m: 12.0, gr: riser_3}
-  Z4_head.spray_4: {nozzle: "MP2000", arc: 180, h_m: 12.0, gr: riser_4}
-  Z4_joint.sm1bm1: {to: [Z4_valve.auto], h_m: 11.2}
+  # --- Zone 4 ---
+  Z4_joint.sm1bm1: {to: [Z4_valve.auto.upstream_chamber], h_m: 11.2}
+  Z4_valve.auto.upstream_chamber:   {to: [Z4_valve.auto.seat, Z4_valve.auto.metering_port], h_m: 11.2}
+  Z4_valve.auto.seat:               {to: [Z4_valve.auto.downstream_chamber], h_m: 11.2}
+  Z4_valve.auto.metering_port:      {to: [Z4_valve.auto.bonnet_chamber], h_m: 11.2}
+  Z4_valve.auto.bonnet_chamber:     {to: [Z4_valve.auto.sol_entry, Z4_valve.auto.bleed_screw], h_m: 11.2}
+  Z4_valve.auto.sol_entry:          {to: [Z4_valve.auto.sol_plunger], h_m: 11.2}
+  Z4_valve.auto.sol_plunger:        {to: [Z4_valve.auto.sol_exhaust], h_m: 11.2}
+  Z4_valve.auto.sol_exhaust:        {to: [Z4_valve.auto.downstream_chamber], h_m: 11.2}
+  Z4_valve.auto.bleed_screw:        {to: [Z4_valve.auto.downstream_chamber], h_m: 11.2}
+  Z4_valve.auto.downstream_chamber: {to: [Z4_joint.bm1c25], h_m: 11.2}
   Z4_joint.bm1c25: {to: [Z4_hose.ldpe25_1], h_m: 11.2}
   Z4_joint.c25bf34_1: {to: [Z4_joint.sj34x12_1], h_m: 12.0, gr: riser_1}
   Z4_joint.c25bf34_2: {to: [Z4_joint.sj34x12_3], h_m: 12.0, gr: riser_3}
-  Z4_joint.sj34x12_1: {to: [Z4_head.spray_1], h_m: 12.0, gr: riser_1}
-  Z4_joint.sj34x12_2: {to: [Z4_head.spray_2], h_m: 12.0, gr: riser_2}
-  Z4_joint.sj34x12_3: {to: [Z4_head.spray_3], h_m: 12.0, gr: riser_3}
+  Z4_joint.sj34x12_1: {to: [Z4_head.spray_1.check_valve], h_m: 12.0, gr: riser_1}
+  Z4_joint.sj34x12_2: {to: [Z4_head.spray_2.check_valve], h_m: 12.0, gr: riser_2}
+  Z4_joint.sj34x12_3: {to: [Z4_head.spray_3.check_valve], h_m: 12.0, gr: riser_3}
   Z4_joint.tee_1: {to: [Z4_hose.ldpe25_2, Z4_hose.ldpe25_3], h_m: 11.4}
   Z4_joint.tee_2: {to: [Z4_hose.ldpe25_4, Z4_hose.ldpe25_5], h_m: 12.0}
   Z4_joint.tee_3: {to: [Z4_joint.c25bf34_2, Z4_hose.ldpe25_6], h_m: 12.0}
@@ -565,34 +634,64 @@ water:
   Z4_hose.ldpe25_4: {to: [Z4_joint.sj34x12_2], l_m: 6, h_m: 12.0}
   Z4_hose.ldpe25_5: {to: [Z4_joint.tee_3], l_m: 20, h_m: 12.0}
   Z4_hose.ldpe25_6: {to: [Z4_joint.sj34x12_4], l_m: 6, h_m: 12.0}
-  Z4_joint.sj34x12_4: {to: [Z4_head.spray_4], h_m: 12.0, gr: riser_4}
-  Z4_valve.auto:    {to: [Z4_joint.bm1c25], h_m: 11.2}
+  Z4_joint.sj34x12_4: {to: [Z4_head.spray_4.check_valve], h_m: 12.0, gr: riser_4}
+  Z4_head.spray_1.check_valve: {to: [Z4_head.spray_1.regulator], h_m: 12.0, gr: riser_1}
+  Z4_head.spray_1.regulator:   {to: [Z4_head.spray_1.riser], h_m: 12.0, gr: riser_1}
+  Z4_head.spray_1.riser:       {to: [Z4_head.spray_1.nozzle], h_m: 12.0, gr: riser_1}
+  Z4_head.spray_1.nozzle:      {nozzle: "MP3000", arc: 270, h_m: 12.0, gr: riser_1}
+  Z4_head.spray_2.check_valve: {to: [Z4_head.spray_2.regulator], h_m: 12.0, gr: riser_2}
+  Z4_head.spray_2.regulator:   {to: [Z4_head.spray_2.riser], h_m: 12.0, gr: riser_2}
+  Z4_head.spray_2.riser:       {to: [Z4_head.spray_2.nozzle], h_m: 12.0, gr: riser_2}
+  Z4_head.spray_2.nozzle:      {nozzle: "MP1000", arc: 210, h_m: 12.0, gr: riser_2}
+  Z4_head.spray_3.check_valve: {to: [Z4_head.spray_3.regulator], h_m: 12.0, gr: riser_3}
+  Z4_head.spray_3.regulator:   {to: [Z4_head.spray_3.riser], h_m: 12.0, gr: riser_3}
+  Z4_head.spray_3.riser:       {to: [Z4_head.spray_3.nozzle], h_m: 12.0, gr: riser_3}
+  Z4_head.spray_3.nozzle:      {nozzle: "MP2000", arc: 270, h_m: 12.0, gr: riser_3}
+  Z4_head.spray_4.check_valve: {to: [Z4_head.spray_4.regulator], h_m: 12.0, gr: riser_4}
+  Z4_head.spray_4.regulator:   {to: [Z4_head.spray_4.riser], h_m: 12.0, gr: riser_4}
+  Z4_head.spray_4.riser:       {to: [Z4_head.spray_4.nozzle], h_m: 12.0, gr: riser_4}
+  Z4_head.spray_4.nozzle:      {nozzle: "MP2000", arc: 180, h_m: 12.0, gr: riser_4}
 
+  # --- Zone 1 (manual) ---
   Z1_joint.sm1c16: {to: [Z1_hose.ldpe16_1], h_m: 11.2}
   Z1_joint.c16c16: {to: [Z1_hose.ldpe16_2], h_m: 12.0}
   Z1_hose.ldpe16_1: {to: [Z1_joint.c16c16], l_m: 10, h_m: 12.0}
-  Z1_hose.ldpe16_2: {to: [Z1_valve.manual], l_m: 10, h_m: 12.0}
-  Z1_valve.manual:  {h_m: 12.0}
+  Z1_hose.ldpe16_2: {to: [Z1_valve.manual.ball], l_m: 10, h_m: 12.0}
+  Z1_valve.manual.ball: {to: [Z1_valve.manual.seat], h_m: 12.0}
+  Z1_valve.manual.seat: {h_m: 12.0}
 
+  # --- Zone 6 (cap) ---
   Z6_joint.cap: {h_m: 11.2}
 
 electrical:
   S2_source.socket:   {to: [S2_wiring.230v_1]}
-  S2_wiring.230v_1:   {to: [S2_relay.pumpstart]}
-  S2_relay.pumpstart: {to: [S2_wiring.230v_2]}
+  S2_wiring.230v_1:   {to: [S2_relay.pumpstart.line]}
+  # Relay: 230v switched path (line -> contact -> load), gated by the 24v coil
+  S2_relay.pumpstart.line:        {to: [S2_relay.pumpstart.contact]}
+  S2_relay.pumpstart.contact:     {to: [S2_relay.pumpstart.load]}
+  S2_relay.pumpstart.load:        {to: [S2_wiring.230v_2]}
+  S2_relay.pumpstart.coil_in:     {to: [S2_relay.pumpstart.coil]}
+  S2_relay.pumpstart.coil:        {to: [S2_relay.pumpstart.coil_common]}
+  S2_relay.pumpstart.coil_common: {}
   S2_wiring.230v_2:   {to: [S1_source.socket]}
-  S1_source.socket:   {to: [S1_pump.jet]}
+  # Pump motor winding sits across the 230v line/neutral
+  S1_source.socket:          {to: [S1_pump.jet.motor_line]}
+  S1_pump.jet.motor_line:    {to: [S1_pump.jet.motor_winding]}
+  S1_pump.jet.motor_winding: {to: [S1_pump.jet.motor_neutral]}
+  S1_pump.jet.motor_neutral: {}
 
   O1_source.socket:   {to: [O1_wiring.230v_1]}
-  O1_wiring.230v_1:   {to: [O1_control.controller]}
-  O1_control.controller:
+  O1_wiring.230v_1:   {to: [O1_control.controller.line]}
+  # Controller: 230v primary -> step-down transformer -> 24v station/common outputs
+  O1_control.controller.line: {to: [O1_control.controller.transformer]}
+  O1_control.controller.transformer:
     to: [D1_wiring.24v/signal_z2, D1_wiring.24v/signal_z3, D1_wiring.24v/signal_z4,
          D1_wiring.24v/signal_z5, D1_wiring.24v/common,
          S2_wiring.24v/signal, S2_wiring.24v/common]
   S2_wiring.24v:
     to:
-      signal: [S2_relay.pumpstart]
-      common: [S2_relay.pumpstart]
+      signal: [S2_relay.pumpstart.coil_in]
+      common: [S2_relay.pumpstart.coil_common]
   D1_wiring.24v:
     to:
       signal_z2: [O1_wiring.splice_1]
@@ -600,14 +699,14 @@ electrical:
       signal_z4: [O1_wiring.splice_3]
       signal_z5: [O1_wiring.splice_4]
       common:    [O1_wiring.splice_8]
-  O1_wiring.splice_1: {to: [Z2_valve.auto]}  
-  O1_wiring.splice_2: {to: [Z3_valve.auto]}   
-  O1_wiring.splice_4: {to: [Z5_valve.auto]}   
-  O1_wiring.splice_3: {to: [Z4_valve.auto]}  
-  Z2_valve.auto: {to: [O1_wiring.splice_5]}
-  Z3_valve.auto: {to: [O1_wiring.splice_6]}
-  Z5_valve.auto: {to: [O1_wiring.splice_7]}
-  Z4_valve.auto: {to: [O1_wiring.splice_8]}
+  O1_wiring.splice_1: {to: [Z2_valve.auto.coil]}  
+  O1_wiring.splice_2: {to: [Z3_valve.auto.coil]}   
+  O1_wiring.splice_4: {to: [Z5_valve.auto.coil]}   
+  O1_wiring.splice_3: {to: [Z4_valve.auto.coil]}  
+  Z2_valve.auto.coil: {to: [O1_wiring.splice_5]}
+  Z3_valve.auto.coil: {to: [O1_wiring.splice_6]}
+  Z5_valve.auto.coil: {to: [O1_wiring.splice_7]}
+  Z4_valve.auto.coil: {to: [O1_wiring.splice_8]}
   O1_wiring.splice_5: {to: [O1_wiring.common_1]}   
   O1_wiring.common_1: {to: [O1_wiring.splice_6]}
   O1_wiring.splice_6: {to: [O1_wiring.common_2]}
