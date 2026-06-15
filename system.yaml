@@ -512,16 +512,16 @@ items:
       common: {}
 
 water:
-  W1_source.well:            {to: [W1_joint.strainer], h_m: 5.6}
-  W1_joint.strainer: {to: [W1_valve.foot], h_m: 4.2}
-  W1_valve.foot:             {to: [W1_joint.hosetail_brass], h_m: 4.8}
-  W1_joint.hosetail_brass: {to: [W1_hose.suction], h_m: 4.2}
-  W1_hose.suction:           {to: [W1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
-  W1_joint.hosetail_plastic: {to: [W1_pump.jet], h_m: 8.2}
-  W1_hose.ldpe32:            {to: [W1_joint.c32c32], l_m: 2, h_m: 8.2}
-  W1_pump.jet:               {to: [W1_joint.bm1c32], h_m: 8.2}
-  W1_joint.bm1c32: {to: [W1_hose.ldpe32], h_m: 8.2}
-  W1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.2}
+  S1_source.well:            {to: [S1_joint.strainer], h_m: 5.6}
+  S1_joint.strainer: {to: [S1_valve.foot], h_m: 4.2}
+  S1_valve.foot:             {to: [S1_joint.hosetail_brass], h_m: 4.8}
+  S1_joint.hosetail_brass: {to: [S1_hose.suction], h_m: 4.2}
+  S1_hose.suction:           {to: [S1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
+  S1_joint.hosetail_plastic: {to: [S1_pump.jet], h_m: 8.2}
+  S1_hose.ldpe32:            {to: [S1_joint.c32c32], l_m: 2, h_m: 8.2}
+  S1_pump.jet:               {to: [S1_joint.bm1c32], h_m: 8.2}
+  S1_joint.bm1c32: {to: [S1_hose.ldpe32], h_m: 8.2}
+  S1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.2}
 
   D1_hose.ldpe32: {to: [D1_joint.c32sm1], l_m: 20, h_m: 8.2}
 
@@ -609,44 +609,44 @@ water:
   Z6_joint.cap: {h_m: 11.2}
 
 electrical:
-  S1_source.socket:   {to: [S1_wiring.230v_1]}
-  S1_wiring.230v_1:   {to: [S1_relay.pumpstart]}
-  S1_relay.pumpstart: {to: [S1_wiring.230v_2]}
-  S1_wiring.230v_2:   {to: [W1_source.socket]}
-  W1_source.socket:   {to: [W1_pump.jet]}
+  S2_source.socket:   {to: [S2_wiring.230v_1]}
+  S2_wiring.230v_1:   {to: [S2_relay.pumpstart]}
+  S2_relay.pumpstart: {to: [S2_wiring.230v_2]}
+  S2_wiring.230v_2:   {to: [S1_source.socket]}
+  S1_source.socket:   {to: [S1_pump.jet]}
 
-  H1_source.socket:   {to: [H1_wiring.230v_1]}
-  H1_wiring.230v_1:   {to: [H1_control.controller]}
-  H1_control.controller:
+  O1_source.socket:   {to: [O1_wiring.230v_1]}
+  O1_wiring.230v_1:   {to: [O1_control.controller]}
+  O1_control.controller:
     to: [D1_wiring.24v/signal_z2, D1_wiring.24v/signal_z3, D1_wiring.24v/signal_z4,
          D1_wiring.24v/signal_z5, D1_wiring.24v/common,
-         S1_wiring.24v/signal, S1_wiring.24v/common]
-  S1_wiring.24v:
+         S2_wiring.24v/signal, S2_wiring.24v/common]
+  S2_wiring.24v:
     to:
-      signal: [S1_relay.pumpstart]
-      common: [S1_relay.pumpstart]
+      signal: [S2_relay.pumpstart]
+      common: [S2_relay.pumpstart]
   D1_wiring.24v:
     to:
-      signal_z2: [Z2_wiring.splice]
-      signal_z3: [Z3_wiring.splice]
-      signal_z4: [Z4_wiring.splice]
-      signal_z5: [Z5_wiring.splice]
-      common:    [D1_wiring.splice_4]
-  Z2_wiring.splice: {to: [Z2_valve.auto]}
-  Z3_wiring.splice: {to: [Z3_valve.auto]}
-  Z5_wiring.splice: {to: [Z5_valve.auto]}
-  Z4_wiring.splice: {to: [Z4_valve.auto]}
-  Z2_valve.auto: {to: [D1_wiring.splice_1]}
-  Z3_valve.auto: {to: [D1_wiring.splice_2]}
-  Z5_valve.auto: {to: [D1_wiring.splice_3]}
-  Z4_valve.auto: {to: [D1_wiring.splice_4]}
-  D1_wiring.splice_1: {to: [D1_wiring.common_1]}
-  D1_wiring.common_1: {to: [D1_wiring.splice_2]}
-  D1_wiring.splice_2: {to: [D1_wiring.common_2]}
-  D1_wiring.common_2: {to: [D1_wiring.splice_3]}
-  D1_wiring.splice_3: {to: [D1_wiring.common_3]}
-  D1_wiring.common_3: {to: [D1_wiring.splice_4]}
-  D1_wiring.splice_4: {}
+      signal_z2: [O1_wiring.splice_1]
+      signal_z3: [O1_wiring.splice_2]
+      signal_z4: [O1_wiring.splice_3]
+      signal_z5: [O1_wiring.splice_4]
+      common:    [O1_wiring.splice_8]
+  O1_wiring.splice_1: {to: [Z2_valve.auto]}   # zone-side: controller signal -> Z2 solenoid
+  O1_wiring.splice_2: {to: [Z3_valve.auto]}   # zone-side: controller signal -> Z3 solenoid
+  O1_wiring.splice_4: {to: [Z5_valve.auto]}   # zone-side: controller signal -> Z5 solenoid
+  O1_wiring.splice_3: {to: [Z4_valve.auto]}   # zone-side: controller signal -> Z4 solenoid
+  Z2_valve.auto: {to: [O1_wiring.splice_5]}
+  Z3_valve.auto: {to: [O1_wiring.splice_6]}
+  Z5_valve.auto: {to: [O1_wiring.splice_7]}
+  Z4_valve.auto: {to: [O1_wiring.splice_8]}
+  O1_wiring.splice_5: {to: [O1_wiring.common_1]}   # common-side: onto the in-box common bus
+  O1_wiring.common_1: {to: [O1_wiring.splice_6]}
+  O1_wiring.splice_6: {to: [O1_wiring.common_2]}
+  O1_wiring.common_2: {to: [O1_wiring.splice_7]}
+  O1_wiring.splice_7: {to: [O1_wiring.common_3]}
+  O1_wiring.common_3: {to: [O1_wiring.splice_8]}
+  O1_wiring.splice_8: {}
 
 pump.jet_curves:
   DAB JET 112 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6], head_m: [61, 54, 47.8, 42.8, 38.8, 34.8, 20]}

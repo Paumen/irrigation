@@ -9,12 +9,12 @@ export function roleOf(type) {
   if (type === "valve.auto") return "valve-auto";
   if (type === "valve.manual") return "valve-manual";
   if (type === "valve.foot") return "junction";
-  if (type === "fitting.cap") return "cap";
+  if (type === "joint.cap") return "cap";
   if (type.startsWith("head.")) return "outlet";
   // swing joints model as short pipes carrying their own k_minor
-  if (type === "fitting.sj34x12" || type === "fitting.sj34x34") return "pipe";
+  if (type === "joint.sj34x12" || type === "joint.sj34x34") return "pipe";
   if (type.startsWith("hose.")) return "pipe";
-  if (type.startsWith("fitting.")) return "junction";
+  if (type.startsWith("joint.")) return "junction";
   throw new Error(`model: unknown water component type "${type}"`);
 }
 
@@ -22,7 +22,7 @@ function subkindOf(type) {
   if (type === "head.rotor") return "rotor";
   if (type === "head.spray") return "spray";
   if (type === "head.stream") return "stream";
-  if (type === "fitting.sj34x12" || type === "fitting.sj34x34") return "swing";
+  if (type === "joint.sj34x12" || type === "joint.sj34x34") return "swing";
   if (type.startsWith("hose.")) return "hose";
   return type;
 }
@@ -57,6 +57,7 @@ function paramsOf(compDef, instance, defaults) {
   }
   if (params.k != null) params.k_minor = params.k;
   if (params.l_m != null) params.length_m = params.l_m;
+  if (params.id_mm != null) params.inner_diameter_mm = params.id_mm;
   return params;
 }
 
@@ -103,9 +104,9 @@ export function buildModel(rawGraph, rawCatalog) {
       const junctionId = `${n.id}__out`;
       flowNodes.set(junctionId, {
         id: junctionId,
-        kind: "fitting.coupling",
+        kind: "joint.coupling",
         role: "junction",
-        subkind: "fitting.coupling",
+        subkind: "joint.coupling",
         elevation_m: n.elevation_m,
         to: n.to,
         params: { k_minor: 0 },

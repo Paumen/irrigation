@@ -75,9 +75,9 @@ for sec in ("water", "electrical"):
         for a in ("l_m", "nozzle", "arc"):
             if a in v:
                 r["attrs"][a] = v[a]
-        if v.get("group"):
-            r["group"] = v["group"]
-INST.setdefault("V1_enclosure.valvebox", {"type": "enclosure.valvebox", "attrs": {}, "edges": []})
+        if v.get("gr"):
+            r["group"] = v["gr"]
+INST.setdefault("D1_enclosure.valvebox", {"type": "enclosure.valvebox", "attrs": {}, "edges": []})
 
 TYPE_INST = collections.defaultdict(list)
 for i, r in INST.items():
@@ -91,13 +91,11 @@ for i, r in INST.items():
 SECTIONS = ["1. SUPPLY", "2. DISTRIBUTE", "3. DELIVER", "4. ORCHESTRATE"]
 def prefix_section(inst):
     pre = inst.split("_", 1)[0]
-    if pre in ("W1", "S1"):
+    if pre in ("S1", "S2"):
         return 0
-    if pre == "V1":
+    if pre == "D1":
         return 1
-    if pre == "P1":
-        return 1 if "hose" in inst else 3
-    if pre == "H1":
+    if pre == "O1":
         return 3
     if re.match(r"Z[1-6]$", pre):
         return 2
