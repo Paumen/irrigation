@@ -75,8 +75,8 @@ for sec in ("water", "electrical"):
         for a in ("l_m", "nozzle", "arc"):
             if a in v:
                 r["attrs"][a] = v[a]
-        if v.get("group"):
-            r["group"] = v["group"]
+        if v.get("gr"):
+            r["group"] = v["gr"]
 INST.setdefault("D1_enclosure.valvebox", {"type": "enclosure.valvebox", "attrs": {}, "edges": []})
 
 TYPE_INST = collections.defaultdict(list)
@@ -101,16 +101,9 @@ def prefix_section(inst):
         return 2
     return 1
 
-# assembly -> section (majority of its member instances' prefixes), with explicit
-# overrides for assemblies whose home section isn't the majority of member locations.
-# The 24 V solenoid splice harness wires the controller out to the zone valves, so it
-# belongs to ORCHESTRATE even though its splices sit at Z*/D1 locations in the box.
-ASM_SECTION_OVERRIDE = {"solenoid_wiring": 3}
+# assembly -> section (majority of its member instances' prefixes)
 ASM_SECTION = {}
 for a in ASSEMBLIES:
-    if a in ASM_SECTION_OVERRIDE:
-        ASM_SECTION[a] = ASM_SECTION_OVERRIDE[a]
-        continue
     insts = [i for t, p in TYPE_PATH.items() if p and p[0] == a for i in TYPE_INST.get(t, [])]
     secs = [prefix_section(i) for i in insts]
     ASM_SECTION[a] = collections.Counter(secs).most_common(1)[0][0] if secs else 0

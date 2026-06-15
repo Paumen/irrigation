@@ -188,24 +188,25 @@ IRRIGATION SYSTEM
 │   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (8 m)
-│   │   ├─ joint.c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
-│   │   │   ├─ body
-│   │   │   └─ thread
-│   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   ├─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
-│   │   │   ├─ thread
-│   │   │   └─ body
-│   │   │       ├─ cap
-│   │   │       ├─ check_valve
-│   │   │       ├─ regulator
-│   │   │       ├─ riser
-│   │   │       ├─ wiper_seal
-│   │   │       ├─ spring
-│   │   │       ├─ flush_plug
-│   │   │       └─ nozzle
+│   │   ├─ riser_1
+│   │   │   ├─ joint.c25bf34
+│   │   │   │   ├─ nut
+│   │   │   │   ├─ grip
+│   │   │   │   ├─ oring
+│   │   │   │   ├─ body
+│   │   │   │   └─ thread
+│   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   └─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │       ├─ thread
+│   │   │       └─ body
+│   │   │           ├─ cap
+│   │   │           ├─ check_valve
+│   │   │           ├─ regulator
+│   │   │           ├─ riser
+│   │   │           ├─ wiper_seal
+│   │   │           ├─ spring
+│   │   │           ├─ flush_plug
+│   │   │           └─ nozzle
 │   │   ├─ hose.ldpe25  (4 m)
 │   │   ├─ joint.tee_c25bf34
 │   │   │   ├─ nut ×2
@@ -213,38 +214,40 @@ IRRIGATION SYSTEM
 │   │   │   ├─ oring ×2
 │   │   │   ├─ thread
 │   │   │   └─ body
-│   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   ├─ head.rotor  (BL4.0, 170°)  (Hunter I-20-04-SS)
-│   │   │   ├─ thread
-│   │   │   └─ body
-│   │   │       ├─ check_valve
-│   │   │       ├─ riser
-│   │   │       ├─ riser_seal
-│   │   │       ├─ retract_spring
-│   │   │       ├─ gear
-│   │   │       ├─ filter
-│   │   │       ├─ nozzle
-│   │   │       ├─ arc
-│   │   │       └─ flo_stop
+│   │   ├─ riser_2
+│   │   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
+│   │   │   └─ head.rotor  (BL4.0, 170°)  (Hunter I-20-04-SS)
+│   │   │       ├─ thread
+│   │   │       └─ body
+│   │   │           ├─ check_valve
+│   │   │           ├─ riser
+│   │   │           ├─ riser_seal
+│   │   │           ├─ retract_spring
+│   │   │           ├─ gear
+│   │   │           ├─ filter
+│   │   │           ├─ nozzle
+│   │   │           ├─ arc
+│   │   │           └─ flo_stop
 │   │   ├─ hose.ldpe25  (18 m)
-│   │   ├─ joint.c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
-│   │   │   ├─ body
-│   │   │   └─ thread
-│   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
-│   │       ├─ thread
-│   │       └─ body
-│   │           ├─ cap
-│   │           ├─ check_valve
-│   │           ├─ regulator
-│   │           ├─ riser
-│   │           ├─ wiper_seal
-│   │           ├─ spring
-│   │           ├─ flush_plug
-│   │           └─ nozzle
+│   │   └─ riser_3
+│   │       ├─ joint.c25bf34
+│   │       │   ├─ nut
+│   │       │   ├─ grip
+│   │       │   ├─ oring
+│   │       │   ├─ body
+│   │       │   └─ thread
+│   │       ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
+│   │       └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
+│   │           ├─ thread
+│   │           └─ body
+│   │               ├─ cap
+│   │               ├─ check_valve
+│   │               ├─ regulator
+│   │               ├─ riser
+│   │               ├─ wiper_seal
+│   │               ├─ spring
+│   │               ├─ flush_plug
+│   │               └─ nozzle
 │   ├─ Z3
 │   │   ├─ joint.sm1bm1
 │   │   │   ├─ swivel_nut
@@ -289,45 +292,47 @@ IRRIGATION SYSTEM
 │   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (2 m)
-│   │   ├─ joint.c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
-│   │   │   ├─ body
-│   │   │   └─ thread
-│   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   ├─ head.rotor  (BL2.5, 150°)  (Hunter I-20-04-SS)
-│   │   │   ├─ thread
-│   │   │   └─ body
-│   │   │       ├─ check_valve
-│   │   │       ├─ riser
-│   │   │       ├─ riser_seal
-│   │   │       ├─ retract_spring
-│   │   │       ├─ gear
-│   │   │       ├─ filter
-│   │   │       ├─ nozzle
-│   │   │       ├─ arc
-│   │   │       └─ flo_stop
+│   │   ├─ riser_1
+│   │   │   ├─ joint.c25bf34
+│   │   │   │   ├─ nut
+│   │   │   │   ├─ grip
+│   │   │   │   ├─ oring
+│   │   │   │   ├─ body
+│   │   │   │   └─ thread
+│   │   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
+│   │   │   └─ head.rotor  (BL2.5, 150°)  (Hunter I-20-04-SS)
+│   │   │       ├─ thread
+│   │   │       └─ body
+│   │   │           ├─ check_valve
+│   │   │           ├─ riser
+│   │   │           ├─ riser_seal
+│   │   │           ├─ retract_spring
+│   │   │           ├─ gear
+│   │   │           ├─ filter
+│   │   │           ├─ nozzle
+│   │   │           ├─ arc
+│   │   │           └─ flo_stop
 │   │   ├─ hose.ldpe25  (10 m)
-│   │   ├─ joint.c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
-│   │   │   ├─ body
-│   │   │   └─ thread
-│   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
-│   │       ├─ thread
-│   │       └─ body
-│   │           ├─ check_valve
-│   │           ├─ riser
-│   │           ├─ riser_seal
-│   │           ├─ retract_spring
-│   │           ├─ gear
-│   │           ├─ filter
-│   │           ├─ nozzle
-│   │           ├─ arc
-│   │           └─ flo_stop
+│   │   └─ riser_2
+│   │       ├─ joint.c25bf34
+│   │       │   ├─ nut
+│   │       │   ├─ grip
+│   │       │   ├─ oring
+│   │       │   ├─ body
+│   │       │   └─ thread
+│   │       ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
+│   │       └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
+│   │           ├─ thread
+│   │           └─ body
+│   │               ├─ check_valve
+│   │               ├─ riser
+│   │               ├─ riser_seal
+│   │               ├─ retract_spring
+│   │               ├─ gear
+│   │               ├─ filter
+│   │               ├─ nozzle
+│   │               ├─ arc
+│   │               └─ flo_stop
 │   ├─ Z4
 │   │   ├─ joint.sm1bm1
 │   │   │   ├─ swivel_nut
@@ -372,24 +377,25 @@ IRRIGATION SYSTEM
 │   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (2 m)
-│   │   ├─ joint.c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
-│   │   │   ├─ body
-│   │   │   └─ thread
-│   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   ├─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
-│   │   │   ├─ thread
-│   │   │   └─ body
-│   │   │       ├─ cap
-│   │   │       ├─ check_valve
-│   │   │       ├─ regulator
-│   │   │       ├─ riser
-│   │   │       ├─ wiper_seal
-│   │   │       ├─ spring
-│   │   │       ├─ flush_plug
-│   │   │       └─ nozzle
+│   │   ├─ riser_1
+│   │   │   ├─ joint.c25bf34
+│   │   │   │   ├─ nut
+│   │   │   │   ├─ grip
+│   │   │   │   ├─ oring
+│   │   │   │   ├─ body
+│   │   │   │   └─ thread
+│   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   └─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │       ├─ thread
+│   │   │       └─ body
+│   │   │           ├─ cap
+│   │   │           ├─ check_valve
+│   │   │           ├─ regulator
+│   │   │           ├─ riser
+│   │   │           ├─ wiper_seal
+│   │   │           ├─ spring
+│   │   │           ├─ flush_plug
+│   │   │           └─ nozzle
 │   │   ├─ hose.ldpe25  (8 m)
 │   │   ├─ joint.tee
 │   │   │   ├─ nut ×3
@@ -397,55 +403,58 @@ IRRIGATION SYSTEM
 │   │   │   ├─ oring ×3
 │   │   │   └─ body
 │   │   ├─ hose.ldpe25  (6 m)
-│   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   ├─ head.spray  (MP1000, 210°)  (Hunter Pro-Spray PRS40)
-│   │   │   ├─ thread
-│   │   │   └─ body
-│   │   │       ├─ cap
-│   │   │       ├─ check_valve
-│   │   │       ├─ regulator
-│   │   │       ├─ riser
-│   │   │       ├─ wiper_seal
-│   │   │       ├─ spring
-│   │   │       ├─ flush_plug
-│   │   │       └─ nozzle
+│   │   ├─ riser_2
+│   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   └─ head.spray  (MP1000, 210°)  (Hunter Pro-Spray PRS40)
+│   │   │       ├─ thread
+│   │   │       └─ body
+│   │   │           ├─ cap
+│   │   │           ├─ check_valve
+│   │   │           ├─ regulator
+│   │   │           ├─ riser
+│   │   │           ├─ wiper_seal
+│   │   │           ├─ spring
+│   │   │           ├─ flush_plug
+│   │   │           └─ nozzle
 │   │   ├─ hose.ldpe25  (20 m)
 │   │   ├─ joint.tee
 │   │   │   ├─ nut ×3
 │   │   │   ├─ grip ×3
 │   │   │   ├─ oring ×3
 │   │   │   └─ body
-│   │   ├─ joint.c25bf34
-│   │   │   ├─ nut
-│   │   │   ├─ grip
-│   │   │   ├─ oring
-│   │   │   ├─ body
-│   │   │   └─ thread
-│   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   ├─ head.spray  (MP2000, 270°)  (Hunter Pro-Spray PRS40)
-│   │   │   ├─ thread
-│   │   │   └─ body
-│   │   │       ├─ cap
-│   │   │       ├─ check_valve
-│   │   │       ├─ regulator
-│   │   │       ├─ riser
-│   │   │       ├─ wiper_seal
-│   │   │       ├─ spring
-│   │   │       ├─ flush_plug
-│   │   │       └─ nozzle
+│   │   ├─ riser_3
+│   │   │   ├─ joint.c25bf34
+│   │   │   │   ├─ nut
+│   │   │   │   ├─ grip
+│   │   │   │   ├─ oring
+│   │   │   │   ├─ body
+│   │   │   │   └─ thread
+│   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
+│   │   │   └─ head.spray  (MP2000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │       ├─ thread
+│   │   │       └─ body
+│   │   │           ├─ cap
+│   │   │           ├─ check_valve
+│   │   │           ├─ regulator
+│   │   │           ├─ riser
+│   │   │           ├─ wiper_seal
+│   │   │           ├─ spring
+│   │   │           ├─ flush_plug
+│   │   │           └─ nozzle
 │   │   ├─ hose.ldpe25  (6 m)
-│   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
-│   │       ├─ thread
-│   │       └─ body
-│   │           ├─ cap
-│   │           ├─ check_valve
-│   │           ├─ regulator
-│   │           ├─ riser
-│   │           ├─ wiper_seal
-│   │           ├─ spring
-│   │           ├─ flush_plug
-│   │           └─ nozzle
+│   │   └─ riser_4
+│   │       ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
+│   │       └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
+│   │           ├─ thread
+│   │           └─ body
+│   │               ├─ cap
+│   │               ├─ check_valve
+│   │               ├─ regulator
+│   │               ├─ riser
+│   │               ├─ wiper_seal
+│   │               ├─ spring
+│   │               ├─ flush_plug
+│   │               └─ nozzle
 │   └─ Z5
 │       ├─ joint.sm1bm1
 │       │   ├─ swivel_nut
@@ -490,45 +499,47 @@ IRRIGATION SYSTEM
 │       │   ├─ oring ×3
 │       │   └─ body
 │       ├─ hose.ldpe25  (4 m)
-│       ├─ joint.c25bf34
-│       │   ├─ nut
-│       │   ├─ grip
-│       │   ├─ oring
-│       │   ├─ body
-│       │   └─ thread
-│       ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│       ├─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
-│       │   ├─ thread
-│       │   └─ body
-│       │       ├─ check_valve
-│       │       ├─ riser
-│       │       ├─ riser_seal
-│       │       ├─ retract_spring
-│       │       ├─ gear
-│       │       ├─ filter
-│       │       ├─ nozzle
-│       │       ├─ arc
-│       │       └─ flo_stop
+│       ├─ riser_1
+│       │   ├─ joint.c25bf34
+│       │   │   ├─ nut
+│       │   │   ├─ grip
+│       │   │   ├─ oring
+│       │   │   ├─ body
+│       │   │   └─ thread
+│       │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
+│       │   └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
+│       │       ├─ thread
+│       │       └─ body
+│       │           ├─ check_valve
+│       │           ├─ riser
+│       │           ├─ riser_seal
+│       │           ├─ retract_spring
+│       │           ├─ gear
+│       │           ├─ filter
+│       │           ├─ nozzle
+│       │           ├─ arc
+│       │           └─ flo_stop
 │       ├─ hose.ldpe25  (12 m)
-│       ├─ joint.c25bf34
-│       │   ├─ nut
-│       │   ├─ grip
-│       │   ├─ oring
-│       │   ├─ body
-│       │   └─ thread
-│       ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│       └─ head.rotor  (BL2.5, 180°)  (Hunter I-20-04-SS)
-│           ├─ thread
-│           └─ body
-│               ├─ check_valve
-│               ├─ riser
-│               ├─ riser_seal
-│               ├─ retract_spring
-│               ├─ gear
-│               ├─ filter
-│               ├─ nozzle
-│               ├─ arc
-│               └─ flo_stop
+│       └─ riser_2
+│           ├─ joint.c25bf34
+│           │   ├─ nut
+│           │   ├─ grip
+│           │   ├─ oring
+│           │   ├─ body
+│           │   └─ thread
+│           ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
+│           └─ head.rotor  (BL2.5, 180°)  (Hunter I-20-04-SS)
+│               ├─ thread
+│               └─ body
+│                   ├─ check_valve
+│                   ├─ riser
+│                   ├─ riser_seal
+│                   ├─ retract_spring
+│                   ├─ gear
+│                   ├─ filter
+│                   ├─ nozzle
+│                   ├─ arc
+│                   └─ flo_stop
 └─ 4. ORCHESTRATE
     ├─ source.socket
     │   ├─ line
