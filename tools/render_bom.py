@@ -20,6 +20,25 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 G = yaml.safe_load(open(os.path.join(ROOT, "system.yaml")))
 
+# ---- fold in defaults (item_defaults by kind, part_defaults by part name) -----
+# Both are lowest precedence: a component/part's own keys always win. This lets
+# system.yaml omit the uniform/repeated fields that these tables supply.
+ITEM_DEFAULTS = G.get("item_defaults", {})
+PART_DEFAULTS = G.get("part_defaults", {})
+def _apply_defaults(node):
+    for k, v in node.items():
+        if not isinstance(v, dict):
+            continue
+        if "." in k:                                   # component: defaults by kind
+            for dk, dv in ITEM_DEFAULTS.get(k.split(".", 1)[0], {}).items():
+                v.setdefault(dk, dv)
+        else:                                          # part: defaults by base name
+            for dk, dv in PART_DEFAULTS.get(re.sub(r"_\d+$", "", k), {}).items():
+                v.setdefault(dk, dv)
+        if "items" in v and isinstance(v["items"], dict):
+            _apply_defaults(v["items"])
+_apply_defaults(G["items"])
+
 # ---- type defs + the assembly path each type sits under in items: -----------
 TYPES, TYPE_PATH = {}, {}
 def walk(node, path):

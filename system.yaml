@@ -25,7 +25,7 @@ interface_types:
   cm16:   {joint: comppress, size: "∅16", gender: M, seal: comp-ring}
   cm25:   {joint: comppress, size: "∅25", gender: M, seal: comp-ring}
   cm32:   {joint: comppress, size: "∅32", gender: M, seal: comp-ring}
-  sm1:    {joint: swivel-union, size: G1,   gender: M, seal: hose
+  sm1:    {joint: swivel-union, size: G1,   gender: M, seal: hose}
   sf1:    {joint: swivel-union, size: G1,   gender: F, seal: washer}
   barb25:  {joint: barb,        size: "∅25", gender: M, seal: clamp}
   barbf25: {joint: barb,        size: "∅25", gender: F, seal: clamp}
@@ -35,10 +35,38 @@ interface_types:
   sig_24v: {domain: 24v}
   com_24v: {domain: 24v}
 
+# Component metadata defaults, keyed by kind (text before the dot). Applied with
+# lowest precedence: a component's own field always wins. Kept to fields that are
+# uniform within the kind (e.g. every hose shares roughness_mm/hz_c) so factoring
+# them out changes no value, only removes repetition.
 item_defaults:
-  hose:             {installed: 2020-08, price_eur_m: 2, max_bar: 6}
-  joint:            {price_eur_m: 5, max_bar: 10, k: 0.1 installed: 2020-08, material: plastic}
-  wiring:           {price_eur_m: 2, installed: 2020-08}
+  hose:   {roughness_mm: 0.0015, hz_c: 150}
+  joint:  {material: plastic, installed: 2020-08}
+  wiring: {installed: 2020-08}
+
+# Leaf-part body defaults, keyed by part name (a trailing _<n> index is ignored,
+# so washer/washer_2 share one entry). Merged under each part with the part's own
+# fields winning. Lets the ~150 repetitive {fail: [...]} bodies collapse to {}.
+part_defaults:
+  body:        {fail: [broken]}
+  nut:         {fail: [broken, misconfig]}
+  grip:        {fail: [broken, misconfig]}
+  thread:      {fail: [broken, misconfig]}
+  swivel_nut:  {fail: [broken, misconfig]}
+  barb:        {fail: [broken, misconfig]}
+  common:      {fail: [broken, misconfig]}
+  line:        {fail: [broken, misconfig]}
+  neutral:     {fail: [broken, misconfig]}
+  earth:       {fail: [broken]}
+  spring:      {fail: [broken]}
+  coil:        {fail: [broken]}
+  winding:     {fail: [broken]}
+  oring:       {material: rubber, fail: [broken, misconfig]}
+  washer:      {material: rubber, fail: [broken, misconfig]}
+  seat:        {fail: [broken, clogged]}
+  check_valve: {fail: [broken]}
+  nozzle:      {material: plastic, fail: [broken, clogged, misconfig]}
+  "24v":       {fail: [broken]}
 
 items:
 
@@ -53,14 +81,13 @@ items:
             k: 2.5
             interfaces: [bm1, bf1]
             items:
-              body:      {fail: [broken]}
+              body: {}
               disc:      {fail: [broken, clogged]}
-              spring:    {drive: disc, fail: [broken]}
+              spring: {drive: disc}
               seat_seal: {seal: disc, material: rubber, fail: [broken]}
           joint.strainer:
             installed: 2026-06
             price_eur: 10
-            material: plastic
             k: 1.0
             interfaces: [bf1]
             items:
@@ -72,15 +99,13 @@ items:
             k: 0.9
             interfaces: [bm1, barb25]
             items:
-              thread: {fail: [broken, misconfig]}
-              barb:   {fail: [broken, misconfig]}
-              body:   {fail: [broken]}
+              thread: {}
+              barb: {}
+              body: {}
       hose.suction:
         installed: 2023-06
         price_eur_m: 5
         material: PVC
-        roughness_mm: 0.0015
-        hz_c: 150
         od_mm: 25
         wall_mm: 0.5
         id_mm: 24
@@ -92,34 +117,31 @@ items:
       joint.hosetail_plastic:
         installed: 2023-06
         price_eur: 5
-        material: plastic
         max_bar: 6
         k: 0.9
         interfaces: [barb25, bm1]
         items:
-          barb:   {fail: [broken, misconfig]}
-          thread: {fail: [broken, misconfig]}
-          body:   {fail: [broken]}
+          barb: {}
+          thread: {}
+          body: {}
 
   pump_discharge:
     items:
       joint.bm1c32:
-        material: plastic
         interfaces: [bm1, c32]
         items:
-          thread: {fail: [broken, misconfig]}
-          body:   {fail: [broken]}
-          oring:  {material: rubber, fail: [broken, misconfig]}
-          grip:   {fail: [broken, misconfig]}
-          nut:    {fail: [broken, misconfig]}
+          thread: {}
+          body: {}
+          oring: {}
+          grip: {}
+          nut: {}
       joint.c32c32:
-        material: plastic
         interfaces: [c32, c32]
         items:
-          body:  {fail: [broken]}
-          oring: {material: rubber, fail: [broken, misconfig], count: 2}
-          grip:  {fail: [broken, misconfig], count: 2}
-          nut:   {fail: [broken, misconfig], count: 2}
+          body: {}
+          oring: {count: 2}
+          grip: {count: 2}
+          nut: {count: 2}
 
   pump_power_assy:
     items:
@@ -131,52 +153,47 @@ items:
         coil_energized_closes: contact
         items:
           coil_in:     {to: coil, fail: [broken, misconfig]}
-          coil:        {drive: contact, fail: [broken]}
+          coil: {drive: contact}
           coil_common: {fail: [broken, misconfig]}
           contact:     {fail: [broken]}
-          line:        {to: contact, fail: [broken, misconfig]}
+          line: {to: contact}
           load:        {fail: [broken, misconfig]}
-          neutral:     {fail: [broken, misconfig]}
-          earth:       {fail: [broken]}
+          neutral: {}
+          earth: {}
 
   manifold_assy:
     items:
       joint.manifold:
-        installed: 2020-08
         price_eur: 150
         bore_mm: 25
         max_bar: 10
         bends: 1
         k: 1.5
         model: "LEV 6-way distributor"
-        material: plastic
         interfaces: [sf1, sf1, sf1, sf1, sf1, sf1, sf1]
         items:
-          washer: {material: rubber, fail: [broken, misconfig], count: 7}
-          body:   {fail: [broken]}
+          washer: {count: 7}
+          body: {}
       joint.c32sm1:
         max_bar: 10
         k: 0.1
         material: brass
         interfaces: [c32, sm1]
         items:
-          nut:        {fail: [broken, misconfig]}
-          grip:       {fail: [broken, misconfig]}
-          oring:      {material: rubber, fail: [broken, misconfig]}
-          body:       {fail: [broken]}
-          swivel_nut: {fail: [broken, misconfig]}
+          nut: {}
+          grip: {}
+          oring: {}
+          body: {}
+          swivel_nut: {}
       joint.cap:
-        installed: 2020-08
         price_eur: 5
         k: 0
         max_bar: 10
-        material: plastic
         interfaces: [sm1]
 
   solenoid_wiring:
     items:
       wiring.splice:
-        installed: 2020-08
         price_eur: 1
         interfaces: [sig_24v, sig_24v, sig_24v]
         items:
@@ -188,20 +205,20 @@ items:
     model: "RainMachine HD-12 TOUCH"
     interfaces: [ac_line, ac_neutral, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v]
     items:
-      line:   {to: transformer/line, fail: [broken, misconfig]}
-      neutral: {to: transformer/neutral, fail: [broken, misconfig]}
+      line: {to: transformer/line}
+      neutral: {to: transformer/neutral}
       screen: {fail: [broken]}
       transformer:
         v_outlet: 24
         items:
-          line:    {to: transformer/winding, fail: [broken, misconfig]}
-          neutral: {fail: [broken, misconfig]}
-          winding: {condition: [transformer], fail: [broken]}
+          line: {to: transformer/winding}
+          neutral: {}
+          winding: {condition: [transformer]}
       terminals:
         fail: [broken]
         items:
           ac_line:  {fail: [broken, misconfig], count: 2}
-          common:   {fail: [broken, misconfig], count: 2}
+          common: {count: 2}
           port:     {fail: [broken, misconfig], count: 12}
 
   head.rotor:
@@ -210,18 +227,18 @@ items:
     model: "Hunter I-20-04-SS"
     interfaces: [bf34]
     items:
-      thread: {to: [body/riser, body/check_valve], fail: [broken, misconfig]}
+      thread: {to: [body/riser, body/check_valve]}
       body:
         fail: [broken]
         material: plastic
         items:
-          check_valve:   {fail: [broken]}
+          check_valve: {}
           riser:         {to: body/filter, material: stainless steel}
           riser_seal:    {seal: body/riser, material: rubber, fail: [broken]}
           retract_spring: {drive: body/riser, material: stainless steel, fail: [broken]}
           gear:          {drive: body/riser, material: plastic, fail: [broken, clogged]}
           filter:        {to: body/nozzle, fail: [broken, clogged]}
-          nozzle:        {material: plastic, fail: [broken, clogged, misconfig]}
+          nozzle: {}
           arc:           {condition: [body/nozzle], fail: [broken, misconfig]}
           flo_stop:      {fail: [broken, misconfig]}
 
@@ -232,19 +249,19 @@ items:
     model: "Hunter Pro-Spray PRS40"
     interfaces: [bf12]
     items:
-      thread: {to: [body/regulator, body/check_valve, body/cap], fail: [broken, misconfig]}
+      thread: {to: [body/regulator, body/check_valve, body/cap]}
       body:
         fail: [broken]
         material: plastic
         items:
           cap:            {fail: [broken]}
-          check_valve:    {fail: [broken]}
+          check_valve: {}
           regulator:      {to: body/riser, fail: [broken]}
           riser:          {to: body/nozzle}
           wiper_seal:     {seal: body/riser, material: rubber, fail: [broken]}
-          spring: {drive: body/riser, material: stainless steel, fail: [broken]}
+          spring: {drive: body/riser, material: stainless steel}
           flush_plug:     {seal: body/nozzle, fail: [broken, misconfig]}
-          nozzle:         {material: plastic, fail: [broken, clogged, misconfig]}
+          nozzle: {}
 
   enclosure.valvebox:
     installed: 2020-08
@@ -259,46 +276,46 @@ items:
   joint.c16c16:
     interfaces: [c16, c16]
     items:
-      body:  {fail: [broken]}
-      oring: {material: rubber, fail: [broken, misconfig], count: 2}
-      grip:  {fail: [broken, misconfig], count: 2}
-      nut:   {fail: [broken, misconfig], count: 2}
+      body: {}
+      oring: {count: 2}
+      grip: {count: 2}
+      nut: {count: 2}
 
   joint.bm1c25:
     interfaces: [bm1, c25]
     items:
-      thread: {fail: [broken, misconfig]}
-      body:   {fail: [broken]}
-      oring:  {material: rubber, fail: [broken, misconfig]}
-      grip:   {fail: [broken, misconfig]}
-      nut:    {fail: [broken, misconfig]}
+      thread: {}
+      body: {}
+      oring: {}
+      grip: {}
+      nut: {}
 
   joint.c25bf34:
     interfaces: [c25, bf34]
     items:
-      nut:    {fail: [broken, misconfig]}
-      grip:   {fail: [broken, misconfig]}
-      oring:  {material: rubber, fail: [broken, misconfig]}
-      body:   {fail: [broken]}
-      thread: {fail: [broken, misconfig]}
+      nut: {}
+      grip: {}
+      oring: {}
+      body: {}
+      thread: {}
 
   joint.sm1bm1:
     material: brass
     interfaces: [sm1, bm1]
     items:
-      swivel_nut: {fail: [broken, misconfig]}
-      body:       {fail: [broken]}
-      thread:     {fail: [broken, misconfig]}
+      swivel_nut: {}
+      body: {}
+      thread: {}
 
   joint.sm1c16:
     material: brass
     interfaces: [sm1, c16]
     items:
-      swivel_nut: {fail: [broken, misconfig]}
-      body:       {fail: [broken]}
-      oring:      {material: rubber, fail: [broken, misconfig]}
-      grip:       {fail: [broken, misconfig]}
-      nut:        {fail: [broken, misconfig]}
+      swivel_nut: {}
+      body: {}
+      oring: {}
+      grip: {}
+      nut: {}
 
 
   joint.sj34x12:
@@ -321,28 +338,25 @@ items:
     k: 0.9
     interfaces: [c25, c25, c25]
     items:
-      nut:   {fail: [broken, misconfig], count: 3}
-      grip:  {fail: [broken, misconfig], count: 3}
-      oring: {material: rubber, fail: [broken, misconfig], count: 3}
-      body:  {fail: [broken]}
+      nut: {count: 3}
+      grip: {count: 3}
+      oring: {count: 3}
+      body: {}
 
   joint.tee_c25bf34:
     price_eur: 10
     bends: 1
     k: 0.9
-    material: plastic
     interfaces: [c25, bf34, c25]
     items:
-      nut:    {fail: [broken, misconfig], count: 2}
-      grip:   {fail: [broken, misconfig], count: 2}
-      oring:  {material: rubber, fail: [broken, misconfig], count: 2}
-      thread: {fail: [broken, misconfig]}
-      body:   {fail: [broken]}
+      nut: {count: 2}
+      grip: {count: 2}
+      oring: {count: 2}
+      thread: {}
+      body: {}
 
   hose.ldpe16:
     material: LDPE
-    roughness_mm: 0.0015
-    hz_c: 150
     od_mm: 16
     wall_mm: 2
     id_mm: 12
@@ -350,8 +364,6 @@ items:
 
   hose.ldpe25:
     material: LDPE
-    roughness_mm: 0.0015
-    hz_c: 150
     od_mm: 25
     wall_mm: 2.7
     id_mm: 19.6
@@ -359,8 +371,6 @@ items:
 
   hose.ldpe32:
     material: LDPE
-    roughness_mm: 0.0015
-    hz_c: 150
     od_mm: 32
     wall_mm: 3
     id_mm: 26
@@ -404,20 +414,20 @@ items:
         drive: body/impeller
         fail: [broken]
         items:
-          line:    {to: motor/winding, fail: [broken, misconfig]}
-          winding: {to: motor/neutral, material: copper, fail: [broken]}
+          line: {to: motor/winding}
+          winding: {to: motor/neutral, material: copper}
           capacitor: {condition: [motor/winding], fail: [broken]}
           thermal_protector: {condition: [motor/winding], fail: [broken, misconfig]}
-          neutral: {fail: [broken, misconfig]}
-          earth:   {fail: [broken]}
+          neutral: {}
+          earth: {}
 
   source.socket:
     installed: 2020-08
     interfaces: [ac_line, ac_neutral, ac_earth]
     items:
-      line:    {fail: [broken]}
+      line: {fail: [broken]}
       neutral: {fail: [broken]}
-      earth:   {fail: [broken]}
+      earth: {}
 
   source.well:
     installed: 1713-01
@@ -436,9 +446,9 @@ items:
         fail: [broken]
         material: plastic
         items:
-          seat:   {fail: [broken, clogged]}
-          thread: {fail: [broken, misconfig]}
-          nut:    {fail: [broken, misconfig]}
+          seat: {}
+          thread: {}
+          nut: {}
           upstream_chamber:   {feature: true}
           downstream_chamber: {feature: true}
       diaphragm:
@@ -446,7 +456,7 @@ items:
         fail: [broken]
         material: rubber
         items:
-          spring:       {drive: diaphragm, material: stainless steel, fail: [broken]}
+          spring: {drive: diaphragm, material: stainless steel}
           metering_port: {to: bonnet/chamber, feature: true, fail: [clogged]}
       bonnet:
         fail: [broken, misconfig]
@@ -465,7 +475,7 @@ items:
           exhaust:  {feature: true, fail: [clogged]}
           pilot_seat: {feature: true}
           24v_1:    {to: solenoid/coil, fail: [broken]}
-          coil:     {ohm: [20, 60], drive: solenoid/plunger, material: copper, fail: [broken]}
+          coil: {ohm: [20, 60], drive: solenoid/plunger, material: copper}
           24v_2:    {fail: [broken]}
           plunger_spring: {drive: solenoid/plunger, material: stainless steel, fail: [broken]}
           solenoid_oring: {material: rubber, fail: [broken, misconfig]}
@@ -481,7 +491,7 @@ items:
       body:
         fail: [broken]
         items:
-          seat:      {fail: [broken, clogged]}
+          seat: {}
           ball:      {drive: body/seat, fail: [broken, misconfig]}
           stem:      {drive: body/ball, fail: [broken]}
           stem_oring: {seal: body/stem, material: rubber, fail: [broken, misconfig]}
@@ -490,9 +500,9 @@ items:
   wiring.230v:
     interfaces: [ac_line, ac_neutral, ac_earth, ac_line, ac_neutral, ac_earth]
     items:
-      line:    {fail: [broken, misconfig]}
-      neutral: {fail: [broken, misconfig]}
-      earth:   {fail: [broken, misconfig]}
+      line: {}
+      neutral: {}
+      earth: {fail: [broken, misconfig]}
 
   wiring.24v:
     interfaces: [com_24v, sig_24v, sig_24v, sig_24v, sig_24v]
@@ -500,13 +510,13 @@ items:
       tube:
         fail: [broken, misconfig]
         items:
-          common:   {fail: [broken, misconfig]}
+          common: {}
           signal:   {fail: [broken, misconfig], count: 4}
 
   wiring.common:
     interfaces: [com_24v, com_24v]
     items:
-      common: {fail: [broken, misconfig]}
+      common: {}
 
 water:
   W1_source.well:            {to: [W1_joint.strainer], h_m: 5.5}
