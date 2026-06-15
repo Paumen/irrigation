@@ -640,12 +640,12 @@ electrical:
   Z3_valve.auto: {to: [O1_wiring.splice_6]}
   Z5_valve.auto: {to: [O1_wiring.splice_7]}
   Z4_valve.auto: {to: [O1_wiring.splice_8]}
-  O1_wiring.splice_5: {to: [D1_wiring.common_1]}   # common-side: onto the in-box common bus
-  D1_wiring.common_1: {to: [O1_wiring.splice_6]}
-  O1_wiring.splice_6: {to: [D1_wiring.common_2]}
-  D1_wiring.common_2: {to: [O1_wiring.splice_7]}
-  O1_wiring.splice_7: {to: [D1_wiring.common_3]}
-  D1_wiring.common_3: {to: [O1_wiring.splice_8]}
+  O1_wiring.splice_5: {to: [O1_wiring.common_1]}   # common-side: onto the in-box common bus
+  O1_wiring.common_1: {to: [O1_wiring.splice_6]}
+  O1_wiring.splice_6: {to: [O1_wiring.common_2]}
+  O1_wiring.common_2: {to: [O1_wiring.splice_7]}
+  O1_wiring.splice_7: {to: [O1_wiring.common_3]}
+  O1_wiring.common_3: {to: [O1_wiring.splice_8]}
   O1_wiring.splice_8: {}
 
 pump.jet_curves:

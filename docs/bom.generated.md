@@ -102,12 +102,6 @@ IRRIGATION SYSTEM
 │   │   └─ tube
 │   │       ├─ common
 │   │       └─ signal ×4
-│   ├─ wiring.common
-│   │   └─ common
-│   ├─ wiring.common
-│   │   └─ common
-│   ├─ wiring.common
-│   │   └─ common
 │   ├─ enclosure.valvebox  (valve box jumbo)
 │   │   ├─ enclosure
 │   │   └─ lid
@@ -561,6 +555,12 @@ IRRIGATION SYSTEM
     │       ├─ ac_line ×2
     │       ├─ common ×2
     │       └─ port ×12
+    ├─ wiring.common
+    │   └─ common
+    ├─ wiring.common
+    │   └─ common
+    ├─ wiring.common
+    │   └─ common
     └─ solenoid_wiring
         ├─ wiring.splice
         │   └─ splice
