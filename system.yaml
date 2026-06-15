@@ -36,13 +36,12 @@ interface_types:
   com_24v: {domain: 24v}
 
 # Component metadata defaults, keyed by kind (text before the dot). Applied with
-# lowest precedence: a component's own field always wins. Kept to fields that are
-# uniform within the kind (e.g. every hose shares roughness_mm/hz_c) so factoring
-# them out changes no value, only removes repetition.
+# lowest precedence: a component's own field always wins. Note joint.k: 0.1 is a
+# real hydraulic default — it gives couplings with no explicit k a 0.1 minor loss.
 item_defaults:
-  hose:   {roughness_mm: 0.0015, hz_c: 150}
-  joint:  {material: plastic, installed: 2020-08}
-  wiring: {installed: 2020-08}
+  hose:   {roughness_mm: 0.0015, hz_c: 150, installed: 2020-08, price_eur_m: 2, max_bar: 6}
+  joint:  {material: plastic, installed: 2020-08, price_eur_m: 5, max_bar: 10, k: 0.1}
+  wiring: {installed: 2020-08, price_eur_m: 2}
 
 # Leaf-part body defaults, keyed by part name (a trailing _<n> index is ignored,
 # so washer/washer_2 share one entry). Merged under each part with the part's own
