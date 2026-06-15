@@ -34,19 +34,12 @@ interface_types:
   ac_earth: {domain: 230v}
   sig_24v: {domain: 24v}
   com_24v: {domain: 24v}
-
-# Component metadata defaults, keyed by kind (text before the dot). Applied with
-# lowest precedence: a component's own field always wins. Kept to fields that are
-# uniform within the kind (e.g. every hose shares roughness_mm/hz_c) so factoring
-# them out changes no value, only removes repetition.
+  
 item_defaults:
   hose:   {roughness_mm: 0.0015, hz_c: 150}
   joint:  {material: plastic, installed: 2020-08}
   wiring: {installed: 2020-08}
 
-# Leaf-part body defaults, keyed by part name (a trailing _<n> index is ignored,
-# so washer/washer_2 share one entry). Merged under each part with the part's own
-# fields winning. Lets the ~150 repetitive {fail: [...]} bodies collapse to {}.
 part_defaults:
   body:        {fail: [broken]}
   nut:         {fail: [broken, misconfig]}
