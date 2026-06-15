@@ -36,9 +36,9 @@ interface_types:
   com_24v: {domain: 24v}
   
 item_defaults:
-  hose:   {roughness_mm: 0.0015, hz_c: 150}
-  joint:  {material: plastic, installed: 2020-08}
-  wiring: {installed: 2020-08}
+  hose:   {roughness_mm: 0.0015, hz_c: 150, installed: 2020-08, price_eur_m: 2, max_bar: 6}
+  joint:  {material: plastic, installed: 2020-08, price_eur: 5, max_bar: 10, k: 0.1}
+  wiring: {installed: 2020-08, price_eur_m: 2}
 
 part_defaults:
   body:        {fail: [broken]}
