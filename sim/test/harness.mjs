@@ -136,7 +136,7 @@ const noFaults = compileFaults(model, {});
   // A fault that cuts the controller's 230V feed must turn it off gracefully (grid-socket
   // discovery is static topology and must not depend on the fault set).
   console.log("\nCASE cut controller feed wire (electrical fault)");
-  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } }, new Set(["H1_wiring.230v_1"]));
+  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } }, new Set(["O1_wiring.230v_1"]));
   check(elec.controllerPowered === false, "controller de-powered by the cut feed");
   check(elec.pumpPowered === false, "pump off (relay coil needs the controller)");
   check(elec.zoneEnergised[2] === false, "Z2 de-energised");

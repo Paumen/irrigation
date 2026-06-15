@@ -512,16 +512,16 @@ items:
       common: {}
 
 water:
-  W1_source.well:            {to: [W1_joint.strainer], h_m: 5.6}
-  W1_joint.strainer: {to: [W1_valve.foot], h_m: 4.2}
-  W1_valve.foot:             {to: [W1_joint.hosetail_brass], h_m: 4.8}
-  W1_joint.hosetail_brass: {to: [W1_hose.suction], h_m: 4.2}
-  W1_hose.suction:           {to: [W1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
-  W1_joint.hosetail_plastic: {to: [W1_pump.jet], h_m: 8.2}
-  W1_hose.ldpe32:            {to: [W1_joint.c32c32], l_m: 2, h_m: 8.2}
-  W1_pump.jet:               {to: [W1_joint.bm1c32], h_m: 8.2}
-  W1_joint.bm1c32: {to: [W1_hose.ldpe32], h_m: 8.2}
-  W1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.2}
+  S1_source.well:            {to: [S1_joint.strainer], h_m: 5.6}
+  S1_joint.strainer: {to: [S1_valve.foot], h_m: 4.2}
+  S1_valve.foot:             {to: [S1_joint.hosetail_brass], h_m: 4.8}
+  S1_joint.hosetail_brass: {to: [S1_hose.suction], h_m: 4.2}
+  S1_hose.suction:           {to: [S1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
+  S1_joint.hosetail_plastic: {to: [S1_pump.jet], h_m: 8.2}
+  S1_hose.ldpe32:            {to: [S1_joint.c32c32], l_m: 2, h_m: 8.2}
+  S1_pump.jet:               {to: [S1_joint.bm1c32], h_m: 8.2}
+  S1_joint.bm1c32: {to: [S1_hose.ldpe32], h_m: 8.2}
+  S1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.2}
 
   D1_hose.ldpe32: {to: [D1_joint.c32sm1], l_m: 20, h_m: 8.2}
 
@@ -609,22 +609,22 @@ water:
   Z6_joint.cap: {h_m: 11.2}
 
 electrical:
-  S1_source.socket:   {to: [S1_wiring.230v_1]}
-  S1_wiring.230v_1:   {to: [S1_relay.pumpstart]}
-  S1_relay.pumpstart: {to: [S1_wiring.230v_2]}
-  S1_wiring.230v_2:   {to: [W1_source.socket]}
-  W1_source.socket:   {to: [W1_pump.jet]}
+  S2_source.socket:   {to: [S2_wiring.230v_1]}
+  S2_wiring.230v_1:   {to: [S2_relay.pumpstart]}
+  S2_relay.pumpstart: {to: [S2_wiring.230v_2]}
+  S2_wiring.230v_2:   {to: [S1_source.socket]}
+  S1_source.socket:   {to: [S1_pump.jet]}
 
-  H1_source.socket:   {to: [H1_wiring.230v_1]}
-  H1_wiring.230v_1:   {to: [H1_control.controller]}
-  H1_control.controller:
+  O1_source.socket:   {to: [O1_wiring.230v_1]}
+  O1_wiring.230v_1:   {to: [O1_control.controller]}
+  O1_control.controller:
     to: [D1_wiring.24v/signal_z2, D1_wiring.24v/signal_z3, D1_wiring.24v/signal_z4,
          D1_wiring.24v/signal_z5, D1_wiring.24v/common,
-         S1_wiring.24v/signal, S1_wiring.24v/common]
-  S1_wiring.24v:
+         S2_wiring.24v/signal, S2_wiring.24v/common]
+  S2_wiring.24v:
     to:
-      signal: [S1_relay.pumpstart]
-      common: [S1_relay.pumpstart]
+      signal: [S2_relay.pumpstart]
+      common: [S2_relay.pumpstart]
   D1_wiring.24v:
     to:
       signal_z2: [Z2_wiring.splice]
