@@ -39,8 +39,13 @@ function flattenItems(items, out = {}) {
   return out;
 }
 
-function paramsOf(compDef, instance) {
+function paramsOf(compDef, instance, defaults) {
   const params = {};
+  // item_defaults (keyed by kind) are lowest precedence: compDef and instance win.
+  for (const [k, v] of Object.entries(defaults || {})) {
+    if (v !== null && typeof v === "object") continue;
+    params[k] = v;
+  }
   for (const [k, v] of Object.entries(compDef || {})) {
     if (k === "ports" || k === "items") continue;
     if (v !== null && typeof v === "object") continue;
@@ -73,6 +78,7 @@ export function buildModel(rawGraph, rawCatalog) {
   if (!rawGraph) throw new Error("buildModel: rawGraph is required");
   if (!rawCatalog) throw new Error("buildModel: rawCatalog is required");
   const components = flattenItems(rawGraph.items);
+  const itemDefaults = rawGraph.item_defaults || {};
   const water = rawGraph.water || {};
 
   const flowNodes = new Map();
@@ -87,7 +93,7 @@ export function buildModel(rawGraph, rawCatalog) {
       subkind: subkindOf(type),
       elevation_m: node.h_m,
       to: downstreamOf(node.to),
-      params: paramsOf(compDef, node),
+      params: paramsOf(compDef, node, itemDefaults[type.split(".")[0]]),
     });
   }
 
