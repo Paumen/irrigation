@@ -34,7 +34,7 @@ interface_types:
   ac_earth: {domain: 230v}
   sig_24v: {domain: 24v}
   com_24v: {domain: 24v}
-
+  
 item_defaults:
   hose:   {roughness_mm: 0.0015, hz_c: 150, installed: 2020-08, price_eur_m: 2, max_bar: 6}
   joint:  {material: plastic, installed: 2020-08, price_eur: 5, max_bar: 10, k: 0.1}
@@ -512,11 +512,11 @@ items:
       common: {}
 
 water:
-  W1_source.well:            {to: [W1_joint.strainer], h_m: 5.5}
-  W1_joint.strainer: {to: [W1_valve.foot], h_m: 4.3}
+  W1_source.well:            {to: [W1_joint.strainer], h_m: 5.6}
+  W1_joint.strainer: {to: [W1_valve.foot], h_m: 4.2}
   W1_valve.foot:             {to: [W1_joint.hosetail_brass], h_m: 4.8}
-  W1_joint.hosetail_brass: {to: [W1_hose.suction], h_m: 4.3}
-  W1_hose.suction:           {to: [W1_joint.hosetail_plastic], l_m: 4, h_m: 4.3}
+  W1_joint.hosetail_brass: {to: [W1_hose.suction], h_m: 4.2}
+  W1_hose.suction:           {to: [W1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
   W1_joint.hosetail_plastic: {to: [W1_pump.jet], h_m: 8.2}
   W1_hose.ldpe32:            {to: [W1_joint.c32c32], l_m: 2, h_m: 8.2}
   W1_pump.jet:               {to: [W1_joint.bm1c32], h_m: 8.2}
@@ -532,78 +532,78 @@ water:
     h_m: 11.2
 
   Z2_head.rotor:   {nozzle: "BL4.0", arc: 170, h_m: 11.6, gr: riser_2}
-  Z2_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.5, gr: riser_1}
+  Z2_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.6, gr: riser_1}
   Z2_head.spray_2: {nozzle: "MP2000", arc: 180, h_m: 11.4, gr: riser_3}
   Z2_joint.sm1bm1: {to: [Z2_valve.auto], h_m: 11.2}
   Z2_joint.bm1c25: {to: [Z2_hose.ldpe25_1], h_m: 11.2}
-  Z2_joint.c25bf34_1: {to: [Z2_joint.sj34x12_1], h_m: 10.5, gr: riser_1}
+  Z2_joint.c25bf34_1: {to: [Z2_joint.sj34x12_1], h_m: 10.6, gr: riser_1}
   Z2_joint.c25bf34_2: {to: [Z2_joint.sj34x12_2], h_m: 11.4, gr: riser_3}
-  Z2_joint.sj34x12_1: {to: [Z2_head.spray_1], h_m: 10.5, gr: riser_1}
+  Z2_joint.sj34x12_1: {to: [Z2_head.spray_1], h_m: 10.6, gr: riser_1}
   Z2_joint.sj34x12_2: {to: [Z2_head.spray_2], h_m: 11.4, gr: riser_3}
   Z2_joint.sj34x34:   {to: [Z2_head.rotor], h_m: 11.6, gr: riser_2}
   Z2_joint.tee_1: {to: [Z2_hose.ldpe25_2, Z2_hose.ldpe25_3], h_m: 11.2}
   Z2_joint.tee_c25bf34: {to: [Z2_joint.sj34x34, Z2_hose.ldpe25_4], h_m: 11.4}
   Z2_hose.ldpe25_1: {to: [Z2_joint.tee_1], l_m: 8, h_m: 11.2}
-  Z2_hose.ldpe25_2: {to: [Z2_joint.c25bf34_1], l_m: 8, h_m: 10.7}
+  Z2_hose.ldpe25_2: {to: [Z2_joint.c25bf34_1], l_m: 8, h_m: 10.6}
   Z2_hose.ldpe25_3: {to: [Z2_joint.tee_c25bf34], l_m: 4, h_m: 11.4}
-  Z2_hose.ldpe25_4: {to: [Z2_joint.c25bf34_2], l_m: 18, h_m: 11.3}
+  Z2_hose.ldpe25_4: {to: [Z2_joint.c25bf34_2], l_m: 18, h_m: 11.2}
   Z2_valve.auto:    {to: [Z2_joint.bm1c25], h_m: 11.2}
 
-  Z3_head.rotor_1: {nozzle: "BL2.5", arc: 150, h_m: 11.1, gr: riser_1}
+  Z3_head.rotor_1: {nozzle: "BL2.5", arc: 150, h_m: 11.2, gr: riser_1}
   Z3_head.rotor_2: {nozzle: "BL5.0", arc: 270, h_m: 11.2, gr: riser_2}
   Z3_joint.sm1bm1: {to: [Z3_valve.auto], h_m: 11.2}
   Z3_joint.bm1c25: {to: [Z3_hose.ldpe25_1], h_m: 11.2}
-  Z3_joint.c25bf34_1: {to: [Z3_joint.sj34x34_1], h_m: 11.1, gr: riser_1}
+  Z3_joint.c25bf34_1: {to: [Z3_joint.sj34x34_1], h_m: 11.2, gr: riser_1}
   Z3_joint.c25bf34_2: {to: [Z3_joint.sj34x34_2], h_m: 11.2, gr: riser_2}
-  Z3_joint.sj34x34_1: {to: [Z3_head.rotor_1], h_m: 11.1, gr: riser_1}
+  Z3_joint.sj34x34_1: {to: [Z3_head.rotor_1], h_m: 11.2, gr: riser_1}
   Z3_joint.sj34x34_2: {to: [Z3_head.rotor_2], h_m: 11.2, gr: riser_2}
   Z3_joint.tee: {to: [Z3_hose.ldpe25_2, Z3_hose.ldpe25_3], h_m: 11.2}
   Z3_hose.ldpe25_1: {to: [Z3_joint.tee], l_m: 2, h_m: 11.2}
-  Z3_hose.ldpe25_2: {to: [Z3_joint.c25bf34_1], l_m: 2, h_m: 11.1}
+  Z3_hose.ldpe25_2: {to: [Z3_joint.c25bf34_1], l_m: 2, h_m: 11.2}
   Z3_hose.ldpe25_3: {to: [Z3_joint.c25bf34_2], l_m: 10, h_m: 11.2}
   Z3_valve.auto:    {to: [Z3_joint.bm1c25], h_m: 11.2}
 
   Z5_head.rotor_1: {nozzle: "BL5.0", arc: 270, h_m: 10.2, gr: riser_1}
-  Z5_head.rotor_2: {nozzle: "BL2.5", arc: 180, h_m: 10.5, gr: riser_2}
+  Z5_head.rotor_2: {nozzle: "BL2.5", arc: 180, h_m: 10.6, gr: riser_2}
   Z5_joint.sm1bm1: {to: [Z5_valve.auto], h_m: 11.2}
   Z5_joint.bm1c25: {to: [Z5_hose.ldpe25_1], h_m: 11.2}
   Z5_joint.c25bf34_1: {to: [Z5_joint.sj34x34_1], h_m: 10.2, gr: riser_1}
-  Z5_joint.c25bf34_2: {to: [Z5_joint.sj34x34_2], h_m: 10.5, gr: riser_2}
+  Z5_joint.c25bf34_2: {to: [Z5_joint.sj34x34_2], h_m: 10.6, gr: riser_2}
   Z5_joint.sj34x34_1: {to: [Z5_head.rotor_1], h_m: 10.2, gr: riser_1}
-  Z5_joint.sj34x34_2: {to: [Z5_head.rotor_2], h_m: 10.5, gr: riser_2}
+  Z5_joint.sj34x34_2: {to: [Z5_head.rotor_2], h_m: 10.6, gr: riser_2}
   Z5_joint.tee: {to: [Z5_hose.ldpe25_2, Z5_hose.ldpe25_3], h_m: 10.6}
-  Z5_hose.ldpe25_1: {to: [Z5_joint.tee], l_m: 20, h_m: 10.9}
-  Z5_hose.ldpe25_2: {to: [Z5_joint.c25bf34_1], l_m: 4, h_m: 10.3}
+  Z5_hose.ldpe25_1: {to: [Z5_joint.tee], l_m: 20, h_m: 10.8}
+  Z5_hose.ldpe25_2: {to: [Z5_joint.c25bf34_1], l_m: 4, h_m: 10.2}
   Z5_hose.ldpe25_3: {to: [Z5_joint.c25bf34_2], l_m: 12, h_m: 10.6}
   Z5_valve.auto:    {to: [Z5_joint.bm1c25], h_m: 11.2}
 
-  Z4_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 11.3, gr: riser_1}
+  Z4_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 11.2, gr: riser_1}
   Z4_head.spray_2: {nozzle: "MP1000", arc: 210, h_m: 12.0, gr: riser_2}
   Z4_head.spray_3: {nozzle: "MP2000", arc: 270, h_m: 12.0, gr: riser_3}
-  Z4_head.spray_4: {nozzle: "MP2000", arc: 180, h_m: 11.9, gr: riser_4}
+  Z4_head.spray_4: {nozzle: "MP2000", arc: 180, h_m: 12.0, gr: riser_4}
   Z4_joint.sm1bm1: {to: [Z4_valve.auto], h_m: 11.2}
   Z4_joint.bm1c25: {to: [Z4_hose.ldpe25_1], h_m: 11.2}
-  Z4_joint.c25bf34_1: {to: [Z4_joint.sj34x12_1], h_m: 11.3, gr: riser_1}
+  Z4_joint.c25bf34_1: {to: [Z4_joint.sj34x12_1], h_m: 11.2, gr: riser_1}
   Z4_joint.c25bf34_2: {to: [Z4_joint.sj34x12_3], h_m: 12.0, gr: riser_3}
-  Z4_joint.sj34x12_1: {to: [Z4_head.spray_1], h_m: 11.3, gr: riser_1}
+  Z4_joint.sj34x12_1: {to: [Z4_head.spray_1], h_m: 11.2, gr: riser_1}
   Z4_joint.sj34x12_2: {to: [Z4_head.spray_2], h_m: 12.0, gr: riser_2}
   Z4_joint.sj34x12_3: {to: [Z4_head.spray_3], h_m: 12.0, gr: riser_3}
   Z4_joint.tee_1: {to: [Z4_hose.ldpe25_2, Z4_hose.ldpe25_3], h_m: 11.4}
-  Z4_joint.tee_2: {to: [Z4_hose.ldpe25_4, Z4_hose.ldpe25_5], h_m: 11.7}
+  Z4_joint.tee_2: {to: [Z4_hose.ldpe25_4, Z4_hose.ldpe25_5], h_m: 11.8}
   Z4_joint.tee_3: {to: [Z4_joint.c25bf34_2, Z4_hose.ldpe25_6], h_m: 11.8}
-  Z4_hose.ldpe25_1: {to: [Z4_joint.tee_1], l_m: 10, h_m: 11.3}
-  Z4_hose.ldpe25_2: {to: [Z4_joint.c25bf34_1], l_m: 2, h_m: 11.3}
+  Z4_hose.ldpe25_1: {to: [Z4_joint.tee_1], l_m: 10, h_m: 11.2}
+  Z4_hose.ldpe25_2: {to: [Z4_joint.c25bf34_1], l_m: 2, h_m: 11.2}
   Z4_hose.ldpe25_3: {to: [Z4_joint.tee_2], l_m: 8, h_m: 11.6}
-  Z4_hose.ldpe25_4: {to: [Z4_joint.sj34x12_2], l_m: 6, h_m: 11.9}
+  Z4_hose.ldpe25_4: {to: [Z4_joint.sj34x12_2], l_m: 6, h_m: 11.8}
   Z4_hose.ldpe25_5: {to: [Z4_joint.tee_3], l_m: 20, h_m: 11.8}
-  Z4_hose.ldpe25_6: {to: [Z4_joint.sj34x12_4], l_m: 6, h_m: 11.9}
-  Z4_joint.sj34x12_4: {to: [Z4_head.spray_4], h_m: 11.9, gr: riser_4}
+  Z4_hose.ldpe25_6: {to: [Z4_joint.sj34x12_4], l_m: 6, h_m: 11.8}
+  Z4_joint.sj34x12_4: {to: [Z4_head.spray_4], h_m: 11.8, gr: riser_4}
   Z4_valve.auto:    {to: [Z4_joint.bm1c25], h_m: 11.2}
 
   Z1_joint.sm1c16: {to: [Z1_hose.ldpe16_1], h_m: 11.2}
-  Z1_joint.c16c16: {to: [Z1_hose.ldpe16_2], h_m: 11.7}
-  Z1_hose.ldpe16_1: {to: [Z1_joint.c16c16], l_m: 10, h_m: 11.5}
-  Z1_hose.ldpe16_2: {to: [Z1_valve.manual], l_m: 10, h_m: 12.0}
+  Z1_joint.c16c16: {to: [Z1_hose.ldpe16_2], h_m: 11.6}
+  Z1_hose.ldpe16_1: {to: [Z1_joint.c16c16], l_m: 10, h_m: 11.6}
+  Z1_hose.ldpe16_2: {to: [Z1_valve.manual], l_m: 10, h_m: 12.2}
   Z1_valve.manual:  {h_m: 12.2}
 
   Z6_joint.cap: {h_m: 11.2}
