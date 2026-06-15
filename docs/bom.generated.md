@@ -123,23 +123,6 @@ IRRIGATION SYSTEM
 │       │   └─ swivel_nut
 │       └─ joint.cap
 ├─ 3. DELIVER
-│   ├─ solenoid_wiring
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   ├─ wiring.splice
-│   │   │   └─ splice
-│   │   └─ wiring.splice
-│   │       └─ splice
 │   ├─ Z1
 │   │   ├─ joint.sm1c16
 │   │   │   ├─ swivel_nut
@@ -555,16 +538,33 @@ IRRIGATION SYSTEM
     │   ├─ line
     │   ├─ neutral
     │   └─ earth
-    └─ control.controller  (RainMachine HD-12 TOUCH)
-        ├─ line
-        ├─ neutral
-        ├─ screen
-        ├─ transformer
-        │   ├─ line
-        │   ├─ neutral
-        │   └─ winding
-        └─ terminals
-            ├─ ac_line ×2
-            ├─ common ×2
-            └─ port ×12
+    ├─ control.controller  (RainMachine HD-12 TOUCH)
+    │   ├─ line
+    │   ├─ neutral
+    │   ├─ screen
+    │   ├─ transformer
+    │   │   ├─ line
+    │   │   ├─ neutral
+    │   │   └─ winding
+    │   └─ terminals
+    │       ├─ ac_line ×2
+    │       ├─ common ×2
+    │       └─ port ×12
+    └─ solenoid_wiring
+        ├─ wiring.splice
+        │   └─ splice
+        ├─ wiring.splice
+        │   └─ splice
+        ├─ wiring.splice
+        │   └─ splice
+        ├─ wiring.splice
+        │   └─ splice
+        ├─ wiring.splice
+        │   └─ splice
+        ├─ wiring.splice
+        │   └─ splice
+        ├─ wiring.splice
+        │   └─ splice
+        └─ wiring.splice
+            └─ splice
 ```
