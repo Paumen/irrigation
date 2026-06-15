@@ -44,9 +44,7 @@ part_defaults:
   body:        {fail: [broken]}
   nut:         {fail: [broken, misconfig]}
   grip:        {fail: [broken, misconfig]}
-  thread:      {fail: [broken, misconfig]}
   swivel_nut:  {fail: [broken, misconfig]}
-  barb:        {fail: [broken, misconfig]}
   common:      {fail: [broken, misconfig]}
   line:        {fail: [broken, misconfig]}
   neutral:     {fail: [broken, misconfig]}
@@ -115,7 +113,6 @@ items:
       joint.bm1c32:
         interfaces: [bm1, c32]
         items:
-          thread: {}
           body: {}
           oring: {}
           grip: {}
@@ -209,21 +206,17 @@ items:
     price_eur: 25
     model: "Hunter I-20-04-SS"
     interfaces: [bf34]
+    material: plastic
     items:
-      thread: {to: [body/riser, body/check_valve]}
-      body:
-        fail: [broken]
-        material: plastic
-        items:
-          check_valve: {}
-          riser:         {to: body/filter, material: stainless steel}
-          riser_seal:    {seal: body/riser, material: rubber, fail: [broken]}
-          retract_spring: {drive: body/riser, material: stainless steel, fail: [broken]}
-          gear:          {drive: body/riser, material: plastic, fail: [broken, clogged]}
-          filter:        {to: body/nozzle, fail: [broken, clogged]}
-          nozzle: {}
-          arc:           {condition: [body/nozzle], fail: [broken, misconfig]}
-          flo_stop:      {fail: [broken, misconfig]}
+      check_valve: {}
+      riser:         {to: filter, material: stainless steel}
+      riser_seal:    {seal: riser, material: rubber, fail: [broken]}
+      retract_spring: {drive: riser, material: stainless steel, fail: [broken]}
+      gear:          {drive: riser, material: plastic, fail: [broken, clogged]}
+      filter:        {to: nozzle, fail: [broken, clogged]}
+      nozzle: {}
+      arc:           {condition: [nozzle], fail: [broken, misconfig]}
+      flo_stop:      {fail: [broken, misconfig]}
 
   head.spray:
     installed: 2020-08
@@ -231,20 +224,16 @@ items:
     regulated_bar: 2.8
     model: "Hunter Pro-Spray PRS40"
     interfaces: [bf12]
+    material: plastic
     items:
-      thread: {to: [body/regulator, body/check_valve, body/cap]}
-      body:
-        fail: [broken]
-        material: plastic
-        items:
-          cap:            {fail: [broken]}
-          check_valve: {}
-          regulator:      {to: body/riser, fail: [broken]}
-          riser:          {to: body/nozzle}
-          wiper_seal:     {seal: body/riser, material: rubber, fail: [broken]}
-          spring: {drive: body/riser, material: stainless steel}
-          flush_plug:     {seal: body/nozzle, fail: [broken, misconfig]}
-          nozzle: {}
+      cap:            {fail: [broken]}
+      check_valve: {}
+      regulator:      {to: riser, fail: [broken]}
+      riser:          {to: nozzle}
+      wiper_seal:     {seal: riser, material: rubber, fail: [broken]}
+      spring: {drive: riser, material: stainless steel}
+      flush_plug:     {seal: nozzle, fail: [broken, misconfig]}
+      nozzle: {}
 
   enclosure.valvebox:
     installed: 2020-08
@@ -267,7 +256,6 @@ items:
   joint.bm1c25:
     interfaces: [bm1, c25]
     items:
-      thread: {}
       body: {}
       oring: {}
       grip: {}
@@ -280,7 +268,6 @@ items:
       grip: {}
       oring: {}
       body: {}
-      thread: {}
 
   joint.sm1bm1:
     material: brass
@@ -288,7 +275,6 @@ items:
     items:
       swivel_nut: {}
       body: {}
-      thread: {}
 
   joint.sm1c16:
     material: brass
@@ -334,7 +320,6 @@ items:
       nut: {count: 2}
       grip: {count: 2}
       oring: {count: 2}
-      thread: {}
       body: {}
 
   hose.ldpe16:
@@ -389,7 +374,6 @@ items:
           body_oring: {seal: body, material: rubber, fail: [broken, misconfig]}
           priming_cap: {fail: [broken, misconfig]}
           priming_cap_oring: {seal: body/priming_cap, material: rubber, fail: [broken, misconfig]}
-          throat:      {feature: true}
           recirculation_passage: {feature: true}
           priming_chamber:     {feature: true}
       motor:
@@ -429,8 +413,6 @@ items:
         material: plastic
         items:
           seat: {}
-          thread: {}
-          nut: {}
           upstream_chamber:   {feature: true}
           downstream_chamber: {feature: true}
       diaphragm:
@@ -470,14 +452,11 @@ items:
     material: plastic
     interfaces: [bf12, bf12]
     items:
-      body:
-        fail: [broken]
-        items:
-          seat: {}
-          ball:      {drive: body/seat, fail: [broken, misconfig]}
-          stem:      {drive: body/ball, fail: [broken]}
-          stem_oring: {seal: body/stem, material: rubber, fail: [broken, misconfig]}
-          handle:    {drive: body/stem, fail: [broken, misconfig]}
+      seat: {}
+      ball:      {drive: seat, fail: [broken, misconfig]}
+      stem:      {drive: ball, fail: [broken]}
+      stem_oring: {seal: stem, material: rubber, fail: [broken, misconfig]}
+      handle:    {drive: stem, fail: [broken, misconfig]}
 
   wiring.230v:
     interfaces: [ac_line, ac_neutral, ac_earth, ac_line, ac_neutral, ac_earth]
@@ -566,34 +545,34 @@ water:
   Z5_hose.ldpe25_3: {to: [Z5_joint.c25bf34_2], l_m: 12, h_m: 10.6}
   Z5_valve.auto:    {to: [Z5_joint.bm1c25], h_m: 11.2}
 
-  Z4_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 11.2, gr: riser_1}
+  Z4_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 12.0, gr: riser_1}
   Z4_head.spray_2: {nozzle: "MP1000", arc: 210, h_m: 12.0, gr: riser_2}
   Z4_head.spray_3: {nozzle: "MP2000", arc: 270, h_m: 12.0, gr: riser_3}
   Z4_head.spray_4: {nozzle: "MP2000", arc: 180, h_m: 12.0, gr: riser_4}
   Z4_joint.sm1bm1: {to: [Z4_valve.auto], h_m: 11.2}
   Z4_joint.bm1c25: {to: [Z4_hose.ldpe25_1], h_m: 11.2}
-  Z4_joint.c25bf34_1: {to: [Z4_joint.sj34x12_1], h_m: 11.2, gr: riser_1}
+  Z4_joint.c25bf34_1: {to: [Z4_joint.sj34x12_1], h_m: 12.0, gr: riser_1}
   Z4_joint.c25bf34_2: {to: [Z4_joint.sj34x12_3], h_m: 12.0, gr: riser_3}
-  Z4_joint.sj34x12_1: {to: [Z4_head.spray_1], h_m: 11.2, gr: riser_1}
+  Z4_joint.sj34x12_1: {to: [Z4_head.spray_1], h_m: 12.0, gr: riser_1}
   Z4_joint.sj34x12_2: {to: [Z4_head.spray_2], h_m: 12.0, gr: riser_2}
   Z4_joint.sj34x12_3: {to: [Z4_head.spray_3], h_m: 12.0, gr: riser_3}
   Z4_joint.tee_1: {to: [Z4_hose.ldpe25_2, Z4_hose.ldpe25_3], h_m: 11.4}
-  Z4_joint.tee_2: {to: [Z4_hose.ldpe25_4, Z4_hose.ldpe25_5], h_m: 11.8}
-  Z4_joint.tee_3: {to: [Z4_joint.c25bf34_2, Z4_hose.ldpe25_6], h_m: 11.8}
+  Z4_joint.tee_2: {to: [Z4_hose.ldpe25_4, Z4_hose.ldpe25_5], h_m: 12.0}
+  Z4_joint.tee_3: {to: [Z4_joint.c25bf34_2, Z4_hose.ldpe25_6], h_m: 12.0}
   Z4_hose.ldpe25_1: {to: [Z4_joint.tee_1], l_m: 10, h_m: 11.2}
-  Z4_hose.ldpe25_2: {to: [Z4_joint.c25bf34_1], l_m: 2, h_m: 11.2}
-  Z4_hose.ldpe25_3: {to: [Z4_joint.tee_2], l_m: 8, h_m: 11.6}
-  Z4_hose.ldpe25_4: {to: [Z4_joint.sj34x12_2], l_m: 6, h_m: 11.8}
-  Z4_hose.ldpe25_5: {to: [Z4_joint.tee_3], l_m: 20, h_m: 11.8}
-  Z4_hose.ldpe25_6: {to: [Z4_joint.sj34x12_4], l_m: 6, h_m: 11.8}
-  Z4_joint.sj34x12_4: {to: [Z4_head.spray_4], h_m: 11.8, gr: riser_4}
+  Z4_hose.ldpe25_2: {to: [Z4_joint.c25bf34_1], l_m: 2, h_m: 12.0}
+  Z4_hose.ldpe25_3: {to: [Z4_joint.tee_2], l_m: 8, h_m: 12.0}
+  Z4_hose.ldpe25_4: {to: [Z4_joint.sj34x12_2], l_m: 6, h_m: 12.0}
+  Z4_hose.ldpe25_5: {to: [Z4_joint.tee_3], l_m: 20, h_m: 12.0}
+  Z4_hose.ldpe25_6: {to: [Z4_joint.sj34x12_4], l_m: 6, h_m: 12.0}
+  Z4_joint.sj34x12_4: {to: [Z4_head.spray_4], h_m: 12.0, gr: riser_4}
   Z4_valve.auto:    {to: [Z4_joint.bm1c25], h_m: 11.2}
 
   Z1_joint.sm1c16: {to: [Z1_hose.ldpe16_1], h_m: 11.2}
-  Z1_joint.c16c16: {to: [Z1_hose.ldpe16_2], h_m: 11.6}
-  Z1_hose.ldpe16_1: {to: [Z1_joint.c16c16], l_m: 10, h_m: 11.6}
-  Z1_hose.ldpe16_2: {to: [Z1_valve.manual], l_m: 10, h_m: 12.2}
-  Z1_valve.manual:  {h_m: 12.2}
+  Z1_joint.c16c16: {to: [Z1_hose.ldpe16_2], h_m: 12.0}
+  Z1_hose.ldpe16_1: {to: [Z1_joint.c16c16], l_m: 10, h_m: 12.0}
+  Z1_hose.ldpe16_2: {to: [Z1_valve.manual], l_m: 10, h_m: 12.0}
+  Z1_valve.manual:  {h_m: 12.0}
 
   Z6_joint.cap: {h_m: 11.2}
 
