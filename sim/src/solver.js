@@ -16,7 +16,7 @@ import {
 import { buildTopology } from "./network.js";
 import { toInp } from "./inp.js";
 import { solveInp } from "./epanet-runner.js";
-import { outletDemandAt, outletTableMin, streamEmitterCoeff } from "./outlets.js";
+import { outletDemandAt, outletTableMin, streamEmitterCoeff, outletThrowAt, outletPrecipMmHr } from "./outlets.js";
 import { emptyEffects } from "./faults.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -204,12 +204,22 @@ export function solveSteady(model, state, elec, hyd, faults) {
 function finalize(model, state, fx, pumpOn, valveOpen, reachable, res, topo, commandedNotOpening, iters, converged, valvesFrozen) {
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   const demands = new Map();
+  const throws = new Map(); // outletId -> throw radius (m) at its solved inlet pressure
+  const precip = new Map(); // outletId -> single-head application rate (mm/hr)
   let outSum = 0;
   for (const o of outlets) {
     const ep = epOf(o.id);
     const q = reachable.has(o.id) ? res.demand[ep] || 0 : 0; // EPANET demand includes emitter outflow
     demands.set(o.id, q);
     outSum += q;
+    if (reachable.has(o.id) && q > 0) {
+      const t = outletThrowAt(o, res.pressureBar[ep] ?? 0, model.curves);
+      if (t != null) {
+        throws.set(o.id, t);
+        const pr = outletPrecipMmHr(q, o.params.arc, t);
+        if (pr != null) precip.set(o.id, pr);
+      }
+    }
   }
   const leakFlows = new Map();
   for (const [nodeId] of fx.leaks) {
@@ -226,6 +236,8 @@ function finalize(model, state, fx, pumpOn, valveOpen, reachable, res, topo, com
     headM: res.headM,
     flow: res.flow,
     demands,
+    throws,
+    precip,
     leakFlows,
     valveOpen,
     commandedNotOpening,

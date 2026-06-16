@@ -4,7 +4,7 @@ import { createHydraulics } from "../src/epanet-runner.js";
 import { solveSteady } from "../src/solver.js";
 import { solveElectrical } from "../src/electrical.js";
 import { compileFaults } from "../src/faults.js";
-import { outletDemandAt, interp } from "../src/outlets.js";
+import { outletDemandAt, outletThrowAt, interp } from "../src/outlets.js";
 import { SPRAY_CLAMP_BAR } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -30,13 +30,15 @@ function check(cond, msg) {
 }
 
 function table(model, r) {
-  console.log("  outlet                  reachable  inlet(bar)  flow(m3/h)");
+  console.log("  outlet                  reachable  inlet(bar)  flow(m3/h)  throw(m)  precip(mm/hr)");
   for (const o of [...model.flowNodes.values()].filter((n) => n.role === "outlet")) {
     const p = r.pressureBar[epOf(o.id)];
     const q = r.demands.get(o.id);
     const re = r.reachable.has(o.id);
+    const t = r.throws.get(o.id);
+    const pr = r.precip.get(o.id);
     console.log(
-      `   ${o.id.padEnd(22)} ${String(re).padEnd(9)} ${(re && Number.isFinite(p) ? p.toFixed(3) : "—").padStart(9)} ${q.toFixed(4).padStart(11)}`,
+      `   ${o.id.padEnd(22)} ${String(re).padEnd(9)} ${(re && Number.isFinite(p) ? p.toFixed(3) : "—").padStart(9)} ${q.toFixed(4).padStart(11)} ${(t != null ? t.toFixed(1) : "—").padStart(8)} ${(pr != null ? pr.toFixed(1) : "—").padStart(13)}`,
     );
   }
   console.log(
@@ -82,6 +84,21 @@ const noFaults = compileFaults(model, {});
     const q = r.demands.get(id);
     const expect = outletDemandAt(o, p, model.curves);
     check(Math.abs(q - expect) < 5e-3, `${id} flow ${q.toFixed(4)} matches catalog ${expect.toFixed(4)} at ${p.toFixed(3)} bar`);
+  }
+  {
+    const o = model.flowNodes.get("Z2_head.rotor");
+    const p = r.pressureBar[epOf("Z2_head.rotor")];
+    const expect = outletThrowAt(o, p, model.curves);
+    const got = r.throws.get("Z2_head.rotor");
+    check(got != null && Math.abs(got - expect) < 1e-6, `Z2_head.rotor throw ${got?.toFixed(1)} m matches catalog ${expect.toFixed(1)} m at ${p.toFixed(3)} bar`);
+    // MP spray: throw at the PRS40-regulated pressure, precip = flow / wetted sector
+    const s = model.flowNodes.get("Z2_head.spray_1");
+    const sp = r.pressureBar[epOf("Z2_head.spray_1")];
+    const st = r.throws.get("Z2_head.spray_1");
+    const sExpect = outletThrowAt(s, sp, model.curves);
+    check(st != null && Math.abs(st - sExpect) < 1e-6, `Z2_head.spray_1 (MP3000) throw ${st?.toFixed(1)} m at ${Math.min(sp, SPRAY_CLAMP_BAR).toFixed(2)} bar (regulated)`);
+    const sPr = r.precip.get("Z2_head.spray_1");
+    check(sPr != null && sPr > 0, `Z2_head.spray_1 precip ${sPr?.toFixed(1)} mm/hr is modeled`);
   }
   const sprayP = r.pressureBar[epOf("Z2_head.spray_1")];
   if (sprayP > SPRAY_CLAMP_BAR) {
