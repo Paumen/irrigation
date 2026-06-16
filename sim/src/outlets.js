@@ -45,16 +45,29 @@ export function outletDemandAt(outlet, p_bar, curves, { noClamp = false } = {}) 
   return interp(pressures, row, lookup);
 }
 
-// Throw radius (m) for a rotor outlet at its inlet pressure, from the catalog radius_m table.
-// Sprays/streams have no modeled radius, so they return null.
+// Throw radius (m) for an outlet at its inlet pressure, from the catalog radius_m tables.
+// Rotors read head.rotor/nozzle by nozzle size; sprays read head.spray/nozzle by model
+// (MP radius is matched-precip, so independent of arc) at the PRS40-regulated pressure.
+// Streams have no modeled radius and return null.
 export function outletThrowAt(outlet, p_bar, curves) {
-  if (outlet.subkind !== "rotor") return null;
-  const radii = curves.nozzleI20.radius_m;
-  if (!radii) return null;
-  const size = String(outlet.params.nozzle).split(/\s+/)[0];
-  const row = radii[size];
-  if (!row) return null;
-  return interp(curves.nozzleI20.pressure_bar, row, p_bar);
+  if (outlet.subkind === "rotor") {
+    const row = curves.nozzleI20.radius_m?.[String(outlet.params.nozzle).split(/\s+/)[0]];
+    return row ? interp(curves.nozzleI20.pressure_bar, row, p_bar) : null;
+  }
+  if (outlet.subkind === "spray") {
+    const row = curves.nozzleMp.radius_m?.[String(outlet.params.nozzle)];
+    if (!row) return null;
+    return interp(curves.nozzleMp.pressure_bar, row, Math.min(p_bar, SPRAY_CLAMP_BAR));
+  }
+  return null;
+}
+
+// Single-head application rate (mm/hr) = flow spread over the head's wetted sector.
+// arc in degrees, throw in m, q in m3/h. 1 L over 1 m2 = 1 mm.
+export function outletPrecipMmHr(q_m3h, arc_deg, throw_m) {
+  if (!throw_m || !arc_deg || q_m3h <= 0) return null;
+  const area = (arc_deg / 360) * Math.PI * throw_m * throw_m;
+  return area > 0 ? (q_m3h * 1000) / area : null;
 }
 
 // Below pMin_bar the solver runs the outlet as an emitter; the table cannot extrapolate toward 0 bar.

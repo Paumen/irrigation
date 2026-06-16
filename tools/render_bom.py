@@ -111,16 +111,35 @@ for a in ASSEMBLIES:
 claimed = {i for t, p in TYPE_PATH.items() if p for i in TYPE_INST.get(t, [])}
 
 # ---- attrs / quantity helpers ----------------------------------------------
-# Nominal rotor throw at 3.0 bar from the catalog radius_m table (sprays have no
-# modeled radius). Static figure for the parts list; the sim computes the actual
-# throw from each head's solved inlet pressure.
-_ROTOR_RADIUS = (G.get("head.rotor/nozzle") or {}).get("radius_m", {})
-def nominal_throw_m(nozzle):
-    row = _ROTOR_RADIUS.get(str(nozzle).split()[0])
-    if not row:
+# Nominal head throw at 2.8 bar from the catalog radius_m tables — rotors keyed by
+# nozzle size (head.rotor/nozzle), sprays by MP model (head.spray/nozzle). Static
+# figure for the parts list; the sim computes the actual throw from each head's
+# solved inlet pressure. 2.8 bar is the MP PRS40-regulated pressure and is
+# representative for the rotors in this system too.
+_NOMINAL_BAR = 2.8
+_ROTOR = G.get("head.rotor/nozzle") or {}
+_SPRAY = G.get("head.spray/nozzle") or {}
+def _interp(xs, ys, x):
+    pts = [(xs[i], ys[i]) for i in range(len(xs)) if ys[i] is not None]
+    if not pts:
         return None
-    pressures = G["head.rotor/nozzle"]["pressure_bar"]
-    return row[pressures.index(3.0)] if 3.0 in pressures else row[len(row) // 2]
+    if x <= pts[0][0]:
+        return pts[0][1]
+    if x >= pts[-1][0]:
+        return pts[-1][1]
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        if x <= x1:
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+    return pts[-1][1]
+def nominal_throw_m(nozzle):
+    n = str(nozzle)
+    rotor_row = _ROTOR.get("radius_m", {}).get(n.split()[0])
+    if rotor_row:
+        return _interp(_ROTOR["pressure_bar"], rotor_row, _NOMINAL_BAR)
+    spray_row = _SPRAY.get("radius_m", {}).get(n)
+    if spray_row:
+        return _interp(_SPRAY["pressure_bar"], spray_row, _NOMINAL_BAR)
+    return None
 
 def attr_suffix(inst):
     a = INST[inst]["attrs"]
@@ -134,7 +153,7 @@ def attr_suffix(inst):
     if a.get("nozzle"):
         t = nominal_throw_m(a["nozzle"])
         if t is not None:
-            bits.append(f"~{t:g} m throw @3 bar")
+            bits.append(f"~{t:.1f} m throw @2.8 bar")
     return f"  ({', '.join(bits)})" if bits else ""
 
 def line(prefix, last, text, out):

@@ -117,7 +117,7 @@ IRRIGATION SYSTEM
 │   │   ├─ riser_1
 │   │   │   ├─ joint.c25bf34
 │   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   └─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │   └─ head.spray  (MP3000, 270°, ~9.1 m throw @2.8 bar)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ cap
 │   │   │       ├─ check_valve
 │   │   │       ├─ regulator
@@ -130,7 +130,7 @@ IRRIGATION SYSTEM
 │   │   ├─ joint.tee_c25bf34
 │   │   ├─ riser_2
 │   │   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   │   └─ head.rotor  (BL4.0, 170°, ~12.2 m throw @3 bar)  (Hunter I-20-04-SS)
+│   │   │   └─ head.rotor  (BL4.0, 170°, ~12.1 m throw @2.8 bar)  (Hunter I-20-04-SS)
 │   │   │       ├─ check_valve
 │   │   │       ├─ riser
 │   │   │       ├─ riser_seal
@@ -144,7 +144,7 @@ IRRIGATION SYSTEM
 │   │   └─ riser_3
 │   │       ├─ joint.c25bf34
 │   │       ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │       └─ head.spray  (MP2000, 180°)  (Hunter Pro-Spray PRS40)
+│   │       └─ head.spray  (MP2000, 180°, ~6.1 m throw @2.8 bar)  (Hunter Pro-Spray PRS40)
 │   │           ├─ cap
 │   │           ├─ check_valve
 │   │           ├─ regulator
@@ -185,7 +185,7 @@ IRRIGATION SYSTEM
 │   │   ├─ riser_1
 │   │   │   ├─ joint.c25bf34
 │   │   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   │   └─ head.rotor  (BL2.5, 150°, ~10.7 m throw @3 bar)  (Hunter I-20-04-SS)
+│   │   │   └─ head.rotor  (BL2.5, 150°, ~10.7 m throw @2.8 bar)  (Hunter I-20-04-SS)
 │   │   │       ├─ check_valve
 │   │   │       ├─ riser
 │   │   │       ├─ riser_seal
@@ -199,7 +199,7 @@ IRRIGATION SYSTEM
 │   │   └─ riser_2
 │   │       ├─ joint.c25bf34
 │   │       ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │       └─ head.rotor  (BL5.0, 270°, ~12.8 m throw @3 bar)  (Hunter I-20-04-SS)
+│   │       └─ head.rotor  (BL5.0, 270°, ~12.4 m throw @2.8 bar)  (Hunter I-20-04-SS)
 │   │           ├─ check_valve
 │   │           ├─ riser
 │   │           ├─ riser_seal
@@ -241,7 +241,7 @@ IRRIGATION SYSTEM
 │   │   ├─ riser_1
 │   │   │   ├─ joint.c25bf34
 │   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   └─ head.spray  (MP3000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │   └─ head.spray  (MP3000, 270°, ~9.1 m throw @2.8 bar)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ cap
 │   │   │       ├─ check_valve
 │   │   │       ├─ regulator
@@ -255,7 +255,7 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (6 m)
 │   │   ├─ riser_2
 │   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   └─ head.spray  (MP1000, 210°)  (Hunter Pro-Spray PRS40)
+│   │   │   └─ head.spray  (MP1000, 210°, ~4.1 m throw @2.8 bar)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ cap
 │   │   │       ├─ check_valve
 │   │   │       ├─ regulator
@@ -269,7 +269,7 @@ IRRIGATION SYSTEM
 │   │   ├─ riser_3
 │   │   │   ├─ joint.c25bf34
 │   │   │   ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │   │   └─ head.spray  (MP2000, 270°)  (Hunter Pro-Spray PRS40)
+│   │   │   └─ head.spray  (MP2000, 270°, ~6.1 m throw @2.8 bar)  (Hunter Pro-Spray PRS40)
 │   │   │       ├─ cap
 │   │   │       ├─ check_valve
 │   │   │       ├─ regulator
@@ -281,7 +281,7 @@ IRRIGATION SYSTEM
 │   │   ├─ hose.ldpe25  (6 m)
 │   │   └─ riser_4
 │   │       ├─ joint.sj34x12  (Hunter sj 3/4x1/2)
-│   │       └─ head.spray  (MP3000, 180°)  (Hunter Pro-Spray PRS40)
+│   │       └─ head.spray  (MP3000, 180°, ~9.1 m throw @2.8 bar)  (Hunter Pro-Spray PRS40)
 │   │           ├─ cap
 │   │           ├─ check_valve
 │   │           ├─ regulator
@@ -322,7 +322,7 @@ IRRIGATION SYSTEM
 │       ├─ riser_1
 │       │   ├─ joint.c25bf34
 │       │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│       │   └─ head.rotor  (BL5.0, 270°, ~12.8 m throw @3 bar)  (Hunter I-20-04-SS)
+│       │   └─ head.rotor  (BL5.0, 270°, ~12.4 m throw @2.8 bar)  (Hunter I-20-04-SS)
 │       │       ├─ check_valve
 │       │       ├─ riser
 │       │       ├─ riser_seal
@@ -336,7 +336,7 @@ IRRIGATION SYSTEM
 │       └─ riser_2
 │           ├─ joint.c25bf34
 │           ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│           └─ head.rotor  (BL2.5, 180°, ~10.7 m throw @3 bar)  (Hunter I-20-04-SS)
+│           └─ head.rotor  (BL2.5, 180°, ~10.7 m throw @2.8 bar)  (Hunter I-20-04-SS)
 │               ├─ check_valve
 │               ├─ riser
 │               ├─ riser_seal
