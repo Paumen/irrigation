@@ -4,6 +4,7 @@ import { createHydraulics } from "../src/epanet-runner.js";
 import { solveSteady } from "../src/solver.js";
 import { solveElectrical } from "../src/electrical.js";
 import { compileFaults } from "../src/faults.js";
+import { validateStateResolver, computeStates } from "../src/states.js";
 import { outletDemandAt, outletThrowAt, interp } from "../src/outlets.js";
 import { SPRAY_CLAMP_BAR } from "../src/config.js";
 
@@ -50,6 +51,18 @@ const model = buildModel(loadGraph(), loadCatalog());
 const hyd = await createHydraulics();
 console.log(`epanet-js engine version: ${hyd.version}\n`);
 const noFaults = compileFaults(model, {});
+const resolver = validateStateResolver(model);
+
+// M5 cross-check: rule-derived states must agree with the numeric solve wherever both exist.
+function crossCheckStates(label, elec, r) {
+  const st = computeStates(model, { elec, hyd: r, resolver });
+  check(
+    st.mismatches.length === 0,
+    `${label}: state cross-check clean (${st.crossChecks.length} checks, ${st.mismatches.length} mismatch)` +
+      (st.mismatches.length ? `: ${st.mismatches.map((m) => `${m.instance}.${m.variable} proj=${m.projected} rule=${m.derived}`).join("; ")}` : ""),
+  );
+  return st;
+}
 
 {
   console.log("CASE idle");
@@ -63,6 +76,10 @@ const noFaults = compileFaults(model, {});
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   check(outlets.every((o) => r.demands.get(o.id) === 0), "every outlet flow is zero");
   check(outlets.every((o) => !r.reachable.has(o.id)), "every outlet is a dead (unreachable) branch");
+  const st = crossCheckStates("idle", elec, r);
+  check(st.states["S1_pump.jet"].pressurised === "unpressurised", "idle: pump unpressurised");
+  check(st.states["Z2_valve.auto"].open === "closed", "idle: Z2 valve closed");
+  check(st.states["Z2_head.rotor"].watering === "off", "idle: Z2 rotor off");
 }
 
 {
@@ -113,6 +130,15 @@ const noFaults = compileFaults(model, {});
   const gain = r.headM[pump.n2] - r.headM[pump.n1];
   const curveHead = interp(model.curves.pump.flow_m3h, model.curves.pump.head_m, r.pumpFlow);
   check(Math.abs(gain - curveHead) < 0.5, `pump head gain ${gain.toFixed(2)} m on curve (${curveHead.toFixed(2)} m at ${r.pumpFlow.toFixed(3)} m3/h)`);
+
+  const st = crossCheckStates("pump+Z2", elec, r);
+  check(st.states["S1_pump.jet"].pressurised === "pressurised" && st.states["S1_pump.jet"].primed === "primed", "pump primed + pressurised");
+  check(st.states["Z2_valve.auto"].open === "open", "Z2 valve open (projected)");
+  check(st.states["Z2_valve.auto"]["diaphragm"] === "up" && st.states["Z2_valve.auto"]["solenoid/coil"] === "live", "Z2 valve mechanism: coil live, diaphragm up");
+  check([3, 4, 5].every((z) => st.states[`Z${z}_valve.auto`].open === "closed"), "Z3/Z4/Z5 valves closed");
+  check(st.states["Z2_head.rotor"].watering === "watering", "Z2 rotor watering");
+  check(st.states["Z1_hose.ldpe16_1"].pressurised === "pressurised", "Z1 hose pressurised (upstream of closed manual valve)");
+  check(st.states["S1_joint.strainer"].wet === "wet" && st.states["S1_valve.foot"].wet === "wet", "suction chain wet (well wet by default)");
 }
 
 {
@@ -147,6 +173,17 @@ const noFaults = compileFaults(model, {});
   check(dryHeads.every((id) => r.demands.get(id) === 0), "every Z2/Z3 head is dry");
   const wetHeads = ["Z4_head.spray_1", "Z5_head.rotor_1"];
   check(wetHeads.every((id) => r.demands.get(id) > 0), "Z4/Z5 heads flow");
+
+  const st = crossCheckStates("broken return", elec, r);
+  check(
+    st.states["Z2_valve.auto"].open === "closed" && st.states["Z3_valve.auto"].open === "closed",
+    "Z2/Z3 valves closed (de-energised return)",
+  );
+  check(
+    st.states["Z4_valve.auto"].open === "open" && st.states["Z5_valve.auto"].open === "open",
+    "Z4/Z5 valves open",
+  );
+  check(st.states["Z2_valve.auto"]["solenoid/coil"] === "dead", "Z2 solenoid coil dead (return current crosses the cut)");
 }
 
 {
@@ -157,6 +194,49 @@ const noFaults = compileFaults(model, {});
   check(elec.controllerPowered === false, "controller de-powered by the cut feed");
   check(elec.pumpPowered === false, "pump off (relay coil needs the controller)");
   check(elec.zoneEnergised[2] === false, "Z2 de-energised");
+  const r = solveSteady(model, {}, elec, hyd, noFaults);
+  const st = crossCheckStates("cut controller feed", elec, r);
+  check(st.states["O1_control.controller"]["transformer"] === "dead", "controller transformer dead");
+  check(st.states["S2_relay.pumpstart"]["coil"] === "dead", "relay coil dead");
+}
+
+{
+  // M5 — qualitative state core: the kind->instance resolver and the rule fixpoint over the
+  // intermediate valve mechanism the numeric loop collapses. No new physics; both inputs (M2
+  // pressures/demands + M4 electrical) are already merged.
+  console.log("\nCASE M5 qualitative state core");
+  // Resolver: nearest-scope-first with global-singleton fallback for cross-prefix references.
+  const cases = [
+    ["S1_pump.jet", "relay.pumpstart/load", "S2_relay.pumpstart", "load"],
+    ["S2_relay.pumpstart", "control.controller/terminals/port", "O1_control.controller", "terminals/port"],
+    ["O1_control.controller", "source.socket", "O1_source.socket", ""],
+    ["S2_relay.pumpstart", "source.socket", "S2_source.socket", ""],
+    ["Z3_valve.auto", "control.controller/terminals/port", "O1_control.controller", "terminals/port"],
+    ["Z2_hose.ldpe25_1", "valve.auto", "Z2_valve.auto", ""],
+    ["Z3_head.rotor_1", "head.rotor", "Z3_head.rotor_1", ""], // self even with two rotors in the zone
+    ["Z2_valve.auto", "solenoid/coil", "Z2_valve.auto", "solenoid/coil"],
+  ];
+  for (const [from, token, id, group] of cases) {
+    const t = resolver.resolveRef(from, token);
+    check(t.id === id && t.group === group, `resolve ${from} "${token}" -> ${id}/${group || "(primary)"} (got ${t.id}/${t.group || "(primary)"})`);
+  }
+  check(resolver.instances.size === 89, `resolver indexes every stateful instance (got ${resolver.instances.size})`);
+
+  // Energise Z2: the whole pilot chain falls out of the fixpoint from the grounded coil + inlet.
+  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } });
+  const r = solveSteady(model, {}, elec, hyd, noFaults);
+  const st = computeStates(model, { elec, hyd: r, resolver });
+  const v = st.states["Z2_valve.auto"];
+  check(v["solenoid/plunger"] === "up", "Z2 plunger up (coil live)");
+  check(v["solenoid/pilot_seat"] === "open", "Z2 pilot seat open");
+  check(v["bonnet/chamber"] === "unpressurised", "Z2 bonnet chamber bled (unpressurised)");
+  check(v["diaphragm"] === "up" && v.open === "open", "Z2 diaphragm up -> valve open");
+  const v3 = st.states["Z3_valve.auto"];
+  check(v3["solenoid/plunger"] === "down" && v3["bonnet/chamber"] === "pressurised" && v3.open === "closed", "Z3 (un-energised) mechanism holds the valve closed");
+
+  // Bleed screw forces the chamber open without a command (qualitative path only — no electrical).
+  const stb = computeStates(model, { elec: solveElectrical(model, {}), hyd: solveSteady(model, {}, solveElectrical(model, {}), hyd, noFaults), state: { bleedOpen: { "Z3_valve.auto": true } }, resolver });
+  check(stb.states["Z3_valve.auto"]["bonnet/chamber"] === "unpressurised", "bleed screw open -> chamber unpressurised even with no command");
 }
 
 console.log(`\n${failures === 0 ? "ALL CHECKS PASSED" : `${failures} CHECK(S) FAILED`}`);

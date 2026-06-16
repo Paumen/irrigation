@@ -203,7 +203,7 @@ remain to do.
 | **M2** outlets + outer solver | ✅ | `src/outlets.js`, `solver.js`; harness cases *idle* + *pump+Z2* |
 | **M3** Z1 manual zone | ⚠️ | engine support present (`valve-manual` TCV in `network.js`, `manualOpen` in `solver.js`, stream-orifice law `streamEmitterCoeff` in `outlets.js`); **no dedicated harness case yet** |
 | **M4** electrical + actuation | ✅ | `src/electrical.js`; harness cases *broken shared return* + *cut controller feed* |
-| **M5** qualitative state core | ⬜ | `states.js` absent; `model.js` still drops the `states:` blocks — but its inputs (M2 pressures/demands + M4 electrical) are already merged, so the resolver + `needs` fixpoint + headless cross-check are buildable now |
+| **M5** qualitative state core | ✅ | `src/states.js` (resolver + `needs` fixpoint + projection + cross-check); harness M5 case + cross-check assertions woven through cases 1–4 (`model.components` already surfaces the `states:` blocks) |
 | **M6** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
 | **M7** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
 | **M8** quasi-time | ⬜ | `quasitime.js` absent |
@@ -318,9 +318,13 @@ manual positions + faults); the `states:` blocks are **derived outputs** — a d
   head flows match catalog within tolerance, Z3–Z5 = 0, mass balance < 1e-3 m³/h, operating point on the
   pump curve, MP sprays clamped at 2.76 bar; (3) broken shared return — Z2/Z3 de-energised (return current
   crosses the cut), Z4/Z5 stay lit, `commandedNotEnergised` = {Z2, Z3}, those valves stay closed;
-  (4) cut controller feed — controller/pump/zone all off. Asserts: converged, no NaN/negative on filled
-  nodes, mass balance, catalog fidelity, pump operating point. **Pending:** a dedicated M3 manual-zone case,
-  and the M9 clog/leak cases (faults are still a stub). Exit nonzero on failure.
+  (4) cut controller feed — controller/pump/zone all off; (5) M5 qualitative state core — the
+  kind→instance resolver (nearest-scope-first + global-singleton cross-prefix fallback) and the rule
+  fixpoint over the intermediate valve mechanism (coil→plunger→pilot_seat→bonnet/chamber→diaphragm→open,
+  plus the bleed-screw path). Asserts: converged, no NaN/negative on filled nodes, mass balance, catalog
+  fidelity, pump operating point, and — woven through cases 1–4 — that every rule-derived state agrees
+  with the numeric solve (`computeStates(...).mismatches` empty). **Pending:** a dedicated M3 manual-zone
+  case, and the M9 clog/leak cases (faults are still a stub). Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
   inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
   (flow widths, pressure colors, outlet labels in m³/h — no unit toggle, per-wire energised traces).
