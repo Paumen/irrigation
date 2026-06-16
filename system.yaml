@@ -1,6 +1,11 @@
 system_metadata:
   area: Netherlands, Wijchen
 
+system:
+  required: [installed_yyyy]
+  required_all_except:
+    - {fields: [interfaces, price], exempt: [source]}
+
 category:
   head:      {requires_one: [nozzle, bore_mm]}
   enclosure: {}
@@ -13,11 +18,6 @@ category:
   wiring:    {}
   control:   {requires: [v_outlet]}
 
-system:
-  requied: [installed]
-  required_all_except:
-    - {fields: [interfaces, price], exempt: [source]}
-
 interface_types:
   bm1:    {joint: BSP,         size: G1,   gender: M, seal: teflon}
   bf1:    {joint: BSP,         size: G1,   gender: F, seal: teflon}
@@ -25,12 +25,12 @@ interface_types:
   bf34:   {joint: BSP,         size: G3/4, gender: F, seal: teflon}
   bm12:   {joint: BSP,         size: G1/2, gender: M, seal: teflon}
   bf12:   {joint: BSP,         size: G1/2, gender: F, seal: teflon}
-  c16:    {joint: comppress, size: "∅16", gender: F, seal: comp-ring}
-  c25:    {joint: comppress, size: "∅25", gender: F, seal: comp-ring}
-  c32:    {joint: comppress, size: "∅32", gender: F, seal: comp-ring}
-  cm16:   {joint: comppress, size: "∅16", gender: M, seal: comp-ring}
-  cm25:   {joint: comppress, size: "∅25", gender: M, seal: comp-ring}
-  cm32:   {joint: comppress, size: "∅32", gender: M, seal: comp-ring}
+  c16:    {joint: compress, size: "∅16", gender: F, seal: comp-ring}
+  c25:    {joint: compress, size: "∅25", gender: F, seal: comp-ring}
+  c32:    {joint: compress, size: "∅32", gender: F, seal: comp-ring}
+  cm16:   {joint: compress, size: "∅16", gender: M, seal: comp-ring}
+  cm25:   {joint: compress, size: "∅25", gender: M, seal: comp-ring}
+  cm32:   {joint: compress, size: "∅32", gender: M, seal: comp-ring}
   sm1:    {joint: swivel-union, size: G1,   gender: M, seal: hose}
   sf1:    {joint: swivel-union, size: G1,   gender: F, seal: washer}
   barb25:  {joint: barb,        size: "∅25", gender: M, seal: clamp}
@@ -40,63 +40,175 @@ interface_types:
   ac_earth: {domain: 230v}
   sig_24v: {domain: 24v}
   com_24v: {domain: 24v}
-  
+
 defaults:
-  hose:   {roughness_mm: 0.0015, hz_c: 150, installed: 2020-08, price_eur_m: 2, max_bar: u, fail: clogged, broken}
-  joint:  {material: plastic, installed: 2020-08, price_eur: 5, max_bar: 10, k: 0.1}
-  wiring: {installed: 2020-08, price_eur_m: 2}
-
-
-  body:        {fail: [broken]}
-  nut:         {fail: [broken, misconfig]}
-  grip:        {fail: [broken, misconfig]}
-  swivel_nut:  {fail: [broken, misconfig]}
-  common:      {fail: [broken, misconfig]}
-  line:        {fail: [broken, misconfig]}
-  neutral:     {fail: [broken, misconfig]}
-  earth:       {fail: [broken]}
-  spring:      {fail: [broken]}
-  coil:        {fail: [broken]}
-  winding:     {fail: [broken]}
-  oring:       {material: rubber, fail: [broken, misconfig]}
-  washer:      {material: rubber, fail: [broken, misconfig]}
-  seat:        {fail: [broken, clogged]}
-  check_valve: {fail: [broken]}
-  nozzle:      {fail: [broken, clogged, misconfig]}
-  "24v":       {fail: [broken]}
+  items:  {installed_yyyy: 2020}
+  hose:   {roughness_mm: 0.0015, hz_c: 150, price_eur_m: 2, max_bar: 6}
+  joint:  {material: plastic, price_eur: 5, max_bar: 10, k: 0.1}
+  wiring: {price_eur_m: 2}
+  spring: {material: stainless steel}
 
 items:
 
-  suction_assy:
+  source.well:
+    installed_yyyy: 1713
+    states:
+      wet: {}
+      dry: {}
+
+  source.socket:
+    interfaces: [ac_line, ac_neutral, ac_earth]
+    states:
+      live: {}
+      dead: {}
     items:
-      foot_valve_assy:
+      line: {}
+      neutral: {}
+      earth: {}
+
+  pump.jet:
+    installed_yyyy: 2023
+    price_eur: 350
+    model: "DAB AQUAJET 132 M"
+    max_outlet_bar: 4.7
+    interfaces: [bf1, bf1, ac_line, ac_neutral, ac_earth]
+    states:
+      primed:
+        needs: ["joint.hosetail_plastic = wet", "body/priming_chamber = wet"]
+      unprimed:
+        needs_any: ["joint.hosetail_plastic = dry", "body/priming_chamber = dry"]
+      pressurised:
+        needs: ["relay.pumpstart/load = live", "pump.jet = primed"]
+      unpressurised:
+        needs_any: ["relay.pumpstart/load = dead", "pump.jet = unprimed"]
+      body/priming_chamber:
+        wet: {}
+        dry: {}
+    items:
+      tank_hose:
+        to: tank
+      tank:
+        model: "DAB 20 L diaphragm tank"
+        volume_l: 20
+        items:
+          shell:     {material: steel}
+          bladder:   {material: rubber}
+          pre_charge: {}
+          air_charge: {feature: true}
+          draw_down:  {feature: true}
+      body:
+        material: plastic
+        items:
+          venturi:   {to: body/impeller}
+          impeller:  {to: body/diffuser, material: plastic}
+          diffuser:  {to: /tank_hose, material: plastic}
+          mech_seal: {material: ceramic}
+          priming_cap: {}
+          recirculation_passage: {feature: true}
+          priming_chamber:     {feature: true}
+      motor:
+        items:
+          line: {to: motor/winding}
+          winding: {to: motor/neutral, material: copper}
+          capacitor: {}
+          thermal_protector: {}
+          neutral: {}
+          earth: {}
+
+  control.controller:
+    price_eur: 200
+    model: "RainMachine HD-12 TOUCH"
+    interfaces: [ac_line, ac_neutral, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v]
+    states:
+      transformer:
+        live: {needs: ["source.socket = live"]}
+        dead: {needs: ["source.socket = dead"]}
+      terminals/common:
+        live: {needs: ["transformer = live"]}
+        dead: {needs: ["transformer = dead"]}
+      terminals/port:
+        live: {needs: ["transformer = live"]}
+        dead: {}
+    items:
+      line: {to: transformer/line}
+      neutral: {to: transformer/neutral}
+      transformer:
+        v_outlet: 24
+        items:
+          line: {to: transformer/winding}
+          neutral: {}
+          winding: {to: terminals/common}
+      terminals:
+        items:
+          ac_line:  {count: 2}
+          common: {count: 2}
+          port:     {count: 12}
+
+  relay.pumpstart:
+    price_eur: 100
+    model: "Hunter PSR-22"
+    interfaces: [ac_line, ac_neutral, ac_earth, sig_24v, com_24v]
+    states:
+      coil:
+        live: {needs: ["control.controller/terminals/port = live", "control.controller/terminals/common = live"]}
+        dead: {needs_any: ["control.controller/terminals/port = dead", "control.controller/terminals/common = dead"]}
+      load:
+        live: {needs: ["coil = live", "source.socket = live"]}
+        dead: {needs_any: ["coil = dead", "source.socket = dead"]}
+    items:
+      coil_in:     {to: coil}
+      coil: {to: coil_common}
+      coil_common: {}
+      contact:     {to: load}
+      line: {to: contact}
+      load:        {}
+      neutral: {}
+      earth: {}
+
+  wiring.230v:
+    interfaces: [ac_line, ac_neutral, ac_earth, ac_line, ac_neutral, ac_earth]
+    items:
+      line: {}
+      neutral: {}
+      earth: {}
+
+  wiring.24v.bundle:
+    interfaces: [24v, 24v, 24v, 24v, 24v]
+
+  wiring.24:
+    interfaces: [24v, 24v]
+
+  hose.suction.set:
+    price_eur: 50
+    items:
+      valve.foot.set:
+        installed_yyyy: 2026
         items:
           valve.foot:
-            installed: 2026-06
             price_eur: 15
             material: brass
             k: 2.5
             interfaces: [bm1, bf1]
-            items:
-              body: {}
-              disc:      {fail: [broken, clogged]}
-              spring: {}
-              seat_seal: {material: rubber, fail: [broken]}
+            states:
+              wet: {needs: ["joint.strainer = wet"]}
+              dry: {needs: ["joint.strainer = dry"]}
           joint.strainer:
-            installed: 2026-06
             price_eur: 10
             k: 1.0
             interfaces: [bf1]
-            items:
-              mesh: {fail: [broken, clogged]}
+            states:
+              wet: {needs: ["source.well = wet"]}
+              dry: {needs: ["source.well = dry"]}
           joint.hosetail_brass:
-            installed: 2026-06
             price_eur: 5
             material: brass
             k: 0.9
             interfaces: [bm1, barb25]
+            states:
+              wet: {needs: ["valve.foot = wet"]}
+              dry: {needs: ["valve.foot = dry"]}
       hose.suction:
-        installed: 2023-06
+        installed_yyyy: 2023
         price_eur_m: 5
         material: PVC
         od_mm: 25
@@ -104,227 +216,29 @@ items:
         id_mm: 24
         max_bar: 5
         interfaces: [barbf25, barbf25]
-        items:
-          tube:  {fail: [broken, clogged, misconfig]}
-          clamp: {material: stainless steel, fail: [broken, misconfig], count: 2}
+        states:
+          wet: {needs: ["joint.hosetail_brass = wet"]}
+          dry: {needs: ["joint.hosetail_brass = dry"]}
+      clamp:
+        installed_yyyy: 2026
+        price_eur: 1
+        count: 2
       joint.hosetail_plastic:
-        installed: 2023-06
+        installed_yyyy: 2023
         price_eur: 5
         max_bar: 6
         k: 0.9
         interfaces: [barb25, bm1]
-
-  pump_discharge:
-    items:
-      joint.bm1c32:
-        interfaces: [bm1, c32]
-        items:
-          body: {}
-          oring: {}
-          grip: {}
-          nut: {}
-      joint.c32c32:
-        interfaces: [c32, c32]
-        items:
-          body: {}
-          oring: {count: 2}
-          grip: {count: 2}
-          nut: {count: 2}
-
-  pump_power_assy:
-    items:
-      relay.pumpstart:
-        installed: 2020-08
-        price_eur: 100
-        model: "Hunter PSR-22"
-        interfaces: [ac_line, ac_neutral, ac_earth, sig_24v, com_24v]
-        coil_energized_closes: contact
-        items:
-          coil_in:     {to: coil, fail: [broken, misconfig]}
-          coil: {}
-          coil_common: {fail: [broken, misconfig]}
-          contact:     {fail: [broken]}
-          line: {to: contact}
-          load:        {fail: [broken, misconfig]}
-          neutral: {}
-          earth: {}
-
-  manifold_assy:
-    items:
-      joint.manifold:
-        price_eur: 150
-        bore_mm: 25
-        max_bar: 10
-        bends: 1
-        k: 1.5
-        model: "LEV 6-way distributor"
-        interfaces: [sf1, sf1, sf1, sf1, sf1, sf1, sf1]
-        items:
-          washer: {count: 7}
-          body: {}
-      joint.c32sm1:
-        max_bar: 10
-        k: 0.1
-        material: brass
-        interfaces: [c32, sm1]
-        items:
-          nut: {}
-          grip: {}
-          oring: {}
-          body: {}
-          swivel_nut: {}
-      joint.cap:
-        price_eur: 5
-        k: 0
-        max_bar: 10
-        interfaces: [sm1]
-
-  control.controller:
-    installed: 2020-08
-    price_eur: 200
-    model: "RainMachine HD-12 TOUCH"
-    interfaces: [ac_line, ac_neutral, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v]
-    items:
-      line: {to: transformer/line}
-      neutral: {to: transformer/neutral}
-      screen: {fail: [broken]}
-      transformer:
-        v_outlet: 24
-        items:
-          line: {to: transformer/winding}
-          neutral: {}
-          winding: {}
-      terminals:
-        fail: [broken]
-        items:
-          ac_line:  {fail: [broken, misconfig], count: 2}
-          common: {count: 2}
-          port:     {fail: [broken, misconfig], count: 12}
-
-  head.rotor:
-    installed: 2020-08
-    price_eur: 25
-    model: "Hunter I-20-04-SS"
-    interfaces: [bf34]
-    material: plastic
-    items:
-      check_valve: {}
-      riser:         {to: filter, material: stainless steel}
-      riser_seal:    {material: rubber, fail: [broken]}
-      retract_spring: {material: stainless steel, fail: [broken]}
-      gear:          {material: plastic, fail: [broken, clogged]}
-      filter:        {to: nozzle, fail: [broken, clogged]}
-      nozzle: {}
-      arc:           {fail: [broken, misconfig]}
-      flo_stop:      {fail: [broken, misconfig]}
-
-  head.spray:
-    installed: 2020-08
-    price_eur: 25
-    regulated_bar: 2.8
-    model: "Hunter Pro-Spray PRS40"
-    interfaces: [bf12]
-    material: plastic
-    items:
-      cap:            {fail: [broken]}
-      check_valve: {}
-      regulator:      {to: riser, fail: [broken]}
-      riser:          {to: nozzle}
-      wiper_seal:     {material: rubber, fail: [broken]}
-      spring: {material: stainless steel}
-      flush_plug:     {fail: [broken, misconfig]}
-      nozzle: {}
-
-  enclosure.valvebox:
-    installed: 2020-08
-    price_eur: 150
-    model: "valve box jumbo"
-    material: plastic
-    interfaces: []
-    items:
-      enclosure: {fail: [broken]}
-      lid:       {fail: [broken, misconfig]}
-
-  joint.c16c16:
-    interfaces: [c16, c16]
-    items:
-      body: {}
-      oring: {count: 2}
-      grip: {count: 2}
-      nut: {count: 2}
-
-  joint.bm1c25:
-    interfaces: [bm1, c25]
-    items:
-      body: {}
-      oring: {}
-      grip: {}
-      nut: {}
-
-  joint.c25bf34:
-    interfaces: [c25, bf34]
-    items:
-      nut: {}
-      grip: {}
-      oring: {}
-      body: {}
-
-  joint.sm1bm1:
-    material: brass
-    interfaces: [sm1, bm1]
-    items:
-      swivel_nut: {}
-      body: {}
-
-  joint.sm1c16:
-    material: brass
-    interfaces: [sm1, c16]
-    items:
-      swivel_nut: {}
-      body: {}
-      oring: {}
-      grip: {}
-      nut: {}
-
-  joint.sj34x12:
-    bends: 4
-    bore_mm: 13
-    k: 3.5
-    model: "Hunter sj 3/4x1/2"
-    interfaces: [bm34, bm12]
-
-  joint.sj34x34:
-    bends: 4
-    bore_mm: 19
-    k: 2.5
-    model: "Hunter sj 3/4x3/4"
-    interfaces: [bm34, bm34]
-
-  joint.tee:
-    price_eur: 10
-    bends: 1
-    k: 0.9
-    interfaces: [c25, c25, c25]
-    items:
-      nut: {count: 3}
-      grip: {count: 3}
-      oring: {count: 3}
-      body: {}
-
-  joint.tee_c25bf34:
-    price_eur: 10
-    bends: 1
-    k: 0.9
-    interfaces: [c25, bf34, c25]
-    items:
-      nut: {count: 2}
-      grip: {count: 2}
-      oring: {count: 2}
-      body: {}
+        states:
+          wet: {needs: ["hose.suction = wet"]}
+          dry: {needs: ["hose.suction = dry"]}
 
   hose.ldpe16:
     material: LDPE
     od_mm: 16
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
     wall_mm: 2
     id_mm: 12
     interfaces: [cm16, cm16]
@@ -333,164 +247,280 @@ items:
     material: LDPE
     od_mm: 25
     wall_mm: 2.7
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
     id_mm: 19.6
     interfaces: [cm25, cm25]
 
   hose.ldpe32:
     material: LDPE
     od_mm: 32
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
     wall_mm: 3
     id_mm: 26
     interfaces: [cm32, cm32]
 
-  pump.jet:
-    installed: 2023-06
-    price_eur: 350
-    model: "DAB AQUAJET 132 M"
-    max_outlet_bar: 4.7
-    interfaces: [bf1, bf1, ac_line, ac_neutral, ac_earth]
-    items:
-      tank_hose:
-        to: tank
-        material: stainless steel
-        fail: [broken, clogged]
-      tank:
-        model: "DAB 20 L diaphragm tank"
-        volume_l: 20
-        items:
-          shell:     {material: steel, fail: [broken]}
-          bladder:   {material: rubber, fail: [broken]}
-          pre_charge: {fail: [broken, misconfig]}
-          air_charge: {feature: true}
-          draw_down:  {feature: true}
-      body:
-        fail: [broken]
-        material: plastic
-        items:
-          venturi:   {to: body/impeller, fail: [broken, clogged]}
-          impeller:  {to: body/diffuser, material: plastic, fail: [broken, clogged]}
-          diffuser:  {material: plastic, fail: [broken, clogged]}
-          mech_seal: {material: ceramic, fail: [broken]}
-          body_oring: {material: rubber, fail: [broken, misconfig]}
-          priming_cap: {fail: [broken, misconfig]}
-          priming_cap_oring: {material: rubber, fail: [broken, misconfig]}
-          recirculation_passage: {feature: true}
-          priming_chamber:     {feature: true}
-      motor:
-        fail: [broken]
-        items:
-          line: {to: motor/winding}
-          winding: {to: motor/neutral, material: copper}
-          capacitor: {fail: [broken]}
-          thermal_protector: {fail: [broken, misconfig]}
-          neutral: {}
-          earth: {}
+  joint.bm1c32:
+    interfaces: [bm1, c32]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
 
-  source.socket:
-    installed: 2020-08
-    interfaces: [ac_line, ac_neutral, ac_earth]
-    items:
-      line: {fail: [broken]}
-      neutral: {fail: [broken]}
-      earth: {}
+  joint.c32c32:
+    interfaces: [c32, c32]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
 
-  source.well:
-    installed: 1713-01
-    fail: [clogged, depleted]
+  joint.bm1c25:
+    interfaces: [bm1, c25]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+
+  joint.c25bf34:
+    interfaces: [c25, bf34]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+
+  joint.c16c16:
+    interfaces: [c16, c16]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
+
+  joint.c32sm1:
+    max_bar: 10
+    k: 0.1
+    material: brass
+    interfaces: [c32, sm1]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
+
+  joint.sm1bm1:
+    material: brass
+    interfaces: [sm1, bm1]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
+
+  joint.sm1c16:
+    material: brass
+    interfaces: [sm1, c16]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
+
+  joint.sj34x12:
+    bends: 4
+    bore_mm: 13
+    k: 3.5
+    model: "Hunter sj 3/4x1/2"
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+    interfaces: [bm34, bm12]
+
+  joint.sj34x34:
+    bends: 4
+    bore_mm: 19
+    k: 2.5
+    model: "Hunter sj 3/4x3/4"
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+    interfaces: [bm34, bm34]
+
+  joint.tee:
+    price_eur: 10
+    bends: 1
+    k: 0.9
+    interfaces: [c25, c25, c25]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+
+  joint.tee_c25bf34:
+    price_eur: 10
+    bends: 1
+    k: 0.9
+    interfaces: [c25, bf34, c25]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+
+  joint.manifold:
+    price_eur: 150
+    bore_mm: 25
+    max_bar: 10
+    bends: 1
+    k: 1.5
+    model: "LEV 6-way distributor"
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
+    interfaces: [sf1, sf1, sf1, sf1, sf1, sf1, sf1]
+
+  joint.cap:
+    price_eur: 5
+    k: 0
+    max_bar: 10
+    interfaces: [sm1]
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised"]}
+      unpressurised: {needs: ["pump.jet = unpressurised"]}
 
   valve.auto:
-    installed: 2020-08
+    installed_yyyy: 2026
     price_eur: 25
     max_bar: 10
     min_bar: 1.5
     Kv: 6.0
     model: "Hunter PGV-101G"
+    states:
+      open:   {needs: ["bonnet/flow_control = open", "diaphragm = up"]}
+      closed: {needs_any: ["bonnet/flow_control = closed", "diaphragm = down"]}
+      diaphragm:
+        up:   {needs: ["joint.sm1bm1 = pressurised", "bonnet/chamber = unpressurised"]}
+        down: {needs_any: ["joint.sm1bm1 = unpressurised", "bonnet/chamber = pressurised"]}
+      bonnet/chamber:
+        unpressurised: {needs_any: ["solenoid/pilot_seat = open", "bonnet/bleed_screw = open"]}
+        pressurised:   {needs: ["solenoid/pilot_seat = closed", "bonnet/bleed_screw = closed"]}
+      solenoid/pilot_seat:
+        open:   {needs: ["solenoid/plunger = up"]}
+        closed: {needs: ["solenoid/plunger = down"]}
+      solenoid/plunger:
+        up:   {needs: ["solenoid/coil = live"]}
+        down: {needs: ["solenoid/coil = dead"]}
+      solenoid/coil:
+        live: {needs: ["control.controller/terminals/port = live", "control.controller/terminals/common = live"]}
+        dead: {needs_any: ["control.controller/terminals/port = dead", "control.controller/terminals/common = dead"]}
+      bonnet/flow_control: {open: {}, closed: {}}
+      bonnet/bleed_screw:  {closed: {}, open: {}}
+
     interfaces: [bf1, bf1, sig_24v, sig_24v]
     items:
       body:
-        fail: [broken]
         material: plastic
         items:
-          seat: {}
-          upstream_chamber:   {feature: true}
+          seat: {to: downstream_chamber}
+          upstream_chamber:   {to: seat, feature: true}
           downstream_chamber: {feature: true}
       diaphragm:
         to: body/seat
-        fail: [broken]
         material: rubber
         items:
-          spring: {material: stainless steel}
-          metering_port: {to: bonnet/chamber, feature: true, fail: [clogged]}
+          spring: {}
+          metering_port: {to: bonnet/chamber, feature: true}
       bonnet:
-        fail: [broken, misconfig]
         material: plastic
         items:
-          chamber:      {feature: true}
-          bleed_screw:  {fail: [broken, misconfig]}
-          flow_control: {fail: [broken, misconfig]}
-          bonnet_cap:   {fail: [broken]}
-          bonnet_screws: {fail: [broken, misconfig]}
+          chamber:      {to: solenoid/entry, feature: true}
+          bleed_screw:  {control: true}
+          flow_control: {control: true}
+          bonnet_cap:   {}
+          bonnet_screws: {}
       solenoid:
         model: "Hunter 458200 (24 VAC)"
+        control: true
         items:
-          entry:    {to: solenoid/plunger, feature: true, fail: [clogged]}
-          plunger:  {to: solenoid/exhaust, material: stainless steel, fail: [broken, clogged]}
-          exhaust:  {feature: true, fail: [clogged]}
+          entry:    {to: solenoid/plunger, feature: true}
+          plunger:
+            to: solenoid/exhaust
+            items:
+              spring: {}
+          exhaust:  {to: body/downstream_chamber, feature: true}
           pilot_seat: {feature: true}
-          24v_1:    {to: solenoid/coil, fail: [broken]}
-          coil: {ohm: [20, 60], material: copper}
-          24v_2:    {fail: [broken]}
-          plunger_spring: {material: stainless steel, fail: [broken]}
-          solenoid_oring: {material: rubber, fail: [broken, misconfig]}
+          24v_1:    {to: solenoid/coil}
+          coil: {to: 24v_2, ohm: [20, 60], material: copper}
+          24v_2:    {}
 
   valve.manual:
-    installed: 2020-08
     price_eur: 5
     max_bar: 10
     Kv: 6.0
     material: plastic
     interfaces: [bf12, bf12]
+    states:
+      open:   {needs: ["handle = open"]}
+      closed: {needs: ["handle = closed"]}
+      handle: {open: {}, closed: {}}
     items:
       seat: {}
-      ball:      {fail: [broken, misconfig]}
-      stem:      {fail: [broken]}
-      stem_oring: {material: rubber, fail: [broken, misconfig]}
-      handle:    {fail: [broken, misconfig]}
+      ball:      {}
+      stem:      {}
+      stem_oring: {material: rubber}
+      handle:    {control: true}
 
-  wiring.230v:
-    interfaces: [ac_line, ac_neutral, ac_earth, ac_line, ac_neutral, ac_earth]
+  head.rotor:
+    price_eur: 25
+    model: "Hunter I-20-04-SS"
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+      watering:      {needs: ["head.rotor = pressurised", "flo_stop = open"]}
+      off:           {needs_any: ["head.rotor = unpressurised", "flo_stop = closed"]}
+      flo_stop: {open: {}, closed: {}}
+    interfaces: [bf34]
+    material: plastic
     items:
-      line: {}
-      neutral: {}
-      earth: {fail: [broken, misconfig]}
+      check_valve:   {to: riser}
+      riser:         {to: filter, }
+      riser_seal:    {material: rubber}
+      spring:        {}
+      gear:          {material: plastic}
+      filter:        {to: nozzle}
+      nozzle:        {control: true}
+      arc:           {control: true}
+      flo_stop:      {control: true}
 
-  wiring.24v:
-    interfaces: [com_24v, sig_24v, sig_24v, sig_24v, sig_24v]
+  head.spray:
+    price_eur: 25
+    regulated_bar: 2.8
+    model: "Hunter Pro-Spray PRS40"
+    states:
+      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
+      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
+    interfaces: [bf12]
+    material: plastic
     items:
-      tube:
-        fail: [broken, misconfig]
-        items:
-          common: {}
-          signal:   {fail: [broken, misconfig], count: 4}
+      cap:            {}
+      check_valve:    {to: regulator}
+      regulator:      {to: riser}
+      riser:          {to: nozzle}
+      wiper_seal:     {material: rubber}
+      spring: {}
+      flush_plug:     {}
+      nozzle: {control: true}
 
-  wiring.common:
-    interfaces: [com_24v, com_24v]
+  enclosure.valvebox:
+    price_eur: 150
+    model: "valve box jumbo"
+    states: {}
+    material: plastic
+    interfaces: []
     items:
-      common: {}
+      enclosure: {}
+      lid:       {}
 
 water:
   S1_source.well:            {to: [S1_joint.strainer], h_m: 5.6}
-  S1_joint.strainer: {to: [S1_valve.foot], h_m: 4.2}
+  S1_joint.strainer: {to: [S1_valve.foot], h_m: 4.8}
   S1_valve.foot:             {to: [S1_joint.hosetail_brass], h_m: 4.8}
-  S1_joint.hosetail_brass: {to: [S1_hose.suction], h_m: 4.2}
-  S1_hose.suction:           {to: [S1_joint.hosetail_plastic], l_m: 4, h_m: 4.2}
-  S1_joint.hosetail_plastic: {to: [S1_pump.jet], h_m: 8.2}
-  S1_hose.ldpe32:            {to: [S1_joint.c32c32], l_m: 2, h_m: 8.2}
-  S1_pump.jet:               {to: [S1_joint.bm1c32], h_m: 8.2}
-  S1_joint.bm1c32: {to: [S1_hose.ldpe32], h_m: 8.2}
-  S1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.2}
+  S1_joint.hosetail_brass: {to: [S1_hose.suction], h_m: 4.8}
+  S1_hose.suction:           {to: [S1_joint.hosetail_plastic], l_m: 4, h_m: 4.8}
+  S1_joint.hosetail_plastic: {to: [S1_pump.jet], h_m: 8.0}
+  S1_hose.ldpe32:            {to: [S1_joint.c32c32], l_m: 2, h_m: 8.0}
+  S1_pump.jet:               {to: [S1_joint.bm1c32], h_m: 8.0}
+  S1_joint.bm1c32: {to: [S1_hose.ldpe32], h_m: 8.0}
+  S1_joint.c32c32: {to: [D1_hose.ldpe32], h_m: 8.4}
 
-  D1_hose.ldpe32: {to: [D1_joint.c32sm1], l_m: 20, h_m: 8.2}
+  D1_hose.ldpe32: {to: [D1_joint.c32sm1], l_m: 20, h_m: 8.4}
 
   D1_joint.c32sm1: {to: [D1_joint.manifold], h_m: 11.2}
   D1_joint.manifold:
@@ -499,19 +529,19 @@ water:
     h_m: 11.2
 
   Z2_head.rotor:   {nozzle: "BL4.0", arc: 170, h_m: 11.6, gr: riser_2}
-  Z2_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.2, gr: riser_1}
+  Z2_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 10.0, gr: riser_1}
   Z2_head.spray_2: {nozzle: "MP2000", arc: 180, h_m: 12.0, gr: riser_3}
   Z2_joint.sm1bm1: {to: [Z2_valve.auto], h_m: 11.2}
   Z2_joint.bm1c25: {to: [Z2_hose.ldpe25_1], h_m: 11.2}
-  Z2_joint.c25bf34_1: {to: [Z2_joint.sj34x12_1], h_m: 10.2, gr: riser_1}
+  Z2_joint.c25bf34_1: {to: [Z2_joint.sj34x12_1], h_m: 10.0, gr: riser_1}
   Z2_joint.c25bf34_2: {to: [Z2_joint.sj34x12_2], h_m: 12.0, gr: riser_3}
-  Z2_joint.sj34x12_1: {to: [Z2_head.spray_1], h_m: 10.2, gr: riser_1}
-  Z2_joint.sj34x12_2: {to: [Z2_head.spray_2], h_m: 11.6, gr: riser_3}
+  Z2_joint.sj34x12_1: {to: [Z2_head.spray_1], h_m: 10.0, gr: riser_1}
+  Z2_joint.sj34x12_2: {to: [Z2_head.spray_2], h_m: 12.0, gr: riser_3}
   Z2_joint.sj34x34:   {to: [Z2_head.rotor], h_m: 11.6, gr: riser_2}
   Z2_joint.tee_1: {to: [Z2_hose.ldpe25_2, Z2_hose.ldpe25_3], h_m: 11.2}
-  Z2_joint.tee_c25bf34: {to: [Z2_joint.sj34x34, Z2_hose.ldpe25_4], h_m: 11.4}
+  Z2_joint.tee_c25bf34: {to: [Z2_joint.sj34x34, Z2_hose.ldpe25_4], h_m: 11.2}
   Z2_hose.ldpe25_1: {to: [Z2_joint.tee_1], l_m: 8, h_m: 11.2}
-  Z2_hose.ldpe25_2: {to: [Z2_joint.c25bf34_1], l_m: 8, h_m: 10.6}
+  Z2_hose.ldpe25_2: {to: [Z2_joint.c25bf34_1], l_m: 8, h_m: 10.8}
   Z2_hose.ldpe25_3: {to: [Z2_joint.tee_c25bf34], l_m: 4, h_m: 11.6}
   Z2_hose.ldpe25_4: {to: [Z2_joint.c25bf34_2], l_m: 18, h_m: 12.0}
   Z2_valve.auto:    {to: [Z2_joint.bm1c25], h_m: 11.2}
@@ -530,24 +560,24 @@ water:
   Z3_hose.ldpe25_3: {to: [Z3_joint.c25bf34_2], l_m: 10, h_m: 11.2}
   Z3_valve.auto:    {to: [Z3_joint.bm1c25], h_m: 11.2}
 
-  Z5_head.rotor_1: {nozzle: "BL5.0", arc: 270, h_m: 10.2, gr: riser_1}
-  Z5_head.rotor_2: {nozzle: "BL2.5", arc: 180, h_m: 10.2, gr: riser_2}
+  Z5_head.rotor_1: {nozzle: "BL5.0", arc: 270, h_m: 10.0, gr: riser_1}
+  Z5_head.rotor_2: {nozzle: "BL2.5", arc: 180, h_m: 10.0, gr: riser_2}
   Z5_joint.sm1bm1: {to: [Z5_valve.auto], h_m: 11.2}
   Z5_joint.bm1c25: {to: [Z5_hose.ldpe25_1], h_m: 11.2}
-  Z5_joint.c25bf34_1: {to: [Z5_joint.sj34x34_1], h_m: 10.2, gr: riser_1}
-  Z5_joint.c25bf34_2: {to: [Z5_joint.sj34x34_2], h_m: 10.6, gr: riser_2}
-  Z5_joint.sj34x34_1: {to: [Z5_head.rotor_1], h_m: 10.2, gr: riser_1}
-  Z5_joint.sj34x34_2: {to: [Z5_head.rotor_2], h_m: 10.6, gr: riser_2}
-  Z5_joint.tee: {to: [Z5_hose.ldpe25_2, Z5_hose.ldpe25_3], h_m: 10.6}
-  Z5_hose.ldpe25_1: {to: [Z5_joint.tee], l_m: 20, h_m: 10.6}
-  Z5_hose.ldpe25_2: {to: [Z5_joint.c25bf34_1], l_m: 4, h_m: 10.2}
-  Z5_hose.ldpe25_3: {to: [Z5_joint.c25bf34_2], l_m: 12, h_m: 10.6}
+  Z5_joint.c25bf34_1: {to: [Z5_joint.sj34x34_1], h_m: 10.0, gr: riser_1}
+  Z5_joint.c25bf34_2: {to: [Z5_joint.sj34x34_2], h_m: 10.0, gr: riser_2}
+  Z5_joint.sj34x34_1: {to: [Z5_head.rotor_1], h_m: 10.0, gr: riser_1}
+  Z5_joint.sj34x34_2: {to: [Z5_head.rotor_2], h_m: 10.0, gr: riser_2}
+  Z5_joint.tee: {to: [Z5_hose.ldpe25_2, Z5_hose.ldpe25_3], h_m: 10.0}
+  Z5_hose.ldpe25_1: {to: [Z5_joint.tee], l_m: 20, h_m: 10.8}
+  Z5_hose.ldpe25_2: {to: [Z5_joint.c25bf34_1], l_m: 4, h_m: 10.0}
+  Z5_hose.ldpe25_3: {to: [Z5_joint.c25bf34_2], l_m: 12, h_m: 10.8}
   Z5_valve.auto:    {to: [Z5_joint.bm1c25], h_m: 11.2}
 
   Z4_head.spray_1: {nozzle: "MP3000", arc: 270, h_m: 12.0, gr: riser_1}
   Z4_head.spray_2: {nozzle: "MP1000", arc: 210, h_m: 12.0, gr: riser_2}
   Z4_head.spray_3: {nozzle: "MP2000", arc: 270, h_m: 12.0, gr: riser_3}
-  Z4_head.spray_4: {nozzle: "MP2000", arc: 180, h_m: 12.0, gr: riser_4}
+  Z4_head.spray_4: {nozzle: "MP3000", arc: 180, h_m: 12.0, gr: riser_4}
   Z4_joint.sm1bm1: {to: [Z4_valve.auto], h_m: 11.2}
   Z4_joint.bm1c25: {to: [Z4_hose.ldpe25_1], h_m: 12.0}
   Z4_joint.c25bf34_1: {to: [Z4_joint.sj34x12_1], h_m: 12.0, gr: riser_1}
@@ -555,10 +585,10 @@ water:
   Z4_joint.sj34x12_1: {to: [Z4_head.spray_1], h_m: 12.0, gr: riser_1}
   Z4_joint.sj34x12_2: {to: [Z4_head.spray_2], h_m: 12.0, gr: riser_2}
   Z4_joint.sj34x12_3: {to: [Z4_head.spray_3], h_m: 12.0, gr: riser_3}
-  Z4_joint.tee_1: {to: [Z4_hose.ldpe25_2, Z4_hose.ldpe25_3], h_m: 11.4}
+  Z4_joint.tee_1: {to: [Z4_hose.ldpe25_2, Z4_hose.ldpe25_3], h_m: 11.2}
   Z4_joint.tee_2: {to: [Z4_hose.ldpe25_4, Z4_hose.ldpe25_5], h_m: 12.0}
   Z4_joint.tee_3: {to: [Z4_joint.c25bf34_2, Z4_hose.ldpe25_6], h_m: 12.0}
-  Z4_hose.ldpe25_1: {to: [Z4_joint.tee_1], l_m: 10, h_m: 11.4}
+  Z4_hose.ldpe25_1: {to: [Z4_joint.tee_1], l_m: 10, h_m: 11.2}
   Z4_hose.ldpe25_2: {to: [Z4_joint.c25bf34_1], l_m: 2, h_m: 12.0}
   Z4_hose.ldpe25_3: {to: [Z4_joint.tee_2], l_m: 8, h_m: 12.0}
   Z4_hose.ldpe25_4: {to: [Z4_joint.sj34x12_2], l_m: 6, h_m: 12.0}
@@ -599,15 +629,15 @@ electrical:
       signal_z4: [O1_wiring.splice_3]
       signal_z5: [O1_wiring.splice_4]
       common:    [O1_wiring.splice_8]
-  O1_wiring.splice_1: {to: [Z2_valve.auto]}  
-  O1_wiring.splice_2: {to: [Z3_valve.auto]}   
-  O1_wiring.splice_4: {to: [Z5_valve.auto]}   
-  O1_wiring.splice_3: {to: [Z4_valve.auto]}  
+  O1_wiring.splice_1: {to: [Z2_valve.auto]}
+  O1_wiring.splice_2: {to: [Z3_valve.auto]}
+  O1_wiring.splice_4: {to: [Z5_valve.auto]}
+  O1_wiring.splice_3: {to: [Z4_valve.auto]}
   Z2_valve.auto: {to: [O1_wiring.splice_5]}
   Z3_valve.auto: {to: [O1_wiring.splice_6]}
   Z5_valve.auto: {to: [O1_wiring.splice_7]}
   Z4_valve.auto: {to: [O1_wiring.splice_8]}
-  O1_wiring.splice_5: {to: [O1_wiring.common_1]}   
+  O1_wiring.splice_5: {to: [O1_wiring.common_1]}
   O1_wiring.common_1: {to: [O1_wiring.splice_6]}
   O1_wiring.splice_6: {to: [O1_wiring.common_2]}
   O1_wiring.common_2: {to: [O1_wiring.splice_7]}
