@@ -23,4 +23,4 @@
 
 13. Schematic geometry — hydraulic and electrical — is hand-authored.
 14. The schematic draws everything in `system.yaml`.
-15. Layout is a phone-portrait logical schematic (not geographic): a wiring band across the top, the manifold as a vertical bar with stacked ports, each auto zone as its own left-to-right row ending in its heads, the Z5 manual row, the Z6 cap stub, and the supply chain (well → pump → controller power) along the bottom.
+15. Layout is a phone-portrait logical schematic (not geographic): a wiring band across the top, the manifold as a vertical bar with stacked ports, each auto zone as its own left-to-right row ending in its heads, the Z1 manual row, the Z6 cap stub, and the supply chain (well → pump → controller power) along the bottom.

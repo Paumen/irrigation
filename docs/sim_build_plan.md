@@ -174,7 +174,7 @@ terminals and drawn internals (controller terminal strip, adapter winding, relay
 the splice's 8 ports, pump motor, valve coil pins), and all 24 wires individually pin-to-pin.
 Layout concept per `docs/Sim_ui.md` §15: phone-portrait logical schematic — wiring band on top,
 manifold as a vertical bar with stacked ports, each zone as its own left-to-right row ending in
-its heads, Z5 manual row, Z6 cap stub, supply chain at the bottom. `scene.js` turns model +
+its heads, Z1 manual row, Z6 cap stub, supply chain at the bottom. `scene.js` turns model +
 geometry into static paths/glyphs once; `render.js` only updates stroke width (∝ |flow|), color
 (red→green against the no-fault baseline, per `docs/Sim_ui.md` §3), idle=grey/dashed, every
 outlet/leak labeled with flow (m³/h everywhere, no unit toggle, per `docs/Sim_ui.md` §2), wiring
@@ -182,7 +182,7 @@ particle-traced from `energisedWires`.
 
 ### Controls
 `controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
-flo-stop; valve bleed screw; Z5 manual handle; grid/adapter plug toggles; fault toggles. Any change →
+flo-stop; valve bleed screw; Z1 manual handle; grid/adapter plug toggles; fault toggles. Any change →
 debounced `electrical → compile faults → solveSteady → renderScene`. The quasi-time module
 (`quasitime.js`) plays a time-ordered sequence of command-states along a timeline — each frame is a
 fully settled `solveSteady` result, scrubbed **within** the single live view (a timeline scrubber, not
@@ -199,7 +199,7 @@ The UI (M5–M7, M9), the fault engine (M8), and the qualitative state layer (M1
 | **M0** Spike | ✅ | `test/m0-smoke.mjs` (`npm run smoke`) |
 | **M1** model/network/inp/runner | ✅ | `src/model.js`, `network.js`, `inp.js`, `epanet-runner.js` |
 | **M2** outlets + outer solver | ✅ | `src/outlets.js`, `solver.js`; harness cases *idle* + *pump+Z2* |
-| **M3** Z5 manual zone | ⚠️ | engine support present (`valve-manual` TCV in `network.js`, `manualOpen` in `solver.js`, stream-orifice law `streamEmitterCoeff` in `outlets.js`); **no dedicated harness case yet** |
+| **M3** Z1 manual zone | ⚠️ | engine support present (`valve-manual` TCV in `network.js`, `manualOpen` in `solver.js`, stream-orifice law `streamEmitterCoeff` in `outlets.js`); **no dedicated harness case yet** |
 | **M4** electrical + actuation | ✅ | `src/electrical.js`; harness cases *broken shared return* + *cut controller feed* |
 | **M5** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
 | **M6** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
@@ -224,7 +224,7 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
 - **M2:** `outlets.js`, `solver.js`; idle + pump+Z2 converge with correct mass balance; `harness.mjs` cases 1–2.
   *States here:* the `pressurised/unpressurised` and head `watering/off` labels are a threshold over the
   converged EPANET pressures/demands — projected directly, no new solve (formalized in M10).
-- **M3 (Z5 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
+- **M3 (Z1 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
   `nozzle.stream` open-orifice discharge, manual-handle open/close in the state model; harness case
   (pump + Z5 open → orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV,
   orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
@@ -237,7 +237,7 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   (`docs/Sim_ui.md` §13–§15).
 - **M6:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
   worker solver client (`docs/Sim_ui.md` §12) + `app.js` wiring (live update, m³/h fixed — no
-  units toggle); pump, zones, Z5 manual handle, rotor flo-stop, valve flow-control, plug toggles.
+  units toggle); pump, zones, Z1 manual handle, rotor flo-stop, valve flow-control, plug toggles.
 - **M7 (quasi-time):** `quasitime.js` — a time-ordered sequence of settled command-states scrubbed
   along a timeline within the single live view; each frame re-uses the `solveSteady` path (a scrubber,
   not a mode switch).
@@ -265,7 +265,7 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
 |---|---|---|
 | **States** | | |
 | R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M8 (input state); per-component qualitative states derived in M10 |
-| R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 (Z5 manual) + M4 |
+| R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 (Z1 manual) + M4 |
 | R3 | Electrical circuit to pump and each solenoid is intact or broken | M4 |
 | R4 | Any element healthy or faulted — hydraulic (clog, leak, weak pump) or electrical (no signal, broken wire, dead solenoid) | M8 |
 | **Logic** | | |
