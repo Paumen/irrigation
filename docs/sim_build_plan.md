@@ -148,8 +148,16 @@ the remaining qualitative rules, and **cross-checks** the two wherever both exis
   `needs`/`needs_any` to a fixpoint from the grounded leaf + electrical + pressure states.
 
 **Kind→instance resolution:** states are declared per kind but the graph has per-instance nodes
-(`Z2_valve.auto`, `Z3_valve.auto`, …); a reference like `"valve.auto = open"` resolves within the
-referencing node's zone/scope. `states.js` owns that resolver. Output is a per-instance **state vector**
+(`Z2_valve.auto`, `Z3_valve.auto`, …), so a bare reference (`"valve.auto = open"`,
+`"pump.jet = pressurised"`) resolves **nearest-scope first**: (1) the *same component instance* for its
+own sub-states (`diaphragm`, `bonnet/chamber`, `solenoid/coil`); (2) an instance sharing the referencing
+node's prefix/scope — covers zone-local refs (`valve.auto`, the in-zone joints) and per-prefix duplicates
+like `source.socket` (`S2_relay.pumpstart` → `S2_source.socket`, `O1_control.controller` →
+`O1_source.socket`); (3) the **unique system-wide instance** for kinds that appear exactly once, which is
+how cross-prefix references resolve — `S1_pump.jet` → `S2_relay.pumpstart`, `S2_relay.pumpstart` →
+`O1_control.controller`, and every `Z*_valve.auto` → `O1_control.controller`. `states.js` owns that
+resolver; a build-time check fails on any reference left ambiguous (multiple in-scope candidates) or
+unresolved (none). Output is a per-instance **state vector**
 consumed by `render.js` for labels and by the harness as cross-check assertions (rule-derived
 `valve.auto = open` ⇔ solver `valveOpen`, etc.). `model.js` must stop dropping the `states:` blocks.
 
@@ -219,7 +227,8 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   max-pressure warnings, the keep-last-good solver-failure badge (`docs/Sim_ui.md` §12);
   `.github/workflows/pages.yml` + `sim/README.md`.
 - **M10 (qualitative state layer):** `states.js` — read the `system.yaml` `states:` blocks (`model.js`
-  drops them today), the kind→instance reference resolver, fixpoint evaluation of **every** declared
+  drops them today), the kind→instance reference resolver (nearest-scope first, global-singleton
+fallback for cross-prefix refs), fixpoint evaluation of **every** declared
   state including the intermediate valve mechanism (diaphragm/bonnet-chamber/pilot_seat/plunger),
   projection from the M2/M4/M8 results, and the cross-check harness (rule-derived state ⇔ numeric solve
   wherever both exist). `render.js` surfaces each component's qualitative state. Depends on M2/M4/M5/M8.
