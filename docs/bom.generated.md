@@ -130,7 +130,7 @@ IRRIGATION SYSTEM
 │   │   ├─ joint.tee_c25bf34
 │   │   ├─ riser_2
 │   │   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   │   └─ head.rotor  (BL4.0, 170°)  (Hunter I-20-04-SS)
+│   │   │   └─ head.rotor  (BL4.0, 170°, ~12.2 m throw @3 bar)  (Hunter I-20-04-SS)
 │   │   │       ├─ check_valve
 │   │   │       ├─ riser
 │   │   │       ├─ riser_seal
@@ -185,7 +185,7 @@ IRRIGATION SYSTEM
 │   │   ├─ riser_1
 │   │   │   ├─ joint.c25bf34
 │   │   │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │   │   └─ head.rotor  (BL2.5, 150°)  (Hunter I-20-04-SS)
+│   │   │   └─ head.rotor  (BL2.5, 150°, ~10.7 m throw @3 bar)  (Hunter I-20-04-SS)
 │   │   │       ├─ check_valve
 │   │   │       ├─ riser
 │   │   │       ├─ riser_seal
@@ -199,7 +199,7 @@ IRRIGATION SYSTEM
 │   │   └─ riser_2
 │   │       ├─ joint.c25bf34
 │   │       ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│   │       └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
+│   │       └─ head.rotor  (BL5.0, 270°, ~12.8 m throw @3 bar)  (Hunter I-20-04-SS)
 │   │           ├─ check_valve
 │   │           ├─ riser
 │   │           ├─ riser_seal
@@ -322,7 +322,7 @@ IRRIGATION SYSTEM
 │       ├─ riser_1
 │       │   ├─ joint.c25bf34
 │       │   ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│       │   └─ head.rotor  (BL5.0, 270°)  (Hunter I-20-04-SS)
+│       │   └─ head.rotor  (BL5.0, 270°, ~12.8 m throw @3 bar)  (Hunter I-20-04-SS)
 │       │       ├─ check_valve
 │       │       ├─ riser
 │       │       ├─ riser_seal
@@ -336,7 +336,7 @@ IRRIGATION SYSTEM
 │       └─ riser_2
 │           ├─ joint.c25bf34
 │           ├─ joint.sj34x34  (Hunter sj 3/4x3/4)
-│           └─ head.rotor  (BL2.5, 180°)  (Hunter I-20-04-SS)
+│           └─ head.rotor  (BL2.5, 180°, ~10.7 m throw @3 bar)  (Hunter I-20-04-SS)
 │               ├─ check_valve
 │               ├─ riser
 │               ├─ riser_seal

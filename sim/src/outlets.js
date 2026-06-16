@@ -45,6 +45,18 @@ export function outletDemandAt(outlet, p_bar, curves, { noClamp = false } = {}) 
   return interp(pressures, row, lookup);
 }
 
+// Throw radius (m) for a rotor outlet at its inlet pressure, from the catalog radius_m table.
+// Sprays/streams have no modeled radius, so they return null.
+export function outletThrowAt(outlet, p_bar, curves) {
+  if (outlet.subkind !== "rotor") return null;
+  const radii = curves.nozzleI20.radius_m;
+  if (!radii) return null;
+  const size = String(outlet.params.nozzle).split(/\s+/)[0];
+  const row = radii[size];
+  if (!row) return null;
+  return interp(curves.nozzleI20.pressure_bar, row, p_bar);
+}
+
 // Below pMin_bar the solver runs the outlet as an emitter; the table cannot extrapolate toward 0 bar.
 export function outletTableMin(outlet, curves) {
   if (outlet.subkind === "stream") return null;

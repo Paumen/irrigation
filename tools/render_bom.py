@@ -111,6 +111,17 @@ for a in ASSEMBLIES:
 claimed = {i for t, p in TYPE_PATH.items() if p for i in TYPE_INST.get(t, [])}
 
 # ---- attrs / quantity helpers ----------------------------------------------
+# Nominal rotor throw at 3.0 bar from the catalog radius_m table (sprays have no
+# modeled radius). Static figure for the parts list; the sim computes the actual
+# throw from each head's solved inlet pressure.
+_ROTOR_RADIUS = (G.get("head.rotor/nozzle") or {}).get("radius_m", {})
+def nominal_throw_m(nozzle):
+    row = _ROTOR_RADIUS.get(str(nozzle).split()[0])
+    if not row:
+        return None
+    pressures = G["head.rotor/nozzle"]["pressure_bar"]
+    return row[pressures.index(3.0)] if 3.0 in pressures else row[len(row) // 2]
+
 def attr_suffix(inst):
     a = INST[inst]["attrs"]
     bits = []
@@ -120,6 +131,10 @@ def attr_suffix(inst):
         bits.append(str(a["nozzle"]))
     if a.get("arc"):
         bits.append(f"{a['arc']}°")
+    if a.get("nozzle"):
+        t = nominal_throw_m(a["nozzle"])
+        if t is not None:
+            bits.append(f"~{t:g} m throw @3 bar")
     return f"  ({', '.join(bits)})" if bits else ""
 
 def line(prefix, last, text, out):
