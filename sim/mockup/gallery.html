@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Irrigation Sim — UI mockup gallery</title>
+<style>
+  :root{--bg:#f4f6f8;--ink:#1c2430;--muted:#6b7785;--line:#c4ccd6;--accent:#0a7d3c}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;padding:18px 16px 50px;max-width:760px;margin:0 auto}
+  h1{font-size:19px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:6px}
+  .rules{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-size:13px;margin:10px 0 18px}
+  .rules b{color:var(--accent)}
+  .grid{display:grid;gap:12px}
+  a.card{display:block;text-decoration:none;color:inherit;background:#fff;
+    border:1px solid var(--line);border-radius:12px;padding:13px 15px;transition:.12s}
+  a.card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(20,30,45,.08)}
+  .card h2{margin:0 0 3px;font-size:16px}
+  .card h2 .tag{font-size:11px;font-weight:600;color:var(--muted);margin-left:6px}
+  .card p{margin:0;color:var(--muted);font-size:13px}
+  .card .verdict{margin-top:6px;font-size:12.5px;color:var(--ink)}
+  .note{margin-top:22px;font-size:12.5px;color:var(--muted)}
+  hr{border:none;border-top:1px solid var(--line);margin:20px 0}
+</style>
+</head>
+<body>
+  <h1>Irrigation Sim — UI mockups</h1>
+  <div class="sub">⚠️ throwaway · fake numbers · for layout &amp; interaction feel only. Best viewed on a phone, portrait.</div>
+
+  <div class="rules">
+    Every variant obeys the rules we agreed: <b>controls live in their items</b> (you reach a control by
+    tapping its component — no global bar, no “run zone” switch), and <b>“zone is watering” is derived</b>,
+    never set directly (watch for “COMMANDED · NOT OPENING” when a signal is energised but the valve can’t open).
+    They differ only in <b>how the overview stays compact while detail appears on demand</b>.
+  </div>
+
+  <h2 style="font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px">The four directions</h2>
+  <div class="grid">
+    <a class="card" href="variant-board.html">
+      <h2>1 · Board + callouts <span class="tag">whole system always visible</span></h2>
+      <p>The entire schematic on one screen. Tap a part and a bubble pops up anchored right at it, expanding from a peek to its controls; everything else dims.</p>
+      <div class="verdict">Best overview density · risk: tight on a phone, callouts can crowd.</div>
+    </a>
+    <a class="card" href="variant-accordion.html">
+      <h2>2 · Accordion <span class="tag">most compact</span></h2>
+      <p>A scannable list of collapsed zone strips (state pill + flow total). Tap one to expand its mini-schematic and controls inline; others stay collapsed.</p>
+      <div class="verdict">Best for scanning state fast · risk: loses the always-on whole-system picture.</div>
+    </a>
+    <a class="card" href="variant-pane.html">
+      <h2>3 · Map + detail pane <span class="tag">master / detail</span></h2>
+      <p>A small fixed map of the whole system up top stays put; the bottom pane swaps to show the tapped component large with its values + controls.</p>
+      <div class="verdict">Overview never moves while you work · risk: map gets small, detail is half a screen away.</div>
+    </a>
+    <a class="card" href="variant-zoom.html">
+      <h2>4 · Semantic zoom <span class="tag">one canvas</span></h2>
+      <p>One canvas where detail is a function of zoom: system → zone → component. Zoom out = clean overview; zoom in = labels, values, then in-place controls.</p>
+      <div class="verdict">Most “native app” feel, no separate panels · risk: more interaction to learn, zoom can disorient.</div>
+    </a>
+  </div>
+
+  <hr>
+  <h2 style="font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px">For reference</h2>
+  <div class="grid">
+    <a class="card" href="slice.html">
+      <h2>Z2 chain slice <span class="tag">focused demo</span></h2>
+      <p>Just the controller → wire → Z2 valve → 3 heads, showing the controls-in-items + derived-watering idea end to end. Cut the wire and watch it stay “commanded, not opening”.</p>
+    </a>
+    <a class="card" href="index.html">
+      <h2>Original board <span class="tag">first attempt — superseded</span></h2>
+      <p>The first mockup, with the global zone-toggle bar that turned out wrong. Kept only to show what we moved away from.</p>
+    </a>
+  </div>
+
+  <div class="note">Pick whichever direction feels closest (or say what’s wrong with each) and I’ll develop that one properly.
+  None of this is wired to the real solver yet.</div>
+</body>
+</html>
