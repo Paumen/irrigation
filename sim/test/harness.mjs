@@ -235,7 +235,10 @@ function crossCheckStates(label, elec, r) {
   check(v3["solenoid/plunger"] === "down" && v3["bonnet/chamber"] === "pressurised" && v3.open === "closed", "Z3 (un-energised) mechanism holds the valve closed");
 
   // Bleed screw forces the chamber open without a command (qualitative path only — no electrical).
-  const stb = computeStates(model, { elec: solveElectrical(model, {}), hyd: solveSteady(model, {}, solveElectrical(model, {}), hyd, noFaults), state: { bleedOpen: { "Z3_valve.auto": true } }, resolver });
+  const bleedState = { bleedOpen: { "Z3_valve.auto": true } };
+  const elecOff = solveElectrical(model, {});
+  const rb = solveSteady(model, bleedState, elecOff, hyd, noFaults);
+  const stb = computeStates(model, { elec: elecOff, hyd: rb, state: bleedState, resolver });
   check(stb.states["Z3_valve.auto"]["bonnet/chamber"] === "unpressurised", "bleed screw open -> chamber unpressurised even with no command");
 }
 
