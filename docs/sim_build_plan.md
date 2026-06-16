@@ -63,6 +63,7 @@ sim/
     solver.js           OUTER fixed-point loop  <- core
     electrical.js       continuity/energization solver over circuit.parts+wires
     faults.js           grouped (role x failtype) fault-effect model + specials
+    states.js           qualitative state projection/evaluator (system.yaml `states:`) + cross-check
     geometry.js         hand-authored coordinates: every flow node, circuit-part port pin, wire route
     scene.js            model + geometry -> static scene graph (pipe/wire paths, glyph descriptors)
     render.js           data-join SVG update from a solved result (positions never move)
@@ -124,6 +125,42 @@ map overrides a handful (e.g. `bleed_screw:misconfigured`=stuck-open forces valv
 `priming_cap:misconfigured`=pump loses prime; `nozzle/arc:misconfigured`=swap table row). Clogs take a
 0..1 severity (partial→addK, full→closeLink); structural breaks default to a representative orifice.
 
+### Qualitative state layer (`states.js`)
+`system.yaml` declares, per component **kind**, named **states** with `needs`/`needs_any` preconditions:
+`source.well` wet/dry, the live/dead wiring chain (`source.socket` → controller transformer/terminals →
+`relay.pumpstart` coil/load → `valve.auto/solenoid/coil`), `pump.jet` primed/unprimed & pressurised/
+unpressurised, every downstream component pressurised/unpressurised, `valve.auto`'s open/closed plus its
+diaphragm / bonnet-chamber / pilot_seat / plunger mechanism, `valve.manual` open/closed, and `head.rotor`
+watering/off. These are a **derived view, not solver inputs:** the EPANET solve + `solveElectrical` stay
+the physics authority; `states.js` **projects** each component's label from the existing results, evaluates
+the remaining qualitative rules, and **cross-checks** the two wherever both exist. Three buckets by origin:
+- **Grounded by the solve (project, no new physics):** electrical `live/dead` = `solveElectrical`
+  reachability (`energisedWires` / `pumpPowered` / per-zone coil energization); `valve.* open/closed` =
+  solver `valveOpen` / `manualOpen` / `bleedOpen`; `*.pressurised` = EPANET node pressure over a threshold
+  **and** `reachable`; `head.* watering` = outlet demand > 0.
+- **New physics — suction wet/dry + prime:** the well is an EPANET RESERVOIR (always available), so wet/dry
+  and pump prime are absent from the hydraulic solve. Add `source.well` wet/dry as an environment condition
+  (toggle alongside faults), propagate wet/dry up the suction chain with the existing `reachable()` helper,
+  and gate the pump (dry / unprimed → it cannot pressurise). `pump.jet = primed` iff suction water reaches
+  `body/priming_chamber` **and** no `priming_cap:misconfigured` fault (the existing lost-prime SPECIAL).
+- **Qualitative-only (rule-evaluate):** the intermediate valve mechanism (diaphragm up/down, bonnet/chamber,
+  pilot_seat, plunger) that the numeric loop intentionally collapses — derived purely by evaluating the yaml
+  `needs`/`needs_any` to a fixpoint from the grounded leaf + electrical + pressure states.
+
+**Kind→instance resolution:** states are declared per kind but the graph has per-instance nodes
+(`Z2_valve.auto`, `Z3_valve.auto`, …), so a bare reference (`"valve.auto = open"`,
+`"pump.jet = pressurised"`) resolves **nearest-scope first**: (1) the *same component instance* for its
+own sub-states (`diaphragm`, `bonnet/chamber`, `solenoid/coil`); (2) an instance sharing the referencing
+node's prefix/scope — covers zone-local refs (`valve.auto`, the in-zone joints) and per-prefix duplicates
+like `source.socket` (`S2_relay.pumpstart` → `S2_source.socket`, `O1_control.controller` →
+`O1_source.socket`); (3) the **unique system-wide instance** for kinds that appear exactly once, which is
+how cross-prefix references resolve — `S1_pump.jet` → `S2_relay.pumpstart`, `S2_relay.pumpstart` →
+`O1_control.controller`, and every `Z*_valve.auto` → `O1_control.controller`. `states.js` owns that
+resolver; a build-time check fails on any reference left ambiguous (multiple in-scope candidates) or
+unresolved (none). Output is a per-instance **state vector**
+consumed by `render.js` for labels and by the harness as cross-check assertions (rule-derived
+`valve.auto = open` ⇔ solver `valveOpen`, etc.). `model.js` must stop dropping the `states:` blocks.
+
 ### Geometry + render (`geometry.js`, `scene.js`, `render.js`)
 No auto-layout (decision superseding the earlier elkjs plan): `geometry.js` is a hand-authored,
 checked-in coordinates module — an x,y for every flow node, per-port pin positions for every
@@ -164,11 +201,16 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   epanet-js enums (`NodeProperty.Pressure`, `LinkProperty.Flow`), CMH units, D-W, pump HEAD curve, GPV.
 - **M1:** `model.js`, `network.js`, `inp.js`, `epanet-runner.js`; validate one healthy zone vs pump curve.
 - **M2:** `outlets.js`, `solver.js`; idle + pump+Z1 converge with correct mass balance; `harness.mjs` cases 1–2.
+  *States here:* the `pressurised/unpressurised` and head `watering/off` labels are a threshold over the
+  converged EPANET pressures/demands — projected directly, no new solve (formalized in M10).
 - **M3 (Z5 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
   `nozzle.stream` open-orifice discharge, manual-handle open/close in the state model; harness case
   (pump + Z5 open → orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV,
   orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
 - **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
+  *States here:* the live/dead wiring states (`source.socket` → controller → relay coil/load →
+  solenoid coil) and `valve.* open/closed` are the `solveElectrical` reachability + solver `valveOpen`
+  results relabeled per the yaml nodes — projected in M10.
 - **M5:** `geometry.js` (hand-authored coordinates + Node completeness test) + `scene.js` +
   `render.js` — static schematic with flow/pressure encoding, full system.yaml coverage
   (`docs/Sim_ui.md` §13–§15).
@@ -178,9 +220,18 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
 - **M7:** ~~`quasitime.js`~~ dropped per `docs/Sim_ui.md` §1 (single live view, no mode switching).
 - **M8 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
+  *States here:* adds the suction-side physics the EPANET reservoir omits — `source.well` wet/dry as an
+  injectable condition, wet/dry propagation up the suction chain via `reachable()`, and `pump.jet` prime
+  gating (unprimed → no pressurise); `priming_cap:misconfigured` already supplies the lost-prime path.
 - **M9:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
   max-pressure warnings, the keep-last-good solver-failure badge (`docs/Sim_ui.md` §12);
   `.github/workflows/pages.yml` + `sim/README.md`.
+- **M10 (qualitative state layer):** `states.js` — read the `system.yaml` `states:` blocks (`model.js`
+  drops them today), the kind→instance reference resolver (nearest-scope first, global-singleton
+fallback for cross-prefix refs), fixpoint evaluation of **every** declared
+  state including the intermediate valve mechanism (diaphragm/bonnet-chamber/pilot_seat/plunger),
+  projection from the M2/M4/M8 results, and the cross-check harness (rule-derived state ⇔ numeric solve
+  wherever both exist). `render.js` surfaces each component's qualitative state. Depends on M2/M4/M5/M8.
 
 ## Requirement → milestone traceability
 
@@ -190,7 +241,7 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
 | # | Requirement (Sim_spec.md) | Milestone |
 |---|---|---|
 | **States** | | |
-| R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M8 (state model) |
+| R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M8 (input state); per-component qualitative states derived in M10 |
 | R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 (Z5 manual) + M4 |
 | R3 | Electrical circuit to pump and each solenoid is intact or broken | M4 |
 | R4 | Any element healthy or faulted — hydraulic (clog, leak, weak pump) or electrical (no signal, broken wire, dead solenoid) | M8 |
@@ -208,6 +259,20 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
 | R14 | Every point where water leaves shown, with how much | M5 |
 | R15 | User can command every control (pump, valves, head flo-stop, valve flow control) and inject faults | M6 (controls) + M8 (fault injection) |
 | R16 | The view updates live as the state changes | M6 |
+
+**Derived qualitative states (`system.yaml` `states:`).** Not Sim_spec requirements but a view computed on
+top of the solve (see *Qualitative state layer* above). R1's "state" is the **input** triple (commands +
+manual positions + faults); the `states:` blocks are **derived outputs** — a distinct concept. Coverage:
+
+| State family | Source |
+|---|---|
+| Electrical live/dead chain | M4 — project from `solveElectrical` reachability |
+| Valve open/closed + manual handle | M2 + M4 — solver `valveOpen` / `manualOpen` / `bleedOpen` |
+| Pressurised/unpressurised (downstream) | M2 — threshold over EPANET pressure + `reachable` |
+| Head watering/off | M2 — outlet demand > 0 |
+| Suction wet/dry, pump primed/pressurised | M8 — new suction-side physics + prime gating |
+| Intermediate valve mechanism (diaphragm/bonnet/pilot/plunger) | M10 — yaml `needs` fixpoint |
+| Kind→instance resolver, projection, cross-check, display | M10 — `states.js` |
 
 ## Risks
 - **CDN wasm locate:** if `epanet-js` can't find its `.wasm` via esm.sh in-browser, vendor just the
