@@ -239,6 +239,7 @@ function finalize(model, state, fx, pumpOn, valveOpen, reachable, res, topo, com
     throws,
     precip,
     leakFlows,
+    pumpOn,
     valveOpen,
     commandedNotOpening,
     reachable,

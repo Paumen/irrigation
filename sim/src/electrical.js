@@ -146,6 +146,14 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   }
   const pumpCommandedNotPowered = pumpStart && !pumpPowered;
 
+  // Per-socket mains presence, for the qualitative state layer (states.js grounds
+  // `source.socket = live/dead` from this). A grid socket is live iff its wall plug is in;
+  // the pump's own socket sits downstream of the relay contact, so it is live iff the pump is.
+  const socketLive = {};
+  for (const s of sockets) socketLive[s] = [...(adj.get(s) || [])].some(isLoad) ? pumpPowered : false;
+  if (controllerGrid) socketLive[controllerGrid] = adapterPlugged;
+  if (pumpGrid) socketLive[pumpGrid] = gridPlugged;
+
   const energisedWires = new Set();
   const light = (path) => {
     if (!path) return;
@@ -175,5 +183,6 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     commandedNotEnergised,
     pumpCommandedNotPowered,
     energisedWires,
+    socketLive,
   };
 }
