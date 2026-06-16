@@ -1,5 +1,3 @@
-review below spec and attached implementation plan.
-
 Irrigation System Simulator — High-Level Spec
 A simulator of the real irrigation system's hydraulics and its control wiring: for any combination of commands and faults, it shows where water sits, at what pressure, and where and how much leaves.
 States
