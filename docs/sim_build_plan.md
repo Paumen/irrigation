@@ -258,6 +258,15 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   injectable condition, wet/dry propagation up the suction chain via `reachable()`, and `pump.jet` prime
   gating (unprimed → no pressurise); `priming_cap:misconfigured` already supplies the lost-prime path.
   These extend the **M5** state layer with the suction/prime states.
+  *Required harness case — metering-port clog (stuck-open valve, M5 cross-check guard):* with the pump
+  on, **all** solenoids de-energised, and the **bleed screw closed**, a clogged `valve.auto`
+  diaphragm metering port stops the bonnet chamber re-pressurising, so the valve cannot close and the
+  zone waters with no command. Assert: the fault compiles to `valveForcedOpen` (Z2 flows ~1.66 m³/h,
+  rotor watering, mass balance), **and** it feeds a new `meteringPortClogged`-style input into the
+  `bonnet/chamber` rule so the chamber reads `unpressurised`, the diaphragm `up`, and the rule-derived
+  `valve.auto = open` matches the solver — i.e. `computeStates(...).mismatches` stays empty. (Today,
+  without that rule input, M5's cross-check *correctly* flags the contradiction: solve says `open`,
+  rule still says `closed` from chamber `pressurised`. M9 must close that gap, not suppress the check.)
 - **M10:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
   max-pressure warnings, the keep-last-good solver-failure badge (`docs/Sim_ui.md` §12);
   `.github/workflows/pages.yml` + `sim/README.md`.
@@ -324,7 +333,10 @@ manual positions + faults); the `states:` blocks are **derived outputs** — a d
   plus the bleed-screw path). Asserts: converged, no NaN/negative on filled nodes, mass balance, catalog
   fidelity, pump operating point, and — woven through cases 1–4 — that every rule-derived state agrees
   with the numeric solve (`computeStates(...).mismatches` empty). **Pending:** a dedicated M3 manual-zone
-  case, and the M9 clog/leak cases (faults are still a stub). Exit nonzero on failure.
+  case, and the M9 clog/leak cases (faults are still a stub) — including the metering-port-clog
+  stuck-open case (pump on, solenoids dead, bleed closed → valve forced open, zone waters, and the
+  `bonnet/chamber` rule fed so the M5 cross-check stays clean), specified under the M9 build step.
+  Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
   inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
   (flow widths, pressure colors, outlet labels in m³/h — no unit toggle, per-wire energised traces).
