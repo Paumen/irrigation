@@ -221,7 +221,7 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
 - **M0 Spike:** Node smoke test — hand-written 3-node INP (reservoir-pump-junction-demand); lock
   epanet-js enums (`NodeProperty.Pressure`, `LinkProperty.Flow`), CMH units, D-W, pump HEAD curve, GPV.
 - **M1:** `model.js`, `network.js`, `inp.js`, `epanet-runner.js`; validate one healthy zone vs pump curve.
-- **M2:** `outlets.js`, `solver.js`; idle + pump+Z1 converge with correct mass balance; `harness.mjs` cases 1–2.
+- **M2:** `outlets.js`, `solver.js`; idle + pump+Z2 converge with correct mass balance; `harness.mjs` cases 1–2.
   *States here:* the `pressurised/unpressurised` and head `watering/off` labels are a threshold over the
   converged EPANET pressures/demands — projected directly, no new solve (formalized in M10).
 - **M3 (Z5 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
