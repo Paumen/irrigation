@@ -60,7 +60,7 @@ sim/
     network.js          Model+state -> Topology (node/link classification, minor-loss folding)
     inp.js              Topology -> EPANET INP text
     epanet-runner.js    Hydraulics: epanet-js Workspace/Project lifecycle; open/solveH/read
-    outlets.js          pressure->flow laws (rotor table, spray clamp@2.8, orifice, leak)
+    outlets.js          pressure->flow laws (rotor table, spray clamp@2.76, orifice, leak)
     solver.js           OUTER fixed-point loop  <- core
     electrical.js       continuity/energization solver over circuit.parts+wires
     faults.js           grouped (role x failtype) fault-effect model + specials
@@ -102,7 +102,7 @@ Loop (≤~60 iters), baseline = rebuild INP each iteration and re-`open()` (sub-
    dead) → 0. Damp `q_set = q_prev + ALPHA·(q − q_prev)`, ALPHA≈0.5.
 3. Render INP, `hyd.solve`, read pressures/flows.
 4. Converge when max |Δp| and |Δq| over outlets below tolerance for 2 consecutive iters.
-- **Regulated spray:** lookup pressure = `min(p_prev, 2.8)` (the `regulated_bar` value) → flat above clamp (fast contraction).
+- **Regulated spray:** lookup pressure = `min(p_prev, 2.76)` (the `regulated_bar` value) → flat above clamp (fast contraction).
 - **Idle / pump-off:** pump link CLOSED, all demands 0, whole downstream is a dead branch → display "—".
 - **Dead branches:** zero demand + flag `filled=false`; override displayed pressure to "—" (never trust
   EPANET pressure on disconnected nodes). Mass-balance assert: Σ(outlet+leak flow) ≈ pump flow.
@@ -292,7 +292,7 @@ manual positions + faults); the `states:` blocks are **derived outputs** — a d
 - **Headless (primary):** `cd sim && npm install && npm test` runs `test/harness.mjs` over: (1) idle —
   all flows 0, downstream `filled=false`; (2) pump+Z1 — pumpPowered, Z1 valve open, head flows match
   catalog within tolerance, Z2–Z4 = 0, mass balance < 1e-3 m³/h, operating point on the pump curve,
-  MP sprays clamped at 2.8 bar; (3) clogged hose — branch heads → 0, no NaN, still converges;
+  MP sprays clamped at 2.76 bar; (3) clogged hose — branch heads → 0, no NaN, still converges;
   (4) broken wire — zone de-energised, valve stays closed, `commandedNotOpening` set, shared-return break
   disables the intended set. Asserts: converged, no NaN/negative on filled nodes, mass balance, catalog
   fidelity, monotonicity (second zone open → per-head pressure drops). Exit nonzero on failure.

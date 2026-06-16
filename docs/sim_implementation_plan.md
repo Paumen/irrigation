@@ -24,8 +24,8 @@ The result must reflect:
 - Outlet discharge depends on the pressure reaching each outlet, and the two head types differ:
   - **Rotors** (`head.rotor`, I-20) are unregulated — discharge follows the `head.rotor/nozzle` table for the
     fitted nozzle size, rising with pressure.
-  - **Spray heads** (`head.spray`, MP rotators) have a built-in regulator (`regulated_bar` 2.8): clamp
-    the nozzle inlet to min(supply, 2.8 bar), then read the `head.spray/nozzle` table for the fitted nozzle+arc.
+  - **Spray heads** (`head.spray`, MP rotators) have a built-in regulator (`regulated_bar` 2.76): clamp
+    the nozzle inlet to min(supply, 2.76 bar), then read the `head.spray/nozzle` table for the fitted nozzle+arc.
     The table is the nozzle's raw pressure-vs-flow, *not* the regulated behaviour — the regulator is what
     holds it steady.
   - **The hand-zone nozzle** (`nozzle.stream`) is an open orifice — discharge from its bore and Cd, not a

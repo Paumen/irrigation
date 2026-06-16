@@ -481,7 +481,7 @@ items:
 
   head.spray:
     price_eur: 25
-    regulated_bar: 2.8
+    regulated_bar: 2.76
     model: "Hunter Pro-Spray PRS40"
     states:
       pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
