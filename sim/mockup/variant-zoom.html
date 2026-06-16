@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Irrigation Sim — Semantic Zoom</title>
+<style>
+  :root{
+    --bg:#f4f7fa; --panel:#ffffff; --ink:#1b2733; --muted:#6b7c8c;
+    --line:#cdd8e3; --accent:#2b7de0; --good:#23a06b; --warn:#e0a020; --bad:#d6443a;
+    --shadow:0 2px 10px rgba(20,40,60,.10);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); overflow:hidden;
+    display:flex; flex-direction:column; height:100dvh;
+  }
+  .banner{
+    background:repeating-linear-gradient(45deg,#fff4d6,#fff4d6 10px,#ffe9b0 10px,#ffe9b0 20px);
+    color:#7a5a00; font-size:12px; font-weight:700; text-align:center;
+    padding:6px 8px; letter-spacing:.3px; border-bottom:1px solid #e8d49a; flex:0 0 auto;
+  }
+  header.bar{
+    flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:8px 10px;
+    background:var(--panel); border-bottom:1px solid var(--line); box-shadow:var(--shadow);
+  }
+  .crumb{font-size:13px; color:var(--muted); display:flex; align-items:center; gap:4px; min-width:0; overflow:hidden}
+  .crumb b{color:var(--ink)}
+  .crumb .sep{opacity:.5}
+  .spacer{flex:1}
+  .zbtns{display:flex; gap:6px}
+  button.z{
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--line);
+    background:#fff; font-size:20px; font-weight:700; color:var(--ink); line-height:1;
+    box-shadow:var(--shadow); cursor:pointer;
+  }
+  button.z:active{transform:scale(.94)}
+  button.z[disabled]{opacity:.35}
+  .stage{flex:1 1 auto; position:relative; overflow:hidden; background:
+    radial-gradient(circle at 30% 10%,#fbfdff,#eaf0f6 70%);}
+  svg#cv{position:absolute; inset:0; width:100%; height:100%; touch-action:none}
+  /* overlay DOM controls live above SVG */
+  .overlay{position:absolute; inset:0; pointer-events:none}
+  .ctlcard{
+    position:absolute; pointer-events:auto; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; box-shadow:0 6px 24px rgba(20,40,60,.18);
+    padding:10px 12px; width:230px; font-size:13px; opacity:0; transform:translateY(8px);
+    transition:opacity .22s ease, transform .22s ease;
+  }
+  .ctlcard.show{opacity:1; transform:translateY(0)}
+  .ctlcard h4{margin:0 0 2px; font-size:14px}
+  .ctlcard .sub{color:var(--muted); font-size:11px; margin-bottom:8px}
+  .row{display:flex; align-items:center; justify-content:space-between; gap:8px; margin:7px 0}
+  .row .lab{color:var(--muted); font-size:12px}
+  .seg{display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .seg button{border:0; background:#fff; padding:5px 8px; font-size:12px; cursor:pointer; color:var(--ink); border-left:1px solid var(--line)}
+  .seg button:first-child{border-left:0}
+  .seg button.on{background:var(--accent); color:#fff; font-weight:600}
+  .toggle{position:relative; width:42px; height:24px; border-radius:13px; background:var(--line); border:0; cursor:pointer; flex:0 0 auto}
+  .toggle.on{background:var(--good)}
+  .toggle::after{content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left .15s; box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .toggle.on::after{left:20px}
+  .badge{display:inline-block; padding:2px 7px; border-radius:20px; font-size:11px; font-weight:700}
+  .b-water{background:#d8f3e6; color:var(--good)}
+  .b-stop{background:#eef2f6; color:var(--muted)}
+  .b-fail{background:#fce0dd; color:var(--bad)}
+  .hint{position:absolute; left:50%; transform:translateX(-50%); bottom:10px; background:rgba(27,39,51,.86);
+    color:#fff; font-size:11px; padding:6px 12px; border-radius:20px; pointer-events:none; opacity:.9; white-space:nowrap}
+  .vals{margin-top:6px; border-top:1px dashed var(--line); padding-top:7px; font-size:12px; color:var(--muted)}
+  .vals b{color:var(--ink)}
+  .legend{position:absolute; left:8px; top:8px; background:rgba(255,255,255,.85); border:1px solid var(--line);
+    border-radius:10px; padding:6px 8px; font-size:10px; color:var(--muted); pointer-events:none; line-height:1.5}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  .dot-good{background:var(--good)} .dot-warn{background:var(--warn)} .dot-bad{background:var(--bad)} .dot-off{background:#b9c5d1}
+  text{font-family:inherit; -webkit-user-select:none; user-select:none}
+  .tapnote{position:absolute; right:8px; top:8px; font-size:10px; color:var(--muted); background:rgba(255,255,255,.8);
+    border:1px solid var(--line); border-radius:8px; padding:4px 7px; pointer-events:none}
+</style>
+</head>
+<body>
+<div class="banner">⚠️ MOCKUP · fake data · no real solver</div>
+<header class="bar">
+  <div class="crumb" id="crumb"></div>
+  <div class="spacer"></div>
+  <div class="zbtns">
+    <button class="z" id="zout" title="Zoom out">−</button>
+    <button class="z" id="zin" title="Zoom in">+</button>
+  </div>
+</header>
+<div class="stage" id="stage">
+  <svg id="cv" viewBox="0 0 1000 1400" preserveAspectRatio="xMidYMid meet"></svg>
+  <div class="overlay" id="overlay">
+    <div class="legend">
+      <div><i class="dot-good"></i>flowing &nbsp;<i class="dot-warn"></i>weak</div>
+      <div><i class="dot-bad"></i>fault &nbsp;<i class="dot-off"></i>off / closed</div>
+    </div>
+    <div class="tapnote" id="tapnote">tap a zone to zoom</div>
+    <div class="hint" id="hint">Overview — pinch out or tap a zone</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   FAKE MODEL — irrigation system. All flows m³/h.
+   ============================================================ */
+const NS="http://www.w3.org/2000/svg";
+
+// per-zone fake nominal head flows (m3/h)
+const ZONES = {
+  Z2:{kind:"auto", x:640, y:430, label:"Z2", heads:[
+        {n:"Rotor BL4.0 @170°", f:0.90, arc:170},
+        {n:"Spray MP3000 @270°", f:0.70, arc:270},
+        {n:"Spray MP2000 @180°", f:0.45, arc:180} ]},
+  Z3:{kind:"auto", x:640, y:560, label:"Z3", heads:[
+        {n:"Rotor BL2.5 @150°", f:0.54, arc:150},
+        {n:"Rotor BL5.0 @270°", f:1.14, arc:270} ]},
+  Z5:{kind:"auto", x:640, y:690, label:"Z5", heads:[
+        {n:"Rotor BL5.0 @270°", f:1.14, arc:270},
+        {n:"Rotor BL2.5 @180°", f:0.54, arc:180} ]},
+  Z4:{kind:"auto", x:640, y:820, label:"Z4", heads:[
+        {n:"Spray MP3000", f:0.70, arc:300},
+        {n:"Spray MP1000", f:0.30, arc:90},
+        {n:"Spray MP2000", f:0.45, arc:180},
+        {n:"Spray MP3000", f:0.70, arc:270} ]},
+  Z1:{kind:"manual", x:640, y:950, label:"Z1", heads:[
+        {n:"Hand line", f:1.20, arc:0} ]},
+  Z6:{kind:"cap", x:640, y:1080, label:"Z6", heads:[]},
+};
+const ZORDER=["Z2","Z3","Z5","Z4","Z1","Z6"];
+
+// editable system state
+const S = {
+  plugController:true,   // 230V plug -> controller
+  plugPump:true,         // 230V plug -> pump
+  mvRelay:true,          // pump-start relay commanded by controller
+  // per-zone control + fault state
+  z:{}
+};
+ZORDER.forEach(z=>{
+  S.z[z]={
+    signal: (z==="Z2"||z==="Z3"||z==="Z5"), // controller energized signal (auto)
+    wireCut:false,
+    solenoidDead:false,
+    bleed:false,                 // bleed screw open => manual drain, won't pressurize zone
+    throttle:"open",             // open|three|half|shut  (auto valve flow throttle)
+    handle: (z==="Z1"),          // manual handle open
+    clog:{}                      // headIndex -> 0|25|50|100
+  };
+});
+
+// pump runs if its plug on AND relay commanded AND controller powered
+function pumpRunning(){ return S.plugPump && S.mvRelay && S.plugController; }
+
+// derived per-zone watering state
+function zoneState(z){
+  const Z=ZONES[z], st=S.z[z];
+  if(Z.kind==="cap") return {state:"cap", flow:0, label:"capped"};
+  if(Z.kind==="manual"){
+    const on = st.handle && pumpRunning();
+    return {state: on?"water":"off", flow: on?headTotal(z):0, label: on?"watering (manual)":"closed"};
+  }
+  // auto
+  const commanded = st.signal && S.plugController;
+  const wiringOk = !st.wireCut;
+  const solOk = !st.solenoidDead;
+  const open = st.throttle!=="shut" && !st.bleed;
+  const pump = pumpRunning();
+  if(commanded && wiringOk && solOk && open && pump){
+    return {state:"water", flow:headTotal(z), label:"watering"};
+  }
+  if(commanded){
+    let why = !wiringOk?"signal wire cut" : !solOk?"solenoid dead" : st.bleed?"bleed open" :
+              st.throttle==="shut"?"throttle shut" : !pump?"pump off":"blocked";
+    return {state:"commanded", flow:0, label:"COMMANDED · NOT OPENING", why};
+  }
+  return {state:"off", flow:0, label:"idle"};
+}
+const THR={open:1, three:0.75, half:0.5, shut:0};
+function headTotal(z){
+  const st=S.z[z];
+  let scale = ZONES[z].kind==="auto" ? THR[st.throttle] : 1;
+  let t=0;
+  ZONES[z].heads.forEach((h,i)=>{
+    let clog=st.clog[i]||0;
+    let mult = clog===100?0 : clog===50?0.5 : clog===25?0.75 : 1;
+    t += h.f*mult*scale;
+  });
+  return t;
+}
+function headFlow(z,i){
+  const st=S.z[z]; const h=ZONES[z].heads[i];
+  let scale = ZONES[z].kind==="auto" ? THR[st.throttle] : 1;
+  let clog=st.clog[i]||0;
+  let mult = clog===100?0 : clog===50?0.5 : clog===25?0.75 : 1;
+  const zs=zoneState(z);
+  if(zs.state!=="water") return 0;
+  return h.f*mult*scale;
+}
+
+/* ============================================================
+   VIEW / ZOOM  — semantic zoom via viewBox
+   ============================================================ */
+const cv=document.getElementById("cv");
+const overlay=document.getElementById("overlay");
+const WORLD={w:1000,h:1400};
+// named focus targets (world coords box) -> level inferred from scale
+const VIEWS={
+  system:{x:0,y:0,w:1000,h:1400},
+};
+ZORDER.forEach(z=>{
+  const Z=ZONES[z];
+  VIEWS["zone_"+z]={x:Z.x-330, y:Z.y-150, w:760, h:300, zone:z};
+});
+let cur="system";        // current named view key
+let vb={...VIEWS.system}; // animated viewBox
+let target={...VIEWS.system};
+let anim=null;
+
+// detail level from current viewBox width (smaller w = more zoom)
+function levelFromVB(){
+  const w=vb.w;
+  if(w>820) return 0;       // GLANCE / overview
+  if(w>520) return 1;       // PEEK (labels+values)
+  return 2;                 // DIG (controls)
+}
+function focusedZone(){
+  // a zone is focused if the viewbox is centered on it & zoomed
+  if(cur.startsWith("zone_")) return cur.slice(5);
+  return null;
+}
+
+function setView(key,zone){
+  if(zone){ cur="zone_"+zone; target={...VIEWS["zone_"+zone]}; }
+  else { cur=key; target={...VIEWS[key]}; }
+  startAnim();
+}
+function startAnim(){
+  cancelAnimationFrame(anim);
+  const t0=performance.now(), from={...vb}, dur=380;
+  function tick(now){
+    let p=Math.min(1,(now-t0)/dur);
+    let e=1-Math.pow(1-p,3); // easeOutCubic
+    vb={x:from.x+(target.x-from.x)*e, y:from.y+(target.y-from.y)*e,
+        w:from.w+(target.w-from.w)*e, h:from.h+(target.h-from.h)*e};
+    applyVB(); render();
+    if(p<1) anim=requestAnimationFrame(tick); else { vb={...target}; applyVB(); render(); }
+  }
+  anim=requestAnimationFrame(tick);
+}
+function applyVB(){ cv.setAttribute("viewBox",`${vb.x} ${vb.y} ${vb.w} ${vb.h}`); }
+
+// zoom buttons step between named levels
+document.getElementById("zin").onclick=()=>{
+  const lv=levelFromVB();
+  if(cur==="system"){ setView("zone_Z2"); }      // dive to first zone
+  else if(lv<2){ // tighten current zone box
+    target={...VIEWS[cur]}; target.w*=0.62; target.h*=0.62;
+    target.x=(VIEWS[cur].x+VIEWS[cur].w/2)-target.w/2;
+    target.y=(VIEWS[cur].y+VIEWS[cur].h/2)-target.h/2;
+    startAnim();
+  }
+};
+document.getElementById("zout").onclick=()=>{
+  const lv=levelFromVB();
+  if(cur!=="system" && lv>=2){ // loosen back to full zone box
+    target={...VIEWS[cur]}; startAnim();
+  } else { setView("system"); }
+};
+
+/* world<->screen for overlay placement */
+function worldToScreen(wx,wy){
+  const r=cv.getBoundingClientRect();
+  // emulate preserveAspectRatio xMidYMid meet
+  const sx=r.width/vb.w, sy=r.height/vb.h, s=Math.min(sx,sy);
+  const ox=(r.width - vb.w*s)/2, oy=(r.height - vb.h*s)/2;
+  const stage=document.getElementById("stage").getBoundingClientRect();
+  return { x:(wx-vb.x)*s+ox + (r.left-stage.left), y:(wy-vb.y)*s+oy + (r.top-stage.top), s };
+}
+
+/* ============================================================
+   SVG RENDER
+   ============================================================ */
+function el(tag,attrs){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
+
+let dashOffset=0;
+function colorFor(v){ // v 0..1 -> red..green
+  if(v<=0) return "#b9c5d1";
+  const r=Math.round(214+(35-214)*v), g=Math.round(68+(160-68)*v), b=Math.round(58+(107-58)*v);
+  return `rgb(${r},${g},${b})`;
+}
+
+function render(){
+  while(cv.firstChild) cv.removeChild(cv.firstChild);
+  const lv=levelFromVB();
+  const fz=focusedZone();
+
+  // defs gradient bg subtle
+  // ---- SUPPLY CHAIN (left column) ----
+  const wellX=180, manX=460;
+  const pump=pumpRunning();
+
+  // feed pipe well->pump->manifold
+  drawPipe(wellX,1180, wellX,300, pump?0.9:0, lv);     // well riser
+  drawPipe(wellX,300, manX,300, pump?0.9:0, lv);       // to pump top
+  drawPipe(manX,300, manX,430, pump?0.9:0, lv);        // pump down to manifold start
+  // manifold spine
+  const manTop=430, manBot=1080;
+  drawPipe(manX,manTop-0, manX,manBot, pump?0.8:0, lv);
+
+  // node glyphs
+  drawNode(wellX,1180,"well", lv);
+  drawNode(wellX,1090,"strainer", lv);
+  drawNode(manX,300,"pump", lv, pump);
+  drawNode(manX,430,"manifold", lv);
+
+  // electrical: controller + relay (drawn lightly, left-top)
+  drawController(120,300,lv);
+
+  // ---- ZONES ----
+  ZORDER.forEach(z=>{
+    drawZone(z, manX, lv, fz);
+  });
+
+  // breadcrumb + hint + buttons
+  updateChrome(lv,fz);
+  // overlay control card
+  renderOverlay(lv,fz);
+}
+
+function drawPipe(x1,y1,x2,y2,flow,lv){
+  cv.appendChild(el("line",{x1,y1,x2,y2,stroke:"#dde5ee","stroke-width":14,"stroke-linecap":"round"}));
+  const col=colorFor(flow);
+  const p=el("line",{x1,y1,x2,y2,stroke:col,"stroke-width":9,"stroke-linecap":"round"});
+  cv.appendChild(p);
+  if(flow>0){
+    const d=el("line",{x1,y1,x2,y2,stroke:"#ffffff","stroke-width":3,
+      "stroke-linecap":"round","stroke-dasharray":"3 22","stroke-dashoffset":dashOffset,opacity:0.9});
+    cv.appendChild(d);
+  }
+}
+
+function drawNode(x,y,kind,lv,running){
+  let col="#7d909f", glyph="●", r=22;
+  if(kind==="pump"){ col=running?"#23a06b":"#b9c5d1"; }
+  if(kind==="well"){ col="#3a7bd0"; }
+  const g=el("g",{});
+  g.appendChild(el("circle",{cx:x,cy:y,r,fill:"#fff",stroke:col,"stroke-width":4}));
+  // simple inner icon
+  if(kind==="pump"){
+    const blade=el("path",{d:`M${x} ${y-10} A10 10 0 1 1 ${x-9} ${y+5}`,fill:"none",stroke:col,"stroke-width":3});
+    if(running){ const an=el("animateTransform",{attributeName:"transform",type:"rotate",
+      from:`0 ${x} ${y}`,to:`360 ${x} ${y}`,dur:"1.2s",repeatCount:"indefinite"}); blade.appendChild(an); }
+    g.appendChild(blade);
+  } else if(kind==="well"){
+    g.appendChild(el("path",{d:`M${x-9} ${y+6} q9 -16 18 0`,fill:"none",stroke:col,"stroke-width":3}));
+  } else {
+    g.appendChild(el("circle",{cx:x,cy:y,r:6,fill:col}));
+  }
+  cv.appendChild(g);
+  if(lv>=1){
+    const names={well:"Well",strainer:"Strainer / foot valve",pump:"Jet pump DAB AQUAJET 132 M",manifold:"Manifold"};
+    const t=el("text",{x:x,y:y+r+16,"text-anchor":"middle","font-size":13,fill:"#445"});
+    t.textContent=names[kind]||kind; cv.appendChild(t);
+    if(lv>=2 && kind==="pump"){
+      const t2=el("text",{x:x,y:y+r+32,"text-anchor":"middle","font-size":12,fill:running?"#23a06b":"#d6443a","font-weight":700});
+      t2.textContent= running?`running · ~${supplyFlow().toFixed(2)} m³/h` : "stopped";
+      cv.appendChild(t2);
+    }
+  }
+}
+function supplyFlow(){ let t=0; ZORDER.forEach(z=>{ if(zoneState(z).state==="water") t+=headTotal(z); }); return t; }
+
+function drawController(x,y,lv){
+  const g=el("g",{});
+  const powered=S.plugController;
+  g.appendChild(el("rect",{x:x-30,y:y-26,width:60,height:52,rx:8,fill:"#fff",
+    stroke:powered?"#2b7de0":"#b9c5d1","stroke-width":3}));
+  g.appendChild(el("circle",{cx:x,cy:y-8,r:5,fill:powered?"#23a06b":"#b9c5d1"}));
+  if(lv>=1){
+    const t=el("text",{x:x,y:y+42,"text-anchor":"middle","font-size":12,fill:"#445"});
+    t.textContent="Controller (O1)"; cv.appendChild(t);
+  }
+  // signal wires to auto zones (marching dashes if energized)
+  ZORDER.forEach(z=>{
+    if(ZONES[z].kind!=="auto") return;
+    const st=S.z[z], en=st.signal && powered && !st.wireCut;
+    const zx=ZONES[z].x-46, zy=ZONES[z].y;
+    const wire=el("path",{d:`M${x} ${y+10} C ${x} ${zy}, ${zx-80} ${zy}, ${zx} ${zy}`,
+      fill:"none",stroke:en?"#e0a020":(st.wireCut?"#d6443a":"#cfd8e2"),
+      "stroke-width":2.4,"stroke-dasharray": st.wireCut?"2 10":"6 8","stroke-dashoffset":-dashOffset,
+      opacity: en?0.95:0.5});
+    cv.appendChild(wire);
+  });
+  cv.appendChild(g);
+}
+
+function drawZone(z, manX, lv, fz){
+  const Z=ZONES[z], st=S.z[z], zs=zoneState(z);
+  const vx=Z.x, vy=Z.y;
+  // port stub from manifold spine to valve
+  const portFlow = zs.state==="water"?Math.min(1,headTotal(z)/2.5):0;
+  drawPipe(manX,vy, vx-30,vy, portFlow, lv);
+
+  // valve glyph
+  const g=el("g",{});
+  let col = zs.state==="water"?"#23a06b" : zs.state==="commanded"?"#d6443a" : zs.state==="cap"?"#8696a5":"#b9c5d1";
+  const isCap=Z.kind==="cap";
+  if(isCap){
+    g.appendChild(el("rect",{x:vx-22,y:vy-16,width:30,height:32,rx:6,fill:"#eef2f6",stroke:"#8696a5","stroke-width":3}));
+    g.appendChild(el("line",{x1:vx-22,y1:vy-16,x2:vx+8,y2:vy+16,stroke:"#8696a5","stroke-width":3}));
+  } else {
+    g.appendChild(el("circle",{cx:vx,cy:vy,r:20,fill:"#fff",stroke:col,"stroke-width":4}));
+    // valve body diamond
+    g.appendChild(el("path",{d:`M${vx-9} ${vy} L${vx} ${vy-9} L${vx+9} ${vy} L${vx} ${vy+9} Z`,
+      fill: zs.state==="water"?"#23a06b": "none", stroke:col,"stroke-width":2.5}));
+    if(Z.kind==="manual"){ // handle
+      g.appendChild(el("line",{x1:vx,y1:vy,x2:vx+ (st.handle?14:0),y2:vy-(st.handle?14:18),
+        stroke:col,"stroke-width":3,"stroke-linecap":"round"}));
+    }
+  }
+  // tap target
+  const hit=el("rect",{x:vx-40,y:vy-60,width:430,height:120,fill:"transparent",style:"cursor:pointer"});
+  hit.addEventListener("click",(e)=>{ e.stopPropagation();
+    const lvNow=levelFromVB();
+    if(fz===z && lvNow>=2){ /* already digging — toggle nothing */ }
+    else { setView("zone_"+z); }
+  });
+  cv.appendChild(hit);
+  cv.appendChild(g);
+
+  // label + state
+  if(lv>=1){
+    const t=el("text",{x:vx,y:vy-26,"text-anchor":"middle","font-size":15,"font-weight":700,fill:"#1b2733"});
+    t.textContent=Z.label+ (Z.kind==="auto"?" · auto":Z.kind==="manual"?" · manual":" · cap");
+    cv.appendChild(t);
+    // derived badge
+    const bw= zs.state==="commanded"?210:120;
+    const badge=el("text",{x:vx,y:vy+34,"text-anchor":"middle","font-size":12,"font-weight":700,
+      fill: zs.state==="water"?"#23a06b": zs.state==="commanded"?"#d6443a":"#6b7c8c"});
+    badge.textContent= zs.label.toUpperCase();
+    cv.appendChild(badge);
+  }
+
+  // heads as fan wedges
+  if(!isCap){
+    Z.heads.forEach((h,i)=>{
+      const hx=vx+90+ (i%2)*150;
+      const hy=vy-20 + Math.floor(i/2)*40;
+      drawHead(z,i,hx,hy,lv);
+    });
+  }
+}
+
+function drawHead(z,i,x,y,lv){
+  const h=ZONES[z].heads[i], st=S.z[z];
+  const f=headFlow(z,i);
+  const nominal=h.f;
+  const ratio=nominal>0? f/nominal : 0;
+  const clog=st.clog[i]||0;
+  const g=el("g",{});
+  // fan wedge scaled by flow
+  const baseR=18, R=baseR + 26*Math.min(1,f/1.2);
+  const arc=Math.max(20,h.arc||60);
+  const a0=-arc/2*Math.PI/180, a1=arc/2*Math.PI/180;
+  const x0=x+R*Math.cos(a0), y0=y+R*Math.sin(a0);
+  const x1=x+R*Math.cos(a1), y1=y+R*Math.sin(a1);
+  const large= arc>180?1:0;
+  const col= f>0? colorFor(ratio) : (clog>0?"#d6443a":"#b9c5d1");
+  if(f>0){
+    const wedge=el("path",{d:`M${x} ${y} L${x0} ${y0} A${R} ${R} 0 ${large} 1 ${x1} ${y1} Z`,
+      fill:col,opacity:0.28,stroke:col,"stroke-width":1.5});
+    g.appendChild(wedge);
+  }
+  g.appendChild(el("circle",{cx:x,cy:y,r:6,fill: clog===100?"#d6443a": col}));
+  if(clog>0 && clog<100){
+    g.appendChild(el("text",{x:x,y:y+4,"text-anchor":"middle","font-size":10,fill:"#fff","font-weight":700,
+      style:"pointer-events:none"})).textContent="";
+  }
+  // tap target for head
+  const hit=el("circle",{cx:x,cy:y,r:Math.max(R,22),fill:"transparent",style:"cursor:pointer"});
+  hit.addEventListener("click",(e)=>{ e.stopPropagation();
+    // dig into the zone, and remember which head to show controls for
+    activeHead={z,i};
+    if(focusedZone()!==z || levelFromVB()<2){ setView("zone_"+z); }
+    else render();
+  });
+  g.appendChild(hit);
+  cv.appendChild(g);
+
+  if(lv>=2){
+    const t=el("text",{x:x,y:y-R-6,"text-anchor":"middle","font-size":11,fill:"#445","font-weight":600});
+    t.textContent=h.n; cv.appendChild(t);
+    const v=el("text",{x:x,y:y+R+14,"text-anchor":"middle","font-size":11,
+      fill: clog>0?"#d6443a":"#23a06b","font-weight":700});
+    v.textContent= clog===100? "CLOGGED" : `${f.toFixed(2)} m³/h${clog?` (-${100-({25:75,50:50}[clog]||0)}%?)`:""}`;
+    if(clog===25) v.textContent=`${f.toFixed(2)} m³/h · clog 25%`;
+    if(clog===50) v.textContent=`${f.toFixed(2)} m³/h · clog 50%`;
+    cv.appendChild(v);
+  } else if(lv>=1){
+    const v=el("text",{x:x,y:y+R+12,"text-anchor":"middle","font-size":10,fill:"#6b7c8c"});
+    v.textContent= f>0? f.toFixed(2):"";
+    cv.appendChild(v);
+  }
+}
+
+/* ============================================================
+   OVERLAY DOM CONTROLS (component-level zoom only)
+   ============================================================ */
+let activeHead=null; // {z,i}
+let cardEl=null;
+function renderOverlay(lv,fz){
+  // remove existing card
+  if(cardEl){ cardEl.remove(); cardEl=null; }
+  if(lv<2 || !fz){ return; }
+  // build a control card for the focused zone (and active head if any)
+  const Z=ZONES[fz], st=S.z[fz], zs=zoneState(fz);
+  const card=document.createElement("div");
+  card.className="ctlcard";
+  let html=`<h4>${Z.label} controls</h4>`;
+  let stClass = zs.state==="water"?"b-water": zs.state==="commanded"?"b-fail":"b-stop";
+  html+=`<div class="sub"><span class="badge ${stClass}">${zs.label}</span></div>`;
+
+  if(Z.kind==="auto"){
+    html+=ctlRow("Controller signal", toggleHTML("sig", st.signal));
+    html+=ctlRow("Signal wire", `<button class="seg-btn" data-act="wire">${st.wireCut?"✂️ CUT — repair":"intact — cut"}</button>`);
+    html+=ctlRow("Solenoid", `<button class="seg-btn" data-act="sol">${st.solenoidDead?"DEAD — replace":"ok — kill"}</button>`);
+    html+=ctlRow("Bleed screw", toggleHTML("bleed", st.bleed));
+    html+=`<div class="row"><span class="lab">Flow throttle</span><span class="seg" id="thr">
+      ${["open","three","half","shut"].map(k=>`<button data-thr="${k}" class="${st.throttle===k?"on":""}">${({open:"Open",three:"¾",half:"½",shut:"Shut"})[k]}</button>`).join("")}
+      </span></div>`;
+  } else if(Z.kind==="manual"){
+    html+=ctlRow("Handle", toggleHTML("handle", st.handle));
+  } else {
+    html+=`<div class="sub">Capped stub — no discharge, no controls.</div>`;
+  }
+
+  // active head controls
+  if(activeHead && activeHead.z===fz && Z.heads[activeHead.i]){
+    const i=activeHead.i, h=Z.heads[i], clog=st.clog[i]||0;
+    html+=`<div class="vals"><b>${h.n}</b><br>flo-stop / nozzle clog:</div>`;
+    html+=`<div class="row"><span class="lab">Clog</span><span class="seg" id="clog">
+      ${[0,25,50,100].map(c=>`<button data-clog="${c}" class="${clog===c?"on":""}">${c===0?"clear":c===100?"full":c+"%"}</button>`).join("")}
+      </span></div>`;
+  } else {
+    html+=`<div class="vals">Tap a head to set nozzle clog / flo-stop.</div>`;
+  }
+
+  // power plug + relay (show under any focused zone for convenience of mockup)
+  html+=`<div class="vals" style="margin-top:8px">System power</div>`;
+  html+=ctlRow("230V plug · controller", toggleHTML("plugC", S.plugController));
+  html+=ctlRow("230V plug · pump", toggleHTML("plugP", S.plugPump));
+  html+=ctlRow("Pump-start relay (MV)", toggleHTML("mv", S.mvRelay));
+
+  card.innerHTML=html;
+  overlay.appendChild(card);
+  cardEl=card;
+  positionCard(card,Z);
+  requestAnimationFrame(()=>card.classList.add("show"));
+  wireCard(card,fz);
+}
+function ctlRow(lab,inner){ return `<div class="row"><span class="lab">${lab}</span>${inner}</div>`; }
+function toggleHTML(name,on){ return `<button class="toggle ${on?"on":""}" data-tog="${name}"></button>`; }
+
+function positionCard(card,Z){
+  const p=worldToScreen(Z.x,Z.y);
+  const stage=document.getElementById("stage").getBoundingClientRect();
+  let left=p.x-260; if(left<8) left=p.x+40; if(left<8) left=8;
+  let top=p.y-90;
+  const ch=card.offsetHeight||320;
+  if(top+ch>stage.height-8) top=stage.height-ch-8;
+  if(top<8) top=8;
+  card.style.left=left+"px"; card.style.top=top+"px";
+}
+
+function wireCard(card,z){
+  const st=S.z[z];
+  card.querySelectorAll("[data-tog]").forEach(b=>{
+    b.onclick=()=>{
+      const n=b.dataset.tog;
+      if(n==="sig") st.signal=!st.signal;
+      else if(n==="bleed") st.bleed=!st.bleed;
+      else if(n==="handle") st.handle=!st.handle;
+      else if(n==="plugC") S.plugController=!S.plugController;
+      else if(n==="plugP") S.plugPump=!S.plugPump;
+      else if(n==="mv") S.mvRelay=!S.mvRelay;
+      render();
+    };
+  });
+  card.querySelectorAll("[data-thr]").forEach(b=> b.onclick=()=>{ st.throttle=b.dataset.thr; render(); });
+  card.querySelectorAll("[data-clog]").forEach(b=> b.onclick=()=>{
+    if(activeHead) st.clog[activeHead.i]=parseInt(b.dataset.clog,10); render();
+  });
+  const wire=card.querySelector('[data-act="wire"]'); if(wire) wire.onclick=()=>{ st.wireCut=!st.wireCut; render(); };
+  const sol=card.querySelector('[data-act="sol"]'); if(sol) sol.onclick=()=>{ st.solenoidDead=!st.solenoidDead; render(); };
+  // style action buttons
+  card.querySelectorAll(".seg-btn").forEach(b=>{ b.style.cssText="border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer"; });
+}
+
+/* ============================================================
+   CHROME (breadcrumb / hint / buttons)
+   ============================================================ */
+function updateChrome(lv,fz){
+  const crumb=document.getElementById("crumb");
+  const names=["System","Zone","Component"];
+  let parts=[`<b>System</b>`];
+  if(fz){ parts=[`System`]; parts.push(`<span class="sep">›</span>`); parts.push(lv>=2?`Zone ${fz}`:`<b>Zone ${fz}</b>`); }
+  if(fz && lv>=2){ parts.push(`<span class="sep">›</span>`); parts.push(`<b>Controls</b>`); }
+  crumb.innerHTML=parts.join(" ");
+
+  document.getElementById("zin").disabled = (lv>=2 && fz) || (fz&&lv>=2);
+  document.getElementById("zin").disabled = (fz && lv>=2 && vb.w<=VIEWS["zone_"+fz].w*0.62+1);
+  document.getElementById("zout").disabled = (cur==="system");
+
+  const hint=document.getElementById("hint");
+  const tap=document.getElementById("tapnote");
+  if(lv===0){ hint.textContent="Overview — colour = flow, dashes = energized. Tap a zone or +."; tap.style.display="block"; }
+  else if(lv===1){ hint.textContent=`Zone ${fz} — labels & live flow. Zoom in (+) for controls.`; tap.style.display="none"; }
+  else { hint.textContent=`Zone ${fz} — controls live here. Tap heads to inject clogs.`; tap.style.display="none"; }
+}
+
+/* ============================================================
+   GESTURES — drag to pan, wheel/pinch to zoom, tap empty = up
+   ============================================================ */
+let dragging=false, lastX=0,lastY=0, pinchD=0;
+cv.addEventListener("pointerdown",e=>{ dragging=true; lastX=e.clientX; lastY=e.clientY; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener("pointermove",e=>{
+  if(!dragging) return;
+  const r=cv.getBoundingClientRect(); const s=Math.min(r.width/vb.w,r.height/vb.h);
+  vb.x-=(e.clientX-lastX)/s; vb.y-=(e.clientY-lastY)/s; lastX=e.clientX; lastY=e.clientY;
+  cur = cur; // keep name but free-pan; recompute focus by proximity
+  applyVB(); render();
+});
+cv.addEventListener("pointerup",e=>{ dragging=false; });
+cv.addEventListener("wheel",e=>{ e.preventDefault();
+  const f=e.deltaY>0?1.12:0.89; zoomAt(e.clientX,e.clientY,f);
+},{passive:false});
+
+// pinch
+let touches=new Map();
+cv.addEventListener("touchstart",e=>{ for(const t of e.changedTouches) touches.set(t.identifier,{x:t.clientX,y:t.clientY}); },{passive:true});
+cv.addEventListener("touchmove",e=>{
+  if(e.touches.length===2){
+    e.preventDefault();
+    const a=e.touches[0], b=e.touches[1];
+    const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+    if(pinchD){ const f=pinchD/d; zoomAt((a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2,f); }
+    pinchD=d;
+  }
+},{passive:false});
+cv.addEventListener("touchend",e=>{ pinchD=0; });
+
+function zoomAt(clientX,clientY,f){
+  cancelAnimationFrame(anim);
+  const r=cv.getBoundingClientRect(); const s=Math.min(r.width/vb.w,r.height/vb.h);
+  const ox=(r.width-vb.w*s)/2, oy=(r.height-vb.h*s)/2;
+  const wx=(clientX-r.left-ox)/s+vb.x, wy=(clientY-r.top-oy)/s+vb.y;
+  let nw=vb.w*f, nh=vb.h*f;
+  nw=Math.max(220,Math.min(WORLD.w*1.05,nw)); nh=nw*(WORLD.h/WORLD.w);
+  vb.x=wx-(wx-vb.x)*(nw/vb.w); vb.y=wy-(wy-vb.y)*(nh/vb.h); vb.w=nw; vb.h=nh;
+  // recompute named focus from center proximity
+  recomputeFocus();
+  applyVB(); render();
+}
+function recomputeFocus(){
+  const cx=vb.x+vb.w/2, cy=vb.y+vb.h/2;
+  if(vb.w>820){ cur="system"; return; }
+  let best=null,bd=1e9;
+  ZORDER.forEach(z=>{ const Z=ZONES[z]; const d=Math.hypot(Z.x-cx,Z.y-cy); if(d<bd){bd=d;best=z;} });
+  if(best) cur="zone_"+best;
+}
+
+// tap empty space zooms out one level
+document.getElementById("stage").addEventListener("dblclick",()=> setView("system"));
+
+/* ============================================================
+   ANIMATION LOOP for marching dashes + droplets
+   ============================================================ */
+function loop(){ dashOffset=(dashOffset-1.2); render(); requestAnimationFrame(loop); }
+
+/* boot */
+applyVB();
+requestAnimationFrame(loop);
+window.addEventListener("resize",()=>{ if(cardEl&&focusedZone()) positionCard(cardEl,ZONES[focusedZone()]); });
+</script>
+</body>
+</html>

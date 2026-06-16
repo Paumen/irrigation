@@ -423,9 +423,6 @@ function render(){
   if(openId){ const g=board.querySelector(`[data-id="${openId}"]`); if(g) g.classList.add("sel"); board.classList.add("has-open"); }
 }
 
-// hack for using continue inside forEach
-let continue_=undefined;
-
 function drawNode(root,id,x,y,w,h,name,sub){
   const g=el("g",{class:"node","data-id":id},root);
   g.dataset.x=x+w/2; g.dataset.y=y; g.dataset.bottom=y+h;
@@ -585,7 +582,6 @@ function meta(id){
     return {ic:"🔵",title:id+" auto valve",sub:"solenoid · 24V · "+heads[id].length+" heads",chip};
   }
   if(id.length===3){ // head
-    const z=id[0]+id[1]==="Z2"?"Z2":id.slice(0,2);
     const zz=id.slice(0,2);
     const h=heads[zz].find(x=>x.id===id);
     const ef=headEffFlow(zz,h);
@@ -693,9 +689,7 @@ function buildCalloutBody(id){
   else if(id==="Z1"){
     h+=sect("Manual valve",[kv("Flow",state.z1handle?"1.60 m³/h":"0.00 m³/h")]);
     h+=`<div class="co-section"><div class="lab">Handle</div><div class="rows">`+
-       ctlToggle("Open handle","manual","z1","z1",state.z1handle,"")+`</div></div>`;
-    // fix arg
-    h=h.replace('"z1","z1",','"z1",');
+       ctlToggle("Open handle","manual","z1",state.z1handle,"")+`</div></div>`;
   }
   else if(id==="Z6"){
     h+=`<div class="kv" style="margin-top:8px;color:var(--muted)">Capped stub — no controls, no discharge.</div>`;
