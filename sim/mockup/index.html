@@ -124,12 +124,13 @@ function pipe(g,x1,y1,x2,y2,active,flow){
 }
 function wire(g,d,energised){
   const id="w"+(pid++);
-  g.appendChild(el("path",{d,id,fill:"none",
+  const p=el("path",{d,id,fill:"none",
     stroke:energised?"var(--wire)":"#cdd5de","stroke-width":2,
-    "stroke-dasharray":"5 4",opacity:energised?1:.55}));
+    "stroke-dasharray":"5 4",opacity:energised?1:.55});
+  g.appendChild(p);
   if(energised){const a=el("animate",{attributeName:"stroke-dashoffset",
     from:"0",to:"-18",dur:".5s",repeatCount:"indefinite"});
-    g.querySelector("#"+id).appendChild(a);}
+    p.appendChild(a);}
 }
 
 // ---- render ----
@@ -200,7 +201,7 @@ function render(){
     if(z.type==="manual"){
       glyphs.appendChild(el("circle",{cx:cx,cy:baseY,r:active?9:4,
         fill:active?"#37c46b":"none",stroke:active?"#0a7d3c":"var(--idle)",
-        "stroke-dasharray":active?"":"2 3",class:"tap","data-id":"Z1head"}));
+        "stroke-dasharray":active?"":"2 3",class:"tap","data-id":"Z1"}));
       glyphs.appendChild(el("text",{x:cx+16,y:baseY+4,class:"sub-t"},"hand line"));
       return;
     }
@@ -271,7 +272,7 @@ function openSheet(id){
   let title=id, kind="", secs="";
   const on=pumpOn();
   if(id==="pump"){
-    title="Jet pump"; kind="S1_pump.jet · DAB JET 112 M";
+    title="Jet pump"; kind="S1_pump.jet · DAB AQUAJET 132 M";
     secs=section("Live",[["state",on?"running":"off"],["flow",on?"2.4 m³/h":"0"],["head","≈ 42 m"]])
        + capBar("pump curve","0 → 3.6 m³/h")
        + section("Actions",["grid on/off"])
