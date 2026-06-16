@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Irrigation · CircuitSim style</title>
+<style>
+  :root{
+    --grid:#e7ecf2;
+    --grid2:#d3dbe6;
+    --bg:#f3f6fa;
+    --ink:#1b2733;
+    --wire:#3a4756;
+    --pin:#5b6b7c;
+    --water:#1976d2;
+    --water-glow:#64b5f6;
+    --sig:#e53935;
+    --sig-dim:#9aa6b2;
+    --good:#2e7d32;
+    --warn:#ef6c00;
+    --bad:#c62828;
+    --panel:#ffffff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:13px;}
+  #banner{
+    position:sticky;top:0;z-index:50;
+    background:repeating-linear-gradient(45deg,#ffe08a,#ffe08a 10px,#ffd24d 10px,#ffd24d 20px);
+    color:#5a3d00;font-weight:700;letter-spacing:.5px;
+    text-align:center;padding:6px 8px;font-size:12px;
+    border-bottom:1px solid #c79a00;
+  }
+  #hdr{padding:8px 10px 2px;}
+  #hdr h1{font-size:15px;margin:0 0 2px;font-weight:600;}
+  #hdr p{margin:0;font-size:11px;color:#5b6b7c;line-height:1.4;}
+  #legend{display:flex;flex-wrap:wrap;gap:8px;padding:6px 10px 8px;font-size:10.5px;color:#445;}
+  #legend .lg{display:flex;align-items:center;gap:4px;}
+  #legend .sw{width:18px;height:0;border-top:2px solid var(--wire);}
+  #legend .sw.w{border-top:2px solid var(--water);}
+  #legend .sw.s{border-top:2px dashed var(--sig);}
+  #legend .dot{width:7px;height:7px;border-radius:50%;}
+  #stage{width:100%;display:block;background:
+     linear-gradient(var(--grid) 1px, transparent 1px) 0 0/16px 16px,
+     linear-gradient(90deg,var(--grid) 1px, transparent 1px) 0 0/16px 16px,
+     linear-gradient(var(--grid2) 1px, transparent 1px) 0 0/64px 64px,
+     linear-gradient(90deg,var(--grid2) 1px, transparent 1px) 0 0/64px 64px,
+     var(--bg);
+     touch-action:pan-y;
+  }
+  .hit{cursor:pointer;}
+  text{user-select:none;font-family:"Segoe UI",Roboto,Arial,sans-serif;}
+  /* editor panel */
+  #editor{
+    position:fixed;z-index:100;width:230px;max-width:calc(100vw - 20px);
+    background:var(--panel);border:1px solid #b9c4d0;border-radius:7px;
+    box-shadow:0 8px 28px rgba(20,40,70,.28);font-size:12px;overflow:hidden;
+    display:none;
+  }
+  #editor .eh{background:#28323d;color:#fff;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;}
+  #editor .eh b{font-size:12.5px;}
+  #editor .eh .x{cursor:pointer;font-weight:700;padding:0 4px;opacity:.85;}
+  #editor .eb{padding:8px 9px;max-height:60vh;overflow:auto;}
+  #editor .sec{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#7a8794;margin:8px 0 4px;}
+  #editor .sec:first-child{margin-top:0;}
+  #editor .row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px;align-items:center;}
+  #editor .kv{font-size:11px;color:#445;margin-bottom:5px;}
+  #editor .kv b{color:#1b2733;}
+  button.b{
+    border:1px solid #b9c4d0;background:#f4f7fb;color:#27313c;border-radius:5px;
+    padding:5px 8px;font-size:11.5px;cursor:pointer;flex:1 1 auto;min-width:40px;
+  }
+  button.b:hover{background:#e9eff5;}
+  button.b.on{background:var(--water);border-color:var(--water);color:#fff;}
+  button.b.sig{background:var(--sig);border-color:var(--sig);color:#fff;}
+  button.b.warn{background:var(--warn);border-color:var(--warn);color:#fff;}
+  button.b.bad{background:var(--bad);border-color:var(--bad);color:#fff;}
+  button.b.good{background:var(--good);border-color:var(--good);color:#fff;}
+  .pill{font-size:9.5px;padding:1px 5px;border-radius:8px;color:#fff;font-weight:600;}
+  .footer{padding:10px;font-size:10.5px;color:#7a8794;line-height:1.5;}
+</style>
+</head>
+<body>
+<div id="banner">⚠️ MOCKUP · fake data — visual style study only</div>
+<div id="hdr">
+  <h1>Rotor system — schematic view</h1>
+  <p>Tap any component to edit its controls &amp; inject faults. Dots = flow (water blue / signal red). Speed ∝ flow. "Watering" is derived, not a switch.</p>
+</div>
+<div id="legend">
+  <div class="lg"><span class="sw w"></span>water pipe</div>
+  <div class="lg"><span class="sw s"></span>24V / 230V signal</div>
+  <div class="lg"><span class="dot" style="background:var(--water)"></span>water flow</div>
+  <div class="lg"><span class="dot" style="background:var(--sig)"></span>energized</div>
+</div>
+
+<svg id="stage" viewBox="0 0 390 1180" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg"></svg>
+
+<div id="editor">
+  <div class="eh"><b id="etitle">—</b><span class="x" onclick="closeEditor()">✕</span></div>
+  <div class="eb" id="ebody"></div>
+</div>
+
+<div class="footer">
+  Falstad-style study. All numbers fabricated. Flows in m³/h. No global controls — every command lives inside its component. Z6 is a capped stub (never discharges).
+</div>
+
+<script>
+/* ============================================================
+   MODEL — the whole system as data
+   ============================================================ */
+const PUMP_MAX = 6.0; // m3/h nominal at manifold when running unrestricted
+
+// state machine of all controllable inputs + faults
+const S = {
+  plugCtrl:true,   // 230V plug -> controller
+  plugPump:true,   // 230V plug -> pump
+  ctrlOn:true,     // controller powered (derived from plugCtrl)
+  mvRelay:true,    // pump-start relay commanded by controller
+  zones:{
+    Z1:{type:'manual', handle:'open', heads:['hand line']},
+    Z2:{type:'auto', sig:true, throttle:'open', bleed:false, wireCut:false, solDead:false,
+        heads:[
+          {n:'BL4.0 rotor', deg:'170°', base:0.90, clog:0},
+          {n:'MP3000 spray', deg:'270°', base:0.70, clog:0},
+          {n:'MP2000 spray', deg:'180°', base:0.45, clog:0},
+        ]},
+    Z3:{type:'auto', sig:false, throttle:'open', bleed:false, wireCut:false, solDead:false,
+        heads:[
+          {n:'BL2.5 rotor', deg:'150°', base:0.54, clog:0},
+          {n:'BL5.0 rotor', deg:'270°', base:1.14, clog:0},
+        ]},
+    Z5:{type:'auto', sig:false, throttle:'open', bleed:false, wireCut:false, solDead:false,
+        heads:[
+          {n:'BL5.0 rotor', deg:'270°', base:1.14, clog:0},
+          {n:'BL2.5 rotor', deg:'180°', base:0.54, clog:0},
+        ]},
+    Z4:{type:'auto', sig:false, throttle:'open', bleed:false, wireCut:false, solDead:false,
+        heads:[
+          {n:'MP3000 spray', deg:'—', base:0.70, clog:0},
+          {n:'MP1000 spray', deg:'—', base:0.30, clog:0},
+          {n:'MP2000 spray', deg:'—', base:0.45, clog:0},
+          {n:'MP3000 spray', deg:'—', base:0.70, clog:0},
+        ]},
+    Z6:{type:'cap'},
+  }
+};
+const THROTTLE_K = {open:1.0, '¾':0.75, '½':0.5, shut:0.0};
+
+/* ---------- DERIVATION ---------- */
+function pumpRunning(){
+  return S.plugPump && S.ctrlOn && S.mvRelay;
+}
+// each zone: compute commanded, opening, flow
+function deriveZone(z){
+  const Z=S.zones[z];
+  if(Z.type==='cap') return {state:'capped', flow:0, commanded:false, opening:false};
+  if(Z.type==='manual'){
+    const open = Z.handle==='open';
+    const flow = (open && pumpRunning()) ? 1.05 : 0;
+    return {state: open?(pumpRunning()?'watering':'open·no pump'):'closed', flow, commanded:open, opening:open};
+  }
+  // auto
+  const commanded = S.ctrlOn && Z.sig;
+  const sigReaches = commanded && !Z.wireCut && !Z.solDead;
+  const throttleK = THROTTLE_K[Z.throttle];
+  const manualBleed = Z.bleed; // bleed screw forces open mechanically
+  const pumped = pumpRunning();
+  // valve physically opens if (solenoid actuated by reaching signal OR bleed) AND throttle not shut
+  const wantsOpen = (sigReaches || manualBleed);
+  const canOpen = wantsOpen && throttleK>0;
+  const opening = canOpen && (pumped || manualBleed); // needs supply pressure for real flow
+  let flow=0;
+  if(canOpen && pumped){
+    flow = Z.heads.reduce((s,h)=> s + h.base*(1-h.clog/100), 0) * throttleK;
+  }
+  let state;
+  if(commanded && !canOpen) state='COMMANDED · NOT OPENING';
+  else if(commanded && canOpen && !pumped) state='OPEN · NO PUMP';
+  else if(commanded && opening && flow>0) state='WATERING';
+  else if(!commanded && manualBleed && pumped) state='BLEED (manual)';
+  else if(!commanded) state='idle';
+  else state='—';
+  return {state, flow, commanded, opening, sigReaches, canOpen, pumped};
+}
+function totalFlow(){
+  let t=0; ['Z1','Z2','Z3','Z4','Z5'].forEach(z=>{t+=deriveZone(z).flow;}); return t;
+}
+
+/* ============================================================
+   GEOMETRY / DRAW — Falstad line-art glyphs
+   ============================================================ */
+const NS='http://www.w3.org/2000/svg';
+const stage=document.getElementById('stage');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function add(p,t,a){const e=el(t,a);p.appendChild(e);return e;}
+
+// registry of animated conductors: {x1,y1,x2,y2,kind,active,rate}
+let conductors=[];
+function wire(p,x1,y1,x2,y2,kind,active,rate){
+  const cls = kind==='sig'?'cond-sig':'cond-w';
+  add(p,'line',{x1,y1,x2,y2,stroke: kind==='sig'?(active?'var(--sig)':'var(--sig-dim)'):'var(--water)',
+    'stroke-width': kind==='sig'?1.6:2.4,'stroke-linecap':'round',
+    'stroke-dasharray': kind==='sig'?'4 3':'none', opacity: active?1:(kind==='sig'?.45:.5)});
+  if(active && rate>0.001) conductors.push({x1,y1,x2,y2,kind,rate});
+}
+function pin(p,x,y){add(p,'circle',{cx:x,cy:y,r:2.1,fill:'var(--pin)'});}
+function lbl(p,x,y,s,size,col,anchor,weight){
+  add(p,'text',{x,y,'font-size':size||10,fill:col||'var(--ink)','text-anchor':anchor||'middle','font-weight':weight||400}).textContent=s;
+}
+function hitbox(p,x,y,w,h,id){
+  const r=add(p,'rect',{x,y,width:w,height:h,fill:'transparent',class:'hit'});
+  r.addEventListener('click',(ev)=>{ev.stopPropagation();openEditor(id,ev);});
+  return r;
+}
+function statePill(p,x,y,txt,col){
+  const w = txt.length*5.3+10;
+  add(p,'rect',{x:x-w/2,y:y-8,width:w,height:13,rx:6,fill:col});
+  add(p,'text',{x,y:y+1.5,'font-size':8.5,fill:'#fff','text-anchor':'middle','font-weight':600}).textContent=txt;
+}
+function pillColor(st){
+  if(st==='WATERING'||st==='watering') return 'var(--good)';
+  if(st==='COMMANDED · NOT OPENING') return 'var(--bad)';
+  if(st.indexOf('NO PUMP')>=0||st.indexOf('no pump')>=0) return 'var(--warn)';
+  if(st==='BLEED (manual)') return 'var(--warn)';
+  if(st==='capped') return '#90a4ae';
+  return '#8696a6';
+}
+
+function render(){
+  conductors=[];
+  while(stage.firstChild) stage.removeChild(stage.firstChild);
+  const run = pumpRunning();
+  const tot = totalFlow();
+
+  // ---- 230V GRID (top) ----
+  const g=add(stage,'g',{});
+  // grid bus
+  lbl(g,195,20,'230 V grid',9,'#7a8794');
+  // two plugs
+  drawPlug(g, 95, 30, 'plugCtrl', S.plugCtrl, '→ controller');
+  drawPlug(g, 285, 30, 'plugPump', S.plugPump, '→ pump');
+
+  // ---- CONTROLLER O1 ----
+  drawController(g, 60, 70);
+
+  // power wire grid->controller
+  wire(g,95,46,95,70,'sig',S.plugCtrl,S.plugCtrl?1:0);
+
+  // ---- PUMP + supply chain (right column) ----
+  drawSupply(g, run);
+
+  // power wire grid->pump (230V)
+  wire(g,285,46,285,150,'sig', S.plugPump, S.plugPump?1:0);
+  // pump-start relay signal controller -> pump (MV)
+  const mvActive = S.ctrlOn && S.mvRelay;
+  wire(g,120,118,120,135,'sig',mvActive,mvActive?1:0);   // down from controller MV pin
+  wire(g,120,135,250,135,'sig',mvActive,mvActive?1:0);   // across to pump relay
+  wire(g,250,135,250,150,'sig',mvActive,mvActive?1:0);
+  lbl(g,185,131,'MV pump-start',8,mvActive?'var(--sig)':'var(--sig-dim)');
+
+  // ---- FEED to manifold ----
+  // pump out (around y=215) down a feed ~20m to manifold top
+  const feedFlow = run? tot/PUMP_MAX : 0;
+  wire(g,250,215,250,250,'w',run, run? Math.max(.15,feedFlow):0);
+  wire(g,250,250,60,250,'w',run, run? Math.max(.15,feedFlow):0);
+  wire(g,60,250,60,278,'w',run, run? Math.max(.15,feedFlow):0);
+  lbl(g,150,244,'≈20 m feed',8,'#7a8794');
+  pin(g,250,215); pin(g,60,278);
+
+  // ---- MANIFOLD bar ----
+  const manTop=280, manBot=280+6*84; // 6 ports spacing 84
+  add(g,'rect',{x:54,y:manTop,width:12,height:manBot-manTop,rx:3,fill:'#cfd8e3',stroke:'var(--wire)','stroke-width':1.4});
+  lbl(g,60,manTop-4,'MANIFOLD',8.5,'#54616e','middle',600);
+  hitbox(g,40,manTop,40,manBot-manTop,'manifold');
+  // pressure dot indicator
+  if(run){add(g,'circle',{cx:60,cy:manTop+10,r:3,fill:'var(--water)'});}
+
+  // ---- ZONES off manifold ----
+  const zoneOrder=['Z2','Z3','Z5','Z4','Z1','Z6'];
+  zoneOrder.forEach((z,i)=>{
+    const py = manTop+24 + i*84;
+    drawZone(g, z, py, run);
+  });
+
+  // ---- live total readout ----
+  add(g,'rect',{x:250,y:282,width:128,height:46,rx:6,fill:'#fff',stroke:'#c3cdd9'});
+  lbl(g,314,298,'PUMP',8,'#7a8794');
+  lbl(g,314,312, run?'RUNNING':'OFF',12, run?'var(--good)':'var(--bad)','middle',700);
+  lbl(g,314,324,'Σ '+tot.toFixed(2)+' m³/h',9,'#445');
+
+  drawDots();
+}
+
+/* ----- glyph: 230V plug ----- */
+function drawPlug(g,x,y,id,on,cap){
+  const c=add(g,'g',{class:'hit'});
+  add(c,'rect',{x:x-16,y:y-12,width:32,height:24,rx:3,fill:'#fff',stroke:'var(--wire)','stroke-width':1.4});
+  // prongs
+  add(c,'line',{x1:x-6,y1:y-12,x2:x-6,y2:y-18,stroke:'var(--wire)','stroke-width':1.6});
+  add(c,'line',{x1:x+6,y1:y-12,x2:x+6,y2:y-18,stroke:'var(--wire)','stroke-width':1.6});
+  add(c,'circle',{cx:x,cy:y,r:4,fill:on?'var(--good)':'#cfd8e3',stroke:'var(--wire)','stroke-width':1});
+  lbl(c,x,y+22,cap,8,'#7a8794');
+  lbl(c,x,y+3.5, on?'⏻':'○',9,on?'#fff':'#90a4ae');
+  hitbox(c,x-18,y-20,36,40,id);
+}
+
+/* ----- glyph: controller ----- */
+function drawController(g,x,y){
+  const w=120,h=48;
+  const c=add(g,'g',{});
+  add(c,'rect',{x,y,width:w,height:h,rx:5,fill:'#fff',stroke:'var(--wire)','stroke-width':1.6});
+  lbl(c,x+8,y+14,'CONTROLLER O1',9,'var(--ink)','start',600);
+  lbl(c,x+8,y+26, S.ctrlOn?'● powered':'○ no power',8, S.ctrlOn?'var(--good)':'var(--bad)','start');
+  // zone signal pins along bottom
+  const zs=['Z2','Z3','Z5','Z4'];
+  zs.forEach((z,i)=>{
+    const px=x+22+i*22, py=y+h;
+    const Z=S.zones[z]; const en=S.ctrlOn&&Z.sig;
+    add(c,'circle',{cx:px,cy:py,r:2.4,fill: en?'var(--sig)':'var(--pin)'});
+    lbl(c,px,py+9,z,7, en?'var(--sig)':'#8696a6');
+  });
+  lbl(c,x+w-2,y+h+9,'MV',7, (S.ctrlOn&&S.mvRelay)?'var(--sig)':'#8696a6','end');
+  hitbox(c,x,y,w,h,'controller');
+}
+
+/* ----- glyph: supply chain well->strainer->pump ----- */
+function drawSupply(g,run){
+  // well
+  const wx=285, wy=170;
+  lbl(g,wx,wy-22,'WELL',8,'#7a8794');
+  add(g,'path',{d:`M${wx-14} ${wy-12} h28 v22 a14 8 0 0 1 -28 0 z`,fill:'#dce6f2',stroke:'var(--wire)','stroke-width':1.3});
+  // strainer / foot valve glyph (a small filter)
+  add(g,'rect',{x:wx-10,y:wy+18,width:20,height:14,rx:2,fill:'#fff',stroke:'var(--wire)','stroke-width':1.2});
+  add(g,'line',{x1:wx-6,y1:wy+19,x2:wx-6,y2:wy+31,stroke:'var(--wire)'});
+  add(g,'line',{x1:wx,y1:wy+19,x2:wx,y2:wy+31,stroke:'var(--wire)'});
+  add(g,'line',{x1:wx+6,y1:wy+19,x2:wx+6,y2:wy+31,stroke:'var(--wire)'});
+  lbl(g,wx+30,wy+28,'strainer',7,'#7a8794','start');
+  // pump body (DAB AQUAJET) — circle with impeller cross, like a source glyph
+  const px=250,py=195;
+  add(g,'circle',{cx:px,cy:py,r:18,fill:'#fff',stroke:run?'var(--good)':'var(--wire)','stroke-width':run?2:1.5,class:'hit'});
+  add(g,'path',{d:`M${px-10} ${py} a10 10 0 0 1 20 0 M${px-7} ${py} a7 7 0 0 0 14 0`,fill:'none',stroke:run?'var(--good)':'var(--pin)','stroke-width':1.4});
+  lbl(g,px,py+30,'JET PUMP',8,'#54616e','middle',600);
+  lbl(g,px,py+39,'DAB AQUAJET 132M',7,'#7a8794');
+  // suction wire well->pump
+  wire(g,wx,wy+32,wx,py,'w',run,run?0.4:0);
+  wire(g,wx,py,px+18,py,'w',run,run?0.4:0);
+  pin(g,px+18,py); pin(g,wx,wy+32);
+  hitbox(g,px-22,py-22,44,44,'pump');
+}
+
+/* ----- glyph: a zone branch off manifold ----- */
+function drawZone(g,z,py,run){
+  const Z=S.zones[z];
+  const d=deriveZone(z);
+  const bx=66;            // start at manifold edge
+  const vx=120;           // valve x
+  // branch line manifold -> valve
+  pin(g,bx,py);
+  const branchActive = run && d.flow>0;
+  wire(g,bx,py,vx-14,py,'w', branchActive, branchActive? Math.min(1,d.flow/2.5)+.12 : 0);
+
+  // valve glyph
+  if(Z.type==='cap'){
+    // capped stub: short line ending in a cap (T)
+    wire(g,bx,py,bx+22,py,'w',false,0);
+    add(g,'line',{x1:bx+22,y1:py-7,x2:bx+22,y2:py+7,stroke:'var(--wire)','stroke-width':2.4});
+    lbl(g,bx+30,py-9,z,9,'#8696a6','start',600);
+    lbl(g,bx+30,py+2,'capped stub',7.5,'#90a4ae','start');
+    statePill(g, bx+78, py-9,'capped','#90a4ae');
+    hitbox(g,bx,py-16,150,32,z);
+    return;
+  }
+
+  // draw valve body (bowtie like Falstad source/diode area)
+  const open = d.opening || d.canOpen;
+  let vcol = '#90a4ae';
+  if(d.state==='WATERING') vcol='var(--good)';
+  else if(d.state==='COMMANDED · NOT OPENING') vcol='var(--bad)';
+  else if(d.state.indexOf('NO PUMP')>=0||d.state==='BLEED (manual)'||d.state==='open·no pump') vcol='var(--warn)';
+  add(g,'g',{class:'hit'});
+  // valve = two triangles meeting
+  add(g,'path',{d:`M${vx-14} ${py-9} L${vx} ${py} L${vx-14} ${py+9} Z`,fill: open?vcol:'#fff',stroke:'var(--wire)','stroke-width':1.4});
+  add(g,'path',{d:`M${vx+14} ${py-9} L${vx} ${py} L${vx+14} ${py+9} Z`,fill: open?vcol:'#fff',stroke:'var(--wire)','stroke-width':1.4});
+  // actuator marker on top
+  if(Z.type==='auto'){
+    add(g,'rect',{x:vx-5,y:py-22,width:10,height:9,rx:1.5,fill: d.sigReaches?'var(--sig)':'#fff',stroke:'var(--wire)'});
+    // signal wire from controller bus area (left) -> solenoid
+    const sigEnerg = S.ctrlOn && Z.sig;
+    drawSignalToValve(g,z,vx,py,sigEnerg,Z);
+  } else {
+    // manual handle
+    add(g,'line',{x1:vx,y1:py-9,x2:vx, y2:py-20,stroke:'var(--wire)','stroke-width':2});
+    add(g,'circle',{cx:vx,cy:py-22,r:3.4,fill: Z.handle==='open'?'var(--good)':'#cfd8e3',stroke:'var(--wire)'});
+  }
+  lbl(g,vx,py+20,z+(Z.type==='manual'?' (manual)':' valve'),8,'#54616e','middle',600);
+
+  // pipe valve -> heads
+  const hActive = run && d.flow>0;
+  wire(g,vx+14,py,vx+44,py,'w',hActive, hActive? Math.min(1,d.flow/2.5)+.12:0);
+  pin(g,vx+44,py);
+
+  // heads
+  drawHeads(g,z,vx+44,py,d,run);
+
+  // state pill (derived)
+  statePill(g, vx+18, py-30, d.state, pillColor(d.state));
+  // flow readout
+  lbl(g, vx+18, py+30, d.flow>0? d.flow.toFixed(2)+' m³/h':'—', 8, d.flow>0?'var(--water)':'#9aa6b2','middle',600);
+
+  hitbox(g,bx,py-36,150,70,z);
+}
+
+function drawSignalToValve(g,z,vx,py,energ,Z){
+  // a stub of signal wire coming from the left margin going up to controller conceptually
+  const sx=18;
+  // route: from left margin at this y, to valve solenoid top
+  const reaches = energ && !Z.wireCut && !Z.solDead;
+  wire(g,sx,py-30,vx-30,py-30,'sig',energ && !Z.wireCut, (energ&&!Z.wireCut)?0.9:0);
+  wire(g,vx-30,py-30,vx-30,py-17,'sig', reaches,(reaches)?0.9:0);
+  wire(g,vx-30,py-17,vx-6,py-17,'sig', reaches,(reaches)?0.9:0);
+  // fault markers
+  if(energ && Z.wireCut){
+    // cut mark
+    add(g,'line',{x1:vx-44,y1:py-34,x2:vx-36,y2:py-26,stroke:'var(--bad)','stroke-width':2});
+    add(g,'line',{x1:vx-44,y1:py-26,x2:vx-36,y2:py-34,stroke:'var(--bad)','stroke-width':2});
+    lbl(g,vx-58,py-36,'wire cut',7,'var(--bad)','end');
+  }
+  if(energ && !Z.wireCut && Z.solDead){
+    add(g,'text',{x:vx+9,y:py-15,'font-size':8,fill:'var(--bad)','font-weight':700}).textContent='⊘';
+    lbl(g,vx+14,py-22,'solenoid dead',7,'var(--bad)','start');
+  }
+  lbl(g,sx,py-33,'24V',7, energ?'var(--sig)':'#9aa6b2','start');
+}
+
+function drawHeads(g,z,x0,py,d,run){
+  const Z=S.zones[z];
+  const n=Z.heads.length;
+  const spanY = Math.min(46, 14*(n-1)+14);
+  const startY = py - (n>1? (n-1)*12 : 0);
+  Z.heads.forEach((h,i)=>{
+    const hy = (n>1)? py - (n-1)*9 + i*18 : py;
+    const hx = x0+22;
+    // tee from trunk to head
+    const hf = run && d.flow>0 && h.clog<100;
+    wire(g,x0,py,x0+10,py,'w', run&&d.flow>0, run&&d.flow>0? Math.min(1,d.flow/2.5)+.1:0);
+    wire(g,x0+10,py,x0+10,hy,'w', hf, hf?0.5:0);
+    wire(g,x0+10,hy,hx,hy,'w', hf, hf?0.5:0);
+    // head glyph: small spray fan
+    const col = h.clog>=100?'#c62828':(h.clog>0?'var(--warn)':'var(--water)');
+    add(g,'circle',{cx:hx,cy:hy,r:3.2,fill: hf?col:'#cfd8e3',stroke:'var(--wire)','stroke-width':1});
+    if(hf){
+      add(g,'path',{d:`M${hx} ${hy} l5 -4 M${hx} ${hy} l6 0 M${hx} ${hy} l5 4`,stroke:col,'stroke-width':1,fill:'none',opacity:.8});
+    }
+    let nm = h.n + (h.deg&&h.deg!=='—'?' '+h.deg:'');
+    if(h.clog>0) nm += h.clog>=100?' ✕clog':' ⚠'+h.clog+'%';
+    lbl(g,hx+9,hy+3,nm,7.5, h.clog>0?'var(--warn)':'#54616e','start');
+  });
+}
+
+/* ============================================================
+   ANIMATED DOTS (the Falstad signature)
+   ============================================================ */
+let dotLayer=null, dotPhase=0;
+function drawDots(){
+  dotLayer=add(stage,'g',{});
+}
+function animate(ts){
+  if(!dotLayer){requestAnimationFrame(animate);return;}
+  while(dotLayer.firstChild) dotLayer.removeChild(dotLayer.firstChild);
+  dotPhase += 0.016;
+  conductors.forEach(c=>{
+    const len=Math.hypot(c.x2-c.x1,c.y2-c.y1);
+    if(len<1) return;
+    const ux=(c.x2-c.x1)/len, uy=(c.y2-c.y1)/len;
+    const speed = c.kind==='sig'? 55 : 26+ 60*c.rate;   // px/s
+    const spacing = c.kind==='sig'? 11 : Math.max(8, 22 - 14*c.rate);
+    const count=Math.max(1,Math.floor(len/spacing));
+    const off=(dotPhase*speed)%spacing;
+    for(let i=0;i<count;i++){
+      const dist=(i*spacing+off)%len;
+      const dx=c.x1+ux*dist, dy=c.y1+uy*dist;
+      add(dotLayer,'circle',{cx:dx,cy:dy, r: c.kind==='sig'?1.5:2.1,
+        fill: c.kind==='sig'?'var(--sig)':'var(--water)'});
+    }
+  });
+  requestAnimationFrame(animate);
+}
+
+/* ============================================================
+   EDITOR PANEL
+   ============================================================ */
+const editor=document.getElementById('editor');
+const ebody=document.getElementById('ebody');
+const etitle=document.getElementById('etitle');
+let curId=null;
+
+function openEditor(id,ev){
+  curId=id;
+  buildEditor(id);
+  editor.style.display='block';
+  // position near tap
+  positionEditor(ev);
+}
+function positionEditor(ev){
+  const r=editor.getBoundingClientRect();
+  let x=20, y=120;
+  if(ev && ev.clientX!=null){
+    x=Math.min(window.innerWidth - r.width - 8, Math.max(8, ev.clientX - r.width/2));
+    y=Math.min(window.innerHeight - r.height - 8, Math.max(56, ev.clientY + 14));
+  }
+  editor.style.left=x+'px';
+  editor.style.top=y+'px';
+}
+function closeEditor(){editor.style.display='none';curId=null;}
+stage.addEventListener('click',()=>closeEditor());
+
+function btn(label,cls,fn){
+  const b=document.createElement('button');
+  b.className='b'+(cls?' '+cls:''); b.textContent=label;
+  b.onclick=(e)=>{e.stopPropagation();fn();refresh();};
+  return b;
+}
+function row(...nodes){const d=document.createElement('div');d.className='row';nodes.forEach(n=>d.appendChild(n));return d;}
+function sec(t){const d=document.createElement('div');d.className='sec';d.textContent=t;return d;}
+function kv(html){const d=document.createElement('div');d.className='kv';d.innerHTML=html;return d;}
+
+function buildEditor(id){
+  ebody.innerHTML='';
+  if(id==='plugCtrl'||id==='plugPump'){
+    etitle.textContent = id==='plugCtrl'?'230V plug → controller':'230V plug → pump';
+    ebody.appendChild(kv('State: <b>'+(S[id]?'plugged / on':'unplugged / off')+'</b>'));
+    ebody.appendChild(sec('control'));
+    ebody.appendChild(row(
+      btn('On','on'===( S[id]?'on':'') && S[id]?'good':'',()=>S[id]=true),
+      btn('Off',!S[id]?'bad':'',()=>S[id]=false)
+    ));
+    return;
+  }
+  if(id==='controller'){
+    etitle.textContent='Controller O1';
+    ebody.appendChild(kv('Power: <b>'+(S.ctrlOn?'on':'no 230V')+'</b> (from plug)'));
+    ebody.appendChild(sec('per-zone 24V signal'));
+    ['Z2','Z3','Z5','Z4'].forEach(z=>{
+      const Z=S.zones[z];
+      ebody.appendChild(row(
+        labelTag(z+' signal'),
+        btn('Energize',Z.sig?'sig':'',()=>{Z.sig=true;}),
+        btn('Off',!Z.sig?'':'',()=>{Z.sig=false;})
+      ));
+    });
+    ebody.appendChild(sec('pump-start relay (MV)'));
+    ebody.appendChild(row(
+      btn('Command MV', S.mvRelay?'sig':'',()=>S.mvRelay=true),
+      btn('Drop MV', !S.mvRelay?'':'',()=>S.mvRelay=false)
+    ));
+    return;
+  }
+  if(id==='pump'){
+    etitle.textContent='Jet pump · DAB AQUAJET 132M';
+    const run=pumpRunning();
+    ebody.appendChild(kv('Running: <b>'+(run?'yes':'no')+'</b>'));
+    ebody.appendChild(kv('Needs: 230V plug + controller MV.'));
+    ebody.appendChild(sec('why off?'));
+    if(!S.plugPump) ebody.appendChild(kv('• 230V pump plug is OFF'));
+    if(!S.ctrlOn) ebody.appendChild(kv('• controller has no power'));
+    if(S.ctrlOn && !S.mvRelay) ebody.appendChild(kv('• MV pump-start not commanded'));
+    if(run) ebody.appendChild(kv('Supplying ≈ '+totalFlow().toFixed(2)+' m³/h'));
+    ebody.appendChild(sec('start relay'));
+    ebody.appendChild(row(
+      btn('MV on',S.mvRelay?'sig':'',()=>S.mvRelay=true),
+      btn('MV off',!S.mvRelay?'':'',()=>S.mvRelay=false)
+    ));
+    return;
+  }
+  if(id==='manifold'){
+    etitle.textContent='Manifold (6 ports)';
+    ebody.appendChild(kv('Distributes pump feed to Z1–Z6.'));
+    ebody.appendChild(kv('Pressure: <b>'+(pumpRunning()?'charged':'no supply')+'</b>'));
+    ebody.appendChild(kv('Σ draw: <b>'+totalFlow().toFixed(2)+' m³/h</b>'));
+    return;
+  }
+  // zones
+  const Z=S.zones[id];
+  if(!Z) return;
+  if(Z.type==='cap'){
+    etitle.textContent=id+' · capped stub';
+    ebody.appendChild(kv('No discharge — port is plugged. Nothing to control.'));
+    return;
+  }
+  const d=deriveZone(id);
+  etitle.textContent=id+(Z.type==='manual'?' · manual zone':' · auto zone');
+  const p=document.createElement('span');p.className='pill';p.style.background=pillColor(d.state);p.textContent=d.state;
+  const sd=document.createElement('div');sd.className='kv';sd.innerHTML='Derived state: ';sd.appendChild(p);
+  ebody.appendChild(sd);
+  ebody.appendChild(kv('Flow: <b>'+d.flow.toFixed(2)+' m³/h</b>'));
+
+  if(Z.type==='manual'){
+    ebody.appendChild(sec('handle'));
+    ebody.appendChild(row(
+      btn('Open',Z.handle==='open'?'good':'',()=>Z.handle='open'),
+      btn('Shut',Z.handle!=='open'?'bad':'',()=>Z.handle='shut')
+    ));
+    ebody.appendChild(kv('Hand line — flows when pump runs &amp; handle open.'));
+    return;
+  }
+
+  // AUTO zone
+  ebody.appendChild(sec('24V signal (from controller)'));
+  ebody.appendChild(row(
+    btn('Energize',Z.sig?'sig':'',()=>Z.sig=true),
+    btn('De-energize',!Z.sig?'':'',()=>Z.sig=false)
+  ));
+  ebody.appendChild(sec('flow throttle'));
+  ebody.appendChild(row(
+    ...['open','¾','½','shut'].map(t=>btn(t,Z.throttle===t?'on':'',()=>Z.throttle=t))
+  ));
+  ebody.appendChild(sec('bleed screw'));
+  ebody.appendChild(row(
+    btn('Bleed open',Z.bleed?'warn':'',()=>Z.bleed=true),
+    btn('Seated',!Z.bleed?'':'',()=>Z.bleed=false)
+  ));
+  ebody.appendChild(sec('⚠ inject faults'));
+  ebody.appendChild(row(
+    btn('Cut signal wire',Z.wireCut?'bad':'',()=>Z.wireCut=!Z.wireCut),
+    btn('Dead solenoid',Z.solDead?'bad':'',()=>Z.solDead=!Z.solDead)
+  ));
+  ebody.appendChild(sec('heads — nozzle clog'));
+  Z.heads.forEach((h,i)=>{
+    const tag=labelTag(h.n+(h.deg&&h.deg!=='—'?' '+h.deg:''));
+    ebody.appendChild(tag);
+    ebody.appendChild(row(
+      btn('clear',h.clog===0?'good':'',()=>h.clog=0),
+      btn('25%',h.clog===25?'warn':'',()=>h.clog=25),
+      btn('50%',h.clog===50?'warn':'',()=>h.clog=50),
+      btn('full',h.clog>=100?'bad':'',()=>h.clog=100)
+    ));
+  });
+}
+function labelTag(t){const d=document.createElement('div');d.style.cssText='font-size:11px;color:#445;margin:2px 0;font-weight:600;';d.textContent=t;return d;}
+
+function refresh(){
+  // derive controller power from plug
+  S.ctrlOn = S.plugCtrl;
+  render();
+  if(curId) buildEditor(curId);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+S.ctrlOn=S.plugCtrl;
+render();
+requestAnimationFrame(animate);
+window.addEventListener('resize',()=>{render();});
+</script>
+</body>
+</html>
