@@ -174,7 +174,7 @@ terminals and drawn internals (controller terminal strip, adapter winding, relay
 the splice's 8 ports, pump motor, valve coil pins), and all 24 wires individually pin-to-pin.
 Layout concept per `docs/Sim_ui.md` §15: phone-portrait logical schematic — wiring band on top,
 manifold as a vertical bar with stacked ports, each zone as its own left-to-right row ending in
-its heads, Z5 manual row, Z6 cap stub, supply chain at the bottom. `scene.js` turns model +
+its heads, Z1 manual row, Z6 cap stub, supply chain at the bottom. `scene.js` turns model +
 geometry into static paths/glyphs once; `render.js` only updates stroke width (∝ |flow|), color
 (red→green against the no-fault baseline, per `docs/Sim_ui.md` §3), idle=grey/dashed, every
 outlet/leak labeled with flow (m³/h everywhere, no unit toggle, per `docs/Sim_ui.md` §2), wiring
@@ -182,7 +182,7 @@ particle-traced from `energisedWires`.
 
 ### Controls
 `controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
-flo-stop; valve bleed screw; Z5 manual handle; grid/adapter plug toggles; fault toggles. Any change →
+flo-stop; valve bleed screw; Z1 manual handle; grid/adapter plug toggles; fault toggles. Any change →
 debounced `electrical → compile faults → solveSteady → renderScene`. The quasi-time module
 (`quasitime.js`) plays a time-ordered sequence of command-states along a timeline — each frame is a
 fully settled `solveSteady` result, scrubbed **within** the single live view (a timeline scrubber, not
@@ -192,21 +192,23 @@ a separate mode, so it stays compatible with `docs/Sim_ui.md` §1's no-mode-swit
 
 The plan was originally written to land **M0 only** and grow from there. The physics core has since
 been built and merged to `main`; the table below is the live state (✅ done / ⚠️ partial / ⬜ not started).
-The UI (M5–M7, M9), the fault engine (M8), and the qualitative state layer (M10) remain to do.
+The qualitative-state **core** (M5) is buildable now on the already-merged M2/M4 physics (it needs no
+UI); the geometry/UI (M6–M8, M10) and the fault engine (M9, which also adds the suction-side states)
+remain to do.
 
 | Milestone | Status | Evidence in `sim/` |
 |---|---|---|
 | **M0** Spike | ✅ | `test/m0-smoke.mjs` (`npm run smoke`) |
 | **M1** model/network/inp/runner | ✅ | `src/model.js`, `network.js`, `inp.js`, `epanet-runner.js` |
 | **M2** outlets + outer solver | ✅ | `src/outlets.js`, `solver.js`; harness cases *idle* + *pump+Z2* |
-| **M3** Z5 manual zone | ⚠️ | engine support present (`valve-manual` TCV in `network.js`, `manualOpen` in `solver.js`, stream-orifice law `streamEmitterCoeff` in `outlets.js`); **no dedicated harness case yet** |
+| **M3** Z1 manual zone | ⚠️ | engine support present (`valve-manual` TCV in `network.js`, `manualOpen` in `solver.js`, stream-orifice law `streamEmitterCoeff` in `outlets.js`); **no dedicated harness case yet** |
 | **M4** electrical + actuation | ✅ | `src/electrical.js`; harness cases *broken shared return* + *cut controller feed* |
-| **M5** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
-| **M6** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
-| **M7** quasi-time | ⬜ | `quasitime.js` absent |
-| **M8** faults | ⬜ | `src/faults.js` is a **stub** — `compileFaults` returns `emptyEffects()` only; the (role × failtype) table, `listFaults`, leaks, and SPECIALs are unbuilt |
-| **M9** polish + Pages | ⬜ | no `.github/workflows/pages.yml`, no `sim/README.md` |
-| **M10** qualitative state layer | ⬜ | `states.js` absent; `model.js` still drops the `states:` blocks |
+| **M5** qualitative state core | ⬜ | `states.js` absent; `model.js` still drops the `states:` blocks — but its inputs (M2 pressures/demands + M4 electrical) are already merged, so the resolver + `needs` fixpoint + headless cross-check are buildable now |
+| **M6** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
+| **M7** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
+| **M8** quasi-time | ⬜ | `quasitime.js` absent |
+| **M9** faults | ⬜ | `src/faults.js` is a **stub** — `compileFaults` returns `emptyEffects()` only; the (role × failtype) table, `listFaults`, leaks, and SPECIALs are unbuilt |
+| **M10** polish + Pages | ⬜ | no `.github/workflows/pages.yml`, no `sim/README.md` |
 
 Verify the current core with `cd sim && npm install && npm test` (full harness) or `npm run smoke` (M0 spike).
 
@@ -221,40 +223,44 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
 - **M0 Spike:** Node smoke test — hand-written 3-node INP (reservoir-pump-junction-demand); lock
   epanet-js enums (`NodeProperty.Pressure`, `LinkProperty.Flow`), CMH units, D-W, pump HEAD curve, GPV.
 - **M1:** `model.js`, `network.js`, `inp.js`, `epanet-runner.js`; validate one healthy zone vs pump curve.
-- **M2:** `outlets.js`, `solver.js`; idle + pump+Z1 converge with correct mass balance; `harness.mjs` cases 1–2.
+- **M2:** `outlets.js`, `solver.js`; idle + pump+Z2 converge with correct mass balance; `harness.mjs` cases 1–2.
   *States here:* the `pressurised/unpressurised` and head `watering/off` labels are a threshold over the
-  converged EPANET pressures/demands — projected directly, no new solve (formalized in M10).
-- **M3 (Z5 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
+  converged EPANET pressures/demands — projected directly, no new solve (formalized in M5).
+- **M3 (Z1 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
   `nozzle.stream` open-orifice discharge, manual-handle open/close in the state model; harness case
-  (pump + Z5 open → orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV,
+  (pump + Z1 open → orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV,
   orifice law, and `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
 - **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
   *States here:* the live/dead wiring states (`source.socket` → controller → relay coil/load →
   solenoid coil) and `valve.* open/closed` are the `solveElectrical` reachability + solver `valveOpen`
-  results relabeled per the yaml nodes — projected in M10.
-- **M5:** `geometry.js` (hand-authored coordinates + Node completeness test) + `scene.js` +
+  results relabeled per the yaml nodes — projected in M5.
+- **M5 (qualitative state core — pulled ahead of the UI):** `states.js` — read the `system.yaml`
+  `states:` blocks (`model.js` drops them today), the kind→instance reference resolver (nearest-scope
+  first, global-singleton fallback for cross-prefix refs), fixpoint evaluation of **every** declared
+  state including the intermediate valve mechanism (diaphragm/bonnet-chamber/pilot_seat/plunger),
+  projection from the **already-merged** M2/M4 results, and the cross-check harness (rule-derived state ⇔
+  numeric solve wherever both exist). Headless and buildable now — it needs no UI and depends only on the
+  done M2/M4 core, so it is gated by the Node harness like every milestone after M2. Two slivers attach
+  later where their inputs appear: the suction-side states (well wet/dry, pump prime) at **M9** when the
+  fault-injectable well-dry condition exists, and on-screen display at **M6** (render) / **M10** (polish).
+- **M6:** `geometry.js` (hand-authored coordinates + Node completeness test) + `scene.js` +
   `render.js` — static schematic with flow/pressure encoding, full system.yaml coverage
-  (`docs/Sim_ui.md` §13–§15).
-- **M6:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
+  (`docs/Sim_ui.md` §13–§15); surfaces each component's **M5** qualitative state as labels.
+- **M7:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
   worker solver client (`docs/Sim_ui.md` §12) + `app.js` wiring (live update, m³/h fixed — no
-  units toggle); pump, zones, Z5 manual handle, rotor flo-stop, valve flow-control, plug toggles.
-- **M7 (quasi-time):** `quasitime.js` — a time-ordered sequence of settled command-states scrubbed
+  units toggle); pump, zones, Z1 manual handle, rotor flo-stop, valve flow-control, plug toggles.
+- **M8 (quasi-time):** `quasitime.js` — a time-ordered sequence of settled command-states scrubbed
   along a timeline within the single live view; each frame re-uses the `solveSteady` path (a scrubber,
   not a mode switch).
-- **M8 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
+- **M9 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
   *States here:* adds the suction-side physics the EPANET reservoir omits — `source.well` wet/dry as an
   injectable condition, wet/dry propagation up the suction chain via `reachable()`, and `pump.jet` prime
   gating (unprimed → no pressurise); `priming_cap:misconfigured` already supplies the lost-prime path.
-- **M9:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
+  These extend the **M5** state layer with the suction/prime states.
+- **M10:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
   max-pressure warnings, the keep-last-good solver-failure badge (`docs/Sim_ui.md` §12);
   `.github/workflows/pages.yml` + `sim/README.md`.
-- **M10 (qualitative state layer):** `states.js` — read the `system.yaml` `states:` blocks (`model.js`
-  drops them today), the kind→instance reference resolver (nearest-scope first, global-singleton
-fallback for cross-prefix refs), fixpoint evaluation of **every** declared
-  state including the intermediate valve mechanism (diaphragm/bonnet-chamber/pilot_seat/plunger),
-  projection from the M2/M4/M8 results, and the cross-check harness (rule-derived state ⇔ numeric solve
-  wherever both exist). `render.js` surfaces each component's qualitative state. Depends on M2/M4/M5/M8.
 
 ## Requirement → milestone traceability
 
@@ -264,24 +270,24 @@ Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The bu
 | # | Requirement (Sim_spec.md) | Milestone |
 |---|---|---|
 | **States** | | |
-| R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M8 (input state); per-component qualitative states derived in M10 |
-| R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 (Z5 manual) + M4 |
+| R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M9 (input state); per-component qualitative states derived in M5 |
+| R2 | Pump running/off; each valve & head outlet open/closed, in any combination | M2 + M3 (Z1 manual) + M4 |
 | R3 | Electrical circuit to pump and each solenoid is intact or broken | M4 |
-| R4 | Any element healthy or faulted — hydraulic (clog, leak, weak pump) or electrical (no signal, broken wire, dead solenoid) | M8 |
+| R4 | Any element healthy or faulted — hydraulic (clog, leak, weak pump) or electrical (no signal, broken wire, dead solenoid) | M9 |
 | **Logic** | | |
 | R5 | For any state, compute physically realistic pressure & flow throughout the network | M1 + M2 |
-| R6 | How much each open outlet releases depends on the pressure reaching it | M2 + M3 (Z5 orifice) |
+| R6 | How much each open outlet releases depends on the pressure reaching it | M2 + M3 (Z1 orifice) |
 | R7 | Valve opens when solenoid energised through healthy wiring or manual bleed opened; pump runs only when commanded through healthy wiring | M4 |
 | R8 | Opening/closing valves redistributes pressure & flow across the whole system | M2 |
-| R9 | A fault behaves realistically (clog restricts, leak escapes, weak pump less, electrical fault stops actuation) | M8 |
-| R10 | Water leaves only through open outlets and leaks; total outflow = what the pump supplies | M2 (balance) + M8 (leaks) |
+| R9 | A fault behaves realistically (clog restricts, leak escapes, weak pump less, electrical fault stops actuation) | M9 |
+| R10 | Water leaves only through open outlets and leaks; total outflow = what the pump supplies | M2 (balance) + M9 (leaks) |
 | **UI** | | |
-| R11 | System shown as a diagram | M5 |
-| R12 | Control wiring shown: commanded on / energised / where a path is broken | M5 (computed M4) |
-| R13 | Pressure & flow shown wherever they occur; filled parts distinguished from empty | M5 |
-| R14 | Every point where water leaves shown, with how much | M5 |
-| R15 | User can command every control (pump, valves, head flo-stop, valve flow control) and inject faults | M6 (controls) + M8 (fault injection) |
-| R16 | The view updates live as the state changes | M6 |
+| R11 | System shown as a diagram | M6 |
+| R12 | Control wiring shown: commanded on / energised / where a path is broken | M6 (computed M4) |
+| R13 | Pressure & flow shown wherever they occur; filled parts distinguished from empty | M6 |
+| R14 | Every point where water leaves shown, with how much | M6 |
+| R15 | User can command every control (pump, valves, head flo-stop, valve flow control) and inject faults | M7 (controls) + M9 (fault injection) |
+| R16 | The view updates live as the state changes | M7 |
 
 **Derived qualitative states (`system.yaml` `states:`).** Not Sim_spec requirements but a view computed on
 top of the solve (see *Qualitative state layer* above). R1's "state" is the **input** triple (commands +
@@ -289,13 +295,13 @@ manual positions + faults); the `states:` blocks are **derived outputs** — a d
 
 | State family | Source |
 |---|---|
-| Electrical live/dead chain | M4 — project from `solveElectrical` reachability |
-| Valve open/closed + manual handle | M2 + M4 — solver `valveOpen` / `manualOpen` / `bleedOpen` |
-| Pressurised/unpressurised (downstream) | M2 — threshold over EPANET pressure + `reachable` |
-| Head watering/off | M2 — outlet demand > 0 |
-| Suction wet/dry, pump primed/pressurised | M8 — new suction-side physics + prime gating |
-| Intermediate valve mechanism (diaphragm/bonnet/pilot/plunger) | M10 — yaml `needs` fixpoint |
-| Kind→instance resolver, projection, cross-check, display | M10 — `states.js` |
+| Electrical live/dead chain | M4 physics — projected by the M5 state core |
+| Valve open/closed + manual handle | M2 + M4 physics — projected in M5 |
+| Pressurised/unpressurised (downstream) | M2 physics — projected in M5 |
+| Head watering/off | M2 physics — projected in M5 |
+| Suction wet/dry, pump primed/pressurised | M9 — new suction-side physics + prime gating |
+| Intermediate valve mechanism (diaphragm/bonnet/pilot/plunger) | M5 — yaml `needs` fixpoint |
+| Kind→instance resolver, projection, cross-check | M5 — `states.js` (on-screen display at M6/M10) |
 
 ## Risks
 - **CDN wasm locate:** if `epanet-js` can't find its `.wasm` via esm.sh in-browser, vendor just the
@@ -314,7 +320,7 @@ manual positions + faults); the `states:` blocks are **derived outputs** — a d
   crosses the cut), Z4/Z5 stay lit, `commandedNotEnergised` = {Z2, Z3}, those valves stay closed;
   (4) cut controller feed — controller/pump/zone all off. Asserts: converged, no NaN/negative on filled
   nodes, mass balance, catalog fidelity, pump operating point. **Pending:** a dedicated M3 manual-zone case,
-  and the M8 clog/leak cases (faults are still a stub). Exit nonzero on failure.
+  and the M9 clog/leak cases (faults are still a stub). Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
   inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
   (flow widths, pressure colors, outlet labels in m³/h — no unit toggle, per-wire energised traces).
