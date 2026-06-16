@@ -73,8 +73,9 @@ sim/
     units.js            bar + m³/h formatting (no unit toggle)
     app.js              glue: load->model->hydraulics->geometry->controls; debounced re-solve
   test/
-    harness.mjs         headless Node verification (node test/harness.mjs)
-    cases.mjs           idle / pump+Z1 / clogged hose / broken wire
+    harness.mjs         headless Node verification (npm test) — cases inline, not a separate cases.mjs
+    m0-smoke.mjs        M0 EPANET spike (npm run smoke)
+    yaml-node.mjs       Node-side system.yaml loader injected into the core
 ```
 
 ### Network translation (`network.js`)
@@ -187,12 +188,29 @@ debounced `electrical → compile faults → solveSteady → renderScene`. The q
 fully settled `solveSteady` result, scrubbed **within** the single live view (a timeline scrubber, not
 a separate mode, so it stays compatible with `docs/Sim_ui.md` §1's no-mode-switching rule).
 
-## Execution scope (this round)
+## Execution status
 
-Save this plan to `docs/` and execute **M0 only** — the EPANET spike. M1–M8 are documented here but
-NOT built this round. After M0: commit/push to `claude/sim-build-uiwft2` and open a draft PR.
+The plan was originally written to land **M0 only** and grow from there. The physics core has since
+been built and merged to `main`; the table below is the live state (✅ done / ⚠️ partial / ⬜ not started).
+The UI (M5–M7, M9), the fault engine (M8), and the qualitative state layer (M10) remain to do.
 
-**M0 deliverable concretely:** `sim/package.json` (`{"type":"module"}`, devDep `epanet-js`), and
+| Milestone | Status | Evidence in `sim/` |
+|---|---|---|
+| **M0** Spike | ✅ | `test/m0-smoke.mjs` (`npm run smoke`) |
+| **M1** model/network/inp/runner | ✅ | `src/model.js`, `network.js`, `inp.js`, `epanet-runner.js` |
+| **M2** outlets + outer solver | ✅ | `src/outlets.js`, `solver.js`; harness cases *idle* + *pump+Z2* |
+| **M3** Z5 manual zone | ⚠️ | engine support present (`valve-manual` TCV in `network.js`, `manualOpen` in `solver.js`, stream-orifice law `streamEmitterCoeff` in `outlets.js`); **no dedicated harness case yet** |
+| **M4** electrical + actuation | ✅ | `src/electrical.js`; harness cases *broken shared return* + *cut controller feed* |
+| **M5** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
+| **M6** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
+| **M7** quasi-time | ⬜ | `quasitime.js` absent |
+| **M8** faults | ⬜ | `src/faults.js` is a **stub** — `compileFaults` returns `emptyEffects()` only; the (role × failtype) table, `listFaults`, leaks, and SPECIALs are unbuilt |
+| **M9** polish + Pages | ⬜ | no `.github/workflows/pages.yml`, no `sim/README.md` |
+| **M10** qualitative state layer | ⬜ | `states.js` absent; `model.js` still drops the `states:` blocks |
+
+Verify the current core with `cd sim && npm install && npm test` (full harness) or `npm run smoke` (M0 spike).
+
+**M0 deliverable (done), for reference:** `sim/package.json` (`{"type":"module"}`, devDep `epanet-js`), and
 `sim/test/m0-smoke.mjs` — a headless Node script that hand-writes a tiny INP (reservoir → pump → one
 junction with a demand, D-W headloss, CMH units, a pump HEAD curve, and one GPV with a headloss curve),
 runs it through epanet-js (`Workspace`/`Project`, `open`/`solveH`), reads back node pressure (→bar) and
@@ -289,13 +307,14 @@ manual positions + faults); the `states:` blocks are **derived outputs** — a d
 - **Shared common-return semantics:** explicitly covered by harness case 4.
 
 ## Verification
-- **Headless (primary):** `cd sim && npm install && npm test` runs `test/harness.mjs` over: (1) idle —
-  all flows 0, downstream `filled=false`; (2) pump+Z1 — pumpPowered, Z1 valve open, head flows match
-  catalog within tolerance, Z2–Z4 = 0, mass balance < 1e-3 m³/h, operating point on the pump curve,
-  MP sprays clamped at 2.76 bar; (3) clogged hose — branch heads → 0, no NaN, still converges;
-  (4) broken wire — zone de-energised, valve stays closed, `commandedNotOpening` set, shared-return break
-  disables the intended set. Asserts: converged, no NaN/negative on filled nodes, mass balance, catalog
-  fidelity, monotonicity (second zone open → per-head pressure drops). Exit nonzero on failure.
+- **Headless (primary):** `cd sim && npm install && npm test` runs `test/harness.mjs`. Cases as built
+  today: (1) idle — all flows 0, every outlet unreachable; (2) pump+Z2 — pumpPowered, Z2 valve open,
+  head flows match catalog within tolerance, Z3–Z5 = 0, mass balance < 1e-3 m³/h, operating point on the
+  pump curve, MP sprays clamped at 2.76 bar; (3) broken shared return — Z2/Z3 de-energised (return current
+  crosses the cut), Z4/Z5 stay lit, `commandedNotEnergised` = {Z2, Z3}, those valves stay closed;
+  (4) cut controller feed — controller/pump/zone all off. Asserts: converged, no NaN/negative on filled
+  nodes, mass balance, catalog fidelity, pump operating point. **Pending:** a dedicated M3 manual-zone case,
+  and the M8 clog/leak cases (faults are still a stub). Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
   inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
   (flow widths, pressure colors, outlet labels in m³/h — no unit toggle, per-wire energised traces).
