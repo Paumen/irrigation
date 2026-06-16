@@ -12,7 +12,8 @@ Nothing of this simulator exists yet. The Python files in `tools/` are the **unr
 scoring engine and are not touched. The simulator is a new `sim/` folder driven by the existing
 root input `system.yaml` (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged):
 the graph sections (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:`
-lists), the catalog sections (pump curve, valve-loss table, rotor `nozzle_i20`, spray `nozzle_mp`),
+lists), the catalog sections (pump curve `pump.jet_curves`, valve-loss table `valve.auto_loss`, rotor
+`head.rotor/nozzle`, spray `head.spray/nozzle`),
 and the context sections (labels).
 
 **Decisions locked with the user:** dependencies loaded from **CDN** via importmap (no vendoring);
@@ -33,7 +34,7 @@ exponent, but each outlet obeys a different pressure→flow law. So instead, eac
 pressure-dependent outlet as a fixed EPANET *demand* computed from its own catalog law at the previous
 iteration's pressure, re-solves, damps, and repeats to convergence. This reproduces the catalog tables
 exactly and is "our layer feeding EPANET and reading results back." The same loop decides auto-valve
-open/closed (open iff energised-through-good-wiring **or** bleed open, **and** inlet ≥ `min_operating_bar`
+open/closed (open iff energised-through-good-wiring **or** bleed open, **and** inlet ≥ `min_bar`
 1.5, **and** no disabling fault); closed valves become closed links so dead branches stay stable.
 
 ### Hosting / deps
@@ -68,7 +69,8 @@ sim/
     scene.js            model + geometry -> static scene graph (pipe/wire paths, glyph descriptors)
     render.js           data-join SVG update from a solved result (positions never move)
     controls.js         control + fault widgets, hold UI state
-    units.js            bar<->L/min<->m3h conversions + formatting
+    quasitime.js        time-ordered command-states played along a timeline
+    units.js            bar + m³/h formatting (no unit toggle)
     app.js              glue: load->model->hydraulics->geometry->controls; debounced re-solve
   test/
     harness.mjs         headless Node verification (node test/harness.mjs)
@@ -77,12 +79,12 @@ sim/
 
 ### Network translation (`network.js`)
 Classify each `flow` node by `kind`:
-- **Links (2-port conduits):** `hose.*`→PIPE (D=`inner_diameter_mm`, len=`length_m`, roughness=`roughness_mm`);
+- **Links (2-port conduits):** `hose.*`→PIPE (D=`id_mm`, len=`l_m`, roughness=`roughness_mm`);
   `swing.*`→short PIPE (D=`bore_mm`, tiny length, its `k_minor` as minor loss); `valve.auto`→**GPV** when
-  open using a headloss curve from the catalog `valve_loss` table (loss_bar×10.197→m), STATUS CLOSED when
-  shut; `valve.manual`→**TCV** from `Kv=6.0`; `pump.well`→**PUMP** with HEAD curve from the catalog
-  `pump_curves` table.
-- **Nodes:** `well`(water.level)→**RESERVOIR** at head=`h_m`; `joint`/`tee`/`manifold`→JUNCTION;
+  open using a headloss curve from the catalog `valve.auto_loss` table (loss_bar×10.197→m), STATUS CLOSED when
+  shut; `valve.manual`→**TCV** from `Kv=6.0`; `pump.jet`→**PUMP** with HEAD curve from the catalog
+  `pump.jet_curves` table.
+- **Nodes:** `source.well`→**RESERVOIR** at head=`h_m` (instance value); `joint`/`tee`/`manifold`→JUNCTION;
   `head.*`/`nozzle.stream`→**outlet JUNCTION** (demand-driven, no downstream); `cap`→dead-end junction.
 - **Edge-walk:** every link spans from its upstream node to `to[0]`; insert a synthetic junction if two
   links would touch directly (rare here). Tees/manifold = one junction with multiple outgoing links.
@@ -91,7 +93,7 @@ Classify each `flow` node by `kind`:
   sees the fitting once). Document the different-bore approximation.
 - **Options:** `UNITS CMH` (matches catalog m³/h directly), `HEADLOSS D-W` (roughness in mm). Pressure m→bar ÷10.197.
 
-### Outer solver (`solver.js`) — `solveSteady(model, state, elec, faults, hyd) -> SteadyResult`
+### Outer solver (`solver.js`) — `solveSteady(model, state, elec, hyd, faults) -> SteadyResult`
 Loop (≤~60 iters), baseline = rebuild INP each iteration and re-`open()` (sub-ms):
 1. **Actuate valves** from current pressure guess + `elec` + bleed/handle + faults; record
    `commandedNotOpening` when energised/bleed but inlet < 1.5 bar. Hysteresis (open 1.5 / stay 1.4) +
@@ -100,7 +102,7 @@ Loop (≤~60 iters), baseline = rebuild INP each iteration and re-`open()` (sub-
    dead) → 0. Damp `q_set = q_prev + ALPHA·(q − q_prev)`, ALPHA≈0.5.
 3. Render INP, `hyd.solve`, read pressures/flows.
 4. Converge when max |Δp| and |Δq| over outlets below tolerance for 2 consecutive iters.
-- **Regulated spray:** lookup pressure = `min(p_prev, 2.76)` → flat above clamp (fast contraction).
+- **Regulated spray:** lookup pressure = `min(p_prev, 2.76)` (the `regulated_bar` value) → flat above clamp (fast contraction).
 - **Idle / pump-off:** pump link CLOSED, all demands 0, whole downstream is a dead branch → display "—".
 - **Dead branches:** zero demand + flag `filled=false`; override displayed pressure to "—" (never trust
   EPANET pressure on disconnected nodes). Mass-balance assert: Σ(outlet+leak flow) ≈ pump flow.
@@ -181,8 +183,9 @@ particle-traced from `energisedWires`.
 `controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
 flo-stop; valve bleed screw; Z5 manual handle; grid/adapter plug toggles; fault toggles. Any change →
 debounced `electrical → compile faults → solveSteady → renderScene`. The quasi-time module
-(`quasitime.js`, a time-ordered sequence of command-states played along a timeline) is **dropped**:
-`docs/Sim_ui.md` §1 specifies a single unified live view with no mode switching.
+(`quasitime.js`) plays a time-ordered sequence of command-states along a timeline — each frame is a
+fully settled `solveSteady` result, scrubbed **within** the single live view (a timeline scrubber, not
+a separate mode, so it stays compatible with `docs/Sim_ui.md` §1's no-mode-switching rule).
 
 ## Execution scope (this round)
 
@@ -217,7 +220,9 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
 - **M6:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
   worker solver client (`docs/Sim_ui.md` §12) + `app.js` wiring (live update, m³/h fixed — no
   units toggle); pump, zones, Z5 manual handle, rotor flo-stop, valve flow-control, plug toggles.
-- **M7:** ~~`quasitime.js`~~ dropped per `docs/Sim_ui.md` §1 (single live view, no mode switching).
+- **M7 (quasi-time):** `quasitime.js` — a time-ordered sequence of settled command-states scrubbed
+  along a timeline within the single live view; each frame re-uses the `solveSteady` path (a scrubber,
+  not a mode switch).
 - **M8 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
   *States here:* adds the suction-side physics the EPANET reservoir omits — `source.well` wet/dry as an
