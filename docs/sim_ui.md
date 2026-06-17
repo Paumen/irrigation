@@ -58,7 +58,7 @@ A scenario explorer — set controls, watch the system respond.
     - gauge glyphs at key nodes.
 - Each head shows its coverage
   - Ideas to reach outcome (apply none, one, or several):
-    - fan wedge at the installed arc with radius scaled by solved flow
+    - fan wedge at the installed arc, sized to how far the head actually throws
     - a throw-distance label
     - an output-flow label
     - a nozzle/rotor type icon.
@@ -76,15 +76,21 @@ A scenario explorer — set controls, watch the system respond.
 - Tapping an item shows its live values and controls, read against what it can actually do — catalog context (head flow span, pump curve, valve loss range).
 - Controls live at item level: 
   - pump on bool
-  - auto valves
+  - auto valve open bool (the controller's zone command; a broken wire can leave it commanded but not energised)
   - manual valve handle bool
   - grid power bool
   - adapter power bool
   - flow-control (0, 0.25, 0.5, 0.75, 1)
   - bleed screw bool
   - solenoid bleed bool (turning the solenoid a quarter turn opens the pilot/solenoid port)
-  - well wet/dry
   - Flo-stop bool
   - arc
   - nozzle
 - Change any control and the whole system updates at once — every derived value and animation follows.
+- When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
+
+## Prerequisites
+These items depend on engine support that doesn't exist yet; the UI can't expose them until it does.
+- **arc / nozzle as controls** — the engine reads these as fixed per-head config, not live commands. Making them adjustable means it must accept them at runtime and rebuild the affected head, with the catalog constraining the valid choices (rotor nozzle sizes vs. spray family/arc combinations).
+- **solenoid bleed** — the engine must accept a manual solenoid override (the quarter-turn that lifts the plunger / opens the pilot seat) as a command; today the pilot seat only opens when the coil is energised.
+- **Item status vocabulary** — the set of per-item statuses the diagram shows must be defined and shared with the side panel (e.g. active, idle, commanded-but-not-acting, faulted, dead), so both read from one taxonomy.
