@@ -16,8 +16,9 @@ A scenario explorer — set controls, watch the system respond.
 - Units:
   - flow: m³/h
   - pressure: bar
-  - length / distance / height: m
+  - length / distance / height / throw: m
   - arc: degrees
+  - application rate (precip): mm/h
 
 ## Diagram
 - Holistic — hydraulics, electrical, and state.
@@ -88,6 +89,43 @@ A scenario explorer — set controls, watch the system respond.
   - nozzle
 - Change any control and the whole system updates at once — every derived value and animation follows.
 - When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
+
+## What the engine provides
+The contract the UI reads from. Pressure is defined only at **junctions** (head inlets, tees, the pump-outlet manifold — points where water can enter/leave); **links** (pipes, the pump, valves) carry flow and direction but no pressure of their own. Anything not listed here, the UI cannot show.
+
+Legend: ✓ yes · — no · opt = an optional idea from the lists above, not required. "Diagram" = encoded visually on the diagram; "Number in diagram" = shown as text/number on the diagram (most numbers live in the side sheet instead).
+
+| Signal | Diagram | Number in diagram | Kind | Side sheet |
+| --- | :---: | :---: | --- | :---: |
+| **Controls** (live) | | | | |
+| Pump on | ✓ | — | control | ✓ |
+| Auto-valve open (zone command) | ✓ | — | control | ✓ |
+| Manual valve handle | ✓ | — | control | ✓ |
+| Grid power | ✓ | — | control | ✓ |
+| Adapter power | ✓ | — | control | ✓ |
+| Flow-control (0 / .25 / .5 / .75 / 1) | ✓ | opt | control | ✓ |
+| Bleed screw | ✓ | — | control | ✓ |
+| **Hydraulic** | | | | |
+| Junction pressure (bar) | ✓ | opt | result | ✓ |
+| Link flow + direction (m³/h) | ✓ | — | result | ✓ |
+| Head output (m³/h) | ✓ | opt | result | ✓ |
+| Head throw radius (m) | ✓ | opt | result | ✓ |
+| Head application rate (mm/h) | — | — | result | ✓ |
+| Valve open / closed | ✓ | — | result | ✓ |
+| Reachable (live vs dead branch) | ✓ | — | result | ✓ |
+| Pump output / total outflow / mass balance | — | — | other | ✓ |
+| Solve settled? (convergence) | ✓ | ✓ | other | ✓ |
+| **Electrical** | | | | |
+| Controller / relay coil / pump motor energised | ✓ | — | result | ✓ |
+| Zone solenoid energised | ✓ | — | result | ✓ |
+| Commanded-but-not-energised (zone / pump) | ✓ | — | result | ✓ |
+| Live wire segments (energised path) | ✓ | — | result | — |
+| Socket live | ✓ | — | result | ✓ |
+| **State** | | | | |
+| Per-item state (primed, pressurised, watering, wet/dry, live/dead, diaphragm, pilot seat) | ✓ | — | result | ✓ |
+| Solve↔rule cross-check mismatch | — | — | other | ✓ |
+
+Controls not in this table (arc, nozzle, solenoid bleed, Flo-stop, fault injection) are not yet provided by the engine — see Prerequisites.
 
 ## Prerequisites
 These items depend on engine support that doesn't exist yet; the UI can't expose them until it does.
