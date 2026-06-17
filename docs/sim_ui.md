@@ -14,7 +14,7 @@ A scenario explorer — set controls, watch the system respond.
     - dense/tabular number layout
     - icon-only controls
 - Units:
-  - flow: L/min
+  - flow: m³/h
   - pressure: bar
   - length / distance / height: m
   - arc: degrees
@@ -80,9 +80,9 @@ A scenario explorer — set controls, watch the system respond.
   - manual valve handle bool
   - grid power bool
   - adapter power bool
-  - flow-control
+  - flow-control (0, 0.25, 0.5, 0.75, 1)
   - bleed screw bool
-  - solenoid bleed bool
+  - solenoid bleed bool (turning the solenoid a quarter turn opens the pilot/solenoid port)
   - well wet/dry
   - Flo-stop bool
   - arc

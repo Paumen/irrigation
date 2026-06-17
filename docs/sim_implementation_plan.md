@@ -8,8 +8,9 @@
 - Water pressure and flow computed by **EPANET**, with our own layer feeding it the system and reading results back.
 - Friction calculated by the Darcy–Weisbach method, using the per-hose smoothness value in `system.yaml`.
 - Any individual part can be broken — the full part-by-part failure list from `system.yaml`.
-- Shows the settled (steady-state) result instantly, and also a quasi-time mode that steps through a
-  sequence of settled states.
+- Shows the settled (steady-state) result instantly, and also a quasi-time behaviour: when the
+  state changes, flow (and possibly other quantities) transition semi-realistically over time from
+  the previous settled result to the new one, rather than snapping instantly.
 - Pressures in bar; flows in m³/h everywhere (no unit toggle).
 
 ## 2. Water behaviour to reproduce

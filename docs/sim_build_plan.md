@@ -69,7 +69,7 @@ sim/
     scene.js            model + geometry -> static scene graph (pipe/wire paths, glyph descriptors)
     render.js           data-join SVG update from a solved result (positions never move)
     controls.js         control + fault widgets, hold UI state
-    quasitime.js        time-ordered command-states played along a timeline
+    quasitime.js        semi-realistic in-time transition between settled states on a state change
     units.js            bar + m³/h formatting (no unit toggle)
     app.js              glue: load->model->hydraulics->geometry->controls; debounced re-solve
   test/
@@ -181,12 +181,14 @@ outlet/leak labeled with flow (m³/h everywhere, no unit toggle, per `docs/sim_u
 particle-traced from `energisedWires`.
 
 ### Controls
-`controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
-flo-stop; valve bleed screw; Z1 manual handle; grid/adapter plug toggles; fault toggles. Any change →
-debounced `electrical → compile faults → solveSteady → renderScene`. The quasi-time module
-(`quasitime.js`) plays a time-ordered sequence of command-states along a timeline — each frame is a
-fully settled `solveSteady` result, scrubbed **within** the single live view (a timeline scrubber, not
-a separate mode, so it stays compatible with `docs/sim_ui.md`'s no-mode-switching rule).
+`controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle
+(0 / 0.25 / 0.5 / 0.75 / 1); rotor flo-stop; valve bleed screw; Z1 manual handle; grid/adapter plug
+toggles; fault toggles. Any change → debounced `electrical → compile faults → solveSteady →
+renderScene`. The quasi-time module (`quasitime.js`) animates the change between states: on a state
+change, flow (and possibly other quantities) transition semi-realistically over time from the
+previous settled result to the new one, rather than snapping instantly. Both endpoints are full
+`solveSteady` results and the transition is an in-view animation, not a separate mode (consistent
+with `docs/sim_ui.md`'s no-mode-switching rule).
 
 ## Execution status
 
@@ -249,9 +251,10 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
 - **M7:** `controls.js` + bottom sheet (per-subpart sections, `docs/sim_ui.md`) +
   worker solver client (`docs/sim_ui.md`) + `app.js` wiring (live update, m³/h fixed — no
   units toggle); pump, zones, Z1 manual handle, rotor flo-stop, valve flow-control, plug toggles.
-- **M8 (quasi-time):** `quasitime.js` — a time-ordered sequence of settled command-states scrubbed
-  along a timeline within the single live view; each frame re-uses the `solveSteady` path (a scrubber,
-  not a mode switch).
+- **M8 (quasi-time):** `quasitime.js` — on a state change, animate a semi-realistic in-time
+  transition of flow (and possibly other quantities) from the previous settled result to the new
+  one, rather than snapping instantly; both endpoints are full `solveSteady` results (an in-view
+  animation, not a mode switch).
 - **M9 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
   *States here:* adds the suction-side physics the EPANET reservoir omits — `source.well` wet/dry as an
