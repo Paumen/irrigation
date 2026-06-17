@@ -91,9 +91,14 @@ A scenario explorer — set controls, watch the system respond.
 - When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
 
 ## Prerequisites
-These items depend on engine support that doesn't exist yet; the UI can't expose them until it does.
-- **arc / nozzle as controls** — the engine reads these as fixed per-head config, not live commands. Making them adjustable means it must accept them at runtime and rebuild the affected head, with the catalog constraining the valid choices (rotor nozzle sizes vs. spray family/arc combinations).
-- **solenoid bleed** — the engine must accept a manual solenoid override (the quarter-turn that lifts the plunger / opens the pilot seat) as a command; today the pilot seat only opens when the coil is energised.
-- **Flo-stop as a control** — the engine reads Flo-stop only into the qualitative state layer, not the hydraulic solve, so toggling it moves the head's state badge but leaves its flow and throw unchanged. Exposing it as a live control means the solve must shut the head's outlet off when Flo-stop is engaged.
-- **fault injection** — the engine runs a no-fault baseline today (`faults.js` is an M9 stub), so fault injection and any fault-related UI are deferred until the fault engine lands. This UI commands controls only.
+
+### Available
+The engine now accepts these as live commands on the `state` object (`state.nozzle` / `state.arc` / `state.solenoidBleed` / `state.floStop`), so the UI can expose them.
+- **arc / nozzle as controls** — accepted at runtime; the catalog constrains the valid choices (rotor nozzle sizes vs. spray family/arc combinations) via `validOutletOptions` / `validateOutletOverrides` in `sim/src/outlets.js`. Rotor arc is geometry-only (precip); spray arc is a flow-table key. The catalog carries the full I-20 nozzle set (blue/grey/black/green) and all MP arcs.
+- **solenoid bleed** — a manual quarter-turn override lifts the plunger / opens the pilot seat even with a dead coil, opening the valve once inlet pressure is available.
+- **Flo-stop as a control** — engaging it now shuts the head's outlet off in the hydraulic solve (zero flow and throw), not just the qualitative state badge.
+
+### Deferred
+The UI can't expose these until the engine lands them; this UI commands controls only.
+- **fault injection** — the engine runs a no-fault baseline today (`faults.js` is an M9 stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
 - **Item status vocabulary** — the set of per-item statuses the diagram shows must be defined and shared with the side sheet (e.g. active, idle, commanded-but-not-acting, faulted, dead), so both read from one taxonomy.
