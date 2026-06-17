@@ -2,26 +2,27 @@
 
 ## Project
 
-Two things for one homeowner's irrigation/rotor system:
+Two unrelated things for one homeowner's irrigation/rotor system:
 
-1. An agent-facing **diagnostic toolkit** — one **Claude skill backed by MCP tools**, covering two capabilities:
-   - **Troubleshooting** — a scoring engine walks a question-and-answer loop and continually re-ranks the most likely root failure modes. Driven by the `playbooks/troubleshoot.md` playbook via the `diagnose_irrigation` MCP tool. Pure scoring engine lives in `tools/` (`engine.py`, `diagnose*.py`, `data.json`).
-   - **Hydraulics & general assistance** — how-it-works / identify / upgrade / maintenance playbooks.
-2. A **simulator** under `sim/` (in progress) — see below. Unrelated to the `tools/` diagnostic engine.
+1. **Diagnostic toolkit** — one Claude skill backed by MCP tools, covering:
+   - **Troubleshooting** — a scoring engine walks a Q&A loop, re-ranking the likeliest failure modes. Driven by `playbooks/troubleshoot.md` via the `diagnose_irrigation` MCP tool; pure engine in `tools/` (`engine.py`, `diagnose*.py`, `data.json`).
+   - **Hydraulics & general help** — how-it-works / identify / upgrade / maintenance playbooks.
+2. **Simulator** (`sim/`, in progress) — see below.
 
 ## Simulator (`sim/`)
 
-A physics engine for the system's hydraulics **and** control wiring. Spec history: `docs/sim_spec.md`, `docs/sim_implementation_plan.md`, `docs/sim_build_plan.md`.
+A physics engine for the system's hydraulics **and** control wiring. Spec history in `docs/sim_*.md`.
 
-- **Inputs** are the root `system.yaml` (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged into one document — single source of truth, no copies). Its sections: the **graph** keys `category`/`items`/`water`/`electrical` (hydraulic `flow` network + electrical `circuit` + component `kinds`/`fail:` lists), the **catalog** keys `pump.jet_curves`/`valve.auto_loss`/`head.rotor/nozzle`/`head.spray/nozzle` (pump curve, valve-loss, nozzle tables), and the **context** keys (`equipment`, `cable_runs`, `control_paths`, `system_design_choices`, labels).
-- **Hydraulics = EPANET** via `epanet-js` (EPANET 2.2 wasm), wrapped by our own outer fixed-point demand loop (`solver.js`): pressure-driven outlets from the catalog laws, auto-valve actuation with lift/stay hysteresis through the real wiring solve (`electrical.js`), reachability-based dead-branch handling, mass balance. `faults.js` is currently an **M9 stub** — `compileFaults` returns only `emptyEffects()` (the no-fault baseline the solver reads); the planned fault engine will compile any combination of system.yaml's ~400 `fail:` entries into solver/network mutations (clog severities → restricted/sealed links, valve-seat clogs scale the valve's loss curve since EPANET ignores GPV minor losses, leak emitters at the nearest junction, weak/dead pump, stuck-open/disabled valves, outlet-law rewrites, electrical cuts). The `emptyEffects()` channel shape (`closedLinks`/`linkK`/`leaks`/`valveLossScale`/`outletMods`/`elecBlocked`/…) is already what `solver.js`/`network.js`/`electrical.js` read. Starved table outlets hand off to EPANET emitters below their lowest catalog point and every fed-back quantity uses adaptive damping (step halves on sign flips), so extreme severities settle.
-- **Verify with `cd sim && npm install && npm test`** (the full harness; `npm run smoke` is the M0 EPANET spike). Entry points: `buildModel` → `solveElectrical` → `solveSteady(model, state, elec, hyd, compileFaults(model, faults))`.
+- **Input** is the root `system.yaml` — single source of truth (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged; no copies). Sections: graph (`category`/`items`/`water`/`electrical`, with per-component `fail:` lists), catalog (`pump.jet_curves`/`valve.auto_loss`/`head.rotor/nozzle`/`head.spray/nozzle`), and context (`cable_runs`/`control_paths`/`system_design_choices`).
+- **Hydraulics = EPANET** (`epanet-js`, EPANET 2.2 wasm) wrapped by our own fixed-point demand loop in `solver.js`: pressure-driven outlets from the catalog laws, auto-valve lift/stay hysteresis driven by the real wiring solve (`electrical.js`), reachability-based dead-branch handling, mass balance. Starved table outlets fall back to EPANET emitters below their lowest catalog point; fed-back quantities use adaptive damping so extreme cases settle.
+- **`faults.js` is an M9 stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline). Its channel shape (`closedLinks`/`linkK`/`leaks`/`valveLossScale`/`outletMods`/`elecBlocked`/…) is already what `solver.js`/`network.js`/`electrical.js` read; the planned engine will compile `system.yaml`'s ~400 `fail:` entries into those channels (see `docs/sim_*.md`).
+- **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, state, elec, hyd, compileFaults(model, faults))`.
 
 ## Session setup
 
-`.claude/hooks/session-start.sh` (registered via `.claude/settings.json`) runs at the start of every Claude Code on the web session: `pip install -r requirements.txt` for the MCP SDK and `pyyaml`. Synchronous so the session is ready when it opens.
+`.claude/hooks/session-start.sh` (via `.claude/settings.json`) runs at session start: `pip install -r requirements.txt` (MCP SDK, pyyaml). Synchronous, so the session is ready on open.
 
 ## Gotchas
 
-- Bash working directory persists between calls, so a `cd` (e.g. `cd .claude/skills/irrigation/media`) silently changes cwd for every later tool call. File tools like `SendUserFile` resolve relative paths against that cwd, so relative paths break after a `cd`. Use absolute paths for file tools, or avoid `cd` (`ls .claude/skills/irrigation/media` instead).
-- When sharing images/files, always pass the `files` array on the **first** `SendUserFile` call — never emit a bare invocation with no arguments. An empty call fails validation with "required parameter `files` is missing" and just adds noise before the retry.
+- Bash cwd persists across calls, so a `cd` silently changes cwd for every later call — and file tools (`SendUserFile`) resolve relative paths against it. Use absolute paths, or avoid `cd` (e.g. `ls dir/` not `cd dir`).
+- Always pass the `files` array on the **first** `SendUserFile` call; an empty call fails validation ("required parameter `files` is missing").
