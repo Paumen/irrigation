@@ -76,7 +76,7 @@ A scenario explorer — set controls, watch the system respond.
 - Tapping an item shows its live values and controls, read against what it can actually do — catalog context (head flow span, pump curve, valve loss range).
 - Controls live at item level: 
   - pump on bool
-  - auto valve open (the controller's zone command; a broken wire can leave it commanded but not energised)
+  - auto valve open bool (the controller's zone command; a broken wire can leave it commanded but not energised)
   - manual valve handle bool
   - grid power bool
   - adapter power bool
