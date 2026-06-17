@@ -20,16 +20,7 @@ class Engine:
 
         self.questions: list[dict] = self._build_questions()
         self.main_questions = [q for q in self.questions if not q.get("optional")]
-        self.optional_questions = [q for q in self.questions if q.get("optional")]
-        self.ages_q = next((q for q in self.questions if q["type"] == "ages"), None)
         self.q_by_id = {q["id"]: q for q in self.questions}
-
-        stages_data = data.get("stages", [])
-        self.stages: list[int] = [s["id"] for s in stages_data]
-        self.stage_labels: dict[int, str] = {s["id"]: s["label"] for s in stages_data}
-        self.stage_qs: dict[int, list[dict]] = {
-            s: [q for q in self.questions if q.get("stage") == s] for s in self.stages
-        }
 
     def _expand_effects(self, effects: dict | None) -> dict | None:
         if not effects:
