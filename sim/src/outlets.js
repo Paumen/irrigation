@@ -31,7 +31,7 @@ function tableRows(outlet, curves) {
     if (!row) throw new Error(`outlets: no head.spray/nozzle row for "${fam}" arc ${arc}`);
     return { pressures: curves.nozzleMp.pressure_bar, row };
   }
-  return null;
+  throw new Error(`outlets: unsupported outlet subkind "${outlet.subkind}"`);
 }
 
 export function outletDemandAt(outlet, p_bar, curves, { noClamp = false } = {}) {
