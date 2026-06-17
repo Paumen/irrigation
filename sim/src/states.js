@@ -204,6 +204,7 @@ export function computeStates(model, opts = {}) {
   const bleedOpen = state.bleedOpen || {};
   const throttle = state.throttle || {};
   const floStop = state.floStop || {};
+  const solenoidBleed = state.solenoidBleed || {};
   const wellWet = env.wellWet ?? true;
   const primingChamberWet = env.primingChamberWet ?? true;
   const bleedForcedOpen = faults?.bleedForcedOpen || new Set();
@@ -234,6 +235,7 @@ export function computeStates(model, opts = {}) {
     if ((kind === "valve.auto" || kind === "valve.manual") && v.key === "open") return !!valveOpen[id];
     if (v.group === "bonnet/flow_control") return (throttle[id] ?? 1) > 0;
     if (v.group === "bonnet/bleed_screw") return !!bleedOpen[id] || bleedForcedOpen.has(id);
+    if (v.group === "solenoid/bleed") return !!solenoidBleed[id];
     if (v.group === "handle") return !!manualOpen[id];
     if (v.group === "flo_stop") return floStop[id] !== false;
     if (kind === "source.well" && v.key === "wet") return wellWet;

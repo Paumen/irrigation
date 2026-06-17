@@ -16,7 +16,14 @@ import {
 import { buildTopology } from "./network.js";
 import { toInp } from "./inp.js";
 import { solveInp } from "./epanet-runner.js";
-import { outletDemandAt, outletTableMin, outletThrowAt, outletPrecipMmHr } from "./outlets.js";
+import {
+  outletDemandAt,
+  outletTableMin,
+  outletThrowAt,
+  outletPrecipMmHr,
+  effectiveOutletCfg,
+  validateOutletOverrides,
+} from "./outlets.js";
 import { emptyEffects } from "./faults.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -56,6 +63,7 @@ const LINKish = (n) =>
 
 export function solveSteady(model, state, elec, hyd, faults) {
   const fx = faults || emptyEffects();
+  validateOutletOverrides(model, state); // fail-fast on illegal nozzle/arc controls
   const pumpOn = !!(elec.pumpPowered && !fx.pumpDisabled);
   const zoneEnergised = elec.zoneEnergised || {};
   const minLift = model.minOperatingBar ?? VALVE_OPEN_BAR;
@@ -63,6 +71,10 @@ export function solveSteady(model, state, elec, hyd, faults) {
   const manualOpen = state.manualOpen || {};
   const bleedOpen = state.bleedOpen || {};
   const throttle = state.throttle || {};
+  const floStop = state.floStop || {};
+  const solenoidBleed = state.solenoidBleed || {};
+  // Flo-Stop is a rotor-only feature; engaged (handle closed) shuts the head's internal seat.
+  const floStopEngaged = (o) => o.subkind === "rotor" && floStop[o.id] === false;
 
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   const autoValves = [...model.flowNodes.values()].filter((n) => n.role === "valve-auto");
@@ -70,7 +82,10 @@ export function solveSteady(model, state, elec, hyd, faults) {
 
   const commandedAuto = (v) =>
     !fx.valveDisabled.has(v.id) &&
-    (zoneEnergised[zoneOf(v.id)] === true || !!bleedOpen[v.id] || fx.bleedForcedOpen.has(v.id));
+    (zoneEnergised[zoneOf(v.id)] === true ||
+      !!bleedOpen[v.id] ||
+      !!solenoidBleed[v.id] ||
+      fx.bleedForcedOpen.has(v.id));
 
   // start commanded autos open so the first solve can establish inlet pressure
   const valveOpen = {};
@@ -122,7 +137,8 @@ export function solveSteady(model, state, elec, hyd, faults) {
     let maxStep = 0;
     for (const o of outlets) {
       const st = dmp.get(o.id);
-      if (!reachable.has(o.id)) {
+      if (!reachable.has(o.id) || floStopEngaged(o)) {
+        // unreachable branch OR Flo-Stop engaged: no demand, no emitter — the head is shut
         st.q = 0;
         st.sign = 0;
         st.alpha = ALPHA;
@@ -130,7 +146,8 @@ export function solveSteady(model, state, elec, hyd, faults) {
       }
       const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar; cold-start guess
       const mod = fx.outletMods.get(o.id) || {};
-      const tableMin = outletTableMin(o, model.curves);
+      const cfg = effectiveOutletCfg(o, state);
+      const tableMin = outletTableMin(o, model.curves, cfg);
       // below the table's lowest point run as an emitter rather than
       // extrapolating the table toward 0 bar
       if (pPrev < tableMin.pMin_bar) {
@@ -144,7 +161,7 @@ export function solveSteady(model, state, elec, hyd, faults) {
         st.sign = 0;
         continue;
       }
-      let target = outletDemandAt(o, pPrev, model.curves) * (mod.flowScale ?? 1);
+      let target = outletDemandAt(o, pPrev, model.curves, cfg) * (mod.flowScale ?? 1);
       if (mod.zeroFlow) target = 0;
       const delta = target - st.q;
       const sign = Math.sign(delta);
@@ -208,10 +225,11 @@ function finalize(model, state, fx, pumpOn, valveOpen, reachable, res, topo, com
     demands.set(o.id, q);
     outSum += q;
     if (reachable.has(o.id) && q > 0) {
-      const t = outletThrowAt(o, res.pressureBar[ep] ?? 0, model.curves);
+      const cfg = effectiveOutletCfg(o, state);
+      const t = outletThrowAt(o, res.pressureBar[ep] ?? 0, model.curves, cfg);
       if (t != null) {
         throws.set(o.id, t);
-        const pr = outletPrecipMmHr(q, o.params.arc, t);
+        const pr = outletPrecipMmHr(q, cfg.arc, t);
         if (pr != null) precip.set(o.id, pr);
       }
     }
