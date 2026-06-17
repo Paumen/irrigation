@@ -21,7 +21,6 @@ export function roleOf(type) {
 function subkindOf(type) {
   if (type === "head.rotor") return "rotor";
   if (type === "head.spray") return "spray";
-  if (type === "head.stream") return "stream";
   if (type === "joint.sj34x12" || type === "joint.sj34x34") return "swing";
   if (type.startsWith("hose.")) return "hose";
   return type;

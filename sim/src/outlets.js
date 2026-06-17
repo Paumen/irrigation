@@ -1,4 +1,4 @@
-import { M_PER_BAR, G, SPRAY_CLAMP_BAR } from "./config.js";
+import { SPRAY_CLAMP_BAR } from "./config.js";
 
 export function interp(xs, ys, x) {
   const pts = [];
@@ -31,15 +31,10 @@ function tableRows(outlet, curves) {
     if (!row) throw new Error(`outlets: no head.spray/nozzle row for "${fam}" arc ${arc}`);
     return { pressures: curves.nozzleMp.pressure_bar, row };
   }
-  return null;
+  throw new Error(`outlets: unsupported outlet subkind "${outlet.subkind}"`);
 }
 
 export function outletDemandAt(outlet, p_bar, curves, { noClamp = false } = {}) {
-  if (outlet.subkind === "stream") {
-    const C = streamEmitterCoeff(outlet.params);
-    const h = Math.max(p_bar, 0) * M_PER_BAR;
-    return C * Math.sqrt(h);
-  }
   const { pressures, row } = tableRows(outlet, curves);
   const lookup = outlet.subkind === "spray" && !noClamp ? Math.min(p_bar, SPRAY_CLAMP_BAR) : p_bar;
   return interp(pressures, row, lookup);
@@ -48,7 +43,6 @@ export function outletDemandAt(outlet, p_bar, curves, { noClamp = false } = {}) 
 // Throw radius (m) for an outlet at its inlet pressure, from the catalog radius_m tables.
 // Rotors read head.rotor/nozzle by nozzle size; sprays read head.spray/nozzle by model
 // (MP radius is matched-precip, so independent of arc) at the PRS40-regulated pressure.
-// Streams have no modeled radius and return null.
 export function outletThrowAt(outlet, p_bar, curves) {
   if (outlet.subkind === "rotor") {
     const row = curves.nozzleI20.radius_m?.[String(outlet.params.nozzle).split(/\s+/)[0]];
@@ -72,20 +66,9 @@ export function outletPrecipMmHr(q_m3h, arc_deg, throw_m) {
 
 // Below pMin_bar the solver runs the outlet as an emitter; the table cannot extrapolate toward 0 bar.
 export function outletTableMin(outlet, curves) {
-  if (outlet.subkind === "stream") return null;
   const { pressures, row } = tableRows(outlet, curves);
   for (let i = 0; i < row.length; i++) {
     if (row[i] != null) return { pMin_bar: pressures[i], qMin: row[i] };
   }
   return { pMin_bar: pressures[0], qMin: 0 };
-}
-
-// C such that q_m3h = C*sqrt(head_m) reproduces Q = Cd*A*sqrt(2*g*h).
-export function streamEmitterCoeff(params) {
-  const bore = params.bore_mm;
-  if (bore == null || bore <= 0) throw new Error("streamEmitterCoeff: missing or invalid bore_mm");
-  const d = bore / 1000;
-  const A = (Math.PI / 4) * d * d;
-  const cd = params.cd ?? 0.62;
-  return 3600 * cd * A * Math.sqrt(2 * G);
 }
