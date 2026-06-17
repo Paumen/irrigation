@@ -16,7 +16,7 @@ import {
 import { buildTopology } from "./network.js";
 import { toInp } from "./inp.js";
 import { solveInp } from "./epanet-runner.js";
-import { outletDemandAt, outletTableMin, streamEmitterCoeff, outletThrowAt, outletPrecipMmHr } from "./outlets.js";
+import { outletDemandAt, outletTableMin, outletThrowAt, outletPrecipMmHr } from "./outlets.js";
 import { emptyEffects } from "./faults.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -131,16 +131,11 @@ export function solveSteady(model, state, elec, hyd, faults) {
       const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar; cold-start guess
       const mod = fx.outletMods.get(o.id) || {};
       const tableMin = outletTableMin(o, model.curves);
-      // below the table's lowest point (or always, for the stream orifice) run as an emitter
-      // rather than extrapolating the table toward 0 bar
-      if (tableMin == null || pPrev < tableMin.pMin_bar) {
-        let coeff;
-        if (tableMin == null) {
-          coeff = streamEmitterCoeff(o.params); // q = C*sqrt(head_m)
-        } else {
-          const headMin = tableMin.pMin_bar * M_PER_BAR;
-          coeff = headMin > 0 ? tableMin.qMin / Math.sqrt(headMin) : 0;
-        }
+      // below the table's lowest point run as an emitter rather than
+      // extrapolating the table toward 0 bar
+      if (pPrev < tableMin.pMin_bar) {
+        const headMin = tableMin.pMin_bar * M_PER_BAR;
+        let coeff = headMin > 0 ? tableMin.qMin / Math.sqrt(headMin) : 0;
         coeff *= mod.flowScale ?? 1;
         // gate to zero near/below zero pressure, else EPANET emitters suck water in
         if (pPrev <= EMITTER_GATE_BAR) coeff = 0;
