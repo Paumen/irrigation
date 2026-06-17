@@ -53,7 +53,7 @@ A scenario explorer — set controls, watch the system respond.
 - Pressurised items obvious at a glance, including roughly how hard
   - Ideas to reach outcome (apply none, one, or several):
     - hose fill/saturation scaling with pressure
-    - a pressure number/badge on pressurised segments
+    - a pressure number/badge on pressurised items
     - line weight or glow scaling with pressure
     - gauge glyphs at key nodes.
 - Each head shows its coverage
@@ -93,4 +93,5 @@ A scenario explorer — set controls, watch the system respond.
 These items depend on engine support that doesn't exist yet; the UI can't expose them until it does.
 - **arc / nozzle as controls** — the engine reads these as fixed per-head config, not live commands. Making them adjustable means it must accept them at runtime and rebuild the affected head, with the catalog constraining the valid choices (rotor nozzle sizes vs. spray family/arc combinations).
 - **solenoid bleed** — the engine must accept a manual solenoid override (the quarter-turn that lifts the plunger / opens the pilot seat) as a command; today the pilot seat only opens when the coil is energised.
+- **Flo-stop as a control** — the engine reads Flo-stop only into the qualitative state layer, not the hydraulic solve, so toggling it moves the head's state badge but leaves its flow and throw unchanged. Exposing it as a live control means the solve must shut the head's outlet off when Flo-stop is engaged.
 - **Item status vocabulary** — the set of per-item statuses the diagram shows must be defined and shared with the side panel (e.g. active, idle, commanded-but-not-acting, faulted, dead), so both read from one taxonomy.
