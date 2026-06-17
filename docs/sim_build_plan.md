@@ -2,7 +2,7 @@
 
 ## Context
 
-`docs/Sim_spec.md` (high-level) and `docs/sim_implementation_plan.md` (build spec) describe a
+`docs/sim_spec.md` (high-level) and `docs/sim_implementation_plan.md` (build spec) describe a
 browser-based simulator of this homeowner's irrigation system — its hydraulics *and* its control
 wiring. For any combination of commands and faults it must show where water sits, at what pressure,
 and where/how much leaves. It is a **static page** (no backend), with water pressure/flow computed by
@@ -19,7 +19,7 @@ and the context sections (labels).
 **Decisions locked with the user:** dependencies loaded from **CDN** via importmap (no vendoring);
 schematic geometry **hand-authored** in a checked-in coordinates module — **no auto-layout, no
 elkjs**; UI is **vanilla JS + hand-rolled SVG/DOM** (no framework, no d3); solver runs in a
-**Web Worker** per `docs/Sim_ui.md` §12, falling back to the main thread if CDN wasm inside the
+**Web Worker** per `docs/sim_ui.md`, falling back to the main thread if CDN wasm inside the
 worker proves broken; hosted on **GitHub Pages**; plain ES modules, **no bundler**.
 
 ## Approach
@@ -69,7 +69,7 @@ sim/
     scene.js            model + geometry -> static scene graph (pipe/wire paths, glyph descriptors)
     render.js           data-join SVG update from a solved result (positions never move)
     controls.js         control + fault widgets, hold UI state
-    quasitime.js        time-ordered command-states played along a timeline
+    quasitime.js        semi-realistic in-time transition between settled states on a state change
     units.js            bar + m³/h formatting (no unit toggle)
     app.js              glue: load->model->hydraulics->geometry->controls; debounced re-solve
   test/
@@ -115,7 +115,7 @@ coil loop energises): controller `mv`→relay coil loop→contact closes→`pump
 grid→line_in→contact→load_out→pump→neutral. Each zone N: `zoneCmd[N]` AND continuity
 `zone_N→signal_N→splice.sig_N→ZN.valve.coil→common_lead→com chain→common_return→controller`. The
 **shared common return** means one break can disable several zones — falls out naturally. Per-wire
-display state (superseding the earlier asked/powered/broken trichotomy, per `docs/Sim_ui.md` §5):
+display state (superseding the earlier asked/powered/broken trichotomy, per `docs/sim_ui.md`):
 `solveElectrical` returns `energisedWires`, the set of wires on a closed current-carrying path —
 wires merely at potential stay unlit.
 
@@ -169,24 +169,26 @@ No auto-layout (decision superseding the earlier elkjs plan): `geometry.js` is a
 checked-in coordinates module — an x,y for every flow node, per-port pin positions for every
 circuit part, and route points for every wire — validated by a Node completeness test that fails
 when anything in `system.yaml` lacks a position (or vice versa). The schematic draws **everything
-in system.yaml** (per `docs/Sim_ui.md` §14): all flow nodes, every circuit part with labelled
+in system.yaml** (per `docs/sim_ui.md`): all flow nodes, every circuit part with labelled
 terminals and drawn internals (controller terminal strip, adapter winding, relay coil + contact,
 the splice's 8 ports, pump motor, valve coil pins), and all 24 wires individually pin-to-pin.
-Layout concept per `docs/Sim_ui.md` §15: phone-portrait logical schematic — wiring band on top,
+Layout concept per `docs/sim_ui.md`: phone-portrait logical schematic — wiring band on top,
 manifold as a vertical bar with stacked ports, each zone as its own left-to-right row ending in
 its heads, Z1 manual row, Z6 cap stub, supply chain at the bottom. `scene.js` turns model +
 geometry into static paths/glyphs once; `render.js` only updates stroke width (∝ |flow|), color
-(red→green against the no-fault baseline, per `docs/Sim_ui.md` §3), idle=grey/dashed, every
-outlet/leak labeled with flow (m³/h everywhere, no unit toggle, per `docs/Sim_ui.md` §2), wiring
+(red→green against the no-fault baseline, per `docs/sim_ui.md`), idle=grey/dashed, every
+outlet/leak labeled with flow (m³/h everywhere, no unit toggle, per `docs/sim_ui.md`), wiring
 particle-traced from `energisedWires`.
 
 ### Controls
-`controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle (0..1); rotor
-flo-stop; valve bleed screw; Z1 manual handle; grid/adapter plug toggles; fault toggles. Any change →
-debounced `electrical → compile faults → solveSteady → renderScene`. The quasi-time module
-(`quasitime.js`) plays a time-ordered sequence of command-states along a timeline — each frame is a
-fully settled `solveSteady` result, scrubbed **within** the single live view (a timeline scrubber, not
-a separate mode, so it stays compatible with `docs/Sim_ui.md` §1's no-mode-switching rule).
+`controls.js`: pump on/off; per-zone controller command; auto-valve flow-control throttle
+(0 / 0.25 / 0.5 / 0.75 / 1); rotor flo-stop; valve bleed screw; Z1 manual handle; grid/adapter plug
+toggles; fault toggles. Any change → debounced `electrical → compile faults → solveSteady →
+renderScene`. The quasi-time module (`quasitime.js`) animates the change between states: on a state
+change, flow (and possibly other quantities) transition semi-realistically over time from the
+previous settled result to the new one, rather than snapping instantly. Both endpoints are full
+`solveSteady` results and the transition is an in-view animation, not a separate mode (consistent
+with `docs/sim_ui.md`'s no-mode-switching rule).
 
 ## Execution status
 
@@ -245,13 +247,14 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   fault-injectable well-dry condition exists, and on-screen display at **M6** (render) / **M10** (polish).
 - **M6:** `geometry.js` (hand-authored coordinates + Node completeness test) + `scene.js` +
   `render.js` — static schematic with flow/pressure encoding, full system.yaml coverage
-  (`docs/Sim_ui.md` §13–§15); surfaces each component's **M5** qualitative state as labels.
-- **M7:** `controls.js` + bottom sheet (per-subpart sections, `docs/Sim_ui.md` §8–§11) +
-  worker solver client (`docs/Sim_ui.md` §12) + `app.js` wiring (live update, m³/h fixed — no
+  (`docs/sim_ui.md`); surfaces each component's **M5** qualitative state as labels.
+- **M7:** `controls.js` + bottom sheet (per-subpart sections, `docs/sim_ui.md`) +
+  worker solver client (`docs/sim_ui.md`) + `app.js` wiring (live update, m³/h fixed — no
   units toggle); pump, zones, Z1 manual handle, rotor flo-stop, valve flow-control, plug toggles.
-- **M8 (quasi-time):** `quasitime.js` — a time-ordered sequence of settled command-states scrubbed
-  along a timeline within the single live view; each frame re-uses the `solveSteady` path (a scrubber,
-  not a mode switch).
+- **M8 (quasi-time):** `quasitime.js` — on a state change, animate a semi-realistic in-time
+  transition of flow (and possibly other quantities) from the previous settled result to the new
+  one, rather than snapping instantly; both endpoints are full `solveSteady` results (an in-view
+  animation, not a mode switch).
 - **M9 (faults):** `faults.js` grouped (role × failtype) table + specials; harness clog case + a leak
   case; fault toggle widgets wired into `controls.js`/`render.js`.
   *States here:* adds the suction-side physics the EPANET reservoir omits — `source.well` wet/dry as an
@@ -268,15 +271,15 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   without that rule input, M5's cross-check *correctly* flags the contradiction: solve says `open`,
   rule still says `closed` from chamber `pressurised`. M9 must close that gap, not suppress the check.)
 - **M10:** polish — `energisedWires` trace styling, labels, `commandedNotOpening`,
-  max-pressure warnings, the keep-last-good solver-failure badge (`docs/Sim_ui.md` §12);
+  max-pressure warnings, the keep-last-good solver-failure badge (`docs/sim_ui.md`);
   `.github/workflows/pages.yml` + `sim/README.md`.
 
 ## Requirement → milestone traceability
 
-Requirements are the bullets of `docs/Sim_spec.md` (States / Logic / UI). The build steps in
+Requirements are the bullets of `docs/sim_spec.md` (States / Logic / UI). The build steps in
 `docs/sim_implementation_plan.md` are the *how*, not requirements.
 
-| # | Requirement (Sim_spec.md) | Milestone |
+| # | Requirement (sim_spec.md) | Milestone |
 |---|---|---|
 | **States** | | |
 | R1 | One state at a time = controller commands + position of every manual control + any faults | M2–M4 + M9 (input state); per-component qualitative states derived in M5 |
