@@ -2,7 +2,7 @@
 ## Purpose
 A scenario explorer — set controls, watch the system respond.
 
-## Look and feel
+## Style
 - Light theme.
 - Mobile-first, phone portrait.
 - Very compact
@@ -19,6 +19,8 @@ A scenario explorer — set controls, watch the system respond.
   - length / distance / height / throw: m
   - arc: degrees
   - precipitation rate: mm/h
+- latest/modern html elements and css features can be used, no fall backs needed. Assume latest browser compatibility.
+
 
 ## Diagram
 - Holistic hydraulics and electrical.
@@ -74,4 +76,6 @@ A scenario explorer — set controls, watch the system respond.
 
 ## Deferred
 - **fault injection** — the engine runs a no-fault baseline today (`faults.js` is a stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
+- HTML and CSS legacy browser fallbacks.
+- Accessibility functionalities like ARIA, reduced motion, colorblindness.
 
