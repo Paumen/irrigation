@@ -80,16 +80,20 @@ port lifts a zone valve or trips the pump relay is decided entirely by the **wir
 > per-port terminals — per-zone routing lives on the cable. `energize{port}` needs those
 > output ports authored as real nodes in the electrical graph.
 
-## Boundaries — state fixed by the world
+## Boundaries — leaf state pinned to a healthy default
 
 Three states sit at the edges of the system and are given, not propagated:
 
 - **well** `pressure` — water available at the source (present = wet, absent = dry)
 - **socket** `live` — mains present at the supply
-- **pump priming chamber** `pressure` — water held in the pump body (you prime it once)
+- **pump priming chamber** `pressure` — water held in the pump body
 
-A boundary is just a state whose rule is "the world says so" instead of "look upstream."
-There is no separate *environment* category and no `mains` noun.
+A boundary is **not a control and not a separate category** — it is one of the same three
+primitives at a leaf, whose rule is "the world says so" instead of "look upstream." Its value is
+**pinned to the healthy default** (well wet, socket live, pump primed); the operator **cannot set
+it**. The only way a boundary leaves its healthy default is **fault injection** — `dead(socket)`
+(mains lost), `clog`/`leak` or a dry-well fault on the source, the lost-prime fault on the pump body.
+There is no `env` toggle, no plug switch, no separate *environment* category, and no `mains` noun.
 
 ## Readings — derived views, never stored
 
@@ -202,7 +206,7 @@ Legend: KILL (gone) · BECOMES (re-homed) · KEEP (engine/physics, not state-voc
 ### Controls (current input fields)
 - `manualOpen` BECOMES `handle{}` · `bleedOpen` BECOMES `bonnetBleed{}` · `solenoidBleed`/`throttle`/`nozzle`/`arc` KEEP · `floStop` BECOMES `headShutoff{}`
 - `pumpStart`/`mv`, `zones` KILL → `energize{port}` (role moves into the wiring; controller ports to be authored)
-- `gridPower`/`adapterPower` KILL → boundary `live`; `env.wellWet`/`env.primingChamberWet` KILL → boundary `pressure`
+- `gridPower`/`adapterPower` KILL → **not replaced by a control**: `socket.live` is pinned live by default, mains-lost is `dead(socket)` (a fault). `env.wellWet`/`env.primingChamberWet` KILL → likewise no toggle: well wet / pump primed are healthy defaults, their loss is a fault, not a user pin.
 
 ### Qualitative states (`states.js` + ~32 `system.yaml` `states:` blocks) — this whole layer dies
 - `live/dead` BECOMES primitive `live`
@@ -249,8 +253,9 @@ All KEEP, re-homed: unit/physics (`M_PER_BAR`, `G`); solver tuning (`ALPHA*`, `*
 
 ## Summary
 
-> **State = `live` + `pressure` + `flow`.** Eight controls. Three boundaries. Everything else
-> is a reading or the engine. Hydraulics split by scale: **EPANET** for the delivery network,
+> **State = `live` + `pressure` + `flow`.** Eight controls — and nothing else the operator sets:
+> the three world-edge states (mains, well, prime) are pinned to their healthy default and only a
+> fault moves them. Everything else is a reading or the engine. Hydraulics split by scale: **EPANET** for the delivery network,
 > a **local pressure relation** for each valve's actuation circuit (no tiny flows in the EPANET
 > matrix). The qualitative layer (`states.js` + the YAML `states:` blocks) is **deleted**, its
 > validation moving to scenario tests. Faults (`dead` / `clog`-`leak` / `stuck`) are the next

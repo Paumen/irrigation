@@ -75,11 +75,13 @@ A scenario explorer — set controls, watch the system respond.
 ## Interaction
 - Control and inspect from a side sheet: controls, states, inputs/outputs, numbers.
 - Tapping an item shows its live values and controls, read against what it can actually do — catalog context (head flow span, pump curve, valve loss range).
-- Controls live at item level. The canonical control + boundary surface is defined in
+- Controls live at item level. The canonical surface is the eight controls in
   `sim_state_model.md` (controller port energize, manual handle, throttle, bonnet bleed, solenoid
-  bleed, head shut-off, nozzle/arc; boundary socket `live`, well/priming `pressure`) — this file does
-  not restate it. UI-specific affordance: render the throttle as five discrete stops
-  (0, 0.25, 0.5, 0.75, 1). A valve's open/closed is **not** a control — it is a reading of the solve.
+  bleed, head shut-off, nozzle/arc) — this file does not restate it. The operator sets **nothing
+  else**: the world-edge states (mains, well, prime) have no control widget — they sit at their
+  healthy default and move only under fault injection. UI-specific affordance: render the throttle as
+  five discrete stops (0, 0.25, 0.5, 0.75, 1). A valve's open/closed is **not** a control — it is a
+  reading of the solve.
 - Change any control and the whole system updates at once — every derived value and animation follows.
 - When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
 

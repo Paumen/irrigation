@@ -14,7 +14,7 @@ Two unrelated things for one homeowner's irrigation/rotor system:
 A physics engine for the system's hydraulics **and** control wiring, in progress. The spec is split across `docs/sim_*.md`, each file owning **one** concern (no decision restated in two places):
 
 - `sim_spec.md` — **requirements** (the "what": States / Logic / UI).
-- `sim_state_model.md` — **authoritative engine model**: state primitives (`live`/`pressure`/`flow`), the control + boundary surface, readings, the local valve-actuation relation, and the fault model (`dead` / `clog`·`leak` / `stuck`). Other docs reference it, never restate it.
+- `sim_state_model.md` — **authoritative engine model**: state primitives (`live`/`pressure`/`flow`), the control surface, the world-edge boundary states, readings, the local valve-actuation relation, and the fault model (`dead` / `clog`·`leak` / `stuck`). Other docs reference it, never restate it.
 - `sim_ui.md` — **UX/visual spec**: look, diagram, interaction (defers control/status vocabulary to `sim_state_model.md`).
 - `sim_build_plan.md` — **the plan**: milestones, file layout, build order, status, verification. Owns the milestone numbering.
 

@@ -4,7 +4,7 @@
 
 `docs/sim_spec.md` is the **requirements** (the "what"). `docs/sim_state_model.md` is the
 **authoritative engine model** — the state primitives (`live`/`pressure`/`flow`), the control +
-boundary surface, the readings, the local valve-actuation relation, and the fault model. This file
+surface, the world-edge boundary states, the readings, the local valve-actuation relation, and the fault model. This file
 is **the plan** (milestones, file layout, build order, status, verification) and owns the milestone
 numbering. It does **not** restate the state, control, or fault vocabulary — for those, read
 `sim_state_model.md`. UX/visual decisions live in `docs/sim_ui.md`.
@@ -161,9 +161,11 @@ each component's **readings** (`sim_state_model.md`) as labels/status, and trace
 the per-component `live` primitive.
 
 ### Controls
-`controls.js` exposes the control + boundary surface defined in `sim_state_model.md` (controller port
-energize, manual handle, throttle, bonnet bleed, solenoid bleed, head shut-off, nozzle/arc; boundary
-socket `live`, well/priming `pressure`). Any change → debounced `electrical → compile faults →
+`controls.js` exposes the eight controls defined in `sim_state_model.md` (controller port
+energize, manual handle, throttle, bonnet bleed, solenoid bleed, head shut-off, nozzle/arc) — and
+**nothing else the operator sets**: the world-edge states (mains, well, prime) are pinned to their
+healthy default and are not control widgets (their loss is a fault, see M8). Any change → debounced
+`electrical → compile faults →
 solveSteady → renderScene`. The quasi-time module (`quasitime.js`) animates the change between states:
 on a state change, flow (and possibly other quantities) transition semi-realistically over time from
 the previous settled result to the new one, rather than snapping instantly. Both endpoints are full
@@ -219,16 +221,18 @@ CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and 
   (`docs/sim_ui.md`); surfaces each component's readings as labels and traces wiring from `live`.
 - **M6 (controls + worker + app):** `controls.js` + bottom sheet (per-subpart sections, `docs/sim_ui.md`) +
   worker solver client (`docs/sim_ui.md`) + `app.js` wiring (live update, m³/h fixed — no
-  units toggle); the full control + boundary surface from `sim_state_model.md`.
+  units toggle); the eight controls from `sim_state_model.md` (no boundary/world-edge widgets — those move only under faults, M8).
 - **M7 (quasi-time):** `quasitime.js` — on a state change, animate a semi-realistic in-time
   transition of flow (and possibly other quantities) from the previous settled result to the new
   one, rather than snapping instantly; both endpoints are full `solveSteady` results (an in-view
   animation, not a mode switch).
 - **M8 (faults):** `faults.js` three-verb compiler (`dead` / `clog`·`leak` / `stuck`, per
   `sim_state_model.md`) + `system.yaml` `fail:` entries; harness clog case + a leak case; fault toggle
-  widgets wired into `controls.js`/`render.js`. This phase also adds the suction-side conditions the
-  EPANET reservoir omits as injectable boundaries — `source.well` `pressure` (wet/dry), pump priming
-  chamber `pressure` — feeding the existing `primed` reading and gating the pump.
+  widgets wired into `controls.js`/`render.js`. This phase also adds the suction-side world-edge
+  states the EPANET reservoir omits — `source.well` `pressure` (wet/dry) and pump priming chamber
+  `pressure`. These are **not** operator controls: they sit at their healthy default (wet, primed)
+  and move only when a fault is injected (dry-well, lost-prime), feeding the existing `primed` reading
+  and gating the pump.
   *Required harness case — metering-port clog (stuck-open valve):* with the pump on, **all** solenoids
   de-energised, and the **bleed screw closed**, `clog(meteringPort)` raises `R_meter` so the bonnet
   chamber can't refill — the pilot stays vented (`rVent < rMeter`), so the valve passes flow with no
