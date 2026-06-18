@@ -15,8 +15,10 @@ const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
 
 // Fed (reachable) and either driven (link node) or above the working-pressure floor (junction).
 export const pressurised = (model, hyd, id) => {
+  const node = model.flowNodes.get(id);
+  if (!node) throw new Error(`pressurised: no flow node "${id}"`); // fail loud, never silently return false
   if (!hyd.reachable.has(id)) return false;
-  if (LINK_ROLES.has(model.flowNodes.get(id)?.role)) return !!hyd.pumpOn;
+  if (LINK_ROLES.has(node.role)) return !!hyd.pumpOn;
   const p = hyd.pressureBar[epOf(id)];
   return Number.isFinite(p) && p >= PRESSURISED_BAR;
 };
