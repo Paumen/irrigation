@@ -23,6 +23,21 @@ export const pressurised = (model, hyd, id) => {
   return Number.isFinite(p) && p >= PRESSURISED_BAR;
 };
 
+// The pump's suction side holds water — the nearest junction/reservoir upstream of the pump is
+// fed and carries pressure. Traverse past link nodes (pipes/hoses), which carry no node pressure.
+export const primed = (model, hyd) => {
+  const pump = [...model.flowNodes.values()].find((n) => n.role === "pump");
+  if (!pump) throw new Error("primed: no pump node");
+  const parentOf = (id) => [...model.flowNodes.values()].find((n) => n.to.includes(id));
+  let node = parentOf(pump.id);
+  if (!node) throw new Error("primed: pump has no inlet node");
+  while (LINK_ROLES.has(node.role)) {
+    node = parentOf(node.id);
+    if (!node) throw new Error("primed: no junction/reservoir upstream of the pump");
+  }
+  return hyd.reachable.has(node.id) && Number.isFinite(hyd.pressureBar[epOf(node.id)]);
+};
+
 // The valve passes flow — the solver's actuation result.
 export const open = (hyd, id) => !!hyd.valveOpen[id];
 

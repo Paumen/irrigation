@@ -28,10 +28,6 @@ import { emptyEffects } from "./faults.js";
 import { valveActuation } from "./valve.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
-const zoneOf = (id) => {
-  const m = /^Z(\d+)_/.exec(id);
-  return m ? Number(m[1]) : null;
-};
 
 export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set()) {
   const { flowNodes } = model;
@@ -62,20 +58,20 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
 const LINKish = (n) =>
   n.role === "pipe" || n.role === "pump" || n.role === "valve-auto" || n.role === "valve-manual";
 
-export function solveSteady(model, state, elec, hyd, faults) {
+export function solveSteady(model, controls, elec, hyd, faults) {
   const fx = faults || emptyEffects();
-  validateOutletOverrides(model, state); // fail-fast on illegal nozzle/arc controls
-  const pumpOn = !!(elec.pumpPowered && !fx.pumpDisabled);
-  const zoneEnergised = elec.zoneEnergised || {};
+  validateOutletOverrides(model, controls); // fail-fast on illegal nozzle/arc controls
+  const pumpId = [...model.flowNodes.values()].find((n) => n.role === "pump")?.id;
+  const pumpOn = !!(elec.live[pumpId] && !fx.pumpDisabled);
   const minLift = model.minOperatingBar ?? VALVE_OPEN_BAR;
 
-  const manualOpen = state.manualOpen || {};
-  const bleedOpen = state.bleedOpen || {};
-  const throttle = state.throttle || {};
-  const floStop = state.floStop || {};
-  const solenoidBleed = state.solenoidBleed || {};
+  const handle = controls.handle || {};
+  const bonnetBleed = controls.bonnetBleed || {};
+  const throttle = controls.throttle || {};
+  const headShutoff = controls.headShutoff || {};
+  const solenoidBleed = controls.solenoidBleed || {};
   // Flo-Stop is a rotor-only feature; engaged (handle closed) shuts the head's internal seat.
-  const floStopEngaged = (o) => o.subkind === "rotor" && floStop[o.id] === false;
+  const headShutoffEngaged = (o) => o.subkind === "rotor" && headShutoff[o.id] === false;
 
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   const autoValves = [...model.flowNodes.values()].filter((n) => n.role === "valve-auto");
@@ -83,8 +79,8 @@ export function solveSteady(model, state, elec, hyd, faults) {
 
   const commandedAuto = (v) =>
     !fx.valveDisabled.has(v.id) &&
-    (zoneEnergised[zoneOf(v.id)] === true ||
-      !!bleedOpen[v.id] ||
+    (elec.live[v.id] === true ||
+      !!bonnetBleed[v.id] ||
       !!solenoidBleed[v.id] ||
       fx.bleedForcedOpen.has(v.id));
 
@@ -92,7 +88,7 @@ export function solveSteady(model, state, elec, hyd, faults) {
   const valveOpen = {};
   for (const v of autoValves) valveOpen[v.id] = fx.valveForcedOpen.has(v.id) || commandedAuto(v);
   for (const v of manualValves) {
-    valveOpen[v.id] = fx.valveForcedOpen.has(v.id) || (!!manualOpen[v.id] && !fx.valveDisabled.has(v.id));
+    valveOpen[v.id] = fx.valveForcedOpen.has(v.id) || (!!handle[v.id] && !fx.valveDisabled.has(v.id));
   }
 
   const dmp = new Map();
@@ -107,7 +103,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
   let stable = 0;
   let iters = 0;
   let valvesFrozen = false;
-  const commandedNotOpening = new Set();
 
   for (let it = 0; it < MAX_ITERS; it++) {
     iters = it + 1;
@@ -115,7 +110,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
     if (freeze) valvesFrozen = true;
 
     if (res && !freeze) {
-      commandedNotOpening.clear();
       for (const v of autoValves) {
         if (fx.valveForcedOpen.has(v.id)) {
           valveOpen[v.id] = true;
@@ -123,14 +117,13 @@ export function solveSteady(model, state, elec, hyd, faults) {
         }
         const inlet = valveInlet[v.id] ?? 0;
         const outlet = valveOutlet[v.id] ?? 0;
-        const cmd = commandedAuto(v); // the intent: coil energised or bled, regardless of physics
         // Local actuation relation: chamber pressure from the valve's own inlet/outlet (not EPANET).
         const act = valveActuation({
           inletBar: inlet,
           outletBar: outlet,
-          coilLive: zoneEnergised[zoneOf(v.id)] === true,
+          coilLive: elec.live[v.id] === true,
           solenoidBleed: !!solenoidBleed[v.id],
-          bonnetBleed: !!bleedOpen[v.id] || fx.bleedForcedOpen.has(v.id),
+          bonnetBleed: !!bonnetBleed[v.id] || fx.bleedForcedOpen.has(v.id),
           throttle: throttle[v.id],
         });
         chamberBar[v.id] = act.chamberBar;
@@ -142,8 +135,6 @@ export function solveSteady(model, state, elec, hyd, faults) {
         } else {
           valveOpen[v.id] = inlet >= minLift; // need min_operating_bar to lift (hysteresis)
         }
-        // commanded (intent) but not open — whether from low inlet OR a fault that blocks venting
-        if (cmd && !valveOpen[v.id]) commandedNotOpening.add(v.id);
       }
     }
 
@@ -153,7 +144,7 @@ export function solveSteady(model, state, elec, hyd, faults) {
     let maxStep = 0;
     for (const o of outlets) {
       const st = dmp.get(o.id);
-      if (!reachable.has(o.id) || floStopEngaged(o)) {
+      if (!reachable.has(o.id) || headShutoffEngaged(o)) {
         // unreachable branch OR Flo-Stop engaged: no demand, no emitter — the head is shut
         st.q = 0;
         st.sign = 0;
@@ -162,7 +153,7 @@ export function solveSteady(model, state, elec, hyd, faults) {
       }
       const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar; cold-start guess
       const mod = fx.outletMods.get(o.id) || {};
-      const cfg = effectiveOutletCfg(o, state);
+      const cfg = effectiveOutletCfg(o, controls);
       const tableMin = outletTableMin(o, model.curves, cfg);
       // below the table's lowest point run as an emitter rather than
       // extrapolating the table toward 0 bar
@@ -222,7 +213,7 @@ export function solveSteady(model, state, elec, hyd, faults) {
     prevP = { ...res.pressureBar };
     if (res && maxdp < P_TOL_BAR && maxStep < Q_TOL_M3H) {
       if (++stable >= STABLE_ITERS) {
-        return finalize(model, state, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, commandedNotOpening, iters, true, valvesFrozen);
+        return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, true, valvesFrozen);
       }
     } else {
       stable = 0;
@@ -230,10 +221,10 @@ export function solveSteady(model, state, elec, hyd, faults) {
   }
 
   const reachable = computeReachable(model, pumpOn, valveOpen, fx.closedLinks);
-  return finalize(model, state, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, commandedNotOpening, iters, false, valvesFrozen);
+  return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, false, valvesFrozen);
 }
 
-function finalize(model, state, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, commandedNotOpening, iters, converged, valvesFrozen) {
+function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged, valvesFrozen) {
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   const demands = new Map();
   const throws = new Map(); // outletId -> throw radius (m) at its solved inlet pressure
@@ -245,7 +236,7 @@ function finalize(model, state, fx, pumpOn, valveOpen, chamberBar, reachable, re
     demands.set(o.id, q);
     outSum += q;
     if (reachable.has(o.id) && q > 0) {
-      const cfg = effectiveOutletCfg(o, state);
+      const cfg = effectiveOutletCfg(o, controls);
       const t = outletThrowAt(o, res.pressureBar[ep] ?? 0, model.curves, cfg);
       if (t != null) {
         throws.set(o.id, t);
@@ -275,7 +266,6 @@ function finalize(model, state, fx, pumpOn, valveOpen, chamberBar, reachable, re
     pumpOn,
     valveOpen,
     chamberBar,
-    commandedNotOpening,
     reachable,
     pumpFlow,
     outSum,

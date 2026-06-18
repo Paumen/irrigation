@@ -52,15 +52,8 @@ items:
 
   source.well:
     installed_yyyy: 1713
-    states:
-      wet: {}
-      dry: {}
-
   source.socket:
     interfaces: [ac_line, ac_neutral, ac_earth]
-    states:
-      live: {}
-      dead: {}
     items:
       line: {}
       neutral: {}
@@ -72,18 +65,6 @@ items:
     model: "DAB AQUAJET 132 M"
     max_outlet_bar: 4.7
     interfaces: [bf1, bf1, ac_line, ac_neutral, ac_earth]
-    states:
-      primed:
-        needs: ["joint.hosetail_plastic = wet", "body/priming_chamber = wet"]
-      unprimed:
-        needs_any: ["joint.hosetail_plastic = dry", "body/priming_chamber = dry"]
-      pressurised:
-        needs: ["relay.pumpstart/load = live", "pump.jet = primed"]
-      unpressurised:
-        needs_any: ["relay.pumpstart/load = dead", "pump.jet = unprimed"]
-      body/priming_chamber:
-        wet: {}
-        dry: {}
     items:
       tank_hose:
         to: tank
@@ -119,16 +100,6 @@ items:
     price_eur: 200
     model: "RainMachine HD-12 TOUCH"
     interfaces: [ac_line, ac_neutral, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, com_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v, sig_24v]
-    states:
-      transformer:
-        live: {needs: ["source.socket = live"]}
-        dead: {needs: ["source.socket = dead"]}
-      terminals/common:
-        live: {needs: ["transformer = live"]}
-        dead: {needs: ["transformer = dead"]}
-      terminals/port:
-        live: {needs: ["transformer = live"]}
-        dead: {}
     items:
       line: {to: transformer/line}
       neutral: {to: transformer/neutral}
@@ -148,13 +119,6 @@ items:
     price_eur: 100
     model: "Hunter PSR-22"
     interfaces: [ac_line, ac_neutral, ac_earth, sig_24v, com_24v]
-    states:
-      coil:
-        live: {needs: ["control.controller/terminals/port = live", "control.controller/terminals/common = live"]}
-        dead: {needs_any: ["control.controller/terminals/port = dead", "control.controller/terminals/common = dead"]}
-      load:
-        live: {needs: ["coil = live", "source.socket = live"]}
-        dead: {needs_any: ["coil = dead", "source.socket = dead"]}
     items:
       coil_in:     {to: coil}
       coil: {to: coil_common}
@@ -189,24 +153,15 @@ items:
             material: brass
             k: 2.5
             interfaces: [bm1, bf1]
-            states:
-              wet: {needs: ["joint.strainer = wet"]}
-              dry: {needs: ["joint.strainer = dry"]}
           joint.strainer:
             price_eur: 10
             k: 1.0
             interfaces: [bf1]
-            states:
-              wet: {needs: ["source.well = wet"]}
-              dry: {needs: ["source.well = dry"]}
           joint.hosetail_brass:
             price_eur: 5
             material: brass
             k: 0.9
             interfaces: [bm1, barb25]
-            states:
-              wet: {needs: ["valve.foot = wet"]}
-              dry: {needs: ["valve.foot = dry"]}
       hose.suction:
         installed_yyyy: 2023
         price_eur_m: 5
@@ -216,9 +171,6 @@ items:
         id_mm: 24
         max_bar: 5
         interfaces: [barbf25, barbf25]
-        states:
-          wet: {needs: ["joint.hosetail_brass = wet"]}
-          dry: {needs: ["joint.hosetail_brass = dry"]}
       clamp:
         installed_yyyy: 2026
         price_eur: 1
@@ -229,16 +181,9 @@ items:
         max_bar: 6
         k: 0.9
         interfaces: [barb25, bm1]
-        states:
-          wet: {needs: ["hose.suction = wet"]}
-          dry: {needs: ["hose.suction = dry"]}
-
   hose.ldpe16:
     material: LDPE
     od_mm: 16
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
     wall_mm: 2
     id_mm: 12
     interfaces: [cm16, cm16]
@@ -247,83 +192,42 @@ items:
     material: LDPE
     od_mm: 25
     wall_mm: 2.7
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
     id_mm: 19.6
     interfaces: [cm25, cm25]
 
   hose.ldpe32:
     material: LDPE
     od_mm: 32
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
     wall_mm: 3
     id_mm: 26
     interfaces: [cm32, cm32]
 
   joint.bm1c32:
     interfaces: [bm1, c32]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   joint.c32c32:
     interfaces: [c32, c32]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   joint.bm1c25:
     interfaces: [bm1, c25]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
-
   joint.c25bf34:
     interfaces: [c25, bf34]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
-
   joint.c16c16:
     interfaces: [c16, c16]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   joint.c32sm1:
     max_bar: 10
     k: 0.1
     material: brass
     interfaces: [c32, sm1]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   joint.sm1bm1:
     material: brass
     interfaces: [sm1, bm1]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   joint.sm1c16:
     material: brass
     interfaces: [sm1, c16]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   joint.sj34x12:
     bends: 4
     bore_mm: 13
     k: 3.5
     model: "Hunter sj 3/4x1/2"
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
     interfaces: [bm34, bm12]
 
   joint.sj34x34:
@@ -331,9 +235,6 @@ items:
     bore_mm: 19
     k: 2.5
     model: "Hunter sj 3/4x3/4"
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
     interfaces: [bm34, bm34]
 
   joint.tee:
@@ -341,19 +242,11 @@ items:
     bends: 1
     k: 0.9
     interfaces: [c25, c25, c25]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
-
   joint.tee_c25bf34:
     price_eur: 10
     bends: 1
     k: 0.9
     interfaces: [c25, bf34, c25]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
-
   joint.manifold:
     price_eur: 150
     bore_mm: 25
@@ -361,9 +254,6 @@ items:
     bends: 1
     k: 1.5
     model: "LEV 6-way distributor"
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
     interfaces: [sf1, sf1, sf1, sf1, sf1, sf1, sf1]
 
   joint.cap:
@@ -371,10 +261,6 @@ items:
     k: 0
     max_bar: 10
     interfaces: [sm1]
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised"]}
-      unpressurised: {needs: ["pump.jet = unpressurised"]}
-
   valve.auto:
     installed_yyyy: 2026
     price_eur: 25
@@ -382,30 +268,6 @@ items:
     min_bar: 1.5
     Kv: 6.0
     model: "Hunter PGV-101G"
-    states:
-      open:   {needs: ["bonnet/flow_control = open", "diaphragm = up"]}
-      closed: {needs_any: ["bonnet/flow_control = closed", "diaphragm = down"]}
-      diaphragm:
-        up:   {needs: ["joint.sm1bm1 = pressurised", "bonnet/chamber = unpressurised"]}
-        down: {needs_any: ["joint.sm1bm1 = unpressurised", "bonnet/chamber = pressurised"]}
-      bonnet/chamber:
-        unpressurised: {needs_any: ["solenoid/pilot_seat = open", "bonnet/bleed_screw = open"]}
-        pressurised:   {needs: ["solenoid/pilot_seat = closed", "bonnet/bleed_screw = closed"]}
-      solenoid/pilot_seat:
-        open:   {needs: ["solenoid/plunger = up"]}
-        closed: {needs: ["solenoid/plunger = down"]}
-      # The plunger lifts when the coil energises OR when the solenoid is bled manually (the
-      # quarter-turn that opens the pilot seat without power); it drops only when neither holds.
-      solenoid/plunger:
-        up:   {needs_any: ["solenoid/coil = live", "solenoid/bleed = open"]}
-        down: {needs: ["solenoid/coil = dead", "solenoid/bleed = closed"]}
-      solenoid/coil:
-        live: {needs: ["control.controller/terminals/port = live", "control.controller/terminals/common = live"]}
-        dead: {needs_any: ["control.controller/terminals/port = dead", "control.controller/terminals/common = dead"]}
-      bonnet/flow_control: {open: {}, closed: {}}
-      bonnet/bleed_screw:  {closed: {}, open: {}}
-      solenoid/bleed:      {closed: {}, open: {}}
-
     interfaces: [bf1, bf1, sig_24v, sig_24v]
     items:
       body:
@@ -450,10 +312,6 @@ items:
     Kv: 6.0
     material: plastic
     interfaces: [bf12, bf12]
-    states:
-      open:   {needs: ["handle = open"]}
-      closed: {needs: ["handle = closed"]}
-      handle: {open: {}, closed: {}}
     items:
       seat: {}
       ball:      {}
@@ -464,12 +322,6 @@ items:
   head.rotor:
     price_eur: 25
     model: "Hunter I-20-04-SS"
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
-      watering:      {needs: ["head.rotor = pressurised", "flo_stop = open"]}
-      off:           {needs_any: ["head.rotor = unpressurised", "flo_stop = closed"]}
-      flo_stop: {open: {}, closed: {}}
     interfaces: [bf34]
     material: plastic
     items:
@@ -487,9 +339,6 @@ items:
     price_eur: 25
     regulated_bar: 2.76
     model: "Hunter Pro-Spray PRS40"
-    states:
-      pressurised:   {needs: ["pump.jet = pressurised", "valve.auto = open"]}
-      unpressurised: {needs_any: ["pump.jet = unpressurised", "valve.auto = closed"]}
     interfaces: [bf12]
     material: plastic
     items:
@@ -505,7 +354,6 @@ items:
   enclosure.valvebox:
     price_eur: 150
     model: "valve box jumbo"
-    states: {}
     material: plastic
     interfaces: []
     items:

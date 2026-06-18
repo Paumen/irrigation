@@ -5,7 +5,7 @@ import { solveSteady } from "../src/solver.js";
 import { solveElectrical } from "../src/electrical.js";
 import { compileFaults } from "../src/faults.js";
 import { outletDemandAt, outletThrowAt, interp } from "../src/outlets.js";
-import { open, watering, pressurised, starved } from "../src/readings.js";
+import { open, watering, pressurised, starved, primed } from "../src/readings.js";
 import { SPRAY_CLAMP_BAR } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -55,8 +55,8 @@ const noFaults = compileFaults(model, {});
 {
   console.log("CASE idle");
   const elec = solveElectrical(model, {});
-  check(elec.pumpPowered === false, "idle: pump not powered (no command)");
-  check(Object.values(elec.zoneEnergised).every((v) => v === false), "idle: no zone energised");
+  check(elec.live["S1_pump.jet"] === false, "idle: pump not powered (no command)");
+  check([2,3,4,5].every((z) => elec.live[`Z${z}_valve.auto`] === false), "idle: no zone energised");
   const r = solveSteady(model, {}, elec, hyd, noFaults);
   table(model, r);
   check(r.converged, "idle converges");
@@ -73,14 +73,14 @@ const noFaults = compileFaults(model, {});
 {
   console.log("\nCASE pump+Z2");
   const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } });
-  check(elec.pumpPowered === true, "pump powered through healthy wiring");
-  check(elec.zoneEnergised[2] === true, "Z2 energised");
-  check([3, 4, 5].every((z) => elec.zoneEnergised[z] === false), "Z3/Z4/Z5 not energised");
+  check(elec.live["S1_pump.jet"] === true, "pump powered through healthy wiring");
+  check(elec.live["Z2_valve.auto"] === true, "Z2 energised");
+  check([3, 4, 5].every((z) => elec.live[`Z${z}_valve.auto`] === false), "Z3/Z4/Z5 not energised");
   const r = solveSteady(model, {}, elec, hyd, noFaults);
   table(model, r);
   check(r.valveOpen["Z2_valve.auto"] === true, "Z2 valve open");
   check(r.converged, "converges");
-  // readings facade (src/readings.js) — derived views over the solve, no stored state
+  // readings facade (src/readings.js) — derived views over the solve, no stored controls
   check(open(r, "Z2_valve.auto") && !open(r, "Z3_valve.auto"), "reading: open(Z2) true, open(Z3) false");
   check(watering(r, "Z2_head.rotor") && pressurised(model, r, "Z2_head.rotor"), "reading: Z2 rotor watering + pressurised");
   check(!watering(r, "Z3_head.rotor_1") && !starved(model, r, "Z3_head.rotor_1"), "reading: Z3 rotor neither watering nor starved (dead branch)");
@@ -124,7 +124,7 @@ const noFaults = compileFaults(model, {});
   check(Math.abs(gain - curveHead) < 0.5, `pump head gain ${gain.toFixed(2)} m on curve (${curveHead.toFixed(2)} m at ${r.pumpFlow.toFixed(3)} m3/h)`);
 
   // readings + the live primitive (no qualitative layer)
-  check(pressurised(model, r, "S1_pump.jet"), "pump pressurised");
+  check(pressurised(model, r, "S1_pump.jet") && primed(model, r), "pump pressurised + primed");
   check(open(r, "Z2_valve.auto"), "Z2 valve open");
   check(elec.live["Z2_valve.auto"] === true, "Z2 solenoid coil live");
   check([3, 4, 5].every((z) => !open(r, `Z${z}_valve.auto`)), "Z3/Z4/Z5 valves closed");
@@ -140,12 +140,13 @@ const noFaults = compileFaults(model, {});
   console.log("\nCASE pump+all zones, broken shared return (O1_wiring.common_2)");
   const blocked = new Set(["O1_wiring.common_2"]);
   const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true, 3: true, 4: true, 5: true } }, blocked);
-  check(elec.pumpPowered === true, "pump still powered (separate 230V circuit)");
-  check(elec.zoneEnergised[4] === true && elec.zoneEnergised[5] === true, "Z4/Z5 energised (return intact)");
-  check(elec.zoneEnergised[2] === false && elec.zoneEnergised[3] === false, "Z2/Z3 de-energised by the shared-return break");
+  check(elec.live["S1_pump.jet"] === true, "pump still powered (separate 230V circuit)");
+  check(elec.live["Z4_valve.auto"] === true && elec.live["Z5_valve.auto"] === true, "Z4/Z5 energised (return intact)");
+  check(elec.live["Z2_valve.auto"] === false && elec.live["Z3_valve.auto"] === false, "Z2/Z3 de-energised by the shared-return break");
   check(
-    elec.commandedNotEnergised.has(2) && elec.commandedNotEnergised.has(3) && elec.commandedNotEnergised.size === 2,
-    "commandedNotEnergised is exactly {Z2, Z3}",
+    elec.live["Z2_valve.auto"] === false && elec.live["Z3_valve.auto"] === false &&
+      elec.live["Z4_valve.auto"] === true && elec.live["Z5_valve.auto"] === true,
+    "live coils: Z2/Z3 dead (return crosses the cut), Z4/Z5 live",
   );
 
   const r = solveSteady(model, {}, elec, hyd, noFaults);
@@ -175,9 +176,9 @@ const noFaults = compileFaults(model, {});
   // discovery is static topology and must not depend on the fault set).
   console.log("\nCASE cut controller feed wire (electrical fault)");
   const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } }, new Set(["O1_wiring.230v_1"]));
-  check(elec.controllerPowered === false, "controller de-powered by the cut feed");
-  check(elec.pumpPowered === false, "pump off (relay coil needs the controller)");
-  check(elec.zoneEnergised[2] === false, "Z2 de-energised");
+  check(elec.live["O1_control.controller"] === false, "controller de-powered by the cut feed");
+  check(elec.live["S1_pump.jet"] === false, "pump off (relay coil needs the controller)");
+  check(elec.live["Z2_valve.auto"] === false, "Z2 de-energised");
   check(elec.live["O1_control.controller"] === false, "controller dead (feed cut)");
   check(elec.live["S2_relay.pumpstart"] === false, "relay coil dead");
 }
@@ -186,10 +187,10 @@ const noFaults = compileFaults(model, {});
   // The valve mechanism now lives in the solve, not a qualitative rule layer: a bonnet bleed
   // screw vents the chamber and opens the valve with no electrical command.
   console.log("\nCASE bonnet bleed opens an un-commanded valve");
-  const bleedControls = { bleedOpen: { "Z3_valve.auto": true } };
+  const bleedControls = { bonnetBleed: { "Z3_valve.auto": true } };
   const elec = solveElectrical(model, { pumpStart: true });
   const r = solveSteady(model, bleedControls, elec, hyd, noFaults);
-  check(elec.zoneEnergised[3] !== true, "Z3 not electrically commanded");
+  check(elec.live["Z3_valve.auto"] !== true, "Z3 not electrically commanded");
   check(open(r, "Z3_valve.auto"), "Z3 valve open via the bonnet bleed screw (no command)");
   check(r.chamberBar["Z3_valve.auto"] < r.pressureBar[epOf("Z3_joint.sm1bm1")], "Z3 bonnet chamber bled below inlet");
 }

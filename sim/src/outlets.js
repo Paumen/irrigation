@@ -17,13 +17,13 @@ export function interp(xs, ys, x) {
   return pts[pts.length - 1][1];
 }
 
-// Effective nozzle/arc for an outlet: runtime controls (state.nozzle / state.arc, keyed by
+// Effective nozzle/arc for an outlet: runtime controls (controls.nozzle / controls.arc, keyed by
 // outlet id) override the baked-in catalog config (outlet.params). Returned object is what the
 // table lookups below read, so changing a control rebuilds the affected head's law without a
 // model rebuild.
-export function effectiveOutletCfg(outlet, state = {}) {
-  const nozzleOv = (state.nozzle || {})[outlet.id];
-  const arcOv = (state.arc || {})[outlet.id];
+export function effectiveOutletCfg(outlet, controls = {}) {
+  const nozzleOv = (controls.nozzle || {})[outlet.id];
+  const arcOv = (controls.arc || {})[outlet.id];
   return {
     nozzle: nozzleOv != null ? nozzleOv : outlet.params.nozzle,
     arc: arcOv != null ? arcOv : outlet.params.arc,
@@ -110,10 +110,10 @@ export function validOutletOptions(outlet, curves) {
 
 // Fail-fast validation of runtime nozzle/arc overrides against the catalog, with a located error.
 // Called once at the top of the solve (and exported so the UI can pre-validate a pending change).
-export function validateOutletOverrides(model, state = {}) {
+export function validateOutletOverrides(model, controls = {}) {
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   for (const o of outlets) {
-    const cfg = effectiveOutletCfg(o, state);
+    const cfg = effectiveOutletCfg(o, controls);
     const opts = validOutletOptions(o, model.curves);
     if (o.subkind === "rotor") {
       const size = String(cfg.nozzle).split(/\s+/)[0];
