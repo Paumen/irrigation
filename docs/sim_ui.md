@@ -19,8 +19,15 @@ A scenario explorer — set controls, watch the system respond.
   - length / distance / height / throw: m
   - arc: degrees
   - precipitation rate: mm/h
-- latest/modern html elements and css features can be used, no fall backs needed. Assume latest browser compatibility.
-
+- latest/modern html elements and css features can be used, no fall backs needed. Assume latest chromium browser compatibility.
+  - Ideas to reach outcome (apply none, one, or several):
+    - @property
+    - anchor positioning
+    - offset Path/Distance
+    - dialog
+    - command/commandfor
+    - colormix
+    - meter
 
 ## Diagram
 - Holistic hydraulics and electrical.
@@ -78,4 +85,5 @@ A scenario explorer — set controls, watch the system respond.
 - **fault injection** — the engine runs a no-fault baseline today (`faults.js` is a stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
 - HTML and CSS legacy browser fallbacks.
 - Accessibility functionalities like ARIA, reduced motion, colorblindness.
+- Scenario lifecycle — reset, presets, persistence.
 
