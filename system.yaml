@@ -467,9 +467,13 @@ electrical:
   O1_source.socket:   {to: [O1_wiring.230v_1]}
   O1_wiring.230v_1:   {to: [O1_control.controller]}
   O1_control.controller:
-    to: [D1_wiring.24v/signal_z2, D1_wiring.24v/signal_z3, D1_wiring.24v/signal_z4,
-         D1_wiring.24v/signal_z5, D1_wiring.24v/common,
-         S2_wiring.24v/signal, S2_wiring.24v/common]
+    to:
+      pump:   [S2_wiring.24v/signal]
+      z2:     [D1_wiring.24v/signal_z2]
+      z3:     [D1_wiring.24v/signal_z3]
+      z4:     [D1_wiring.24v/signal_z4]
+      z5:     [D1_wiring.24v/signal_z5]
+      common: [D1_wiring.24v/common, S2_wiring.24v/common]
   S2_wiring.24v:
     to:
       signal: [S2_relay.pumpstart]

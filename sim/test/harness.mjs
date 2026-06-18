@@ -9,6 +9,8 @@ import { open, watering, pressurised, starved, primed } from "../src/readings.js
 import { SPRAY_CLAMP_BAR } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
+// Controller output ports the operator energises (the wiring decides pump vs zone).
+const energize = (...ports) => ({ energize: ports.map((p) => `O1_control.controller/${p}`) });
 const Z2_HEADS = ["Z2_head.rotor", "Z2_head.spray_1", "Z2_head.spray_2"];
 const OTHER_AUTO_HEADS = [
   "Z3_head.rotor_1",
@@ -72,7 +74,7 @@ const noFaults = compileFaults(model, {});
 
 {
   console.log("\nCASE pump+Z2");
-  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } });
+  const elec = solveElectrical(model, energize("pump", "z2"));
   check(elec.live["S1_pump.jet"] === true, "pump powered through healthy wiring");
   check(elec.live["Z2_valve.auto"] === true, "Z2 energised");
   check([3, 4, 5].every((z) => elec.live[`Z${z}_valve.auto`] === false), "Z3/Z4/Z5 not energised");
@@ -139,7 +141,7 @@ const noFaults = compileFaults(model, {});
   // break, still reaching the controller common) energise normally.
   console.log("\nCASE pump+all zones, broken shared return (O1_wiring.common_2)");
   const blocked = new Set(["O1_wiring.common_2"]);
-  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true, 3: true, 4: true, 5: true } }, blocked);
+  const elec = solveElectrical(model, energize("pump", "z2", "z3", "z4", "z5"), blocked);
   check(elec.live["S1_pump.jet"] === true, "pump still powered (separate 230V circuit)");
   check(elec.live["Z4_valve.auto"] === true && elec.live["Z5_valve.auto"] === true, "Z4/Z5 energised (return intact)");
   check(elec.live["Z2_valve.auto"] === false && elec.live["Z3_valve.auto"] === false, "Z2/Z3 de-energised by the shared-return break");
@@ -175,7 +177,7 @@ const noFaults = compileFaults(model, {});
   // A fault that cuts the controller's 230V feed must turn it off gracefully (grid-socket
   // discovery is static topology and must not depend on the fault set).
   console.log("\nCASE cut controller feed wire (electrical fault)");
-  const elec = solveElectrical(model, { pumpStart: true, zones: { 2: true } }, new Set(["O1_wiring.230v_1"]));
+  const elec = solveElectrical(model, energize("pump", "z2"), new Set(["O1_wiring.230v_1"]));
   check(elec.live["O1_control.controller"] === false, "controller de-powered by the cut feed");
   check(elec.live["S1_pump.jet"] === false, "pump off (relay coil needs the controller)");
   check(elec.live["Z2_valve.auto"] === false, "Z2 de-energised");
@@ -188,7 +190,7 @@ const noFaults = compileFaults(model, {});
   // screw vents the chamber and opens the valve with no electrical command.
   console.log("\nCASE bonnet bleed opens an un-commanded valve");
   const bleedControls = { bonnetBleed: { "Z3_valve.auto": true } };
-  const elec = solveElectrical(model, { pumpStart: true });
+  const elec = solveElectrical(model, energize("pump"));
   const r = solveSteady(model, bleedControls, elec, hyd, noFaults);
   check(elec.live["Z3_valve.auto"] !== true, "Z3 not electrically commanded");
   check(open(r, "Z3_valve.auto"), "Z3 valve open via the bonnet bleed screw (no command)");

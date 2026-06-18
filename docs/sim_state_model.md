@@ -76,9 +76,11 @@ The controller has no "zone" or "pump" concept. It **energizes a port**; whether
 port lifts a zone valve or trips the pump relay is decided entirely by the **wiring**.
 "Pump" and "zone" are roles the topology assigns, not control vocabulary.
 
-> **To-build (granular graph):** the controller is authored today with a flat `to:` and no
-> per-port terminals — per-zone routing lives on the cable. `energize{port}` needs those
-> output ports authored as real nodes in the electrical graph.
+The controller's output ports are authored as real nodes in the electrical graph
+(`O1_control.controller/{pump,z2,z3,z4,z5,common}`), and `solveElectrical` takes `energize` — the
+set of energized port nodes. For each coil (pump relay, each zone valve) the solver checks whether
+an energized port closes a loop through it against the shared `common` return, so the wiring alone
+decides what a port actuates.
 
 ## Boundaries — leaf state pinned to a healthy default
 
@@ -205,7 +207,7 @@ Legend: KILL (gone) · BECOMES (re-homed) · KEEP (engine/physics, not state-voc
 
 ### Controls (current input fields)
 - `manualOpen` BECOMES `handle{}` · `bleedOpen` BECOMES `bonnetBleed{}` · `solenoidBleed`/`throttle`/`nozzle`/`arc` KEEP · `floStop` BECOMES `headShutoff{}`
-- `pumpStart`/`mv`, `zones` KILL → `energize{port}` (role moves into the wiring; controller ports to be authored)
+- `pumpStart`/`mv`, `zones` KILL → `energize{port}` (role moves into the wiring; controller output ports authored as real nodes, `solveElectrical` takes `energize`)
 - `gridPower`/`adapterPower` KILL → **not replaced by a control**: `socket.live` is pinned live by default, mains-lost is `dead(socket)` (a fault). `env.wellWet`/`env.primingChamberWet` KILL → likewise no toggle: well wet / pump primed are healthy defaults, their loss is a fault, not a user pin.
 
 ### Qualitative states (`states.js` + ~32 `system.yaml` `states:` blocks) — this whole layer dies

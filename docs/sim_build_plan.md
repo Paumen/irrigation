@@ -123,16 +123,19 @@ the local-relation `chamberBar` on each valve); `electrical.js` produces `live`.
 views (`open`, `pressurised`, `primed`, `watering`, `starved`) are pure functions of those primitives
 in `readings.js` — see `sim_state_model.md` for the model.
 
-### Electrical (`electrical.js`) — `solveElectrical(circuit, commands, faults) -> ElecResult`
-Graph of **ports** (intra-part `to:` + inter-part `wires`, bidirectional). `acts:` are control relations,
-not continuity. Reusable `reachable(graph, from, to, blocked)`. Fixpoint (relay contact closes when its
-coil loop energises): controller `mv`→relay coil loop→contact closes→pump `live` via
-grid→line_in→contact→load_out→pump→neutral. Each zone N: `zoneCmd[N]` AND continuity
-`zone_N→signal_N→splice.sig_N→Z{N}_valve.auto/solenoid/coil→common_lead→com chain→common_return→controller`. The
-**shared common return** means one break can disable several zones — falls out naturally. The solve
-sets the **`live`** primitive per component — every component on a closed current-carrying path reads
-`live`, a component merely at potential stays dead, so a single broken wire reads dead while its
-neighbours stay lit.
+### Electrical (`electrical.js`) — `solveElectrical(model, commands, blocked) -> { live }`
+Graph of **ports** (intra-part `to:` + inter-part wiring, bidirectional). Reusable
+`reachable(graph, from, to, blocked)`. The control surface is `commands.energize` — the set of
+**controller output port nodes** the operator switches on (`O1_control.controller/{pump,z2…z5}`); the
+controller has no pump/zone concept, the **wiring decides** what each port actuates. A two-terminal
+coil energises iff some energised port closes a loop through it against the shared `common` return
+(`loopClosed`, either polarity) and the controller itself is powered. Pump path: the controller's
+`pump` port closes the relay coil loop → the contact closes → pump `live` via its separate 230V
+socket. Each zone valve: its port closes the valve-coil loop
+`port→signal→splice→Z{N}_valve.auto/solenoid/coil→common chain→controller common`. The **shared
+common return** means one break can disable several zones — falls out naturally. The result is the
+**`live`** primitive per node — every node on a closed current-carrying path reads `live`, a node
+merely at potential stays dead, so a single broken wire reads dead while its neighbours stay lit.
 
 ### Faults (`faults.js`)
 Three verbs only — `dead(id)` / `clog(id)`·`leak(id)` / `stuck(id, open|closed)` — per the fault model
