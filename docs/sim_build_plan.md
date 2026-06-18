@@ -39,10 +39,9 @@ exponent, but each outlet obeys a different pressure→flow law. So instead, eac
 pressure-dependent outlet as a fixed EPANET *demand* computed from its own catalog law at the previous
 iteration's pressure, re-solves, damps, and repeats to convergence. This reproduces the catalog tables
 exactly and is "our layer feeding EPANET and reading results back." The same loop decides each
-auto-valve open/closed via the **local valve-actuation relation** (`sim_state_model.md`): the valve
-passes flow when the pilot vents (the vent conductance beats the metering conductance, `rVent < rMeter`)
-**and** the inlet clears the lift/stay hysteresis; closed valves become closed links so dead branches
-stay stable. There is **one truth: the solve** — no qualitative rule engine runs alongside it.
+auto-valve open/closed via the **local valve-actuation relation** (defined in `sim_state_model.md`);
+closed valves become closed links so dead branches stay stable. There is **one truth: the solve** —
+no qualitative rule engine runs alongside it.
 
 ### Hosting / deps
 - `sim/index.html` uses an **importmap** → `epanet-js`, `js-yaml` from a CDN (esm.sh/jsdelivr).
@@ -105,8 +104,7 @@ Classify each `flow` node by `kind`:
 ### Outer solver (`solver.js`) — `solveSteady(model, controls, elec, hyd, faults) -> SteadyResult`
 Loop (≤~60 iters), baseline = rebuild INP each iteration and re-`open()` (sub-ms):
 1. **Actuate valves** from the current pressure guess + `elec` + bleed/handle + faults, via the local
-   valve relation: open iff the pilot vents (`(coil live OR solenoidBleed OR bonnetBleed) AND throttle>0`
-   ⟹ `rVent < rMeter`) **and** the inlet clears the lift/stay hysteresis (open 1.5 / stay 1.4 bar).
+   valve relation (`sim_state_model.md`); the lift/stay hysteresis is open 1.5 / stay 1.4 bar and
    `chamberBar` is the resulting diagnostic chamber pressure. Freeze valve states for the last few iters
    to stop flapping.
 2. **Set demands:** each reachable outlet `q = outletDemandAt(o, p_prev)`; unreachable (closed-valve /
@@ -138,13 +136,10 @@ common return** means one break can disable several zones — falls out naturall
 merely at potential stays dead, so a single broken wire reads dead while its neighbours stay lit.
 
 ### Faults (`faults.js`)
-Three verbs only — `dead(id)` / `clog(id)`·`leak(id)` / `stuck(id, open|closed)` — per the fault model
-in `sim_state_model.md`. Every passage is a real named conductance, so any fault has a home without new
-vocabulary: `dead` forces `live=false`; `clog`/`leak` change a component's hydraulic conductance (raise
-`R`, add a leak orifice, weaken the pump); `stuck` forces a passage's actuation (valve seized open, etc.).
-`system.yaml` has **no `fail:` entries yet** and `compileFaults` returns `emptyEffects()` — this is the
-no-fault baseline this phase. Building it: author `fail:` entries in `system.yaml`, then compile each to
-one of the three verbs against the granular topology (every conductance/passage already a real element).
+The three-verb fault model (`dead` / `clog`·`leak` / `stuck`) and the map from the current
+`emptyEffects()` stub fields onto those verbs live in `sim_state_model.md`. `compileFaults` returns
+the no-fault baseline today; building it = author `fail:` entries in `system.yaml` and compile each to
+a verb against the granular topology (every conductance/passage is already a real element).
 
 ### Geometry + render (`geometry.js`, `scene.js`, `render.js`)
 No auto-layout (decision superseding the earlier elkjs plan): `geometry.js` is a hand-authored,

@@ -3,19 +3,18 @@
 The **single authoritative model** for **controls**, **state**, **readings**, and **faults** in the
 irrigation simulator — the engine vocabulary. Other docs reference it and must not restate these
 decisions: `sim_spec.md` owns the requirements, `sim_ui.md` the UX, `sim_build_plan.md` the plan.
-Written from the domain; the migration map at the end says what each existing symbol becomes.
 
 ## Status — built vs. to-build
 
-This is a target spec, not a description of today's code. Honest about the gap:
+`sim_build_plan.md` owns the milestone status; in short:
 
-- **Now (this phase): a clean, healthy system.** Get `live`/`pressure`/`flow` and the
-  readings right for a correctly functioning system, and author the finer-grained topology
-  the model needs (valve internals, controller output ports).
+- **Built: the healthy system.** `live`/`pressure`/`flow` + readings, the finer-grained
+  topology (valve internals, controller output ports), and the local valve relation are in the
+  engine and exercised by the harness.
 - **Later: faults.** The three fault verbs are the *design intent*, not yet implemented.
-  `system.yaml` currently has **no `fail:` entries** and `compileFaults` is a stub. The rule
-  for this phase is: **don't build anything that makes faults hard to add later** — every
-  conductance and passage must be a real, named element a fault verb can target.
+  `system.yaml` has **no `fail:` entries** and `compileFaults` is a stub. The standing rule:
+  **don't build anything that makes faults hard to add later** — every conductance and passage
+  must be a real, named element a fault verb can target.
 
 ## The core distinction
 
@@ -201,57 +200,21 @@ Every passage has a conductance, so any unexpected fault has a home without new 
 **Not implemented this phase** — see Status. The healthy-system work must keep every
 conductance and passage a real, named element so these verbs drop in later without rework.
 
-## Migration map — what each existing symbol becomes
+## Fault mapping — what the `faults.js` stub becomes (later phase)
 
-Legend: KILL (gone) · BECOMES (re-homed) · KEEP (engine/physics, not state-vocab).
+The healthy-system refactor is **done**: the old qualitative layer (`states.js` + the
+`system.yaml` `states:` blocks) is deleted, `live`/`pressure`/`flow` + readings replace it, and
+the engine carries the local valve relation (see *How state is produced*). What remains is the
+fault phase. `faults.js` is still the no-fault stub: `emptyEffects()` exposes the old effect
+fields, and `compileFaults` returns it unchanged. Building the fault engine means compiling
+`system.yaml` `fail:` entries down to the three verbs, mapping those stub fields onto them:
 
-### Controls (current input fields)
-- `manualOpen` BECOMES `handle{}` · `bleedOpen` BECOMES `bonnetBleed{}` · `solenoidBleed`/`throttle`/`nozzle`/`arc` KEEP · `floStop` BECOMES `headShutoff{}`
-- `pumpStart`/`mv`, `zones` KILL → `energize{port}` (role moves into the wiring; controller output ports authored as real nodes, `solveElectrical` takes `energize`)
-- `gridPower`/`adapterPower` KILL → **not replaced by a control**: `socket.live` is pinned live by default, mains-lost is `dead(socket)` (a fault). `env.wellWet`/`env.primingChamberWet` KILL → likewise no toggle: well wet / pump primed are healthy defaults, their loss is a fault, not a user pin.
+- `pumpDisabled`, `valveDisabled`, `elecBlocked` → `dead(id)`
+- `closedLinks`, `linkK`, `valveLossScale`, `pumpHeadScale`, `leaks`, `outletMods.flowScale/zeroFlow` → `clog`/`leak`
+- `valveForcedOpen`, `bleedForcedOpen` → `stuck(open)`; `outletMods.nozzle/arc` → an `nozzle`/`arc` control value
 
-### Qualitative states (`states.js` + ~32 `system.yaml` `states:` blocks) — this whole layer dies
-- `live/dead` BECOMES primitive `live`
-- `wet/dry` BECOMES reading (`pressure` present)
-- `pressurised`, `primed`, `open/closed`, `up/down`, `watering/off` KILL → readings
-- `COMPLEMENT`, `POSITIVE`, `parseKindStates`, `axisOf`, `isGroupDef`, `hasRule`,
-  `buildStateResolver`, `validateStateResolver`, `computeStates`, `groundedPos`,
-  `CROSSCHECK_KEYS` — **`states.js` deleted in full** (cross-check coverage moves to the
-  scenario harness, see Validation)
-
-### Solve outputs ("states in disguise")
-- `pressureBar`/`headM` BECOMES `pressure`; `demands`/`flow`/`pumpFlow` BECOMES `flow`
-- `controllerEnergised`/`relayCoil`/`pumpPowered`/`zoneEnergised`/`socketLive`/`energisedWires` BECOMES `live` (one word, per component)
-- `pumpOn`, `valveOpen`, `watering` KILL → readings
-- `commandedNotOpening`/`commandedNotEnergised`/`pumpCommandedNotPowered` KILL → no replacement (a coil is just `dead`)
-- `reachable` KEEP (engine: the hydraulic propagation)
-- `converged`/`iters`/`valvesFrozen`/`dmp`/`stable`/`prevP`/`valveInlet` KEEP (solver bookkeeping)
-- `throws`/`precip` KEEP (readings from the head transfer law); `outSum`/`massImbalance` KEEP (diagnostics over `flow`)
-
-### Faults (`faults.js`) — later phase
-- `pumpDisabled`, `valveDisabled`, `elecBlocked` BECOMES `dead(id)`
-- `closedLinks`, `linkK`, `valveLossScale`, `pumpHeadScale`, `leaks`, `outletMods.flowScale/zeroFlow` BECOMES `clog`/`leak`
-- `valveForcedOpen`, `bleedForcedOpen` BECOMES `stuck(open)`; `outletMods.nozzle/arc` BECOMES an `nozzle`/`arc` control value
-- `emptyEffects()`/`compileFaults()` stay stubs this phase; `system.yaml` `fail:` entries to be authored later
-
-### Engine / topology (core reused — finer-grained, with a new local valve relation)
-- `solveElectrical` + `buildAdj`/`bfs`/`pathOf`/`reachable`/`throughBoth` KEEP (the `live` engine)
-- `solveSteady`/`computeReachable`/`finalize` KEEP (EPANET delivery solve); the fixed-point
-  valve loop decides open/closed from the vent-vs-metering conductance (`rVent < rMeter`) plus the inlet lift/stay hysteresis
-- **new** valve-actuation relation — per-valve local chamber-pressure / port-flow computation,
-  fed by EPANET's inlet/outlet pressures (NOT added to the EPANET network)
-- `buildTopology` EXTENDED — author valve internals and controller ports as real components;
-  internals feed the local relation, they are **not** spliced into the EPANET matrix
-- `outlets.js` (catalog transfer laws + nozzle/arc application), `model.js`
-  (roles decide which primitive a component carries), `inp.js`, `epanet-runner.js`, `units.js` KEEP
-- **new** `readings.js` — `open`, `pressurised`, `primed`, `watering`, `starved`
-
-### Config constants
-All KEEP, re-homed: unit/physics (`M_PER_BAR`, `G`); solver tuning (`ALPHA*`, `*_TOL*`,
-`MAX_ITERS`, `EPANET_*`, `VALVE_FREEZE_TAIL`); transfer params (`VALVE_OPEN_BAR`/`STAY_BAR`,
-`SPRAY_CLAMP_BAR`, geometry, `THROTTLE_MIN`, `PRESSURISED_BAR`); fault params (`CLOG_*`,
-`PILOT_CLOG_BLOCKS`, `PUMP_CLOG_LOSS`, `*_BORE_MM`, `*_CD`, `WRONG_STREAM_BORE_SCALE`)
-— the last group sits idle until the fault phase.
+The fault-tuning config constants (`CLOG_*`, `PILOT_CLOG_BLOCKS`, `PUMP_CLOG_LOSS`, `*_BORE_MM`,
+`*_CD`, `WRONG_STREAM_BORE_SCALE`) already sit in `config.js`, idle until this phase.
 
 ## Summary
 
