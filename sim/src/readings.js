@@ -7,12 +7,19 @@
 import { PRESSURISED_BAR } from "./config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
-const pressureBar = (hyd, id) => hyd.pressureBar[epOf(id)];
 const flow = (hyd, id) => hyd.demands.get(id) || 0;
 
-// Fed (reachable) and gauge pressure clears the working floor.
-export const pressurised = (hyd, id) =>
-  hyd.reachable.has(id) && Number.isFinite(pressureBar(hyd, id)) && pressureBar(hyd, id) >= PRESSURISED_BAR;
+// EPANET reports gauge pressure on junctions only; pipes/pumps/valves (link-role nodes) carry no
+// node pressure, so a reachable link is pressurised whenever the pump is driving the branch.
+const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
+
+// Fed (reachable) and either driven (link node) or above the working-pressure floor (junction).
+export const pressurised = (model, hyd, id) => {
+  if (!hyd.reachable.has(id)) return false;
+  if (LINK_ROLES.has(model.flowNodes.get(id)?.role)) return !!hyd.pumpOn;
+  const p = hyd.pressureBar[epOf(id)];
+  return Number.isFinite(p) && p >= PRESSURISED_BAR;
+};
 
 // The valve passes flow — the solver's actuation result.
 export const open = (hyd, id) => !!hyd.valveOpen[id];
@@ -21,4 +28,4 @@ export const open = (hyd, id) => !!hyd.valveOpen[id];
 export const watering = (hyd, id) => flow(hyd, id) > 0;
 
 // Pressurised but not delivering — fed yet shut/blocked at the head (e.g. below its table minimum).
-export const starved = (hyd, id) => pressurised(hyd, id) && flow(hyd, id) <= 0;
+export const starved = (model, hyd, id) => pressurised(model, hyd, id) && flow(hyd, id) <= 0;

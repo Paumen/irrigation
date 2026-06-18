@@ -146,18 +146,24 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   }
   const pumpCommandedNotPowered = pumpStart && !pumpPowered;
 
-  // Per-socket mains presence, for the qualitative state layer (states.js grounds
-  // `source.socket = live/dead` from this). A grid socket is live iff its wall plug is in;
-  // the pump's own socket sits downstream of the relay contact, so it is live iff the pump is.
+  // Per-socket mains presence, feeding the `live` primitive below. A grid socket is live iff its
+  // wall plug is in; the pump's own socket sits downstream of the relay contact, so it is live iff
+  // the pump is.
   const socketLive = {};
   for (const s of sockets) socketLive[s] = [...(adj.get(s) || [])].some(isLoad) ? pumpPowered : false;
   if (controllerGrid) socketLive[controllerGrid] = adapterPlugged;
   if (pumpGrid) socketLive[pumpGrid] = gridPlugged;
 
   const energisedWires = new Set();
+  // `live` — the single electrical state primitive: electricity reaches this node. A node is live
+  // when it sits on an energised path (lit below) or is a live socket (mains present at the wall).
+  const liveNodes = new Set();
   const light = (path) => {
     if (!path) return;
-    for (const node of path) if (isWire(node)) energisedWires.add(node);
+    for (const node of path) {
+      liveNodes.add(node);
+      if (isWire(node)) energisedWires.add(node);
+    }
   };
   if (controllerPowered) light(pathOf(adj, controllerGrid, controllerId, blockLoadsExcept(allLoads, blocked, controllerId)));
   if (relayCoil) {
@@ -175,7 +181,12 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     light(pathOf(adj, controllerId, v, new Set([...base, terms[0]])));
   }
 
+  for (const s of sockets) if (socketLive[s]) liveNodes.add(s);
+  const live = {};
+  for (const id of ids) live[id] = liveNodes.has(id);
+
   return {
+    live,
     controllerPowered,
     relayCoil,
     pumpPowered,
