@@ -11,11 +11,10 @@ Two unrelated things for one homeowner's irrigation/rotor system:
 
 ## Simulator (`sim/`)
 
-A physics engine for the system's hydraulics **and** control wiring. Spec history in `docs/sim_*.md`.
+A physics engine for the system's hydraulics **and** control wiring, in progress. Full spec in `docs/sim_*.md`.
 
-- **Input** is the root `system.yaml` — single source of truth (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged; no copies). Sections: graph (`category`/`items`/`water`/`electrical`, with per-component `fail:` lists), catalog (`pump.jet_curves`/`valve.auto_loss`/`head.rotor/nozzle`/`head.spray/nozzle`), and context (`cable_runs`/`control_paths`/`system_design_choices`).
-- **Hydraulics = EPANET** (`epanet-js`, EPANET 2.2 wasm) wrapped by our own fixed-point demand loop in `solver.js`: pressure-driven outlets from the catalog laws, auto-valve lift/stay hysteresis driven by the real wiring solve (`electrical.js`), reachability-based dead-branch handling, mass balance. Starved table outlets fall back to EPANET emitters below their lowest catalog point; fed-back quantities use adaptive damping so extreme cases settle.
-- **`faults.js` is an M9 stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline). Its channel shape (`closedLinks`/`linkK`/`leaks`/`valveLossScale`/`outletMods`/`elecBlocked`/…) is already what `solver.js`/`network.js`/`electrical.js` read; the planned engine will compile `system.yaml`'s ~400 `fail:` entries into those channels (see `docs/sim_*.md`).
+- **Input** is the root `system.yaml` — single source of truth (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged; no copies).
+- **`faults.js` is an M9 stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline).
 - **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, state, elec, hyd, compileFaults(model, faults))`.
 
 ## Session setup
