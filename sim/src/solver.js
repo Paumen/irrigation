@@ -98,12 +98,10 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   let topo = null;
   let stable = 0;
   let iters = 0;
-  let valvesFrozen = false;
 
   for (let it = 0; it < MAX_ITERS; it++) {
     iters = it + 1;
     const freeze = it >= MAX_ITERS - VALVE_FREEZE_TAIL;
-    if (freeze) valvesFrozen = true;
 
     if (res && !freeze) {
       for (const v of autoValves) {
@@ -206,7 +204,7 @@ export function solveSteady(model, controls, elec, hyd, faults) {
     prevP = { ...res.pressureBar };
     if (res && maxdp < P_TOL_BAR && maxStep < Q_TOL_M3H) {
       if (++stable >= STABLE_ITERS) {
-        return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, true, valvesFrozen);
+        return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, true);
       }
     } else {
       stable = 0;
@@ -214,10 +212,10 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   }
 
   const reachable = computeReachable(model, pumpOn, valveOpen, fx.closedLinks);
-  return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, false, valvesFrozen);
+  return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, false);
 }
 
-function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged, valvesFrozen) {
+function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged) {
   const outlets = nodesByRole(model, "outlet");
   const demands = new Map();
   const throws = new Map(); // outletId -> throw radius (m)
@@ -238,13 +236,8 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
       }
     }
   }
-  const leakFlows = new Map();
-  for (const [nodeId] of fx.leaks) {
-    const ep = epOf(nodeId);
-    const q = res.demand[ep] || 0;
-    leakFlows.set(nodeId, q);
-    outSum += q;
-  }
+  // Leaks aren't reported per-node, but their outflow still counts toward mass balance.
+  for (const [nodeId] of fx.leaks) outSum += res.demand[epOf(nodeId)] || 0;
   const pumpFlow = topo.pumpLinkId ? Math.abs(res.flow[topo.pumpLinkId] || 0) : 0;
   const massImbalance = pumpOn ? Math.abs(pumpFlow - outSum) : outSum;
 
@@ -255,7 +248,6 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
     demands,
     throws,
     precip,
-    leakFlows,
     pumpOn,
     valveOpen,
     chamberBar,
@@ -265,7 +257,6 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
     massImbalance,
     converged,
     iters,
-    valvesFrozen,
     topo,
   };
 }
