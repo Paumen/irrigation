@@ -26,8 +26,7 @@ import {
 } from "./outlets.js";
 import { emptyEffects } from "./faults.js";
 import { valveActuation } from "./valve.js";
-
-const epOf = (id) => id.replace(/\./g, "_");
+import { epOf, isLinkNode, nodesByRole, nodeByRole } from "./model.js";
 
 export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set()) {
   const { flowNodes } = model;
@@ -38,7 +37,7 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
     if (n.role === "valve-auto" || n.role === "valve-manual") return !!valveOpen[n.id];
     return true;
   };
-  const start = [...flowNodes.values()].find((n) => n.role === "reservoir");
+  const start = nodeByRole(model, "reservoir");
   if (!start) throw new Error("computeReachable: no reservoir node in the model");
   const queue = [start.id];
   reachable.add(start.id);
@@ -47,7 +46,7 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
     for (const cId of n.to) {
       if (reachable.has(cId)) continue;
       const c = flowNodes.get(cId);
-      if (LINKish(c) && !linkPassable(c)) continue;
+      if (isLinkNode(c) && !linkPassable(c)) continue;
       reachable.add(cId);
       queue.push(cId);
     }
@@ -55,13 +54,10 @@ export function computeReachable(model, pumpOn, valveOpen, closedLinks = new Set
   return reachable;
 }
 
-const LINKish = (n) =>
-  n.role === "pipe" || n.role === "pump" || n.role === "valve-auto" || n.role === "valve-manual";
-
 export function solveSteady(model, controls, elec, hyd, faults) {
   const fx = faults || emptyEffects();
   validateOutletOverrides(model, controls);
-  const pumpId = [...model.flowNodes.values()].find((n) => n.role === "pump")?.id;
+  const pumpId = nodeByRole(model, "pump")?.id;
   const pumpOn = !!(elec.live[pumpId] && !fx.pumpDisabled);
   const minLift = model.minOperatingBar ?? VALVE_OPEN_BAR;
 
@@ -73,9 +69,9 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   // Flo-Stop is rotor-only; headShutoff===false (closed) shuts the head's internal seat.
   const headShutoffEngaged = (o) => o.subkind === "rotor" && headShutoff[o.id] === false;
 
-  const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
-  const autoValves = [...model.flowNodes.values()].filter((n) => n.role === "valve-auto");
-  const manualValves = [...model.flowNodes.values()].filter((n) => n.role === "valve-manual");
+  const outlets = nodesByRole(model, "outlet");
+  const autoValves = nodesByRole(model, "valve-auto");
+  const manualValves = nodesByRole(model, "valve-manual");
 
   const commandedAuto = (v) =>
     !fx.valveDisabled.has(v.id) &&
@@ -102,12 +98,10 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   let topo = null;
   let stable = 0;
   let iters = 0;
-  let valvesFrozen = false;
 
   for (let it = 0; it < MAX_ITERS; it++) {
     iters = it + 1;
     const freeze = it >= MAX_ITERS - VALVE_FREEZE_TAIL;
-    if (freeze) valvesFrozen = true;
 
     if (res && !freeze) {
       for (const v of autoValves) {
@@ -210,7 +204,7 @@ export function solveSteady(model, controls, elec, hyd, faults) {
     prevP = { ...res.pressureBar };
     if (res && maxdp < P_TOL_BAR && maxStep < Q_TOL_M3H) {
       if (++stable >= STABLE_ITERS) {
-        return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, true, valvesFrozen);
+        return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, true);
       }
     } else {
       stable = 0;
@@ -218,11 +212,11 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   }
 
   const reachable = computeReachable(model, pumpOn, valveOpen, fx.closedLinks);
-  return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, false, valvesFrozen);
+  return finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, false);
 }
 
-function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged, valvesFrozen) {
-  const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
+function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged) {
+  const outlets = nodesByRole(model, "outlet");
   const demands = new Map();
   const throws = new Map(); // outletId -> throw radius (m)
   const precip = new Map(); // outletId -> application rate (mm/hr)
@@ -242,13 +236,8 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
       }
     }
   }
-  const leakFlows = new Map();
-  for (const [nodeId] of fx.leaks) {
-    const ep = epOf(nodeId);
-    const q = res.demand[ep] || 0;
-    leakFlows.set(nodeId, q);
-    outSum += q;
-  }
+  // Leaks aren't reported per-node, but their outflow still counts toward mass balance.
+  for (const [nodeId] of fx.leaks) outSum += res.demand[epOf(nodeId)] || 0;
   const pumpFlow = topo.pumpLinkId ? Math.abs(res.flow[topo.pumpLinkId] || 0) : 0;
   const massImbalance = pumpOn ? Math.abs(pumpFlow - outSum) : outSum;
 
@@ -259,7 +248,6 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
     demands,
     throws,
     precip,
-    leakFlows,
     pumpOn,
     valveOpen,
     chamberBar,
@@ -269,7 +257,6 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
     massImbalance,
     converged,
     iters,
-    valvesFrozen,
     topo,
   };
 }

@@ -3,6 +3,18 @@ export function typeOf(id) {
   return id.replace(/^[A-Z]+[0-9]+_/, "").replace(/_[0-9]+$/, "");
 }
 
+// EPANET ids may not contain '.'.
+export const epOf = (id) => id.replace(/\./g, "_");
+
+// Link-role nodes map to EPANET links and carry no node pressure, so modules special-case them.
+export const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
+export const isLinkNode = (n) => LINK_ROLES.has(n.role);
+
+export const nodesByRole = (model, role) =>
+  [...model.flowNodes.values()].filter((n) => n.role === role);
+export const nodeByRole = (model, role) =>
+  [...model.flowNodes.values()].find((n) => n.role === role);
+
 export function roleOf(type) {
   if (type === "source.well") return "reservoir";
   if (type === "pump.jet") return "pump";

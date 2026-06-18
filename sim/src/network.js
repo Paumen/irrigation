@@ -5,12 +5,11 @@ import {
   CONNECTOR_DIAM_MM,
   DEFAULT_ROUGHNESS_MM,
   THROTTLE_MIN,
+  kvToTcvK,
 } from "./config.js";
-import { kvToTcvK } from "./units.js";
+import { epOf, isLinkNode } from "./model.js";
 
-const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
 const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
-const isLink = (n) => LINK_ROLES.has(n.role);
 
 export function buildTopology(model, state) {
   const { flowNodes } = model;
@@ -24,12 +23,11 @@ export function buildTopology(model, state) {
   const pumpHeadScale = state.pumpHeadScale ?? 1;
   const valveLossScale = state.valveLossScale || new Map();
 
-  // EPANET ids may not contain '.'
   const toEpanet = new Map();
   const toFlow = new Map();
   const ep = (flowId) => {
     if (!toEpanet.has(flowId)) {
-      const e = flowId.replace(/\./g, "_");
+      const e = epOf(flowId);
       toEpanet.set(flowId, e);
       toFlow.set(e, flowId);
     }
@@ -95,7 +93,7 @@ export function buildTopology(model, state) {
           rough_mm: DEFAULT_ROUGHNESS_MM,
           mloss: k,
         });
-      } else if (isLink(child) && k > 0) {
+      } else if (isLinkNode(child) && k > 0) {
         addFold(childId, k);
       }
     }
@@ -123,7 +121,7 @@ export function buildTopology(model, state) {
 
   let pumpLinkId = null;
   for (const L of flowNodes.values()) {
-    if (!isLink(L)) continue;
+    if (!isLinkNode(L)) continue;
     if (L.to.length === 0) continue;
     if (L.to.length > 1) {
       throw new Error(`network: link "${L.id}" has ${L.to.length} downstream nodes`);
