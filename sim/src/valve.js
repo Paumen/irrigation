@@ -1,10 +1,8 @@
-// Valve chamber pressure is computed here as a local resistor divider, NOT spliced into the
-// EPANET network. chamber = (inlet*rVent + outlet*rMeter) / (rMeter + rVent).
+// Chamber pressure is a local resistor divider, NOT spliced into the EPANET network.
 
 import { VALVE_OPEN_BAR } from "./config.js";
 
-// Only resistance ratios matter. Shut passages stay high-but-finite (never infinite) so the
-// divider is always defined and a clogged metering port resolves continuously into stuck-open.
+// Shut passages must stay finite (never Infinity) or the divider is undefined.
 export const R_METER = 1;
 export const R_VENT_OPEN = 0.01;
 export const R_VENT_SHUT = 1e4;
@@ -27,8 +25,7 @@ export function valveActuation({
 
   const chamberBar = (inletBar * rVent + outletBar * rMeter) / (rMeter + rVent);
 
-  // Test conductances (rVent < rMeter), NOT outlet pressure: stays valid when the valve is shut
-  // and the outlet is isolated/garbage.
+  // Test conductances, NOT outlet pressure: outlet is garbage when the valve is shut.
   const vented = throttle > 0 && rVent < rMeter;
   const open = vented && inletBar >= liftBar;
   const meterFlow = (inletBar - chamberBar) / rMeter;

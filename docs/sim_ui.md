@@ -65,7 +65,7 @@ A scenario explorer — set controls, watch the system respond.
     - a nozzle/rotor type icon.
 
 ### Electrical visualization
-- "Energised" means carrying current on a closed path, not merely sitting at voltage, so a broken wire reads dead while neighbours stay lit.
+- A component is drawn live when it carries the `live` primitive (`sim_state_model.md`) — on a closed current-carrying path, not merely sitting at voltage — so a broken wire reads dead while neighbours stay lit.
   - Ideas to reach outcome (apply none, one, or several):
     - wire dashes
     - energised full colour vs de-energised desaturated
@@ -75,24 +75,21 @@ A scenario explorer — set controls, watch the system respond.
 ## Interaction
 - Control and inspect from a side sheet: controls, states, inputs/outputs, numbers.
 - Tapping an item shows its live values and controls, read against what it can actually do — catalog context (head flow span, pump curve, valve loss range).
-- Controls live at item level: 
-  - pump on bool
-  - auto valve open bool 
-  - manual valve handle bool
-  - grid power bool
-  - adapter power bool
-  - flow-control (0, 0.25, 0.5, 0.75, 1)
-  - bleed screw bool
-  - solenoid bleed bool 
-  - Flo-stop bool
-  - arc
-  - nozzle
+- Controls live at item level. The canonical surface is the eight controls in
+  `sim_state_model.md` (controller port energize, manual handle, throttle, bonnet bleed, solenoid
+  bleed, head shut-off, nozzle/arc) — this file does not restate it. The operator sets **nothing
+  else**: the world-edge states (mains, well, prime) have no control widget — they sit at their
+  healthy default and move only under fault injection. UI-specific affordance: render the throttle as
+  five discrete stops (0, 0.25, 0.5, 0.75, 1). A valve's open/closed is **not** a control — it is a
+  reading of the solve.
 - Change any control and the whole system updates at once — every derived value and animation follows.
 - When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
 
 ## Prerequisites
-- **Item status vocabulary** — the set of per-item statuses the diagram shows must be defined and shared with the side sheet, so both read from one taxonomy.
+- **Item status vocabulary** — the per-item statuses the diagram and side sheet share are the
+  **readings** over the state primitives (`open`/`pressurised`/`primed`/`watering`/`starved`), defined
+  in `sim_state_model.md`. Both the diagram and the side sheet read from that one taxonomy.
 
 ### Deferred
-- **fault injection** — the engine runs a no-fault baseline today (`faults.js` is an M9 stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
+- **fault injection** — the engine runs a no-fault baseline today (`faults.js` is a stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
 

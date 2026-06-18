@@ -1,4 +1,4 @@
-// Strips a leading prefix and a pure-numeric suffix only; `coupling_bm1c32` keeps its suffix.
+// Strips leading prefix and pure-numeric suffix only; `coupling_bm1c32` keeps its suffix.
 export function typeOf(id) {
   return id.replace(/^[A-Z]+[0-9]+_/, "").replace(/_[0-9]+$/, "");
 }
@@ -6,7 +6,7 @@ export function typeOf(id) {
 // EPANET ids may not contain '.'.
 export const epOf = (id) => id.replace(/\./g, "_");
 
-// Link-role nodes map to EPANET links and carry no node pressure, so modules special-case them.
+// Link-role nodes map to EPANET links and carry no node pressure.
 export const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
 export const isLinkNode = (n) => LINK_ROLES.has(n.role);
 
@@ -23,7 +23,7 @@ export function roleOf(type) {
   if (type === "valve.foot") return "junction";
   if (type === "joint.cap") return "cap";
   if (type.startsWith("head.")) return "outlet";
-  // swing joints model as short pipes carrying their own k_minor
+  // swing joints model as short pipes carrying k_minor
   if (type === "joint.sj34x12" || type === "joint.sj34x34") return "pipe";
   if (type.startsWith("hose.")) return "pipe";
   if (type.startsWith("joint.")) return "junction";
@@ -38,7 +38,7 @@ function subkindOf(type) {
   return type;
 }
 
-// Override hook for pump brand mismatches; empty because catalog keys already match the YAML `model`.
+// Empty: catalog keys already match the YAML pump `model`.
 const PUMP_CURVE_ALIAS = {};
 
 function flattenItems(items, out = {}) {
@@ -52,7 +52,7 @@ function flattenItems(items, out = {}) {
 
 function paramsOf(compDef, instance, defaults) {
   const params = {};
-  // item_defaults (keyed by kind) are lowest precedence: compDef and instance win.
+  // Precedence low to high: item_defaults, compDef, instance.
   for (const [k, v] of Object.entries(defaults || {})) {
     if (v !== null && typeof v === "object") continue;
     params[k] = v;
