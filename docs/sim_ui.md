@@ -18,10 +18,10 @@ A scenario explorer — set controls, watch the system respond.
   - pressure: bar
   - length / distance / height / throw: m
   - arc: degrees
-  - application rate (precip): mm/h
+  - precipitation rate: mm/h
 
 ## Diagram
-- Holistic — hydraulics, electrical, and state.
+- Holistic hydraulics and electrical.
 - Comprehensible in one view; nothing hidden behind a mode.
 - Diagram mostly visual, most text and numbers live in a side sheet.
 - Item carries status indicator(s).
