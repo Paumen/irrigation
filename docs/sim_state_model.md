@@ -66,10 +66,11 @@ port lifts a zone valve or trips the pump relay is decided entirely by the **wir
 
 ## Boundaries — state fixed by the world
 
-Two states sit at the edges of the system and are given, not propagated:
+Three states sit at the edges of the system and are given, not propagated:
 
 - **well** `pressure` — water available at the source (present = wet, absent = dry)
 - **socket** `live` — mains present at the supply
+- **pump priming chamber** `pressure` — water held in the pump body (you prime it once)
 
 A boundary is just a state whose rule is "the world says so" instead of "look upstream."
 There is no separate *environment* category and no `mains` noun.
@@ -113,23 +114,34 @@ it is the control compared to the resulting state at read time, stored nowhere.
 - `pressure` and `flow` come from the **hydraulic solve** (EPANET + the demand loop:
   the source/pump drive potential through open passages; conductances set the drops).
 
+The hydraulic network is **extended to include valve internals**: the bonnet chamber is a
+real node and the metering port / pilot seat are real links, spliced from topology the same
+way the builder already splices swing joints and connectors. This is what lets the valve
+mechanism live in the one graph instead of a parallel rule layer (see the worked example).
+The pressure-actuated diaphragm — which EPANET does not model natively — rides the existing
+fixed-point valve loop in the solver (the loop that already toggles valves from inlet
+pressure each iteration), now keyed on `inlet − chamber` pressure.
+
 There is **one truth: the solve.** There is no qualitative rule engine running alongside
 it and no cross-check, because there is nothing to reconcile — readings are functions of
 the one solved state.
 
 ## Worked example — the solenoid valve, including a clogged metering port
 
-The valve is a subsystem of internal components, each carrying only the three primitives:
+The valve is a subsystem of internal components spliced into the hydraulic graph, each
+carrying only the three primitives:
 
 | internal part | primitive | how set |
 |---|---|---|
 | coil | `live` | electrical solve |
-| bonnet chamber | `pressure` | hydraulic solve |
-| metering port | `flow` | hydraulic solve (conductance into the chamber) |
+| bonnet chamber | `pressure` | hydraulic solve (real node) |
+| metering port | `flow` | hydraulic solve (real link — conductance into the chamber) |
+| pilot seat | `flow` | hydraulic solve (real link — vents the chamber when the plunger lifts) |
 
-The mechanism is rules over those primitives — *no `up`/`down`/`open`/`closed` states*:
+Because the chamber and ports are real nodes/links, the mechanism *is* the solve — *no
+`up`/`down`/`open`/`closed` states, and no separate rule engine*:
 
-- the valve passes flow ⟸ `(coil live OR solenoidBleed OR bonnetBleed) AND inlet pressure ≥ lift`
+- the valve passes flow ⟸ `(coil live OR solenoidBleed OR bonnetBleed) AND throttle > 0 AND inlet pressure − chamber pressure ≥ lift`
 - diaphragm position is a **reading** of (inlet `pressure` vs chamber `pressure`)
 
 **Metering port clogged** = `clog(meteringPort)`, the same verb as a clogged pipe:
@@ -174,10 +186,13 @@ Legend: KILL (gone) · BECOMES (re-homed) · KEEP (engine/physics, not state-voc
 - `valveForcedOpen`, `bleedForcedOpen` BECOMES `stuck(open)`; `outletMods.nozzle/arc` BECOMES an `nozzle`/`arc` control value
 - `emptyEffects()` KILL; `compileFaults()` KEEP (rewritten to compile `fail:` into the three verbs)
 
-### Engine / topology (survives untouched — it already emits all three primitives)
+### Engine / topology (core reused — the hydraulic network is extended for valve internals)
 - `solveElectrical` + `buildAdj`/`bfs`/`pathOf`/`reachable`/`throughBoth` KEEP (the `live` engine)
-- `solveSteady`/`computeReachable`/`finalize` KEEP (the `pressure`+`flow` engine)
-- `buildTopology`, `outlets.js` (catalog transfer laws + nozzle/arc application), `model.js`
+- `solveSteady`/`computeReachable`/`finalize` KEEP (the `pressure`+`flow` engine); the
+  fixed-point valve loop is re-keyed on `inlet − chamber` pressure to drive the diaphragm
+- `buildTopology` EXTENDED — splices valve internals (chamber node, metering-port / pilot-seat
+  links) into the EPANET graph, like it already splices swing joints and connectors
+- `outlets.js` (catalog transfer laws + nozzle/arc application), `model.js`
   (roles decide which primitive a component carries), `inp.js`, `epanet-runner.js`, `units.js` KEEP
 - **new** `readings.js` — `open`, `watering`, `primed`, `starved`, `reaching`, `commandedNotReaching`
 
@@ -190,6 +205,7 @@ All KEEP, re-homed: unit/physics (`M_PER_BAR`, `G`); solver tuning (`ALPHA*`, `*
 ## Summary
 
 > **State = `live` + `pressure` + `flow`.** Eight controls. Three fault verbs
-> (`dead` / `clog`-`leak` / `stuck`). Two boundaries. Everything else is a reading or the
-> engine. The two solvers already emit the three primitives; the qualitative layer bolted
-> on top (`states.js` + the YAML `states:` blocks) is deleted, not rewritten.
+> (`dead` / `clog`-`leak` / `stuck`). Three boundaries. Everything else is a reading or the
+> engine. The solvers' core is reused and the hydraulic network is extended to absorb the
+> valve mechanism as real nodes/links — which is precisely what lets the qualitative layer
+> bolted on top (`states.js` + the YAML `states:` blocks) be **deleted, not ported**.
