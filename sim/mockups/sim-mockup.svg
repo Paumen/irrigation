@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="884" viewBox="0 0 400 884">
+<rect x="0" y="0" width="400" height="884" rx="0" fill="#f4f6f9"/>
+<rect x="12" y="12" width="376" height="30" rx="8" fill="#ffffff" stroke="#e2e6ec" stroke-width="1"/>
+<circle cx="30" cy="27" r="6" fill="#2e9e5b"/>
+<text x="46" y="31" font-family="sans-serif" font-size="13" fill="#2b2f36" text-anchor="start" font-weight="600">Pump ON  ·  Zone 2 watering</text>
+<text x="380" y="31" font-family="sans-serif" font-size="12" fill="#2f7fd6" text-anchor="end" font-weight="700">1.66 m³/h</text>
+<rect x="12" y="52" width="376" height="150" rx="10" fill="#ffffff" stroke="#e2e6ec" stroke-width="1"/>
+<text x="22" y="72" font-family="sans-serif" font-size="10" fill="#8a9099" text-anchor="start" font-weight="700">WIRING</text>
+<rect x="22" y="82" width="86" height="104" rx="8" fill="#fbfcfd" stroke="#e2e6ec" stroke-width="1"/>
+<text x="65" y="98" font-family="sans-serif" font-size="9.5" fill="#2b2f36" text-anchor="middle" font-weight="600">Controller</text>
+<circle cx="34" cy="112" r="4" fill="#2e9e5b"/>
+<text x="44" y="115.5" font-family="sans-serif" font-size="9" fill="#2b2f36" text-anchor="start" font-weight="600">Pump</text>
+<circle cx="34" cy="127" r="4" fill="#2e9e5b"/>
+<text x="44" y="130.5" font-family="sans-serif" font-size="9" fill="#2b2f36" text-anchor="start" font-weight="600">Z2</text>
+<circle cx="34" cy="142" r="4" fill="#bcc2ca"/>
+<text x="44" y="145.5" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400">Z3</text>
+<circle cx="34" cy="157" r="4" fill="#bcc2ca"/>
+<text x="44" y="160.5" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400">Z4</text>
+<circle cx="34" cy="172" r="4" fill="#bcc2ca"/>
+<text x="44" y="175.5" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400">Z5</text>
+<rect x="150" y="86" width="70" height="40" rx="7" fill="#fbfcfd" stroke="#e2e6ec" stroke-width="1"/>
+<text x="185" y="103" font-family="sans-serif" font-size="9.5" fill="#2b2f36" text-anchor="middle" font-weight="600">Relay</text>
+<text x="185" y="117" font-family="sans-serif" font-size="8.5" fill="#2e9e5b" text-anchor="middle" font-weight="600">closed</text>
+<rect x="150" y="140" width="70" height="40" rx="7" fill="#fbfcfd" stroke="#e2e6ec" stroke-width="1"/>
+<text x="185" y="157" font-family="sans-serif" font-size="9.5" fill="#2b2f36" text-anchor="middle" font-weight="600">Pump</text>
+<circle cx="165" cy="170" r="4" fill="#2e9e5b"/>
+<text x="174" y="173" font-family="sans-serif" font-size="8" fill="#8a9099" text-anchor="start" font-weight="400">230V live</text>
+<rect x="300" y="86" width="76" height="94" rx="7" fill="#fbfcfd" stroke="#e2e6ec" stroke-width="1"/>
+<text x="338" y="102" font-family="sans-serif" font-size="9.5" fill="#2b2f36" text-anchor="middle" font-weight="600">Valve coils</text>
+<circle cx="312" cy="120" r="4" fill="#2e9e5b"/>
+<text x="322" y="123.5" font-family="sans-serif" font-size="9" fill="#2b2f36" text-anchor="start" font-weight="600">Z2 energised</text>
+<circle cx="312" cy="135" r="4" fill="#bcc2ca"/>
+<text x="322" y="138.5" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400">Z3 off</text>
+<circle cx="312" cy="150" r="4" fill="#bcc2ca"/>
+<text x="322" y="153.5" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400">Z4 off</text>
+<circle cx="312" cy="165" r="4" fill="#bcc2ca"/>
+<text x="322" y="168.5" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400">Z5 off</text>
+<path d="M38,112 C120,112 110,106 150,106" fill="none" stroke="#2e9e5b" stroke-width="2.4" stroke-linecap="round"/>
+<path d="M38,127 C150,127 210,140 300,120" fill="none" stroke="#2e9e5b" stroke-width="2.4" stroke-linecap="round"/>
+<path d="M38,142 C150,150 210,150 300,135" fill="none" stroke="#bcc2ca" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>
+<path d="M38,157 C150,165 210,165 300,150" fill="none" stroke="#bcc2ca" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>
+<path d="M38,172 C150,180 210,180 300,165" fill="none" stroke="#bcc2ca" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>
+<rect x="12" y="212" width="376" height="432" rx="10" fill="#ffffff" stroke="#e2e6ec" stroke-width="1"/>
+<text x="22" y="232" font-family="sans-serif" font-size="10" fill="#8a9099" text-anchor="start" font-weight="700">HYDRAULICS</text>
+<rect x="30" y="244" width="20" height="354" rx="5" fill="#eef1f5" stroke="#e2e6ec" stroke-width="1"/>
+<text x="40" y="238" font-family="sans-serif" font-size="8.5" fill="#8a9099" text-anchor="middle" font-weight="400">manifold</text>
+<circle cx="64" cy="272" r="7" fill="#fff" stroke="#bcc2ca" stroke-width="2"/>
+<path d="M72,272 L286,272" fill="none" stroke="#bcc2ca" stroke-width="2.2" stroke-dasharray="4 5" stroke-linecap="round"/>
+<text x="80" y="260" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="500">Z1 manual</text>
+<text x="80" y="290" font-family="sans-serif" font-size="10" fill="#bcc2ca" text-anchor="start" font-weight="500">—</text>
+<circle cx="300" cy="272" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<text x="80" y="305" font-family="sans-serif" font-size="8" fill="#8a9099" text-anchor="start" font-weight="400">manual handle: closed</text>
+<circle cx="64" cy="330" r="7" fill="#2e9e5b" stroke="#2e9e5b" stroke-width="2"/>
+<path d="M72,330 L286,330" fill="none" stroke="#2f7fd6" stroke-width="7" stroke-dasharray="9 6" stroke-linecap="round"/>
+<path d="M274,325 L284,330 L274,335" fill="none" stroke="#2f7fd6" stroke-width="2"/>
+<text x="80" y="318" font-family="sans-serif" font-size="11" fill="#2b2f36" text-anchor="start" font-weight="700">Z2</text>
+<text x="80" y="348" font-family="sans-serif" font-size="10" fill="#2f7fd6" text-anchor="start" font-weight="700">1.66 m³/h</text>
+<rect x="152" y="304" width="46" height="16" rx="8" fill="#eaf3fb" stroke="#eaf3fb" stroke-width="1"/><text x="175" y="315.5" font-family="sans-serif" font-size="9.5" fill="#2f6fb0" text-anchor="middle" font-weight="600">2.8 bar</text>
+<path d="M300,317 L302.6,287.1 A30,30 0 0 1 302.6,346.9 Z" fill="#34a85f" fill-opacity="0.16" stroke="#34a85f" stroke-opacity="0.35" stroke-width="1"/>
+<circle cx="300" cy="317" r="5" fill="#2f7fd6" stroke="#1c5fa8" stroke-width="1.5"/>
+<text x="308" y="311" font-family="sans-serif" font-size="8.5" fill="#2f7fd6" text-anchor="start" font-weight="600">0.83</text>
+<path d="M300,343 L302.6,313.1 A30,30 0 0 1 302.6,372.9 Z" fill="#34a85f" fill-opacity="0.16" stroke="#34a85f" stroke-opacity="0.35" stroke-width="1"/>
+<circle cx="300" cy="343" r="5" fill="#2f7fd6" stroke="#1c5fa8" stroke-width="1.5"/>
+<text x="308" y="357" font-family="sans-serif" font-size="8.5" fill="#2f7fd6" text-anchor="start" font-weight="600">0.83</text>
+<circle cx="64" cy="388" r="7" fill="#fff" stroke="#bcc2ca" stroke-width="2"/>
+<path d="M72,388 L286,388" fill="none" stroke="#bcc2ca" stroke-width="2.2" stroke-dasharray="4 5" stroke-linecap="round"/>
+<text x="80" y="376" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="500">Z3</text>
+<text x="80" y="406" font-family="sans-serif" font-size="10" fill="#bcc2ca" text-anchor="start" font-weight="500">—</text>
+<circle cx="300" cy="375" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<circle cx="300" cy="401" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<circle cx="64" cy="446" r="7" fill="#fff" stroke="#bcc2ca" stroke-width="2"/>
+<path d="M72,446 L286,446" fill="none" stroke="#bcc2ca" stroke-width="2.2" stroke-dasharray="4 5" stroke-linecap="round"/>
+<text x="80" y="434" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="500">Z4</text>
+<text x="80" y="464" font-family="sans-serif" font-size="10" fill="#bcc2ca" text-anchor="start" font-weight="500">—</text>
+<circle cx="300" cy="433" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<circle cx="300" cy="459" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<circle cx="64" cy="504" r="7" fill="#fff" stroke="#bcc2ca" stroke-width="2"/>
+<path d="M72,504 L286,504" fill="none" stroke="#bcc2ca" stroke-width="2.2" stroke-dasharray="4 5" stroke-linecap="round"/>
+<text x="80" y="492" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="500">Z5</text>
+<text x="80" y="522" font-family="sans-serif" font-size="10" fill="#bcc2ca" text-anchor="start" font-weight="500">—</text>
+<circle cx="300" cy="491" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<circle cx="300" cy="517" r="5" fill="#fff" stroke="#bcc2ca" stroke-width="1.5"/>
+<circle cx="64" cy="562" r="7" fill="#fff" stroke="#bcc2ca" stroke-width="2"/>
+<path d="M72,562 L286,562" fill="none" stroke="#bcc2ca" stroke-width="2.2" stroke-dasharray="4 5" stroke-linecap="round"/>
+<text x="80" y="550" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="500">Z6</text>
+<text x="80" y="580" font-family="sans-serif" font-size="10" fill="#bcc2ca" text-anchor="start" font-weight="500">—</text>
+<path d="M270,562 L270,562" />
+<text x="290" y="566" font-family="sans-serif" font-size="9" fill="#bcc2ca" text-anchor="middle" font-weight="400">cap</text>
+<rect x="278" y="557" width="8" height="10" rx="2" fill="#fff" stroke="#bcc2ca"/>
+<text x="22" y="616" font-family="sans-serif" font-size="9" fill="#8a9099" text-anchor="start" font-weight="400"></text>
+<path d="M40,628 L330,628" fill="none" stroke="#2f7fd6" stroke-width="6" stroke-dasharray="9 6" stroke-linecap="round"/>
+<path d="M318,623 L328,628 L318,633" fill="none" stroke="#2f7fd6" stroke-width="2"/>
+<circle cx="26" cy="628" r="6" fill="#2f7fd6" stroke="#1c5fa8" stroke-width="1.5"/>
+<text x="26" y="646" font-family="sans-serif" font-size="8.5" fill="#2b2f36" text-anchor="middle" font-weight="600">well</text>
+<circle cx="120" cy="628" r="6" fill="#2f7fd6" stroke="#1c5fa8" stroke-width="1.5"/>
+<text x="120" y="646" font-family="sans-serif" font-size="8.5" fill="#2b2f36" text-anchor="middle" font-weight="600">pump</text>
+<circle cx="220" cy="628" r="6" fill="#2f7fd6" stroke="#1c5fa8" stroke-width="1.5"/>
+<text x="220" y="646" font-family="sans-serif" font-size="8.5" fill="#2b2f36" text-anchor="middle" font-weight="600">filter</text>
+<circle cx="320" cy="628" r="6" fill="#2f7fd6" stroke="#1c5fa8" stroke-width="1.5"/>
+<text x="320" y="646" font-family="sans-serif" font-size="8.5" fill="#2b2f36" text-anchor="middle" font-weight="600">manifold</text>
+<circle cx="120" cy="628" r="9" fill="none" stroke="#2e9e5b" stroke-width="2.5"/>
+<text x="120" y="614" font-family="sans-serif" font-size="8" fill="#2e9e5b" text-anchor="middle" font-weight="700">running</text>
+<rect x="12" y="662" width="376" height="180" rx="12" fill="#ffffff" stroke="#e2e6ec" stroke-width="1"/><rect x="12" y="662" width="376" height="180" rx="12" fill="none" stroke="#2f7fd6" stroke-width="1.5"/>
+<rect x="180" y="672" width="40" height="4" rx="2" fill="#e2e6ec" stroke="#e2e6ec" stroke-width="1"/>
+<text x="24" y="700" font-family="sans-serif" font-size="14" fill="#2b2f36" text-anchor="start" font-weight="700">Z2 · Rotor head</text>
+<text x="376" y="700" font-family="sans-serif" font-size="10" fill="#8a9099" text-anchor="end" font-weight="400">tapped</text>
+<text x="24" y="726" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="400">flow</text>
+<text x="180" y="726" font-family="sans-serif" font-size="12" fill="#2b2f36" text-anchor="end" font-weight="700">0.83 m³/h</text>
+<text x="376" y="726" font-family="sans-serif" font-size="9.5" fill="#8a9099" text-anchor="end" font-weight="400">catalog 0.4–1.2</text>
+<text x="24" y="752" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="400">pressure</text>
+<text x="180" y="752" font-family="sans-serif" font-size="12" fill="#2b2f36" text-anchor="end" font-weight="700">2.8 bar</text>
+<text x="376" y="752" font-family="sans-serif" font-size="9.5" fill="#8a9099" text-anchor="end" font-weight="400">clamped</text>
+<text x="24" y="778" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="400">throw</text>
+<text x="180" y="778" font-family="sans-serif" font-size="12" fill="#2b2f36" text-anchor="end" font-weight="700">9.0 m</text>
+<text x="24" y="804" font-family="sans-serif" font-size="11" fill="#8a9099" text-anchor="start" font-weight="400">arc</text>
+<text x="180" y="804" font-family="sans-serif" font-size="12" fill="#2b2f36" text-anchor="end" font-weight="700">170°</text>
+<rect x="24" y="832" width="110" height="1" rx="0" fill="#e2e6ec" stroke="#e2e6ec" stroke-width="1"/>
+<text x="24" y="852" font-family="sans-serif" font-size="8" fill="#8a9099" text-anchor="start" font-weight="400"></text>
+<path d="M24,852 L42,852" stroke="#2f7fd6" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round"/>
+<text x="46" y="855" font-family="sans-serif" font-size="8.5" fill="#8a9099" text-anchor="start" font-weight="400">flow</text>
+<path d="M86,852 L104,852" stroke="#2e9e5b" stroke-width="3"  stroke-linecap="round"/>
+<text x="108" y="855" font-family="sans-serif" font-size="8.5" fill="#8a9099" text-anchor="start" font-weight="400">live</text>
+<path d="M140,852 L158,852" stroke="#bcc2ca" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round"/>
+<text x="162" y="855" font-family="sans-serif" font-size="8.5" fill="#8a9099" text-anchor="start" font-weight="400">off</text>
+<path d="M190,852 L208,852" stroke="#d64545" stroke-width="3" stroke-dasharray="4 3" stroke-linecap="round"/>
+<text x="212" y="855" font-family="sans-serif" font-size="8.5" fill="#8a9099" text-anchor="start" font-weight="400">broken</text>
+<path d="M261,852 L266.0,843.3 A10,10 0 0 1 266.0,860.7 Z" fill="#34a85f" fill-opacity="0.16" stroke="#34a85f" stroke-opacity="0.35" stroke-width="1"/>
+<text x="271" y="855" font-family="sans-serif" font-size="8.5" fill="#8a9099" text-anchor="start" font-weight="400">coverage</text>
+</svg>
