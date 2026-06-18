@@ -6,7 +6,7 @@
   "description": "Headless irrigation system simulator (hydraulics + control wiring), solved with EPANET under Node.",
   "scripts": {
     "smoke": "node test/m0-smoke.mjs",
-    "test": "node test/harness.mjs"
+    "test": "node test/valve.test.mjs && node test/harness.mjs"
   },
   "devDependencies": {
     "epanet-js": "^0.8.0",
