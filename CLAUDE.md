@@ -11,10 +11,15 @@ Two unrelated things for one homeowner's irrigation/rotor system:
 
 ## Simulator (`sim/`)
 
-A physics engine for the system's hydraulics **and** control wiring, in progress. Full spec in `docs/sim_*.md`.
+A physics engine for the system's hydraulics **and** control wiring, in progress. The spec is split across `docs/sim_*.md`, each file owning **one** concern (no decision restated in two places):
+
+- `sim_spec.md` — **requirements** (the "what": States / Logic / UI).
+- `sim_state_model.md` — **authoritative engine model**: state primitives (`live`/`pressure`/`flow`), the control + boundary surface, readings, the local valve-actuation relation, and the fault model (`dead` / `clog`·`leak` / `stuck`). Other docs reference it, never restate it.
+- `sim_ui.md` — **UX/visual spec**: look, diagram, interaction (defers control/status vocabulary to `sim_state_model.md`).
+- `sim_build_plan.md` — **the plan**: milestones, file layout, build order, status, verification. Owns the milestone numbering.
 
 - **Input** is the root `system.yaml` — single source of truth (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged; no copies).
-- **`faults.js` is an M9 stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline).
+- **`faults.js` is a stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline); the fault milestone is unbuilt.
 - **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, state, elec, hyd, compileFaults(model, faults))`.
 
 ## Session setup

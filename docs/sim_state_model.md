@@ -1,8 +1,9 @@
 # Simulator state model
 
-The authoritative model for **controls** and **states** in the irrigation simulator.
-Written from the domain, not the current code. This is the target the code moves toward;
-the migration map at the end says what each existing symbol becomes.
+The **single authoritative model** for **controls**, **state**, **readings**, and **faults** in the
+irrigation simulator — the engine vocabulary. Other docs reference it and must not restate these
+decisions: `sim_spec.md` owns the requirements, `sim_ui.md` the UX, `sim_build_plan.md` the plan.
+Written from the domain; the migration map at the end says what each existing symbol becomes.
 
 ## Status — built vs. to-build
 
