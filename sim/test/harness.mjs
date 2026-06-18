@@ -80,7 +80,7 @@ const noFaults = compileFaults(model, {});
   table(model, r);
   check(r.valveOpen["Z2_valve.auto"] === true, "Z2 valve open");
   check(r.converged, "converges");
-  // readings facade (src/readings.js) — derived views over the solve, no stored state
+  // readings facade (src/readings.js) — derived views over the solve, no stored controls
   check(open(r, "Z2_valve.auto") && !open(r, "Z3_valve.auto"), "reading: open(Z2) true, open(Z3) false");
   check(watering(r, "Z2_head.rotor") && pressurised(model, r, "Z2_head.rotor"), "reading: Z2 rotor watering + pressurised");
   check(!watering(r, "Z3_head.rotor_1") && !starved(model, r, "Z3_head.rotor_1"), "reading: Z3 rotor neither watering nor starved (dead branch)");
@@ -187,7 +187,7 @@ const noFaults = compileFaults(model, {});
   // The valve mechanism now lives in the solve, not a qualitative rule layer: a bonnet bleed
   // screw vents the chamber and opens the valve with no electrical command.
   console.log("\nCASE bonnet bleed opens an un-commanded valve");
-  const bleedControls = { bleedOpen: { "Z3_valve.auto": true } };
+  const bleedControls = { bonnetBleed: { "Z3_valve.auto": true } };
   const elec = solveElectrical(model, { pumpStart: true });
   const r = solveSteady(model, bleedControls, elec, hyd, noFaults);
   check(elec.live["Z3_valve.auto"] !== true, "Z3 not electrically commanded");
