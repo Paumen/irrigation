@@ -3,12 +3,10 @@ export function typeOf(id) {
   return id.replace(/^[A-Z]+[0-9]+_/, "").replace(/_[0-9]+$/, "");
 }
 
-// EPANET ids may not contain '.', so flow ids are sanitized to this form everywhere they cross
-// into the EPANET layer.
+// EPANET ids may not contain '.'.
 export const epOf = (id) => id.replace(/\./g, "_");
 
-// Roles that map to EPANET links (2-port elements) rather than nodes. Link-role nodes carry no
-// node pressure, so several modules need to special-case them.
+// Link-role nodes map to EPANET links and carry no node pressure, so modules special-case them.
 export const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
 export const isLinkNode = (n) => LINK_ROLES.has(n.role);
 

@@ -27,7 +27,7 @@ export function effectiveOutletCfg(outlet, controls = {}) {
   };
 }
 
-// Rotor nozzle config carries a trailing label (e.g. "3.0 grey"); the size is the leading token.
+// Size is the leading token of the nozzle config (e.g. "3.0 grey").
 const rotorSize = (cfg) => String(cfg.nozzle).split(/\s+/)[0];
 
 function tableRows(outlet, curves, cfg = effectiveOutletCfg(outlet)) {
