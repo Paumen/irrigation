@@ -110,11 +110,8 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
 
   const pumpStart = !!(commands.mv ?? commands.pumpStart);
   const zoneCmd = commands.zones || {};
-  const gridPlugged = commands.gridPower !== false;
-  const adapterPlugged = commands.adapterPower !== false;
 
   const controllerPowered =
-    adapterPlugged &&
     reachable(adj, controllerGrid, controllerId, blockLoadsExcept(allLoads, blocked, controllerId));
 
   const relayCoilTerms = [...(adj.get(relayId) || [])].filter((n) => typeOf(n).startsWith("wiring.24v"));
@@ -126,7 +123,6 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
 
   const pumpPowered =
     relayCoil &&
-    gridPlugged &&
     reachable(adj, pumpGrid, pumpId, blockLoadsExcept(allLoads, blocked, relayId, pumpId));
 
   const zoneEnergised = {};
@@ -141,12 +137,12 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
       throughBoth(adj, controllerId, v, terms, blockLoadsExcept(allLoads, blocked, v));
   }
 
-  // A grid socket is live iff its wall plug is in; the pump's socket sits downstream of the relay
-  // contact, so it is live iff the pump is.
+  // A grid socket carries mains, live in the healthy baseline (mains-loss is a fault, not a
+  // control); the pump's socket sits downstream of the relay contact, so it is live iff the pump is.
   const socketLive = {};
   for (const s of sockets) socketLive[s] = [...(adj.get(s) || [])].some(isLoad) ? pumpPowered : false;
-  if (controllerGrid) socketLive[controllerGrid] = adapterPlugged;
-  if (pumpGrid) socketLive[pumpGrid] = gridPlugged;
+  if (controllerGrid) socketLive[controllerGrid] = true;
+  if (pumpGrid) socketLive[pumpGrid] = true;
 
   const liveNodes = new Set();
   const light = (path) => {
