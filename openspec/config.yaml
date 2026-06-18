@@ -1,0 +1,32 @@
+schema: spec-driven
+
+context: |
+  Browser-based simulator (`sim/`) of a homeowner's irrigation system: hydraulics
+  (EPANET 2.2 wasm via epanet-js, driven by our own outer fixed-point loop) plus
+  control wiring. Static GitHub Pages page, no backend. Vanilla JS + hand-rolled
+  SVG/DOM (no framework, no bundler, no d3); CDN deps via importmap; solver in a
+  Web Worker. Single input is the root `system.yaml`. The physics core (M1-M4) is
+  built and Node-harness-verified; the UI (M5-M6) is unbuilt.
+  Authoritative engine model + state/control/fault vocabulary: docs/sim_state_model.md.
+  Requirements: docs/sim_spec.md. UX/visual spec: docs/sim_ui.md. Plan/milestones:
+  docs/sim_build_plan.md. Specs follow a strict "one concern per file, no decision
+  restated twice" rule.
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
