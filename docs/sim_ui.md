@@ -77,13 +77,13 @@ A scenario explorer — set controls, watch the system respond.
 - Tapping an item shows its live values and controls, read against what it can actually do — catalog context (head flow span, pump curve, valve loss range).
 - Controls live at item level: 
   - pump on bool
-  - auto valve open bool (the controller's zone command; a broken wire can leave it commanded but not energised)
+  - auto valve open bool 
   - manual valve handle bool
   - grid power bool
   - adapter power bool
   - flow-control (0, 0.25, 0.5, 0.75, 1)
   - bleed screw bool
-  - solenoid bleed bool (turning the solenoid a quarter turn opens the pilot/solenoid port)
+  - solenoid bleed bool 
   - Flo-stop bool
   - arc
   - nozzle
@@ -91,14 +91,8 @@ A scenario explorer — set controls, watch the system respond.
 - When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
 
 ## Prerequisites
-
-### Available
-The engine now accepts these as live commands on the `state` object (`state.nozzle` / `state.arc` / `state.solenoidBleed` / `state.floStop`), so the UI can expose them.
-- **arc / nozzle as controls** — accepted at runtime; the catalog constrains the valid choices (rotor nozzle sizes vs. spray family/arc combinations) via `validOutletOptions` / `validateOutletOverrides` in `sim/src/outlets.js`. Rotor arc is geometry-only (precip); spray arc is a flow-table key. The catalog carries the full I-20 nozzle set (blue/grey/black/green) and all MP arcs.
-- **solenoid bleed** — a manual quarter-turn override lifts the plunger / opens the pilot seat even with a dead coil, opening the valve once inlet pressure is available.
-- **Flo-stop as a control** — engaging it now shuts the head's outlet off in the hydraulic solve (zero flow and throw), not just the qualitative state badge.
+- **Item status vocabulary** — the set of per-item statuses the diagram shows must be defined and shared with the side sheet (e.g. active, idle, commanded-but-not-acting, faulted, dead), so both read from one taxonomy.
 
 ### Deferred
-The UI can't expose these until the engine lands them; this UI commands controls only.
 - **fault injection** — the engine runs a no-fault baseline today (`faults.js` is an M9 stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
-- **Item status vocabulary** — the set of per-item statuses the diagram shows must be defined and shared with the side sheet (e.g. active, idle, commanded-but-not-acting, faulted, dead), so both read from one taxonomy.
+
