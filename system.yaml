@@ -520,10 +520,6 @@ head.rotor/nozzle:
     "BL5.0": [0.84, 0.91, 1.02, 1.14, 1.24, 1.32, 1.41]
     "BL6.0": [1.01, 1.09, 1.22, 1.36, 1.47, 1.57, 1.67]
     "BL8.0": [1.35, 1.46, 1.63, 1.81, 1.95, 2.09, 2.22]
-    # Grey low-angle, black short-radius, and green high-flow nozzle series — Hunter PGP
-    # Ultra/I-20 metric performance chart (LIT-651 9/14). Same pressure_bar axis as the blue
-    # standard rows. The I-20 nozzle rack is colour-coded: blue=standard, grey=low angle,
-    # black=short radius, green=high flow.
     "GR2.0": [0.33, 0.36, 0.40, 0.45, 0.48, 0.52, 0.55]
     "GR2.5": [0.44, 0.47, 0.53, 0.59, 0.64, 0.68, 0.72]
     "GR3.5": [0.58, 0.62, 0.68, 0.75, 0.80, 0.85, 0.89]
@@ -538,9 +534,6 @@ head.rotor/nozzle:
     "GN8.0": [1.17, 1.28, 1.44, 1.61, 1.76, 1.89, 2.01]
     "GN10": [1.48, 1.60, 1.80, 2.01, 2.18, 2.34, 2.49]
     "GN13": [1.91, 2.08, 2.34, 2.61, 2.83, 3.03, 3.23]
-  # Throw radius (m), Hunter I-20 Ultra Blue Standard nozzle metric chart (INT-296).
-  # Columns share pressure_bar above; the chart starts at 2.0 bar, so the 1.7-bar
-  # column is extrapolated (2.0-bar value − 0.3 m, matching the SR/LA tables' slope).
   radius_m:
     "BL1.5": [8.8, 9.1, 9.4, 9.8, 9.8, 9.8, 9.4]
     "BL2.0": [9.8, 10.1, 10.1, 10.4, 10.4, 10.4, 10.4]
@@ -550,7 +543,6 @@ head.rotor/nozzle:
     "BL5.0": [11.3, 11.6, 11.9, 12.8, 12.8, 12.8, 12.8]
     "BL6.0": [11.6, 11.9, 12.2, 13.1, 13.1, 13.4, 13.4]
     "BL8.0": [11.6, 11.9, 12.5, 13.4, 13.7, 14.0, 14.0]
-    # Grey / black / green radius rows (LIT-651 9/14), same pressure_bar axis as above.
     "GR2.0": [7.3, 7.6, 7.9, 8.2, 8.5, 8.8, 9.1]
     "GR2.5": [7.9, 8.2, 8.8, 9.4, 10.1, 10.4, 10.7]
     "GR3.5": [8.5, 8.8, 9.1, 10.1, 10.7, 11.0, 11.3]
@@ -573,9 +565,6 @@ head.spray/nozzle:
       90:  [null,  0.036, 0.041, 0.043, 0.045, 0.048, 0.050]
       180: [null,  0.073, 0.080, 0.084, 0.091, 0.093, 0.098]
       210: [null,  0.084, 0.093, 0.098, 0.105, 0.109, 0.114]
-      # 270 (210-270 model): matched-precipitation, so flow is linear in arc — interpolated
-      # between this catalog's 210 and 360 rows. Hunter MP Rotator guide (LIT-461) confirms the
-      # MP1000 210-270 ratios (270/360 ≈ 0.74, 270/210 ≈ 1.27).
       270: [null,  0.110, 0.120, 0.127, 0.136, 0.142, 0.148]
       360: [null,  0.148, 0.161, 0.170, 0.182, 0.191, 0.198]
     MP2000:
@@ -590,12 +579,6 @@ head.spray/nozzle:
       210: [0.382, 0.418, 0.452, 0.482, 0.511, 0.538, 0.566]
       270: [0.497, 0.538, 0.579, 0.620, 0.656, 0.695, 0.731]
       360: [0.654, 0.715, 0.772, 0.827, 0.877, 0.924, 0.970]
-  # Throw radius (m) per MP Rotator model. MP nozzles are matched-precipitation:
-  # radius is a function of model + pressure only (flow scales with arc to keep it),
-  # so one row per model, shared across arcs. Hunter MP Rotator metric design guide
-  # (LIT-461); columns share pressure_bar above (the guide's bar points line up with
-  # the catalog's psi axis). MP1000 isn't rated at the lowest column (null), matching
-  # its null flow there. Radius is the factory max setting (adjustable down to −25%).
   radius_m:
     MP1000: [null, 3.7, 4.0, 4.1, 4.3, 4.5, 4.5]
     MP2000: [5.2, 5.5, 5.8, 6.1, 6.4, 6.4, 6.4]
