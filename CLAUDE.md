@@ -20,7 +20,7 @@ A physics engine for the system's hydraulics **and** control wiring, in progress
 
 - **Input** is the root `system.yaml` — single source of truth (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged; no copies).
 - **`faults.js` is a stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline); the fault milestone is unbuilt.
-- **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, state, elec, hyd, compileFaults(model, faults))`.
+- **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, controls, elec, hyd, compileFaults(model, faults))`.
 
 ## Session setup
 

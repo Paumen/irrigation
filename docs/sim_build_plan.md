@@ -128,7 +128,7 @@ Graph of **ports** (intra-part `to:` + inter-part `wires`, bidirectional). `acts
 not continuity. Reusable `reachable(graph, from, to, blocked)`. Fixpoint (relay contact closes when its
 coil loop energises): controller `mv`→relay coil loop→contact closes→pump `live` via
 grid→line_in→contact→load_out→pump→neutral. Each zone N: `zoneCmd[N]` AND continuity
-`zone_N→signal_N→splice.sig_N→ZN.valve.coil→common_lead→com chain→common_return→controller`. The
+`zone_N→signal_N→splice.sig_N→Z{N}_valve.auto/solenoid/coil→common_lead→com chain→common_return→controller`. The
 **shared common return** means one break can disable several zones — falls out naturally. The solve
 sets the **`live`** primitive per component — every component on a closed current-carrying path reads
 `live`, a component merely at potential stays dead, so a single broken wire reads dead while its
@@ -175,7 +175,7 @@ with `docs/sim_ui.md`'s no-mode-switching rule).
 The physics core has been built and merged to `main`; the table below is the live state
 (✅ done / ⚠️ partial / ⬜ not started). The healthy-system engine (M1–M4) and the readings facade
 already follow `sim_state_model.md` (`live`/`pressure`/`flow` + readings, the local valve relation,
-no qualitative rule layer). The geometry/UI (M5–M6, M9) and the fault engine (M7) remain to do.
+no qualitative rule layer). The geometry/UI (M5–M6), quasi-time (M7), the fault engine (M8), and polish (M9) remain to do.
 
 | Milestone | Status | Evidence in `sim/` |
 |---|---|---|
