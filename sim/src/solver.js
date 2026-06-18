@@ -25,6 +25,7 @@ import {
   validateOutletOverrides,
 } from "./outlets.js";
 import { emptyEffects } from "./faults.js";
+import { valveActuation } from "./valve.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
 const zoneOf = (id) => {
@@ -99,6 +100,8 @@ export function solveSteady(model, state, elec, hyd, faults) {
 
   let prevP = {}; // epId -> bar
   let valveInlet = {}; // flowId -> bar at the valve inlet node
+  let valveOutlet = {}; // flowId -> bar at the valve outlet node
+  const chamberBar = {}; // valveId -> bonnet-chamber pressure (bar), from the local actuation relation
   let res = null;
   let topo = null;
   let stable = 0;
@@ -118,16 +121,26 @@ export function solveSteady(model, state, elec, hyd, faults) {
           valveOpen[v.id] = true;
           continue;
         }
-        const cmd = commandedAuto(v);
         const inlet = valveInlet[v.id] ?? 0;
-        if (!cmd) {
+        const outlet = valveOutlet[v.id] ?? 0;
+        // Local actuation relation: chamber pressure from the valve's own inlet/outlet (not EPANET).
+        const act = valveActuation({
+          inletBar: inlet,
+          outletBar: outlet,
+          coilLive: zoneEnergised[zoneOf(v.id)] === true,
+          solenoidBleed: !!solenoidBleed[v.id],
+          bonnetBleed: !!bleedOpen[v.id] || fx.bleedForcedOpen.has(v.id),
+        });
+        chamberBar[v.id] = act.chamberBar;
+        const vented = act.vented;
+        if (!vented) {
           valveOpen[v.id] = false;
         } else if (valveOpen[v.id]) {
           valveOpen[v.id] = inlet >= VALVE_STAY_BAR; // hold open until nearly drained
         } else {
           valveOpen[v.id] = inlet >= minLift; // need min_operating_bar to lift (hysteresis)
         }
-        if (cmd && !valveOpen[v.id]) commandedNotOpening.add(v.id);
+        if (vented && !valveOpen[v.id]) commandedNotOpening.add(v.id);
       }
     }
 
@@ -190,7 +203,11 @@ export function solveSteady(model, state, elec, hyd, faults) {
     res = solveInp(hyd, toInp(topo), { nodeIds: topo.nodeIds, linkIds: topo.linkIds });
 
     valveInlet = {};
-    for (const v of topo.valves) valveInlet[v.flowId] = res.pressureBar[v.n1] ?? 0;
+    valveOutlet = {};
+    for (const v of topo.valves) {
+      valveInlet[v.flowId] = res.pressureBar[v.n1] ?? 0;
+      valveOutlet[v.flowId] = res.pressureBar[v.n2] ?? 0;
+    }
 
     let maxdp = 0;
     for (const o of outlets) {
