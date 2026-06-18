@@ -70,7 +70,7 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   const throttle = controls.throttle || {};
   const headShutoff = controls.headShutoff || {};
   const solenoidBleed = controls.solenoidBleed || {};
-  // Flo-Stop is rotor-only; handleShutoff===false (closed) shuts the head's internal seat.
+  // Flo-Stop is rotor-only; headShutoff===false (closed) shuts the head's internal seat.
   const headShutoffEngaged = (o) => o.subkind === "rotor" && headShutoff[o.id] === false;
 
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
