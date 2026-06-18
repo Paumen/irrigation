@@ -6,6 +6,7 @@ import { solveElectrical } from "../src/electrical.js";
 import { compileFaults } from "../src/faults.js";
 import { validateStateResolver, computeStates } from "../src/states.js";
 import { outletDemandAt, outletThrowAt, interp } from "../src/outlets.js";
+import { open, watering, pressurised, starved } from "../src/readings.js";
 import { SPRAY_CLAMP_BAR } from "../src/config.js";
 
 const epOf = (id) => id.replace(/\./g, "_");
@@ -92,6 +93,10 @@ function crossCheckStates(label, elec, r) {
   table(model, r);
   check(r.valveOpen["Z2_valve.auto"] === true, "Z2 valve open");
   check(r.converged, "converges");
+  // readings facade (src/readings.js) — derived views over the solve, no stored state
+  check(open(r, "Z2_valve.auto") && !open(r, "Z3_valve.auto"), "reading: open(Z2) true, open(Z3) false");
+  check(watering(r, "Z2_head.rotor") && pressurised(r, "Z2_head.rotor"), "reading: Z2 rotor watering + pressurised");
+  check(!watering(r, "Z3_head.rotor_1") && !starved(r, "Z3_head.rotor_1"), "reading: Z3 rotor neither watering nor starved (dead branch)");
   const allP = [...model.flowNodes.values()].filter((n) => n.role === "outlet" && r.reachable.has(n.id));
   check(allP.every((o) => Number.isFinite(r.pressureBar[epOf(o.id)])), "no NaN pressure on filled outlets");
   check(r.massImbalance < 1e-3, `mass balance < 1e-3 (got ${r.massImbalance.toExponential(2)})`);

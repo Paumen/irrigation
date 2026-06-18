@@ -42,8 +42,14 @@ export function valveActuation({
   const rVent = parallelR(pilotR, bleedR);
 
   const chamberBar = (inletBar * rVent + outletBar * rMeter) / (rMeter + rVent);
-  const open = throttle > 0 && inletBar - chamberBar >= liftBar;
+
+  // The chamber drains to the outlet side (diaphragm lifts) when the vent conductance beats the
+  // metering conductance — i.e. rVent < rMeter. This is computed from the conductances, NOT the
+  // outlet pressure, so it stays well-defined when the valve is shut (outlet isolated/garbage).
+  // It captures both the pilot opening (rVent drops) AND a clogged metering port (rMeter rises).
+  const vented = throttle > 0 && rVent < rMeter;
+  const open = vented && inletBar >= liftBar;
   const meterFlow = (inletBar - chamberBar) / rMeter;
 
-  return { chamberBar, open, meterFlow };
+  return { chamberBar, vented, open, meterFlow };
 }
