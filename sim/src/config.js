@@ -16,12 +16,10 @@ export const VALVE_FREEZE_TAIL = 12;
 
 export const SPRAY_CLAMP_BAR = 2.76;
 
-// A node counts as qualitatively "pressurised" once its solved gauge pressure clears this
-// floor (and it is reachable). Well below the 1.5-bar valve-lift threshold so a dead-headed
-// but reachable branch still reads pressurised.
+// Must stay well below VALVE_OPEN_BAR so a dead-headed but reachable branch reads pressurised.
 export const PRESSURISED_BAR = 0.1;
 
-// Floor keeps the 1/t² loss scaling finite.
+// Floor keeps the 1/t² loss scaling finite; must be > 0.
 export const THROTTLE_MIN = 0.05;
 
 export const SWING_LEN_M = 0.3;
@@ -35,10 +33,8 @@ export const CONNECTOR_LEN_M = 0.1;
 export const CONNECTOR_DIAM_MM = 25;
 export const DEFAULT_ROUGHNESS_MM = 0.0015;
 
-// At/above this blocked-area fraction the line is sealed.
 export const CLOG_FULL = 0.99;
 export const PILOT_CLOG_BLOCKS = 0.5;
-// Pump-path clog head scale = 1 - PUMP_CLOG_LOSS * severity.
 export const PUMP_CLOG_LOSS = 0.6;
 export const LEAK_BORE_MM = 6;
 export const DRIP_BORE_MM = 2;
