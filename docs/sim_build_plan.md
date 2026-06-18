@@ -192,54 +192,26 @@ no qualitative rule layer). The geometry/UI (M5–M6), quasi-time (M7), the faul
 
 Verify the current core with `cd sim && npm install && npm test` (full harness) or `npm run smoke` (M0 spike).
 
-**M0 deliverable (done), for reference:** `sim/package.json` (`{"type":"module"}`, devDep `epanet-js`), and
-`sim/test/m0-smoke.mjs` — a headless Node script that hand-writes a tiny INP (reservoir → pump → one
-junction with a demand, D-W headloss, CMH units, a pump HEAD curve, and one GPV with a headloss curve),
-runs it through epanet-js (`Workspace`/`Project`, `open`/`solveH`), reads back node pressure (→bar) and
-link flow, and asserts they're finite/sane. Purpose: lock the epanet-js API surface (exact enum names,
-CMH unit support, D-W, pump curve, GPV) before M1. Prints the results table and exits nonzero on failure.
+## Build order
 
-## Build order (each milestone after M2 gated by the Node harness)
-- **M0 Spike:** Node smoke test — hand-written 3-node INP (reservoir-pump-junction-demand); lock
-  epanet-js enums (`NodeProperty.Pressure`, `LinkProperty.Flow`), CMH units, D-W, pump HEAD curve, GPV.
-- **M1:** `model.js`, `network.js`, `inp.js`, `epanet-runner.js`; validate one healthy zone vs pump curve.
-- **M2:** `outlets.js`, `solver.js`, `readings.js`; idle + pump+Z2 converge with correct mass balance;
-  `harness.mjs` cases 1–2. The `pressurised`/`watering`/`starved`/`primed`/`open` readings are pure
-  functions over the converged solve (threshold/location over `pressure`/`flow`) — no separate solve,
-  no stored state. This is the only "state vocabulary"; there is no qualitative rule layer.
-- **M3 (Z1 manual zone):** the manual hand-watering branch end-to-end — `valve.manual` TCV from `Kv`,
-  `nozzle.stream` open-orifice discharge, manual-handle open/close; harness case (pump + Z1 open →
-  orifice flow, mass balance). Mechanical only, no electrical dependency; the TCV, orifice law, and
-  `manualOpen` plumbing already exist from M1–M2, so this is mostly verification + tuning.
-- **M4:** `electrical.js` + valve actuation in the loop; harness case (broken wire / shared return).
-  The solve sets `live` per component (`solveElectrical` reachability) and each valve's open/closed
-  via the local vent-vs-metering relation; the readings relabel those directly.
-- **M5 (geometry/scene/render):** `geometry.js` (hand-authored coordinates + Node completeness test) +
-  `scene.js` + `render.js` — static schematic with flow/pressure encoding, full system.yaml coverage
-  (`docs/sim_ui.md`); surfaces each component's readings as labels and traces wiring from `live`.
-- **M6 (controls + worker + app):** `controls.js` + bottom sheet (per-subpart sections, `docs/sim_ui.md`) +
-  worker solver client (`docs/sim_ui.md`) + `app.js` wiring (live update, m³/h fixed — no
-  units toggle); the eight controls from `sim_state_model.md` (no boundary/world-edge widgets — those move only under faults, M8).
-- **M7 (quasi-time):** `quasitime.js` — on a state change, animate a semi-realistic in-time
-  transition of flow (and possibly other quantities) from the previous settled result to the new
-  one, rather than snapping instantly; both endpoints are full `solveSteady` results (an in-view
-  animation, not a mode switch).
-- **M8 (faults):** `faults.js` three-verb compiler (`dead` / `clog`·`leak` / `stuck`, per
-  `sim_state_model.md`) + `system.yaml` `fail:` entries; harness clog case + a leak case; fault toggle
-  widgets wired into `controls.js`/`render.js`. This phase also adds the suction-side world-edge
-  states the EPANET reservoir omits — `source.well` `pressure` (wet/dry) and pump priming chamber
-  `pressure`. These are **not** operator controls: they sit at their healthy default (wet, primed)
-  and move only when a fault is injected (dry-well, lost-prime), feeding the existing `primed` reading
-  and gating the pump.
-  *Required harness case — metering-port clog (stuck-open valve):* with the pump on, **all** solenoids
-  de-energised, and the **bleed screw closed**, `clog(meteringPort)` raises `R_meter` so the bonnet
-  chamber can't refill — the pilot stays vented (`rVent < rMeter`), so the valve passes flow with no
-  command. Assert: Z2 flows ~1.66 m³/h, the rotor reads `watering`, mass balance holds, and the
-  `chamberBar` divider tracks the low chamber pressure (the diaphragm-lifted reading). The fault is one
-  parameter on one real conductance — no new vocabulary.
-- **M9:** polish — `live` wiring trace styling, labels, the non-convergence affordance
-  (keep-last-good + a plain "won't settle" badge off the `converged` flag, `docs/sim_ui.md`),
-  max-pressure warnings; `.github/workflows/pages.yml` + `sim/README.md`.
+Build in milestone order; each milestone after M2 is gated by the Node harness. Deliverables are
+the design sections above + the file layout; the unique per-milestone notes:
+
+- **M2** readings are pure functions over the converged solve (threshold/location over
+  `pressure`/`flow`) — no separate solve, no stored state, no qualitative rule layer.
+- **M3** is mostly verification + tuning: the `valve.manual` TCV, `nozzle.stream` orifice law, and
+  `manualOpen` plumbing already exist from M1–M2; add a harness case (pump + Z1 → orifice flow, mass balance).
+- **M8** also adds the suction-side world-edge states the EPANET reservoir omits — `source.well`
+  `pressure` and pump priming-chamber `pressure`. These are **not** operator controls: they sit at
+  their healthy default (wet, primed) and move only under a fault (dry-well, lost-prime), feeding the
+  `primed` reading and gating the pump. *Required harness case — metering-port clog (stuck-open valve):*
+  pump on, **all** solenoids de-energised, **bleed screw closed**; `clog(meteringPort)` raises
+  `R_meter` so the chamber can't refill, the pilot stays vented (`rVent < rMeter`), and the valve
+  passes flow uncommanded. Assert Z2 ~1.66 m³/h, rotor `watering`, mass balance holds, `chamberBar`
+  tracks the low chamber pressure.
+- **M9** polish: `live` wiring-trace styling, labels, the non-convergence affordance (keep-last-good +
+  a "won't settle" badge off the `converged` flag, `docs/sim_ui.md`), max-pressure warnings;
+  `.github/workflows/pages.yml` + `sim/README.md`.
 
 ## Requirement → milestone traceability
 
@@ -281,19 +253,14 @@ pure views over the solved primitives — defined in `sim_state_model.md`, not a
 - **Shared common-return semantics:** explicitly covered by the broken-shared-return harness case.
 
 ## Verification
-- **Headless (primary):** `cd sim && npm install && npm test` runs `test/harness.mjs`, which asserts the
-  **solved primitives and readings** directly against hand-checked scenarios (no qualitative projection
-  to reconcile — there is one truth, the solve). Cases as built today: (1) idle — all flows 0, every
-  outlet unreachable, nothing `watering`/`pressurised`; (2) pump+Z2 — pump `live` + `primed`, Z2 valve
-  open, head flows match catalog within tolerance and read `watering`+`pressurised`, Z3–Z5 = 0 (dead
-  branch: neither `watering` nor `starved`), mass balance < 1e-3 m³/h, operating point on the pump curve,
-  MP sprays clamped at 2.76 bar; (3) broken shared return — Z2/Z3 de-energised (return current crosses
-  the cut, their coils read dead), those valves stay closed, Z4/Z5 stay `live`; (4) cut controller feed —
-  controller/pump/zone all dead. **Pending:** a dedicated M3 manual-zone case, and the M8 clog/leak cases
-  (faults are still a stub) — including the metering-port-clog stuck-open case (pump on, solenoids dead,
-  bleed closed → valve passes flow, zone waters, `chamberBar` tracks the low chamber pressure), specified
-  under the M8 build step. Exit nonzero on failure.
+- **Headless (primary):** `cd sim && npm install && npm test` runs `test/harness.mjs`, asserting the
+  **solved primitives and readings** directly against hand-checked scenarios (one truth, nothing to
+  reconcile). Cases built today: (1) *idle* — all flows 0, every outlet unreachable; (2) *pump+Z2* —
+  pump `primed`, Z2 open, head flows match catalog and read `watering`+`pressurised`, Z3–Z5 = 0 (dead
+  branch), mass balance < 1e-3 m³/h, operating point on the pump curve, MP clamped at 2.76 bar;
+  (3) *broken shared return* — Z2/Z3 coils read dead so those valves stay closed, Z4/Z5 stay `live`;
+  (4) *cut controller feed* — controller/pump/zones all dead. **Pending:** the M3 manual-zone case and
+  the M8 clog/leak cases (incl. the metering-port-clog stuck-open case, specified under M8). Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
   inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
-  (flow widths, pressure colors, outlet labels in m³/h — no unit toggle, per-wire `live` traces).
-  Confirm Pages deploy after push.
+  (flow widths, pressure colors, outlet labels in m³/h, per-wire `live` traces). Confirm Pages deploy after push.
