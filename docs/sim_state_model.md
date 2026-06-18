@@ -129,10 +129,14 @@ just `pressure` present / `live`.)
      zero-flow dead-end — EPANET's weak spots — for zero benefit, since the boundary pressures
      are already known.)
 
-The two couple through the diaphragm: `valve open ⟸ inlet − chamber ≥ lift`, evaluated each
-pass of the **existing fixed-point valve loop** (the loop that already toggles valves on
-inlet pressure). The local chamber relation feeds that comparison; the comparison sets the
-valve's EPANET status for the next pass.
+The two couple through the diaphragm, evaluated each pass of the **existing fixed-point valve
+loop**: the valve opens when the pilot is **venting** — the vent conductance beats the metering
+conductance (`rVent < rMeter`), so the chamber drains toward the outlet side — gated by the
+inlet lift/stay hysteresis the loop already applies. The conductance test (rather than a raw
+`inlet − chamber` pressure subtraction) is what keeps the decision stable when the valve is shut
+and its outlet pressure is undefined; it captures both the pilot opening *and* a clogged metering
+port (`rMeter` rises → still vented → stuck open). `chamberBar` is the resulting diagnostic
+pressure. The comparison sets the valve's EPANET status for the next pass.
 
 There is **one truth: the solve.** No qualitative rule engine runs alongside it — the local
 valve relation is *physics* (a pressure divider over real conductances producing real
@@ -160,7 +164,7 @@ The valve's internals are real components, each carrying only the three primitiv
 
 The mechanism *is* physics — *no `up`/`down`/`open`/`closed` states, no rule engine*:
 
-- the valve passes flow ⟸ `(coil live OR solenoidBleed OR bonnetBleed) AND throttle > 0 AND inlet − chamber ≥ lift`
+- the valve passes flow ⟸ the pilot vents (`(coil live OR solenoidBleed OR bonnetBleed) AND throttle > 0` ⟹ `rVent < rMeter`) **AND** the inlet clears the lift/stay hysteresis
 - diaphragm position is a **reading** of (inlet `pressure` vs chamber `pressure`)
 
 **Metering port clogged** *(a later-phase fault)* = `clog(meteringPort)` — raise `R_meter`,
@@ -226,7 +230,7 @@ Legend: KILL (gone) · BECOMES (re-homed) · KEEP (engine/physics, not state-voc
 ### Engine / topology (core reused — finer-grained, with a new local valve relation)
 - `solveElectrical` + `buildAdj`/`bfs`/`pathOf`/`reachable`/`throughBoth` KEEP (the `live` engine)
 - `solveSteady`/`computeReachable`/`finalize` KEEP (EPANET delivery solve); the fixed-point
-  valve loop is re-keyed on `inlet − chamber` pressure
+  valve loop decides open/closed from the vent-vs-metering conductance (`rVent < rMeter`) plus the inlet lift/stay hysteresis
 - **new** valve-actuation relation — per-valve local chamber-pressure / port-flow computation,
   fed by EPANET's inlet/outlet pressures (NOT added to the EPANET network)
 - `buildTopology` EXTENDED — author valve internals and controller ports as real components;

@@ -23,6 +23,15 @@ export const pressurised = (model, hyd, id) => {
   return Number.isFinite(p) && p >= PRESSURISED_BAR;
 };
 
+// The pump's suction side holds water — its inlet node is fed and carries pressure.
+export const primed = (model, hyd) => {
+  const pump = [...model.flowNodes.values()].find((n) => n.role === "pump");
+  if (!pump) throw new Error("primed: no pump node");
+  const inlet = [...model.flowNodes.values()].find((n) => n.to.includes(pump.id));
+  if (!inlet) throw new Error("primed: pump has no inlet node");
+  return hyd.reachable.has(inlet.id) && Number.isFinite(hyd.pressureBar[epOf(inlet.id)]);
+};
+
 // The valve passes flow — the solver's actuation result.
 export const open = (hyd, id) => !!hyd.valveOpen[id];
 

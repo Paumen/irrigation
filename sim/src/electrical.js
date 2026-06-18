@@ -131,20 +131,16 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     reachable(adj, pumpGrid, pumpId, blockLoadsExcept(allLoads, blocked, relayId, pumpId));
 
   const zoneEnergised = {};
-  const commandedNotEnergised = new Set();
   for (const v of valves) {
     const z = zoneOf(v);
     if (z == null) continue;
     const terms = [...(adj.get(v) || [])];
-    const energised =
+    zoneEnergised[z] =
       controllerPowered &&
       !!zoneCmd[z] &&
       terms.length === 2 &&
       throughBoth(adj, controllerId, v, terms, blockLoadsExcept(allLoads, blocked, v));
-    zoneEnergised[z] = energised;
-    if (zoneCmd[z] && !energised) commandedNotEnergised.add(z);
   }
-  const pumpCommandedNotPowered = pumpStart && !pumpPowered;
 
   // Per-socket mains presence, feeding the `live` primitive below. A grid socket is live iff its
   // wall plug is in; the pump's own socket sits downstream of the relay contact, so it is live iff
@@ -154,16 +150,12 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   if (controllerGrid) socketLive[controllerGrid] = adapterPlugged;
   if (pumpGrid) socketLive[pumpGrid] = gridPlugged;
 
-  const energisedWires = new Set();
   // `live` — the single electrical state primitive: electricity reaches this node. A node is live
   // when it sits on an energised path (lit below) or is a live socket (mains present at the wall).
   const liveNodes = new Set();
   const light = (path) => {
     if (!path) return;
-    for (const node of path) {
-      liveNodes.add(node);
-      if (isWire(node)) energisedWires.add(node);
-    }
+    for (const node of path) liveNodes.add(node);
   };
   if (controllerPowered) light(pathOf(adj, controllerGrid, controllerId, blockLoadsExcept(allLoads, blocked, controllerId)));
   if (relayCoil) {
@@ -185,15 +177,7 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const live = {};
   for (const id of ids) live[id] = liveNodes.has(id);
 
-  return {
-    live,
-    controllerPowered,
-    relayCoil,
-    pumpPowered,
-    zoneEnergised,
-    commandedNotEnergised,
-    pumpCommandedNotPowered,
-    energisedWires,
-    socketLive,
-  };
+  // One electrical primitive out: `live` per node. Consumers read a coil's liveness as
+  // live[valveId], the pump's as live[pumpId], the controller's as live[controllerId].
+  return { live };
 }
