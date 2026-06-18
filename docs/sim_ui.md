@@ -24,7 +24,7 @@ A scenario explorer — set controls, watch the system respond.
 - Holistic — hydraulics, electrical, and state.
 - Comprehensible in one view; nothing hidden behind a mode.
 - Diagram mostly visual, most text and numbers live in a side sheet.
-- Item carries a status indicator.
+- Item carries status indicator(s).
 - Every connection traceable end to end, nothing crossing or dangling 
   - Ideas to reach outcome (apply none, one, or several):
     - orthogonal routing
@@ -32,13 +32,6 @@ A scenario explorer — set controls, watch the system respond.
     - lane spacing for parallel runs
     - junction dots on real connections 
     - hops where lines merely cross.
-- Active items are obviously alive, idle ones recede
-  - Ideas to reach outcome (apply none, one, or several):
-    - watering heads animate while idle ones grey out
-    - full vs reduced opacity
-    - full colour vs muted/outline-only
-    - subtle pulse on active status indicators.
-    - icons representing state
 
 ### Hydraulic visualization
 - Flow clear at a glance — where it goes and roughly how much.
@@ -50,7 +43,6 @@ A scenario explorer — set controls, watch the system respond.
     - paced droplets 
     - pulsing lines
 
- 
 - Pressurised items obvious at a glance, including roughly how hard
   - Ideas to reach outcome (apply none, one, or several):
     - hose fill/saturation scaling with pressure
@@ -76,20 +68,10 @@ A scenario explorer — set controls, watch the system respond.
 - Control and inspect from a side sheet: controls, states, inputs/outputs, numbers.
 - Tapping an item shows its live values and controls, read against what it can actually do — catalog context (head flow span, pump curve, valve loss range).
 - Controls live at item level. The canonical surface is the eight controls in
-  `sim_state_model.md` (controller port energize, manual handle, throttle, bonnet bleed, solenoid
-  bleed, head shut-off, nozzle/arc) — this file does not restate it. The operator sets **nothing
-  else**: the world-edge states (mains, well, prime) have no control widget — they sit at their
-  healthy default and move only under fault injection. UI-specific affordance: render the throttle as
-  five discrete stops (0, 0.25, 0.5, 0.75, 1). A valve's open/closed is **not** a control — it is a
-  reading of the solve.
+  `sim_state_model.md`.
 - Change any control and the whole system updates at once — every derived value and animation follows.
 - When the system can't settle on a stable answer — it never balances out — the view says so plainly rather than showing numbers that look real but aren't.
 
-## Prerequisites
-- **Item status vocabulary** — the per-item statuses the diagram and side sheet share are the
-  **readings** over the state primitives (`open`/`pressurised`/`primed`/`watering`/`starved`), defined
-  in `sim_state_model.md`. Both the diagram and the side sheet read from that one taxonomy.
-
-### Deferred
+## Deferred
 - **fault injection** — the engine runs a no-fault baseline today (`faults.js` is a stub), so fault injection and any fault-related UI are deferred until the fault engine lands.
 
