@@ -17,10 +17,6 @@ export function interp(xs, ys, x) {
   return pts[pts.length - 1][1];
 }
 
-// Effective nozzle/arc for an outlet: runtime controls (controls.nozzle / controls.arc, keyed by
-// outlet id) override the baked-in catalog config (outlet.params). Returned object is what the
-// table lookups below read, so changing a control rebuilds the affected head's law without a
-// model rebuild.
 export function effectiveOutletCfg(outlet, controls = {}) {
   const nozzleOv = (controls.nozzle || {})[outlet.id];
   const arcOv = (controls.arc || {})[outlet.id];
@@ -53,9 +49,7 @@ export function outletDemandAt(outlet, p_bar, curves, cfg = effectiveOutletCfg(o
   return interp(pressures, row, lookup);
 }
 
-// Throw radius (m) for an outlet at its inlet pressure, from the catalog radius_m tables.
-// Rotors read head.rotor/nozzle by nozzle size; sprays read head.spray/nozzle by model
-// (MP radius is matched-precip, so independent of arc) at the PRS40-regulated pressure.
+// Spray radius is keyed by model only: MP radius is matched-precip, so independent of arc.
 export function outletThrowAt(outlet, p_bar, curves, cfg = effectiveOutletCfg(outlet)) {
   if (outlet.subkind === "rotor") {
     const row = curves.nozzleI20.radius_m?.[String(cfg.nozzle).split(/\s+/)[0]];
@@ -69,7 +63,6 @@ export function outletThrowAt(outlet, p_bar, curves, cfg = effectiveOutletCfg(ou
   return null;
 }
 
-// Single-head application rate (mm/hr) = flow spread over the head's wetted sector.
 // arc in degrees, throw in m, q in m3/h. 1 L over 1 m2 = 1 mm.
 export function outletPrecipMmHr(q_m3h, arc_deg, throw_m) {
   if (!throw_m || !arc_deg || q_m3h <= 0) return null;
@@ -77,7 +70,7 @@ export function outletPrecipMmHr(q_m3h, arc_deg, throw_m) {
   return area > 0 ? (q_m3h * 1000) / area : null;
 }
 
-// Below pMin_bar the solver runs the outlet as an emitter; the table cannot extrapolate toward 0 bar.
+// Below pMin_bar the table cannot extrapolate toward 0 bar; the solver runs an emitter instead.
 export function outletTableMin(outlet, curves, cfg = effectiveOutletCfg(outlet)) {
   const { pressures, row } = tableRows(outlet, curves, cfg);
   for (let i = 0; i < row.length; i++) {
@@ -86,10 +79,6 @@ export function outletTableMin(outlet, curves, cfg = effectiveOutletCfg(outlet))
   return { pMin_bar: pressures[0], qMin: 0 };
 }
 
-// Catalog-constrained choices for a head's nozzle/arc controls (the UI reads this to offer only
-// legal options). The body type (outlet.subkind) is fixed; it decides which set applies and how
-// arc behaves: a rotor's arc is continuous and flow-independent (geometry only), a spray's arc is
-// discrete and flow-determining (one tabulated flow row per arc), re-constrained per MP model.
 export function validOutletOptions(outlet, curves) {
   if (outlet.subkind === "rotor") {
     return {
@@ -108,8 +97,6 @@ export function validOutletOptions(outlet, curves) {
   throw new Error(`outlets: unsupported outlet subkind "${outlet.subkind}"`);
 }
 
-// Fail-fast validation of runtime nozzle/arc overrides against the catalog, with a located error.
-// Called once at the top of the solve (and exported so the UI can pre-validate a pending change).
 export function validateOutletOverrides(model, controls = {}) {
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   for (const o of outlets) {

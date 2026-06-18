@@ -1,7 +1,7 @@
-// Reachability never passes *through* a load (valve coil, pump motor, relay coil, controller
-// transformer); wires, splices and sockets are pass-through conductors. A two-terminal device
-// is energised iff the source reaches it via each terminal with the other blocked. The relay's
-// 24V coil and 230V contact share one node: the contact conducts only once the coil loop closes.
+// Reachability never passes through a load; wires, splices and sockets are pass-through. A
+// two-terminal device is energised iff the source reaches it via each terminal with the other
+// blocked. The relay's 24V coil and 230V contact share one node: the contact conducts only once
+// the coil loop closes.
 
 import { typeOf } from "./model.js";
 
@@ -13,9 +13,8 @@ const zoneOf = (id) => {
   return m ? Number(m[1]) : null;
 };
 
-// A bundle (`to:` keyed by port) splits into one node per child conductor — `pid/port` — so a
-// single conductor is a distinct node, not the whole multi-core cable. Plain `to:` arrays keep
-// the node as-is, and references carry their full `pid/port` id (no longer collapsed to the bundle).
+// A `to:` keyed by port splits into one node per conductor (`pid/port`); plain `to:` arrays keep
+// the node as `pid`. References carry their full `pid/port` id.
 function buildAdj(electrical) {
   const adj = new Map();
   const ensure = (id) => {
@@ -98,8 +97,8 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const allLoads = new Set(ids.filter(isLoad));
   const valves = ids.filter((id) => typeOf(id) === "valve.auto");
 
-  // controllerGrid is resolved against the unfaulted graph: a fault cutting the feed must turn
-  // the controller off, not erase the socket and crash discovery.
+  // Resolve controllerGrid against the unfaulted graph: a fault cutting the feed must turn the
+  // controller off, not erase the socket and crash discovery.
   const sockets = ids.filter((id) => typeOf(id) === "source.socket");
   const gridSockets = sockets.filter((s) => ![...(adj.get(s) || [])].some(isLoad));
   const controllerGrid = gridSockets.find((s) =>
@@ -142,16 +141,13 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
       throughBoth(adj, controllerId, v, terms, blockLoadsExcept(allLoads, blocked, v));
   }
 
-  // Per-socket mains presence, feeding the `live` primitive below. A grid socket is live iff its
-  // wall plug is in; the pump's own socket sits downstream of the relay contact, so it is live iff
-  // the pump is.
+  // A grid socket is live iff its wall plug is in; the pump's socket sits downstream of the relay
+  // contact, so it is live iff the pump is.
   const socketLive = {};
   for (const s of sockets) socketLive[s] = [...(adj.get(s) || [])].some(isLoad) ? pumpPowered : false;
   if (controllerGrid) socketLive[controllerGrid] = adapterPlugged;
   if (pumpGrid) socketLive[pumpGrid] = gridPlugged;
 
-  // `live` — the single electrical state primitive: electricity reaches this node. A node is live
-  // when it sits on an energised path (lit below) or is a live socket (mains present at the wall).
   const liveNodes = new Set();
   const light = (path) => {
     if (!path) return;
@@ -177,7 +173,5 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const live = {};
   for (const id of ids) live[id] = liveNodes.has(id);
 
-  // One electrical primitive out: `live` per node. Consumers read a coil's liveness as
-  // live[valveId], the pump's as live[pumpId], the controller's as live[controllerId].
   return { live };
 }

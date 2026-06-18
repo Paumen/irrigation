@@ -60,7 +60,7 @@ const LINKish = (n) =>
 
 export function solveSteady(model, controls, elec, hyd, faults) {
   const fx = faults || emptyEffects();
-  validateOutletOverrides(model, controls); // fail-fast on illegal nozzle/arc controls
+  validateOutletOverrides(model, controls);
   const pumpId = [...model.flowNodes.values()].find((n) => n.role === "pump")?.id;
   const pumpOn = !!(elec.live[pumpId] && !fx.pumpDisabled);
   const minLift = model.minOperatingBar ?? VALVE_OPEN_BAR;
@@ -70,7 +70,7 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   const throttle = controls.throttle || {};
   const headShutoff = controls.headShutoff || {};
   const solenoidBleed = controls.solenoidBleed || {};
-  // Flo-Stop is a rotor-only feature; engaged (handle closed) shuts the head's internal seat.
+  // Flo-Stop is rotor-only; handleShutoff===false (closed) shuts the head's internal seat.
   const headShutoffEngaged = (o) => o.subkind === "rotor" && headShutoff[o.id] === false;
 
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
@@ -95,9 +95,9 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   for (const o of outlets) dmp.set(o.id, { q: 0, sign: 0, alpha: ALPHA });
 
   let prevP = {}; // epId -> bar
-  let valveInlet = {}; // flowId -> bar at the valve inlet node
-  let valveOutlet = {}; // flowId -> bar at the valve outlet node
-  const chamberBar = {}; // valveId -> bonnet-chamber pressure (bar), from the local actuation relation
+  let valveInlet = {}; // flowId -> bar
+  let valveOutlet = {}; // flowId -> bar
+  const chamberBar = {}; // valveId -> bar
   let res = null;
   let topo = null;
   let stable = 0;
@@ -117,7 +117,6 @@ export function solveSteady(model, controls, elec, hyd, faults) {
         }
         const inlet = valveInlet[v.id] ?? 0;
         const outlet = valveOutlet[v.id] ?? 0;
-        // Local actuation relation: chamber pressure from the valve's own inlet/outlet (not EPANET).
         const act = valveActuation({
           inletBar: inlet,
           outletBar: outlet,
@@ -131,9 +130,9 @@ export function solveSteady(model, controls, elec, hyd, faults) {
         if (!vented) {
           valveOpen[v.id] = false;
         } else if (valveOpen[v.id]) {
-          valveOpen[v.id] = inlet >= VALVE_STAY_BAR; // hold open until nearly drained
+          valveOpen[v.id] = inlet >= VALVE_STAY_BAR; // stay-open threshold (hysteresis vs lift)
         } else {
-          valveOpen[v.id] = inlet >= minLift; // need min_operating_bar to lift (hysteresis)
+          valveOpen[v.id] = inlet >= minLift; // lift threshold (hysteresis vs stay)
         }
       }
     }
@@ -145,18 +144,16 @@ export function solveSteady(model, controls, elec, hyd, faults) {
     for (const o of outlets) {
       const st = dmp.get(o.id);
       if (!reachable.has(o.id) || headShutoffEngaged(o)) {
-        // unreachable branch OR Flo-Stop engaged: no demand, no emitter — the head is shut
         st.q = 0;
         st.sign = 0;
         st.alpha = ALPHA;
         continue;
       }
-      const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar; cold-start guess
+      const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar
       const mod = fx.outletMods.get(o.id) || {};
       const cfg = effectiveOutletCfg(o, controls);
       const tableMin = outletTableMin(o, model.curves, cfg);
-      // below the table's lowest point run as an emitter rather than
-      // extrapolating the table toward 0 bar
+      // below the table's lowest point run as an emitter, not extrapolate the table toward 0 bar
       if (pPrev < tableMin.pMin_bar) {
         const headMin = tableMin.pMin_bar * M_PER_BAR;
         let coeff = headMin > 0 ? tableMin.qMin / Math.sqrt(headMin) : 0;
@@ -227,8 +224,8 @@ export function solveSteady(model, controls, elec, hyd, faults) {
 function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged, valvesFrozen) {
   const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
   const demands = new Map();
-  const throws = new Map(); // outletId -> throw radius (m) at its solved inlet pressure
-  const precip = new Map(); // outletId -> single-head application rate (mm/hr)
+  const throws = new Map(); // outletId -> throw radius (m)
+  const precip = new Map(); // outletId -> application rate (mm/hr)
   let outSum = 0;
   for (const o of outlets) {
     const ep = epOf(o.id);

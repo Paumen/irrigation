@@ -16,9 +16,9 @@ export function buildTopology(model, state) {
   const { flowNodes } = model;
   const pumpOn = !!state.pumpOn;
   const valveOpen = state.valveOpen || {};
-  const demands = state.demands || new Map(); // m3/h
-  const emitters = state.emitters || new Map(); // coeff CMH/sqrt(m)
-  const throttle = state.throttle || {}; // 0..1 (1 = factory-open)
+  const demands = state.demands || new Map();
+  const emitters = state.emitters || new Map();
+  const throttle = state.throttle || {}; // 0..1, 1 = factory-open
   const closedLinks = state.closedLinks || new Set();
   const linkK = state.linkK || new Map();
   const pumpHeadScale = state.pumpHeadScale ?? 1;
@@ -151,7 +151,7 @@ export function buildTopology(model, state) {
       pumps.push({ id: ep(L.id), n1, n2, curveId: "PCURVE" });
       if (!pumpOn) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-auto") {
-      // EPANET ignores the minor-loss column on GPVs, so throttle (1/t^2) and seat clog scale the curve
+      // EPANET ignores minor-loss on GPVs, so throttle and seat clog scale the curve instead
       const t = throttle[L.id] ?? 1;
       const lossScale = valveLossScale.get(L.id) ?? 1;
       let setting = "VCURVE";
@@ -163,7 +163,7 @@ export function buildTopology(model, state) {
       valves.push({ id: ep(L.id), flowId: L.id, n1, n2, diam_mm: CONNECTOR_DIAM_MM, type: "GPV", setting, mloss, isAuto: true });
       if (!valveOpen[L.id]) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-manual") {
-      // a TCV's setting IS its loss K, so seat clog scales the setting
+      // a TCV's setting IS its loss K, so seat clog scales it
       const diam = L.params.bore_mm || 16;
       valves.push({
         id: ep(L.id),
