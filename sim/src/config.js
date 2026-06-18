@@ -2,7 +2,7 @@ export const M_PER_BAR = 10.197;
 
 export const ALPHA = 0.5;
 export const ALPHA_MIN = 0.05;
-// EPANET emitters suck water IN at negative p; gate them off below this.
+// Gate emitters off below this; EPANET emitters suck water IN at negative p.
 export const EMITTER_GATE_BAR = 0.02;
 export const P_TOL_BAR = 1e-3;
 export const Q_TOL_M3H = 1e-4;
@@ -16,10 +16,10 @@ export const VALVE_FREEZE_TAIL = 12;
 
 export const SPRAY_CLAMP_BAR = 2.76;
 
-// Must stay well below VALVE_OPEN_BAR so a dead-headed but reachable branch reads pressurised.
+// Must stay below VALVE_OPEN_BAR so a dead-headed reachable branch reads pressurised.
 export const PRESSURISED_BAR = 0.1;
 
-// Floor keeps the 1/t² loss scaling finite; must be > 0.
+// Must be > 0 to keep 1/t² loss scaling finite.
 export const THROTTLE_MIN = 0.05;
 
 export const SWING_LEN_M = 0.3;
@@ -43,7 +43,7 @@ export const FLUSH_BORE_MM = 5;
 export const FLUSH_CD = 0.8;
 export const WRONG_STREAM_BORE_SCALE = 0.6;
 
-// K scales with diam^4, so it MUST use the same diameter declared on the TCV link.
+// diam_mm MUST match the diameter declared on the TCV link (K scales with diam^4).
 export function kvToTcvK(kv_m3h, diam_mm) {
   if (kv_m3h <= 0) return 1e9;
   const d = diam_mm / 1000;

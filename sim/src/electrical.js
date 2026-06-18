@@ -1,7 +1,6 @@
-// Reachability never passes through a load; wires, splices and sockets are pass-through. A
-// two-terminal device is energised iff the source reaches it via each terminal with the other
-// blocked. The relay's 24V coil and 230V contact share one node: the contact conducts only once
-// the coil loop closes.
+// Reachability never passes through a load. A two-terminal device is energised iff the source
+// reaches it via each terminal with the other blocked. The relay's 24V coil and 230V contact
+// share one node: the contact conducts only once the coil loop closes.
 
 import { typeOf } from "./model.js";
 
@@ -10,7 +9,7 @@ const isLoad = (id) => LOAD_TYPES.has(typeOf(id));
 const isWire = (id) => typeOf(id).startsWith("wiring.");
 
 // A `to:` keyed by port splits into one node per conductor (`pid/port`); plain `to:` arrays keep
-// the node as `pid`. References carry their full `pid/port` id.
+// the node as `pid`.
 function buildAdj(electrical) {
   const adj = new Map();
   const ensure = (id) => {
@@ -69,8 +68,7 @@ function blockLoadsExcept(allLoads, base, ...allow) {
   return s;
 }
 
-// A two-terminal coil energises when a hot source reaches one terminal and the shared return
-// reaches the other, closing the loop through the device — either polarity.
+// Closes if hot reaches one terminal and the shared return the other — either polarity.
 function loopClosed(adj, hot, ret, device, [a, b], base) {
   const hotViaA = reachable(adj, hot, device, new Set([...base, b]));
   const retViaB = reachable(adj, ret, device, new Set([...base, a]));
@@ -96,15 +94,14 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const allLoads = new Set(ids.filter(isLoad));
   const valves = ids.filter((id) => typeOf(id) === "valve.auto");
 
-  // Controller output ports are real nodes (`<controller>/<port>`): `common` is the shared 24V
-  // return, the rest are the switchable output terminals the controller energises.
+  // `common` is the shared 24V return; the rest are switchable output terminals.
   const portNodes = ids.filter((id) => id.startsWith(`${controllerId}/`));
   const commonNode = portNodes.find((id) => id.endsWith("/common"));
   const outPorts = portNodes.filter((id) => id !== commonNode);
   if (!commonNode) throw new Error("solveElectrical: controller has no /common return port");
 
-  // Resolve controllerGrid against the unfaulted graph: a fault cutting the feed must turn the
-  // controller off, not erase the socket and crash discovery.
+  // Resolve controllerGrid against the unfaulted graph (no `blocked`): a fault cutting the feed
+  // must turn the controller off, not erase the socket and crash discovery.
   const sockets = ids.filter((id) => typeOf(id) === "source.socket");
   const gridSockets = sockets.filter((s) => ![...(adj.get(s) || [])].some(isLoad));
   const controllerGrid = gridSockets.find((s) =>
@@ -117,11 +114,8 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
   const controllerPowered =
     reachable(adj, controllerGrid, controllerId, blockLoadsExcept(allLoads, blocked, controllerId));
 
-  // The control surface: which controller output ports are energised. The wiring — not the
-  // controller — decides whether a port trips the pump relay or lifts a zone valve.
   const energised = (commands.energize || []).filter((p) => outPorts.includes(p));
 
-  // The energised port (if any) whose loop closes through `device` against the shared return.
   const portClosing = (device, terms, base) => {
     if (!controllerPowered || terms.length !== 2) return null;
     return energised.find((p) => loopClosed(adj, p, commonNode, device, terms, base)) || null;
@@ -140,8 +134,8 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     valvePort[v] = portClosing(v, [...(adj.get(v) || [])], blockLoadsExcept(allLoads, blocked, v));
   }
 
-  // A grid socket carries mains, live in the healthy baseline (mains-loss is a fault, not a
-  // control); the pump's socket sits downstream of the relay contact, so it is live iff the pump is.
+  // A grid socket is live in the healthy baseline; the pump's socket sits downstream of the relay
+  // contact, so it is live iff the pump is.
   const socketLive = {};
   for (const s of sockets) socketLive[s] = [...(adj.get(s) || [])].some(isLoad) ? pumpPowered : false;
   if (controllerGrid) socketLive[controllerGrid] = true;
@@ -152,8 +146,7 @@ export function solveElectrical(model, commands = {}, blocked = new Set()) {
     if (!path) return;
     for (const node of path) liveNodes.add(node);
   };
-  // Light a closed coil loop: both legs, from the energised port and from the shared return (the
-  // dead polarity's pathOf finds no path and is a no-op).
+  // Light both legs and both polarities; the dead polarity's pathOf is a no-op.
   const lightLoop = (hot, device, [a, b], base) => {
     light(pathOf(adj, hot, device, new Set([...base, b])));
     light(pathOf(adj, hot, device, new Set([...base, a])));

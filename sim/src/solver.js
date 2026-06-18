@@ -1,5 +1,4 @@
-// EPANET emitters allow only one global exponent, but each outlet obeys its own catalog law,
-// so each iteration sets every outlet as a fixed demand from its law at the previous pressure.
+// EPANET emitters share one global exponent, so each outlet is set as a fixed demand from its own law at the previous pressure each iteration.
 import {
   ALPHA,
   ALPHA_MIN,
@@ -66,7 +65,6 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   const throttle = controls.throttle || {};
   const headShutoff = controls.headShutoff || {};
   const solenoidBleed = controls.solenoidBleed || {};
-  // Flo-Stop is rotor-only; headShutoff===false (closed) shuts the head's internal seat.
   const headShutoffEngaged = (o) => o.subkind === "rotor" && headShutoff[o.id] === false;
 
   const outlets = nodesByRole(model, "outlet");
@@ -90,10 +88,10 @@ export function solveSteady(model, controls, elec, hyd, faults) {
   const dmp = new Map();
   for (const o of outlets) dmp.set(o.id, { q: 0, sign: 0, alpha: ALPHA });
 
-  let prevP = {}; // epId -> bar
-  let valveInlet = {}; // flowId -> bar
-  let valveOutlet = {}; // flowId -> bar
-  const chamberBar = {}; // valveId -> bar
+  let prevP = {};
+  let valveInlet = {};
+  let valveOutlet = {};
+  const chamberBar = {};
   let res = null;
   let topo = null;
   let stable = 0;
@@ -124,9 +122,9 @@ export function solveSteady(model, controls, elec, hyd, faults) {
         if (!vented) {
           valveOpen[v.id] = false;
         } else if (valveOpen[v.id]) {
-          valveOpen[v.id] = inlet >= VALVE_STAY_BAR; // stay-open threshold (hysteresis vs lift)
+          valveOpen[v.id] = inlet >= VALVE_STAY_BAR;
         } else {
-          valveOpen[v.id] = inlet >= minLift; // lift threshold (hysteresis vs stay)
+          valveOpen[v.id] = inlet >= minLift;
         }
       }
     }
@@ -143,11 +141,11 @@ export function solveSteady(model, controls, elec, hyd, faults) {
         st.alpha = ALPHA;
         continue;
       }
-      const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5; // bar
+      const pPrev = res ? (prevP[epOf(o.id)] ?? 0) : 2.5;
       const mod = fx.outletMods.get(o.id) || {};
       const cfg = effectiveOutletCfg(o, controls);
       const tableMin = outletTableMin(o, model.curves, cfg);
-      // below the table's lowest point run as an emitter, not extrapolate the table toward 0 bar
+      // below the table's lowest point run as an emitter rather than extrapolate toward 0 bar
       if (pPrev < tableMin.pMin_bar) {
         const headMin = tableMin.pMin_bar * M_PER_BAR;
         let coeff = headMin > 0 ? tableMin.qMin / Math.sqrt(headMin) : 0;
@@ -218,8 +216,8 @@ export function solveSteady(model, controls, elec, hyd, faults) {
 function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, converged) {
   const outlets = nodesByRole(model, "outlet");
   const demands = new Map();
-  const throws = new Map(); // outletId -> throw radius (m)
-  const precip = new Map(); // outletId -> application rate (mm/hr)
+  const throws = new Map();
+  const precip = new Map();
   let outSum = 0;
   for (const o of outlets) {
     const ep = epOf(o.id);
@@ -236,7 +234,7 @@ function finalize(model, controls, fx, pumpOn, valveOpen, chamberBar, reachable,
       }
     }
   }
-  // Leaks aren't reported per-node, but their outflow still counts toward mass balance.
+  // leak outflow isn't reported per-node but still counts toward mass balance
   for (const [nodeId] of fx.leaks) outSum += res.demand[epOf(nodeId)] || 0;
   const pumpFlow = topo.pumpLinkId ? Math.abs(res.flow[topo.pumpLinkId] || 0) : 0;
   const massImbalance = pumpOn ? Math.abs(pumpFlow - outSum) : outSum;

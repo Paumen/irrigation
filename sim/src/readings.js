@@ -3,8 +3,8 @@ import { epOf, isLinkNode, nodeByRole } from "./model.js";
 
 const flow = (hyd, id) => hyd.demands.get(id) || 0;
 
-// EPANET reports pressure on junctions only; link-role nodes carry none, so a reachable
-// link counts as pressurised whenever the pump is driving the branch.
+// EPANET reports pressure on junctions only; link nodes carry none, so a reachable link is
+// pressurised iff the pump is driving it.
 export const pressurised = (model, hyd, id) => {
   const node = model.flowNodes.get(id);
   if (!node) throw new Error(`pressurised: no flow node "${id}"`);
@@ -14,8 +14,6 @@ export const pressurised = (model, hyd, id) => {
   return Number.isFinite(p) && p >= PRESSURISED_BAR;
 };
 
-// Traverse past link nodes (which carry no node pressure) to the nearest junction/reservoir
-// upstream of the pump.
 export const primed = (model, hyd) => {
   const pump = nodeByRole(model, "pump");
   if (!pump) throw new Error("primed: no pump node");
