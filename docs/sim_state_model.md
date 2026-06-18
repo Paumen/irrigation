@@ -3,19 +3,18 @@
 The **single authoritative model** for **controls**, **state**, **readings**, and **faults** in the
 irrigation simulator — the engine vocabulary. Other docs reference it and must not restate these
 decisions: `sim_spec.md` owns the requirements, `sim_ui.md` the UX, `sim_build_plan.md` the plan.
-Written from the domain; the migration map at the end says what each existing symbol becomes.
 
 ## Status — built vs. to-build
 
-This is a target spec, not a description of today's code. Honest about the gap:
+`sim_build_plan.md` owns the milestone status; in short:
 
-- **Now (this phase): a clean, healthy system.** Get `live`/`pressure`/`flow` and the
-  readings right for a correctly functioning system, and author the finer-grained topology
-  the model needs (valve internals, controller output ports).
+- **Built: the healthy system.** `live`/`pressure`/`flow` + readings, the finer-grained
+  topology (valve internals, controller output ports), and the local valve relation are in the
+  engine and exercised by the harness.
 - **Later: faults.** The three fault verbs are the *design intent*, not yet implemented.
-  `system.yaml` currently has **no `fail:` entries** and `compileFaults` is a stub. The rule
-  for this phase is: **don't build anything that makes faults hard to add later** — every
-  conductance and passage must be a real, named element a fault verb can target.
+  `system.yaml` has **no `fail:` entries** and `compileFaults` is a stub. The standing rule:
+  **don't build anything that makes faults hard to add later** — every conductance and passage
+  must be a real, named element a fault verb can target.
 
 ## The core distinction
 
@@ -158,7 +157,7 @@ scenarios (idle, one zone running, a cut controller feed, a shared-return break,
 same scenarios as today, asserting on `live`/`pressure`/`flow` and the readings directly
 instead of on a qualitative projection.
 
-## Worked example — the solenoid valve, including a clogged metering port
+## Worked example — the solenoid valve
 
 The valve's internals are real components, each carrying only the three primitives:
 
@@ -169,27 +168,18 @@ The valve's internals are real components, each carrying only the three primitiv
 | metering port | `flow` | **local relation** (`(inlet − chamber) / R_meter`) |
 | pilot seat / bleed port | `flow` | **local relation** (vent path when open) |
 
-The mechanism *is* physics — *no `up`/`down`/`open`/`closed` states, no rule engine*:
-
-- the valve passes flow ⟸ the pilot vents (`(coil live OR solenoidBleed OR bonnetBleed) AND throttle > 0` ⟹ `rVent < rMeter`) **AND** the inlet clears the lift/stay hysteresis
-- diaphragm position is a **reading** of (inlet `pressure` vs chamber `pressure`)
-
-**Metering port clogged** *(a later-phase fault)* = `clog(meteringPort)` — raise `R_meter`,
-the same verb as a clogged pipe:
+Diaphragm position is a **reading** of (inlet `pressure` vs chamber `pressure`) — *no
+`up`/`down`/`open`/`closed` states, no rule engine*. A later-phase `clog(meteringPort)` fault
+(raise `R_meter`, the same verb as a clogged pipe) shows the chain that authoring real internals buys:
 
 ```
 clog metering port → chamber can't refill → chamber pressure stays low
 → diaphragm stays lifted → valve passes flow even de-energized → stuck open / weeping
 ```
 
-Every step is one of the three primitives; the fault is one parameter on one real,
-named conductance; the diagnosis is tracing that chain. This is *why* the metering port,
-chamber and ports must be authored as real elements now even though faults come later — so
-the verb has something to target.
-
 ## Faults — three verbs (design intent, later phase)
 
-A fault never invents a new state. It touches one of three things:
+A fault never invents a new state; it touches one of three things:
 
 | verb | effect | examples |
 |---|---|---|
@@ -197,68 +187,23 @@ A fault never invents a new state. It touches one of three things:
 | `clog(id)` / `leak(id)` | change a component's hydraulic conductance | blocked nozzle, clogged metering port, pipe leak, weak pump |
 | `stuck(id, open\|closed)` | force a passage's actuation | valve seized open, diaphragm jammed |
 
-Every passage has a conductance, so any unexpected fault has a home without new vocabulary.
-**Not implemented this phase** — see Status. The healthy-system work must keep every
-conductance and passage a real, named element so these verbs drop in later without rework.
+Every passage has a conductance, so any unexpected fault has a home without new vocabulary — which
+is *why* the healthy-system phase keeps every conductance/passage a real, named element (see Status).
+Not built yet: `faults.js` is the no-fault stub (`emptyEffects()` exposes the old effect fields;
+`compileFaults` returns them unchanged). Building it means authoring `system.yaml` `fail:` entries
+and compiling each stub field to a verb:
 
-## Migration map — what each existing symbol becomes
+- `pumpDisabled`, `valveDisabled`, `elecBlocked` → `dead(id)`
+- `closedLinks`, `linkK`, `valveLossScale`, `pumpHeadScale`, `leaks`, `outletMods.flowScale/zeroFlow` → `clog`/`leak`
+- `valveForcedOpen`, `bleedForcedOpen` → `stuck(open)`; `outletMods.nozzle/arc` → an `nozzle`/`arc` control value
 
-Legend: KILL (gone) · BECOMES (re-homed) · KEEP (engine/physics, not state-vocab).
-
-### Controls (current input fields)
-- `manualOpen` BECOMES `handle{}` · `bleedOpen` BECOMES `bonnetBleed{}` · `solenoidBleed`/`throttle`/`nozzle`/`arc` KEEP · `floStop` BECOMES `headShutoff{}`
-- `pumpStart`/`mv`, `zones` KILL → `energize{port}` (role moves into the wiring; controller output ports authored as real nodes, `solveElectrical` takes `energize`)
-- `gridPower`/`adapterPower` KILL → **not replaced by a control**: `socket.live` is pinned live by default, mains-lost is `dead(socket)` (a fault). `env.wellWet`/`env.primingChamberWet` KILL → likewise no toggle: well wet / pump primed are healthy defaults, their loss is a fault, not a user pin.
-
-### Qualitative states (`states.js` + ~32 `system.yaml` `states:` blocks) — this whole layer dies
-- `live/dead` BECOMES primitive `live`
-- `wet/dry` BECOMES reading (`pressure` present)
-- `pressurised`, `primed`, `open/closed`, `up/down`, `watering/off` KILL → readings
-- `COMPLEMENT`, `POSITIVE`, `parseKindStates`, `axisOf`, `isGroupDef`, `hasRule`,
-  `buildStateResolver`, `validateStateResolver`, `computeStates`, `groundedPos`,
-  `CROSSCHECK_KEYS` — **`states.js` deleted in full** (cross-check coverage moves to the
-  scenario harness, see Validation)
-
-### Solve outputs ("states in disguise")
-- `pressureBar`/`headM` BECOMES `pressure`; `demands`/`flow`/`pumpFlow` BECOMES `flow`
-- `controllerEnergised`/`relayCoil`/`pumpPowered`/`zoneEnergised`/`socketLive`/`energisedWires` BECOMES `live` (one word, per component)
-- `pumpOn`, `valveOpen`, `watering` KILL → readings
-- `commandedNotOpening`/`commandedNotEnergised`/`pumpCommandedNotPowered` KILL → no replacement (a coil is just `dead`)
-- `reachable` KEEP (engine: the hydraulic propagation)
-- `converged`/`iters`/`valvesFrozen`/`dmp`/`stable`/`prevP`/`valveInlet` KEEP (solver bookkeeping)
-- `throws`/`precip` KEEP (readings from the head transfer law); `outSum`/`massImbalance` KEEP (diagnostics over `flow`)
-
-### Faults (`faults.js`) — later phase
-- `pumpDisabled`, `valveDisabled`, `elecBlocked` BECOMES `dead(id)`
-- `closedLinks`, `linkK`, `valveLossScale`, `pumpHeadScale`, `leaks`, `outletMods.flowScale/zeroFlow` BECOMES `clog`/`leak`
-- `valveForcedOpen`, `bleedForcedOpen` BECOMES `stuck(open)`; `outletMods.nozzle/arc` BECOMES an `nozzle`/`arc` control value
-- `emptyEffects()`/`compileFaults()` stay stubs this phase; `system.yaml` `fail:` entries to be authored later
-
-### Engine / topology (core reused — finer-grained, with a new local valve relation)
-- `solveElectrical` + `buildAdj`/`bfs`/`pathOf`/`reachable`/`throughBoth` KEEP (the `live` engine)
-- `solveSteady`/`computeReachable`/`finalize` KEEP (EPANET delivery solve); the fixed-point
-  valve loop decides open/closed from the vent-vs-metering conductance (`rVent < rMeter`) plus the inlet lift/stay hysteresis
-- **new** valve-actuation relation — per-valve local chamber-pressure / port-flow computation,
-  fed by EPANET's inlet/outlet pressures (NOT added to the EPANET network)
-- `buildTopology` EXTENDED — author valve internals and controller ports as real components;
-  internals feed the local relation, they are **not** spliced into the EPANET matrix
-- `outlets.js` (catalog transfer laws + nozzle/arc application), `model.js`
-  (roles decide which primitive a component carries), `inp.js`, `epanet-runner.js`, `units.js` KEEP
-- **new** `readings.js` — `open`, `pressurised`, `primed`, `watering`, `starved`
-
-### Config constants
-All KEEP, re-homed: unit/physics (`M_PER_BAR`, `G`); solver tuning (`ALPHA*`, `*_TOL*`,
-`MAX_ITERS`, `EPANET_*`, `VALVE_FREEZE_TAIL`); transfer params (`VALVE_OPEN_BAR`/`STAY_BAR`,
-`SPRAY_CLAMP_BAR`, geometry, `THROTTLE_MIN`, `PRESSURISED_BAR`); fault params (`CLOG_*`,
-`PILOT_CLOG_BLOCKS`, `PUMP_CLOG_LOSS`, `*_BORE_MM`, `*_CD`, `WRONG_STREAM_BORE_SCALE`)
-— the last group sits idle until the fault phase.
+The fault-tuning config constants (`CLOG_*`, `PILOT_CLOG_BLOCKS`, `PUMP_CLOG_LOSS`, `*_BORE_MM`,
+`*_CD`, `WRONG_STREAM_BORE_SCALE`) already sit in `config.js`, idle until this phase.
 
 ## Summary
 
-> **State = `live` + `pressure` + `flow`.** Eight controls — and nothing else the operator sets:
-> the three world-edge states (mains, well, prime) are pinned to their healthy default and only a
-> fault moves them. Everything else is a reading or the engine. Hydraulics split by scale: **EPANET** for the delivery network,
-> a **local pressure relation** for each valve's actuation circuit (no tiny flows in the EPANET
-> matrix). The qualitative layer (`states.js` + the YAML `states:` blocks) is **deleted**, its
-> validation moving to scenario tests. Faults (`dead` / `clog`-`leak` / `stuck`) are the next
-> phase; this phase keeps every conductance a real named element so they drop in without rework.
+> **State = `live` + `pressure` + `flow`**, produced by one solve — EPANET for the delivery network,
+> a local pressure relation for each valve's actuation circuit. Eight controls and nothing else the
+> operator sets; world-edge states (mains, well, prime) sit at their healthy default and move only
+> under a fault. Everything else is a reading. The old qualitative layer (`states.js` + the YAML
+> `states:` blocks) is **deleted**; faults (`dead` / `clog`-`leak` / `stuck`) are the next phase.
