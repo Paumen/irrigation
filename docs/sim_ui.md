@@ -25,7 +25,7 @@ A scenario explorer — set controls, watch the system respond.
 - Comprehensible in one view; nothing hidden behind a mode.
 - Diagram mostly visual, most text and numbers live in a side sheet.
 - Item carries status indicator(s).
-- Every connection traceable end to end, nothing crossing or dangling 
+- Every connection traceable end to end, no ambigious crossing or dangling 
   - Ideas to reach outcome (apply none, one, or several):
     - orthogonal routing
     - per-terminal colour-coding
