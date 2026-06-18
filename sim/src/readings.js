@@ -1,17 +1,15 @@
 import { PRESSURISED_BAR } from "./config.js";
+import { epOf, isLinkNode, nodeByRole } from "./model.js";
 
-const epOf = (id) => id.replace(/\./g, "_");
 const flow = (hyd, id) => hyd.demands.get(id) || 0;
 
 // EPANET reports pressure on junctions only; link-role nodes carry none, so a reachable
 // link counts as pressurised whenever the pump is driving the branch.
-const LINK_ROLES = new Set(["pipe", "pump", "valve-auto", "valve-manual"]);
-
 export const pressurised = (model, hyd, id) => {
   const node = model.flowNodes.get(id);
   if (!node) throw new Error(`pressurised: no flow node "${id}"`);
   if (!hyd.reachable.has(id)) return false;
-  if (LINK_ROLES.has(node.role)) return !!hyd.pumpOn;
+  if (isLinkNode(node)) return !!hyd.pumpOn;
   const p = hyd.pressureBar[epOf(id)];
   return Number.isFinite(p) && p >= PRESSURISED_BAR;
 };
@@ -19,12 +17,12 @@ export const pressurised = (model, hyd, id) => {
 // Traverse past link nodes (which carry no node pressure) to the nearest junction/reservoir
 // upstream of the pump.
 export const primed = (model, hyd) => {
-  const pump = [...model.flowNodes.values()].find((n) => n.role === "pump");
+  const pump = nodeByRole(model, "pump");
   if (!pump) throw new Error("primed: no pump node");
   const parentOf = (id) => [...model.flowNodes.values()].find((n) => n.to.includes(id));
   let node = parentOf(pump.id);
   if (!node) throw new Error("primed: pump has no inlet node");
-  while (LINK_ROLES.has(node.role)) {
+  while (isLinkNode(node)) {
     node = parentOf(node.id);
     if (!node) throw new Error("primed: no junction/reservoir upstream of the pump");
   }

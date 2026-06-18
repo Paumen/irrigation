@@ -1,4 +1,5 @@
 import { SPRAY_CLAMP_BAR } from "./config.js";
+import { nodesByRole } from "./model.js";
 
 export function interp(xs, ys, x) {
   const pts = [];
@@ -26,9 +27,12 @@ export function effectiveOutletCfg(outlet, controls = {}) {
   };
 }
 
+// Rotor nozzle config carries a trailing label (e.g. "3.0 grey"); the size is the leading token.
+const rotorSize = (cfg) => String(cfg.nozzle).split(/\s+/)[0];
+
 function tableRows(outlet, curves, cfg = effectiveOutletCfg(outlet)) {
   if (outlet.subkind === "rotor") {
-    const size = String(cfg.nozzle).split(/\s+/)[0];
+    const size = rotorSize(cfg);
     const row = curves.nozzleI20.flow_m3h[size];
     if (!row) throw new Error(`outlets: no head.rotor/nozzle row for size "${size}"`);
     return { pressures: curves.nozzleI20.pressure_bar, row };
@@ -52,7 +56,7 @@ export function outletDemandAt(outlet, p_bar, curves, cfg = effectiveOutletCfg(o
 // Spray radius is keyed by model only: MP radius is matched-precip, so independent of arc.
 export function outletThrowAt(outlet, p_bar, curves, cfg = effectiveOutletCfg(outlet)) {
   if (outlet.subkind === "rotor") {
-    const row = curves.nozzleI20.radius_m?.[String(cfg.nozzle).split(/\s+/)[0]];
+    const row = curves.nozzleI20.radius_m?.[rotorSize(cfg)];
     return row ? interp(curves.nozzleI20.pressure_bar, row, p_bar) : null;
   }
   if (outlet.subkind === "spray") {
@@ -98,12 +102,12 @@ export function validOutletOptions(outlet, curves) {
 }
 
 export function validateOutletOverrides(model, controls = {}) {
-  const outlets = [...model.flowNodes.values()].filter((n) => n.role === "outlet");
+  const outlets = nodesByRole(model, "outlet");
   for (const o of outlets) {
     const cfg = effectiveOutletCfg(o, controls);
     const opts = validOutletOptions(o, model.curves);
     if (o.subkind === "rotor") {
-      const size = String(cfg.nozzle).split(/\s+/)[0];
+      const size = rotorSize(cfg);
       if (!opts.nozzle.includes(size)) {
         throw new Error(`${o.id}: nozzle "${cfg.nozzle}" invalid (valid: ${opts.nozzle.join(", ")})`);
       }
