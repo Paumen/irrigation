@@ -5,8 +5,8 @@ import {
   CONNECTOR_DIAM_MM,
   DEFAULT_ROUGHNESS_MM,
   THROTTLE_MIN,
+  kvToTcvK,
 } from "./config.js";
-import { kvToTcvK } from "./units.js";
 import { epOf, isLinkNode } from "./model.js";
 
 const NODE_ROLES = new Set(["reservoir", "junction", "cap", "outlet"]);
