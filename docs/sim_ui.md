@@ -37,8 +37,8 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 ## Diagram
 - **U6** — Holistic hydraulics and electrical.
 - **U7** — Comprehensible in one view; nothing hidden behind a mode.
-- **U8** — Diagram mostly visual; most text and numbers live in a panel beside the diagram,
-  which stays the main view.
+- **U8** — Diagram mostly visual; most text and numbers live in a panel, while the diagram
+  stays the main view.
 - **U9** — Each item carries status indicator(s) — the per-item readings in
   `sim_state_model.md`, mapped by item type:
     - valve → `open`
@@ -89,7 +89,7 @@ requirement are non-binding menus (apply none, one, or several), not requirement
     - broken segments drawn dashed/red.
 
 ## Interaction
-- **U17** — Control and inspect from the side panel: controls, states, inputs/outputs, numbers.
+- **U17** — Control and inspect from the panel: controls, states, inputs/outputs, numbers.
 - **U18** — Tapping an item shows its live values and controls, read against what it can
   actually do — catalog context (head flow span, pump curve, valve loss range).
 - **U19** — Controls live at item level. The canonical surface is the eight controls in
