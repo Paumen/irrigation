@@ -186,7 +186,7 @@ no qualitative rule layer). The geometry/UI (M5–M6), quasi-time (M7), the faul
 | **M4** electrical + actuation | ✅ | `src/electrical.js`; harness cases *broken shared return* + *cut controller feed* |
 | **M5** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
 | **M6** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
-| **M7** quasi-time | ⬜ | `quasitime.js` absent |
+| **M7** quasi-time | ⚠️ | `src/quasitime.js` is a **stub** — `transition` snaps to the target (identity); the semi-realistic interpolation is unbuilt |
 | **M8** faults | ⬜ | `src/faults.js` is a **stub** — `compileFaults` returns `emptyEffects()` only; the three-verb compiler and `system.yaml` `fail:` entries are unbuilt |
 | **M9** polish + Pages | ⬜ | no `.github/workflows/pages.yml`, no `sim/README.md` |
 
