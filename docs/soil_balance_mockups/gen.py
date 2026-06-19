@@ -93,7 +93,7 @@ s.append(f'<rect x="{bx:.1f}" y="{SKY_TOP}" width="{STEP:.1f}" height="{Y_BOT-SK
 # sky
 s.append(f'<rect x="{X0}" y="{SKY_TOP}" width="{X1-X0:.1f}" height="{Y_SURF-SKY_TOP}" fill="{C_SKY}"/>')
 # sun on top of the scene (UI-1 — the day's energy that drives ET out)
-sun_x, sun_y, sun_r = X1 - 22, SKY_TOP + 19, 8
+sun_x, sun_y, sun_r = X1 - 22, SKY_TOP + 17, 8
 rays = []
 for ang in range(0, 360, 45):
     a = math.radians(ang)
