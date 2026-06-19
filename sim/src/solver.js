@@ -177,7 +177,7 @@ export function solveSteady(model, controls, elec, hyd) {
       if (Number.isFinite(p) && Number.isFinite(prevP[ep])) maxdp = Math.max(maxdp, Math.abs(p - prevP[ep]));
     }
     prevP = { ...res.pressureBar };
-    if (res && maxdp < P_TOL_BAR && maxStep < Q_TOL_M3H) {
+    if (maxdp < P_TOL_BAR && maxStep < Q_TOL_M3H) {
       if (++stable >= STABLE_ITERS) {
         return finalize(model, controls, pumpOn, valveOpen, chamberBar, reachable, res, topo, iters, true);
       }
