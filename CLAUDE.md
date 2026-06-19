@@ -19,8 +19,8 @@ A physics engine for the system's hydraulics **and** control wiring, in progress
 - `sim_build_plan.md` — **the plan**: milestones, file layout, build order, status, verification. Owns the milestone numbering.
 
 - **Input** is the root `system.yaml` — single source of truth (the former `graph.yaml` + `catalog.yaml` + `context.yaml`, merged; no copies).
-- **`faults.js` is a stub** — `compileFaults` returns `emptyEffects()` (the no-fault baseline); the fault milestone is unbuilt.
-- **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, controls, elec, hyd, compileFaults(model, faults))`.
+- **No fault layer.** `faults.js` and its effect seams have been removed; `solveSteady` models the healthy system only. Re-introducing faults (the deferred M8 milestone) means re-adding the solver/network hooks from scratch.
+- **Verify: `cd sim && npm install && npm test`** (full harness; `npm run smoke` is the M0 EPANET spike). Pipeline: `buildModel` → `solveElectrical` → `solveSteady(model, controls, elec, hyd)`.
 
 ## Session setup
 

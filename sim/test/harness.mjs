@@ -3,7 +3,6 @@ import { buildModel } from "../src/model.js";
 import { createHydraulics } from "../src/epanet-runner.js";
 import { solveSteady } from "../src/solver.js";
 import { solveElectrical } from "../src/electrical.js";
-import { compileFaults } from "../src/faults.js";
 import { outletDemandAt, outletThrowAt, interp } from "../src/outlets.js";
 import { open, watering, pressurised, starved, primed } from "../src/readings.js";
 import { SPRAY_CLAMP_BAR } from "../src/config.js";
@@ -52,14 +51,13 @@ function table(model, r) {
 const model = buildModel(loadGraph(), loadCatalog());
 const hyd = await createHydraulics();
 console.log(`epanet-js engine version: ${hyd.version}\n`);
-const noFaults = compileFaults(model, {});
 
 {
   console.log("CASE idle");
   const elec = solveElectrical(model, {});
   check(elec.live["S1_pump.jet"] === false, "idle: pump not powered (no command)");
   check([2,3,4,5].every((z) => elec.live[`Z${z}_valve.auto`] === false), "idle: no zone energised");
-  const r = solveSteady(model, {}, elec, hyd, noFaults);
+  const r = solveSteady(model, {}, elec, hyd);
   table(model, r);
   check(r.converged, "idle converges");
   check(r.pumpFlow < 1e-6, "no pump flow when off");
@@ -78,7 +76,7 @@ const noFaults = compileFaults(model, {});
   check(elec.live["S1_pump.jet"] === true, "pump powered through healthy wiring");
   check(elec.live["Z2_valve.auto"] === true, "Z2 energised");
   check([3, 4, 5].every((z) => elec.live[`Z${z}_valve.auto`] === false), "Z3/Z4/Z5 not energised");
-  const r = solveSteady(model, {}, elec, hyd, noFaults);
+  const r = solveSteady(model, {}, elec, hyd);
   table(model, r);
   check(r.valveOpen["Z2_valve.auto"] === true, "Z2 valve open");
   check(r.converged, "converges");
@@ -151,7 +149,7 @@ const noFaults = compileFaults(model, {});
     "live coils: Z2/Z3 dead (return crosses the cut), Z4/Z5 live",
   );
 
-  const r = solveSteady(model, {}, elec, hyd, noFaults);
+  const r = solveSteady(model, {}, elec, hyd);
   table(model, r);
   check(r.converged, "converges");
   check(r.massImbalance < 1e-3, `mass balance < 1e-3 (got ${r.massImbalance.toExponential(2)})`);
@@ -191,7 +189,7 @@ const noFaults = compileFaults(model, {});
   console.log("\nCASE bonnet bleed opens an un-commanded valve");
   const bleedControls = { bonnetBleed: { "Z3_valve.auto": true } };
   const elec = solveElectrical(model, energize("pump"));
-  const r = solveSteady(model, bleedControls, elec, hyd, noFaults);
+  const r = solveSteady(model, bleedControls, elec, hyd);
   check(elec.live["Z3_valve.auto"] !== true, "Z3 not electrically commanded");
   check(open(r, "Z3_valve.auto"), "Z3 valve open via the bonnet bleed screw (no command)");
   check(r.chamberBar["Z3_valve.auto"] < r.pressureBar[epOf("Z3_joint.sm1bm1")], "Z3 bonnet chamber bled below inlet");

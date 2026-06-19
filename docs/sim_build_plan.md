@@ -70,7 +70,6 @@ sim/
     outlets.js          pressure->flow laws (rotor table, spray clamp@2.76, orifice, leak)
     solver.js           OUTER fixed-point loop + local valve relation  <- core
     electrical.js       continuity/energization solver over circuit.parts+wires -> per-component live
-    faults.js           three-verb fault compiler (dead | clog·leak | stuck), per sim_state_model.md
     readings.js         derived views over the solve: open, pressurised, primed, watering, starved
     geometry.js         hand-authored coordinates: every flow node, circuit-part port pin, wire route
     scene.js            model + geometry -> static scene graph (pipe/wire paths, glyph descriptors)
@@ -101,9 +100,9 @@ Classify each `flow` node by `kind`:
   sees the fitting once). Document the different-bore approximation.
 - **Options:** `UNITS CMH` (matches catalog m³/h directly), `HEADLOSS D-W` (roughness in mm). Pressure m→bar ÷10.197.
 
-### Outer solver (`solver.js`) — `solveSteady(model, controls, elec, hyd, faults) -> SteadyResult`
+### Outer solver (`solver.js`) — `solveSteady(model, controls, elec, hyd) -> SteadyResult`
 Loop (≤~60 iters), baseline = rebuild INP each iteration and re-`open()` (sub-ms):
-1. **Actuate valves** from the current pressure guess + `elec` + bleed/handle + faults, via the local
+1. **Actuate valves** from the current pressure guess + `elec` + bleed/handle, via the local
    valve relation (`sim_state_model.md`); the lift/stay hysteresis is open 1.5 / stay 1.4 bar and
    `chamberBar` is the resulting diagnostic chamber pressure. Freeze valve states for the last few iters
    to stop flapping.
@@ -135,11 +134,14 @@ common return** means one break can disable several zones — falls out naturall
 **`live`** primitive per node — every node on a closed current-carrying path reads `live`, a node
 merely at potential stays dead, so a single broken wire reads dead while its neighbours stay lit.
 
-### Faults (`faults.js`)
-The three-verb fault model (`dead` / `clog`·`leak` / `stuck`) and the map from the current
-`emptyEffects()` stub fields onto those verbs live in `sim_state_model.md`. `compileFaults` returns
-the no-fault baseline today; building it = author `fail:` entries in `system.yaml` and compile each to
-a verb against the granular topology (every conductance/passage is already a real element).
+### Faults
+**Removed.** `faults.js` and every fault effect-seam (`closedLinks`, `linkK`, `pumpHeadScale`,
+`valveLossScale`, `valveDisabled`, `valveForcedOpen`, `bleedForcedOpen`, `outletMods`, `leaks`,
+`elecBlocked`) that were threaded through `solver.js`/`network.js` have been deleted; the engine
+models the healthy system only. The three-verb fault model (`dead` / `clog`·`leak` / `stuck`) still
+lives in `sim_state_model.md` as design intent, but M8 now re-introduces those hooks from scratch
+rather than fleshing out a stub. (`solveElectrical`'s `blocked` param is **not** a fault seam — it is
+the M4 broken-wire input the harness drives directly, and stays.)
 
 ### Geometry + render (`geometry.js`, `scene.js`, `render.js`)
 No auto-layout (decision superseding the earlier elkjs plan): `geometry.js` is a hand-authored,
@@ -163,8 +165,7 @@ the per-component `live` primitive.
 energize, manual handle, throttle, bonnet bleed, solenoid bleed, head shut-off, nozzle/arc) — and
 **nothing else the operator sets**: the world-edge states (mains, well, prime) are pinned to their
 healthy default and are not control widgets (their loss is a fault, see M8). Any change → debounced
-`electrical → compile faults →
-solveSteady → renderScene`. The quasi-time module (`quasitime.js`) animates the change between states:
+`electrical → solveSteady → renderScene`. The quasi-time module (`quasitime.js`) animates the change between states:
 on a state change, flow (and possibly other quantities) transition semi-realistically over time from
 the previous settled result to the new one, rather than snapping instantly. Both endpoints are full
 `solveSteady` results and the transition is an in-view animation, not a separate mode (consistent
@@ -187,7 +188,7 @@ no qualitative rule layer). The geometry/UI (M5–M6), quasi-time (M7), the faul
 | **M5** geometry/scene/render | ⬜ | none of `geometry.js`/`scene.js`/`render.js` exist |
 | **M6** controls + worker + app | ⬜ | none of `controls.js`/`app.js`/`index.html` exist |
 | **M7** quasi-time | ⬜ | `quasitime.js` absent |
-| **M8** faults | ⬜ | `src/faults.js` is a **stub** — `compileFaults` returns `emptyEffects()` only; the three-verb compiler and `system.yaml` `fail:` entries are unbuilt |
+| **M8** faults | ⬜ | not started — `src/faults.js` and the solver/network fault seams were **removed**; M8 re-introduces the three-verb compiler and the hooks from scratch |
 | **M9** polish + Pages | ⬜ | no `.github/workflows/pages.yml`, no `sim/README.md` |
 
 Verify the current core with `cd sim && npm install && npm test` (full harness) or `npm run smoke` (M0 spike).
