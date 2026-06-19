@@ -14,6 +14,9 @@ treat as ground. Open = unresolved question noted below; not final.
 - **Open / to improve:**
   - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
+  - **U6** — "holistic" is fuzzy: both domains in one picture vs. complete/nothing-omitted
+    vs. coupling-made-legible (likely all three). Also clarify the U6/U7 split (what's
+    depicted vs. how it's presented).
 
 ## Style
 - **U1** — Light theme.
