@@ -37,8 +37,8 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 ## Diagram
 - **U6** — Holistic hydraulics and electrical.
 - **U7** — Comprehensible in one view; nothing hidden behind a mode.
-- **U8** — Diagram mostly visual and always the main view; text and numbers live in a side
-  panel that overlays the diagram rather than shrinking it.
+- **U8** — Diagram mostly visual; most text and numbers live in a panel beside the diagram,
+  which stays the main view.
 - **U9** — Each item carries status indicator(s) — the per-item readings in
   `sim_state_model.md`, mapped by item type:
     - valve → `open`
@@ -100,10 +100,6 @@ requirement are non-binding menus (apply none, one, or several), not requirement
   view says so plainly rather than showing numbers that look real but aren't.
 - **U22** — Each property has one home: where it is both shown and set, that visual is its
   control (arc is the wedge), never a duplicate widget.
-- **U23** — The side panel is open only while an item is selected; with nothing selected it is
-  closed and the diagram fills the view. This holds on phone portrait (U2) exactly as on any
-  larger screen — the overlaying side panel is the only inspector pattern; there is no separate
-  mobile sheet or narrow-screen layout.
 
 ## Deferred
 - **fault injection** — fault injection and any fault-related UI are deferred until the
