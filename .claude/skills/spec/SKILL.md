@@ -16,7 +16,7 @@ This skill covers three phases — **Writing**, **Iterating**, **Reviewing** —
 - **A skipped question stays open.** A batch of quick questions at once is fine. If the user skips one, that is not "you choose" — keep it open and re-surface it later. Never silently fill the gap.
 - **Ask instead of theorizing.** When intent is fuzzy, pull it out with rapid small questions rather than reasoning toward a guess in your head. Asking is faster than being wrong.
 - **Flag every guess.** If you must move past a gap, say plainly "I'm guessing here" and mark it. Don't smooth an assumption into the text as if it were settled.
-- **Put a cheap partial out early.** A stub, one slice, one example line, one row — the lowest-cost thing the user can react to — and let their reaction steer. Not a half-built feature; the point is low sunk cost.
+- **Put a cheap partial out early.** A stub, mockup, svg, png — the lowest-cost thing the user can react to — and let their reaction steer.
 - **Outcome before mechanism.** Anchor on the result the user wants and why. Hold off on *how* until the *what* is agreed — the how is the easiest thing to redo once intent is clear.
 - **Read back, then lock.** Before locking a settled part, restate it in *your own* words — not an echo of theirs — and ask "is this what you mean?". The paraphrase is what surfaces a misread, cheaply, before it's built on. Only on a yes: name it, fix it in one line, treat it as ground the rest stands on.
 
