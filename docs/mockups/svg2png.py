@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Standard SVG -> PNG converter for the mockups in this directory.
 
-Renders every `*.svg` next to this script to a same-named `*.png`, so the
-committed PNGs stay in sync with their SVG sources (the ones `gen.py` emits
+Renders every `svg/*.svg` source to a same-named `*.png` in this directory, so
+the committed PNGs stay in sync with their SVG sources (the ones `gen.py` emits
 and the hand-authored side-panel mocks alike).
 
 Standard install:  pip install cairosvg
 Usage:             python3 svg2png.py [--scale N] [file.svg ...]
 
-With no file arguments it converts all SVGs in this directory. `--scale`
+With no file arguments it converts all SVGs in `svg/`. `--scale`
 (default 2) sets the output resolution multiplier.
 """
 import glob
@@ -16,6 +16,7 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.join(HERE, "svg")
 
 
 def main(argv):
@@ -33,12 +34,12 @@ def main(argv):
     except ImportError:
         sys.exit("cairosvg not installed — run:  pip install cairosvg")
 
-    svgs = args or sorted(glob.glob(os.path.join(HERE, "*.svg")))
+    svgs = args or sorted(glob.glob(os.path.join(SRC, "*.svg")))
     if not svgs:
         sys.exit("no SVGs found")
 
     for svg in svgs:
-        png = os.path.splitext(svg)[0] + ".png"
+        png = os.path.join(HERE, os.path.splitext(os.path.basename(svg))[0] + ".png")
         cairosvg.svg2png(url=svg, write_to=png, scale=scale)
         print("rendered", os.path.basename(png))
 

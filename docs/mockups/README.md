@@ -18,14 +18,19 @@ line visualizations). There are two diagrams, two side panels, and one legend:
 | `sim-ui-U18-side-panel-docked` | Tap an item → panel **docks beside** the diagram, which stays the canvas. | U18 · U8·U14·U15·U17·U19·U20 |
 | `sim-ui-U12-U16-diagram-line-visualizations` | Legend: how each value is drawn — flow, pressure, status icons, coverage wedge, live/broken wiring. | U12–U16 · U9·U21·R12 |
 
+## Layout
+
+SVG **sources** live in `svg/`; the rendered **PNGs** (what you view inline)
+sit at the top level next to this README, same basename.
+
 ## Regenerating
 
 The two **diagram-style** sheets and the **legend** are generated; the two
-**side-panel** mocks are hand-authored SVG (edited directly).
+**side-panel** mocks are hand-authored SVG in `svg/` (edited directly).
 
 ```sh
-python3 gen.py        # (re)writes the generated SVGs in place
-python3 svg2png.py    # renders every *.svg here to a same-named *.png
+python3 gen.py        # (re)writes the generated SVG sources into svg/
+python3 svg2png.py    # renders every svg/*.svg to a same-named *.png here
 ```
 
 `svg2png.py` is a standard SVG→PNG converter (`pip install cairosvg`); it keeps
