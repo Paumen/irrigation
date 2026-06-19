@@ -16,6 +16,7 @@ treat as ground. Open = unresolved question noted below; not final.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
   - **U6** — wording sharpened (integrated diagram, coupling legible) but not yet final.
   - **U9** — per-item status indicator mapping; not yet final.
+  - **U10** — to be validated against a diagram mockup (connection traceability end to end).
 
 ## Style
 - **U1** — Light theme.
