@@ -36,3 +36,10 @@ every committed PNG in sync with its SVG source, hand-authored ones included.
 Flow magnitude (thickness vs dash-speed vs both); pressure (fill saturation vs
 number badge vs both); coverage wedges (always-on vs selected-head only);
 side panel overlay vs docked.
+
+## Session archive (`session-*`)
+
+Raw, unedited mocks from the chat exploration that fed the sheets above — kept as
+a record only. They predate this naming and the still-open overlay-vs-docked
+question (U8); prefer the `sim-ui-*` sheets.
+
