@@ -30,6 +30,7 @@ This skill covers three phases — **Writing**, **Iterating**, **Reviewing** —
 Write the spec itself, separate from the conversation, in this shape:
 
 - **One requirement = an ID + one plain sentence.** Stable short ID (e.g. `S3`, `L2`, `U5`), then a single sentence a non-developer could read aloud. No compound requirements — split them.
+- **An ID is permanent once assigned.** Never renumber existing requirements when one is added or removed — give a new requirement the next free ID, and leave a deleted one's ID retired (don't reuse it). Renumbering silently breaks every reference, in the doc and outside it.
 - **Group into three buckets:**
   - **States** — what the thing can *be* (modes, conditions, the values something holds).
   - **Logic** — how it *behaves* / what drives a change from one state to another (rules, transitions, computations).
