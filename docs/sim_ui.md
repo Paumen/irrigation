@@ -10,10 +10,11 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 Tracks which requirements are settled vs. still being worked. Locked = wording agreed,
 treat as ground. Open = unresolved question noted below; not final.
 
-- **Locked (final):** U1, U2, U4, U5, U6
+- **Locked (final):** U1, U2, U4, U5, U7
 - **Open / to improve:**
   - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
+  - **U6** — wording sharpened (integrated diagram, coupling legible) but not yet final.
 
 ## Style
 - **U1** — Light theme.
@@ -48,7 +49,7 @@ treat as ground. Open = unresolved question noted below; not final.
 - **U6** — One integrated diagram showing both the hydraulic network and the control wiring
   together — complete, with the coupling between them (coil energizes → valve opens → flow)
   legible, not two separate pictures.
-- **U7** — Comprehensible in one view; nothing hidden behind a mode.
+- **U7** — The diagram is comprehensible in one view; nothing hidden behind a mode.
 - **U8** — Diagram stays the main view; most text and numbers live in the panel (U25), not on
   the diagram.
 - **U23** — Only two kinds of number appear on the diagram itself — pump pressure and each
