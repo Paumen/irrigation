@@ -7,6 +7,7 @@ watering, planting on the surface, sun on top.
 
 Emits  svg/UI1-UI7-soil-balance.svg  ; render with svg2png.py.
 """
+import math
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +25,7 @@ WATER_HI= "#74C4E8"
 WATER_LO= "#2E8FC0"
 TURF    = "#5BAE5B"
 ROOT    = "#8a6a3f"
-RAIN    = "#49A6DC"
+RAIN_COLOR = "#49A6DC"
 ET       = "#E0913B"
 DOSE    = "#3FB28E"
 SUN     = "#F4C430"
@@ -116,7 +117,6 @@ add(f'<text x="{L}" y="{CARD_Y+40}" font-size="9.5" fill="{MUTED}">'
 sx, sy = W - 56, CARD_Y + 30
 add(f'<g stroke="{SUN}" stroke-width="2" stroke-linecap="round">')
 for a in range(0, 360, 45):
-    import math
     dx, dy = math.cos(math.radians(a)), math.sin(math.radians(a))
     add(f'<line x1="{sx+dx*12:.1f}" y1="{sy+dy*12:.1f}" x2="{sx+dx*17:.1f}" y2="{sy+dy*17:.1f}"/>')
 add('</g>')
@@ -144,9 +144,9 @@ for i in range(N):
     # rain drop in (down)
     if RAIN[i] > 0:
         add(f'<path d="M{x:.1f} {yb} c3 4 4.5 6 4.5 8 a4.5 4.5 0 0 1 -9 0 c0 -2 1.5 -4 4.5 -8 Z" '
-            f'fill="{RAIN}"/>')
+            f'fill="{RAIN_COLOR}"/>')
         add(f'<ellipse cx="{x-1.3:.1f}" cy="{yb+8.5}" rx="1.3" ry="2" fill="#CDEBFB"/>')
-        add(f'<text x="{x:.1f}" y="{yb+22}" font-size="7.5" fill="{RAIN}" '
+        add(f'<text x="{x:.1f}" y="{yb+22}" font-size="7.5" fill="{RAIN_COLOR}" '
             f'text-anchor="middle">{RAIN[i]:g}</text>')
     else:
         # ET loss out (up arrow) — every dry day
@@ -241,7 +241,7 @@ row2 = ly + 40
 col2 = L + 150
 leg(L,    row1, lambda x,y: f'<rect x="{x}" y="{y-7}" width="14" height="14" rx="3" fill="url(#water)"/>', "soil water")
 leg(col2, row1, lambda x,y: f'<line x1="{x}" y1="{y}" x2="{x+15}" y2="{y}" stroke="{THRESH}" stroke-width="1.6" stroke-dasharray="4 3"/>', "watering threshold")
-leg(L,    row2, lambda x,y: f'<path d="M{x+7} {y-8} c3 4 4.5 6 4.5 8 a4.5 4.5 0 0 1 -9 0 c0 -2 1.5 -4 4.5 -8 Z" fill="{RAIN}"/><ellipse cx="{x+5.5}" cy="{y+0.5}" rx="1.4" ry="2.1" fill="#CDEBFB"/>', "rain in")
+leg(L,    row2, lambda x,y: f'<path d="M{x+7} {y-8} c3 4 4.5 6 4.5 8 a4.5 4.5 0 0 1 -9 0 c0 -2 1.5 -4 4.5 -8 Z" fill="{RAIN_COLOR}"/><ellipse cx="{x+5.5}" cy="{y+0.5}" rx="1.4" ry="2.1" fill="#CDEBFB"/>', "rain in")
 leg(col2, row2, lambda x,y: f'<path d="M{x+7} {y+5} l0 -10 M{x+4} {y-2} l3 -3 l3 3" fill="none" stroke="{ET}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>', "ET loss")
 # watering-dose chip on its own line
 row3 = ly + 62
