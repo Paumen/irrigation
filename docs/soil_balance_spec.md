@@ -1,86 +1,37 @@
-# Soil-Balance Tool — Requirements
+# Soil-Balance webapp
 
-A single-screen tool that judges irrigation need for one fixed location by
-modelling soil moisture against recent and forecast weather, and watering.
+## 1. scope
 
-Requirements have a stable ID + one plain sentence. IDs are permanent: a
-removed requirement's ID is retired (never reused), and nothing is renumbered.
+- **SCO-1** Single-screen tool to judge irrigation need for one fixed site, replacing gut-feel scheduling with a grounded, soil-moisture estimate driven by recent + forecast weather and watering.
+- **SCO-2** Let the user try "what-if" watering on any day and see the soil response immediately.
+- **SCO-3** Scope: one user, one zone, one built-in site (Vormersesluisweg 3A, Wijchen).
+- **SCO-4** No build step, framework (unless buildless like alpine), server, or browser-side hydraulics (precipitation rate is precomputed). Deployable to GitHub Pages. Nothing persists; all settings reset on reload.
+- **SCO-5** Mobile first, light UI.
 
-## 1. Purpose & context
+## 2. data
 
-- **PUR-1** Offer a single-screen tool that *helps the user judge* irrigation need visually (no automated verdict) for one fixed location, by modelling soil moisture against recent and forecast weather, and watering.
-- **PUR-2** Let the user try "what-if" watering on any day and see the soil response immediately.
-- **PUR-3** Replace gut-feel scheduling with a grounded, tunable estimate that is realistic by default rather than optimistic. *(inferred)*
-- **PUR-4** One user, one watering zone, one built-in site (Vormersesluisweg 3A, Wijchen).
+- **DAT-1** Weather from daily Open-Meteo forecast (local Amsterdam time) and Historical Forecast API: rainfall, daily temperature, evapotranspiration.
+- **DAT-2** Each load fetches 16 days before today + 16 forecast days; the earliest fetched days (before the shown window) act as run-up to settle the soil estimate. The graph shows 16 days: last 8, today, next 7.
+- **DAT-3** Precipitation rate, 0.063 mm/min (3.78 mm/hr gross), from BL4.0 / 180° nozzle (Hunter I-20).
 
-## 2. Data & time window
+## 3. logic
 
-- **DAT-1** All weather comes from a single daily Open-Meteo forecast, in local (Amsterdam) time.
-- **DAT-2** It uses rainfall, daily maximum temperature, and reference evapotranspiration.
-- **DAT-3** Each load fetches 32 days before today plus 16 forecast days, live in the browser.
-- **DAT-4** The chart shows 18 days by default: the last 9, today, and the next 8.
-- **DAT-5** Fetched days that fall before the shown window act as a run-up to settle the soil estimate.
+- **LOG-1** Daily: reservoir = previous level + gains − losses, clamped between empty and full. Reservoir size = soil water-held-per-depth × root depth.
+- **LOG-2** Losses = reference evapotranspiration × crop coefficient. Below the watering threshold, daily loss tapers as the soil dries (FAO-56 stress coefficient Ks), easing demand.
+- **LOG-3** Gains = rainfall × effectiveness + applied watering × efficiency.
+- **LOG-4** Next-watering projection: step the reservoir forward over the forecast days, honouring any toggled future watering, to find the first day it crosses the watering threshold.
 
-## 3. Soil model & watering rate (Logic)
+## 4. controls
 
-- **MOD-1** Each day the reservoir is updated as previous level + the day's gains − the day's losses, then clamped between empty and full.
-- **MOD-2** Gains are rainfall at 90% effectiveness plus applied watering reduced by the watering-efficiency factor.
-- **MOD-3** Losses are reference evapotranspiration scaled by growth thirstiness (the crop coefficient, set by the planting type — UI-9).
-- **MOD-4** *(retired from Logic; relocated to UX — see §4.)*
-- **MOD-5** Applied watering in mm equals the day's watering minutes × a fixed precipitation-rate constant, baked in from one offline `sim/` run for the installed head (not computed in the page).
-- **MOD-6** Below the stress threshold the daily loss tapers as the soil dries (the FAO-56 stress coefficient Ks), so demand eases under stress.
-- **MOD-7** Reservoir size equals the soil's water-held-per-depth (UI-5) × the plant's root depth (UI-9); changing either updates it.
+- **CTR-1** Planting type → preset crop coefficient, root depth, watering threshold.
+- **CTR-2** Soil type → water-held-per-depth.
+- **CTR-3** Watering duration (minutes) → dose added per click.
+- **CTR-6** Toggle per day / click day to water, past or future — first click applies the dose, second cancels (clear on/off).
 
-## 4. Display & interaction (UX)
+## 5. ux/ui
 
-- **UI-1** Soil moisture is shown across the window as a filled cross-section of the root zone — water fills from the bottom up to each day's level.
-- **UI-2** Clicking a day toggles watering: first click applies the dose, second click cancels it.
-- **UI-3** Watering can be set on past as well as future days.
-- **UI-4** The amount added per click is set by the watering-duration control (in minutes).
-- **UI-5** The soil-type control sets the soil's water-held-per-depth.
-- **MOD-4** Each day's level is shown as a percentage of reservoir capacity. *(display rule; ID retained from its original home in §3.)*
-- **UI-6** The chart can scroll/pan beyond the default 18-day window into the fetched-but-hidden forecast days.
-- **UI-7** A horizontal marker line is drawn at the stress threshold — a visual reference only; it drives nothing.
-- **UI-8** *(retired — there is no standalone growth-thirstiness control; the planting type owns it, UI-9.)*
-- **UI-9** The planting-type control sets a preset for the plant's water draw (crop coefficient), root depth, and stress threshold; default is turf.
-- **UI-10** The daily water balance is shown as separate per-day bars for decline (evapotranspiration out), rain in, and watering in.
-- **UI-11** The daily maximum temperature appears as a number per day, not a line.
-- **UI-12** The planting is drawn on the surface (turf / flowers / plants) with roots reaching to the root depth, making the reservoir's depth visible.
-- **UI-13** Rain and watering are drawn as droplets falling onto the soil on the days they occur.
-- **UI-14** Today's level is labelled directly on the chart as a percentage (MOD-4 stays the general per-day rule).
-
-## 5. Defaults & build
-
-Default settings (realism built in):
-
-| Setting | Default | Source |
-|---|---|---|
-| Planting type | turf → crop coefficient ≈ 0.9, shallow root depth, stress threshold 50% depletion | UI-9 preset (FAO-56 turf figures) |
-| Soil type | sandy → low water-held-per-depth | UI-5 |
-| Reservoir size | ≈ 25 mm usable (= sandy water-per-depth × shallow turf root) | derived, MOD-7 |
-| Watering efficiency | 75% | evaporation, drift, run-off on sand |
-| Rainfall effectiveness | 90% | owned by MOD-2 |
-| Precipitation rate | 0.063 mm/min (3.78 mm/hr gross) | sim run, see provenance below (MOD-5) |
-| Default watering dose | 60 min (~2.8 mm net) | practical single rotor run; adjustable via UI-4 |
-| Nozzle / arc | BL4.0 / 180° (Hunter I-20) | the installed head; basis for the precip rate |
-
-**Precipitation-rate provenance (MOD-5).** Produced by one offline `sim/`
-solve of the Z2 zone with the rotor set to BL4.0 / 180°: inlet 2.83 bar →
-14.5 L/min, 12.1 m throw → 3.78 mm/hr gross over the wetted sector =
-**0.063 mm/min**. After the 75% efficiency that is 0.047 mm/min net into the
-soil. Re-run `sim/` and update this constant if the head changes.
-
-- **BLD-1** A single self-contained web page — no build step, framework, server, or local computation; deployable as a static page (GitHub Pages). The precipitation rate is precomputed (MOD-5), so no hydraulics run in the browser.
-- **BLD-2** Nothing is saved; all settings reset on reload.
-
-## Non-goals
-
-- No automated water/skip verdict — the tool supports a *visual* judgment only (PUR-1).
-- No persistence — settings reset on reload (BLD-2), to keep it a zero-backend static page.
-- One user / one zone / one site (PUR-4); no location picker and no multi-zone scheduling.
-- No live in-browser hydraulics — the precipitation rate is baked in from the sim (MOD-5, BLD-1).
-- No fault/failure modelling — healthy system only.
-
-## Open
-
-- None blocking. The default watering dose (UI-4, 60 min) is a soft default and may be revisited; it is freely adjustable and locks nothing.
+- **UIX-1** Soil moisture across the window is a continuous stepped fill; water rises bottom-up to each day's level.
+- **UIX-2** Planting with roots on the surface (turf / flowers / plants) and sun on top.
+- **UIX-3** Per day: ET loss, rain in, and watering on graph; daily max temperature as a number.
+- **UIX-4** Horizontal marker line at the watering threshold; today's level labelled as a percentage.
+- **UIX-5** 'Next watering in +N days' counter (uses LOG-4).
