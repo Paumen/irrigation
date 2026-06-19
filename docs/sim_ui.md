@@ -6,6 +6,15 @@ Requirements carry stable `U` IDs so milestones can cite them (`sim_build_plan.m
 An ID is permanent once assigned; the "Ideas to reach outcome" lists under a
 requirement are non-binding menus (apply none, one, or several), not requirements.
 
+## Review status
+Tracks which requirements are settled vs. still being worked. Locked = wording agreed,
+treat as ground. Open = unresolved question noted below; not final.
+
+- **Locked (final):** U1, U2
+- **Open / to improve:**
+  - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
+    "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
+
 ## Style
 - **U1** — Light theme.
 - **U2** — Mobile-first, phone portrait is the primary target; on wider screens the layout scales
