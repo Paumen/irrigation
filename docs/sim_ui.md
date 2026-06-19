@@ -101,7 +101,9 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 - **U22** — Each property has one home: where it is both shown and set, that visual is its
   control (arc is the wedge), never a duplicate widget.
 - **U23** — The side panel is open only while an item is selected; with nothing selected it is
-  closed and the diagram fills the view.
+  closed and the diagram fills the view. This holds on phone portrait (U2) exactly as on any
+  larger screen — the overlaying side panel is the only inspector pattern; there is no separate
+  mobile sheet or narrow-screen layout.
 
 ## Deferred
 - **fault injection** — fault injection and any fault-related UI are deferred until the
