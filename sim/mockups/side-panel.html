@@ -84,7 +84,8 @@
   .nums { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: center; }
   .nums dt { color: var(--muted); font-size: 11px; }
   .nums dd { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; white-space: nowrap; }
-  .nums meter { grid-column: 1 / -1; width: 100%; height: 5px; }
+  .nums dd.bar { grid-column: 1 / -1; }
+  .nums dd.bar meter { display: block; width: 100%; height: 5px; }
 
   .group { border-top: 1px solid var(--line); padding-top: 7px; display: grid; gap: 6px; }
   .group > .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
@@ -148,10 +149,10 @@
   <!-- live numbers vs what the head can actually do (U17, U18); units per U4 -->
   <dl class="nums">
     <dt>pressure</dt><dd>2.9 bar</dd><dd class="note">/ 4.5 max</dd>
-    <meter min="0" max="4.5" low="1.5" optimum="3" value="2.9"></meter>
+    <dd class="bar"><meter min="0" max="4.5" low="1.5" optimum="3" value="2.9"></meter></dd>
 
     <dt>flow</dt><dd>0.62 m³/h</dd><dd class="note">0.3–0.9 span</dd>
-    <meter min="0.3" max="0.9" value="0.62"></meter>
+    <dd class="bar"><meter min="0.3" max="0.9" value="0.62"></meter></dd>
 
     <dt>throw</dt><dd>7.2 m</dd><dd class="note">/ 9.0 max</dd>
     <dt>precip</dt><dd>14 mm/h</dd><dd class="note">U15</dd>
