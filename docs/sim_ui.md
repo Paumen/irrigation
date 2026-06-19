@@ -10,7 +10,7 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 Tracks which requirements are settled vs. still being worked. Locked = wording agreed,
 treat as ground. Open = unresolved question noted below; not final.
 
-- **Locked (final):** U1, U2, U4
+- **Locked (final):** U1, U2, U4, U5
 - **Open / to improve:**
   - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
