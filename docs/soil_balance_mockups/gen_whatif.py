@@ -56,7 +56,7 @@ def run(extra):
         ks = 1.0 if g >= THR_MM else max(0.0, g / THR_MM)  # Ks taper below RAW (MOD-6)
         L = max(0.0, min(CAP, g - decl[i] * ks))
         lv.append(L)
-    return [L / CAP * 100 for L in lv]
+    return [level / CAP * 100 for level in lv]
 
 
 before = run({})
@@ -225,7 +225,7 @@ svg = "\n".join(s)
 here = os.path.dirname(os.path.abspath(__file__))
 svg_path = os.path.join(here, "svg", "UI2-UI3-whatif.svg")
 png_path = os.path.join(here, "UI2-UI3-whatif.png")
-with open(svg_path, "w") as f:
+with open(svg_path, "w", encoding="utf-8") as f:
     f.write(svg)
 cairosvg.svg2png(bytestring=svg.encode(), write_to=png_path, output_width=W * 2, output_height=H * 2)
 print("wrote", svg_path)
