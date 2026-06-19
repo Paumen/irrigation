@@ -20,10 +20,11 @@ def xi(i): return X0 + i * STEP
 
 
 # --- illustrative data (18 days) ---
+# soil % is the running level; the waterfall steps between consecutive levels.
 soil = [74, 68, 71, 63, 60, 52, 46, 40, 35, 44, 40, 36, 33, 29, 38, 34, 31, 28]
 temp = [19, 21, 22, 24, 26, 27, 25, 28, 29, 30, 28, 27, 26, 29, 31, 28, 26, 25]
-bal = [-3, -3, 1.5, -4, -1.5, -4, -3, -3, -2.5, 4.5, -2, -2, -1.5, -2, 4.5, -2, -1.5, -1.5]
-rain_day = {2, 4}
+LEVEL_START = 20.0                       # mm at end of the day before the window
+level = [p / 4 for p in soil]            # 25 mm reservoir -> 1% = 0.25 mm
 watered = {9, 14}
 
 # --- soil plot scale ---
@@ -32,10 +33,11 @@ def ys(p): return S_BOT - (p / 100) * (S_BOT - S_TOP)
 THR = 50
 y_thr = ys(THR)
 
-# --- waterfall scale ---
-ZERO = 412
-PXMM = 9
-BARW = STEP * 0.46
+# --- waterfall scale (running soil level, mm) ---
+WF_TOP, WF_BOT = 374, 452
+WF_HI, WF_LO = 22.0, 4.0
+def ywf(mm): return WF_BOT - (mm - WF_LO) / (WF_HI - WF_LO) * (WF_BOT - WF_TOP)
+BARW = STEP * 0.42
 
 # --- colours ---
 C_SOIL = "#2e7d32"; C_THR = "#c62828"; C_BAND = "#fdecea"
@@ -99,26 +101,28 @@ for i in range(N):
     else:
         s.append(f'<circle cx="{xi(i):.1f}" cy="{ys(soil[i]):.1f}" r="2.6" fill="{C_SOIL}"/>')
 
-# --- waterfall panel (UI-1 daily balance) ---
-s.append(f'<text x="40" y="370" font-size="12" font-weight="600" fill="{C_TXT}">Daily balance</text>')
-s.append(f'<line x1="{X0}" y1="{ZERO}" x2="{X1}" y2="{ZERO}" stroke="{C_MUT}" stroke-width="1"/>')
-s.append(f'<text x="{X0-8}" y="{ZERO+4}" font-size="10" fill="{C_MUT}" text-anchor="end">0</text>')
+# --- waterfall panel (UI-1: daily balance as a waterfall of the running level) ---
+s.append(f'<text x="40" y="368" font-size="12" font-weight="600" fill="{C_TXT}">Daily balance</text>')
+s.append(f'<text x="156" y="368" font-size="10.5" fill="{C_MUT}">— running soil water (mm), stepping each day</text>')
+for mm in (5, 10, 15, 20):
+    s.append(f'<line x1="{X0}" y1="{ywf(mm):.1f}" x2="{X1}" y2="{ywf(mm):.1f}" stroke="{C_LINE}" stroke-width="1"/>')
+    s.append(f'<text x="{X0-8}" y="{ywf(mm)+3:.1f}" font-size="9.5" fill="{C_MUT}" text-anchor="end">{mm}</text>')
+prev = LEVEL_START
 for i in range(N):
-    v = bal[i]
-    h = abs(v) * PXMM
+    cur = level[i]
     x = xi(i) - BARW / 2
-    if i in watered:
-        # loss portion (brown, down) + watering dose (blue, up)
-        loss = 4.0; dose = 2.8
-        s.append(f'<rect x="{x:.1f}" y="{ZERO}" width="{BARW:.1f}" height="{loss*PXMM:.1f}" fill="{C_LOSS}"/>')
-        s.append(f'<rect x="{x:.1f}" y="{ZERO-dose*PXMM:.1f}" width="{BARW:.1f}" height="{dose*PXMM:.1f}" fill="{C_WATER}"/>')
-        # droplet marker
-        cy = ZERO - dose * PXMM - 16
-        s.append(f'<path d="M {xi(i):.1f} {cy-7:.1f} q 6 8 0 13 q -6 -5 0 -13 z" fill="{C_WATER}"/>')
-    elif v >= 0:
-        s.append(f'<rect x="{x:.1f}" y="{ZERO-h:.1f}" width="{BARW:.1f}" height="{h:.1f}" fill="{C_GAIN}"/>')
-    else:
-        s.append(f'<rect x="{x:.1f}" y="{ZERO}" width="{BARW:.1f}" height="{h:.1f}" fill="{C_LOSS}"/>')
+    top = ywf(max(prev, cur)); bot = ywf(min(prev, cur))
+    h = max(bot - top, 1.5)
+    up = cur >= prev
+    s.append(f'<rect x="{x:.1f}" y="{top:.1f}" width="{BARW:.1f}" height="{h:.1f}" '
+             f'fill="{C_GAIN if up else C_LOSS}"/>')
+    if i > 0:  # connector from the previous step's end to this step's start
+        s.append(f'<line x1="{xi(i-1)+BARW/2:.1f}" y1="{ywf(prev):.1f}" '
+                 f'x2="{x:.1f}" y2="{ywf(prev):.1f}" stroke="{C_MUT}" stroke-width="0.8" stroke-dasharray="2 2"/>')
+    if i in watered:  # blue droplet above the up-step
+        cy = top - 14
+        s.append(f'<path d="M {xi(i):.1f} {cy:.1f} q 6 8 0 13 q -6 -5 0 -13 z" fill="{C_WATER}"/>')
+    prev = cur
 
 # --- day axis (UI-2 clickable days, today marker) ---
 AX = 468
@@ -152,9 +156,9 @@ def chip(x, kind, label):
 
 chip(40, "line", "soil moisture")
 chip(170, "dash", "stress threshold")
-chip(320, "gain", "rain / gain")
-chip(430, "loss", "demand / loss")
-chip(560, "water", "watering (click a day)")
+chip(320, "gain", "level up (gain)")
+chip(450, "loss", "level down (loss)")
+chip(590, "water", "watering (click a day)")
 
 s.append(f'<rect x="40" y="{LY+18}" width="{W-80}" height="0.8" fill="{C_LINE}"/>')
 s.append(f'<text x="40" y="{LY+44}" font-size="11" fill="{C_MUT}">'
