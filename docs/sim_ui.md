@@ -10,7 +10,7 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 Tracks which requirements are settled vs. still being worked. Locked = wording agreed,
 treat as ground. Open = unresolved question noted below; not final.
 
-- **Locked (final):** U1, U2, U4, U5, U7
+- **Locked (final):** U1, U2, U4, U5, U7, U8, U23
 - **Open / to improve:**
   - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
@@ -50,8 +50,8 @@ treat as ground. Open = unresolved question noted below; not final.
   together — complete, with the coupling between them (coil energizes → valve opens → flow)
   legible, not two separate pictures.
 - **U7** — The diagram is comprehensible in one view; nothing hidden behind a mode.
-- **U8** — Diagram stays the main view; most text and numbers live in the panel (U25), not on
-  the diagram.
+- **U8** — The diagram stays the main view; detail (text, and numbers beyond U23's two) lives
+  in the panel (U25), not on the diagram.
 - **U23** — Only two kinds of number appear on the diagram itself — pump pressure and each
   head's flow rate; every other number lives in the panel.
 - **U9** — Each item carries status indicator(s) — the per-item readings in
