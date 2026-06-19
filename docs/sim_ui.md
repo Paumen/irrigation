@@ -20,6 +20,7 @@ treat as ground. Open = unresolved question noted below; not final.
     unambiguous and traceable end to end.
   - **U12** — flow visualization (direction + rough magnitude); pending mockup.
   - **U13** — pressurised graduated by magnitude (not on/off); pending mockup.
+  - **U14** — meaning settled as spatial footprint (labels deferred); footprint pending mockup.
 
 ## Style
 - **U1** — Light theme.
@@ -98,13 +99,13 @@ treat as ground. Open = unresolved question noted below; not final.
       the diagram except pump pressure)
     - line weight or glow scaling with pressure
     - gauge glyphs at key nodes.
-- **U14** — Each head shows its coverage.
+- **U14** — Each head shows its spatial coverage footprint: a fan wedge at the installed arc,
+  radius scaled to throw against the head's max range. (Coverage *labels* — throw distance,
+  output flow, nozzle/rotor type icon — are deferred; see Deferred.)
   - Ideas to reach outcome (apply none, one, or several):
     - fan wedge at the installed arc, radius scaled to throw against the head's max range
-    - drag the wedge edges to set the arc
-    - a throw-distance label
-    - an output-flow label
-    - a nozzle/rotor type icon.
+    - drag the wedge edges to set the arc (subject to U22 — the wedge is a read-only
+      reflection; arc is set only in the panel, so this idea is excluded)
 - **U15** — Each head shows its precipitation rate (mm/h).
 
 ### Electrical visualization
@@ -139,3 +140,5 @@ treat as ground. Open = unresolved question noted below; not final.
 - HTML and CSS legacy browser fallbacks.
 - Accessibility functionalities like ARIA, reduced motion, colorblindness.
 - Scenario lifecycle — reset, presets, persistence.
+- Per-head coverage **labels** (throw distance, output flow, nozzle/rotor type icon) — U14 covers
+  the spatial footprint only for now; labels are a later improvement.
