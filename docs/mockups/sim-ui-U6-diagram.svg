@@ -124,5 +124,5 @@
 <rect x="14" y="680" width="392" height="26" rx="6" fill="#ffffff" stroke="#e4e9ee"/>
 <text x="24" y="697" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#1f2933" text-anchor="start" font-weight="600" letter-spacing="0">Σ outflow = pump supply</text>
 <text x="396" y="697" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#2b8de0" text-anchor="end" font-weight="700" letter-spacing="0">1.66 m³/h out · 1.66 in ✓</text>
-<text x="12" y="880" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">covers R11·R13·R14·R10 · U2·U6–U13·U16 — encoding key in sheet 3</text>
+<text x="12" y="880" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">covers R11·R13·R14·R10 · U2·U6–U13·U16 — encoding in sim-ui-U12-U16-diagram-line-visualizations</text>
 </svg>
