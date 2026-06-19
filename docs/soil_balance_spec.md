@@ -18,7 +18,7 @@
 ## 3. logic
 
 - **LOG-1** Daily: reservoir = previous level + gains − losses, then clamped between empty (wilting point) and full (field capacity); water above full is discarded that day. Reservoir size = soil water-held-per-depth × root depth.
-- **LOG-2** Losses = reference evapotranspiration × crop coefficient × Ks (FAO-56 water-stress coefficient). With total available water TAW = reservoir size (LOG-1) and readily-available water RAW = p × TAW (p set per planting), the watering threshold is the stored level TAW − RAW = (1 − p) × reservoir size; at or above the threshold Ks = 1, below it Ks falls linearly with the remaining stored water (Ks = stored ÷ threshold), reaching 0 at wilting point — easing demand as the soil dries. As a percentage of available water (UIX-4), the threshold sits at (1 − p) × 100% (turf/flowers 55%, shrubs 50%).
+- **LOG-2** Losses = reference evapotranspiration × crop coefficient × Ks (FAO-56 water-stress coefficient). With total available water TAW = reservoir size (LOG-1) and readily-available water RAW = p × TAW (p set per planting), the watering threshold is the stored level TAW − RAW = (1 − p) × reservoir size; at or above the threshold Ks = 1, below it Ks falls linearly with the remaining stored water (Ks = stored ÷ threshold; if the threshold is 0, Ks = 1), reaching 0 at wilting point — easing demand as the soil dries. As a percentage of available water (UIX-4), the threshold sits at (1 − p) × 100% (turf/flowers 55%, shrubs 50%).
 - **LOG-3** Gains = rainfall × effectiveness (0.8) + applied watering × efficiency (0.9).
 - **LOG-4** Next-watering projection: step the reservoir forward over all 16 forecast days, honouring any toggled future watering, to find the first day it crosses the watering threshold; if none, report ">16 days".
 
@@ -26,7 +26,7 @@
 
 - **CTR-1** Planting type → preset crop coefficient, root depth, watering threshold p. Presets (tunable): Turf (Kc 0.85, 0.15 m, p 0.45) · Flower bed (0.90, 0.30 m, 0.45) · Shrubs (0.70, 0.50 m, 0.50).
 - **CTR-2** Soil type → plant-available water-held-per-depth (field capacity − wilting point). Presets: Sand 60 · Loam 170 · Clay 190 mm·m⁻¹.
-- **CTR-3** Watering duration (minutes, default 60) → dose added per click = precipitation rate (DAT-3) × minutes (gross; efficiency applied in LOG-3).
+- **CTR-3** Watering duration (minutes, default 60) → dose applied to each watered day (CTR-4) = precipitation rate (DAT-3) × minutes (gross; efficiency applied in LOG-3).
 - **CTR-4** Toggle per day / click day to water, past or future — first click applies the dose, second cancels (clear on/off).
 
 ## 5. ux/ui
