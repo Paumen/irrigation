@@ -15,6 +15,7 @@ treat as ground. Open = unresolved question noted below; not final.
   - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
   - **U6** — wording sharpened (integrated diagram, coupling legible) but not yet final.
+  - **U9** — per-item status indicator mapping; not yet final.
 
 ## Style
 - **U1** — Light theme.
