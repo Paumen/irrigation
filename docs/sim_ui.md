@@ -16,7 +16,8 @@ treat as ground. Open = unresolved question noted below; not final.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
   - **U6** — wording sharpened (integrated diagram, coupling legible) but not yet final.
   - **U9** — per-item status indicator mapping; not yet final.
-  - **U10** — to be validated against a diagram mockup (connection traceability end to end).
+  - **U10** — (U11 merged in) to be validated against a diagram mockup: connections
+    unambiguous and traceable end to end.
 
 ## Style
 - **U1** — Light theme.
@@ -68,9 +69,10 @@ treat as ground. Open = unresolved question noted below; not final.
   never left blank: head idle (no `pressure`/`flow`, neither `watering` nor `starved`), valve
   closed (not `open`), hydraulic item dry (not `pressurised`), pump unprimed (not `primed`),
   electrical item de-energised (not `live`).
-- **U10** — Every connection traceable end to end.
-- **U11** — No ambiguous crossing or dangling connection.
-  - Ideas to reach outcome for U10–U11 (apply none, one, or several):
+- **U10** — Every connection is unambiguous and traceable end to end: no crossing reads as a
+  join, no line dangles.
+- **U11** — *(retired — merged into U10; ID never reused)*
+  - Ideas to reach outcome for U10 (apply none, one, or several):
     - orthogonal routing
     - per-terminal colour-coding
     - lane spacing for parallel runs
