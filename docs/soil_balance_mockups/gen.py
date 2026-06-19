@@ -10,11 +10,12 @@ out), UI-2/UI-4 (click-to-water dose), UI-5/UI-9 (presets), UI-6 (pan),
 UI-7 (stress threshold). Illustrative data only.
 """
 import os
+import math
 import random
 from datetime import date, timedelta
 import cairosvg
 
-W, H = 1000, 562
+W, H = 1000, 568
 X0, X1 = 80, 940
 N = 18
 STEP = (X1 - X0) / (N - 1)
@@ -25,14 +26,19 @@ TODAY_DATE = date(2026, 6, 19)
 def xi(i): return X0 + i * STEP
 
 
-# --- illustrative data (18 days) ---
-soil = [74, 68, 71, 63, 60, 52, 46, 40, 35, 44, 40, 36, 33, 29, 38, 34, 31, 28]  # % saturation
-temp = [19, 21, 22, 24, 26, 27, 25, 28, 29, 30, 28, 27, 26, 29, 31, 28, 26, 25]
-LEVEL_START = 20.0
-level = [p / 4 for p in soil]
-delta = [level[i] - (level[i - 1] if i else LEVEL_START) for i in range(N)]
-watered = {9, 14}
-rain_days = {i for i in range(N) if delta[i] > 0 and i not in watered}
+# --- illustrative data (18 days), as the day's water components in mm ---
+temp  = [19, 21, 22, 24, 26, 27, 25, 28, 29, 30, 28, 27, 26, 29, 31, 28, 26, 25]
+decl  = [1.5, 1.5, 1.3, 2.0, 1.5, 2.0, 1.5, 1.5, 1.25, 1.5, 1.0, 1.0, 0.75, 1.0, 1.5, 1.0, 0.75, 0.75]  # ET demand out
+rain  = [0, 0, 2.0, 0, 0.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]                                      # effective rain in
+water = [0, 0, 0, 0, 0, 0, 0, 0, 0, 2.85, 0, 0, 0, 0, 2.85, 0, 0, 0]                                     # watering in (net)
+LEVEL_START = 20.0                          # mm at end of the day before the window
+level, _L = [], LEVEL_START
+for i in range(N):
+    _L = max(0.0, min(25.0, _L + rain[i] + water[i] - decl[i]))
+    level.append(_L)
+soil = [L / 25 * 100 for L in level]        # % saturation
+watered = {i for i in range(N) if water[i] > 0}
+rain_days = {i for i in range(N) if rain[i] > 0}
 
 # --- soil cross-section geometry ---
 SKY_TOP, Y_SURF, Y_BOT = 150, 186, 398     # sky / ground surface / root-zone bottom
@@ -100,7 +106,30 @@ s.append("".join(grains))
 # water saturation: area under the moisture line, down to the bottom (grains show through)
 wpts = " ".join(f"{xi(i):.1f},{ys(soil[i]):.1f}" for i in range(N))
 s.append(f'<polygon points="{X0},{Y_BOT} {wpts} {X1},{Y_BOT}" fill="url(#sat)" opacity="0.82"/>')
-# grass strip on the surface
+
+# planting: turf + flowers + leafy plants, each with roots into the soil (UI-9 / MOD-7)
+C_ROOT = "#6b4f2a"; C_STEM = "#3f8a2e"
+plants = [  # (x, kind, petal-colour, root-depth fraction of root zone)
+    (X0 + 55, "flower", "#e57399", 0.46),
+    (X0 + 175, "plant",  None,      0.40),
+    (X0 + 320, "flower", "#b06fd6", 0.52),
+    (X0 + 470, "plant",  None,      0.44),
+    (X0 + 615, "flower", "#e8743b", 0.50),
+    (X0 + 745, "plant",  None,      0.42),
+    (X0 + 860, "flower", "#e57399", 0.48),
+]
+ROOTZ = Y_BOT - Y_SURF
+
+def roots(x, frac):
+    d = ROOTZ * frac
+    return (f'<path d="M {x:.1f} {Y_SURF} C {x-4:.1f} {Y_SURF+d*0.3:.1f} {x+5:.1f} {Y_SURF+d*0.6:.1f} {x:.1f} {Y_SURF+d:.1f}" stroke="{C_ROOT}" stroke-width="1.6" fill="none" opacity="0.6"/>'
+            f'<path d="M {x:.1f} {Y_SURF+d*0.28:.1f} q -12 {d*0.22:.1f} -16 {d*0.46:.1f}" stroke="{C_ROOT}" stroke-width="1" fill="none" opacity="0.45"/>'
+            f'<path d="M {x:.1f} {Y_SURF+d*0.48:.1f} q 12 {d*0.16:.1f} 15 {d*0.4:.1f}" stroke="{C_ROOT}" stroke-width="1" fill="none" opacity="0.45"/>')
+
+# roots first (over the water, under the surface greenery)
+s.append("".join(roots(x, frac) for x, _, _, frac in plants))
+
+# grass strip + blades on the surface
 s.append(f'<rect x="{X0}" y="{Y_SURF-4}" width="{X1-X0:.1f}" height="4" fill="{C_GRASS}"/>')
 blades = []
 gx = X0 + 4
@@ -110,6 +139,27 @@ while gx < X1:
     gx += 7
 s.append("".join(blades))
 
+def flower(x, petal):
+    cy = Y_SURF - 32
+    out = [f'<line x1="{x:.1f}" y1="{Y_SURF-4}" x2="{x:.1f}" y2="{cy+5:.1f}" stroke="{C_STEM}" stroke-width="1.7"/>',
+           f'<path d="M {x:.1f} {Y_SURF-15:.1f} q -9 -2 -12 -9 q 9 -1 12 5 z" fill="{C_STEM}"/>']
+    for ang in range(0, 360, 72):
+        rx = x + 6.5 * math.cos(math.radians(ang)); ry = cy + 6.5 * math.sin(math.radians(ang))
+        out.append(f'<circle cx="{rx:.1f}" cy="{ry:.1f}" r="4.2" fill="{petal}"/>')
+    out.append(f'<circle cx="{x:.1f}" cy="{cy:.1f}" r="3.3" fill="#f6c344"/>')
+    return "".join(out)
+
+def plant(x):
+    out = [f'<line x1="{x:.1f}" y1="{Y_SURF-4}" x2="{x:.1f}" y2="{Y_SURF-22:.1f}" stroke="{C_STEM}" stroke-width="1.7"/>']
+    for dx, dy in [(-9, -11), (9, -13), (-7, -19), (7, -21), (0, -26)]:
+        rot = -32 if dx < 0 else (32 if dx > 0 else 0)
+        out.append(f'<ellipse cx="{x+dx:.1f}" cy="{Y_SURF+dy:.1f}" rx="6.5" ry="3.6" fill="{C_STEM}" '
+                   f'transform="rotate({rot} {x+dx:.1f} {Y_SURF+dy:.1f})"/>')
+    return "".join(out)
+
+for x, kind, petal, _ in plants:
+    s.append(flower(x, petal) if kind == "flower" else plant(x))
+
 # saturation axis labels (Wet/Dry) + stress threshold (UI-7)
 s.append(f'<text x="{X0-10}" y="{Y_SURF+4:.1f}" font-size="10" fill="{C_MUT}" text-anchor="end">100%</text>')
 s.append(f'<text x="{X0-10}" y="{Y_BOT:.1f}" font-size="10" fill="{C_MUT}" text-anchor="end">0%</text>')
@@ -118,6 +168,29 @@ s.append(f'<text x="{X0-10}" y="{Y_BOT-6:.1f}" font-size="9" fill="{C_DRY}" text
 s.append(f'<line x1="{X0}" y1="{y_thr:.1f}" x2="{X1}" y2="{y_thr:.1f}" stroke="{C_THR}" '
          f'stroke-width="1.6" stroke-dasharray="6 4"/>')
 s.append(f'<text x="{X1-4}" y="{y_thr-6:.1f}" font-size="10.5" fill="{C_THR}" text-anchor="end">stress threshold &#8212; turf starts to wilt below 50%</text>')
+
+# daily water in / out as separate bars near the root-zone floor (UI-1)
+BZ = Y_BOT - 28
+BPMM = 7.5
+BARW = STEP * 0.30
+C_DECL = "#b9722e"; C_RAINB = "#7fc3ec"; C_WATB = "#0d47a1"
+s.append(f'<line x1="{X0}" y1="{BZ}" x2="{X1}" y2="{BZ}" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.75"/>')
+s.append(f'<text x="{X1+8}" y="{BZ-12:.1f}" font-size="9" fill="{C_MUT}">in</text>')
+s.append(f'<text x="{X1+8}" y="{BZ+14:.1f}" font-size="9" fill="{C_MUT}">out</text>')
+for i in range(N):
+    cx = xi(i)
+    # decline (ET demand) — downward, left of centre
+    s.append(f'<rect x="{cx-BARW:.1f}" y="{BZ:.1f}" width="{BARW:.1f}" height="{decl[i]*BPMM:.1f}" '
+             f'fill="{C_DECL}" stroke="#fff" stroke-width="0.5"/>')
+    # gains — upward, right of centre, rain then watering stacked
+    base = BZ
+    if rain[i] > 0:
+        h = rain[i] * BPMM
+        s.append(f'<rect x="{cx:.1f}" y="{base-h:.1f}" width="{BARW:.1f}" height="{h:.1f}" fill="{C_RAINB}" stroke="#fff" stroke-width="0.5"/>')
+        base -= h
+    if water[i] > 0:
+        h = water[i] * BPMM
+        s.append(f'<rect x="{cx:.1f}" y="{base-h:.1f}" width="{BARW:.1f}" height="{h:.1f}" fill="{C_WATB}" stroke="#fff" stroke-width="0.5"/>')
 
 # water-table line + day markers (UI-2)
 s.append(f'<polyline points="{wpts}" fill="none" stroke="{C_WLINE}" stroke-width="2.4"/>')
@@ -146,7 +219,7 @@ for i in watered:
 # today readout callout (states the value; not a verdict)
 ty = ys(soil[TODAY])
 s.append(f'<rect x="{xi(TODAY)-26:.1f}" y="{ty-34:.1f}" width="52" height="22" rx="5" fill="{C_WLINE}"/>')
-s.append(f'<text x="{xi(TODAY):.1f}" y="{ty-19:.1f}" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">{soil[TODAY]}%</text>')
+s.append(f'<text x="{xi(TODAY):.1f}" y="{ty-19:.1f}" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">{round(soil[TODAY])}%</text>')
 s.append(f'<path d="M {xi(TODAY)-5:.1f} {ty-12:.1f} L {xi(TODAY)+5:.1f} {ty-12:.1f} L {xi(TODAY):.1f} {ty-5:.1f} z" fill="{C_WLINE}"/>')
 
 # --- day axis: weekday + date (UI-2) ---
@@ -167,29 +240,33 @@ s.append(f'<text x="{X1+12}" y="{midy:.0f}" font-size="22" fill="{C_LINE}">›</
 s.append(f'<text x="{W/2:.0f}" y="454" font-size="10" fill="{C_MUT}" text-anchor="middle">'
          f'← scroll to the 32 run-up days &#183; or 8 more forecast days →</text>')
 
-# --- legend ---
-LY = 488
-def chip(x, kind, label):
-    if kind == "water":
-        s.append(f'<rect x="{x}" y="{LY-12}" width="16" height="13" fill="url(#sat)"/>')
-    elif kind == "dry":
-        s.append(f'<rect x="{x}" y="{LY-12}" width="16" height="13" fill="{C_DRY}"/>')
-        s.append(f'<circle cx="{x+5}" cy="{LY-7}" r="1.4" fill="{C_GRAIN}"/><circle cx="{x+11}" cy="{LY-4}" r="1.4" fill="{C_GRAIN}"/>')
-    elif kind == "dash":
-        s.append(f'<line x1="{x}" y1="{LY-5}" x2="{x+22}" y2="{LY-5}" stroke="{C_THR}" stroke-width="1.6" stroke-dasharray="5 3"/>')
-    elif kind == "drop":
-        s.append(droplet(x + 7, LY - 13, C_WATER, 0.7))
-    s.append(f'<text x="{x+(30 if kind!="dash" else 28)}" y="{LY}" font-size="11" fill="{C_TXT}">{label}</text>')
+# --- legend (two rows) ---
+def sw(x, y, fill):
+    s.append(f'<rect x="{x}" y="{y-11}" width="15" height="12" fill="{fill}" stroke="#fff" stroke-width="0.5"/>')
 
-chip(40, "water", "water in soil")
-chip(180, "dry", "dry soil")
-chip(300, "dash", "stress threshold")
-chip(450, "drop", "rain / watering")
-s.append(f'<circle cx="617" cy="{LY-5}" r="5" fill="#fff" stroke="{C_WATER}" stroke-width="2"/>')
-s.append(f'<text x="628" y="{LY}" font-size="11" fill="{C_TXT}">a day you watered (click to toggle)</text>')
+def lbl(x, y, t):
+    s.append(f'<text x="{x}" y="{y}" font-size="11" fill="{C_TXT}">{t}</text>')
 
-s.append(f'<rect x="40" y="{LY+18}" width="{W-80}" height="0.8" fill="{C_LINE}"/>')
-s.append(f'<text x="40" y="{LY+44}" font-size="11" fill="{C_MUT}">'
+R1 = 484
+sw(40, R1, "url(#sat)"); lbl(62, R1, "water in soil")
+s.append(f'<rect x="180" y="{R1-11}" width="15" height="12" fill="{C_DRY}"/>')
+s.append(f'<circle cx="185" cy="{R1-6}" r="1.4" fill="{C_GRAIN}"/><circle cx="190" cy="{R1-3}" r="1.4" fill="{C_GRAIN}"/>')
+lbl(202, R1, "dry soil")
+s.append(f'<path d="M 300 {R1-12} C 297 {R1-7} 304 {R1-4} 300 {R1+1}" stroke="{C_ROOT}" stroke-width="1.6" fill="none"/>')
+lbl(312, R1, "plant roots")
+s.append(f'<line x1="410" y1="{R1-5}" x2="432" y2="{R1-5}" stroke="{C_THR}" stroke-width="1.6" stroke-dasharray="5 3"/>')
+lbl(438, R1, "stress threshold")
+
+R2 = 506
+sw(40, R2, C_DECL); lbl(62, R2, "decline (ET out)")
+sw(180, R2, C_RAINB); lbl(202, R2, "rain in")
+sw(290, R2, C_WATB); lbl(312, R2, "watering in")
+s.append(droplet(412, R2 - 13, C_WATER, 0.7)); lbl(424, R2, "rain / watering droplets")
+s.append(f'<circle cx="600" cy="{R2-5}" r="5" fill="#fff" stroke="{C_WATER}" stroke-width="2"/>')
+lbl(612, R2, "a day you watered (click to toggle)")
+
+s.append(f'<rect x="40" y="{R2+16}" width="{W-80}" height="0.8" fill="{C_LINE}"/>')
+s.append(f'<text x="40" y="{R2+40}" font-size="11" fill="{C_MUT}">'
          f'Click any day to apply / cancel a 60-min dose (past or future). '
          f'Illustrative data &#183; static page, settings reset on reload.</text>')
 
