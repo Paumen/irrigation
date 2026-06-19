@@ -3,8 +3,10 @@
 
 Partials that check the *reading* of sim_ui.md / sim_spec.md before any UI
 code exists. Naming is `sim-ui-<requirement(s)>-<what-it-is>` — see README.md.
-This script owns the three *diagram-style* sheets (the two side-panel mocks are
-hand-authored). Writes SVG sources into the `svg/` subfolder; turn them into
+This script generates three sheets — sim-ui-U6-diagram,
+sim-ui-U18-side-panel-overlay, and sim-ui-U12-U16-diagram-line-visualizations;
+the other two (sim-ui-U8-diagram-with-panel, sim-ui-U18-side-panel-docked) are
+hand-authored. Writes SVG sources into the `svg/` subfolder; turn them into
 PNG (rendered alongside this script) with the companion converter:
   python3 gen.py && python3 svg2png.py
 """

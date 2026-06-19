@@ -25,8 +25,10 @@ sit at the top level next to this README, same basename.
 
 ## Regenerating
 
-The two **diagram-style** sheets and the **legend** are generated; the two
-**side-panel** mocks are hand-authored SVG in `svg/` (edited directly).
+`gen.py` generates three of the five — `sim-ui-U6-diagram`,
+`sim-ui-U18-side-panel-overlay`, and `sim-ui-U12-U16-diagram-line-visualizations`.
+The other two (`sim-ui-U8-diagram-with-panel`, `sim-ui-U18-side-panel-docked`)
+are hand-authored SVG in `svg/` (edited directly).
 
 ```sh
 python3 gen.py        # (re)writes the generated SVG sources into svg/
