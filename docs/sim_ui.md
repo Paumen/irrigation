@@ -37,15 +37,22 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 ## Diagram
 - **U6** — Holistic hydraulics and electrical.
 - **U7** — Comprehensible in one view; nothing hidden behind a mode.
-- **U8** — Diagram mostly visual; most text and numbers live in a panel beside the diagram,
-  which stays the main view.
+- **U8** — Diagram stays the main view; most text and numbers live in the panel (U25), not on
+  the diagram.
+- **U23** — Only two kinds of number appear on the diagram itself — pump pressure and each
+  head's flow rate; every other number lives in the panel.
 - **U9** — Each item carries status indicator(s) — the per-item readings in
-  `sim_state_model.md`, mapped by item type:
+  `sim_state_model.md` (plus the `live` state primitive for electrical items, which is not a
+  reading), mapped by item type:
     - valve → `open`
     - head → `watering` / `starved`
     - pump → `primed`
-    - source, pipes, joints, chambers → `pressurised`
+    - source, pipes, joints, chambers → `pressurised`, shown graduated by pressure magnitude (U13)
     - electrical items → `live`
+- **U24** — Every indicator also has a resting form, shown when its active reading is absent and
+  never left blank: head idle (no `pressure`/`flow`, neither `watering` nor `starved`), valve
+  closed (not `open`), hydraulic item dry (not `pressurised`), pump unprimed (not `primed`),
+  electrical item de-energised (not `live`).
 - **U10** — Every connection traceable end to end.
 - **U11** — No ambiguous crossing or dangling connection.
   - Ideas to reach outcome for U10–U11 (apply none, one, or several):
@@ -64,7 +71,8 @@ requirement are non-binding menus (apply none, one, or several), not requirement
     - line thickness scaling with flow.
     - paced droplets
     - pulsing lines
-- **U13** — Pressurised items obvious at a glance, including roughly how hard.
+- **U13** — Pressurised items obvious at a glance, including roughly how hard — the indicator is
+  graduated by pressure magnitude, not just on/off.
   - Ideas to reach outcome (apply none, one, or several):
     - hose fill/saturation scaling with pressure
     - a pressure number/badge on pressurised items
@@ -96,10 +104,14 @@ requirement are non-binding menus (apply none, one, or several), not requirement
   `sim_state_model.md`.
 - **U20** — Change any control and the whole system updates at once — every derived value
   and animation follows.
-- **U21** — When the system can't settle on a stable answer — it never balances out — the
-  view says so plainly rather than showing numbers that look real but aren't.
-- **U22** — Each property has one home: where it is both shown and set, that visual is its
-  control (arc is the wedge), never a duplicate widget.
+- **U21** — When the solve does not converge — the fixed-point valve loop never settles on
+  stable `pressure`/`flow` — the view says so plainly rather than showing numbers that look real
+  but aren't.
+- **U22** — A property is set in exactly one place, the panel; where the same property also
+  appears on the diagram (e.g. the arc as a wedge) that is a read-only reflection, not a second
+  control.
+- **U25** — The panel is a card/sheet that slides in from the right when an item is selected on
+  the diagram, partially overlaying the diagram (which stays the main view, U8).
 
 ## Deferred
 - **fault injection** — fault injection and any fault-related UI are deferred until the
