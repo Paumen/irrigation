@@ -52,7 +52,7 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 - **U24** — Every indicator also has a resting form, shown when its active reading is absent and
   never left blank: head idle (no `pressure`/`flow`, neither `watering` nor `starved`), valve
   closed (not `open`), hydraulic item dry (not `pressurised`), pump unprimed (not `primed`),
-  electrical item de-energized (not `live`).
+  electrical item de-energised (not `live`).
 - **U10** — Every connection traceable end to end.
 - **U11** — No ambiguous crossing or dangling connection.
   - Ideas to reach outcome for U10–U11 (apply none, one, or several):
