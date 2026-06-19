@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encoding strips — flow / pressure / live (U12, U13, U16)</title>
+<style>
+  :root {
+    --ink: #1d2733;
+    --muted: #6b7785;
+    --line: #d7dee6;
+    --card: #ffffff;
+    --bg: #f4f6f9;
+    --water: #1e88e5;          /* base water blue */
+    --water-deep: #0d47a1;
+    --live: #f5a623;           /* energised */
+    --dead: #aab4bf;           /* de-energised */
+    --fault: #e53935;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px;
+    background: var(--bg); color: var(--ink);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+    width: 940px;
+  }
+  h1 { font-size: 17px; margin: 0 0 2px; }
+  .sub { color: var(--muted); font-size: 12px; margin: 0 0 18px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+  }
+  .card > h2 { font-size: 13px; margin: 0 0 2px; letter-spacing: .02em; }
+  .card > .note { color: var(--muted); font-size: 11.5px; margin: 0 0 12px; }
+  .levels { display: grid; grid-template-columns: 150px repeat(4, 1fr); gap: 0 10px; align-items: center; }
+  .levels .head { color: var(--muted); font-size: 11px; text-align: center; padding-bottom: 6px; }
+  .levels .head.first { text-align: left; }
+  .rowlabel { color: var(--ink); font-size: 12px; }
+  .rowlabel small { color: var(--muted); display: block; font-size: 10.5px; }
+  .cell { height: 38px; display: flex; align-items: center; justify-content: center; }
+  svg { display: block; overflow: visible; }
+  .hose { fill: none; stroke-linecap: round; }
+  .badge {
+    font: 600 10px system-ui; fill: var(--ink);
+  }
+  .badge-bg { fill: #fff; stroke: var(--line); }
+  .seg { stroke-linecap: round; fill: none; }
+  /* motion (only visible in the live file) */
+  @keyframes flow { to { stroke-dashoffset: -28; } }
+  @keyframes current { to { stroke-dashoffset: -16; } }
+  .legend { color: var(--muted); font-size: 11px; margin-top: 4px; }
+  .pill { display:inline-block; padding:1px 7px; border-radius:999px; font-size:10.5px; border:1px solid var(--line); margin-right:4px;}
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .splitcol h3 { font-size: 12px; margin: 0 0 8px; }
+  .splitcol .recipe { color: var(--muted); font-size: 11px; margin: 0 0 10px; }
+  .combo { display:grid; grid-template-columns: 60px 1fr; gap: 4px 8px; align-items:center; }
+  .combo .cap { color: var(--muted); font-size: 10.5px; text-align:right; }
+</style>
+</head>
+<body>
+
+<h1>Encoding strips — what reads at a glance</h1>
+<p class="sub">Candidate encodings from <b>sim_ui.md</b> for flow (U12), pressure (U13), electrical live (U16).
+Each row is one idea; columns are discrete levels so you can judge "roughly how much / how hard". Motion rows are
+marked — they only move in the live HTML, the PNG shows a frame.</p>
+
+<!-- ============ FLOW ============ -->
+<div class="card">
+  <h2>U12 · FLOW — where it goes & roughly how much</h2>
+  <p class="note">Hose carrying 0 → 3 m³/h, left to right.</p>
+  <div class="levels">
+    <div class="head first">encoding ↓ &nbsp; level →</div>
+    <div class="head">0 (idle)</div><div class="head">0.4</div><div class="head">1.2</div><div class="head">3.0 m³/h</div>
+
+    <!-- thickness -->
+    <div class="rowlabel">thickness<small>stroke-width ∝ flow</small></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="#c7d0da" stroke-width="1.5" stroke-dasharray="2 3"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="2.5"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="9"/></svg></div>
+
+    <!-- gradient/colour -->
+    <div class="rowlabel">colour ramp<small>pale → deep ∝ flow</small></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="#dde6ef" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="#9ecbf3" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="#3d97e8" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water-deep)" stroke-width="5"/></svg></div>
+
+    <!-- dash density -->
+    <div class="rowlabel">dash density<small>more dashes ∝ flow</small></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="#c7d0da" stroke-width="3" stroke-dasharray="1 11"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="3" stroke-dasharray="3 9"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="3" stroke-dasharray="5 4"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="3" stroke-dasharray="8 2"/></svg></div>
+
+    <!-- animated dashes -->
+    <div class="rowlabel">moving dashes<small>speed ∝ flow · (animated)</small></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="#c7d0da" stroke-width="3" stroke-dasharray="2 3"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="3" stroke-dasharray="6 6" style="animation:flow 1.6s linear infinite"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="3" stroke-dasharray="6 6" style="animation:flow .8s linear infinite"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line class="hose" x1="6" y1="10" x2="164" y2="10" stroke="var(--water)" stroke-width="3" stroke-dasharray="6 6" style="animation:flow .35s linear infinite"/></svg></div>
+
+    <!-- droplets -->
+    <div class="rowlabel">paced droplets<small>count + speed · (animated)</small></div>
+    <div class="cell"><svg width="170" height="20"><line x1="6" y1="10" x2="164" y2="10" stroke="#eef2f6" stroke-width="6"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line x1="6" y1="10" x2="164" y2="10" stroke="#eef2f6" stroke-width="6"/><circle cx="50" cy="10" r="2.6" fill="var(--water)"/><circle cx="120" cy="10" r="2.6" fill="var(--water)"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line x1="6" y1="10" x2="164" y2="10" stroke="#eef2f6" stroke-width="6"/><circle cx="30" cy="10" r="3" fill="var(--water)"/><circle cx="70" cy="10" r="3" fill="var(--water)"/><circle cx="110" cy="10" r="3" fill="var(--water)"/><circle cx="150" cy="10" r="3" fill="var(--water)"/></svg></div>
+    <div class="cell"><svg width="170" height="20"><line x1="6" y1="10" x2="164" y2="10" stroke="#eef2f6" stroke-width="6"/><circle cx="20" cy="10" r="3.4" fill="var(--water)"/><circle cx="44" cy="10" r="3.4" fill="var(--water)"/><circle cx="68" cy="10" r="3.4" fill="var(--water)"/><circle cx="92" cy="10" r="3.4" fill="var(--water)"/><circle cx="116" cy="10" r="3.4" fill="var(--water)"/><circle cx="140" cy="10" r="3.4" fill="var(--water)"/></svg></div>
+  </div>
+</div>
+
+<!-- ============ PRESSURE ============ -->
+<div class="card">
+  <h2>U13 · PRESSURE — pressurised obvious & roughly how hard</h2>
+  <p class="note">Same node/hose at dry → 3.5 bar.</p>
+  <div class="levels">
+    <div class="head first">encoding ↓ &nbsp; level →</div>
+    <div class="head">— (dry)</div><div class="head">1.0</div><div class="head">2.0</div><div class="head">3.5 bar</div>
+
+    <!-- fill saturation -->
+    <div class="rowlabel">fill saturation<small>hose interior fills ∝ bar</small></div>
+    <div class="cell"><svg width="170" height="22"><rect x="6" y="5" width="158" height="12" rx="6" fill="#fff" stroke="var(--line)"/></svg></div>
+    <div class="cell"><svg width="170" height="22"><rect x="6" y="5" width="158" height="12" rx="6" fill="#d6e8fa" stroke="var(--line)"/></svg></div>
+    <div class="cell"><svg width="170" height="22"><rect x="6" y="5" width="158" height="12" rx="6" fill="#8fc1f0" stroke="var(--line)"/></svg></div>
+    <div class="cell"><svg width="170" height="22"><rect x="6" y="5" width="158" height="12" rx="6" fill="#2f8be6" stroke="var(--line)"/></svg></div>
+
+    <!-- badge -->
+    <div class="rowlabel">numeric badge<small>bar value on the node</small></div>
+    <div class="cell"><svg width="170" height="22"><line x1="6" y1="11" x2="164" y2="11" stroke="#e3e9ef" stroke-width="5"/><rect class="badge-bg" x="62" y="2" width="46" height="16" rx="8"/><text class="badge" x="85" y="13" text-anchor="middle" fill="var(--muted)">— bar</text></svg></div>
+    <div class="cell"><svg width="170" height="22"><line x1="6" y1="11" x2="164" y2="11" stroke="#bcd9f5" stroke-width="5"/><rect class="badge-bg" x="62" y="2" width="46" height="16" rx="8"/><text class="badge" x="85" y="13" text-anchor="middle">1.0</text></svg></div>
+    <div class="cell"><svg width="170" height="22"><line x1="6" y1="11" x2="164" y2="11" stroke="#bcd9f5" stroke-width="5"/><rect class="badge-bg" x="62" y="2" width="46" height="16" rx="8"/><text class="badge" x="85" y="13" text-anchor="middle">2.0</text></svg></div>
+    <div class="cell"><svg width="170" height="22"><line x1="6" y1="11" x2="164" y2="11" stroke="#bcd9f5" stroke-width="5"/><rect class="badge-bg" x="62" y="2" width="46" height="16" rx="8"/><text class="badge" x="85" y="13" text-anchor="middle">3.5</text></svg></div>
+
+    <!-- glow -->
+    <div class="rowlabel">glow / halo<small>blur radius ∝ bar</small></div>
+    <div class="cell"><svg width="170" height="24"><line x1="6" y1="12" x2="164" y2="12" stroke="#dfe6ed" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="24"><line x1="6" y1="12" x2="164" y2="12" stroke="#7fb6ee" stroke-width="5" opacity=".35" style="filter:blur(2px)"/><line x1="6" y1="12" x2="164" y2="12" stroke="var(--water)" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="24"><line x1="6" y1="12" x2="164" y2="12" stroke="#7fb6ee" stroke-width="5" opacity=".55" style="filter:blur(4px)"/><line x1="6" y1="12" x2="164" y2="12" stroke="var(--water)" stroke-width="5"/></svg></div>
+    <div class="cell"><svg width="170" height="24"><line x1="6" y1="12" x2="164" y2="12" stroke="#7fb6ee" stroke-width="6" opacity=".75" style="filter:blur(7px)"/><line x1="6" y1="12" x2="164" y2="12" stroke="var(--water)" stroke-width="5"/></svg></div>
+
+    <!-- gauge glyph -->
+    <div class="rowlabel">gauge glyph<small>dial / &lt;meter&gt; at key node</small></div>
+    <div class="cell"><svg width="40" height="26" viewBox="0 0 40 26"><path d="M6 22 A14 14 0 0 1 34 22" fill="none" stroke="#e0e6ec" stroke-width="3"/><line x1="20" y1="22" x2="20" y2="12" stroke="var(--muted)" stroke-width="2"/></svg></div>
+    <div class="cell"><svg width="40" height="26" viewBox="0 0 40 26"><path d="M6 22 A14 14 0 0 1 34 22" fill="none" stroke="#e0e6ec" stroke-width="3"/><line x1="20" y1="22" x2="10" y2="16" stroke="var(--water)" stroke-width="2"/></svg></div>
+    <div class="cell"><svg width="40" height="26" viewBox="0 0 40 26"><path d="M6 22 A14 14 0 0 1 34 22" fill="none" stroke="#e0e6ec" stroke-width="3"/><line x1="20" y1="22" x2="20" y2="9" stroke="var(--water)" stroke-width="2"/></svg></div>
+    <div class="cell"><svg width="40" height="26" viewBox="0 0 40 26"><path d="M6 22 A14 14 0 0 1 34 22" fill="none" stroke="#e0e6ec" stroke-width="3"/><line x1="20" y1="22" x2="31" y2="15" stroke="var(--water-deep)" stroke-width="2"/></svg></div>
+  </div>
+</div>
+
+<!-- ============ ELECTRICAL ============ -->
+<div class="card">
+  <h2>U16 · LIVE — energised wiring vs not, and broken paths</h2>
+  <div class="levels" style="grid-template-columns:150px repeat(3,1fr);">
+    <div class="head first">encoding ↓ &nbsp; state →</div>
+    <div class="head">live</div><div class="head">de-energised</div><div class="head">broken</div>
+
+    <div class="rowlabel">colour vs desaturated</div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--live)" stroke-width="3"/></svg></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--dead)" stroke-width="3"/></svg></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="90" y2="8" stroke="var(--dead)" stroke-width="3"/><line class="seg" x1="100" y1="8" x2="184" y2="8" stroke="var(--dead)" stroke-width="3"/></svg></div>
+
+    <div class="rowlabel">moving current dashes<small>(animated)</small></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--live)" stroke-width="3" stroke-dasharray="4 4" style="animation:current .5s linear infinite"/></svg></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--dead)" stroke-width="3"/></svg></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--fault)" stroke-width="2.5" stroke-dasharray="5 4"/></svg></div>
+
+    <div class="rowlabel">live badge / dot</div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--dead)" stroke-width="3"/><circle cx="95" cy="8" r="4.5" fill="var(--live)"/></svg></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="184" y2="8" stroke="var(--dead)" stroke-width="3"/><circle cx="95" cy="8" r="4.5" fill="none" stroke="var(--dead)"/></svg></div>
+    <div class="cell"><svg width="190" height="16"><line class="seg" x1="6" y1="8" x2="86" y2="8" stroke="var(--dead)" stroke-width="3"/><line class="seg" x1="104" y1="8" x2="184" y2="8" stroke="var(--dead)" stroke-width="3"/><path d="M91 3 l8 10 M99 3 l-8 10" stroke="var(--fault)" stroke-width="1.6"/></svg></div>
+  </div>
+  <p class="legend"><span class="pill" style="border-color:#f0c98a">live = amber</span><span class="pill">dead = grey</span><span class="pill" style="border-color:#f0a6a4">broken = red break</span> — energised vs not is a hue+saturation flip; "broken" needs its own mark so it isn't read as merely de-energised.</p>
+</div>
+
+<!-- ============ COMBINED / T2 ============ -->
+<div class="card">
+  <h2>T2 · FLOW + PRESSURE on the SAME hose — which split reads cleanly?</h2>
+  <p class="note">Both U12 and U13 want to modulate the same line. Two ways to divide the channels so they don't fight.
+  Three hoses, each a different flow <i>and</i> pressure.</p>
+  <div class="two">
+    <div class="splitcol">
+      <h3>Split A</h3>
+      <p class="recipe">thickness = flow · fill-saturation = pressure · moving dashes = direction</p>
+      <div class="combo">
+        <div class="cap">0.4 m³/h<br>1.0 bar</div>
+        <svg width="320" height="20"><line x1="6" y1="10" x2="314" y2="10" stroke="#d6e8fa" stroke-width="4"/><line x1="6" y1="10" x2="314" y2="10" stroke="#9ecbf3" stroke-width="2.5" stroke-dasharray="6 6" style="animation:flow 1.6s linear infinite"/></svg>
+        <div class="cap">1.2 m³/h<br>2.0 bar</div>
+        <svg width="320" height="20"><line x1="6" y1="10" x2="314" y2="10" stroke="#8fc1f0" stroke-width="7"/><line x1="6" y1="10" x2="314" y2="10" stroke="#2f8be6" stroke-width="3" stroke-dasharray="6 6" style="animation:flow .8s linear infinite"/></svg>
+        <div class="cap">3.0 m³/h<br>3.5 bar</div>
+        <svg width="320" height="20"><line x1="6" y1="10" x2="314" y2="10" stroke="#2f8be6" stroke-width="11"/><line x1="6" y1="10" x2="314" y2="10" stroke="#fff" stroke-width="3.5" stroke-dasharray="6 6" opacity=".6" style="animation:flow .35s linear infinite"/></svg>
+      </div>
+    </div>
+    <div class="splitcol">
+      <h3>Split B</h3>
+      <p class="recipe">colour ramp = flow · glow = pressure · badge = pressure number</p>
+      <div class="combo">
+        <div class="cap">0.4 m³/h<br>1.0 bar</div>
+        <svg width="320" height="22"><line x1="6" y1="11" x2="314" y2="11" stroke="#7fb6ee" stroke-width="5" opacity=".35" style="filter:blur(2px)"/><line x1="6" y1="11" x2="314" y2="11" stroke="#9ecbf3" stroke-width="4"/><rect class="badge-bg" x="140" y="3" width="40" height="15" rx="7"/><text class="badge" x="160" y="13.5" text-anchor="middle">1.0</text></svg>
+        <div class="cap">1.2 m³/h<br>2.0 bar</div>
+        <svg width="320" height="22"><line x1="6" y1="11" x2="314" y2="11" stroke="#7fb6ee" stroke-width="6" opacity=".55" style="filter:blur(4px)"/><line x1="6" y1="11" x2="314" y2="11" stroke="#3d97e8" stroke-width="4"/><rect class="badge-bg" x="140" y="3" width="40" height="15" rx="7"/><text class="badge" x="160" y="13.5" text-anchor="middle">2.0</text></svg>
+        <div class="cap">3.0 m³/h<br>3.5 bar</div>
+        <svg width="320" height="22"><line x1="6" y1="11" x2="314" y2="11" stroke="#7fb6ee" stroke-width="7" opacity=".75" style="filter:blur(7px)"/><line x1="6" y1="11" x2="314" y2="11" stroke="var(--water-deep)" stroke-width="4"/><rect class="badge-bg" x="140" y="3" width="40" height="15" rx="7"/><text class="badge" x="160" y="13.5" text-anchor="middle">3.5</text></svg>
+      </div>
+    </div>
+  </div>
+  <p class="legend">Open question this picture answers: does <b>thickness alone</b> carry flow well enough that pressure can own colour/fill — or does flow need colour too, forcing pressure onto a badge/gauge? Pick a winner per quantity and U12/U13 get an owning channel each.</p>
+</div>
+
+</body>
+</html>
