@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Irrigation · Node Flow Editor (MOCKUP)</title>
+<style>
+  :root{
+    --bg:#1b1d22; --panel:#23262d; --node:#2e323b; --node2:#363b45;
+    --ink:#e7eaf0; --dim:#9aa3b2; --line:#3a3f4a;
+    --water:#3aa0ff; --water-d:#1d5fb0;
+    --sig:#ff9b3d; --sig-d:#b3651b;
+    --grid230:#7d5bff;
+    --ok:#37c46b; --warn:#f3b13a; --bad:#ef4d4d; --idle:#6b727f;
+    --shadow:0 6px 18px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  #banner{position:fixed;top:0;left:0;right:0;z-index:60;
+    background:repeating-linear-gradient(45deg,#3a2a00,#3a2a00 10px,#322400 10px,#322400 20px);
+    color:#ffcf6b;font-size:12px;font-weight:700;text-align:center;padding:5px 8px;
+    border-bottom:1px solid #5a4400;letter-spacing:.3px}
+  header{position:fixed;top:27px;left:0;right:0;z-index:55;background:var(--panel);
+    border-bottom:1px solid var(--line);padding:7px 12px;display:flex;align-items:center;gap:8px}
+  header .dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+  header h1{font-size:14px;margin:0;font-weight:600}
+  header .sub{font-size:11px;color:var(--dim);margin-left:auto}
+  #legend{position:fixed;top:62px;left:0;right:0;z-index:54;background:#1f2228;
+    border-bottom:1px solid var(--line);display:flex;gap:14px;justify-content:center;
+    padding:5px 6px;font-size:10.5px;color:var(--dim);flex-wrap:wrap}
+  #legend i{display:inline-block;width:18px;height:0;border-top-width:3px;border-top-style:solid;
+    vertical-align:middle;margin-right:5px;border-radius:2px}
+  .l-water i{border-color:var(--water)} .l-sig i{border-color:var(--sig);border-top-style:dashed}
+  .l-pwr i{border-color:var(--grid230)}
+  #canvas{position:absolute;top:88px;left:0;right:0;bottom:0;overflow:auto;-webkit-overflow-scrolling:touch}
+  #stage{position:relative;width:390px;margin:0 auto}
+  svg#wires{position:absolute;top:0;left:0;pointer-events:none;z-index:1;overflow:visible}
+  .node{position:absolute;z-index:2;width:120px;background:linear-gradient(180deg,var(--node2),var(--node));
+    border:1px solid #444a55;border-radius:9px;box-shadow:var(--shadow);padding:7px 8px 16px;
+    cursor:pointer;transition:transform .08s,border-color .15s;user-select:none}
+  .node:active{transform:scale(.97)}
+  .node.sel{border-color:#7fb6ff;box-shadow:0 0 0 2px rgba(58,160,255,.4),var(--shadow)}
+  .node .nt{font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:5px;line-height:1.15}
+  .node .nt .ico{font-size:14px}
+  .node .nsub{font-size:9.5px;color:var(--dim);margin-top:2px;line-height:1.2}
+  .node .nval{font-size:10px;color:#bfe3ff;margin-top:3px;font-variant-numeric:tabular-nums}
+  /* port nubs */
+  .port{position:absolute;width:11px;height:11px;border-radius:3px;border:2px solid #1b1d22;z-index:3}
+  .port.in{left:-7px} .port.out{right:-7px}
+  .port.water{background:var(--water)} .port.sig{background:var(--sig)} .port.pwr{background:var(--grid230)}
+  /* status badge */
+  .badge{position:absolute;left:50%;transform:translateX(-50%);bottom:-9px;
+    display:flex;align-items:center;gap:4px;background:#15171b;border:1px solid var(--line);
+    border-radius:10px;padding:1px 7px;font-size:8.5px;color:var(--dim);white-space:nowrap;z-index:4}
+  .badge .b{width:7px;height:7px;border-radius:50%;background:var(--idle)}
+  .badge.ok .b{background:var(--ok);box-shadow:0 0 5px var(--ok)} .badge.ok{color:#9be8b6;border-color:#1d5a33}
+  .badge.bad .b{background:var(--bad);box-shadow:0 0 5px var(--bad)} .badge.bad{color:#ffb3b3;border-color:#5a1d1d}
+  .badge.warn .b{background:var(--warn);box-shadow:0 0 5px var(--warn)} .badge.warn{color:#ffe2a6;border-color:#5a4400}
+  /* wires animation */
+  .wire{fill:none;stroke-linecap:round}
+  .wire.water{stroke:var(--water-d);stroke-width:3}
+  .wire.sig{stroke:var(--sig-d);stroke-width:2.5}
+  .wire.pwr{stroke:#4a3a8a;stroke-width:2.5}
+  .wire.flow{stroke-dasharray:7 6;animation:dash 1s linear infinite}
+  .wire.water.flow{stroke:var(--water)} .wire.sig.flow{stroke:var(--sig)} .wire.pwr.flow{stroke:var(--grid230)}
+  @keyframes dash{to{stroke-dashoffset:-26}}
+  /* drawer */
+  #scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;opacity:0;pointer-events:none;transition:opacity .2s}
+  #scrim.on{opacity:1;pointer-events:auto}
+  #drawer{position:fixed;top:0;right:0;bottom:0;width:300px;max-width:88vw;background:var(--panel);
+    z-index:91;transform:translateX(105%);transition:transform .22s cubic-bezier(.4,0,.2,1);
+    box-shadow:-8px 0 24px rgba(0,0,0,.5);display:flex;flex-direction:column}
+  #drawer.on{transform:translateX(0)}
+  #dhead{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
+  #dhead .ico{font-size:20px}
+  #dhead .tt{flex:1}
+  #dhead .tt b{font-size:14px;display:block}
+  #dhead .tt span{font-size:10.5px;color:var(--dim)}
+  #dhead .x{font-size:22px;color:var(--dim);cursor:pointer;padding:0 4px;line-height:1}
+  #dbody{padding:12px 14px;overflow:auto;flex:1}
+  .sect{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);
+    margin:14px 0 7px;border-bottom:1px solid var(--line);padding-bottom:4px}
+  .sect:first-child{margin-top:0}
+  .kv{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+  .kv span{color:var(--dim)} .kv b{font-variant-numeric:tabular-nums}
+  .ctl{margin:9px 0}
+  .ctl label{font-size:11px;color:var(--dim);display:block;margin-bottom:5px}
+  .seg{display:flex;gap:4px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:52px;background:var(--node);color:var(--ink);border:1px solid #444a55;
+    border-radius:7px;padding:8px 4px;font-size:11px;cursor:pointer}
+  .seg button.on{background:#2c5a9a;border-color:#3a7fe0;color:#fff}
+  .seg button.on.red{background:#7a2a2a;border-color:#e04d4d}
+  .seg button.on.grn{background:#1f6a3c;border-color:#37c46b}
+  .toggle{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:7px 0}
+  .sw{width:40px;height:23px;border-radius:13px;background:#444a55;position:relative;transition:background .15s;flex:none}
+  .sw.on{background:var(--ok)}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
+    background:#fff;transition:left .15s}
+  .sw.on::after{left:19px}
+  .note{font-size:10.5px;color:var(--dim);line-height:1.45;margin-top:6px}
+  .statusline{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+    padding:8px 10px;border-radius:7px;background:#15171b;margin-bottom:4px}
+  .statusline .b{width:9px;height:9px;border-radius:50%}
+  .hint{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:50;
+    font-size:10px;color:var(--dim);background:rgba(20,22,26,.85);padding:4px 10px;border-radius:10px;
+    border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="banner">⚠️ MOCKUP · fake data · node-flow editor concept</div>
+<header>
+  <span class="dot"></span>
+  <h1>irrigation.flow</h1>
+  <span class="sub">DAB AQUAJET 132 M · 6 zones</span>
+</header>
+<div id="legend">
+  <span class="l-water"><i></i>water (m³/h)</span>
+  <span class="l-sig"><i></i>signal</span>
+  <span class="l-pwr"><i></i>230 V</span>
+</div>
+
+<div id="canvas">
+  <div id="stage">
+    <svg id="wires"></svg>
+  </div>
+</div>
+<div class="hint">tap a node to open its config · faults live inside nodes</div>
+
+<div id="scrim"></div>
+<aside id="drawer">
+  <div id="dhead">
+    <span class="ico" id="dico">⬡</span>
+    <div class="tt"><b id="dtitle">Node</b><span id="dtype">type</span></div>
+    <div class="x" id="dclose">×</div>
+  </div>
+  <div id="dbody"></div>
+</aside>
+
+<script>
+"use strict";
+/* ===== fake state model ===== */
+// nodes layout in a 390-wide stage. y grows downward (top->bottom flow)
+const NODES = {
+  grid_ctl:{x:18, y:8,  w:120, ico:"🔌", title:"Grid plug A", type:"230 V supply", kind:"plug"},
+  grid_pmp:{x:252,y:8,  w:120, ico:"🔌", title:"Grid plug B", type:"230 V supply", kind:"plug"},
+  ctrl:    {x:18, y:96, w:120, ico:"🧠", title:"Controller O1", type:"zone controller", kind:"ctrl"},
+  well:    {x:252,y:96, w:120, ico:"💧", title:"Well", type:"source", kind:"src"},
+  strain:  {x:252,y:178,w:120, ico:"🛢️", title:"Strainer", type:"foot valve", kind:"pipe"},
+  pump:    {x:252,y:260,w:120, ico:"⚙️", title:"Jet pump", type:"AQUAJET 132 M", kind:"pump"},
+  feed:    {x:252,y:348,w:120, ico:"〰️", title:"Feed ~20 m", type:"pipe run", kind:"pipe"},
+  man:     {x:135,y:430,w:120, ico:"🕸️", title:"Manifold", type:"6-way split", kind:"man"},
+  // zones
+  z2v:{x:14, y:520,w:112,ico:"🟢",title:"Z2 valve",type:"auto valve",kind:"av",zone:"Z2"},
+  z3v:{x:138,y:520,w:112,ico:"🟢",title:"Z3 valve",type:"auto valve",kind:"av",zone:"Z3"},
+  z5v:{x:262,y:520,w:112,ico:"🟢",title:"Z5 valve",type:"auto valve",kind:"av",zone:"Z5"},
+  z4v:{x:14, y:760,w:112,ico:"🟢",title:"Z4 valve",type:"auto valve",kind:"av",zone:"Z4"},
+  z1v:{x:138,y:760,w:112,ico:"🤚",title:"Z1 valve",type:"manual valve",kind:"mv",zone:"Z1"},
+  z6v:{x:262,y:760,w:112,ico:"🚫",title:"Z6 stub",type:"capped",kind:"cap",zone:"Z6"},
+  // heads (compact, below their zone)
+  z2h:{x:14, y:618,w:112,ico:"💦",title:"Z2 heads",type:"3 heads",kind:"heads",zone:"Z2"},
+  z3h:{x:138,y:618,w:112,ico:"💦",title:"Z3 heads",type:"2 rotors",kind:"heads",zone:"Z3"},
+  z5h:{x:262,y:618,w:112,ico:"💦",title:"Z5 heads",type:"2 rotors",kind:"heads",zone:"Z5"},
+  z4h:{x:14, y:858,w:112,ico:"💦",title:"Z4 heads",type:"4 sprays",kind:"heads",zone:"Z4"},
+  z1h:{x:138,y:858,w:112,ico:"💦",title:"Z1 hand line",type:"hand line",kind:"heads",zone:"Z1"},
+};
+const STAGE_H = 950;
+
+// head definitions per zone (nominal m³/h)
+const HEADS = {
+  Z2:[{n:"BL4.0 rotor 170°",q:0.90},{n:"MP3000 spray 270°",q:0.70},{n:"MP2000 spray 180°",q:0.45}],
+  Z3:[{n:"BL2.5 rotor 150°",q:0.54},{n:"BL5.0 rotor 270°",q:1.14}],
+  Z5:[{n:"BL5.0 rotor 270°",q:1.14},{n:"BL2.5 rotor 180°",q:0.54}],
+  Z4:[{n:"MP3000",q:0.70},{n:"MP1000",q:0.30},{n:"MP2000",q:0.45},{n:"MP3000",q:0.70}],
+  Z1:[{n:"hand line",q:0.80}],
+};
+
+// editable control state
+const S = {
+  plugA:true, plugB:true,                 // grid plugs
+  sig:{Z2:false,Z3:false,Z5:false,Z4:false}, // controller per-zone signals
+  mv:false,                               // controller MV/pump-start
+  // auto-valve per-zone internal controls + faults
+  av:{
+    Z2:{bleed:false,throttle:"open",wireCut:false,deadSol:false},
+    Z3:{bleed:false,throttle:"open",wireCut:false,deadSol:false},
+    Z5:{bleed:false,throttle:"open",wireCut:false,deadSol:false},
+    Z4:{bleed:false,throttle:"open",wireCut:false,deadSol:false},
+  },
+  z1handle:"shut",                        // manual valve handle
+  // per-head flo-stop + clog
+  heads:{},
+};
+// init head sub-state
+for(const z in HEADS){ S.heads[z]=HEADS[z].map(()=>({flo:true,clog:0})); }
+
+const THR = {open:1.0, "¾":0.75, "½":0.5, shut:0.0};
+
+/* ===== derived computation ===== */
+function compute(){
+  const d={pump:{},zones:{},wires:{}};
+  const ctrlPwr = S.plugA;
+  const pumpPwr = S.plugB;
+  d.ctrlPwr=ctrlPwr; d.pumpPwr=pumpPwr;
+
+  // pump runs if MV/pump-start energized AND pump has power
+  const pumpRun = S.mv && pumpPwr;
+  d.pumpRun = pumpRun;
+
+  // per auto-valve open logic
+  let totalQ=0;
+  function avState(z){
+    const a=S.av[z];
+    const signal = S.sig[z] && ctrlPwr;          // controller energizes line
+    const signalReaches = signal && !a.wireCut;  // wire intact
+    const canActuate = signalReaches && !a.deadSol; // solenoid alive
+    const commanded = signal;                    // user intends to water
+    // valve opens if actuated OR bleed screw manually cracked, AND there is pump pressure
+    const valveOpen = (canActuate || a.bleed) && pumpRun && a.throttle!=="shut";
+    return {signal,signalReaches,canActuate,commanded,valveOpen};
+  }
+  function headFlow(z, openFrac){
+    let q=0; const hs=S.heads[z];
+    HEADS[z].forEach((h,i)=>{
+      const st=hs[i];
+      if(!st.flo) return;            // flo-stop closed
+      const clogF = st.clog>=100?0:(1-st.clog/100);
+      q += h.q*clogF*openFrac;
+    });
+    return q;
+  }
+  for(const z of ["Z2","Z3","Z5","Z4"]){
+    const st=avState(z);
+    const frac = st.valveOpen ? THR[S.av[z].throttle] : 0;
+    const q = headFlow(z, frac);
+    totalQ += q;
+    let status;
+    if(st.valveOpen && q>0.01) status="ok";
+    else if(st.commanded && !st.valveOpen) status="warn"; // commanded not opening
+    else status="idle";
+    d.zones[z]={...st,q,status};
+  }
+  // Z1 manual
+  {
+    const frac = (S.z1handle==="shut"?0:THR[S.z1handle]||0);
+    const open = frac>0 && pumpRun;
+    const q = open? headFlow("Z1",frac):0;
+    totalQ+=q;
+    d.zones.Z1={valveOpen:open,commanded:S.z1handle!=="shut",q,status:open&&q>0.01?"ok":(S.z1handle!=="shut"&&!open?"warn":"idle")};
+  }
+  d.zones.Z6={valveOpen:false,commanded:false,q:0,status:"idle"};
+
+  d.totalQ = totalQ;
+  // pump delivers totalQ if running; show head pressure-ish fake
+  d.pumpQ = pumpRun? totalQ : 0;
+  d.pumpP = pumpRun? (totalQ>0? Math.max(1.2, 4.6 - totalQ*0.55).toFixed(1) : "4.8") : "0.0";
+  return d;
+}
+
+/* ===== wires: [fromNode, fromPortKind, toNode, kind] ; kind: water|sig|pwr ; flow:boolfn ===== */
+const WIRES = [
+  ["grid_ctl","ctrl","pwr", d=>d.ctrlPwr],
+  ["grid_pmp","pump","pwr", d=>d.pumpPwr],
+  ["well","strain","water", d=>d.pumpRun],
+  ["strain","pump","water", d=>d.pumpRun],
+  ["pump","feed","water", d=>d.pumpRun&&d.pumpQ>0.01],
+  ["feed","man","water", d=>d.pumpRun&&d.pumpQ>0.01],
+  // controller signals
+  ["ctrl","z2v","sig", d=>d.zones.Z2.signalReaches],
+  ["ctrl","z3v","sig", d=>d.zones.Z3.signalReaches],
+  ["ctrl","z5v","sig", d=>d.zones.Z5.signalReaches],
+  ["ctrl","z4v","sig", d=>d.zones.Z4.signalReaches],
+  ["ctrl","pump","sig", d=>d.mv&&d.ctrlPwr],   // MV/pump start
+  // manifold -> valves
+  ["man","z2v","water", d=>d.zones.Z2.valveOpen],
+  ["man","z3v","water", d=>d.zones.Z3.valveOpen],
+  ["man","z5v","water", d=>d.zones.Z5.valveOpen],
+  ["man","z4v","water", d=>d.zones.Z4.valveOpen],
+  ["man","z1v","water", d=>d.zones.Z1.valveOpen],
+  ["man","z6v","water", d=>false],
+  // valves -> heads
+  ["z2v","z2h","water", d=>d.zones.Z2.valveOpen&&d.zones.Z2.q>0.01],
+  ["z3v","z3h","water", d=>d.zones.Z3.valveOpen&&d.zones.Z3.q>0.01],
+  ["z5v","z5h","water", d=>d.zones.Z5.valveOpen&&d.zones.Z5.q>0.01],
+  ["z4v","z4h","water", d=>d.zones.Z4.valveOpen&&d.zones.Z4.q>0.01],
+  ["z1v","z1h","water", d=>d.zones.Z1.valveOpen&&d.zones.Z1.q>0.01],
+];
+
+/* ===== render ===== */
+const stage=document.getElementById("stage");
+const svg=document.getElementById("wires");
+let D=compute();
+let selected=null;
+
+function portKindFor(wireKind){return wireKind;}
+
+function buildNodes(){
+  // remove existing node divs (keep svg)
+  [...stage.querySelectorAll(".node")].forEach(n=>n.remove());
+  for(const id in NODES){
+    const n=NODES[id];
+    const el=document.createElement("div");
+    el.className="node"; el.id="node-"+id;
+    el.style.left=n.x+"px"; el.style.top=n.y+"px"; el.style.width=(n.w||120)+"px";
+    el.dataset.id=id;
+    el.innerHTML=`<div class="nt"><span class="ico">${n.ico}</span><span>${n.title}</span></div>
+      <div class="nsub">${n.type}</div>
+      <div class="nval" id="val-${id}"></div>
+      <div class="badge" id="badge-${id}"><span class="b"></span><span class="t"></span></div>`;
+    // ports
+    addPorts(el,id);
+    el.addEventListener("click",()=>openDrawer(id));
+    stage.appendChild(el);
+  }
+}
+function nub(side,kind,topPct){
+  const p=document.createElement("div");
+  p.className=`port ${side} ${kind}`;
+  p.style.top=topPct;
+  return p;
+}
+function addPorts(el,id){
+  const k=NODES[id].kind;
+  // generic: water in left, water out right; controller/plug get sig/pwr
+  if(k==="plug"){ el.appendChild(nub("out","pwr","50%")); }
+  else if(k==="ctrl"){
+    el.appendChild(nub("in","pwr","30%"));
+    el.appendChild(nub("out","sig","30%"));
+    el.appendChild(nub("out","sig","70%"));
+  }
+  else if(k==="src"){ el.appendChild(nub("out","water","50%")); }
+  else if(k==="pump"){
+    el.appendChild(nub("in","water","35%"));
+    el.appendChild(nub("in","pwr","65%"));
+    el.appendChild(nub("in","sig","82%"));
+    el.appendChild(nub("out","water","50%"));
+  }
+  else if(k==="man"){ el.appendChild(nub("in","water","50%")); el.appendChild(nub("out","water","50%")); }
+  else if(k==="av"){
+    el.appendChild(nub("in","water","35%"));
+    el.appendChild(nub("in","sig","70%"));
+    el.appendChild(nub("out","water","50%"));
+  }
+  else if(k==="mv"){ el.appendChild(nub("in","water","50%")); el.appendChild(nub("out","water","50%")); }
+  else if(k==="cap"){ el.appendChild(nub("in","water","50%")); }
+  else if(k==="heads"){ el.appendChild(nub("in","water","50%")); }
+  else { el.appendChild(nub("in","water","50%")); el.appendChild(nub("out","water","50%")); }
+}
+
+// port pixel positions (approx, matches addPorts top%)
+function portPos(id,which,kind){
+  const n=NODES[id]; const w=n.w||120;
+  // figure top% by kind+side similar to addPorts
+  let topPct=0.5, side=which;
+  const k=n.kind;
+  if(k==="ctrl"){
+    if(which==="in") topPct=0.30;
+    else { topPct = kind==="sig" ? null : 0.30; } // out sig: choose per target later
+  }
+  if(k==="pump" && which==="in"){
+    if(kind==="water")topPct=0.35; else if(kind==="pwr")topPct=0.65; else topPct=0.82;
+  }
+  if(k==="av" && which==="in"){ topPct = kind==="sig"?0.70:0.35; }
+  // node height approx
+  const h = el_h(id);
+  const x = which==="in" ? n.x - 1 : n.x + w + 1;
+  const y = n.y + (topPct||0.5)*h;
+  return {x,y};
+}
+function el_h(id){
+  const el=document.getElementById("node-"+id);
+  return el? el.offsetHeight : 56;
+}
+
+function ctrlOutTop(targetId){
+  // distribute controller's two sig out nubs; map targets to a top% so wires look ordered
+  const order=["z2v","z3v","z5v","z4v","pump"];
+  const i=order.indexOf(targetId);
+  return 0.3 + (i/(order.length-1))*0.4; // 0.3..0.7
+}
+
+function bez(a,b){
+  const dx=Math.max(30,Math.abs(b.x-a.x)*0.5);
+  return `M ${a.x} ${a.y} C ${a.x+dx} ${a.y}, ${b.x-dx} ${b.y}, ${b.x} ${b.y}`;
+}
+
+function drawWires(){
+  svg.setAttribute("width",390);
+  svg.setAttribute("height",STAGE_H);
+  svg.innerHTML="";
+  WIRES.forEach(([from,to,kind,flowFn])=>{
+    let a=portPos(from,"out",kind);
+    let b=portPos(to,"in",kind);
+    if(NODES[from].kind==="ctrl"){
+      a={x:NODES[from].x+(NODES[from].w||120)+1, y:NODES[from].y+ctrlOutTop(to)*el_h(from)};
+    }
+    const flow = flowFn(D);
+    const p=document.createElementNS("http://www.w3.org/2000/svg","path");
+    p.setAttribute("d",bez(a,b));
+    p.setAttribute("class",`wire ${kind}${flow?" flow":""}`);
+    svg.appendChild(p);
+  });
+}
+
+function fmt(q){return q.toFixed(2);}
+
+function refresh(){
+  D=compute();
+  // node values + badges
+  setVal("pump", D.pumpRun?`${fmt(D.pumpQ)} m³/h · ${D.pumpP} bar`:"off");
+  setBadge("pump", D.pumpRun?"ok":"idle", D.pumpRun?"running":"stopped");
+  setVal("man", D.pumpRun?`Σ ${fmt(D.totalQ)} m³/h`:"no pressure");
+  setBadge("man", D.totalQ>0.01?"ok":"idle", D.totalQ>0.01?"flowing":"idle");
+  setVal("feed", D.pumpRun?`${fmt(D.pumpQ)} m³/h`:"—");
+  setBadge("feed", D.pumpRun&&D.pumpQ>0.01?"ok":"idle","");
+  setBadge("well", D.pumpRun?"ok":"idle","");
+  setBadge("strain", D.pumpRun?"ok":"idle","");
+  setVal("ctrl", D.ctrlPwr?"powered":"no power");
+  setBadge("ctrl", D.ctrlPwr?"ok":"bad", D.ctrlPwr?"online":"dark");
+  setVal("grid_ctl", S.plugA?"230 V on":"off");
+  setBadge("grid_ctl", S.plugA?"ok":"idle","");
+  setVal("grid_pmp", S.plugB?"230 V on":"off");
+  setBadge("grid_pmp", S.plugB?"ok":"idle","");
+
+  const vmap={Z2:"z2v",Z3:"z3v",Z5:"z5v",Z4:"z4v",Z1:"z1v"};
+  const hmap={Z2:"z2h",Z3:"z3h",Z5:"z5h",Z4:"z4h",Z1:"z1h"};
+  for(const z in vmap){
+    const zd=D.zones[z];
+    const cls = zd.status;
+    let txt = cls==="ok"?"watering":(cls==="warn"?"COMMANDED·NOT OPENING":(zd.commanded?"commanded":"idle"));
+    setBadge(vmap[z], cls, cls==="warn"?"NOT OPENING":(cls==="ok"?"open":"closed"));
+    setVal(vmap[z], zd.valveOpen?`${fmt(zd.q)} m³/h`:(cls==="warn"?"signal · stuck":"shut"));
+    if(hmap[z]){
+      setVal(hmap[z], zd.q>0.01?`${fmt(zd.q)} m³/h`:"dry");
+      setBadge(hmap[z], zd.q>0.01?"ok":"idle", zd.q>0.01?"spraying":"");
+    }
+  }
+  setBadge("z6v","idle","capped"); setVal("z6v","no discharge");
+
+  drawWires();
+  // selection ring
+  [...stage.querySelectorAll(".node")].forEach(n=>n.classList.toggle("sel",n.dataset.id===selected));
+  if(selected) renderDrawerBody(selected);
+}
+function setVal(id,t){const e=document.getElementById("val-"+id); if(e)e.textContent=t;}
+function setBadge(id,cls,t){
+  const e=document.getElementById("badge-"+id); if(!e)return;
+  e.className="badge "+(cls||"");
+  e.querySelector(".t").textContent=t||"";
+}
+
+/* ===== drawer ===== */
+const scrim=document.getElementById("scrim"), drawer=document.getElementById("drawer");
+const dbody=document.getElementById("dbody");
+document.getElementById("dclose").onclick=closeDrawer;
+scrim.onclick=closeDrawer;
+function openDrawer(id){ selected=id; scrim.classList.add("on"); drawer.classList.add("on");
+  document.getElementById("dico").textContent=NODES[id].ico;
+  document.getElementById("dtitle").textContent=NODES[id].title;
+  document.getElementById("dtype").textContent=NODES[id].type;
+  refresh();
+}
+function closeDrawer(){ selected=null; scrim.classList.remove("on"); drawer.classList.remove("on");
+  [...stage.querySelectorAll(".node")].forEach(n=>n.classList.remove("sel")); }
+
+function statusLine(cls,txt){
+  const c=cls==="ok"?"var(--ok)":cls==="bad"?"var(--bad)":cls==="warn"?"var(--warn)":"var(--idle)";
+  return `<div class="statusline"><span class="b" style="background:${c};box-shadow:0 0 6px ${c}"></span>${txt}</div>`;
+}
+
+function renderDrawerBody(id){
+  const n=NODES[id], k=n.kind; let h="";
+  if(k==="plug"){
+    const on = id==="grid_ctl"?S.plugA:S.plugB;
+    h+=statusLine(on?"ok":"idle", on?"230 V live":"unplugged");
+    h+=`<div class="sect">Live</div>
+      <div class="kv"><span>Voltage</span><b>${on?"230 V":"0 V"}</b></div>
+      <div class="kv"><span>Feeds</span><b>${id==="grid_ctl"?"Controller O1":"Jet pump"}</b></div>`;
+    h+=`<div class="sect">Control</div>
+      <div class="toggle"><span>Plug power</span><div class="sw ${on?"on":""}" data-act="plug" data-id="${id}"></div></div>
+      <div class="note">Pulling the plug is the only power control. A dead controller plug kills all zone signals.</div>`;
+  }
+  else if(k==="ctrl"){
+    h+=statusLine(D.ctrlPwr?"ok":"bad", D.ctrlPwr?"Controller online":"No power — all signals dead");
+    h+=`<div class="sect">Per-zone signal outputs</div>`;
+    for(const z of ["Z2","Z3","Z5","Z4"]){
+      h+=`<div class="toggle"><span>${z} signal ${S.sig[z]&&D.ctrlPwr&&D.zones[z].status==="warn"?'<b style="color:var(--warn)">· not opening</b>':''}</span>
+        <div class="sw ${S.sig[z]?"on":""}" data-act="sig" data-id="${z}"></div></div>`;
+    }
+    h+=`<div class="sect">Master valve / pump-start</div>
+      <div class="toggle"><span>MV · pump-start</span><div class="sw ${S.mv?"on":""}" data-act="mv"></div></div>
+      <div class="note">Pump only runs while this output is energized AND its 230 V plug is live. Energizing a zone signal without MV = pressure-less line.</div>`;
+  }
+  else if(k==="pump"){
+    h+=statusLine(D.pumpRun?"ok":"idle", D.pumpRun?"Running":"Stopped");
+    h+=`<div class="sect">Live</div>
+      <div class="kv"><span>Flow</span><b>${fmt(D.pumpQ)} m³/h</b></div>
+      <div class="kv"><span>Discharge</span><b>${D.pumpP} bar</b></div>
+      <div class="kv"><span>230 V</span><b>${D.pumpPwr?"present":"absent"}</b></div>
+      <div class="kv"><span>Start signal</span><b>${S.mv?"energized":"off"}</b></div>
+      <div class="note">No controls live in the pump itself. Drive it from the Controller's MV/pump-start output and Grid plug B.</div>`;
+  }
+  else if(k==="av"){
+    const z=n.zone, zd=D.zones[z], a=S.av[z];
+    const cls=zd.status;
+    h+=statusLine(cls, cls==="ok"?"Watering":cls==="warn"?"COMMANDED · NOT OPENING":"Idle");
+    h+=`<div class="sect">Live</div>
+      <div class="kv"><span>Signal at valve</span><b>${zd.signalReaches?"present":(zd.signal?"cut":"none")}</b></div>
+      <div class="kv"><span>Solenoid</span><b>${a.deadSol?"DEAD":"ok"}</b></div>
+      <div class="kv"><span>Pump pressure</span><b>${D.pumpRun?"yes":"no"}</b></div>
+      <div class="kv"><span>Flow</span><b>${fmt(zd.q)} m³/h</b></div>`;
+    h+=`<div class="sect">Controls (in this valve)</div>
+      <div class="ctl"><label>Flow throttle</label><div class="seg" data-seg="thr" data-id="${z}">
+        ${["open","¾","½","shut"].map(o=>`<button data-v="${o}" class="${a.throttle===o?"on":""}">${o}</button>`).join("")}
+      </div></div>
+      <div class="toggle"><span>Bleed screw (manual crack)</span><div class="sw ${a.bleed?"on":""}" data-act="bleed" data-id="${z}"></div></div>`;
+    h+=`<div class="sect">Inject fault</div>
+      <div class="toggle"><span>Cut signal wire</span><div class="sw ${a.wireCut?"on":""}" data-act="wirecut" data-id="${z}"></div></div>
+      <div class="toggle"><span>Dead solenoid</span><div class="sw ${a.deadSol?"on":""}" data-act="deadsol" data-id="${z}"></div></div>
+      <div class="note">Bleed screw opens the valve mechanically even with a dead solenoid (as long as the pump runs).</div>`;
+  }
+  else if(k==="mv"){ // Z1 manual
+    const zd=D.zones.Z1;
+    h+=statusLine(zd.status, zd.valveOpen?"Open":(zd.commanded?"COMMANDED · NOT OPENING":"Shut"));
+    h+=`<div class="sect">Live</div>
+      <div class="kv"><span>Flow</span><b>${fmt(zd.q)} m³/h</b></div>
+      <div class="kv"><span>Pump pressure</span><b>${D.pumpRun?"yes":"no"}</b></div>`;
+    h+=`<div class="sect">Handle</div>
+      <div class="ctl"><div class="seg" data-seg="z1" >
+        ${["open","¾","½","shut"].map(o=>`<button data-v="${o}" class="${S.z1handle===o?"on":""}">${o}</button>`).join("")}
+      </div></div>
+      <div class="note">Manual valve — no electrical signal. Needs the pump running to flow the hand line.</div>`;
+  }
+  else if(k==="cap"){
+    h+=statusLine("idle","Capped stub");
+    h+=`<div class="kv"><span>Discharge</span><b>none</b></div>
+      <div class="note">Z6 is a capped manifold stub. No heads, no controls.</div>`;
+  }
+  else if(k==="heads"){
+    const z=n.zone, zd=D.zones[z];
+    h+=statusLine(zd.q>0.01?"ok":"idle", zd.q>0.01?"Spraying":"Dry");
+    h+=`<div class="sect">Live · total ${fmt(zd.q)} m³/h</div>`;
+    HEADS[z].forEach((hd,i)=>{
+      const st=S.heads[z][i];
+      const clogF = st.clog>=100?0:(1-st.clog/100);
+      const eff = (st.flo?hd.q*clogF*(zd.valveOpen?THR[(S.av[z]?S.av[z].throttle:"open")]||(z==="Z1"?(THR[S.z1handle]||0):1):0):0);
+      h+=`<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px">
+        <div class="kv"><span style="color:var(--ink);font-weight:600">${hd.n}</span><b>${fmt(eff)} m³/h</b></div>
+        <div class="toggle"><span>Flo-stop</span><div class="sw ${st.flo?"on":""}" data-act="flo" data-id="${z}" data-i="${i}"></div></div>
+        <div class="ctl"><label>Nozzle clog</label><div class="seg" data-seg="clog" data-id="${z}" data-i="${i}">
+          ${[0,25,50,100].map(c=>`<button data-v="${c}" class="${st.clog===c?(c>=100?"on red":"on"):""}">${c===0?"clear":c===100?"full":c+"%"}</button>`).join("")}
+        </div></div>
+      </div>`;
+    });
+  }
+  else { // pipes/src
+    h+=statusLine(D.pumpRun?"ok":"idle", D.pumpRun?"Carrying flow":"Idle");
+    h+=`<div class="kv"><span>Flow</span><b>${D.pumpRun?fmt(D.pumpQ):"0.00"} m³/h</b></div>
+      <div class="note">Passive component — no controls. Drive flow from upstream nodes.</div>`;
+  }
+  dbody.innerHTML=h;
+  wireDrawerControls();
+}
+
+function wireDrawerControls(){
+  dbody.querySelectorAll(".sw").forEach(sw=>{
+    sw.onclick=()=>{
+      const act=sw.dataset.act, id=sw.dataset.id, i=sw.dataset.i;
+      if(act==="plug"){ if(id==="grid_ctl")S.plugA=!S.plugA; else S.plugB=!S.plugB; }
+      else if(act==="sig"){ S.sig[id]=!S.sig[id]; }
+      else if(act==="mv"){ S.mv=!S.mv; }
+      else if(act==="bleed"){ S.av[id].bleed=!S.av[id].bleed; }
+      else if(act==="wirecut"){ S.av[id].wireCut=!S.av[id].wireCut; }
+      else if(act==="deadsol"){ S.av[id].deadSol=!S.av[id].deadSol; }
+      else if(act==="flo"){ S.heads[id][+i].flo=!S.heads[id][+i].flo; }
+      refresh();
+    };
+  });
+  dbody.querySelectorAll(".seg").forEach(seg=>{
+    seg.querySelectorAll("button").forEach(b=>{
+      b.onclick=()=>{
+        const t=seg.dataset.seg, id=seg.dataset.id, i=seg.dataset.i, v=b.dataset.v;
+        if(t==="thr") S.av[id].throttle=v;
+        else if(t==="z1") S.z1handle=v;
+        else if(t==="clog") S.heads[id][+i].clog=+v;
+        refresh();
+      };
+    });
+  });
+}
+
+/* ===== boot ===== */
+buildNodes();
+// stage height
+stage.style.height=STAGE_H+"px";
+requestAnimationFrame(()=>{ refresh(); });
+// seed an interesting default: Z3 watering, Z5 commanded but wire-cut
+S.plugA=S.plugB=true; S.mv=true; S.sig.Z3=true; S.sig.Z5=true; S.av.Z5.wireCut=true;
+requestAnimationFrame(refresh);
+</script>
+</body>
+</html>

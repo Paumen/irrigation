@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Irrigation Sim · Accordion</title>
+<style>
+  :root{
+    --bg:#f4f6f8; --card:#ffffff; --line:#e2e7ec; --ink:#1d2630; --muted:#6b7884;
+    --accent:#2f8fd6; --water:#3aa0e6; --good:#2e9d5b; --warn:#d98a16; --bad:#d6453f;
+    --grid:#7b5cd6;
+    --shadow:0 1px 2px rgba(20,40,60,.06),0 2px 8px rgba(20,40,60,.05);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    max-width:430px; margin:0 auto; padding:0 0 40px; min-height:100vh;
+  }
+  .banner{
+    background:repeating-linear-gradient(45deg,#ffe9b0,#ffe9b0 12px,#ffe1a0 12px,#ffe1a0 24px);
+    color:#7a5600; font-weight:700; font-size:12.5px; letter-spacing:.02em;
+    text-align:center; padding:7px 10px; border-bottom:1px solid #e9cf86;
+    position:sticky; top:0; z-index:50;
+  }
+  header.appbar{
+    padding:14px 16px 10px; display:flex; align-items:baseline; justify-content:space-between;
+  }
+  header.appbar h1{font-size:18px; margin:0; font-weight:700; letter-spacing:-.01em}
+  header.appbar .sub{font-size:12px; color:var(--muted)}
+  .totals{
+    margin:0 16px 12px; padding:10px 12px; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; box-shadow:var(--shadow); display:flex; gap:14px; align-items:center;
+  }
+  .totals .big{font-size:22px; font-weight:700; line-height:1}
+  .totals .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+  .totals .seg{flex:1}
+  .totals .pumpdot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
+
+  .list{padding:0 12px; display:flex; flex-direction:column; gap:8px}
+
+  .strip{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .strip.open{border-color:#cfe2f2}
+  .striphead{
+    display:flex; align-items:center; gap:10px; padding:11px 13px; cursor:pointer;
+    user-select:none;
+  }
+  .chev{width:16px;height:16px;flex:none;transition:transform .22s ease; color:var(--muted)}
+  .strip.open .chev{transform:rotate(90deg)}
+  .zname{font-weight:700; font-size:15px; min-width:30px}
+  .ztype{font-size:11px; color:var(--muted); font-weight:500}
+  .spacer{flex:1}
+  .flowmini{font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .flowmini b{color:var(--ink); font-weight:700}
+
+  .pill{
+    font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:999px; white-space:nowrap;
+    letter-spacing:.02em; text-transform:uppercase;
+  }
+  .pill.watering{background:#e3f5ea; color:var(--good)}
+  .pill.commanded{background:#fdeede; color:var(--warn)}
+  .pill.off{background:#eef1f4; color:var(--muted)}
+  .pill.manual{background:#eaf3fb; color:var(--accent)}
+  .pill.capped{background:#eef1f4; color:#9aa6b0}
+  .pill.fault{background:#fae3e2; color:var(--bad)}
+
+  .panel{
+    max-height:0; overflow:hidden; transition:max-height .28s ease;
+    border-top:0 solid var(--line);
+  }
+  .strip.open .panel{max-height:1400px; border-top:1px solid var(--line)}
+  .panelin{padding:12px 13px 14px}
+
+  .schematic{
+    background:#f8fbfd; border:1px solid #e7eef4; border-radius:10px; padding:6px;
+    margin-bottom:12px;
+  }
+  svg{display:block; width:100%; height:auto}
+
+  .statusline{
+    font-size:12px; margin:2px 0 12px; color:var(--muted); display:flex; align-items:center; gap:6px;
+  }
+  .statusline .dot{width:8px;height:8px;border-radius:50%}
+
+  .ctrlgrp{margin-bottom:12px}
+  .ctrlgrp h4{
+    font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);
+    margin:0 0 7px; font-weight:700;
+  }
+  .row{
+    display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px dashed #eef1f4;
+  }
+  .row:last-child{border-bottom:0}
+  .row .name{font-size:13px; flex:1; min-width:0}
+  .row .name .sm{font-size:11px;color:var(--muted);display:block}
+  .row .val{font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; min-width:54px; text-align:right}
+
+  .seg-ctl{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .seg-ctl button{
+    border:0; background:#fff; padding:5px 9px; font-size:12px; font-weight:600; color:var(--muted);
+    cursor:pointer; border-left:1px solid var(--line);
+  }
+  .seg-ctl button:first-child{border-left:0}
+  .seg-ctl button.on{background:var(--accent); color:#fff}
+
+  .toggle{position:relative; width:42px; height:24px; flex:none}
+  .toggle input{opacity:0; width:100%; height:100%; margin:0; cursor:pointer}
+  .toggle .tk{
+    position:absolute; inset:0; background:#cfd6dd; border-radius:999px; transition:.18s; pointer-events:none;
+  }
+  .toggle .tk:after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .toggle input:checked + .tk{background:var(--good)}
+  .toggle input:checked + .tk:after{transform:translateX(18px)}
+  .toggle.danger input:checked + .tk{background:var(--bad)}
+
+  .faultbtns{display:flex; flex-wrap:wrap; gap:6px}
+  .faultbtns button{
+    border:1px solid var(--line); background:#fff; color:var(--muted); font-size:11.5px;
+    padding:5px 9px; border-radius:8px; cursor:pointer; font-weight:600;
+  }
+  .faultbtns button.on{background:var(--bad); color:#fff; border-color:var(--bad)}
+  .faultbtns button.warnon{background:var(--warn); color:#fff; border-color:var(--warn)}
+
+  .note{font-size:11px; color:var(--muted); margin-top:4px}
+  .miniwrap{display:flex; align-items:center; gap:8px}
+
+  /* SVG animation */
+  .pipe-flow{stroke-dasharray:3 5; animation:dash 1s linear infinite}
+  @keyframes dash{to{stroke-dashoffset:-16}}
+  .wire-live{stroke-dasharray:4 4; animation:wdash .7s linear infinite}
+  @keyframes wdash{to{stroke-dashoffset:-16}}
+  .droplet{animation:drip 1.4s linear infinite}
+  @keyframes drip{0%{opacity:0;transform:translateY(0)}15%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 14px;font-size:11px;color:var(--muted);padding:4px 16px 0}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:18px;height:0;border-top:3px solid;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="banner">⚠️ MOCKUP · fake data · no real solver</div>
+
+<header class="appbar">
+  <div>
+    <h1>Irrigation</h1>
+    <div class="sub">DAB AQUAJET 132 M · 6 zones</div>
+  </div>
+</header>
+
+<div class="totals" id="totals"></div>
+<div class="legend">
+  <span><i style="border-color:var(--water)"></i>water flowing</span>
+  <span><i style="border-color:var(--grid)"></i>24V signal live</span>
+  <span><i style="border-color:#c2ccd4"></i>idle</span>
+</div>
+
+<div class="list" id="list"></div>
+
+<script>
+"use strict";
+
+/* ---------- fake model ---------- */
+// throttle states: open / three / half / shut  (maps to fraction)
+const THR = {open:1, three:0.75, half:0.5, shut:0};
+
+const state = {
+  // 230V plugs
+  plugController:true,
+  plugPump:true,
+  // controller commands MV (pump-start relay) + per-zone signals
+  mv:true,
+  pumpFault:false, // dead/weak pump fault
+  // supply chain faults
+  strainerClog:false,
+};
+
+// heads carry a base flow (m3/h) + clog level (0,25,50,100) + flostop(open/shut)
+function head(id,label,kind,deg,base){return {id,label,kind,deg,base,clog:0,flostop:true};}
+
+const zones = [
+  {
+    id:"Z2", type:"auto · rotor+spray", valve:"auto",
+    signal:true, bleed:false, throttle:"open", wireCut:false, solenoidDead:false,
+    heads:[
+      head("z2h1","Rotor BL4.0","rotor",170,0.90),
+      head("z2h2","Spray MP3000","spray",270,0.70),
+      head("z2h3","Spray MP2000","spray",180,0.45),
+    ],
+  },
+  {
+    id:"Z3", type:"auto · 2 rotors", valve:"auto",
+    signal:true, bleed:false, throttle:"open", wireCut:false, solenoidDead:false,
+    heads:[
+      head("z3h1","Rotor BL2.5","rotor",150,0.54),
+      head("z3h2","Rotor BL5.0","rotor",270,1.14),
+    ],
+  },
+  {
+    id:"Z5", type:"auto · 2 rotors", valve:"auto",
+    signal:false, bleed:false, throttle:"open", wireCut:false, solenoidDead:false,
+    heads:[
+      head("z5h1","Rotor BL5.0","rotor",270,1.14),
+      head("z5h2","Rotor BL2.5","rotor",180,0.54),
+    ],
+  },
+  {
+    id:"Z4", type:"auto · 4 sprays", valve:"auto",
+    signal:false, bleed:false, throttle:"open", wireCut:false, solenoidDead:false,
+    heads:[
+      head("z4h1","Spray MP3000","spray",90,0.70),
+      head("z4h2","Spray MP1000","spray",90,0.30),
+      head("z4h3","Spray MP2000","spray",180,0.45),
+      head("z4h4","Spray MP3000","spray",90,0.70),
+    ],
+  },
+  {
+    id:"Z1", type:"manual · hand line", valve:"manual",
+    handle:"shut", heads:[],
+  },
+  {
+    id:"Z6", type:"capped stub", valve:"capped", heads:[],
+  },
+];
+
+/* ---------- derived state ---------- */
+function pumpRunning(){
+  return state.plugPump && state.mv && state.plugController && !state.pumpFault;
+}
+function supplyOk(){ return !state.strainerClog; }
+
+// returns {label, cls, watering(bool), flow(number)}
+function zoneState(z){
+  const pr = pumpRunning() && supplyOk();
+  if(z.valve==="capped") return {label:"CAPPED", cls:"capped", watering:false, flow:0};
+  if(z.valve==="manual"){
+    const open = z.handle==="open";
+    const watering = open && pr;
+    return {
+      label: watering? "WATERING" : (open? "OPEN · NO SUPPLY":"VALVE SHUT"),
+      cls: watering? "watering" : (open? "commanded":"manual"),
+      watering, flow: watering? 0.85:0,
+    };
+  }
+  // auto valve
+  const commanded = state.plugController && z.signal; // controller energizes signal
+  const wireOk = !z.wireCut;
+  const solOk = !z.solenoidDead;
+  const throttleFrac = THR[z.throttle];
+  const valveCanOpen = wireOk && solOk && (throttleFrac>0 || z.bleed) && pr;
+  const watering = commanded && valveCanOpen;
+
+  let flow=0;
+  if(watering){
+    flow = z.heads.reduce((s,h)=>{
+      const c = h.flostop? (1 - h.clog/100) : 0;
+      return s + h.base*c;
+    },0) * (z.bleed? 1 : throttleFrac);
+  }
+
+  let label, cls;
+  if(!commanded){ label="OFF"; cls="off"; }
+  else if(watering){ label="WATERING"; cls="watering"; }
+  else {
+    cls="commanded";
+    if(!wireOk) label="COMMANDED · WIRE CUT";
+    else if(!solOk) label="COMMANDED · SOLENOID DEAD";
+    else if(!pr) label="COMMANDED · NO PUMP";
+    else if(throttleFrac===0 && !z.bleed) label="COMMANDED · THROTTLED SHUT";
+    else label="COMMANDED · NOT OPENING";
+  }
+  return {label, cls, watering, flow, commanded};
+}
+
+function headFlow(h, zWatering, zMul){
+  if(!zWatering) return 0;
+  const c = h.flostop? (1 - h.clog/100) : 0;
+  return h.base*c*zMul;
+}
+
+function systemFlow(){
+  let f=0;
+  zones.forEach(z=>{ f+=zoneState(z).flow; });
+  return f;
+}
+
+/* ---------- SVG helpers ---------- */
+function wedge(cx,cy,r,deg,active){
+  // draw a wedge from -deg/2 to +deg/2 pointing up
+  const a0 = (-90 - deg/2)*Math.PI/180;
+  const a1 = (-90 + deg/2)*Math.PI/180;
+  const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+  const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+  const large = deg>180?1:0;
+  const col = active? "var(--water)" : "#cdd8e0";
+  const fill = active? "rgba(58,160,230,.18)":"rgba(180,195,205,.15)";
+  return `<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 ${large} 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="${col}" stroke-width="1.5"/>`;
+}
+
+function zoneSVG(z, zs){
+  const watering = zs.watering;
+  const mul = z.bleed?1:THR[z.throttle];
+  const W=358, H=128;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${z.id} schematic">`;
+
+  // controller box (left) + wire to valve
+  const wireLive = state.plugController && z.signal && !z.wireCut;
+  const wireCol = wireLive? "var(--grid)":"#c2ccd4";
+  s+=`<rect x="6" y="50" width="40" height="28" rx="5" fill="#fff" stroke="#cdd8e0"/>`;
+  s+=`<text x="26" y="68" font-size="9" text-anchor="middle" fill="var(--muted)">CTRL</text>`;
+  // wire
+  s+=`<line x1="46" y1="64" x2="86" y2="64" stroke="${wireCol}" stroke-width="2.5" ${wireLive?'class="wire-live"':''}/>`;
+  if(z.wireCut){
+    s+=`<line x1="64" y1="56" x2="70" y2="72" stroke="var(--bad)" stroke-width="2.5"/>`;
+    s+=`<line x1="70" y1="56" x2="64" y2="72" stroke="var(--bad)" stroke-width="2.5"/>`;
+  }
+
+  // valve (solenoid) box
+  const valActive = watering;
+  const valCol = z.solenoidDead? "var(--bad)" : (valActive? "var(--water)":"#cdd8e0");
+  s+=`<rect x="86" y="48" width="44" height="32" rx="6" fill="${valActive?'rgba(58,160,230,.12)':'#fff'}" stroke="${valCol}" stroke-width="2"/>`;
+  s+=`<text x="108" y="68" font-size="9" text-anchor="middle" fill="${z.solenoidDead?'var(--bad)':'var(--muted)'}">${z.solenoidDead?'SOL✕':'VALVE'}</text>`;
+
+  // feed pipe from valve to manifold split
+  const pipeCol = watering? "var(--water)":"#cdd8e0";
+  s+=`<line x1="130" y1="64" x2="170" y2="64" stroke="${pipeCol}" stroke-width="4" ${watering?'class="pipe-flow"':''}/>`;
+
+  // heads laid horizontally
+  const n=z.heads.length||1;
+  const startX=190, gap=(W-startX-18)/Math.max(n,1);
+  z.heads.forEach((h,i)=>{
+    const cx=startX+gap*i+gap/2, cy=64;
+    const hActive = watering && h.flostop && h.clog<100;
+    // branch pipe
+    s+=`<line x1="170" y1="64" x2="${cx.toFixed(0)}" y2="${cy}" stroke="${hActive?'var(--water)':'#cdd8e0'}" stroke-width="2.5" ${hActive?'class="pipe-flow"':''}/>`;
+    // wedge spray
+    s+=wedge(cx,cy,18,h.deg,hActive);
+    // head dot
+    const hcol = (!h.flostop)?"#9aa6b0":(h.clog>=100?"var(--bad)":(h.clog>0?"var(--warn)":(hActive?"var(--water)":"#9aa6b0")));
+    s+=`<circle cx="${cx.toFixed(0)}" cy="${cy}" r="4.5" fill="${hcol}"/>`;
+    // label
+    s+=`<text x="${cx.toFixed(0)}" y="${cy+34}" font-size="8.5" text-anchor="middle" fill="var(--muted)">${h.kind==='rotor'?'R':'S'}${h.clog?(' '+h.clog+'%'):''}${h.flostop?'':' ⦸'}</text>`;
+    // droplet
+    if(hActive){
+      s+=`<circle cx="${cx.toFixed(0)}" cy="${cy-22}" r="2.2" fill="var(--water)" class="droplet"/>`;
+    }
+  });
+  s+=`</svg>`;
+  return s;
+}
+
+function manualSVG(z, zs){
+  const watering=zs.watering;
+  const W=358,H=92;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${z.id} schematic">`;
+  s+=`<text x="10" y="20" font-size="10" fill="var(--muted)">manifold</text>`;
+  const open=z.handle==="open";
+  const col=watering?"var(--water)":"#cdd8e0";
+  s+=`<line x1="10" y1="50" x2="120" y2="50" stroke="${col}" stroke-width="4" ${watering?'class="pipe-flow"':''}/>`;
+  // handle valve
+  s+=`<circle cx="135" cy="50" r="16" fill="#fff" stroke="${open?'var(--accent)':'#cdd8e0'}" stroke-width="2"/>`;
+  const ha = open? "-45":"45";
+  s+=`<line x1="135" y1="50" x2="${135+14*Math.cos(ha*Math.PI/180)}" y2="${50+14*Math.sin(ha*Math.PI/180)}" stroke="${open?'var(--accent)':'var(--muted)'}" stroke-width="3" stroke-linecap="round"/>`;
+  s+=`<text x="135" y="86" font-size="9" text-anchor="middle" fill="var(--muted)">handle ${z.handle}</text>`;
+  // hand line
+  s+=`<line x1="151" y1="50" x2="320" y2="50" stroke="${watering?'var(--water)':'#cdd8e0'}" stroke-width="3" ${watering?'class="pipe-flow"':''}/>`;
+  s+=`<text x="335" y="54" font-size="14" text-anchor="middle">🚿</text>`;
+  s+=`</svg>`;
+  return s;
+}
+
+function cappedSVG(){
+  const W=358,H=72;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="capped stub">`;
+  s+=`<line x1="10" y1="36" x2="250" y2="36" stroke="#cdd8e0" stroke-width="4"/>`;
+  s+=`<rect x="250" y="24" width="14" height="24" rx="3" fill="#9aa6b0"/>`;
+  s+=`<text x="290" y="40" font-size="11" text-anchor="middle" fill="var(--muted)">capped</text>`;
+  s+=`</svg>`;
+  return s;
+}
+
+/* ---------- render ---------- */
+let openId = "Z2";
+
+function fmt(n){return n.toFixed(2);}
+
+function renderTotals(){
+  const pr=pumpRunning()&&supplyOk();
+  const f=systemFlow();
+  const active=zones.filter(z=>zoneState(z).watering).length;
+  const el=document.getElementById("totals");
+  el.innerHTML=`
+    <div class="seg">
+      <div class="lbl">System flow</div>
+      <div class="big">${fmt(f)} <span style="font-size:13px;color:var(--muted);font-weight:600">m³/h</span></div>
+    </div>
+    <div class="seg" style="text-align:right">
+      <div class="lbl"><span class="pumpdot" style="background:${pr?'var(--good)':'var(--bad)'}"></span>Pump</div>
+      <div style="font-size:14px;font-weight:700;color:${pr?'var(--good)':'var(--bad)'}">${pr?'RUNNING':(state.pumpFault?'FAULT':(!state.plugPump?'NO POWER':(!supplyOk()?'STARVED':'STOPPED')))}</div>
+      <div class="lbl" style="margin-top:3px">${active} zone${active===1?'':'s'} watering</div>
+    </div>`;
+}
+
+function statusDotColor(cls){
+  return cls==="watering"?"var(--good)":cls==="commanded"?"var(--warn)":cls==="fault"?"var(--bad)":cls==="manual"?"var(--accent)":"#c2ccd4";
+}
+
+function render(){
+  renderTotals();
+  const list=document.getElementById("list");
+  list.innerHTML="";
+
+  // supply / controller strip first
+  list.appendChild(supplyStrip());
+
+  zones.forEach(z=>{
+    const zs=zoneState(z);
+    const open = openId===z.id;
+    const strip=document.createElement("div");
+    strip.className="strip"+(open?" open":"");
+
+    const head=document.createElement("div");
+    head.className="striphead";
+    head.innerHTML=`
+      <svg class="chev" viewBox="0 0 16 16"><path d="M5 3l6 5-6 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="zname">${z.id}</span>
+      <span class="ztype">${z.type}</span>
+      <span class="spacer"></span>
+      <span class="flowmini">${zs.flow>0?`<b>${fmt(zs.flow)}</b> m³/h`:'—'}</span>
+      <span class="pill ${zs.cls}">${zs.label}</span>`;
+    head.onclick=()=>{ openId = open? null : z.id; render(); };
+    strip.appendChild(head);
+
+    const panel=document.createElement("div");
+    panel.className="panel";
+    if(open){
+      const pin=document.createElement("div");
+      pin.className="panelin";
+      pin.appendChild(buildZonePanel(z,zs));
+      panel.appendChild(pin);
+    }
+    strip.appendChild(panel);
+    list.appendChild(strip);
+  });
+}
+
+function el(html){const d=document.createElement("div");d.innerHTML=html.trim();return d.firstChild;}
+
+function buildZonePanel(z,zs){
+  const frag=document.createDocumentFragment();
+
+  // schematic
+  const sch=document.createElement("div");
+  sch.className="schematic";
+  if(z.valve==="auto") sch.innerHTML=zoneSVG(z,zs);
+  else if(z.valve==="manual") sch.innerHTML=manualSVG(z,zs);
+  else sch.innerHTML=cappedSVG();
+  frag.appendChild(sch);
+
+  // derived status line
+  const sl=document.createElement("div");
+  sl.className="statusline";
+  sl.innerHTML=`<span class="dot" style="background:${statusDotColor(zs.cls)}"></span> Derived: <b style="color:${statusDotColor(zs.cls)};margin-left:3px">${zs.label}</b>`;
+  frag.appendChild(sl);
+
+  if(z.valve==="capped"){
+    frag.appendChild(el(`<div class="note">Capped stub — no controls, no discharge.</div>`));
+    return frag;
+  }
+
+  if(z.valve==="manual"){
+    const g=document.createElement("div");g.className="ctrlgrp";
+    g.innerHTML=`<h4>Manual valve</h4>`;
+    const r=el(`<div class="row"><div class="name">Handle</div></div>`);
+    const seg=el(`<div class="seg-ctl">
+      <button data-v="open">Open</button>
+      <button data-v="shut">Shut</button></div>`);
+    seg.querySelectorAll("button").forEach(b=>{
+      if(b.dataset.v===z.handle) b.classList.add("on");
+      b.onclick=()=>{z.handle=b.dataset.v;render();};
+    });
+    r.appendChild(seg);g.appendChild(r);
+    frag.appendChild(g);
+    return frag;
+  }
+
+  // AUTO valve panel: controller channel, valve controls, heads, faults
+  const mul = z.bleed?1:THR[z.throttle];
+
+  // Controller channel
+  const gc=document.createElement("div");gc.className="ctrlgrp";
+  gc.innerHTML=`<h4>Controller channel (24V signal)</h4>`;
+  const rc=el(`<div class="row"><div class="name">Energize ${z.id} signal<span class="sm">controller O1 → solenoid</span></div></div>`);
+  rc.appendChild(makeToggle(z.signal, v=>{z.signal=v;render();}));
+  gc.appendChild(rc);
+  frag.appendChild(gc);
+
+  // Valve controls
+  const gv=document.createElement("div");gv.className="ctrlgrp";
+  gv.innerHTML=`<h4>Auto valve</h4>`;
+  // bleed
+  const rb=el(`<div class="row"><div class="name">Bleed screw<span class="sm">manual open, bypasses signal</span></div></div>`);
+  rb.appendChild(makeToggle(z.bleed, v=>{z.bleed=v;render();}));
+  gv.appendChild(rb);
+  // throttle
+  const rt=el(`<div class="row"><div class="name">Flow throttle</div></div>`);
+  const seg=el(`<div class="seg-ctl">
+    <button data-v="open">Open</button>
+    <button data-v="three">¾</button>
+    <button data-v="half">½</button>
+    <button data-v="shut">Shut</button></div>`);
+  seg.querySelectorAll("button").forEach(b=>{
+    if(b.dataset.v===z.throttle) b.classList.add("on");
+    b.onclick=()=>{z.throttle=b.dataset.v;render();};
+  });
+  rt.appendChild(seg);gv.appendChild(rt);
+  frag.appendChild(gv);
+
+  // Heads
+  const gh=document.createElement("div");gh.className="ctrlgrp";
+  gh.innerHTML=`<h4>Heads</h4>`;
+  z.heads.forEach(h=>{
+    const f=headFlow(h,zs.watering,mul);
+    const r=el(`<div class="row"><div class="name">${h.label} <span class="sm">${h.deg}° · ${h.kind}</span></div></div>`);
+    const val=el(`<div class="val">${f>0?fmt(f):'—'}</div>`);
+    // flo-stop toggle
+    const ts=makeToggle(h.flostop, v=>{h.flostop=v;render();},"flo-stop");
+    r.appendChild(val);
+    r.appendChild(ts);
+    gh.appendChild(r);
+    // clog faults
+    const rf=el(`<div class="row" style="border-bottom:0;padding-top:2px"><div class="name"><span class="sm">nozzle clog</span></div></div>`);
+    const fb=document.createElement("div");fb.className="faultbtns";
+    [["0","clear"],["25","25%"],["50","50%"],["100","full"]].forEach(([v,lbl])=>{
+      const b=document.createElement("button");
+      b.textContent=lbl;
+      const cv=parseInt(v,10);
+      if(h.clog===cv && cv>0) b.classList.add(cv===100?"on":"warnon");
+      b.onclick=()=>{h.clog=cv;render();};
+      fb.appendChild(b);
+    });
+    rf.appendChild(fb);
+    gh.appendChild(rf);
+  });
+  frag.appendChild(gh);
+
+  // Faults (wiring/solenoid)
+  const gf=document.createElement("div");gf.className="ctrlgrp";
+  gf.innerHTML=`<h4>Inject faults</h4>`;
+  const fb=document.createElement("div");fb.className="faultbtns";
+  const bWire=document.createElement("button");bWire.textContent="Cut signal wire";
+  if(z.wireCut)bWire.classList.add("on");
+  bWire.onclick=()=>{z.wireCut=!z.wireCut;render();};
+  const bSol=document.createElement("button");bSol.textContent="Dead solenoid";
+  if(z.solenoidDead)bSol.classList.add("on");
+  bSol.onclick=()=>{z.solenoidDead=!z.solenoidDead;render();};
+  fb.appendChild(bWire);fb.appendChild(bSol);
+  gf.appendChild(fb);
+  frag.appendChild(gf);
+
+  return frag;
+}
+
+function makeToggle(checked, onchange, danger){
+  const lab=document.createElement("label");
+  lab.className="toggle"+(danger?"":"");
+  const inp=document.createElement("input");inp.type="checkbox";inp.checked=checked;
+  inp.onchange=()=>onchange(inp.checked);
+  const tk=document.createElement("span");tk.className="tk";
+  lab.appendChild(inp);lab.appendChild(tk);
+  return lab;
+}
+
+/* ---------- supply / controller strip ---------- */
+function supplyStrip(){
+  const open=openId==="SUP";
+  const pr=pumpRunning()&&supplyOk();
+  const strip=document.createElement("div");
+  strip.className="strip"+(open?" open":"");
+  const head=document.createElement("div");head.className="striphead";
+  const stCls = pr?"watering":(state.pumpFault||!supplyOk()?"fault":"off");
+  const stLbl = pr?"PUMP RUNNING":(state.pumpFault?"PUMP FAULT":(!supplyOk()?"STARVED":(!state.plugPump?"NO POWER":"STOPPED")));
+  head.innerHTML=`
+    <svg class="chev" viewBox="0 0 16 16"><path d="M5 3l6 5-6 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="zname" style="font-size:14px">Supply</span>
+    <span class="ztype">well → pump → manifold</span>
+    <span class="spacer"></span>
+    <span class="flowmini">${pr?`<b>${fmt(systemFlow())}</b> m³/h`:'—'}</span>
+    <span class="pill ${stCls}">${stLbl}</span>`;
+  head.onclick=()=>{openId=open?null:"SUP";render();};
+  strip.appendChild(head);
+
+  const panel=document.createElement("div");panel.className="panel";
+  if(open){
+    const pin=document.createElement("div");pin.className="panelin";
+    pin.appendChild(supplyPanel());
+    panel.appendChild(pin);
+  }
+  strip.appendChild(panel);
+  return strip;
+}
+
+function supplyPanel(){
+  const frag=document.createDocumentFragment();
+  const pr=pumpRunning()&&supplyOk();
+  // schematic
+  const sch=document.createElement("div");sch.className="schematic";
+  sch.innerHTML=supplySVG();
+  frag.appendChild(sch);
+
+  const sl=document.createElement("div");sl.className="statusline";
+  const c = pr?"var(--good)":"var(--bad)";
+  sl.innerHTML=`<span class="dot" style="background:${c}"></span> Pump <b style="color:${c};margin-left:3px">${pr?'RUNNING':'NOT RUNNING'}</b>`;
+  frag.appendChild(sl);
+
+  // 230V plugs
+  const gp=document.createElement("div");gp.className="ctrlgrp";
+  gp.innerHTML=`<h4>230V grid plugs</h4>`;
+  const r1=el(`<div class="row"><div class="name">Controller plug</div></div>`);
+  r1.appendChild(makeToggle(state.plugController,v=>{state.plugController=v;render();}));
+  const r2=el(`<div class="row"><div class="name">Pump plug</div></div>`);
+  r2.appendChild(makeToggle(state.plugPump,v=>{state.plugPump=v;render();}));
+  gp.appendChild(r1);gp.appendChild(r2);
+  frag.appendChild(gp);
+
+  // Pump-start relay (MV)
+  const gm=document.createElement("div");gm.className="ctrlgrp";
+  gm.innerHTML=`<h4>Pump-start (MV relay)</h4>`;
+  const rm=el(`<div class="row"><div class="name">Controller commands MV<span class="sm">closes when any zone runs</span></div></div>`);
+  rm.appendChild(makeToggle(state.mv,v=>{state.mv=v;render();}));
+  gm.appendChild(rm);
+  frag.appendChild(gm);
+
+  // faults
+  const gf=document.createElement("div");gf.className="ctrlgrp";
+  gf.innerHTML=`<h4>Inject faults</h4>`;
+  const fb=document.createElement("div");fb.className="faultbtns";
+  const bP=document.createElement("button");bP.textContent="Dead/weak pump";
+  if(state.pumpFault)bP.classList.add("on");
+  bP.onclick=()=>{state.pumpFault=!state.pumpFault;render();};
+  const bS=document.createElement("button");bS.textContent="Strainer clog";
+  if(state.strainerClog)bS.classList.add("on");
+  bS.onclick=()=>{state.strainerClog=!state.strainerClog;render();};
+  fb.appendChild(bP);fb.appendChild(bS);
+  gf.appendChild(fb);
+  frag.appendChild(gf);
+
+  return frag;
+}
+
+function supplySVG(){
+  const pr=pumpRunning()&&supplyOk();
+  const W=358,H=110;
+  const flow=pr;
+  const col=flow?"var(--water)":"#cdd8e0";
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="supply chain">`;
+  // well
+  s+=`<rect x="8" y="40" width="34" height="44" rx="4" fill="#eef5fb" stroke="#cdd8e0"/>`;
+  s+=`<text x="25" y="98" font-size="9" text-anchor="middle" fill="var(--muted)">well</text>`;
+  // strainer
+  const stCol=state.strainerClog?"var(--bad)":"#cdd8e0";
+  s+=`<line x1="42" y1="60" x2="74" y2="60" stroke="${state.strainerClog?'var(--bad)':col}" stroke-width="4" ${flow?'class="pipe-flow"':''}/>`;
+  s+=`<rect x="74" y="50" width="18" height="20" rx="3" fill="#fff" stroke="${stCol}"/>`;
+  s+=`<text x="83" y="98" font-size="8" text-anchor="middle" fill="var(--muted)">strainer</text>`;
+  // pump
+  const pCol=state.pumpFault?"var(--bad)":(pr?"var(--water)":"#cdd8e0");
+  s+=`<line x1="92" y1="60" x2="120" y2="60" stroke="${col}" stroke-width="4" ${flow?'class="pipe-flow"':''}/>`;
+  s+=`<circle cx="140" cy="60" r="20" fill="${pr?'rgba(58,160,230,.12)':'#fff'}" stroke="${pCol}" stroke-width="2.5"/>`;
+  s+=`<text x="140" y="58" font-size="9" text-anchor="middle" fill="${state.pumpFault?'var(--bad)':'var(--muted)'}">PUMP</text>`;
+  s+=`<text x="140" y="69" font-size="7.5" text-anchor="middle" fill="var(--muted)">AQUAJET</text>`;
+  if(pr){s+=`<g transform="translate(140,60)"><path d="M0,0 L0,-9" stroke="var(--water)" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="0.6s" repeatCount="indefinite"/></path></g>`;}
+  // feed ~20m to manifold
+  s+=`<line x1="160" y1="60" x2="290" y2="60" stroke="${col}" stroke-width="4" ${flow?'class="pipe-flow"':''}/>`;
+  s+=`<text x="225" y="50" font-size="8" text-anchor="middle" fill="var(--muted)">~20 m feed</text>`;
+  // manifold
+  s+=`<rect x="290" y="38" width="20" height="44" rx="4" fill="#fff" stroke="${col}"/>`;
+  s+=`<text x="300" y="98" font-size="8" text-anchor="middle" fill="var(--muted)">manifold</text>`;
+  // MV relay marker + controller wire
+  const mvLive=state.plugController&&state.mv;
+  s+=`<rect x="120" y="92" width="40" height="14" rx="3" fill="${mvLive?'rgba(123,92,214,.12)':'#fff'}" stroke="${mvLive?'var(--grid)':'#cdd8e0'}"/>`;
+  s+=`<text x="140" y="102" font-size="8" text-anchor="middle" fill="${mvLive?'var(--grid)':'var(--muted)'}">MV relay</text>`;
+  s+=`<line x1="140" y1="80" x2="140" y2="92" stroke="${mvLive?'var(--grid)':'#c2ccd4'}" stroke-width="2" ${mvLive?'class="wire-live"':''}/>`;
+  s+=`</svg>`;
+  return s;
+}
+
+render();
+</script>
+</body>
+</html>

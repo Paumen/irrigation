@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Irrigation Sim — converged (FAKE DATA)</title>
+<style>
+  :root{
+    --bg:#eef3ee; --ink:#1d2a22; --muted:#6a7c70; --line:#b9c7bd;
+    --water:#2f8fd0; --water-dk:#1c6fab; --grass:#3fae5a; --grass-dk:#2c8043;
+    --metal:#8a99a5; --sig:#e8902a; --pwr:#9b59b6;
+    --ok:#2c8043; --warn:#e0a012; --bad:#d2473b; --idle:#9fb0a4; --panel:#fff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.4 -apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:9px 13px 5px;display:flex;align-items:center;gap:8px}
+  header h1{margin:0;font-size:15px;font-weight:650;flex:1}
+  header .sub{font-size:10.5px;color:var(--muted);font-weight:400}
+  .zbtn{font:600 12px/1 inherit;border:1px solid var(--line);background:#fff;color:var(--muted);
+    padding:7px 11px;border-radius:16px}
+  .zbtn.live{background:var(--grass-dk);border-color:var(--grass-dk);color:#fff}
+  .legend{display:flex;gap:13px;flex-wrap:wrap;padding:0 13px 6px;font-size:10.5px;color:var(--muted)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:3px}
+  .stage{position:relative;margin:0 6px}
+  svg{width:100%;display:block;background:
+    linear-gradient(0deg,#e7efe7,#eef3ee);border-radius:12px;touch-action:manipulation}
+  text{font:10px -apple-system,Segoe UI,Roboto,sans-serif;fill:var(--ink)}
+  .lbl{fill:var(--muted);font-size:9px}
+  .zlbl{font-size:11px;font-weight:700;fill:var(--ink)}
+  .hit{cursor:pointer}
+
+  /* circuitsim-style control panel, anchored at the part */
+  .panel{position:absolute;z-index:10;min-width:172px;max-width:230px;background:var(--panel);
+    border:1px solid var(--line);border-radius:11px;box-shadow:0 8px 26px rgba(20,40,25,.18);
+    padding:9px 11px;font-size:12.5px;transform:translate(-50%,-100%)}
+  .panel .nm{font-weight:700;font-size:13px}
+  .panel .kd{color:var(--muted);font-size:10px;margin-bottom:6px}
+  .panel .v{display:flex;justify-content:space-between;padding:2px 0}
+  .panel .v b{font-weight:650}
+  .sec{border-top:1px solid #eef1ee;margin-top:7px;padding-top:7px}
+  .sec h4{margin:0 0 4px;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .ctl{display:flex;align-items:center;gap:8px;margin:5px 0}
+  .ctl label{flex:1;font-size:12px}
+  .tog{appearance:none;width:36px;height:21px;border-radius:11px;background:#cfd9d1;position:relative;border:none;flex:none}
+  .tog:checked{background:var(--ok)} .tog.bad:checked{background:var(--bad)}
+  .tog::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.15s}
+  .tog:checked::after{left:17px}
+  .step{display:flex;gap:6px;align-items:center}
+  .step button{width:25px;height:25px;border-radius:7px;border:1px solid var(--line);background:#fff;font:700 14px/1 inherit}
+  .step b{min-width:34px;text-align:center}
+  .x{position:absolute;top:5px;right:8px;border:none;background:none;color:var(--muted);font-size:16px}
+  #scrim{position:fixed;inset:0;z-index:9}
+</style>
+</head>
+<body>
+<header>
+  <h1>Irrigation system <span class="sub">— ⚠️ mockup · fake data</span></h1>
+  <button class="zbtn" id="zbtn">Overview</button>
+</header>
+<div class="legend">
+  <span><i style="background:var(--water)"></i>water / flow</span>
+  <span><i style="background:var(--sig)"></i>24V signal</span>
+  <span><i style="background:var(--pwr)"></i>230V power</span>
+  <span><i style="background:var(--ok)"></i>watering</span>
+  <span><i style="background:var(--warn)"></i>commanded·not opening</span>
+  <span><i style="background:var(--bad)"></i>fault</span>
+</div>
+<div class="stage" id="stage">
+  <svg id="svg" viewBox="0 0 360 900" preserveAspectRatio="xMidYMid meet"></svg>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+function E(t,a={},k=[]){const n=document.createElementNS(NS,t);
+  for(const x in a)n.setAttribute(x,a[x]);
+  for(const c of [].concat(k))if(c)n.appendChild(typeof c=="string"?document.createTextNode(c):c);return n;}
+
+const NOZ={"BL4.0":.90,"BL5.0":1.14,"BL2.5":.54,"MP3000":.70,"MP2000":.45,"MP1000":.30};
+
+// ---------------- hand-authored geometry ----------------
+const MAIN_X=58;                 // vertical main line / manifold spine
+const VALVE_X=100;               // valve column
+const ZONES=[
+  {id:"Z2",y:150,type:"auto",sigX:20,
+   heads:[{x:160,arc:170,noz:"BL4.0",kind:"rotor"},{x:235,arc:270,noz:"MP3000",kind:"spray"},{x:310,arc:180,noz:"MP2000",kind:"spray"}]},
+  {id:"Z3",y:285,type:"auto",sigX:26,
+   heads:[{x:190,arc:150,noz:"BL2.5",kind:"rotor"},{x:300,arc:270,noz:"BL5.0",kind:"rotor"}]},
+  {id:"Z5",y:400,type:"auto",sigX:32,
+   heads:[{x:190,arc:270,noz:"BL5.0",kind:"rotor"},{x:300,arc:180,noz:"BL2.5",kind:"rotor"}]},
+  {id:"Z4",y:520,type:"auto",sigX:38,
+   heads:[{x:155,arc:270,noz:"MP3000",kind:"spray"},{x:215,arc:210,noz:"MP1000",kind:"spray"},{x:275,arc:270,noz:"MP2000",kind:"spray"},{x:330,arc:180,noz:"MP3000",kind:"spray"}]},
+  {id:"Z1",y:630,type:"manual",heads:[{x:210,kind:"hand"}]},
+  {id:"Z6",y:690,type:"cap",heads:[]},
+];
+const CTRL={x:16,y:14,w:150,h:46};
+const PLUG_O1={x:176,y:16,w:46,h:24};
+const PLUG_S2={x:120,y:792,w:46,h:24};
+const PUMP={x:MAIN_X,y:762,r:17};
+const STRAINER={x:MAIN_X,y:812};
+const WELL={x:MAIN_X,y:858};
+const MAIN_TOP=130, MAIN_BOT=735;
+
+// ---------------- control state (granular, owned by items) ----------------
+const S={
+  plug:{o1:true,s2:true},
+  ctrl:{mv:false, Z2:true, Z3:false, Z5:true, Z4:false},
+  wire:{Z2:false,Z3:false,Z5:false,Z4:false},            // cut?
+  sol:{Z2:false,Z3:true,Z5:false,Z4:false},              // dead? (Z3 seeded dead -> commanded·not opening)
+  valve:{Z2:{bleed:false,thr:0},Z3:{bleed:false,thr:0},Z5:{bleed:false,thr:0},Z4:{bleed:false,thr:0}},
+  manual:{handle:false},
+  head:{},  // "Z2#0":{flo,clog}
+};
+ZONES.forEach(z=>z.heads.forEach((h,i)=>{ if(h.kind!=="hand"&&h.kind!=="cap") S.head[z.id+"#"+i]={flo:false,clog:0}; }));
+S.ctrl.mv=true; // pump commanded so the demo shows water
+
+// ---------------- derived ----------------
+function D(){
+  const o1=S.plug.o1, pump=S.ctrl.mv && S.plug.s2;
+  const z={};
+  ZONES.forEach(zo=>{
+    if(zo.type==="cap"){ z[zo.id]={state:"cap"}; return; }
+    if(zo.type==="manual"){
+      const open=S.manual.handle, fed=open&&pump;
+      z[zo.id]={open,fed,energ:false,flow:fed?0.6:0,
+        state:fed?"watering":(open?"open·no supply":"off")};
+      return;
+    }
+    const energ = S.ctrl[zo.id] && o1 && !S.wire[zo.id] && !S.sol[zo.id];
+    const v=S.valve[zo.id];
+    const open = (energ||v.bleed) && v.thr<3;
+    const fed = open && pump;
+    let flow=0; const heads=zo.heads.map((h,i)=>{
+      const hs=S.head[zo.id+"#"+i];
+      const flowing = fed && !hs.flo && hs.clog<3;
+      const f = flowing ? NOZ[h.noz]*(1-0.25*hs.clog)*(1-0.18*v.thr) : 0;
+      flow+=f; return {flowing,f};
+    });
+    const commandedNotOpening = S.ctrl[zo.id] && !open;
+    z[zo.id]={energ,open,fed,flow,heads,commandedNotOpening,
+      state: flow>0?"watering":(commandedNotOpening?"commanded":"off")};
+  });
+  return {o1,pump,z};
+}
+
+// ---------------- helpers ----------------
+function polar(cx,cy,r,deg){const a=deg*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+function fanPath(cx,cy,r,arc,centerDeg){
+  const [x0,y0]=polar(cx,cy,r,centerDeg-arc/2),[x1,y1]=polar(cx,cy,r,centerDeg+arc/2);
+  return `M ${cx} ${cy} L ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${arc>180?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`;}
+let uid=0;
+function waterPipe(g,pts,active,flow){
+  const id="wp"+(uid++);
+  const d="M "+pts.map(p=>p.join(" ")).join(" L ");
+  g.appendChild(E("path",{d,id,fill:"none","stroke-linecap":"round","stroke-linejoin":"round",
+    stroke:active?"var(--water)":"#c2cfc6","stroke-width":active?5.5:4,opacity:active?1:.85}));
+  if(active){ // slow droplets
+    const n=Math.max(2,Math.round((flow||1)*2.2)+1), dur=Math.max(2.2, 4.2-(flow||1)*0.8);
+    for(let i=0;i<n;i++){const c=E("circle",{r:2.3,fill:"#dff0fb"});
+      const m=E("animateMotion",{dur:dur+"s",repeatCount:"indefinite",begin:(-i*dur/n).toFixed(2)+"s"});
+      m.appendChild(E("mpath",{href:"#"+id}));c.appendChild(m);g.appendChild(c);}}
+}
+function wire(g,pts,kind,energ){
+  const col=kind==="pwr"?"var(--pwr)":"var(--sig)";
+  const d="M "+pts.map(p=>p.join(" ")).join(" L ");
+  const p=E("path",{d,fill:"none","stroke-width":1.8,"stroke-linejoin":"round",
+    stroke:energ?col:"#cdd6cf","stroke-dasharray":"5 4",opacity:energ?1:.6});
+  g.appendChild(p);
+  if(energ)p.appendChild(E("animate",{attributeName:"stroke-dashoffset",from:"0",to:"-18",dur:"1.1s",repeatCount:"indefinite"}));
+}
+function dot(g,x,y,status){
+  const c={ok:"var(--ok)",warn:"var(--warn)",bad:"var(--bad)",idle:"var(--idle)"}[status];
+  g.appendChild(E("circle",{cx:x,cy:y,r:3.4,fill:c,stroke:"#fff","stroke-width":1}));
+}
+
+// ---------------- render ----------------
+const svg=document.getElementById("svg"), stage=document.getElementById("stage");
+function render(){
+  const d=D(); uid=0; svg.innerHTML="";
+  const gZoom=E("g"); svg.appendChild(gZoom);                 // zoom hit-lanes (behind)
+  const gPipe=E("g"); const gWire=E("g"); const gPart=E("g"); const gSpray=E("g"); const gInd=E("g");
+  [gPipe,gWire,gPart,gSpray,gInd].forEach(x=>svg.appendChild(x));
+
+  // zoom lanes
+  ZONES.forEach(z=>{
+    gZoom.appendChild(E("rect",{x:6,y:z.y-66,width:348,height:118,rx:10,
+      fill:"transparent",class:"hit","data-zoom":z.id}));
+  });
+
+  // ===== HYDRAULIC =====
+  // main line / manifold spine
+  gPipe.appendChild(E("rect",{x:MAIN_X-5,y:MAIN_TOP,width:10,height:MAIN_BOT-MAIN_TOP,rx:5,
+    fill:d.pump?"var(--water-dk)":"#b3c1b7"}));
+  gPart.appendChild(E("text",{x:MAIN_X,y:MAIN_TOP-5,"text-anchor":"middle",class:"lbl"},"manifold"));
+
+  // supply chain (below)
+  waterPipe(gPipe,[[MAIN_X,MAIN_BOT],[MAIN_X,PUMP.y-PUMP.r]],d.pump,2.4);
+  waterPipe(gPipe,[[MAIN_X,PUMP.y+PUMP.r],[MAIN_X,STRAINER.y]],d.pump,2.4);
+  waterPipe(gPipe,[[MAIN_X,STRAINER.y],[MAIN_X,WELL.y-10]],d.pump,2.4);
+  // well
+  gPart.appendChild(E("path",{d:`M ${WELL.x-16} ${WELL.y-8} a16 8 0 1 0 32 0 v18 a16 8 0 1 1 -32 0 Z`,
+    fill:"#cfe3f0",stroke:"var(--line)",class:"hit","data-id":"well"}));
+  gPart.appendChild(E("text",{x:WELL.x,y:WELL.y+30,"text-anchor":"middle",class:"lbl"},"well"));
+  // strainer
+  gPart.appendChild(E("rect",{x:STRAINER.x-7,y:STRAINER.y-7,width:14,height:14,rx:2,transform:`rotate(45 ${STRAINER.x} ${STRAINER.y})`,fill:"#fff",stroke:"var(--metal)",class:"hit","data-id":"strainer"}));
+  // pump (impeller circle)
+  gPart.appendChild(E("circle",{cx:PUMP.x,cy:PUMP.y,r:PUMP.r,
+    fill:d.pump?"#dff0fb":"#fff",stroke:d.pump?"var(--water-dk)":"var(--metal)","stroke-width":2,class:"hit","data-id":"pump"}));
+  gPart.appendChild(E("path",{d:`M ${PUMP.x-7} ${PUMP.y} L ${PUMP.x+6} ${PUMP.y-5} L ${PUMP.x+6} ${PUMP.y+5} Z`,
+    fill:d.pump?"var(--water-dk)":"var(--metal)"}));
+  gPart.appendChild(E("text",{x:PUMP.x+24,y:PUMP.y+4,class:"lbl"},"jet pump"));
+  dot(gInd,PUMP.x+PUMP.r-2,PUMP.y-PUMP.r+2,d.pump?"ok":"idle");
+
+  // ===== zones =====
+  ZONES.forEach(z=>{
+    const zs=d.z[z.id];
+    // manifold tap -> valve/cap
+    const tapActive = z.type!=="cap" && zs.fed;
+    waterPipe(gPipe,[[MAIN_X,z.y],[VALVE_X-8,z.y]], tapActive, zs.flow||1);
+    gPart.appendChild(E("text",{x:14,y:z.y+4,class:"zlbl"},z.id));
+
+    if(z.type==="cap"){
+      gPart.appendChild(E("rect",{x:VALVE_X-8,y:z.y-8,width:13,height:16,rx:3,fill:"#e4ebe5",stroke:"var(--metal)",class:"hit","data-id":"Z6"}));
+      gPart.appendChild(E("text",{x:VALVE_X+14,y:z.y+4,class:"lbl"},"capped"));
+      dot(gInd,VALVE_X+6,z.y-8,"idle"); return;
+    }
+
+    // lateral pipe along the row
+    const xs=z.heads.map(h=>h.x); const lastX=Math.max(...xs);
+    waterPipe(gPipe,[[VALVE_X+12,z.y],[lastX,z.y]], zs.fed, zs.flow||1);
+
+    // valve glyph (P&ID bowtie) + solenoid (auto) / handle (manual)
+    drawValve(gPart,gInd,z,zs);
+
+    // heads with spray fans (irrigation skin)
+    z.heads.forEach((h,i)=>{
+      if(h.kind==="hand"){
+        const on=zs.fed;
+        gPart.appendChild(E("circle",{cx:h.x,cy:z.y,r:5,fill:"#fff",stroke:on?"var(--water-dk)":"var(--metal)","stroke-width":1.6,class:"hit","data-id":z.id+"#hand"}));
+        gPart.appendChild(E("text",{x:h.x+10,y:z.y+4,class:"lbl"},"hand line"));
+        if(on) sprayDroplets(gSpray,h.x,z.y,60,-90,0.6);
+        return;
+      }
+      const hd=zs.heads[i], flowing=hd.flowing;
+      // spray fan above the lateral (points up)
+      if(flowing){
+        const r=20+hd.f*16;
+        gSpray.appendChild(E("path",{d:fanPath(h.x,z.y-3,r,h.arc,-90),
+          fill:"var(--water)",opacity:.16}));
+        gSpray.appendChild(E("path",{d:fanPath(h.x,z.y-3,r,h.arc,-90),
+          fill:"none",stroke:"var(--water)","stroke-width":1,opacity:.4}));
+        sprayDroplets(gSpray,h.x,z.y-3,h.arc,-90,hd.f,h.kind);
+      }
+      // head body on the lateral
+      gPart.appendChild(E("rect",{x:h.x-4,y:z.y-2,width:8,height:9,rx:1.5,
+        fill:flowing?"var(--water-dk)":"#fff",stroke:flowing?"var(--water-dk)":"var(--metal)","stroke-width":1.3,
+        class:"hit","data-id":z.id+"#"+i}));
+      gPart.appendChild(E("text",{x:h.x,y:z.y+19,"text-anchor":"middle",class:"lbl"},h.noz));
+      const hs=S.head[z.id+"#"+i];
+      dot(gInd,h.x+6,z.y-2, hs.clog>=3?"bad":(flowing?"ok":(hs.flo?"idle":"idle")));
+    });
+
+    // zone state tag (DERIVED)
+    const tagcol=zs.state==="watering"?"var(--ok)":(zs.commandedNotOpening?"var(--warn)":"var(--idle)");
+    const txt=zs.state==="watering"?(zs.flow.toFixed(2)+" m³/h"):(zs.commandedNotOpening?"commanded · not opening":"off");
+    gPart.appendChild(E("text",{x:14,y:z.y+16,class:"lbl",fill:tagcol},txt));
+  });
+
+  // ===== ELECTRICAL =====
+  // controller
+  gPart.appendChild(E("rect",{x:CTRL.x,y:CTRL.y,width:CTRL.w,height:CTRL.h,rx:9,
+    fill:"#fff",stroke:d.o1?"var(--grass-dk)":"var(--metal)","stroke-width":1.5,class:"hit","data-id":"controller"}));
+  gPart.appendChild(E("text",{x:CTRL.x+10,y:CTRL.y+18,"font-weight":650},"Controller"));
+  gPart.appendChild(E("text",{x:CTRL.x+10,y:CTRL.y+33,class:"lbl"},"tap to set outputs"));
+  // mini channel lamps in controller
+  ["Z2","Z3","Z5","Z4"].forEach((zid,i)=>{
+    const on=S.ctrl[zid]&&d.o1;
+    gPart.appendChild(E("circle",{cx:CTRL.x+96+i*15,cy:CTRL.y+30,r:4.5,
+      fill:on?"var(--sig)":"#e2e8e3",stroke:"var(--line)"}));
+    gPart.appendChild(E("text",{x:CTRL.x+96+i*15,y:CTRL.y+14,"text-anchor":"middle",class:"lbl"},zid));
+  });
+  // O1 power plug
+  drawPlug(gPart,PLUG_O1,"230V",S.plug.o1,"plug_o1");
+  wire(gWire,[[PLUG_O1.x,PLUG_O1.y+12],[CTRL.x+CTRL.w,CTRL.y+12]],"pwr",S.plug.o1);
+
+  // per-zone signal wires (each its own line, hand-routed in the left lane)
+  ZONES.filter(z=>z.type==="auto").forEach(z=>{
+    const zs=d.z[z.id];
+    const energ=zs.energ;
+    wire(gWire,[[z.sigX,CTRL.y+CTRL.h],[z.sigX,z.y-15],[VALVE_X-3,z.y-15]],"sig",energ);
+    if(S.wire[z.id]) gWire.appendChild(E("text",{x:z.sigX+6,y:(CTRL.y+CTRL.h+z.y-15)/2,fill:"var(--bad)","font-size":"12"},"✂"));
+  });
+  // pump-start (MV) wire down far-left lane then to pump
+  wire(gWire,[[12,CTRL.y+CTRL.h],[12,PUMP.y],[PUMP.x-PUMP.r,PUMP.y]],"sig",d.pump);
+  // S2 power plug -> pump
+  drawPlug(gPart,PLUG_S2,"230V",S.plug.s2,"plug_s2");
+  wire(gWire,[[PLUG_S2.x,PLUG_S2.y+12],[PUMP.x+PUMP.r,PLUG_S2.y+12],[PUMP.x+PUMP.r,PUMP.y+8]],"pwr",S.plug.s2);
+
+  svg.querySelectorAll(".hit").forEach(n=>n.addEventListener("click",ev=>{
+    ev.stopPropagation();
+    if(n.dataset.zoom){ zoomTo(n.dataset.zoom); }
+    else openPanel(n.dataset.id);
+  }));
+  if(openId) positionPanel();
+}
+
+function drawValve(gPart,gInd,z,zs){
+  const x=VALVE_X, y=z.y;
+  const col=zs.open?"var(--ok)":(zs.commandedNotOpening?"var(--warn)":"var(--metal)");
+  // bowtie
+  gPart.appendChild(E("path",{d:`M ${x-9} ${y-9} L ${x} ${y} L ${x-9} ${y+9} Z M ${x+9} ${y-9} L ${x} ${y} L ${x+9} ${y+9} Z`,
+    fill:zs.open?"#dff0e6":"#fff",stroke:col,"stroke-width":1.8,class:"hit","data-id":z.id}));
+  if(z.type==="auto"){ // solenoid actuator box on top
+    gPart.appendChild(E("rect",{x:x-5,y:y-21,width:10,height:9,rx:1.5,
+      fill:zs.energ?"var(--sig)":"#eef1ee",stroke:col,class:"hit","data-id":z.id}));
+    gPart.appendChild(E("line",{x1:x,y1:y-12,x2:x,y2:y-9,stroke:col,"stroke-width":1.5}));
+  } else { // manual handle
+    gPart.appendChild(E("line",{x1:x,y1:y-9,x2:x,y2:y-18,stroke:col,"stroke-width":2}));
+    gPart.appendChild(E("line",{x1:x-7,y1:y-18,x2:x+7,y2:y-18,stroke:col,"stroke-width":2,"stroke-linecap":"round"}));
+  }
+  dot(gInd,x+10,y+9, zs.open?"ok":(zs.commandedNotOpening?"warn":"idle"));
+}
+function drawPlug(g,P,txt,on,id){
+  g.appendChild(E("rect",{x:P.x,y:P.y,width:P.w,height:P.h,rx:5,
+    fill:on?"#f1e6f7":"#fff",stroke:on?"var(--pwr)":"var(--metal)",class:"hit","data-id":id}));
+  g.appendChild(E("text",{x:P.x+P.w/2,y:P.y+16,"text-anchor":"middle","font-size":"9.5",
+    fill:on?"var(--pwr)":"var(--muted)","font-weight":600},txt+(on?"":" ⏻")));
+}
+function sprayDroplets(g,cx,cy,arc,centerDeg,flow,kind){
+  const n=Math.max(2,Math.round((flow||.5)*4));
+  const r=20+(flow||.5)*16, dur=Math.max(1.4,2.2-(flow||.5)*.4);
+  for(let i=0;i<n;i++){
+    const t=n>1?i/(n-1):.5, ang=centerDeg-arc/2+arc*t;
+    const [ex,ey]=polar(cx,cy,r,ang);
+    const c=E("circle",{r:1.8,fill:"#bfe0f5"});
+    const m=E("animateMotion",{path:`M ${cx} ${cy} L ${ex.toFixed(1)} ${ey.toFixed(1)}`,
+      dur:dur.toFixed(2)+"s",repeatCount:"indefinite",begin:(-i*dur/n).toFixed(2)+"s"});
+    c.appendChild(m); g.appendChild(c);
+  }
+}
+
+// ---------------- zoom (viewBox tween, meet projection) ----------------
+const BASE={x:0,y:0,w:360,h:900};
+let VB={...BASE}, zoomed=false;
+const zbtn=document.getElementById("zbtn");
+zbtn.onclick=()=>{ closePanel(); tween(BASE); zoomed=false; zbtn.classList.remove("live"); zbtn.textContent="Overview"; };
+function zoomTo(zid){
+  const z=ZONES.find(z=>z.id===zid); if(!z)return;
+  closePanel();
+  // fit the zone row; keep aspect by expanding height to base ratio
+  let r={x:4,y:z.y-78,w:352,h:150};
+  const aspect=BASE.w/BASE.h;
+  if(r.w/r.h>aspect){ const nh=r.w/aspect; r.y-=(nh-r.h)/2; r.h=nh; }
+  tween(r); zoomed=true; zbtn.classList.add("live"); zbtn.textContent="◂ "+zid;
+}
+function tween(to){
+  const from={...VB}, t0=performance.now(), dur=320;
+  function step(now){
+    const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3);
+    VB={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e,w:from.w+(to.w-from.w)*e,h:from.h+(to.h-from.h)*e};
+    svg.setAttribute("viewBox",`${VB.x} ${VB.y} ${VB.w} ${VB.h}`);
+    if(openId)positionPanel();
+    if(k<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function project(vx,vy){ // svg coords -> stage pixel coords (meet, xMidYMid)
+  const W=svg.clientWidth, H=svg.clientHeight;
+  const s=Math.min(W/VB.w,H/VB.h);
+  const ox=(W-VB.w*s)/2, oy=(H-VB.h*s)/2;
+  return [ox+(vx-VB.x)*s, oy+(vy-VB.y)*s];
+}
+
+// ---------------- panel (circuitsim-style, anchored) ----------------
+let openId=null;
+function closePanel(){const p=document.getElementById("pnl");if(p)p.remove();const s=document.getElementById("scrim");if(s)s.remove();openId=null;}
+function anchor(id){
+  if(id==="controller")return[CTRL.x+CTRL.w/2,CTRL.y];
+  if(id==="pump")return[PUMP.x,PUMP.y-PUMP.r];
+  if(id==="well")return[WELL.x,WELL.y-12];
+  if(id==="strainer")return[STRAINER.x,STRAINER.y-8];
+  if(id==="plug_o1")return[PLUG_O1.x+PLUG_O1.w/2,PLUG_O1.y];
+  if(id==="plug_s2")return[PLUG_S2.x+PLUG_S2.w/2,PLUG_S2.y];
+  const z=ZONES.find(z=>z.id===id.split("#")[0]);
+  if(z){ if(id.includes("#")){const part=id.split("#")[1];
+      if(part==="hand")return[z.heads[0].x,z.y-8];
+      const h=z.heads[+part];return[h.x,z.y-8];}
+    return[VALVE_X,z.y-22]; }
+  return[180,100];
+}
+function tog(label,checked,on,bad){const r=document.createElement("div");r.className="ctl";
+  const l=document.createElement("label");l.textContent=label;
+  const t=document.createElement("input");t.type="checkbox";t.className="tog"+(bad?" bad":"");t.checked=checked;
+  t.onchange=()=>{on(t.checked);render();};r.append(l,t);return r;}
+function stepper(label,vals,idx,on){const r=document.createElement("div");r.className="ctl";
+  r.innerHTML=`<label>${label}</label>`;const s=document.createElement("div");s.className="step";
+  const m=Object.assign(document.createElement("button"),{textContent:"−"});
+  const b=document.createElement("b");b.textContent=vals[idx];
+  const p=Object.assign(document.createElement("button"),{textContent:"+"});
+  m.onclick=()=>{on(Math.max(0,idx-1));render();};p.onclick=()=>{on(Math.min(vals.length-1,idx+1));render();};
+  s.append(m,b,p);r.appendChild(s);return r;}
+function sec(h,...rows){const s=document.createElement("div");s.className="sec";
+  s.appendChild(Object.assign(document.createElement("h4"),{textContent:h}));rows.forEach(r=>s.appendChild(r));return s;}
+
+function openPanel(id){
+  closePanel(); openId=id; const d=D();
+  const scrim=document.createElement("div");scrim.id="scrim";scrim.onclick=closePanel;document.body.appendChild(scrim);
+  const p=document.createElement("div");p.id="pnl";p.className="panel";p.onclick=e=>e.stopPropagation();
+  let nm=id,kd="",vrows="";const V=(a,b)=>`<div class="v"><span>${a}</span><b>${b}</b></div>`;
+  const body=document.createElement("div");
+
+  const base=id.split("#")[0]; const z=ZONES.find(z=>z.id===base); const zs=z?d.z[base]:null;
+  if(id==="controller"){nm="Controller";kd="O1_control.controller";
+    body.appendChild(sec("Outputs (this item)",
+      tog("MV / pump-start",S.ctrl.mv,v=>S.ctrl.mv=v),
+      tog("Z2 signal",S.ctrl.Z2,v=>S.ctrl.Z2=v),
+      tog("Z3 signal",S.ctrl.Z3,v=>S.ctrl.Z3=v),
+      tog("Z5 signal",S.ctrl.Z5,v=>S.ctrl.Z5=v),
+      tog("Z4 signal",S.ctrl.Z4,v=>S.ctrl.Z4=v)));
+  } else if(id==="plug_o1"){nm="Controller power";kd="O1 · 230V plug";
+    body.appendChild(sec("Action (this item)",tog("grid power",S.plug.o1,v=>S.plug.o1=v)));
+  } else if(id==="plug_s2"){nm="Pump power";kd="S2 · 230V plug";
+    body.appendChild(sec("Action (this item)",tog("grid power",S.plug.s2,v=>S.plug.s2=v)));
+  } else if(id==="pump"){nm="Jet pump";kd="S1_pump.jet · DAB AQUAJET 132 M";
+    vrows=V("state",d.pump?"running":"off")+V("flow",d.pump?"~2.4 m³/h":"0");
+    body.appendChild(sec("Note","driven by its 230V plug + the controller's MV output — no control of its own.".split("|").map(t=>{const e=document.createElement("div");e.className="lbl";e.textContent=t;return e;})[0]));
+  } else if(id==="well"||id==="strainer"){nm=id==="well"?"Well":"Strainer / foot valve";kd="S1 suction";
+    vrows=V("supply",d.pump?"drawing":"idle");
+  } else if(base==="Z6"){nm="Z6 cap";kd="Z6_joint.cap";
+    vrows=V("state","capped — no discharge");
+  } else if(z && !id.includes("#")){ // a valve
+    nm=z.id+(z.type==="manual"?" manual valve":" auto valve");kd=z.id+"_valve."+z.type;
+    vrows=V("valve",zs.open?"open":(zs.commandedNotOpening?"commanded · not opening":"closed"))
+         +V("flow",(zs.flow||0).toFixed(2)+" m³/h");
+    if(z.type==="auto"){
+      body.appendChild(sec("Actions (this item)",
+        tog("bleed screw (manual open)",S.valve[z.id].bleed,v=>S.valve[z.id].bleed=v),
+        stepper("flow throttle",["open","¾","½","shut"],S.valve[z.id].thr,v=>S.valve[z.id].thr=v)));
+      body.appendChild(sec("Faults (this item)",
+        tog("solenoid dead",S.sol[z.id],v=>S.sol[z.id]=v,true),
+        tog("cut signal wire",S.wire[z.id],v=>S.wire[z.id]=v,true)));
+    } else {
+      body.appendChild(sec("Action (this item)",tog("handle open",S.manual.handle,v=>S.manual.handle=v)));
+    }
+  } else if(z && id.includes("#")){ // a head
+    const part=id.split("#")[1];
+    if(part==="hand"){nm=z.id+" hand line";kd="Z1 outlet";vrows=V("flow",zs.fed?"~0.60 m³/h":"0");}
+    else{const i=+part,h=z.heads[i],hs=S.head[id],hd=zs.heads[i];
+      nm=z.id+" head "+(i+1);kd=h.noz+" "+h.kind+" @ "+h.arc+"°";
+      vrows=V("flow",hd.flowing?hd.f.toFixed(2)+" m³/h":"0");
+      body.appendChild(sec("Action (this item)",tog("flo-stop (shut head)",hs.flo,v=>hs.flo=v)));
+      body.appendChild(sec("Fault (this item)",stepper("nozzle clog",["none","25%","50%","full"],hs.clog,v=>hs.clog=v)));
+    }
+  }
+  p.innerHTML=`<button class="x">×</button><div class="nm">${nm}</div><div class="kd">${kd}</div>${vrows}`;
+  p.appendChild(body);
+  p.querySelector(".x").onclick=closePanel;
+  stage.appendChild(p); positionPanel();
+}
+function positionPanel(){
+  const p=document.getElementById("pnl");if(!p)return;
+  const [vx,vy]=anchor(openId); let [px,py]=project(vx,vy); py-=8;
+  const w=p.offsetWidth,h=p.offsetHeight,st=stage.clientWidth;
+  px=Math.max(w/2+4,Math.min(st-w/2-4,px));
+  py=Math.max(h+6,py);
+  p.style.left=px+"px";p.style.top=py+"px";
+}
+window.addEventListener("resize",()=>{if(openId)positionPanel();});
+render();
+</script>
+</body>
+</html>

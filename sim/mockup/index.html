@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Irrigation Sim — layout mockup (FAKE DATA)</title>
+<style>
+  :root{
+    --bg:#f4f6f8; --ink:#1c2430; --muted:#6b7785; --line:#c4ccd6;
+    --idle:#aab3bd; --wire:#2fa4ff; --warn:#f5a623; --panel:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; background:var(--bg); color:var(--ink);
+    font:14px/1.4 -apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:10px 14px 8px; position:sticky; top:0; background:var(--bg); z-index:5}
+  header h1{margin:0; font-size:15px; font-weight:650}
+  header .sub{color:var(--muted); font-size:11.5px; margin-top:2px}
+  .legend{display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    padding:6px 14px 10px; font-size:11px; color:var(--muted)}
+  .legend .grad{width:90px; height:10px; border-radius:5px;
+    background:linear-gradient(90deg,#e23b3b,#f5d33b,#37c46b)}
+  .legend i{display:inline-block; width:10px; height:10px; border-radius:50%;
+    background:var(--wire); margin-right:4px; vertical-align:-1px}
+  .legend .dash{display:inline-block;width:18px;border-top:2px dashed var(--wire);
+    margin-right:4px;vertical-align:4px}
+  .cmds{display:flex; gap:6px; flex-wrap:wrap; padding:0 14px 8px}
+  .cmds button{font:600 12px/1 inherit; padding:8px 11px; border-radius:18px;
+    border:1px solid var(--line); background:#fff; color:var(--muted)}
+  .cmds button.on{background:#0a7d3c; border-color:#0a7d3c; color:#fff}
+  .stage{padding:0 6px 40px}
+  svg{width:100%; height:auto; display:block; touch-action:manipulation}
+  text{font:11px -apple-system,Segoe UI,Roboto,sans-serif; fill:var(--ink)}
+  .sub-t{fill:var(--muted); font-size:9.5px}
+  .tap{cursor:pointer}
+
+  /* bottom sheet */
+  #sheet{position:fixed; left:0; right:0; bottom:0; transform:translateY(102%);
+    transition:transform .25s ease; background:var(--panel); z-index:20;
+    border-radius:16px 16px 0 0; box-shadow:0 -8px 30px rgba(20,30,45,.18);
+    max-height:78vh; overflow:auto; padding:8px 16px 28px}
+  #sheet.open{transform:translateY(0)}
+  #sheet .grab{width:38px;height:4px;border-radius:2px;background:#d3d9e0;margin:6px auto 10px}
+  #sheet h2{margin:2px 0 2px; font-size:16px}
+  #sheet .kind{color:var(--muted); font-size:11.5px; margin-bottom:10px}
+  .sec{border-top:1px solid #eef1f4; padding:10px 0}
+  .sec h3{margin:0 0 6px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+  .row{display:flex; justify-content:space-between; padding:3px 0; font-size:13px}
+  .row b{font-weight:650}
+  .chip{display:inline-block; padding:5px 10px; border:1px solid var(--line);
+    border-radius:14px; font-size:12px; margin:3px 5px 0 0; background:#fff}
+  .bar{height:6px;border-radius:3px;background:#eef1f4;margin:6px 0 2px;position:relative}
+  .bar>span{position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;background:#0a7d3c}
+  #scrim{position:fixed; inset:0; background:rgba(15,22,33,.28); z-index:15;
+    opacity:0; pointer-events:none; transition:opacity .25s}
+  #scrim.show{opacity:1; pointer-events:auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>Irrigation Sim — layout sketch</h1>
+  <div class="sub">⚠️ MOCKUP · fake numbers · for layout &amp; animation feel only — not wired to the solver</div>
+</header>
+<div class="legend">
+  <span><span class="grad"></span> pressure 0→baseline</span>
+  <span><i></i> flow droplets</span>
+  <span><span class="dash"></span> energised wire</span>
+</div>
+<div class="cmds" id="cmds"></div>
+<div class="stage"><svg id="svg" viewBox="0 0 392 820" preserveAspectRatio="xMidYMin meet"></svg></div>
+
+<div id="scrim"></div>
+<div id="sheet"><div class="grab"></div><div id="sheetBody"></div></div>
+
+<script>
+const SVGNS="http://www.w3.org/2000/svg";
+function el(tag,attrs={},kids=[]){const n=document.createElementNS(SVGNS,tag);
+  for(const k in attrs)n.setAttribute(k,attrs[k]);
+  for(const c of [].concat(kids))if(c)n.appendChild(typeof c=="string"?document.createTextNode(c):c);
+  return n;}
+
+// ---- fake catalog-ish per-nozzle flow (m³/h near ~3 bar) ----
+const NOZ={ "BL4.0":0.90,"BL5.0":1.14,"BL2.5":0.54,"MP3000":0.70,"MP2000":0.45,"MP1000":0.30 };
+
+// ---- topology pulled from system.yaml (manifold order: Z2,Z3,Z5,Z4,Z1,Z6) ----
+const ZONES=[
+  {id:"Z2",type:"auto",heads:[["BL4.0",170],["MP3000",270],["MP2000",180]]},
+  {id:"Z3",type:"auto",heads:[["BL2.5",150],["BL5.0",270]]},
+  {id:"Z5",type:"auto",heads:[["BL5.0",270],["BL2.5",180]]},
+  {id:"Z4",type:"auto",heads:[["MP3000",270],["MP1000",210],["MP2000",270],["MP3000",180]]},
+  {id:"Z1",type:"manual",heads:[["hand",0]]},
+  {id:"Z6",type:"cap",heads:[]},
+];
+
+// ---- command state (the live state we let the user toggle) ----
+const cmd={Z2:true,Z3:false,Z5:true,Z4:false,Z1:false};
+const pumpOn=()=>ZONES.some(z=>z.type==="auto"&&cmd[z.id])||cmd.Z1;
+
+// ---- helpers ----
+function polar(cx,cy,r,deg){const a=deg*Math.PI/180;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+function wedge(cx,cy,r,arc){ // fan centred pointing east, sweep=arc°
+  const a0=-arc/2,a1=arc/2;const [x0,y0]=polar(cx,cy,r,a0),[x1,y1]=polar(cx,cy,r,a1);
+  const large=arc>180?1:0;
+  if(arc>=360)return `M ${cx-r} ${cy} A ${r} ${r} 0 1 1 ${cx+r} ${cy} A ${r} ${r} 0 1 1 ${cx-r} ${cy} Z`;
+  return `M ${cx} ${cy} L ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z`;}
+
+let pid=0;
+function pipe(g,x1,y1,x2,y2,active,flow){
+  const id="p"+(pid++);
+  const pts=`M ${x1} ${y1} L ${x2} ${y2}`;
+  g.appendChild(el("path",{d:pts,id,fill:"none",
+    stroke:active?"url(#pg)":"var(--idle)","stroke-width":active?5:3,
+    "stroke-linecap":"round","stroke-dasharray":active?"":"3 5",opacity:active?1:.7}));
+  if(active){ // droplet particles, density/speed ∝ flow
+    const n=Math.max(2,Math.round(flow*4));
+    const dur=Math.max(.7,2.2-flow*0.9);
+    for(let i=0;i<n;i++){
+      const c=el("circle",{r:2.6,fill:"#1f7ad6"});
+      const m=el("animateMotion",{dur:dur+"s",repeatCount:"indefinite",
+        begin:(-i*dur/n).toFixed(2)+"s",rotate:"auto"});
+      m.appendChild(el("mpath",{href:"#"+id}));
+      c.appendChild(m); g.appendChild(c);
+    }
+  }
+}
+function wire(g,d,energised){
+  const id="w"+(pid++);
+  const p=el("path",{d,id,fill:"none",
+    stroke:energised?"var(--wire)":"#cdd5de","stroke-width":2,
+    "stroke-dasharray":"5 4",opacity:energised?1:.55});
+  g.appendChild(p);
+  if(energised){const a=el("animate",{attributeName:"stroke-dashoffset",
+    from:"0",to:"-18",dur:".5s",repeatCount:"indefinite"});
+    p.appendChild(a);}
+}
+
+// ---- render ----
+function render(){
+  const svg=document.getElementById("svg");
+  svg.innerHTML="";
+  pid=0;
+  // gradient def
+  const defs=el("defs");
+  const lg=el("linearGradient",{id:"pg",x1:"0",y1:"0",x2:"1",y2:"0"});
+  lg.appendChild(el("stop",{offset:"0",  "stop-color":"#e23b3b"}));
+  lg.appendChild(el("stop",{offset:"0.5","stop-color":"#f5d33b"}));
+  lg.appendChild(el("stop",{offset:"1",  "stop-color":"#37c46b"}));
+  defs.appendChild(lg); svg.appendChild(defs);
+
+  const wires=el("g"); const pipes=el("g"); const glyphs=el("g");
+  svg.appendChild(pipes); svg.appendChild(wires); svg.appendChild(glyphs);
+
+  const on=pumpOn();
+  // ---------- WIRING BAND (top) ----------
+  glyphs.appendChild(el("rect",{x:14,y:14,width:120,height:46,rx:8,
+    fill:"#fff",stroke:"var(--line)"}));
+  glyphs.appendChild(el("text",{x:24,y:32,"font-weight":650},"Controller"));
+  glyphs.appendChild(el("text",{x:24,y:48,class:"sub-t"},"O1 · MV + Z2–Z5"));
+  // power socket → controller
+  glyphs.appendChild(el("rect",{x:330,y:18,width:48,height:24,rx:5,fill:"#fff",stroke:"var(--line)"}));
+  glyphs.appendChild(el("text",{x:354,y:34,"text-anchor":"middle",class:"sub-t"},"230V"));
+  wire(wires,"M 330 30 L 134 30",true);
+
+  const manY={Z2:230,Z3:288,Z5:346,Z4:404,Z1:462,Z6:512};
+  // ---------- MANIFOLD vertical bar ----------
+  glyphs.appendChild(el("rect",{x:78,y:212,width:14,height:316,rx:6,
+    fill:on?"#bfe6cd":"#e3e8ee",stroke:"var(--line)"}));
+  glyphs.appendChild(el("text",{x:85,y:206,"text-anchor":"middle",class:"sub-t"},"manifold"));
+
+  ZONES.forEach(z=>{
+    const y=manY[z.id];
+    const active = (z.type==="auto"&&cmd[z.id]) || (z.type==="manual"&&cmd.Z1);
+    glyphs.appendChild(el("circle",{cx:85,cy:y,r:4,fill:active?"#37c46b":"var(--idle)"}));
+
+    if(z.type==="cap"){
+      pipe(pipes,92,y,128,y,false,0);
+      glyphs.appendChild(el("rect",{x:128,y:y-7,width:14,height:14,rx:3,fill:"#e3e8ee",stroke:"var(--line)",class:"tap","data-id":"Z6"}));
+      glyphs.appendChild(el("text",{x:150,y:y+4,class:"sub-t"},"Z6 cap"));
+      return;
+    }
+    // port → valve
+    pipe(pipes,92,y,150,y,active,active?totalFlow(z):0);
+    // valve glyph
+    const vc=z.type==="manual"?"#fff":(active?"#dff3e6":"#fff");
+    glyphs.appendChild(el("rect",{x:150,y:y-11,width:26,height:22,rx:5,fill:vc,
+      stroke:active?"#0a7d3c":"var(--line)","stroke-width":active?2:1,class:"tap","data-id":z.id}));
+    glyphs.appendChild(el("text",{x:163,y:y+4,"text-anchor":"middle","font-size":"9",
+      fill:active?"#0a7d3c":"var(--muted)"},z.type==="manual"?"⤺":"V"));
+    glyphs.appendChild(el("text",{x:163,y:y-15,"text-anchor":"middle","font-weight":650,"font-size":"10"},z.id));
+
+    // valve → head cluster
+    const cx=300, baseY=y;
+    pipe(pipes,176,y,cx-40,baseY,active,active?totalFlow(z):0);
+
+    // wiring drop from controller to auto valve
+    if(z.type==="auto"){
+      const wx=120;
+      wire(wires,`M ${wx} 60 C ${wx} ${y-60}, 163 ${y-50}, 163 ${y-11}`,cmd[z.id]);
+    }
+
+    // heads as fan wedges
+    if(z.type==="manual"){
+      glyphs.appendChild(el("circle",{cx:cx,cy:baseY,r:active?9:4,
+        fill:active?"#37c46b":"none",stroke:active?"#0a7d3c":"var(--idle)",
+        "stroke-dasharray":active?"":"2 3",class:"tap","data-id":"Z1"}));
+      glyphs.appendChild(el("text",{x:cx+16,y:baseY+4,class:"sub-t"},"hand line"));
+      return;
+    }
+    const n=z.heads.length, spread=Math.min(40, 14*(n-1));
+    z.heads.forEach((h,i)=>{
+      const [noz,arc]=h;
+      const hy=baseY-(spread/2)+ (n>1?spread*i/(n-1):0);
+      const flow=active?NOZ[noz]:0;
+      const r=active? 12+flow*16 : 6;
+      glyphs.appendChild(el("path",{d:wedge(cx,hy,r,arc),
+        fill:active?"#37c46b":"none",opacity:active?.32:1,
+        stroke:active?"#0a7d3c":"var(--idle)","stroke-width":1,
+        "stroke-dasharray":active?"":"2 3",class:"tap","data-id":z.id+"#"+i}));
+      glyphs.appendChild(el("circle",{cx,cy:hy,r:2,fill:active?"#0a7d3c":"var(--idle)"}));
+    });
+    glyphs.appendChild(el("text",{x:cx,y:baseY+spread/2+18,"text-anchor":"middle",class:"sub-t"},
+      n+(n>1?" heads":" head")));
+  });
+
+  // ---------- SUPPLY CHAIN (bottom) ----------
+  const sy=600;
+  glyphs.appendChild(el("text",{x:14,y:sy-10,class:"sub-t"},"SUPPLY"));
+  // well
+  glyphs.appendChild(el("ellipse",{cx:40,cy:sy+30,rx:18,ry:8,fill:"#dce9f5",stroke:"var(--line)"}));
+  glyphs.appendChild(el("rect",{x:22,y:sy+30,width:36,height:34,fill:"#dce9f5",stroke:"none"}));
+  glyphs.appendChild(el("text",{x:40,y:sy+82,"text-anchor":"middle",class:"sub-t"},"well"));
+  // suction → pump
+  pipe(pipes,58,sy+50,140,sy+50,on,on?2.4:0);
+  // pump
+  glyphs.appendChild(el("circle",{cx:165,cy:sy+50,r:20,
+    fill:on?"#dff3e6":"#fff",stroke:on?"#0a7d3c":"var(--line)","stroke-width":on?2:1,class:"tap","data-id":"pump"}));
+  glyphs.appendChild(el("text",{x:165,y:sy+54,"text-anchor":"middle","font-weight":650,
+    fill:on?"#0a7d3c":"var(--muted)"},"P"));
+  glyphs.appendChild(el("text",{x:165,y:sy+82,"text-anchor":"middle",class:"sub-t"},on?"pump · running":"pump · off"));
+  // discharge up to manifold base
+  pipe(pipes,185,sy+50,260,sy+50,on,on?2.4:0);
+  pipe(pipes,260,sy+50,260,528,false,0); // riser sketch (idle styling, just structure)
+  // pump-start relay wire from controller
+  wire(wires,`M 120 60 C 120 ${sy-30}, 165 ${sy-10}, 165 ${sy+30}`,on);
+  // power for pump (S2)
+  glyphs.appendChild(el("rect",{x:300,y:sy+38,width:48,height:24,rx:5,fill:"#fff",stroke:"var(--line)"}));
+  glyphs.appendChild(el("text",{x:324,y:sy+54,"text-anchor":"middle",class:"sub-t"},"230V"));
+  wire(wires,`M 300 ${sy+50} L 185 ${sy+50}`,on);
+
+  // attach taps
+  svg.querySelectorAll(".tap").forEach(n=>n.addEventListener("click",()=>openSheet(n.dataset.id)));
+}
+function totalFlow(z){return z.heads.reduce((s,h)=>s+(NOZ[h[0]]||0.4),0);}
+
+// ---- command buttons ----
+const cmds=document.getElementById("cmds");
+["Z2","Z3","Z5","Z4","Z1"].forEach(id=>{
+  const b=document.createElement("button");
+  b.textContent=(id==="Z1"?"Z1 manual":id);
+  const sync=()=>b.className=cmd[id]?"on":"";
+  b.onclick=()=>{cmd[id]=!cmd[id]; sync(); render();};
+  sync(); cmds.appendChild(b);
+});
+
+// ---- bottom sheet (preview of §8–§11) ----
+const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim"),
+      body=document.getElementById("sheetBody");
+function closeSheet(){sheet.classList.remove("open");scrim.classList.remove("show");}
+scrim.onclick=closeSheet;
+function openSheet(id){
+  const base=id.split("#")[0];
+  const zone=ZONES.find(z=>z.id===base);
+  let title=id, kind="", secs="";
+  const on=pumpOn();
+  if(id==="pump"){
+    title="Jet pump"; kind="S1_pump.jet · DAB AQUAJET 132 M";
+    secs=section("Live",[["state",on?"running":"off"],["flow",on?"2.4 m³/h":"0"],["head","≈ 42 m"]])
+       + capBar("pump curve","0 → 3.6 m³/h")
+       + section("Actions",["grid on/off"])
+       + section("Faults",["weak pump","dead pump","impeller wear"]);
+  } else if(base==="Z6"){
+    title="Z6 cap"; kind="Z6_joint.cap — capped stub, no discharge";
+    secs=section("Faults",["flush plug left in (geyser)"]);
+  } else if(zone){
+    const active=(zone.type==="auto"&&cmd[zone.id])||(zone.type==="manual"&&cmd.Z1);
+    title=zone.id+(zone.type==="manual"?" — manual valve":zone.type==="auto"?" — auto valve":"");
+    kind=zone.id+"_valve."+zone.type;
+    secs=section("Live",[["valve",active?"open":"closed"],["flow",active?totalFlow(zone).toFixed(2)+" m³/h":"0"],["pressure",active?"≈ 3.0 bar":"0"]]);
+    if(zone.type==="auto"){
+      secs+=capBar("valve loss curve","0.2 → 9.1 m³/h");
+      secs+=section("Actions",["bleed screw","flow throttle −","flow throttle +"]);
+      secs+=section("Faults",["solenoid dead","diaphragm torn","seat clog 25/50/75/full","stuck open"]);
+    } else if(zone.type==="manual"){
+      secs+=section("Actions",["handle open/close"]);
+      secs+=section("Faults",["seat clog","seal weep"]);
+    }
+    // per-head subpart sections
+    zone.heads.forEach((h,i)=>{
+      if(h[0]==="hand")return;
+      secs+=section(zone.id+" head "+(i+1)+" · "+h[0]+" @ "+h[1]+"°",
+        [["flow",active?NOZ[h[0]].toFixed(2)+" m³/h":"0"]],["flo-stop","faults: nozzle clog · plug left in"]);
+    });
+  }
+  body.innerHTML=`<h2>${title}</h2><div class="kind">${kind}</div>${secs}`;
+  sheet.classList.add("open"); scrim.classList.add("show");
+}
+function section(h,rows){
+  let r="";
+  rows.forEach(x=>{ if(Array.isArray(x)) r+=`<div class="row"><span>${x[0]}</span><b>${x[1]}</b></div>`;
+    else r+=`<span class="chip">${x}</span>`; });
+  return `<div class="sec"><h3>${h}</h3>${r}</div>`;
+}
+function capBar(h,range){return `<div class="sec"><h3>${h}</h3>`+
+  `<div class="bar"><span style="left:62%"></span></div>`+
+  `<div class="row sub-t"><span>${range}</span><span>live ▲</span></div></div>`;}
+
+render();
+</script>
+</body>
+</html>
