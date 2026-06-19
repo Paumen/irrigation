@@ -51,7 +51,7 @@ C_SKY = "#eaf4fb"; C_DRY = "#e7d9bd"; C_GRAIN = "#cdb993"
 C_GRASS = "#5fae3f"; C_WTOP = "#cfe8f7"; C_WBOT = "#3f86bd"; C_WLINE = "#1f6f9e"
 C_THR = "#c62828"; C_BAND = "#f7d9d6"; C_WATER = "#1e88e5"; C_RAIN = "#5aa9e0"
 C_TODAY = "#fff7d6"; C_TXT = "#37474f"; C_MUT = "#78909c"
-C_PANEL = "#f6f8fa"; C_LINE = "#cfd8dc"
+C_PANEL = "#f6f8fa"; C_LINE = "#cfd8dc"; C_SUN = "#f6b73c"
 
 s = []
 s.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
@@ -92,6 +92,16 @@ s.append(f'<rect x="{bx:.1f}" y="{SKY_TOP}" width="{STEP:.1f}" height="{Y_BOT-SK
 # --- soil cross-section ---
 # sky
 s.append(f'<rect x="{X0}" y="{SKY_TOP}" width="{X1-X0:.1f}" height="{Y_SURF-SKY_TOP}" fill="{C_SKY}"/>')
+# sun on top of the scene (UI-1 — the day's energy that drives ET out)
+sun_x, sun_y, sun_r = X1 - 22, SKY_TOP + 17, 8
+rays = []
+for ang in range(0, 360, 45):
+    a = math.radians(ang)
+    rays.append(f'<line x1="{sun_x+(sun_r+2)*math.cos(a):.1f}" y1="{sun_y+(sun_r+2)*math.sin(a):.1f}" '
+                f'x2="{sun_x+(sun_r+6)*math.cos(a):.1f}" y2="{sun_y+(sun_r+6)*math.sin(a):.1f}" '
+                f'stroke="{C_SUN}" stroke-width="1.8" stroke-linecap="round"/>')
+s.append("".join(rays))
+s.append(f'<circle cx="{sun_x}" cy="{sun_y}" r="{sun_r}" fill="{C_SUN}"/>')
 # dry soil body
 s.append(f'<rect x="{X0}" y="{Y_SURF}" width="{X1-X0:.1f}" height="{Y_BOT-Y_SURF}" fill="{C_DRY}"/>')
 # soil grain texture
