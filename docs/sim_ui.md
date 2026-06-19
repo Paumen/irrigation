@@ -10,7 +10,7 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 Tracks which requirements are settled vs. still being worked. Locked = wording agreed,
 treat as ground. Open = unresolved question noted below; not final.
 
-- **Locked (final):** U1, U2
+- **Locked (final):** U1, U2, U4
 - **Open / to improve:**
   - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
     "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
@@ -27,12 +27,12 @@ treat as ground. Open = unresolved question noted below; not final.
     - progressive disclosure
     - dense/tabular number layout
     - icon-only controls
-- **U4** — Units:
-  - flow: m³/h
-  - pressure: bar
-  - length / distance / height / throw: m
-  - arc: degrees
-  - precipitation rate: mm/h
+- **U4** — Units (with display precision):
+  - flow: m³/h — 2 decimals
+  - pressure: bar — 1 decimal
+  - length / distance / height / throw: m — 1 decimal
+  - arc: degrees — 0 decimals
+  - precipitation rate: mm/h — 1 decimal
 - **U5** — Assume latest Chromium; latest/modern HTML elements and CSS features can be
   used (legacy fallbacks are a non-goal, see Deferred).
   - Ideas to reach outcome (apply none, one, or several):
