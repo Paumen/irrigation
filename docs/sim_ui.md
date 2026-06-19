@@ -101,10 +101,6 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 - **U22** — Each property has one home: where it is both shown and set, that visual is its
   control (arc is the wedge), never a duplicate widget.
 
-## Open
-- **U15 placement** — whether precipitation rate sits with the coverage readout or the state
-  readout is unresolved.
-
 ## Deferred
 - **fault injection** — fault injection and any fault-related UI are deferred until the
   fault engine lands (`sim_build_plan.md` M8).
