@@ -6,7 +6,7 @@
 - **SCO-2** Let the user try "what-if" watering on any day and see the soil response immediately.
 - **SCO-3** Scope: one user, one zone, one built-in site (Vormersesluisweg 3A, Wijchen; 51.79733 °N, 5.70643 °E).
 - **SCO-4** No build step, framework (unless buildless like Alpine.js), server, or browser-side hydraulics (precipitation rate is precomputed). Deployable to GitHub Pages. Nothing persists; all settings reset on reload.
-- **SCO-5** Mobile first, light UI.
+- **SCO-5** Mobile-first; light colour theme.
 
 ## 2. data
 
@@ -38,3 +38,4 @@
 - **UIX-4** Horizontal marker line at the watering threshold, which sits at (1 − p) × 100% of available water; today's level labelled as a percentage of available water (0% = wilting, 100% = field capacity).
 - **UIX-5** 'Next watering in +N days' counter (uses LOG-4); ">14 days" when none within 14 days.
 - **UIX-6** Display rounding (display only — the balance computes at full precision): stored level as an integer %, temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
+- **UIX-7** Controls: planting type and soil type as segmented buttons (every option visible, single tap); watering duration as a +/− minute stepper.
