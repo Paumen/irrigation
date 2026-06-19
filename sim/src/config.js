@@ -33,16 +33,6 @@ export const CONNECTOR_LEN_M = 0.1;
 export const CONNECTOR_DIAM_MM = 25;
 export const DEFAULT_ROUGHNESS_MM = 0.0015;
 
-export const CLOG_FULL = 0.99;
-export const PILOT_CLOG_BLOCKS = 0.5;
-export const PUMP_CLOG_LOSS = 0.6;
-export const LEAK_BORE_MM = 6;
-export const DRIP_BORE_MM = 2;
-export const LEAK_CD = 0.62;
-export const FLUSH_BORE_MM = 5;
-export const FLUSH_CD = 0.8;
-export const WRONG_STREAM_BORE_SCALE = 0.6;
-
 // diam_mm MUST match the diameter declared on the TCV link (K scales with diam^4).
 export function kvToTcvK(kv_m3h, diam_mm) {
   if (kv_m3h <= 0) return 1e9;

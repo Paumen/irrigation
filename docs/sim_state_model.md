@@ -12,9 +12,9 @@ decisions: `sim_spec.md` owns the requirements, `sim_ui.md` the UX, `sim_build_p
   topology (valve internals, controller output ports), and the local valve relation are in the
   engine and exercised by the harness.
 - **Later: faults.** The three fault verbs are the *design intent*, not yet implemented.
-  `system.yaml` has **no `fail:` entries** and `compileFaults` is a stub. The standing rule:
-  **don't build anything that makes faults hard to add later** — every conductance and passage
-  must be a real, named element a fault verb can target.
+  `system.yaml` has **no `fail:` entries**, and there is no fault code in the engine — it models the
+  healthy system only. The finer-grained topology (every conductance and passage a real, named element
+  a fault verb could target) is kept, so M8 can re-introduce the hooks, but it starts from zero.
 
 ## The core distinction
 
@@ -189,16 +189,11 @@ A fault never invents a new state; it touches one of three things:
 
 Every passage has a conductance, so any unexpected fault has a home without new vocabulary — which
 is *why* the healthy-system phase keeps every conductance/passage a real, named element (see Status).
-Not built yet: `faults.js` is the no-fault stub (`emptyEffects()` exposes the old effect fields;
-`compileFaults` returns them unchanged). Building it means authoring `system.yaml` `fail:` entries
-and compiling each stub field to a verb:
-
-- `pumpDisabled`, `valveDisabled`, `elecBlocked` → `dead(id)`
-- `closedLinks`, `linkK`, `valveLossScale`, `pumpHeadScale`, `leaks`, `outletMods.flowScale/zeroFlow` → `clog`/`leak`
-- `valveForcedOpen`, `bleedForcedOpen` → `stuck(open)`; `outletMods.nozzle/arc` → an `nozzle`/`arc` control value
-
-The fault-tuning config constants (`CLOG_*`, `PILOT_CLOG_BLOCKS`, `PUMP_CLOG_LOSS`, `*_BORE_MM`,
-`*_CD`, `WRONG_STREAM_BORE_SCALE`) already sit in `config.js`, idle until this phase.
+Not built: there is no fault code today — no fault module, no solver/network effect seams, no
+fault-tuning constants in the engine. Building M8 means introducing those hooks from scratch: author
+`system.yaml` `fail:` entries and compile each to a verb (`dead` forces `live=false`; `clog`/`leak`
+change a conductance; `stuck` forces a passage's actuation) against the granular topology.
+(`solveElectrical`'s `blocked` argument is the M4 broken-wire input, not a fault seam, and remains.)
 
 ## Summary
 

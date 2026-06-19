@@ -18,10 +18,6 @@ export function buildTopology(model, state) {
   const demands = state.demands || new Map();
   const emitters = state.emitters || new Map();
   const throttle = state.throttle || {}; // 0..1, 1 = factory-open
-  const closedLinks = state.closedLinks || new Set();
-  const linkK = state.linkK || new Map();
-  const pumpHeadScale = state.pumpHeadScale ?? 1;
-  const valveLossScale = state.valveLossScale || new Map();
 
   const toEpanet = new Map();
   const toFlow = new Map();
@@ -106,7 +102,7 @@ export function buildTopology(model, state) {
   if (vpts.length === 0) throw new Error("network: valve_loss curve is empty");
   if (vpts[0][0] > 0) vpts.unshift([0, 0]);
   const curves = {
-    PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i] * pumpHeadScale]),
+    PCURVE: pump.flow_m3h.map((q, i) => [q, pump.head_m[i]]),
     VCURVE: vpts,
   };
 
@@ -130,8 +126,7 @@ export function buildTopology(model, state) {
     const n2 = resolveEndpoint(L.to[0], L, false);
     if (!n1) throw new Error(`network: link "${L.id}" has no upstream node`);
     if (!n2) throw new Error(`network: link "${L.id}" has no downstream node`);
-    const mloss = (foldedK.get(L.id) || 0) + (linkK.get(L.id) || 0);
-    if (closedLinks.has(L.id)) statusClosed.push(ep(L.id));
+    const mloss = foldedK.get(L.id) || 0;
 
     if (L.role === "pipe") {
       const isSwing = L.subkind === "swing";
@@ -149,19 +144,18 @@ export function buildTopology(model, state) {
       pumps.push({ id: ep(L.id), n1, n2, curveId: "PCURVE" });
       if (!pumpOn) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-auto") {
-      // EPANET ignores minor-loss on GPVs, so throttle and seat clog scale the curve instead
+      // EPANET ignores minor-loss on GPVs, so throttle scales the curve instead
       const t = throttle[L.id] ?? 1;
-      const lossScale = valveLossScale.get(L.id) ?? 1;
       let setting = "VCURVE";
-      if (t < 1 || lossScale !== 1) {
+      if (t < 1) {
         const tt = Math.max(t, THROTTLE_MIN);
         setting = `VC_${ep(L.id)}`;
-        curves[setting] = curves.VCURVE.map(([q, h]) => [q, (h * lossScale) / (tt * tt)]);
+        curves[setting] = curves.VCURVE.map(([q, h]) => [q, h / (tt * tt)]);
       }
       valves.push({ id: ep(L.id), flowId: L.id, n1, n2, diam_mm: CONNECTOR_DIAM_MM, type: "GPV", setting, mloss, isAuto: true });
       if (!valveOpen[L.id]) statusClosed.push(ep(L.id));
     } else if (L.role === "valve-manual") {
-      // a TCV's setting IS its loss K, so seat clog scales it
+      // a TCV's setting IS its loss K
       const diam = L.params.bore_mm || 16;
       valves.push({
         id: ep(L.id),
@@ -170,7 +164,7 @@ export function buildTopology(model, state) {
         n2,
         diam_mm: diam,
         type: "TCV",
-        setting: kvToTcvK(L.params.Kv, diam) * (valveLossScale.get(L.id) ?? 1),
+        setting: kvToTcvK(L.params.Kv, diam),
         mloss,
         isAuto: false,
       });
