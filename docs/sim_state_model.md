@@ -12,10 +12,9 @@ decisions: `sim_spec.md` owns the requirements, `sim_ui.md` the UX, `sim_build_p
   topology (valve internals, controller output ports), and the local valve relation are in the
   engine and exercised by the harness.
 - **Later: faults.** The three fault verbs are the *design intent*, not yet implemented.
-  `system.yaml` has **no `fail:` entries**, and the former `faults.js` stub plus every solver/network
-  fault seam have been **removed** — the engine models the healthy system only. The finer-grained
-  topology (every conductance and passage a real, named element a fault verb could target) is kept, so
-  M8 can re-introduce the hooks, but it now starts from zero rather than fleshing out a stub.
+  `system.yaml` has **no `fail:` entries**, and there is no fault code in the engine — it models the
+  healthy system only. The finer-grained topology (every conductance and passage a real, named element
+  a fault verb could target) is kept, so M8 can re-introduce the hooks, but it starts from zero.
 
 ## The core distinction
 
@@ -190,10 +189,8 @@ A fault never invents a new state; it touches one of three things:
 
 Every passage has a conductance, so any unexpected fault has a home without new vocabulary — which
 is *why* the healthy-system phase keeps every conductance/passage a real, named element (see Status).
-Not built: there is no fault code today. The earlier `faults.js` stub, its solver/network effect
-seams (`closedLinks`, `linkK`, `pumpHeadScale`, `valveLossScale`, `valveDisabled`, `valveForcedOpen`,
-`bleedForcedOpen`, `outletMods`, `leaks`, `elecBlocked`), and the idle fault-tuning constants in
-`config.js` were all **removed**. Building M8 means re-introducing those hooks from scratch: author
+Not built: there is no fault code today — no fault module, no solver/network effect seams, no
+fault-tuning constants in the engine. Building M8 means introducing those hooks from scratch: author
 `system.yaml` `fail:` entries and compile each to a verb (`dead` forces `live=false`; `clog`/`leak`
 change a conductance; `stuck` forces a passage's actuation) against the granular topology.
 (`solveElectrical`'s `blocked` argument is the M4 broken-wire input, not a fault seam, and remains.)

@@ -139,8 +139,8 @@ merely at potential stays dead, so a single broken wire reads dead while its nei
 `valveLossScale`, `valveDisabled`, `valveForcedOpen`, `bleedForcedOpen`, `outletMods`, `leaks`,
 `elecBlocked`) that were threaded through `solver.js`/`network.js` have been deleted; the engine
 models the healthy system only. The three-verb fault model (`dead` / `clog`·`leak` / `stuck`) still
-lives in `sim_state_model.md` as design intent, but M8 now re-introduces those hooks from scratch
-rather than fleshing out a stub. (`solveElectrical`'s `blocked` param is **not** a fault seam — it is
+lives in `sim_state_model.md` as design intent, but M8 now re-introduces those hooks from scratch.
+(`solveElectrical`'s `blocked` param is **not** a fault seam — it is
 the M4 broken-wire input the harness drives directly, and stays.)
 
 ### Geometry + render (`geometry.js`, `scene.js`, `render.js`)
