@@ -263,5 +263,5 @@ pure views over the solved primitives — defined in `sim_state_model.md`, not a
   (4) *cut controller feed* — controller/pump/zones all dead. **Pending:** the M3 manual-zone case and
   the M8 clog/leak cases (incl. the metering-port-clog stuck-open case, specified under M8). Exit nonzero on failure.
 - **Browser:** serve with `python -m http.server` from repo root, open `/sim/`; exercise pump/zones,
-  inject a clog/leak/broken wire from the component bottom sheets, confirm the single live schematic
+  inject a clog/leak/broken wire, confirm the single live schematic
   (flow widths, pressure colors, outlet labels in m³/h, per-wire `live` traces). Confirm Pages deploy after push.
