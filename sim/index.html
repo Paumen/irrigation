@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <!-- U2: mobile-first, phone portrait -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Irrigation simulator</title>
+
+  <!-- Hosting contract (sim_build_plan.md): CDN deps via importmap, no vendoring.
+       The stubs don't import these yet; the map pins the names the real M5/M6 will use. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "epanet-js": "https://esm.sh/epanet-js@0.8.0",
+        "js-yaml": "https://esm.sh/js-yaml@4.2.0"
+      }
+    }
+  </script>
+
+  <!-- U1: light theme. U3: very compact. Real styling is deferred; this is the baseline shell. -->
+  <style>
+    :root { color-scheme: light; font: 14px/1.3 system-ui, sans-serif; }
+    body { margin: 0; display: flex; flex-direction: column; min-height: 100dvh; }
+    /* U6/U7: one holistic view, nothing behind a mode — canvas on top, side sheet below. */
+    #scene { flex: 1 1 auto; width: 100%; background: #fff; }
+    #sheet { flex: 0 0 auto; border-top: 1px solid #ddd; padding: 8px; }
+    #badge { display: none; padding: 4px 8px; background: #fde; color: #900; font-weight: 600; }
+    #badge[data-show] { display: block; }
+  </style>
+</head>
+<body>
+  <!-- U21: non-convergence affordance — hidden unless the solve won't settle. -->
+  <div id="badge">⚠ won't settle</div>
+
+  <!-- U6: single SVG canvas for the holistic hydraulic + electrical schematic. -->
+  <svg id="scene" viewBox="0 0 320 480" preserveAspectRatio="xMidYMid meet"></svg>
+
+  <!-- U8/U17: text, numbers and controls live in the side sheet. -->
+  <aside id="sheet"></aside>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
