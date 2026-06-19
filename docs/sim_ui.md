@@ -18,6 +18,7 @@ treat as ground. Open = unresolved question noted below; not final.
   - **U9** — per-item status indicator mapping; not yet final.
   - **U10** — (U11 merged in) to be validated against a diagram mockup: connections
     unambiguous and traceable end to end.
+  - **U12** — flow visualization (direction + rough magnitude); pending mockup.
 
 ## Style
 - **U1** — Light theme.
