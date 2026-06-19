@@ -10,7 +10,7 @@
 
 ## 2. data
 
-- **DAT-1** Weather from Open-Meteo's Forecast API (`api.open-meteo.com/v1/forecast`) in a single request — `past_days=24`, `forecast_days=16`, `timezone=Europe/Amsterdam` — yielding 24 past days + today + 15 forecast days as one gapless series anchored on the API's own "today" (never a client clock). Daily variables: `precipitation_sum` (rainfall), `temperature_2m_max` (display only), `et0_fao_evapotranspiration` (fetched precomputed — no browser-side ET); a null daily value is treated as 0 for that day.
+- **DAT-1** Weather from Open-Meteo's Forecast API (`api.open-meteo.com/v1/forecast`) in a single request — `past_days=24`, `forecast_days=16`, `timezone=Europe/Amsterdam` — yielding 24 past days + today + 15 forecast days as one gapless series anchored on the API's own "today" (never a client clock). Daily variables: `precipitation_sum` (rainfall), `temperature_2m_max` (display only), `et0_fao_evapotranspiration` (fetched precomputed — no browser-side ET). Missing (null) values: precipitation → 0, et0 → the previous day's value (0 ET is unphysical), temperature → shown blank.
 - **DAT-2** Of the days fetched (DAT-1), the earliest — before the shown window — act as run-up to settle the soil estimate, seeded at field capacity on the first fetched day. The graph shows a 16-day window: last 8, today, next 7.
 - **DAT-3** Precipitation rate, 0.063 mm/min (3.78 mm/hr gross), from BL4.0 / 180° nozzle (Hunter I-20).
 - **DAT-4** If a weather fetch fails, the screen shows an explicit unavailable/error state rather than estimated, stale, or zero-filled data — no silent fallback.
