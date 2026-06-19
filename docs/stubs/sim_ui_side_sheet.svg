@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="470" height="840" viewBox="0 0 470 840" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <!-- ===== stub: item-tapped side sheet (U17/U18) ===== -->
+  <!-- NOT the app. A static mock to react to the sim_ui.md spec before build. -->
+  <rect x="0" y="0" width="470" height="840" fill="#eef1f5"/>
+
+  <text x="20" y="26" font-size="13" font-weight="700" fill="#0f172a">side-sheet stub — item tapped: Z2 rotor</text>
+  <text x="20" y="44" font-size="11" fill="#64748b">static mock for sim_ui.md · light theme (U1) · phone portrait (U2) · very compact (U3) · units (U4)</text>
+
+  <!-- ===================== PHONE FRAME ===================== -->
+  <rect x="20" y="58" width="360" height="762" rx="30" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="150" y="70" width="100" height="7" rx="3.5" fill="#e2e8f0"/>
+
+  <!-- top nav -->
+  <text x="44" y="106" font-size="12" fill="#2563eb">‹ diagram</text>
+  <circle cx="350" cy="102" r="1.7" fill="#94a3b8"/><circle cx="356" cy="102" r="1.7" fill="#94a3b8"/><circle cx="362" cy="102" r="1.7" fill="#94a3b8"/>
+
+  <!-- ===== identity band (U9 status · U18 catalog id) ===== -->
+  <text x="44" y="140" font-size="21" font-weight="700" fill="#0f172a">Z2 · rotor</text>
+  <!-- status chip: head -> watering (U9) -->
+  <rect x="276" y="124" width="92" height="24" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <circle cx="291" cy="136" r="4" fill="#16a34a"/>
+  <text x="301" y="140" font-size="12" font-weight="600" fill="#15803d">watering</text>
+  <text x="44" y="160" font-size="11.5" fill="#64748b">Hunter I-20-04-SS · nozzle BL4.0</text>
+
+  <line x1="44" y1="172" x2="356" y2="172" stroke="#eef1f5" stroke-width="1.5"/>
+
+  <!-- ===== coverage card (U14 coverage · U15 precip) ===== -->
+  <rect x="36" y="184" width="328" height="150" rx="14" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="52" y="206" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="0.5">COVERAGE</text>
+
+  <!-- fan wedge: apex left, opens right, 170 deg about +x axis -->
+  <defs>
+    <radialGradient id="wedge" cx="0%" cy="50%" r="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.12"/>
+    </radialGradient>
+  </defs>
+  <!-- apex (78,272) r=64 ; half-angle 85deg -> endpoints at +-85deg -->
+  <path d="M 78 272 L 83.6 208.3 A 64 64 0 0 1 83.6 335.7 Z" fill="url(#wedge)" stroke="#0ea5e9" stroke-width="1.2"/>
+  <circle cx="78" cy="272" r="4" fill="#0ea5e9"/>
+  <!-- arc readout -->
+  <text x="92" y="248" font-size="12" font-weight="600" fill="#0369a1">170°</text>
+
+  <!-- throw + precip labels (right side of card) -->
+  <text x="208" y="226" font-size="11" fill="#64748b">throw</text>
+  <text x="208" y="246" font-size="18" font-weight="700" fill="#0f172a">9.4 <tspan font-size="12" font-weight="500" fill="#64748b">m</tspan></text>
+
+  <text x="208" y="280" font-size="11" fill="#64748b">precip rate</text>
+  <text x="208" y="300" font-size="18" font-weight="700" fill="#0f172a">14 <tspan font-size="12" font-weight="500" fill="#64748b">mm/h</tspan></text>
+  <text x="208" y="320" font-size="10.5" fill="#94a3b8">◷ ~64 min for 15 mm</text>
+
+  <!-- ===== state readouts (U17 numbers · U18 read vs catalog) ===== -->
+  <rect x="36" y="346" width="328" height="104" rx="14" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="52" y="368" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="0.5">STATE</text>
+
+  <!-- pressure -->
+  <text x="52" y="392" font-size="11.5" fill="#475569">pressure</text>
+  <text x="200" y="392" font-size="15" font-weight="700" fill="#0f172a">3.1 <tspan font-size="11" font-weight="500" fill="#64748b">bar</tspan></text>
+  <circle cx="338" cy="388" r="4" fill="#16a34a"/>
+
+  <!-- flow with catalog span bar (U18) -->
+  <text x="52" y="420" font-size="11.5" fill="#475569">flow</text>
+  <text x="200" y="420" font-size="15" font-weight="700" fill="#0f172a">0.74 <tspan font-size="11" font-weight="500" fill="#64748b">m³/h</tspan></text>
+  <!-- span track 0.4..1.1, marker at 0.74 -> frac (0.74-0.4)/0.7=0.486 -->
+  <rect x="52" y="430" width="300" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="52" y="430" width="146" height="6" rx="3" fill="#93c5fd"/>
+  <circle cx="198" cy="433" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/>
+  <text x="52" y="448" font-size="9.5" fill="#94a3b8">0.4</text>
+  <text x="338" y="448" font-size="9.5" fill="#94a3b8">1.1 (nozzle span)</text>
+
+  <!-- ===== controls (U19 item-level controls) ===== -->
+  <rect x="36" y="462" width="328" height="166" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="52" y="484" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="0.5">CONTROLS</text>
+
+  <!-- nozzle{head} select -->
+  <text x="52" y="510" font-size="12" fill="#334155">nozzle</text>
+  <rect x="216" y="496" width="136" height="26" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="228" y="513" font-size="12" font-weight="600" fill="#0f172a">BL4.0</text>
+  <path d="M 336 506 l 4 4 l 4 -4" fill="none" stroke="#64748b" stroke-width="1.4"/>
+
+  <!-- arc{head} slider -->
+  <text x="52" y="548" font-size="12" fill="#334155">arc</text>
+  <text x="318" y="548" font-size="12" font-weight="600" fill="#0f172a">170°</text>
+  <rect x="52" y="556" width="300" height="5" rx="2.5" fill="#e2e8f0"/>
+  <rect x="52" y="556" width="142" height="5" rx="2.5" fill="#2563eb"/>
+  <circle cx="194" cy="558.5" r="8" fill="#2563eb" stroke="#fff" stroke-width="2"/>
+
+  <!-- headShutoff{head} toggle -->
+  <text x="52" y="596" font-size="12" fill="#334155">head shutoff</text>
+  <text x="246" y="596" font-size="11" fill="#16a34a" font-weight="600">open</text>
+  <rect x="312" y="584" width="40" height="22" rx="11" fill="#16a34a"/>
+  <circle cx="341" cy="595" r="8" fill="#ffffff"/>
+
+  <!-- footer interaction hint (U17) -->
+  <text x="44" y="660" font-size="10.5" fill="#94a3b8">change a control → whole system re-solves (U20)</text>
+
+  <!-- ===================== ANNOTATION STRIP ===================== -->
+  <g font-size="10" font-weight="700">
+    <line x1="380" y1="138" x2="400" y2="138" stroke="#cbd5e1" stroke-dasharray="2 2"/>
+    <rect x="400" y="128" width="62" height="20" rx="10" fill="#fde68a"/><text x="409" y="142" fill="#92400e">U9·U18</text>
+
+    <line x1="364" y1="258" x2="400" y2="258" stroke="#cbd5e1" stroke-dasharray="2 2"/>
+    <rect x="400" y="248" width="62" height="20" rx="10" fill="#bae6fd"/><text x="408" y="262" fill="#075985">U14·U15</text>
+
+    <line x1="364" y1="398" x2="400" y2="398" stroke="#cbd5e1" stroke-dasharray="2 2"/>
+    <rect x="400" y="388" width="62" height="20" rx="10" fill="#bae6fd"/><text x="408" y="402" fill="#075985">U17·U18</text>
+
+    <line x1="364" y1="545" x2="400" y2="545" stroke="#cbd5e1" stroke-dasharray="2 2"/>
+    <rect x="400" y="535" width="40" height="20" rx="10" fill="#ddd6fe"/><text x="411" y="549" fill="#5b21b6">U19</text>
+  </g>
+</svg>
