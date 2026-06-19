@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<defs><linearGradient id="sat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe8f7"/><stop offset="1" stop-color="#3f86bd"/></linearGradient></defs>
+<rect width="1000" height="640" fill="#ffffff"/>
+<text x="40" y="34" font-size="20" font-weight="700" fill="#37474f">What-if watering</text>
+<text x="230" y="34" font-size="13" fill="#78909c">click any day &#8594; see the soil respond &#183; past or future</text>
+<rect x="700" y="16" width="260" height="24" rx="6" fill="#f6f8fa" stroke="#cfd8dc"/>
+<text x="712" y="33" font-size="12" fill="#37474f">Watering duration: <tspan font-weight="700">60 min</tspan> &#8594; +2.8 mm net</text>
+<rect x="40" y="64" width="920" height="196" rx="10" fill="#ffffff" stroke="#cfd8dc"/>
+<text x="56" y="86" font-size="14" font-weight="700" fill="#37474f">Before</text>
+<text x="102" y="86" font-size="12" fill="#78909c">&#8212; the soil drifts down; by Mon 22 Jun it has dipped into stress</text>
+<rect x="510.0" y="94.0" width="50.6" height="126.0" fill="#fff7d6" opacity="0.8"/>
+<line x1="80" y1="220.0" x2="940" y2="220.0" stroke="#cfd8dc"/>
+<text x="72" y="98.0" font-size="9" fill="#78909c" text-anchor="end">100%</text>
+<text x="72" y="223.0" font-size="9" fill="#78909c" text-anchor="end">0%</text>
+<polygon points="80,220.0 80.0,116.2 130.6,121.2 181.2,116.2 231.8,120.7 282.4,125.8 332.9,130.3 383.5,134.3 434.1,138.9 484.7,143.9 535.3,148.4 585.9,153.0 636.5,158.0 687.1,162.5 737.6,166.6 788.2,170.0 838.8,173.6 889.4,177.0 940.0,179.7 940,220.0" fill="url(#sat)" opacity="0.85"/>
+<line x1="80" y1="157.0" x2="940" y2="157.0" stroke="#c62828" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="936" y="152.0" font-size="9.5" fill="#c62828" text-anchor="end">stress threshold (50%)</text>
+<polyline points="80.0,116.2 130.6,121.2 181.2,116.2 231.8,120.7 282.4,125.8 332.9,130.3 383.5,134.3 434.1,138.9 484.7,143.9 535.3,148.4 585.9,153.0 636.5,158.0 687.1,162.5 737.6,166.6 788.2,170.0 838.8,173.6 889.4,177.0 940.0,179.7" fill="none" stroke="#1f6f9e" stroke-width="2.4"/>
+<circle cx="80.0" cy="116.2" r="2.4" fill="#1f6f9e"/>
+<circle cx="130.6" cy="121.2" r="2.4" fill="#1f6f9e"/>
+<circle cx="181.2" cy="116.2" r="2.4" fill="#1f6f9e"/>
+<circle cx="231.8" cy="120.7" r="2.4" fill="#1f6f9e"/>
+<circle cx="282.4" cy="125.8" r="2.4" fill="#1f6f9e"/>
+<circle cx="332.9" cy="130.3" r="2.4" fill="#1f6f9e"/>
+<circle cx="383.5" cy="134.3" r="2.4" fill="#1f6f9e"/>
+<circle cx="434.1" cy="138.9" r="2.4" fill="#1f6f9e"/>
+<circle cx="484.7" cy="143.9" r="2.4" fill="#1f6f9e"/>
+<circle cx="535.3" cy="148.4" r="2.4" fill="#1f6f9e"/>
+<circle cx="585.9" cy="153.0" r="2.4" fill="#1f6f9e"/>
+<circle cx="636.5" cy="158.0" r="2.4" fill="#c62828"/>
+<circle cx="687.1" cy="162.5" r="2.4" fill="#c62828"/>
+<circle cx="737.6" cy="166.6" r="2.4" fill="#c62828"/>
+<circle cx="788.2" cy="170.0" r="2.4" fill="#c62828"/>
+<circle cx="838.8" cy="173.6" r="2.4" fill="#c62828"/>
+<circle cx="889.4" cy="177.0" r="2.4" fill="#c62828"/>
+<circle cx="940.0" cy="179.7" r="2.4" fill="#c62828"/>
+<circle cx="687.1" cy="162.5" r="6" fill="none" stroke="#78909c" stroke-width="1.4" stroke-dasharray="3 3"/>
+<text x="687.1" y="184.5" font-size="10" fill="#c62828" text-anchor="middle">dips below stress</text>
+<text x="80.0" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Wed</text>
+<text x="80.0" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">10 Jun</text>
+<text x="130.6" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Thu</text>
+<text x="130.6" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">11 Jun</text>
+<text x="181.2" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Fri</text>
+<text x="181.2" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">12 Jun</text>
+<text x="231.8" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sat</text>
+<text x="231.8" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">13 Jun</text>
+<text x="282.4" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sun</text>
+<text x="282.4" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">14 Jun</text>
+<text x="332.9" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Mon</text>
+<text x="332.9" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">15 Jun</text>
+<text x="383.5" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Tue</text>
+<text x="383.5" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">16 Jun</text>
+<text x="434.1" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Wed</text>
+<text x="434.1" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">17 Jun</text>
+<text x="484.7" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Thu</text>
+<text x="484.7" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">18 Jun</text>
+<text x="535.3" y="236.0" font-size="9.5" fill="#37474f" font-weight="700" text-anchor="middle">Today</text>
+<text x="535.3" y="248.0" font-size="9" fill="#37474f" font-weight="700" text-anchor="middle">19 Jun</text>
+<text x="585.9" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sat</text>
+<text x="585.9" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">20 Jun</text>
+<text x="636.5" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sun</text>
+<text x="636.5" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">21 Jun</text>
+<text x="687.1" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Mon</text>
+<text x="687.1" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">22 Jun</text>
+<text x="737.6" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Tue</text>
+<text x="737.6" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">23 Jun</text>
+<text x="788.2" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Wed</text>
+<text x="788.2" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">24 Jun</text>
+<text x="838.8" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Thu</text>
+<text x="838.8" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">25 Jun</text>
+<text x="889.4" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Fri</text>
+<text x="889.4" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">26 Jun</text>
+<text x="940.0" y="236.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sat</text>
+<text x="940.0" y="248.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">27 Jun</text>
+<circle cx="687.1" cy="278.0" r="13" fill="#1e88e5"/>
+<text x="687.1" y="283.0" font-size="15" fill="#fff" text-anchor="middle">&#8595;</text>
+<text x="709.1" y="283.0" font-size="12" fill="#37474f">click Mon 22 Jun &#8212; apply a 60-min dose</text>
+<rect x="40" y="296" width="920" height="196" rx="10" fill="#ffffff" stroke="#cfd8dc"/>
+<text x="56" y="318" font-size="14" font-weight="700" fill="#37474f">After</text>
+<text x="94" y="318" font-size="12" fill="#78909c">&#8212; the dose lifts that day back over the line; the bump fades as the soil dries again</text>
+<rect x="510.0" y="326.0" width="50.6" height="126.0" fill="#fff7d6" opacity="0.8"/>
+<line x1="80" y1="452.0" x2="940" y2="452.0" stroke="#cfd8dc"/>
+<text x="72" y="330.0" font-size="9" fill="#78909c" text-anchor="end">100%</text>
+<text x="72" y="455.0" font-size="9" fill="#78909c" text-anchor="end">0%</text>
+<polygon points="80,452.0 80.0,348.2 130.6,353.2 181.2,348.2 231.8,352.7 282.4,357.8 332.9,362.3 383.5,366.3 434.1,370.9 484.7,375.9 535.3,380.4 585.9,385.0 636.5,390.0 687.1,380.2 737.6,384.7 788.2,388.7 838.8,393.3 889.4,397.5 940.0,401.0 940,452.0" fill="url(#sat)" opacity="0.85"/>
+<polygon points="687.1,380.2 737.6,384.7 788.2,388.7 838.8,393.3 889.4,397.5 940.0,401.0 940.0,411.7 889.4,409.0 838.8,405.6 788.2,402.0 737.6,398.6 687.1,394.5" fill="#bfe3c4" opacity="0.85"/>
+<polyline points="80.0,348.2 130.6,353.2 181.2,348.2 231.8,352.7 282.4,357.8 332.9,362.3 383.5,366.3 434.1,370.9 484.7,375.9 535.3,380.4 585.9,385.0 636.5,390.0 687.1,394.5 737.6,398.6 788.2,402.0 838.8,405.6 889.4,409.0 940.0,411.7" fill="none" stroke="#9bb7c9" stroke-width="1.6" stroke-dasharray="5 4"/>
+<line x1="80" y1="389.0" x2="940" y2="389.0" stroke="#c62828" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="936" y="384.0" font-size="9.5" fill="#c62828" text-anchor="end">stress threshold (50%)</text>
+<polyline points="80.0,348.2 130.6,353.2 181.2,348.2 231.8,352.7 282.4,357.8 332.9,362.3 383.5,366.3 434.1,370.9 484.7,375.9 535.3,380.4 585.9,385.0 636.5,390.0 687.1,380.2 737.6,384.7 788.2,388.7 838.8,393.3 889.4,397.5 940.0,401.0" fill="none" stroke="#1f6f9e" stroke-width="2.4"/>
+<circle cx="80.0" cy="348.2" r="2.4" fill="#1f6f9e"/>
+<circle cx="130.6" cy="353.2" r="2.4" fill="#1f6f9e"/>
+<circle cx="181.2" cy="348.2" r="2.4" fill="#1f6f9e"/>
+<circle cx="231.8" cy="352.7" r="2.4" fill="#1f6f9e"/>
+<circle cx="282.4" cy="357.8" r="2.4" fill="#1f6f9e"/>
+<circle cx="332.9" cy="362.3" r="2.4" fill="#1f6f9e"/>
+<circle cx="383.5" cy="366.3" r="2.4" fill="#1f6f9e"/>
+<circle cx="434.1" cy="370.9" r="2.4" fill="#1f6f9e"/>
+<circle cx="484.7" cy="375.9" r="2.4" fill="#1f6f9e"/>
+<circle cx="535.3" cy="380.4" r="2.4" fill="#1f6f9e"/>
+<circle cx="585.9" cy="385.0" r="2.4" fill="#1f6f9e"/>
+<circle cx="636.5" cy="390.0" r="2.4" fill="#c62828"/>
+<circle cx="737.6" cy="384.7" r="2.4" fill="#1f6f9e"/>
+<circle cx="788.2" cy="388.7" r="2.4" fill="#1f6f9e"/>
+<circle cx="838.8" cy="393.3" r="2.4" fill="#c62828"/>
+<circle cx="889.4" cy="397.5" r="2.4" fill="#c62828"/>
+<circle cx="940.0" cy="401.0" r="2.4" fill="#c62828"/>
+<path d="M 681.1 332.0 q 4 5 0 9 q -4 -4 0 -9 z" fill="#1e88e5"/>
+<path d="M 687.1 332.0 q 4 5 0 9 q -4 -4 0 -9 z" fill="#1e88e5"/>
+<path d="M 693.1 332.0 q 4 5 0 9 q -4 -4 0 -9 z" fill="#1e88e5"/>
+<circle cx="687.1" cy="380.2" r="6" fill="#fff" stroke="#1e88e5" stroke-width="2.6"/>
+<rect x="657.1" y="346.2" width="60" height="20" rx="5" fill="#1e88e5"/>
+<text x="687.1" y="360.2" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">+60 min</text>
+<path d="M 683.1 366.2 L 691.1 366.2 L 687.1 372.2 z" fill="#1e88e5"/>
+<text x="80.0" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Wed</text>
+<text x="80.0" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">10 Jun</text>
+<text x="130.6" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Thu</text>
+<text x="130.6" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">11 Jun</text>
+<text x="181.2" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Fri</text>
+<text x="181.2" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">12 Jun</text>
+<text x="231.8" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sat</text>
+<text x="231.8" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">13 Jun</text>
+<text x="282.4" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sun</text>
+<text x="282.4" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">14 Jun</text>
+<text x="332.9" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Mon</text>
+<text x="332.9" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">15 Jun</text>
+<text x="383.5" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Tue</text>
+<text x="383.5" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">16 Jun</text>
+<text x="434.1" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Wed</text>
+<text x="434.1" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">17 Jun</text>
+<text x="484.7" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Thu</text>
+<text x="484.7" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">18 Jun</text>
+<text x="535.3" y="468.0" font-size="9.5" fill="#37474f" font-weight="700" text-anchor="middle">Today</text>
+<text x="535.3" y="480.0" font-size="9" fill="#37474f" font-weight="700" text-anchor="middle">19 Jun</text>
+<text x="585.9" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sat</text>
+<text x="585.9" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">20 Jun</text>
+<text x="636.5" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sun</text>
+<text x="636.5" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">21 Jun</text>
+<text x="687.1" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Mon</text>
+<text x="687.1" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">22 Jun</text>
+<text x="737.6" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Tue</text>
+<text x="737.6" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">23 Jun</text>
+<text x="788.2" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Wed</text>
+<text x="788.2" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">24 Jun</text>
+<text x="838.8" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Thu</text>
+<text x="838.8" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">25 Jun</text>
+<text x="889.4" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Fri</text>
+<text x="889.4" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">26 Jun</text>
+<text x="940.0" y="468.0" font-size="9.5" fill="#78909c" font-weight="400" text-anchor="middle">Sat</text>
+<text x="940.0" y="480.0" font-size="9" fill="#78909c" font-weight="400" text-anchor="middle">27 Jun</text>
+<rect x="40" y="499" width="15" height="12" fill="url(#sat)" stroke="#fff" stroke-width="0.5"/>
+<text x="62" y="510" font-size="11" fill="#37474f">water in soil</text>
+<rect x="180" y="499" width="15" height="12" fill="#bfe3c4" stroke="#fff" stroke-width="0.5"/>
+<text x="202" y="510" font-size="11" fill="#37474f">water the dose adds</text>
+<polyline points="335,506 357,506" fill="none" stroke="#9bb7c9" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text x="363" y="510" font-size="11" fill="#37474f">before this click</text>
+<line x1="478" y1="506" x2="500" y2="506" stroke="#c62828" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text x="506" y="510" font-size="11" fill="#37474f">stress threshold</text>
+<circle cx="628" cy="505" r="5" fill="#fff" stroke="#1e88e5" stroke-width="2"/>
+<text x="640" y="510" font-size="11" fill="#37474f">the day you clicked (click again to cancel)</text>
+<text x="40" y="532" font-size="11" fill="#78909c">Clicking toggles the dose on that day (UI-2/UI-3); the reservoir is re-rolled forward (MOD-1), with loss easing under stress (Ks, MOD-6). Illustrative data.</text>
+</svg>
