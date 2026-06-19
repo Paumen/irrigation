@@ -5,7 +5,7 @@
   <!-- readings = round dials (watch); controls = wedge-drag / select / toggle (set). -->
   <rect x="0" y="0" width="470" height="840" fill="#eef1f5"/>
 
-  <text x="20" y="26" font-size="13" font-weight="700" fill="#0f172a">side-panel mockup — item tapped: Z2 rotor</text>
+  <text x="20" y="26" font-size="13" font-weight="700" fill="#0f172a">panel docked — item tapped: Z2 rotor</text>
   <text x="20" y="44" font-size="11" fill="#64748b">diagram is the persistent canvas · arc lives only on the wedge · readings as dials, controls settable</text>
 
   <!-- ===================== PHONE FRAME (diagram canvas) ===================== -->
