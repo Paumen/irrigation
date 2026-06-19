@@ -2,9 +2,9 @@
 """Generate UI-interpretation mockups (SVG) for the irrigation sim spec.
 
 Partials that check the *reading* of sim_ui.md / sim_spec.md before any UI
-code exists. Naming is `sim-ui-<requirement(s)>-<what-it-is>` — see README.md.
-This script owns the three *diagram-style* sheets (the two side-panel mocks are
-hand-authored). Writes SVG sources into the `svg/` subfolder; turn them into
+code exists. Naming is `<requirement(s)>-<what-it-is>` — see README.md.
+This script owns three sheets (U6-diagram, U18-panel-overlay, U12-U16-legend);
+the rest are hand-authored. Writes SVG sources into the `svg/` subfolder; turn them into
 PNG (rendered alongside this script) with the companion converter:
   python3 gen.py && python3 svg2png.py
 """
@@ -189,9 +189,9 @@ def overview():
     s.append(txt(W-24,sy+57,"1.66 m³/h out · 1.66 in ✓",9,FLOW,anchor="end",weight="700"))
 
     # footnote: requirements covered
-    s.append(txt(12,H-20,"covers R11·R13·R14·R10 · U2·U6–U13·U16 — encoding in sim-ui-U12-U16-diagram-line-visualizations",8,MUTE))
+    s.append(txt(12,H-20,"covers R11·R13·R14·R10 · U2·U6–U13·U16 — encoding in U12-U16-legend",8,MUTE))
     s.append('</svg>')
-    open(f"{OUT}/sim-ui-U6-diagram.svg","w").write("\n".join(s))
+    open(f"{OUT}/U6-diagram.svg","w").write("\n".join(s))
 
 # ---------------------------------------------------------------- SHEET 2
 def inspector():
@@ -267,7 +267,7 @@ def inspector():
 
     s.append(txt(14,H-18,"covers U8·U9·U17·U18·U19·U22·U23 — tap an item → overlay panel, state + catalog + controls",8,MUTE))
     s.append('</svg>')
-    open(f"{OUT}/sim-ui-U18-side-panel-overlay.svg","w").write("\n".join(s))
+    open(f"{OUT}/U18-panel-overlay.svg","w").write("\n".join(s))
 
 # ---------------------------------------------------------------- SHEET 3
 def key():
@@ -352,7 +352,7 @@ def key():
     s.append(txt(14,y,"won't-settle (U21): keep last-good numbers + amber ‘won’t settle’ badge, never fake values.",8.5,STARVE))
 
     s.append('</svg>')
-    open(f"{OUT}/sim-ui-U12-U16-diagram-line-visualizations.svg","w").write("\n".join(s))
+    open(f"{OUT}/U12-U16-legend.svg","w").write("\n".join(s))
 
 overview(); inspector(); key()
 print("wrote SVGs to", OUT, "— run svg2png.py to render PNGs")

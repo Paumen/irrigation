@@ -3,7 +3,7 @@
 
 Renders every `svg/*.svg` source to a same-named `*.png` in this directory, so
 the committed PNGs stay in sync with their SVG sources (the ones `gen.py` emits
-and the hand-authored side-panel mocks alike).
+and the hand-authored mocks alike).
 
 Standard install:  pip install cairosvg
 Usage:             python3 svg2png.py [--scale N] [file.svg ...]
