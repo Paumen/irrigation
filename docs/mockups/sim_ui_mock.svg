@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="448" height="880" viewBox="0 0 448 880" font-family="-apple-system, Segoe UI, sans-serif">
+  <defs>
+    <style>
+      @keyframes flow { to { stroke-dashoffset: -16; } }
+      .flowing { stroke-dasharray: 6 10; animation: flow 0.8s linear infinite; }
+      .lbl { font-size: 9px; fill: #5b6168; }
+      .val { font-size: 10px; fill: #1c2024; font-weight: 600; }
+      .h  { font-size: 8px; fill: #8a9099; letter-spacing: .4px; }
+    </style>
+    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cfe6f7"/><stop offset="1" stop-color="#1b6fb3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- phone frame -->
+  <rect x="2" y="2" width="444" height="876" rx="26" fill="#ffffff" stroke="#dfe3e8"/>
+  <text x="16" y="26" class="val" font-size="13">irrigation · sim</text>
+  <text x="432" y="26" text-anchor="end" class="lbl">pump ON · Z2</text>
+
+  <!-- ============ WIRING BAND ============ -->
+  <text x="16" y="48" class="h">WIRING (live)</text>
+  <rect x="10" y="52" width="428" height="120" rx="10" fill="#fafbfc" stroke="#eceff2"/>
+
+  <!-- controller -->
+  <rect x="22" y="66" width="60" height="40" rx="5" fill="#fff" stroke="#c9cdd2"/>
+  <text x="52" y="83" text-anchor="middle" class="lbl">RainMach</text>
+  <text x="52" y="95" text-anchor="middle" class="lbl">controller</text>
+  <!-- ports -->
+  <g font-size="8" text-anchor="middle">
+    <circle cx="92" cy="62" r="3" fill="#e8a33d"/><text x="92" y="56" fill="#e8a33d">pump</text>
+    <circle cx="92" cy="78" r="3" fill="#e8a33d"/><text x="108" y="81" fill="#e8a33d">z2</text>
+    <circle cx="92" cy="92" r="3" fill="#c9cdd2"/><text x="108" y="95" fill="#aeb4ba">z3</text>
+    <circle cx="92" cy="106" r="3" fill="#c9cdd2"/><text x="108" y="109" fill="#aeb4ba">z4</text>
+    <circle cx="92" cy="120" r="3" fill="#c9cdd2"/><text x="108" y="123" fill="#aeb4ba">z5</text>
+  </g>
+
+  <!-- energized wires (amber solid) -->
+  <path d="M95 62 H150 V70 H300" fill="none" stroke="#e8a33d" stroke-width="2"/>
+  <path d="M95 78 H160 V92 H300" fill="none" stroke="#e8a33d" stroke-width="2"/>
+  <!-- dead wires (grey dashed) -->
+  <path d="M95 92 H170 V120 H230" fill="none" stroke="#c9cdd2" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <path d="M95 106 H176 V134 H230" fill="none" stroke="#c9cdd2" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <path d="M95 120 H182 V148 H230" fill="none" stroke="#c9cdd2" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <!-- relay + pump coil + splice (simplified) -->
+  <rect x="300" y="60" width="40" height="22" rx="4" fill="#fff" stroke="#e8a33d"/>
+  <text x="320" y="74" text-anchor="middle" font-size="8" fill="#e8a33d">relay</text>
+  <rect x="300" y="84" width="40" height="22" rx="4" fill="#fff" stroke="#e8a33d"/>
+  <text x="320" y="98" text-anchor="middle" font-size="8" fill="#e8a33d">Z2 coil</text>
+  <text x="226" y="142" class="lbl" font-size="7">splice / shared common (8 ports, 24 wires) — folded?</text>
+
+  <!-- ============ HYDRAULIC SCHEMATIC ============ -->
+  <text x="16" y="196" class="h">HYDRAULICS</text>
+
+  <!-- manifold vertical bar -->
+  <rect x="40" y="210" width="20" height="300" rx="5" fill="#eaf3fb" stroke="#9cc4e3"/>
+  <text x="50" y="525" text-anchor="middle" class="lbl" font-size="8">manifold</text>
+
+  <!-- supply chain at bottom feeding manifold -->
+  <path d="M50 560 V510" fill="none" stroke="url(#pg)" stroke-width="6"/>
+  <path d="M50 560 V510" fill="none" stroke="#fff" stroke-width="2" class="flowing" opacity=".7"/>
+  <g transform="translate(0,560)">
+    <circle cx="50" cy="20" r="10" fill="#1b6fb3"/><text x="50" y="23" text-anchor="middle" fill="#fff" font-size="8">P</text>
+    <path d="M50 30 V60" stroke="url(#pg)" stroke-width="6"/>
+    <text x="66" y="24" class="lbl">pump 2.1 m³/h</text>
+    <text x="66" y="58" class="lbl">well · primed ✓</text>
+    <text x="66" y="44" class="val">3.4 bar</text>
+  </g>
+
+  <!-- helper: a zone row -->
+  <!-- Z2 ACTIVE -->
+  <g transform="translate(60,228)">
+    <!-- valve -->
+    <rect x="6" y="-8" width="30" height="16" rx="3" fill="#fff" stroke="#1b6fb3"/>
+    <text x="21" y="3" text-anchor="middle" font-size="8" fill="#1b6fb3">V2</text>
+    <text x="21" y="-12" text-anchor="middle" class="lbl" font-size="7">open</text>
+    <!-- main run (pressure color + flow thickness + anim) -->
+    <path d="M36 0 H150" fill="none" stroke="url(#pg)" stroke-width="6"/>
+    <path d="M36 0 H150" fill="none" stroke="#fff" stroke-width="2" class="flowing" opacity=".7"/>
+    <!-- branch to 3 heads -->
+    <path d="M150 0 V-26 H210" fill="none" stroke="#3f8fc4" stroke-width="4"/>
+    <path d="M150 0 H210" fill="none" stroke="#3f8fc4" stroke-width="4"/>
+    <path d="M150 0 V26 H210" fill="none" stroke="#3f8fc4" stroke-width="4"/>
+    <!-- heads with coverage wedge + flow label -->
+    <g transform="translate(214,-26)">
+      <path d="M0 0 L18 -8 A20 20 0 0 1 18 8 Z" fill="#9bd2b0" stroke="#2e9e5b" stroke-width="1"/>
+      <circle cx="0" cy="0" r="3" fill="#2e9e5b"/>
+      <text x="26" y="-2" class="val">0.90</text><text x="26" y="8" class="lbl" font-size="7">rotor BL4 ·170°</text>
+    </g>
+    <g transform="translate(214,0)">
+      <path d="M0 0 L17 -12 A21 21 0 0 1 6 19 Z" fill="#9bd2b0" stroke="#2e9e5b" stroke-width="1"/>
+      <circle cx="0" cy="0" r="3" fill="#2e9e5b"/>
+      <text x="26" y="-2" class="val">0.62</text><text x="26" y="8" class="lbl" font-size="7">MP3000·270° · 38 mm/h</text>
+    </g>
+    <g transform="translate(214,26)">
+      <path d="M0 0 L20 0 A20 20 0 0 1 -20 0 Z" fill="#9bd2b0" stroke="#2e9e5b" stroke-width="1"/>
+      <circle cx="0" cy="0" r="3" fill="#2e9e5b"/>
+      <text x="26" y="-2" class="val">0.25</text><text x="26" y="8" class="lbl" font-size="7">MP2000·180°</text>
+    </g>
+    <text x="-2" y="-18" class="h" fill="#1b6fb3">Z2</text>
+  </g>
+
+  <!-- Z3 idle -->
+  <g transform="translate(60,300)">
+    <rect x="6" y="-8" width="30" height="16" rx="3" fill="#fff" stroke="#c9cdd2"/>
+    <text x="21" y="3" text-anchor="middle" font-size="8" fill="#aeb4ba">V3</text>
+    <path d="M36 0 H150" fill="none" stroke="#c9cdd2" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M150 0 V-14 H210 M150 0 V14 H210" fill="none" stroke="#c9cdd2" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <circle cx="214" cy="-14" r="3" fill="#d4d8dc"/><circle cx="214" cy="14" r="3" fill="#d4d8dc"/>
+    <text x="224" y="-11" class="lbl" font-size="7">rotor ·  —</text>
+    <text x="224" y="17" class="lbl" font-size="7">rotor ·  —</text>
+    <text x="-2" y="-12" class="h">Z3  (idle)</text>
+  </g>
+
+  <!-- Z4 idle (4 heads, dense) -->
+  <g transform="translate(60,348)">
+    <rect x="6" y="-8" width="30" height="16" rx="3" fill="#fff" stroke="#c9cdd2"/>
+    <text x="21" y="3" text-anchor="middle" font-size="8" fill="#aeb4ba">V4</text>
+    <path d="M36 0 H150" fill="none" stroke="#c9cdd2" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M150 0 V-21 H205 M150 0 V-7 H205 M150 0 V7 H205 M150 0 V21 H205" fill="none" stroke="#c9cdd2" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <circle cx="209" cy="-21" r="3" fill="#d4d8dc"/><circle cx="209" cy="-7" r="3" fill="#d4d8dc"/>
+    <circle cx="209" cy="7" r="3" fill="#d4d8dc"/><circle cx="209" cy="21" r="3" fill="#d4d8dc"/>
+    <text x="218" y="-4" class="lbl" font-size="7">4× spray —</text>
+    <text x="-2" y="-16" class="h">Z4  (idle)</text>
+  </g>
+
+  <!-- Z5 idle -->
+  <g transform="translate(60,402)">
+    <rect x="6" y="-8" width="30" height="16" rx="3" fill="#fff" stroke="#c9cdd2"/>
+    <text x="21" y="3" text-anchor="middle" font-size="8" fill="#aeb4ba">V5</text>
+    <path d="M36 0 H150" fill="none" stroke="#c9cdd2" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M150 0 V-12 H210 M150 0 V12 H210" fill="none" stroke="#c9cdd2" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <circle cx="214" cy="-12" r="3" fill="#d4d8dc"/><circle cx="214" cy="12" r="3" fill="#d4d8dc"/>
+    <text x="-2" y="-10" class="h">Z5  (idle)</text>
+  </g>
+
+  <!-- Z1 manual -->
+  <g transform="translate(60,444)">
+    <path d="M0 0 H30" fill="none" stroke="#c9cdd2" stroke-width="2" stroke-dasharray="4 4"/>
+    <circle cx="42" cy="0" r="7" fill="#fff" stroke="#c9cdd2"/><text x="42" y="3" text-anchor="middle" font-size="8" fill="#aeb4ba">⊗</text>
+    <path d="M49 0 H150" fill="none" stroke="#c9cdd2" stroke-width="2" stroke-dasharray="4 4"/>
+    <text x="158" y="3" class="lbl" font-size="7">manual hose-end (closed)</text>
+    <text x="-2" y="-10" class="h">Z1  manual</text>
+  </g>
+
+  <!-- Z6 cap -->
+  <g transform="translate(60,478)">
+    <path d="M0 0 H40" fill="none" stroke="#c9cdd2" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="40" y="-5" width="10" height="10" fill="#d4d8dc"/>
+    <text x="56" y="3" class="lbl" font-size="7">Z6 cap (spare)</text>
+  </g>
+
+  <!-- ============ INSPECTOR PANEL (bottom sheet) ============ -->
+  <rect x="10" y="640" width="428" height="222" rx="14" fill="#f7f9fb" stroke="#e2e7ec"/>
+  <rect x="194" y="648" width="60" height="4" rx="2" fill="#cfd5db"/>
+  <text x="24" y="676" class="val" font-size="12">Z2 · rotor  Hunter I-20</text>
+  <text x="424" y="676" text-anchor="end" font-size="10" fill="#2e9e5b">watering ✓</text>
+
+  <!-- readings row -->
+  <g transform="translate(24,700)">
+    <text x="0" y="0" class="lbl">pressure</text><text x="0" y="14" class="val">3.1 bar</text>
+    <text x="90" y="0" class="lbl">flow</text><text x="90" y="14" class="val">0.90 m³/h</text>
+    <text x="170" y="0" class="lbl">throw</text><text x="170" y="14" class="val">12.2 m</text>
+    <text x="260" y="0" class="lbl">precip</text><text x="260" y="14" class="val">— mm/h</text>
+  </g>
+
+  <!-- controls -->
+  <g transform="translate(24,734)">
+    <text x="0" y="0" class="h">CONTROLS  (set here = its only home)</text>
+    <!-- nozzle -->
+    <text x="0" y="20" class="lbl">nozzle</text>
+    <rect x="0" y="26" width="80" height="20" rx="5" fill="#fff" stroke="#c9cdd2"/><text x="8" y="40" class="val">BL4.0 ▾</text>
+    <!-- arc (lives on the wedge) -->
+    <text x="100" y="20" class="lbl">arc → drag wedge</text>
+    <path d="M150 64 L168 56 A20 20 0 0 1 168 72 Z" fill="#cfe6d8" stroke="#2e9e5b"/>
+    <circle cx="150" cy="64" r="3" fill="#2e9e5b"/><text x="118" y="40" class="val">170°</text>
+    <!-- flo-stop -->
+    <text x="240" y="20" class="lbl">flo-stop</text>
+    <rect x="240" y="26" width="44" height="20" rx="10" fill="#dff0e6" stroke="#2e9e5b"/><circle cx="272" cy="36" r="8" fill="#2e9e5b"/>
+  </g>
+  <text x="24" y="852" class="lbl" font-size="8">catalog context: BL4.0 span 0.68–1.10 m³/h · range to 12.5 m</text>
+</svg>
