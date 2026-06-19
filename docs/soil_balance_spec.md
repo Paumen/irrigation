@@ -16,7 +16,7 @@ removed requirement's ID is retired (never reused), and nothing is renumbered.
 ## 2. Data & time window
 
 - **DAT-1** All weather comes from a single daily Open-Meteo forecast, in local (Amsterdam) time.
-- **DAT-2** It uses rainfall, temperature, and reference evapotranspiration.
+- **DAT-2** It uses rainfall, daily maximum temperature, and reference evapotranspiration.
 - **DAT-3** Each load fetches 32 days before today plus 16 forecast days, live in the browser.
 - **DAT-4** The chart shows 18 days by default: the last 9, today, and the next 8.
 - **DAT-5** Fetched days that fall before the shown window act as a run-up to settle the soil estimate.
@@ -33,7 +33,7 @@ removed requirement's ID is retired (never reused), and nothing is renumbered.
 
 ## 4. Display & interaction (UX)
 
-- **UI-1** Soil moisture is the main line across the window; the daily water balance is shown as a waterfall chart; mean temperature appears as a number per day, not a line.
+- **UI-1** Soil moisture is shown across the window as a filled cross-section of the root zone — water fills from the bottom up to each day's level.
 - **UI-2** Clicking a day toggles watering: first click applies the dose, second click cancels it.
 - **UI-3** Watering can be set on past as well as future days.
 - **UI-4** The amount added per click is set by the watering-duration control (in minutes).
@@ -43,6 +43,11 @@ removed requirement's ID is retired (never reused), and nothing is renumbered.
 - **UI-7** A horizontal marker line is drawn at the stress threshold — a visual reference only; it drives nothing.
 - **UI-8** *(retired — there is no standalone growth-thirstiness control; the planting type owns it, UI-9.)*
 - **UI-9** The planting-type control sets a preset for the plant's water draw (crop coefficient), root depth, and stress threshold; default is turf.
+- **UI-10** The daily water balance is shown as separate per-day bars for decline (evapotranspiration out), rain in, and watering in.
+- **UI-11** The daily maximum temperature appears as a number per day, not a line.
+- **UI-12** The planting is drawn on the surface (turf / flowers / plants) with roots reaching to the root depth, making the reservoir's depth visible.
+- **UI-13** Rain and watering are drawn as droplets falling onto the soil on the days they occur.
+- **UI-14** Today's level is labelled directly on the chart as a percentage (MOD-4 stays the general per-day rule).
 
 ## 5. Defaults & build
 

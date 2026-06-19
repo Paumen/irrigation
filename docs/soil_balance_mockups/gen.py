@@ -27,7 +27,7 @@ def xi(i): return X0 + i * STEP
 
 
 # --- illustrative data (18 days), as the day's water components in mm ---
-temp  = [19, 21, 22, 24, 26, 27, 25, 28, 29, 30, 28, 27, 26, 29, 31, 28, 26, 25]
+temp  = [23, 25, 27, 29, 32, 33, 30, 34, 35, 36, 33, 32, 31, 35, 37, 34, 31, 30]  # daily max °C
 decl  = [1.5, 1.5, 1.3, 2.0, 1.5, 2.0, 1.5, 1.5, 1.25, 1.5, 1.0, 1.0, 0.75, 1.0, 1.5, 1.0, 0.75, 0.75]  # ET demand out
 rain  = [0, 0, 2.0, 0, 0.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]                                      # effective rain in
 water = [0, 0, 0, 0, 0, 0, 0, 0, 0, 2.85, 0, 0, 0, 0, 2.85, 0, 0, 0]                                     # watering in (net)
@@ -200,8 +200,8 @@ for i in range(N):
     else:
         s.append(f'<circle cx="{xi(i):.1f}" cy="{ys(soil[i]):.1f}" r="2.4" fill="{C_WLINE}"/>')
 
-# air-temperature numbers along the top of the sky (UI-1)
-s.append(f'<text x="{X0-10}" y="{SKY_TOP+13:.1f}" font-size="9" fill="{C_MUT}" text-anchor="end">air °C</text>')
+# daily-max temperature numbers along the top of the sky (UI-11)
+s.append(f'<text x="{X0-10}" y="{SKY_TOP+13:.1f}" font-size="9" fill="{C_MUT}" text-anchor="end">max °C</text>')
 for i in range(N):
     s.append(f'<text x="{xi(i):.1f}" y="{SKY_TOP+13:.1f}" font-size="10.5" fill="{C_MUT}" text-anchor="middle">{temp[i]}°</text>')
 
