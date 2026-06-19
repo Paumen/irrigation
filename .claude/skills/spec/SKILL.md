@@ -18,7 +18,7 @@ This skill covers three phases — **Writing**, **Iterating**, **Reviewing** —
 - **Flag every guess.** If you must move past a gap, say plainly "I'm guessing here" and mark it. Don't smooth an assumption into the text as if it were settled.
 - **Put a cheap partial out early.** A stub, one slice, one example line, one row — the lowest-cost thing the user can react to — and let their reaction steer. Not a half-built feature; the point is low sunk cost.
 - **Outcome before mechanism.** Anchor on the result the user wants and why. Hold off on *how* until the *what* is agreed — the how is the easiest thing to redo once intent is clear.
-- **Lock what lands.** When a part is settled, name it, restate it in one line, and ask for explicit approval. Locked parts are the ground the rest stands on.
+- **Read back, then lock.** Before locking a settled part, restate it in *your own* words — not an echo of theirs — and ask "is this what you mean?". The paraphrase is what surfaces a misread, cheaply, before it's built on. Only on a yes: name it, fix it in one line, treat it as ground the rest stands on.
 
 ## Language
 
@@ -37,6 +37,7 @@ Write the spec itself, separate from the conversation, in this shape:
   - **UX / UI** — what the user *sees and does* (look, layout, interaction).
 - A requirement lives in exactly one bucket and is stated in exactly one place — if you're tempted to restate it elsewhere, reference it by ID instead.
 - Keep open questions visible in the doc (a short "Open" list of unresolved IDs), not buried in chat — a skipped question is tracked here.
+- **Carry a Non-goals list** — a short, explicit "not doing / out of scope" section, each line one plain sentence. Writing down what the spec *excludes* is what stops scope creep and re-litigation later; when a non-goal is a deliberate trade-off, add the one-line reason it was left out.
 
 ## Phase notes
 
