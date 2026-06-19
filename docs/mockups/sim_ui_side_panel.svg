@@ -47,7 +47,7 @@
   <rect x="306" y="182" width="58" height="13" rx="6.5" fill="#bae6fd"/><text x="335" y="192" font-size="7.5" font-weight="700" fill="#075985" text-anchor="middle">U14·U15·U19</text>
 
   <defs>
-    <radialGradient id="wedge" cx="0%" cy="50%" r="100%">
+    <radialGradient id="wedge" cx="206" cy="250" r="27" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55"/>
       <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.12"/>
     </radialGradient>
