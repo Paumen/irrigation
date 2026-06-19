@@ -4,12 +4,13 @@
 Partials that check the *reading* of sim_ui.md / sim_spec.md before any UI
 code exists. Naming is `sim-ui-<requirement(s)>-<what-it-is>` — see README.md.
 This script owns the three *diagram-style* sheets (the two side-panel mocks are
-hand-authored). Writes SVG next to this script; turn them into PNG with the
-companion converter:  python3 gen.py && python3 svg2png.py
+hand-authored). Writes SVG sources into the `svg/` subfolder; turn them into
+PNG (rendered alongside this script) with the companion converter:
+  python3 gen.py && python3 svg2png.py
 """
 import math, os
 
-OUT = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "svg")
 os.makedirs(OUT, exist_ok=True)
 
 # palette (U1 light theme)
