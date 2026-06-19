@@ -8,7 +8,8 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 
 ## Style
 - **U1** — Light theme.
-- **U2** — Mobile-first, phone portrait.
+- **U2** — Mobile-first, phone portrait is the primary target; on wider screens the layout scales
+  up to a comfortable bounded width (neither a thin phone-width strip nor full-bleed).
 - **U3** — Very compact.
   - Ideas to reach outcome (apply none, one, or several):
     - minimal whitespace/padding
