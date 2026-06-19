@@ -48,5 +48,3 @@ every committed PNG in sync with its SVG source, hand-authored ones included.
 Flow magnitude (thickness vs dash-speed vs both); pressure (fill saturation vs
 number badge vs both); coverage wedges (always-on vs selected-head only); side
 panel overlay vs docked; on a phone, split vs tap-up sheet (U8).
-</content>
-</invoke>
