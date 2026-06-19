@@ -19,6 +19,7 @@ treat as ground. Open = unresolved question noted below; not final.
   - **U10** — (U11 merged in) to be validated against a diagram mockup: connections
     unambiguous and traceable end to end.
   - **U12** — flow visualization (direction + rough magnitude); pending mockup.
+  - **U13** — pressurised graduated by magnitude (not on/off); pending mockup.
 
 ## Style
 - **U1** — Light theme.
@@ -93,7 +94,8 @@ treat as ground. Open = unresolved question noted below; not final.
   graduated by pressure magnitude, not just on/off.
   - Ideas to reach outcome (apply none, one, or several):
     - hose fill/saturation scaling with pressure
-    - a pressure number/badge on pressurised items
+    - a pressure number/badge on pressurised items (subject to U23 — no pressure numbers on
+      the diagram except pump pressure)
     - line weight or glow scaling with pressure
     - gauge glyphs at key nodes.
 - **U14** — Each head shows its coverage.
