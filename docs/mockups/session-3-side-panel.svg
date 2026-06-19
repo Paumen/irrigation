@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="820" font-family="system-ui, sans-serif">
+  <rect width="440" height="820" fill="#f7f8fa"/>
+  <text x="220" y="30" font-size="15" font-weight="700" text-anchor="middle" fill="#222">Side panel — item selected (react to the structure)</text>
+
+  <!-- panel frame -->
+  <rect x="50" y="52" width="340" height="740" rx="14" fill="#fff" stroke="#cfd4da" stroke-width="2"/>
+
+  <!-- SYSTEM strip (always present) -->
+  <text x="68" y="80" font-size="10" font-weight="700" letter-spacing="1" fill="#8a93a0">SYSTEM</text>
+  <circle cx="70" cy="98" r="5" fill="#2e7d32"/>
+  <text x="82" y="102" font-size="12" fill="#333">pump running · primed</text>
+  <text x="372" y="80" font-size="10" text-anchor="end" fill="#8a93a0">●●○○ zones</text>
+  <text x="68" y="122" font-size="12" fill="#555">2.4 m³/h total · 3.6 bar at manifold</text>
+  <line x1="64" y1="138" x2="376" y2="138" stroke="#e9edf2"/>
+
+  <!-- selected item header -->
+  <text x="68" y="164" font-size="15" font-weight="700" fill="#1f2937">Z2 · rotor</text>
+  <text x="68" y="181" font-size="10" fill="#9aa3b0">Hunter I-20-04-SS</text>
+  <rect x="296" y="150" width="80" height="22" rx="11" fill="#e7f4e8"/>
+  <circle cx="312" cy="161" r="4" fill="#2e7d32"/>
+  <text x="322" y="165" font-size="11" fill="#2e7d32">watering</text>
+
+  <!-- LIVE VALUES with catalog-context bars (U18) -->
+  <text x="68" y="210" font-size="10" font-weight="700" letter-spacing="1" fill="#8a93a0">LIVE  (vs catalog range)</text>
+
+  <!-- flow -->
+  <text x="68" y="234" font-size="12" fill="#444">flow</text>
+  <text x="376" y="234" font-size="12" font-weight="700" text-anchor="end" fill="#1f2937">1.04 m³/h</text>
+  <rect x="68" y="242" width="308" height="6" rx="3" fill="#e7ebf0"/>
+  <rect x="68" y="242" width="246" height="6" rx="3" fill="#9fc0e8"/>
+  <line x1="314" y1="238" x2="314" y2="252" stroke="#2f6fb0" stroke-width="2"/>
+  <text x="68" y="262" font-size="9" fill="#9aa3b0">BL4.0 span 0.68–1.10 m³/h</text>
+
+  <!-- pressure -->
+  <text x="68" y="288" font-size="12" fill="#444">pressure</text>
+  <text x="376" y="288" font-size="12" font-weight="700" text-anchor="end" fill="#1f2937">3.4 bar</text>
+  <rect x="68" y="296" width="308" height="6" rx="3" fill="#e7ebf0"/>
+  <rect x="68" y="296" width="190" height="6" rx="3" fill="#9fc0e8"/>
+  <line x1="258" y1="292" x2="258" y2="306" stroke="#2f6fb0" stroke-width="2"/>
+  <text x="68" y="316" font-size="9" fill="#9aa3b0">working 1.5–4.5 bar</text>
+
+  <!-- throw -->
+  <text x="68" y="342" font-size="12" fill="#444">throw</text>
+  <text x="376" y="342" font-size="12" font-weight="700" text-anchor="end" fill="#1f2937">12.2 m</text>
+  <rect x="68" y="350" width="308" height="6" rx="3" fill="#e7ebf0"/>
+  <rect x="68" y="350" width="300" height="6" rx="3" fill="#9fc0e8"/>
+  <line x1="368" y1="346" x2="368" y2="360" stroke="#2f6fb0" stroke-width="2"/>
+  <text x="68" y="370" font-size="9" fill="#9aa3b0">max range 12.5 m</text>
+
+  <!-- precip -->
+  <text x="68" y="396" font-size="12" fill="#444">precip rate</text>
+  <text x="376" y="396" font-size="12" font-weight="700" text-anchor="end" fill="#1f2937">31 mm/h</text>
+
+  <line x1="64" y1="416" x2="376" y2="416" stroke="#e9edf2"/>
+
+  <!-- CONTROLS (item level, U19) -->
+  <text x="68" y="440" font-size="10" font-weight="700" letter-spacing="1" fill="#8a93a0">CONTROLS</text>
+
+  <!-- nozzle stepper -->
+  <text x="68" y="466" font-size="12" fill="#444">nozzle</text>
+  <rect x="250" y="452" width="126" height="22" rx="11" fill="#f1f4f8" stroke="#d4dae2"/>
+  <text x="266" y="467" font-size="13" fill="#2f6fb0">◂</text>
+  <text x="313" y="467" font-size="12" text-anchor="middle" fill="#1f2937">BL4.0</text>
+  <text x="360" y="467" font-size="13" text-anchor="end" fill="#2f6fb0">▸</text>
+
+  <!-- arc: NO widget, set on diagram (U22) -->
+  <text x="68" y="500" font-size="12" fill="#444">arc</text>
+  <text x="376" y="500" font-size="12" text-anchor="end" fill="#1f2937">170°</text>
+  <text x="68" y="516" font-size="9" fill="#9aa3b0">↳ drag the wedge in the diagram (one home, U22)</text>
+
+  <!-- flo-stop toggle -->
+  <text x="68" y="544" font-size="12" fill="#444">flo-stop</text>
+  <rect x="332" y="532" width="44" height="22" rx="11" fill="#cfe6d0"/>
+  <circle cx="365" cy="543" r="9" fill="#2e7d32"/>
+  <text x="300" y="548" font-size="10" text-anchor="end" fill="#8a93a0">open</text>
+
+  <line x1="64" y1="572" x2="376" y2="572" stroke="#e9edf2"/>
+
+  <!-- IN / OUT (U17) -->
+  <text x="68" y="596" font-size="10" font-weight="700" letter-spacing="1" fill="#8a93a0">IN / OUT</text>
+  <text x="68" y="620" font-size="12" fill="#555">in  3.5 bar  (riser)</text>
+  <text x="68" y="640" font-size="12" fill="#555">out 1.04 m³/h → 170° fan, 12.2 m</text>
+
+  <!-- footer note -->
+  <text x="68" y="700" font-size="9" fill="#b3bac4">Default (nothing selected) = SYSTEM strip expands to</text>
+  <text x="68" y="714" font-size="9" fill="#b3bac4">per-zone flow/pressure list. Valve selected shows</text>
+  <text x="68" y="728" font-size="9" fill="#b3bac4">throttle / bleed controls instead of nozzle/arc.</text>
+</svg>
