@@ -38,7 +38,7 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 - **U6** — Holistic hydraulics and electrical.
 - **U7** — Comprehensible in one view; nothing hidden behind a mode.
 - **U8** — Diagram mostly visual and always the main view; text and numbers live in a side
-  panel that overlays the diagram (covering one edge) rather than shrinking it.
+  panel that overlays the diagram rather than shrinking it.
 - **U9** — Each item carries status indicator(s) — the per-item readings in
   `sim_state_model.md`, mapped by item type:
     - valve → `open`
@@ -100,11 +100,8 @@ requirement are non-binding menus (apply none, one, or several), not requirement
   view says so plainly rather than showing numbers that look real but aren't.
 - **U22** — Each property has one home: where it is both shown and set, that visual is its
   control (arc is the wedge), never a duplicate widget.
-- **U23** — The side panel (U8/U17) is shown only while an item is selected, sliding in over
-  the diagram from one edge; with nothing selected no panel shows and the diagram fills the screen.
-- **Open (U23):** how the panel is dismissed (✕ / tap empty diagram / re-tap the item) and
-  whether the diagram auto-pans so a selected item stays visible beside the open panel — both
-  unresolved.
+- **U23** — The side panel is open only while an item is selected; with nothing selected it is
+  closed and the diagram fills the view.
 
 ## Deferred
 - **fault injection** — fault injection and any fault-related UI are deferred until the
