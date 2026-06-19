@@ -36,6 +36,12 @@ export function mountControls(sheet, onChange = () => {}) {
       input = document.createElement("input");
       input.type = "number";
       input.value = String(c.default);
+    } else if (c.kind === "select") {
+      input = document.createElement("select");
+      const option = document.createElement("option");
+      option.value = String(c.default);
+      option.textContent = String(c.default);
+      input.append(option);
     } else {
       input = document.createElement("input");
       input.value = String(c.default);
