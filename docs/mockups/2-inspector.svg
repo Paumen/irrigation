@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="720" viewBox="0 0 420 720">
+<rect width="100%" height="100%" fill="#f6f8fa"/>
+<rect x="0" y="0" width="420" height="720" fill="#f6f8fa"/>
+<g opacity="0.18">
+<path d="M30,70 L260,70" stroke="#1f2933" stroke-width="3" fill="none"/>
+<rect x="120" y="62" width="18" height="16" rx="3" fill="none" stroke="#1f2933"/>
+<path d="M30,116 L260,116" stroke="#1f2933" stroke-width="3" fill="none"/>
+<rect x="120" y="108" width="18" height="16" rx="3" fill="none" stroke="#1f2933"/>
+<path d="M30,162 L260,162" stroke="#1f2933" stroke-width="3" fill="none"/>
+<rect x="120" y="154" width="18" height="16" rx="3" fill="none" stroke="#1f2933"/>
+<path d="M30,208 L260,208" stroke="#1f2933" stroke-width="3" fill="none"/>
+<rect x="120" y="200" width="18" height="16" rx="3" fill="none" stroke="#1f2933"/>
+<path d="M30,254 L260,254" stroke="#1f2933" stroke-width="3" fill="none"/>
+<rect x="120" y="246" width="18" height="16" rx="3" fill="none" stroke="#1f2933"/>
+</g>
+<rect x="112" y="146" width="34" height="32" rx="5" fill="none" stroke="#2b8de0" stroke-width="2"/>
+<line x1="146" y1="162" x2="196" y2="200" stroke="#2b8de0" stroke-width="1.5" stroke-dasharray="3 3"/>
+<rect x="196" y="0" width="224" height="720" fill="#ffffff" stroke="#e4e9ee"/>
+<rect x="196" y="0" width="4" height="720" fill="#2b8de0"/>
+<text x="212" y="30" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Z2 · valve.auto</text>
+<text x="212" y="46" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">Hunter PGV-101G</text>
+<text x="406" y="30" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" fill="#9aa5b1" text-anchor="end" font-weight="400" letter-spacing="0">✕</text>
+<line x1="196" y1="58" x2="420" y2="58" stroke="#e4e9ee"/>
+<text x="212" y="78" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="start" font-weight="700" letter-spacing="1">STATE  (live values)</text>
+<text x="212" y="98" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">reading</text><text x="406" y="98" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" fill="#2b8de0" text-anchor="end" font-weight="700" letter-spacing="0">open ▶</text>
+<text x="212" y="118" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">inlet pressure</text><text x="406" y="118" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" fill="#1c6fb3" text-anchor="end" font-weight="700" letter-spacing="0">3.0 bar</text><rect x="212" y="123" width="194" height="4" rx="2" fill="#e4e9ee"/><rect x="212" y="123" width="124" height="4" rx="2" fill="#2b8de0"/>
+<text x="212" y="150" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">flow</text><text x="406" y="150" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" fill="#2b8de0" text-anchor="end" font-weight="700" letter-spacing="0">1.66 m³/h</text><rect x="212" y="155" width="194" height="4" rx="2" fill="#e4e9ee"/><rect x="212" y="155" width="35" height="4" rx="2" fill="#2b8de0"/>
+<text x="212" y="182" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">chamber</text><text x="406" y="182" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" fill="#1c6fb3" text-anchor="end" font-weight="700" letter-spacing="0">0.2 bar (vented)</text>
+<text x="212" y="202" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">coil</text><text x="406" y="202" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" fill="#f0b429" text-anchor="end" font-weight="700" letter-spacing="0">live ⚡</text>
+<line x1="196" y1="222" x2="420" y2="222" stroke="#e4e9ee"/>
+<text x="212" y="242" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="start" font-weight="700" letter-spacing="1">vs CATALOG (what it can do)</text>
+<text x="212" y="262" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">loss range 0.21–0.97 bar · Kv 6.0</text>
+<text x="212" y="278" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">min working 1.5 bar</text>
+<line x1="196" y1="296" x2="420" y2="296" stroke="#e4e9ee"/>
+<text x="212" y="316" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="start" font-weight="700" letter-spacing="1">CONTROLS  (set here)</text>
+<text x="212" y="340" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">energize port (z2)</text><rect x="362" y="329" width="42" height="16" rx="8" fill="#2b8de0"/><circle cx="392" cy="337" r="6.5" fill="#fff"/>
+<text x="212" y="366" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">solenoid bleed</text><rect x="362" y="355" width="42" height="16" rx="8" fill="#e4e9ee"/><circle cx="372" cy="363" r="6.5" fill="#fff"/>
+<text x="212" y="392" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">bonnet bleed</text><rect x="362" y="381" width="42" height="16" rx="8" fill="#e4e9ee"/><circle cx="372" cy="389" r="6.5" fill="#fff"/>
+<text x="212" y="420" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">throttle (flow control)</text>
+<rect x="212" y="430" width="194" height="4" rx="2" fill="#e4e9ee"/>
+<rect x="212" y="430" width="165" height="4" rx="2" fill="#2b8de0"/>
+<circle cx="377" cy="432" r="7" fill="#ffffff" stroke="#2b8de0" stroke-width="2"/>
+<text x="406" y="424" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#2b8de0" text-anchor="end" font-weight="700" letter-spacing="0">0.85</text>
+<line x1="196" y1="456" x2="420" y2="456" stroke="#e4e9ee"/>
+<text x="212" y="476" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">note · faults deferred (M8) — no</text>
+<text x="212" y="489" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">inject UI yet (U Deferred)</text>
+<text x="14" y="702" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">covers U8·U9·U17·U18·U19·U22·U23 — tap an item → overlay panel, state + catalog + controls</text>
+</svg>

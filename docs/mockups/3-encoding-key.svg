@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="760" viewBox="0 0 420 760">
+<defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d6ebfb"/><stop offset="1" stop-color="#2b8de0"/></linearGradient></defs>
+<rect width="100%" height="100%" fill="#f6f8fa"/>
+<rect x="0" y="0" width="420" height="34" fill="#ffffff"/>
+<line x1="0" y1="34" x2="420" y2="34" stroke="#e4e9ee"/>
+<text x="12" y="22" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="12" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Encoding key — how each value is drawn</text>
+<text x="14" y="60" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10.5" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Flow — thickness + animated dashes</text>
+<text x="406" y="60" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="end" font-weight="400" letter-spacing="0">U12</text>
+<line x1="14" y1="68" x2="406" y2="68" stroke="#e4e9ee"/>
+<path d="M30,88 L150,88" stroke="#c3ccd5" stroke-width="1.2" fill="none" stroke-dasharray="4 4"/>
+<text x="165" y="92" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">none / idle (grey, static)</text>
+<path d="M30,114 L150,114" stroke="#2b8de0" stroke-width="2.4" fill="none" stroke-dasharray="6 4"/>
+<text x="165" y="118" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">low  →→ animated</text>
+<path d="M30,140 L150,140" stroke="#2b8de0" stroke-width="4.6" fill="none" stroke-dasharray="6 4"/>
+<text x="165" y="144" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">high  →→ animated</text>
+<text x="14" y="174" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10.5" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Pressure — fill saturation + bar badge</text>
+<text x="406" y="174" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="end" font-weight="400" letter-spacing="0">U13</text>
+<line x1="14" y1="182" x2="406" y2="182" stroke="#e4e9ee"/>
+<rect x="30" y="193" width="120" height="16" rx="4" fill="none" stroke="#c3ccd5"/>
+<text x="165" y="206" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">dry / empty (hollow)</text>
+<rect x="30" y="219" width="120" height="16" rx="4" fill="#2b8de0" fill-opacity="0.44" stroke="#1c6fb3"/>
+<text x="90" y="231" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#1c6fb3" text-anchor="middle" font-weight="700" letter-spacing="0">1.2 bar</text>
+<text x="165" y="232" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">low ~1 bar</text>
+<rect x="30" y="245" width="120" height="16" rx="4" fill="#2b8de0" fill-opacity="0.80" stroke="#1c6fb3"/>
+<text x="90" y="257" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#fff" text-anchor="middle" font-weight="700" letter-spacing="0">3.0 bar</text>
+<text x="165" y="258" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">high ~3 bar</text>
+<text x="14" y="288" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10.5" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Status icons — per-item reading</text>
+<text x="406" y="288" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="end" font-weight="400" letter-spacing="0">U9 · state model</text>
+<line x1="14" y1="296" x2="406" y2="296" stroke="#e4e9ee"/>
+<text x="30" y="320" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">valve</text>
+<text x="120" y="320" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#2b8de0" text-anchor="start" font-weight="700" letter-spacing="0">open ▶ / shut</text>
+<text x="30" y="342" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">head</text>
+<text x="120" y="342" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#2b8de0" text-anchor="start" font-weight="700" letter-spacing="0">watering 💧 / starved ▲</text>
+<text x="30" y="364" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">pump</text>
+<text x="120" y="364" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1c6fb3" text-anchor="start" font-weight="700" letter-spacing="0">primed ✓</text>
+<text x="30" y="386" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">pipe/joint</text>
+<text x="120" y="386" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1c6fb3" text-anchor="start" font-weight="700" letter-spacing="0">pressurised</text>
+<text x="30" y="408" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">electrical</text>
+<text x="120" y="408" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#f0b429" text-anchor="start" font-weight="700" letter-spacing="0">live ⚡</text>
+<text x="14" y="438" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10.5" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Head — coverage wedge, throw &amp; precip</text>
+<text x="406" y="438" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="end" font-weight="400" letter-spacing="0">U14 · U15</text>
+<line x1="14" y1="446" x2="406" y2="446" stroke="#e4e9ee"/>
+<path d="M70.0,500.0 L98.3,528.3 A40.0,40.0 0 1 0 41.7,528.3 Z" fill="#d6ebfb" fill-opacity="0.55" stroke="#2b8de0" stroke-width="1"/>
+<circle cx="70" cy="500" r="3" fill="#2b8de0"/>
+<text x="70" y="556" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#1f2933" text-anchor="middle" font-weight="400" letter-spacing="0">rotor · 270° · r∝throw</text>
+<path d="M190.0,500.0 L218.0,500.0 A28.0,28.0 0 0 0 162.0,500.0 Z" fill="#d6ebfb" fill-opacity="0.55" stroke="#2b8de0" stroke-width="1"/>
+<circle cx="190" cy="500" r="3" fill="#2b8de0"/>
+<text x="190" y="556" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#1f2933" text-anchor="middle" font-weight="400" letter-spacing="0">spray · 180°</text>
+<text x="290" y="490" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">throw 12.5 m</text>
+<text x="290" y="506" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#2b8de0" text-anchor="start" font-weight="700" letter-spacing="0">flow 1.04 m³/h</text>
+<text x="290" y="522" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1c6fb3" text-anchor="start" font-weight="700" letter-spacing="0">precip 11 mm/h</text>
+<text x="14" y="572" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="10.5" fill="#1f2933" text-anchor="start" font-weight="700" letter-spacing="0">Wiring — live / de-energised / broken</text>
+<text x="406" y="572" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#9aa5b1" text-anchor="end" font-weight="400" letter-spacing="0">U16 · R12</text>
+<line x1="14" y1="580" x2="406" y2="580" stroke="#e4e9ee"/>
+<path d="M30,600 L150,600" stroke="#f0b429" stroke-width="2.2" fill="none" />
+<text x="165" y="604" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">energised</text>
+<path d="M30,624 L150,624" stroke="#c3ccd5" stroke-width="1.4" fill="none" stroke-dasharray="4 4"/>
+<text x="165" y="628" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">de-energised</text>
+<path d="M30,648 L150,648" stroke="#e02d39" stroke-width="1.8" fill="none" stroke-dasharray="3 4"/>
+<text x="90" y="644" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="12" fill="#e02d39" text-anchor="middle" font-weight="700" letter-spacing="0">✕</text>
+<text x="165" y="652" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="start" font-weight="400" letter-spacing="0">broken path</text>
+<text x="14" y="678" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8.5" fill="#f0932b" text-anchor="start" font-weight="400" letter-spacing="0">won't-settle (U21): keep last-good numbers + amber ‘won’t settle’ badge, never fake values.</text>
+</svg>

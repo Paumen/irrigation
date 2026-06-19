@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="900" viewBox="0 0 420 900">
+<defs><marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2b8de0"/></marker><linearGradient id="pg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d6ebfb"/><stop offset="1" stop-color="#2b8de0"/></linearGradient></defs>
+<rect width="100%" height="100%" fill="#f6f8fa"/>
+<rect x="0" y="0" width="420" height="34" fill="#ffffff"/>
+<line x1="0" y1="34" x2="420" y2="34" stroke="#e4e9ee"/>
+<text x="12" y="22" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" fill="#1f2933" text-anchor="start" font-weight="600" letter-spacing="0">Irrigation sim</text>
+<text x="408" y="22" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="11" fill="#2b8de0" text-anchor="end" font-weight="600" letter-spacing="0">pump ON · Z2 watering</text>
+<text x="12" y="56" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#9aa5b1" text-anchor="start" font-weight="700" letter-spacing="1">WIRING</text>
+<rect x="14" y="66" width="92" height="58" rx="6" fill="#ffffff" stroke="#f0b429" stroke-width="1.5"/>
+<text x="60" y="81" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9.5" fill="#1f2933" text-anchor="middle" font-weight="600" letter-spacing="0">controller</text>
+<circle cx="24" cy="77" r="3" fill="#f0b429"/>
+<circle cx="24" cy="124" r="3.2" fill="#f0b429"/>
+<text x="24" y="135" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#f0b429" text-anchor="middle" font-weight="700" letter-spacing="0">pump</text>
+<circle cx="38" cy="124" r="3.2" fill="#f0b429"/>
+<text x="38" y="135" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#f0b429" text-anchor="middle" font-weight="700" letter-spacing="0">z2</text>
+<circle cx="52" cy="124" r="3.2" fill="#c3ccd5"/>
+<text x="52" y="135" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">z3</text>
+<circle cx="66" cy="124" r="3.2" fill="#c3ccd5"/>
+<text x="66" y="135" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">z4</text>
+<circle cx="80" cy="124" r="3.2" fill="#c3ccd5"/>
+<text x="80" y="135" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">z5</text>
+<circle cx="94" cy="124" r="3.2" fill="#f0b429"/>
+<text x="94" y="135" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#f0b429" text-anchor="middle" font-weight="700" letter-spacing="0">com</text>
+<rect x="150" y="66" width="60" height="34" rx="5" fill="#ffffff" stroke="#f0b429" stroke-width="1.5"/>
+<text x="180" y="80" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#1f2933" text-anchor="middle" font-weight="600" letter-spacing="0">relay</text>
+<text x="180" y="92" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#f0b429" text-anchor="middle" font-weight="700" letter-spacing="0">coil ✓</text>
+<rect x="150" y="108" width="60" height="22" rx="5" fill="#ffffff" stroke="#f0b429" stroke-width="1.5"/>
+<text x="180" y="123" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#1f2933" text-anchor="middle" font-weight="600" letter-spacing="0">230V pump ⚡</text>
+<path d="M24,124 L24,140 L180,140 L180,100" fill="none" stroke="#f0b429" stroke-width="2"/>
+<circle cx="180" cy="140" r="2.2" fill="#f0b429"/>
+<path d="M38,124 L38,150 L250,150" fill="none" stroke="#f0b429" stroke-width="2"/>
+<path d="M52,124 L52,158 L250,158" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="3 3"/>
+<path d="M66,124 L66,166 L250,166" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="3 3"/>
+<path d="M80,124 L80,174 L250,174" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="3 3"/>
+<path d="M94,124 L94,186 L250,186" fill="none" stroke="#f0b429" stroke-width="1.6"/>
+<text x="150" y="198" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7.5" fill="#9aa5b1" text-anchor="middle" font-weight="400" letter-spacing="0">shared common return (one break ⇒ several zones drop)</text>
+<line x1="0" y1="210" x2="420" y2="210" stroke="#e4e9ee"/>
+<text x="12" y="230" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#9aa5b1" text-anchor="start" font-weight="700" letter-spacing="1">HYDRAULICS</text>
+<rect x="61" y="250" width="18" height="300" rx="8" fill="url(#pg)" stroke="#1c6fb3"/>
+<text x="70" y="244" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="middle" font-weight="400" letter-spacing="0">6-way</text>
+<text x="70" y="562" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="middle" font-weight="400" letter-spacing="0">manifold</text>
+<circle cx="79" cy="270" r="2.4" fill="#1c6fb3"/>
+<circle cx="79" cy="330" r="2.4" fill="#1c6fb3"/>
+<circle cx="79" cy="390" r="2.4" fill="#1c6fb3"/>
+<circle cx="79" cy="450" r="2.4" fill="#1c6fb3"/>
+<circle cx="79" cy="510" r="2.4" fill="#1c6fb3"/>
+<circle cx="79" cy="540" r="2.4" fill="#1c6fb3"/>
+<path d="M79,270 L120,270" fill="none" stroke="#2b8de0" stroke-width="3.4" />
+<rect x="120" y="261" width="20" height="18" rx="3" fill="#ffffff" stroke="#2b8de0" stroke-width="1.6"/>
+<text x="130" y="274" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#2b8de0" text-anchor="middle" font-weight="700" letter-spacing="0">Z2</text>
+<text x="130" y="257" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#2b8de0" text-anchor="middle" font-weight="700" letter-spacing="0">open</text>
+<path d="M140,270 L185,270" fill="none" stroke="#2b8de0" stroke-width="3.4" />
+<path d="M185,270 L218,256.0" fill="none" stroke="#2b8de0" stroke-width="2.4" />
+<path d="M240.0,256.0 L265.1,253.8 A25.2,25.2 0 0 0 214.9,253.8 Z" fill="#d6ebfb" fill-opacity="0.55" stroke="#2b8de0" stroke-width="1"/>
+<circle cx="240" cy="256.0" r="2.4" fill="#2b8de0"/>
+<path d="M185,270 L218,270.0" fill="none" stroke="#2b8de0" stroke-width="2.4" />
+<path d="M240.0,270.0 L255.6,285.6 A22.0,22.0 0 1 0 224.4,285.6 Z" fill="#d6ebfb" fill-opacity="0.55" stroke="#2b8de0" stroke-width="1"/>
+<circle cx="240" cy="270.0" r="2.4" fill="#2b8de0"/>
+<path d="M185,270 L218,284.0" fill="none" stroke="#2b8de0" stroke-width="2.4" />
+<path d="M240.0,284.0 L258.8,284.0 A18.8,18.8 0 0 0 221.2,284.0 Z" fill="#d6ebfb" fill-opacity="0.55" stroke="#2b8de0" stroke-width="1"/>
+<circle cx="240" cy="284.0" r="2.4" fill="#2b8de0"/>
+<text x="410" y="248" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#2b8de0" text-anchor="end" font-weight="700" letter-spacing="0">1.66 m³/h</text>
+<path d="M79,330 L120,330" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<rect x="120" y="321" width="20" height="18" rx="3" fill="#ffffff" stroke="#c3ccd5" stroke-width="1.6"/>
+<text x="130" y="334" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">Z3</text>
+<text x="130" y="317" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">shut</text>
+<path d="M140,330 L185,330" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M185,330 L218,323.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,323.0 L262.8,316.9 A23.6,23.6 0 0 0 217.2,316.9 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="323.0" r="2.4" fill="#c3ccd5"/>
+<path d="M185,330 L218,337.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,337.0 L257.8,354.8 A25.2,25.2 0 1 0 222.2,354.8 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="337.0" r="2.4" fill="#c3ccd5"/>
+<path d="M79,390 L120,390" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<rect x="120" y="381" width="20" height="18" rx="3" fill="#ffffff" stroke="#c3ccd5" stroke-width="1.6"/>
+<text x="130" y="394" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">Z4</text>
+<text x="130" y="377" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">shut</text>
+<path d="M140,390 L185,390" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M185,390 L218,369.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,369.0 L255.6,384.6 A22.0,22.0 0 1 0 224.4,384.6 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="369.0" r="2.4" fill="#c3ccd5"/>
+<path d="M185,390 L218,383.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,383.0 L255.8,387.2 A16.4,16.4 0 1 0 224.2,387.2 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="383.0" r="2.4" fill="#c3ccd5"/>
+<path d="M185,390 L218,397.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,397.0 L253.3,410.3 A18.8,18.8 0 1 0 226.7,410.3 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="397.0" r="2.4" fill="#c3ccd5"/>
+<path d="M185,390 L218,411.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,411.0 L262.0,411.0 A22.0,22.0 0 0 0 218.0,411.0 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="411.0" r="2.4" fill="#c3ccd5"/>
+<path d="M79,450 L120,450" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<rect x="120" y="441" width="20" height="18" rx="3" fill="#ffffff" stroke="#c3ccd5" stroke-width="1.6"/>
+<text x="130" y="454" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">Z5</text>
+<text x="130" y="437" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">shut</text>
+<path d="M140,450 L185,450" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M185,450 L218,443.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,443.0 L257.8,460.8 A25.2,25.2 0 1 0 222.2,460.8 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="443.0" r="2.4" fill="#c3ccd5"/>
+<path d="M185,450 L218,457.0" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<path d="M240.0,457.0 L263.6,457.0 A23.6,23.6 0 0 0 216.4,457.0 Z" fill="#eef1f4" fill-opacity="0.7" stroke="#c3ccd5" stroke-width="1"/>
+<circle cx="240" cy="457.0" r="2.4" fill="#c3ccd5"/>
+<path d="M79,510 L120,510" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<rect x="120" y="501" width="20" height="18" rx="3" fill="#ffffff" stroke="#c3ccd5"/>
+<text x="130" y="514" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="middle" font-weight="700" letter-spacing="0">Z1</text>
+<text x="130" y="497" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#9aa5b1" text-anchor="middle" font-weight="400" letter-spacing="0">manual</text>
+<text x="150" y="514" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">→ hose (handle-shut)</text>
+<path d="M79,540 L150,540" fill="none" stroke="#c3ccd5" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="150" y1="534" x2="150" y2="546" stroke="#9aa5b1" stroke-width="2"/>
+<text x="158" y="543" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">Z6 cap</text>
+<line x1="0" y1="575" x2="420" y2="575" stroke="#e4e9ee"/>
+<text x="12" y="595" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#9aa5b1" text-anchor="start" font-weight="700" letter-spacing="1">SUPPLY</text>
+<rect x="14" y="626" width="40" height="40" rx="6" fill="#d6ebfb" stroke="#1c6fb3"/>
+<text x="34" y="644" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#1c6fb3" text-anchor="middle" font-weight="600" letter-spacing="0">well</text>
+<text x="34" y="620" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#2b8de0" text-anchor="middle" font-weight="700" letter-spacing="0">primed ✓</text>
+<path d="M54,646 L92,646" fill="none" stroke="#2b8de0" stroke-width="3.4" marker-end="url(#arr)"/>
+<circle cx="120" cy="646" r="20" fill="#ffffff" stroke="#2b8de0" stroke-width="2"/>
+<text x="120" y="642" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#1f2933" text-anchor="middle" font-weight="600" letter-spacing="0">pump</text>
+<text x="120" y="652" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#1c6fb3" text-anchor="middle" font-weight="700" letter-spacing="0">3.0 bar</text>
+<text x="120" y="620" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7" fill="#2b8de0" text-anchor="middle" font-weight="700" letter-spacing="0">running</text>
+<path d="M140,646 L300,646" fill="none" stroke="#2b8de0" stroke-width="3.4" marker-end="url(#arr)"/>
+<text x="220" y="636" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7.5" fill="#9aa5b1" text-anchor="middle" font-weight="400" letter-spacing="0">20 m LDPE-32</text>
+<path d="M300,646 L300,250" fill="none" stroke="#2b8de0" stroke-width="3" stroke-dasharray="2 3" opacity="0.4"/>
+<text x="330" y="650" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="7.5" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">→ to manifold</text>
+<rect x="14" y="680" width="392" height="26" rx="6" fill="#ffffff" stroke="#e4e9ee"/>
+<text x="24" y="697" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#1f2933" text-anchor="start" font-weight="600" letter-spacing="0">Σ outflow = pump supply</text>
+<text x="396" y="697" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="9" fill="#2b8de0" text-anchor="end" font-weight="700" letter-spacing="0">1.66 m³/h out · 1.66 in ✓</text>
+<text x="12" y="880" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="8" fill="#9aa5b1" text-anchor="start" font-weight="400" letter-spacing="0">covers R11·R13·R14·R10 · U2·U6–U13·U16 — encoding key in sheet 3</text>
+</svg>
