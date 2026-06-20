@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Garden water — Vormersesluisweg 3A</title>
+<style>
+  :root {
+    --bg: #0f1714;
+    --panel: #15211c;
+    --panel-2: #1b2a24;
+    --line: #28453a;
+    --ink: #eaf3ee;
+    --ink-dim: #9fb6ab;
+    --ink-faint: #6f8a7e;
+
+    --water: #45b6f5;     /* rain + irrigation gains */
+    --et: #f0a94a;        /* evapotranspiration loss */
+    --good: #4fcf8a;      /* comfortably wet */
+    --soon: #f0c34a;      /* getting dry */
+    --now: #f0664a;       /* needs water */
+    --today: #ffffff;
+
+    --r: 14px;
+    --tap: 44px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 24px) env(safe-area-inset-left);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .wrap { max-width: 560px; margin: 0 auto; padding: 16px 14px 0; }
+
+  h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    margin: 4px 0 14px;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  h1 .loc { color: var(--ink); }
+
+  /* ---- Verdict banner (SCO-1, UIX-2) ---- */
+  .verdict {
+    border-radius: var(--r);
+    padding: 18px 18px 16px;
+    margin-bottom: 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .verdict::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: var(--state-color, var(--ink-faint));
+  }
+  .verdict .headline {
+    font-size: 26px;
+    line-height: 1.15;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--state-color, var(--ink));
+    letter-spacing: -.01em;
+  }
+  .verdict .sub { color: var(--ink-dim); font-size: 14px; }
+  .verdict .sub b { color: var(--ink); font-weight: 600; }
+
+  .gauge {
+    margin-top: 14px;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .gauge .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    border-radius: 999px;
+    background: var(--state-color, var(--good));
+    transition: width .35s ease;
+  }
+  .gauge .thresh {
+    position: absolute; top: -3px; bottom: -3px;
+    width: 2px;
+    background: var(--ink);
+    opacity: .85;
+  }
+  .gauge-legend {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--ink-faint);
+    margin-top: 5px;
+  }
+
+  /* ---- Card ---- */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .card > h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ink-faint);
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+
+  /* ---- Trend chart (UIX-1) ---- */
+  .chart-wrap { position: relative; }
+  svg.chart { width: 100%; height: 200px; display: block; touch-action: pan-y; }
+  .chart-legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    font-size: 11px; color: var(--ink-dim);
+    margin-top: 8px;
+  }
+  .chart-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .swatch.water { background: var(--water); }
+  .swatch.et { background: var(--et); }
+  .swatch.level { background: linear-gradient(var(--good), rgba(79,207,138,.15)); }
+  .swatch.thr { background: repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 7px); border-radius:0; height:2px; }
+
+  /* ---- Day detail (UIX-3) ---- */
+  .detail .when {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .detail .when .d { font-size: 17px; font-weight: 600; }
+  .detail .when .t { color: var(--ink-dim); font-size: 13px; }
+  .detail .badge {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; padding: 3px 8px; border-radius: 999px;
+    background: var(--panel-2); color: var(--ink-dim);
+  }
+  .detail .badge.today { background: var(--today); color: #122; }
+  .detail .badge.future { color: var(--water); }
+
+  .ledger { margin: 4px 0 12px; }
+  .ledger .row {
+    display: grid;
+    grid-template-columns: 84px 1fr 64px;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 14px;
+  }
+  .ledger .row .lbl { color: var(--ink-dim); display:flex; align-items:center; gap:7px; }
+  .ledger .bar-track { height: 8px; border-radius: 999px; background: var(--panel-2); overflow: hidden; }
+  .ledger .bar { height: 100%; border-radius: 999px; }
+  .ledger .bar.water { background: var(--water); }
+  .ledger .bar.et { background: var(--et); }
+  .ledger .amt { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .ledger .amt.up { color: var(--water); }
+  .ledger .amt.down { color: var(--et); }
+  .ledger .net {
+    border-top: 1px solid var(--line);
+    margin-top: 6px; padding-top: 9px;
+    grid-template-columns: 84px 1fr 64px;
+  }
+  .ledger .net .lbl { color: var(--ink); font-weight: 600; }
+  .ledger .net .amt { font-weight: 700; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display:inline-block; }
+  .dot.water { background: var(--water); }
+  .dot.et { background: var(--et); }
+
+  /* watering toggle for the selected day (UIX-5 — past or future) */
+  .water-toggle {
+    width: 100%;
+    min-height: var(--tap);
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--ink);
+    font: inherit; font-weight: 600; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer;
+  }
+  .water-toggle.on { background: var(--water); color: #04222e; border-color: var(--water); }
+  .water-toggle .mm { font-weight: 500; opacity: .85; font-size: 13px; }
+  .hint { font-size: 12px; color: var(--ink-faint); margin-top: 8px; text-align: center; }
+
+  /* ---- Controls (UIX-4) ---- */
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 4px; }
+  .field > label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; color: var(--ink-dim); margin-bottom: 8px;
+  }
+  .field > label .val { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .chips { display: flex; gap: 8px; }
+  .chips button {
+    flex: 1 1 0;
+    min-height: var(--tap);
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--ink-dim);
+    font: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    padding: 6px 4px;
+    transition: background .12s, color .12s, border-color .12s;
+  }
+  .chips button[aria-pressed="true"] {
+    background: var(--good); color: #04241a; border-color: var(--good);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: var(--tap);
+    background: transparent; cursor: pointer; margin: 0;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line);
+  }
+  input[type="range"]::-moz-range-track {
+    height: 8px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--water); border: 3px solid var(--bg);
+    margin-top: -11px; box-shadow: 0 1px 4px rgba(0,0,0,.4);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--water); border: 3px solid var(--bg);
+  }
+
+  .reset {
+    background: none; border: none; color: var(--ink-faint);
+    font: inherit; font-size: 13px; text-decoration: underline;
+    cursor: pointer; padding: 8px 0; margin-top: 2px;
+  }
+
+  /* states */
+  .status { text-align: center; color: var(--ink-dim); padding: 40px 0; }
+  .status.err { color: var(--now); }
+  .status .retry {
+    display: inline-block; margin-top: 12px;
+    background: var(--panel-2); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 10px; padding: 10px 18px; font: inherit; cursor: pointer; min-height: var(--tap);
+  }
+  .skel { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.85} }
+
+  footer { color: var(--ink-faint); font-size: 11px; text-align: center; padding: 18px 0 4px; }
+  footer a { color: var(--ink-faint); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Garden water · <span class="loc">Vormersesluisweg 3A, Wijchen</span></h1>
+    <div id="app">
+      <div class="status skel" id="loading">Reading the last weeks of weather…</div>
+    </div>
+    <footer>
+      Soil-moisture estimate from a daily water balance ·
+      weather by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+    </footer>
+  </div>
+
+<script type="module">
+/* =========================================================================
+   Engine — daily soil-water balance (self-contained, no imports).
+   ========================================================================= */
+const SITE = { name: "Vormersesluisweg 3A, Wijchen", lat: 51.79733, lon: 5.70643 };
+const API = {
+  base: "https://api.open-meteo.com/v1/forecast",
+  daily: "precipitation_sum,temperature_2m_max,et0_fao_evapotranspiration",
+  timezone: "Europe/Amsterdam",
+  pastDays: 24,
+  forecastDays: 16,
+};
+const TODAY_INDEX = 24;            // fixed; never derived from the device clock
+const SPRINKLER_RATE = 0.063;      // mm/min gross
+const RAIN_EFFECTIVENESS = 0.8;
+const WATERING_EFFICIENCY = 0.9;
+const PROJECTION_DAYS = 14;
+const MIN_DAYS = TODAY_INDEX + PROJECTION_DAYS + 1;
+const VIEW = { start: TODAY_INDEX - 8, length: 16 };
+
+const PLANTINGS = {
+  "Turf":       { kc: 0.85, rootDepth: 0.15, p: 0.45 },
+  "Flower bed": { kc: 0.90, rootDepth: 0.30, p: 0.45 },
+  "Shrubs":     { kc: 0.70, rootDepth: 0.50, p: 0.50 },
+};
+const SOILS = { "Sand": 60, "Sandy loam": 130, "Loam": 170, "Clay": 190 };
+
+const DEFAULTS = {
+  planting: "Flower bed",
+  soil: "Sandy loam",
+  wateringMinutes: 60,
+  watered: [],
+};
+
+const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
+
+function buildUrl() {
+  const params = new URLSearchParams({
+    latitude: SITE.lat, longitude: SITE.lon, daily: API.daily,
+    timezone: API.timezone, past_days: API.pastDays, forecast_days: API.forecastDays,
+  });
+  return `${API.base}?${params.toString()}`;
+}
+
+function normalizeWeather(json) {
+  const daily = json && json.daily;
+  if (!daily || !Array.isArray(daily.time)) throw new Error("Malformed weather response: missing daily.time");
+  const time = daily.time, n = time.length;
+  if (n < MIN_DAYS) throw new Error(`Malformed weather response: expected at least ${MIN_DAYS} days, got ${n}`);
+  const rawRain = daily.precipitation_sum, rawEt0 = daily.et0_fao_evapotranspiration;
+  if (!Array.isArray(rawRain) || rawRain.length < n || !Array.isArray(rawEt0) || rawEt0.length < n)
+    throw new Error("Malformed weather response: precipitation_sum / et0_fao_evapotranspiration missing or too short");
+  const rawTemp = Array.isArray(daily.temperature_2m_max) ? daily.temperature_2m_max : [];
+  const rain = [], et0 = [], tempMax = []; let lastEt0 = 0;
+  for (let i = 0; i < n; i++) {
+    rain.push(rawRain[i] == null ? 0 : rawRain[i]);
+    const e = rawEt0[i];
+    if (e == null) { et0.push(lastEt0); } else { et0.push(e); lastEt0 = e; }
+    tempMax.push(rawTemp[i] == null ? null : rawTemp[i]);
+  }
+  return { time, rain, et0, tempMax };
+}
+
+async function fetchWeather(signal) {
+  let response;
+  try { response = await fetch(buildUrl(), { signal }); }
+  catch (cause) { throw new Error("Weather request failed (network error)", { cause }); }
+  if (!response.ok) throw new Error(`Weather request failed (HTTP ${response.status})`);
+  let json;
+  try { json = await response.json(); }
+  catch (cause) { throw new Error("Weather response was not valid JSON", { cause }); }
+  return normalizeWeather(json);
+}
+
+function deriveParams(controls) {
+  const planting = PLANTINGS[controls.planting];
+  const soilAW = SOILS[controls.soil];
+  if (!planting) throw new Error(`Unknown planting: ${controls.planting}`);
+  if (soilAW == null) throw new Error(`Unknown soil: ${controls.soil}`);
+  const tankSize = soilAW * planting.rootDepth;
+  const raw = planting.p * tankSize;
+  const threshold = tankSize - raw;
+  return { kc: planting.kc, rootDepth: planting.rootDepth, p: planting.p, soilAW, tankSize, raw, threshold };
+}
+
+function ks(stored, threshold) {
+  if (threshold <= 0) return 1;
+  if (stored >= threshold) return 1;
+  return clamp(stored / threshold, 0, 1);
+}
+
+function runBalance(weather, params, wateredSet, dose) {
+  const { tankSize, threshold, kc } = params;
+  const n = weather.et0.length;
+  const series = []; let prev = tankSize;
+  for (let i = 0; i < n; i++) {
+    const start = prev;
+    const k = ks(start, threshold);
+    const loss = weather.et0[i] * kc * k;
+    const applied = wateredSet.has(i) ? dose : 0;
+    const gain = weather.rain[i] * RAIN_EFFECTIVENESS + applied * WATERING_EFFICIENCY;
+    const level = clamp(start + gain - loss, 0, tankSize);
+    series.push({ index: i, start, ks: k, et0: weather.et0[i], loss, rain: weather.rain[i], applied, gain, level });
+    prev = level;
+  }
+  return series;
+}
+
+function projectNextWatering(series, threshold) {
+  if (!Array.isArray(series) || series.length <= TODAY_INDEX)
+    throw new Error(`Invalid series: expected more than ${TODAY_INDEX} days`);
+  if (series[TODAY_INDEX].level <= threshold) return { days: 0, beyondHorizon: false };
+  const end = Math.min(TODAY_INDEX + PROJECTION_DAYS, series.length - 1);
+  for (let j = TODAY_INDEX + 1; j <= end; j++)
+    if (series[j].level <= threshold) return { days: j - TODAY_INDEX, beyondHorizon: false };
+  return { days: null, beyondHorizon: true };
+}
+
+function buildWindow(series, weather, wateredSet, tankSize, start, length) {
+  const fraction = (mm) => (tankSize > 0 ? mm / tankSize : 0);
+  const days = [];
+  for (let w = 0; w < length; w++) {
+    const i = start + w;
+    const rec = series[i];
+    if (!rec) continue;
+    days.push({
+      index: i, date: weather.time[i], levelMm: rec.level, levelFraction: fraction(rec.level),
+      et: rec.loss, ks: rec.ks, rain: rec.rain, watering: rec.applied,
+      watered: wateredSet.has(i), tempMax: weather.tempMax[i], isToday: i === TODAY_INDEX,
+    });
+  }
+  return days;
+}
+
+function compute(controls, weather, view = VIEW) {
+  if (!weather || !Array.isArray(weather.time) || !Array.isArray(weather.rain) ||
+      !Array.isArray(weather.et0) || !Array.isArray(weather.tempMax) || weather.et0.length < MIN_DAYS)
+    throw new Error("Invalid weather: expected a normalized object from normalizeWeather/fetchWeather");
+  const merged = { ...DEFAULTS, ...controls };
+  if (!Array.isArray(merged.watered)) throw new Error("Invalid controls: watered must be an array of day indices");
+  const params = deriveParams(merged);
+  const dose = SPRINKLER_RATE * merged.wateringMinutes;
+  const wateredSet = new Set(merged.watered);
+  const series = runBalance(weather, params, wateredSet, dose);
+  const fraction = (mm) => (params.tankSize > 0 ? mm / params.tankSize : 0);
+  const days = buildWindow(series, weather, wateredSet, params.tankSize, view.start, view.length);
+  const todayRec = series[TODAY_INDEX];
+  const today = {
+    index: TODAY_INDEX, date: weather.time[TODAY_INDEX], levelMm: todayRec.level,
+    levelFraction: fraction(todayRec.level), tempMax: weather.tempMax[TODAY_INDEX],
+  };
+  return {
+    site: SITE, ...params, dose, thresholdFraction: fraction(params.threshold),
+    todayIndex: TODAY_INDEX, series, wateredSet, weather, view, days, today,
+    nextWatering: projectNextWatering(series, params.threshold),
+  };
+}
+
+/* =========================================================================
+   UI
+   ========================================================================= */
+const STORE_KEY = "soil.controls.v1";
+const SVGNS = "http://www.w3.org/2000/svg";
+const app = document.getElementById("app");
+
+let weather = null;
+let controls = loadControls();
+let selected = TODAY_INDEX;   // index of the day shown in the detail panel
+
+function loadControls() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (raw && typeof raw === "object") {
+      return {
+        planting: PLANTINGS[raw.planting] ? raw.planting : DEFAULTS.planting,
+        soil: SOILS[raw.soil] ? raw.soil : DEFAULTS.soil,
+        wateringMinutes: clamp(Number(raw.wateringMinutes) || DEFAULTS.wateringMinutes, 5, 180),
+        watered: Array.isArray(raw.watered) ? raw.watered.filter(Number.isInteger) : [],
+      };
+    }
+  } catch (_) {}
+  return { ...DEFAULTS, watered: [] };
+}
+function saveControls() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(controls)); } catch (_) {}
+}
+
+/* --- date helpers (no device clock for "today"; labels only) --- */
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function parseDate(s) { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
+function shortDate(s) { const d = parseDate(s); return `${DOW[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; }
+function dayLabel(model, index) {
+  if (index === TODAY_INDEX) return "Today";
+  if (index === TODAY_INDEX + 1) return "Tomorrow";
+  if (index === TODAY_INDEX - 1) return "Yesterday";
+  return shortDate(model.weather.time[index]);
+}
+
+/* --- moisture state buckets (UIX-2) --- */
+function stateOf(levelMm, threshold, tankSize) {
+  // Comfortable zone is above the refill threshold; below it the plant is stressed.
+  if (levelMm <= threshold) return { key: "now", color: "var(--now)" };
+  const head = tankSize - threshold;            // mm of comfortable buffer
+  if (head > 0 && (levelMm - threshold) / head < 0.28) return { key: "soon", color: "var(--soon)" };
+  return { key: "good", color: "var(--good)" };
+}
+
+/* ========================= render ========================= */
+function render() {
+  let model;
+  try { model = compute(controls, weather); }
+  catch (e) { renderError(e.message); return; }
+
+  if (selected < model.view.start || selected >= model.view.start + model.view.length)
+    selected = TODAY_INDEX;
+
+  app.innerHTML = "";
+  app.append(
+    verdict(model),
+    trendCard(model),
+    detailCard(model),
+    controlsCard(model),
+  );
+  wire(model);
+}
+
+/* ---- Verdict (SCO-1 / UIX-2) ---- */
+function verdict(model) {
+  const t = model.today;
+  const st = stateOf(t.levelMm, model.threshold, model.tankSize);
+  const nw = model.nextWatering;
+  const pct = Math.round(t.levelFraction * 100);
+
+  let headline, sub;
+  if (st.key === "now") {
+    headline = "Water now";
+    sub = `The soil has dropped to the refill point. Your <b>${controls.planting.toLowerCase()}</b> is starting to feel it.`;
+  } else if (nw.days === 0) {
+    headline = "Water now";
+    sub = `At the refill point today.`;
+  } else if (nw.beyondHorizon) {
+    headline = st.key === "soon" ? "Fine for now" : "No watering needed";
+    sub = `Rain and current moisture cover the next <b>2 weeks</b> — no watering needed in the forecast.`;
+  } else {
+    headline = st.key === "soon" ? "Water soon" : "All good";
+    const when = nw.days === 1 ? "tomorrow" : `in <b>${nw.days} days</b>`;
+    sub = `On track to reach the refill point ${when}.`;
+  }
+
+  const el = h("section", "verdict");
+  el.style.setProperty("--state-color", st.color);
+  el.innerHTML = `
+    <p class="headline">${headline}</p>
+    <p class="sub">${sub}</p>
+    <div class="gauge" title="Soil moisture: ${pct}% of capacity">
+      <div class="fill" style="width:${clamp(pct,0,100)}%"></div>
+      <div class="thresh" style="left:${clamp(model.thresholdFraction*100,0,100)}%"></div>
+    </div>
+    <div class="gauge-legend">
+      <span>Dry</span>
+      <span>${pct}% full · refill line marked</span>
+      <span>Wet</span>
+    </div>`;
+  return el;
+}
+
+/* ---- Trend chart (UIX-1) ---- */
+function trendCard(model) {
+  const card = h("section", "card");
+  card.innerHTML = `<h2>Moisture trend · ${model.view.length} days</h2><div class="chart-wrap"></div>`;
+  card.querySelector(".chart-wrap").append(chart(model));
+  const legend = h("div", "chart-legend");
+  legend.innerHTML = `
+    <span><i class="swatch level"></i>Soil moisture</span>
+    <span><i class="swatch thr"></i>Refill point</span>
+    <span><i class="swatch water"></i>Rain / watering</span>
+    <span><i class="swatch et"></i>Dry-out</span>`;
+  card.append(legend);
+  return card;
+}
+
+function chart(model) {
+  const days = model.days;
+  const W = 100, H = 100;                 // viewBox units; scales to width
+  const padT = 8, padB = 16, padL = 0, padR = 0;
+  const plotH = H - padT - padB;
+  const n = days.length;
+  const colW = (W - padL - padR) / n;
+  const xC = (i) => padL + colW * (i + 0.5);
+  const yF = (f) => padT + plotH * (1 - clamp(f, 0, 1));
+
+  const svg = document.createElementNS(SVGNS, "svg");
+  svg.setAttribute("class", "chart");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+  const mk = (name, attrs) => { const e = document.createElementNS(SVGNS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+  // future shading (from today onward)
+  const futureStart = days.findIndex(d => d.index === TODAY_INDEX);
+  if (futureStart >= 0) {
+    svg.append(mk("rect", {
+      x: padL + colW * futureStart, y: padT, width: colW * (n - futureStart), height: plotH,
+      fill: "#ffffff", opacity: "0.03",
+    }));
+  }
+
+  // refill threshold line
+  const ty = yF(model.thresholdFraction);
+  svg.append(mk("line", { x1: 0, x2: W, y1: ty, y2: ty, stroke: "var(--ink)", "stroke-width": "0.5",
+    "stroke-dasharray": "2 1.6", opacity: "0.55", "vector-effect": "non-scaling-stroke" }));
+
+  // moisture area + line
+  const top = days.map((d,i) => `${xC(i).toFixed(2)},${yF(d.levelFraction).toFixed(2)}`);
+  const areaPts = `${padL},${yF(0)} ` + top.join(" ") + ` ${W},${yF(0)}`;
+  const grad = mk("linearGradient", { id: "lvl", x1: "0", y1: "0", x2: "0", y2: "1" });
+  grad.append(mk("stop", { offset: "0", "stop-color": "var(--good)", "stop-opacity": "0.45" }));
+  grad.append(mk("stop", { offset: "1", "stop-color": "var(--good)", "stop-opacity": "0.04" }));
+  const defs = mk("defs", {}); defs.append(grad); svg.append(defs);
+  svg.append(mk("polygon", { points: areaPts, fill: "url(#lvl)" }));
+  svg.append(mk("polyline", { points: top.join(" "), fill: "none", stroke: "var(--good)",
+    "stroke-width": "1.6", "stroke-linejoin": "round", "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }));
+
+  // per-day event ticks: rain/watering up (blue), dry-out down (orange) — UIX-3 at a glance
+  const maxMm = Math.max(6, ...days.map(d => Math.max(d.rain + d.watering, d.et)));
+  const tickH = (mm) => (mm / maxMm) * (plotH * 0.42);
+  for (let i = 0; i < n; i++) {
+    const d = days[i], x = xC(i);
+    const up = d.rain + d.watering;
+    if (up > 0.05) svg.append(mk("line", { x1: x, x2: x, y1: H - padB, y2: H - padB - tickH(up),
+      stroke: "var(--water)", "stroke-width": "2.4", "stroke-linecap": "round", "vector-effect": "non-scaling-stroke", opacity: d.watered ? "1" : "0.8" }));
+    if (d.et > 0.05) svg.append(mk("line", { x1: x, x2: x, y1: H - padB + 0.5, y2: H - padB + 0.5 + tickH(d.et) * 0.5,
+      stroke: "var(--et)", "stroke-width": "2.4", "stroke-linecap": "round", "vector-effect": "non-scaling-stroke", opacity: "0.7" }));
+    // watering marker
+    if (d.watered) svg.append(mk("circle", { cx: x, cy: yF(d.levelFraction), r: "1.7", fill: "var(--water)",
+      stroke: "var(--bg)", "stroke-width": "0.6", "vector-effect": "non-scaling-stroke" }));
+  }
+
+  // today marker
+  if (futureStart >= 0) {
+    const tx = xC(futureStart);
+    svg.append(mk("line", { x1: tx, x2: tx, y1: padT - 2, y2: H - padB, stroke: "var(--today)",
+      "stroke-width": "1", opacity: "0.9", "vector-effect": "non-scaling-stroke" }));
+    svg.append(mk("circle", { cx: tx, cy: yF(days[futureStart].levelFraction), r: "2.4",
+      fill: "var(--today)", stroke: "var(--bg)", "stroke-width": "0.8", "vector-effect": "non-scaling-stroke" }));
+  }
+
+  // selected highlight
+  const selPos = days.findIndex(d => d.index === selected);
+  if (selPos >= 0) {
+    svg.append(mk("rect", { x: padL + colW * selPos, y: padT, width: colW, height: plotH,
+      fill: "var(--ink)", opacity: "0.10", rx: "1" }));
+  }
+
+  // x labels (sparse, to avoid clutter — UIX-1: glanceable)
+  for (let i = 0; i < n; i++) {
+    if (days[i].index !== TODAY_INDEX && i % 3 !== 0) continue;
+    const t = mk("text", { x: xC(i), y: H - 4, "text-anchor": "middle",
+      "font-size": "3.4", fill: days[i].index === TODAY_INDEX ? "var(--today)" : "var(--ink-faint)" });
+    t.textContent = days[i].index === TODAY_INDEX ? "today" : `${parseDate(days[i].date).getDate()}`;
+    svg.append(t);
+  }
+
+  // transparent hit columns for tap-to-select
+  for (let i = 0; i < n; i++) {
+    const hit = mk("rect", { x: padL + colW * i, y: 0, width: colW, height: H, fill: "transparent", style: "cursor:pointer" });
+    hit.addEventListener("click", () => { selected = days[i].index; render(); });
+    svg.append(hit);
+  }
+
+  return svg;
+}
+
+/* ---- Day detail / ledger (UIX-3) + per-day watering (UIX-5) ---- */
+function detailCard(model) {
+  const rec = model.series[selected];
+  const card = h("section", "card detail");
+  const label = dayLabel(model, selected);
+  const isFuture = selected > TODAY_INDEX;
+  const isToday = selected === TODAY_INDEX;
+  const badge = isToday ? `<span class="badge today">Now</span>`
+    : isFuture ? `<span class="badge future">Forecast</span>`
+    : `<span class="badge">Past</span>`;
+
+  const dose = model.dose;
+  const up = rec.gain, down = rec.loss, net = up - down;
+  const rainEff = rec.rain * RAIN_EFFECTIVENESS;
+  const waterEff = rec.applied * WATERING_EFFICIENCY;
+  const scale = Math.max(up, down, 0.5);
+  const pctOf = (mm) => `${clamp((mm / scale) * 100, 0, 100)}%`;
+  const tempStr = rec_tempMax(model, selected);
+
+  const rows = [];
+  if (rec.rain > 0.05)
+    rows.push(ledgerRow("Rain", `${fmt(rec.rain)} mm`, "up", pctOf(rainEff), `+${fmt(rainEff)} mm`));
+  if (rec.applied > 0.05)
+    rows.push(ledgerRow("Watering", "", "up", pctOf(waterEff), `+${fmt(waterEff)} mm`, "water"));
+  rows.push(ledgerRow("Dry-out", "evaporation", "down", pctOf(down), `−${fmt(down)} mm`, "et"));
+
+  card.innerHTML = `
+    <div class="when">
+      <div><span class="d">${label}</span> ${badge}</div>
+      <div class="t">${shortDate(rec_date(model, selected))}${tempStr}</div>
+    </div>
+    <div class="ledger">
+      ${rows.join("")}
+      <div class="row net">
+        <span class="lbl">Net change</span>
+        <span></span>
+        <span class="amt ${net >= 0 ? "up" : "down"}">${net >= 0 ? "+" : "−"}${fmt(Math.abs(net))} mm</span>
+      </div>
+      <div class="row" style="grid-template-columns:84px 1fr 64px;">
+        <span class="lbl">Moisture</span>
+        <span></span>
+        <span class="amt">${Math.round((rec.level / model.tankSize) * 100)}%</span>
+      </div>
+    </div>
+    <button class="water-toggle ${model.wateredSet.has(selected) ? "on" : ""}" id="waterBtn">
+      ${model.wateredSet.has(selected)
+        ? `Watered ${isFuture ? "(planned)" : ""} · tap to remove`
+        : `Add watering ${isFuture ? "(plan)" : "(record)"} `}
+      <span class="mm">${fmt(dose)} mm</span>
+    </button>
+    <p class="hint">Tap any day in the chart to inspect it · add watering to past or future days to test a plan</p>`;
+  return card;
+}
+
+function ledgerRow(lbl, hint, dir, width, amt, dot) {
+  const dotEl = dot ? `<span class="dot ${dot}"></span>` : "";
+  const sub = hint ? ` <span style="color:var(--ink-faint);font-size:12px">${hint}</span>` : "";
+  return `<div class="row">
+    <span class="lbl">${dotEl}${lbl}</span>
+    <span class="bar-track"><span class="bar ${dir === "up" ? "water" : "et"}" style="width:${width}"></span></span>
+    <span class="amt ${dir}">${amt}</span>
+  </div>`;
+}
+
+function rec_date(model, i) { return model.weather.time[i]; }
+function rec_tempMax(model, i) {
+  const t = model.weather.tempMax[i];
+  return (t == null) ? "" : ` · ${Math.round(t)}°C`;
+}
+
+/* ---- Controls (UIX-4) ---- */
+function controlsCard(model) {
+  const card = h("section", "card");
+  const plantBtns = Object.keys(PLANTINGS).map(k =>
+    `<button data-plant="${k}" aria-pressed="${controls.planting === k}">${k}</button>`).join("");
+  const soilBtns = Object.keys(SOILS).map(k =>
+    `<button data-soil="${k}" aria-pressed="${controls.soil === k}">${k}</button>`).join("");
+  card.innerHTML = `
+    <h2>What's planted &amp; soil</h2>
+    <div class="field">
+      <label>Planting</label>
+      <div class="chips" id="plantChips">${plantBtns}</div>
+    </div>
+    <div class="field">
+      <label>Soil</label>
+      <div class="chips" id="soilChips">${soilBtns}</div>
+    </div>
+    <div class="field">
+      <label>Watering run <span class="val"><span id="minOut">${controls.wateringMinutes}</span> min · ${fmt(model.dose)} mm</span></label>
+      <input type="range" id="minutes" min="5" max="180" step="5" value="${controls.wateringMinutes}" />
+    </div>
+    <button class="reset" id="reset">Clear watering plan &amp; reset settings</button>`;
+  return card;
+}
+
+/* ---- wiring ---- */
+function wire(model) {
+  app.querySelectorAll("#plantChips button").forEach(b =>
+    b.addEventListener("click", () => { controls.planting = b.dataset.plant; saveControls(); render(); }));
+  app.querySelectorAll("#soilChips button").forEach(b =>
+    b.addEventListener("click", () => { controls.soil = b.dataset.soil; saveControls(); render(); }));
+
+  const minutes = app.querySelector("#minutes");
+  const minOut = app.querySelector("#minOut");
+  if (minutes) {
+    minutes.addEventListener("input", () => { minOut.textContent = minutes.value; });
+    minutes.addEventListener("change", () => {
+      controls.wateringMinutes = clamp(Number(minutes.value), 5, 180); saveControls(); render();
+    });
+  }
+
+  const wb = app.querySelector("#waterBtn");
+  if (wb) wb.addEventListener("click", () => {
+    const set = new Set(controls.watered);
+    set.has(selected) ? set.delete(selected) : set.add(selected);
+    controls.watered = [...set].sort((a,b)=>a-b);
+    saveControls(); render();
+  });
+
+  const reset = app.querySelector("#reset");
+  if (reset) reset.addEventListener("click", () => {
+    controls = { ...DEFAULTS, watered: [] }; selected = TODAY_INDEX; saveControls(); render();
+  });
+}
+
+/* ---- helpers ---- */
+function h(tag, cls) { const e = document.createElement(tag); if (cls) e.className = cls; return e; }
+function fmt(x) { return (Math.round(x * 10) / 10).toFixed(1); }
+
+function renderError(msg) {
+  app.innerHTML = `
+    <div class="status err">
+      <div>Couldn't load the weather.</div>
+      <div style="font-size:12px;color:var(--ink-faint);margin-top:6px">${msg}</div>
+      <button class="retry" id="retry">Try again</button>
+    </div>`;
+  const r = document.getElementById("retry");
+  if (r) r.addEventListener("click", boot);
+}
+
+/* ---- boot ---- */
+async function boot() {
+  app.innerHTML = `<div class="status skel" id="loading">Reading the last weeks of weather…</div>`;
+  try {
+    weather = await fetchWeather();
+    render();
+  } catch (e) {
+    renderError(e.message);
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
