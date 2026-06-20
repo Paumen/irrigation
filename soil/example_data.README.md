@@ -4,7 +4,7 @@ A real snapshot of `soil.js`'s `compute({}, weather)` output, captured against
 live Open-Meteo weather for the built-in site on 2026-06-20. Use it to build the
 UI without hitting the network or re-running the balance.
 
-Regenerate by running this from the `soil/` directory (`node regen.mjs > example_data.json`):
+Regenerate by running this from the `soil/` directory (`node regen.mjs`):
 
 ```js
 import { writeFileSync } from "node:fs";
@@ -13,7 +13,18 @@ import { compute, fetchWeather } from "./soil.js";
 const result = compute({}, await fetchWeather());
 // wateredSet is a Set, which JSON.stringify drops to {}; serialize it as an array.
 const out = { ...result, wateredSet: [...result.wateredSet] };
-writeFileSync("example_data.json", JSON.stringify(out, null, 2) + "\n");
+
+// Round every number to 4 dp to strip float noise (3.78000…02 -> 3.78),
+// but leave `site` lat/lon exact — rounding those would shift the coordinates.
+const round4 = (v) => (typeof v === "number" ? Math.round(v * 1e4) / 1e4 : v);
+const clean = (node, key) =>
+  key === "site" ? node
+  : Array.isArray(node) ? node.map((v) => clean(v))
+  : node && typeof node === "object"
+    ? Object.fromEntries(Object.entries(node).map(([k, v]) => [k, clean(v, k)]))
+  : round4(node);
+
+writeFileSync("example_data.json", JSON.stringify(clean(out), null, 2) + "\n");
 ```
 
 ## Controls used
