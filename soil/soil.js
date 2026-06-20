@@ -1,12 +1,3 @@
-// Soil-Balance backend — data layer + balance logic for one fixed garden.
-//
-// Pure ES module: fetch weather, derive soil parameters from presets, run the
-// FAO-56 daily water balance, and project the next watering. No DOM, no
-// rounding/formatting (the UI rounds per UIX-6). Requirement IDs reference
-// docs/soil_balance_spec.md.
-
-// ── Site & API (SCO-3, DAT-1) ────────────────────────────────────────────────
-
 export const SITE = {
   name: "Vormersesluisweg 3A, Wijchen",
   lat: 51.79733,
@@ -21,27 +12,18 @@ export const API = {
   forecastDays: 16,
 };
 
-// One gapless series of 40 days: 24 past + today + 15 forecast. Today is fixed
-// at index 24 — never derived from the device clock (DAT-1).
+// Fixed; never derived from the device clock.
 export const TODAY_INDEX = 24;
 
-// Shown window: last 8 days, today, next 7 (DAT-2). Days before it are run-up
-// that settles the estimate from the full-tank seed.
-export const WINDOW_START = TODAY_INDEX - 8; // 16
+export const WINDOW_START = TODAY_INDEX - 8;
 export const WINDOW_LENGTH = 16;
 
-// ── Physical constants (DAT-3, LOG-3, LOG-4) ─────────────────────────────────
-
-export const SPRINKLER_RATE = 0.063; // mm/min gross (BL4.0 / 180° I-20)
+export const SPRINKLER_RATE = 0.063; // mm/min gross
 export const RAIN_EFFECTIVENESS = 0.8;
 export const WATERING_EFFICIENCY = 0.9;
 export const PROJECTION_DAYS = 14;
 
-// Minimum gapless days the maths need: today (index 24) plus the 14-day
-// projection horizon (index 38) → 39 days.
 export const MIN_DAYS = TODAY_INDEX + PROJECTION_DAYS + 1;
-
-// ── Presets & defaults (CTR-1, CTR-2, CTR-5) ─────────────────────────────────
 
 export const PLANTINGS = {
   "Turf": { kc: 0.85, rootDepth: 0.15, p: 0.45 },
@@ -49,7 +31,7 @@ export const PLANTINGS = {
   "Shrubs": { kc: 0.70, rootDepth: 0.50, p: 0.50 },
 };
 
-// Plant-available water held per metre of depth (field capacity − wilting), mm/m.
+// Plant-available water per metre of depth (field capacity − wilting), mm/m.
 export const SOILS = {
   "Sand": 60,
   "Sandy loam": 130,
@@ -61,16 +43,12 @@ export const DEFAULTS = {
   planting: "Flower bed",
   soil: "Sandy loam",
   wateringMinutes: 60,
-  watered: [], // absolute day indices into the 40-day series (CTR-4)
+  watered: [], // absolute day indices into the series
 };
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function clamp(x, lo, hi) {
   return Math.min(hi, Math.max(lo, x));
 }
-
-// ── Weather fetch & normalization (DAT-1, DAT-4) ─────────────────────────────
 
 export function buildUrl() {
   const params = new URLSearchParams({
@@ -84,10 +62,8 @@ export function buildUrl() {
   return `${API.base}?${params.toString()}`;
 }
 
-// Turn the raw Open-Meteo payload into parallel numeric arrays, applying the
-// DAT-1 null rules: rain → 0, et0 → previous day's value (0 would be wrong;
-// first-day null falls back to 0), temperature → null (shown blank, unused in
-// maths). Throws on a malformed/short response so callers never use bad data.
+// Null rules: rain → 0, et0 → previous day's value (0 would be wrong; first-day
+// null → 0), temperature → null. Throws on a malformed/short response.
 export function normalizeWeather(json) {
   const daily = json && json.daily;
   if (!daily || !Array.isArray(daily.time)) {
@@ -102,9 +78,7 @@ export function normalizeWeather(json) {
     );
   }
 
-  // Rain and et0 drive the maths: a missing/short array must fail loudly, never
-  // silently zero-fill (DAT-4). Temperature is display-only, so a missing array
-  // degrades to blanks per DAT-1 ("temperature → shown blank").
+  // rain/et0 must fail loudly, never zero-fill; temperature degrades to blanks.
   const rawRain = daily.precipitation_sum;
   const rawEt0 = daily.et0_fao_evapotranspiration;
   if (
@@ -122,7 +96,7 @@ export function normalizeWeather(json) {
   const rain = [];
   const et0 = [];
   const tempMax = [];
-  let lastEt0 = 0; // forward-fill seed (first-day-null fallback)
+  let lastEt0 = 0;
 
   for (let i = 0; i < n; i++) {
     rain.push(rawRain[i] == null ? 0 : rawRain[i]);
@@ -141,9 +115,6 @@ export function normalizeWeather(json) {
   return { time, rain, et0, tempMax };
 }
 
-// Live request. Throws a clear error on network failure, non-OK response, or
-// malformed body — no silent fallback (DAT-4). The UI catches and shows the
-// unavailable state. Returns the normalized weather on success.
 export async function fetchWeather(signal) {
   let response;
   try {
@@ -165,10 +136,7 @@ export async function fetchWeather(signal) {
   return normalizeWeather(json);
 }
 
-// ── Soil parameters (LOG-1, LOG-2) ───────────────────────────────────────────
-
-// Tank size = available water per metre × root depth (mm, plant-available).
-// TAW = tank size; RAW = p × TAW; watering threshold = TAW − RAW = (1−p)·TAW.
+// threshold = TAW − RAW = (1−p)·TAW.
 export function deriveParams(controls) {
   const planting = PLANTINGS[controls.planting];
   const soilAW = SOILS[controls.soil];
@@ -190,21 +158,14 @@ export function deriveParams(controls) {
   };
 }
 
-// ── Daily water balance (LOG-1, LOG-2, LOG-3) ────────────────────────────────
-
-// FAO-56 stress coefficient. Stored = water held above wilting at day start.
-// At/above the threshold Ks = 1; below it Ks = stored/threshold (linear to 0 at
-// wilting). Threshold 0 → Ks = 1.
 export function ks(stored, threshold) {
   if (threshold <= 0) return 1;
   if (stored >= threshold) return 1;
   return clamp(stored / threshold, 0, 1);
 }
 
-// Run the balance over every fetched day. Seed full at field capacity on the
-// first day (DAT-2); each day: level = clamp(start + gains − losses, 0, tank),
-// with overflow above full discarded. Ks uses the previous day's closing level
-// (the start-of-day stored water). `dose` is the gross mm applied on watered days.
+// Seed full at field capacity on day 0; overflow above full is discarded. Ks
+// uses the previous day's closing level. `dose` is gross mm on watered days.
 export function runBalance(weather, params, wateredSet, dose) {
   const { tankSize, threshold, kc } = params;
   const n = weather.et0.length;
@@ -237,11 +198,6 @@ export function runBalance(weather, params, wateredSet, dose) {
   return series;
 }
 
-// ── Next-watering projection (LOG-4) ─────────────────────────────────────────
-
-// Walk closing levels forward from today over the next 14 days (toggled future
-// watering is already baked into `series`). Today at/below threshold → now (+0);
-// first day to/below threshold → +N; none within 14 days → >14.
 export function projectNextWatering(series, threshold) {
   if (!Array.isArray(series) || series.length <= TODAY_INDEX) {
     throw new Error(`Invalid series: expected more than ${TODAY_INDEX} days`);
@@ -258,16 +214,6 @@ export function projectNextWatering(series, threshold) {
   return { days: null, beyond14: true };
 }
 
-// ── Orchestrator ─────────────────────────────────────────────────────────────
-
-// Recompute everything from controls + normalized weather. Pure and seedless:
-// any control change re-runs the whole balance from the full seed (LOG-1), so
-// the caller just re-invokes this. Values are full precision (UI rounds, UIX-6).
-//
-//   controls = { planting, soil, wateringMinutes, watered }  (watered: abs indices)
-//
-// Returns the view-model: derived params, the dose, the 16-day window, today's
-// entry, the next-watering projection, and the full per-day series.
 export function compute(controls, weather) {
   if (
     !weather ||
@@ -287,7 +233,7 @@ export function compute(controls, weather) {
     throw new Error("Invalid controls: watered must be an array of day indices");
   }
   const params = deriveParams(merged);
-  const dose = SPRINKLER_RATE * merged.wateringMinutes; // gross mm (CTR-3)
+  const dose = SPRINKLER_RATE * merged.wateringMinutes; // gross mm
   const wateredSet = new Set(merged.watered);
   const series = runBalance(weather, params, wateredSet, dose);
 
@@ -302,7 +248,7 @@ export function compute(controls, weather) {
       date: weather.time[i],
       levelMm: rec.level,
       levelFraction: fraction(rec.level),
-      et: rec.loss, // actual ET loss applied to the tank (et0·kc·Ks)
+      et: rec.loss, // et0·kc·Ks
       rain: rec.rain, // gross
       watering: rec.applied, // gross dose, or 0
       watered: wateredSet.has(i),
@@ -324,7 +270,7 @@ export function compute(controls, weather) {
     site: SITE,
     ...params,
     dose,
-    thresholdFraction: fraction(params.threshold), // marker at (1−p) (UIX-4)
+    thresholdFraction: fraction(params.threshold),
     days,
     today,
     nextWatering: projectNextWatering(series, params.threshold),
