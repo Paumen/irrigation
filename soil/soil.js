@@ -19,14 +19,7 @@ export const SPRINKLER_RATE = 0.063; // mm/min gross
 export const RAIN_EFFECTIVENESS = 0.8;
 export const WATERING_EFFICIENCY = 0.9;
 
-export const PROJECTION_DAYS = 14;
-
-export const MIN_DAYS = TODAY_INDEX + PROJECTION_DAYS + 1;
-
-export const VIEW = {
-  start: TODAY_INDEX - 8,
-  length: 16,
-};
+export const MIN_DAYS = TODAY_INDEX + 1;
 
 export const PLANTINGS = {
   "Turf": { kc: 0.85, rootDepth: 0.15, p: 0.45 },
@@ -201,50 +194,7 @@ export function runBalance(weather, params, wateredSet, dose) {
   return series;
 }
 
-export function projectNextWatering(series, threshold) {
-  if (!Array.isArray(series) || series.length <= TODAY_INDEX) {
-    throw new Error(`Invalid series: expected more than ${TODAY_INDEX} days`);
-  }
-  if (series[TODAY_INDEX].level <= threshold) {
-    return { days: 0, beyondHorizon: false };
-  }
-  const end = Math.min(TODAY_INDEX + PROJECTION_DAYS, series.length - 1);
-  for (let j = TODAY_INDEX + 1; j <= end; j++) {
-    if (series[j].level <= threshold) {
-      return { days: j - TODAY_INDEX, beyondHorizon: false };
-    }
-  }
-  return { days: null, beyondHorizon: true };
-}
-
-export function buildWindow(series, weather, wateredSet, tankSize, start, length) {
-  const fraction = (mm) => (tankSize > 0 ? mm / tankSize : 0);
-  const days = [];
-
-  for (let w = 0; w < length; w++) {
-    const i = start + w;
-    const rec = series[i];
-    if (!rec) continue;
-
-    days.push({
-      index: i,
-      date: weather.time[i],
-      levelMm: rec.level,
-      levelFraction: fraction(rec.level),
-      et: rec.loss, // et0·kc·Ks
-      ks: rec.ks,
-      rain: rec.rain, // gross
-      watering: rec.applied, // gross dose, or 0
-      watered: wateredSet.has(i),
-      tempMax: weather.tempMax[i],
-      isToday: i === TODAY_INDEX,
-    });
-  }
-
-  return days;
-}
-
-export function compute(controls, weather, view = VIEW) {
+export function compute(controls, weather) {
   if (
     !weather ||
     !Array.isArray(weather.time) ||
@@ -269,15 +219,6 @@ export function compute(controls, weather, view = VIEW) {
 
   const fraction = (mm) => (params.tankSize > 0 ? mm / params.tankSize : 0);
 
-  const days = buildWindow(
-    series,
-    weather,
-    wateredSet,
-    params.tankSize,
-    view.start,
-    view.length,
-  );
-
   const todayRec = series[TODAY_INDEX];
   const today = {
     index: TODAY_INDEX,
@@ -296,9 +237,6 @@ export function compute(controls, weather, view = VIEW) {
     series,
     wateredSet,
     weather,
-    view,
-    days,
     today,
-    nextWatering: projectNextWatering(series, params.threshold),
   };
 }
