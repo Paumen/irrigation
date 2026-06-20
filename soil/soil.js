@@ -12,14 +12,9 @@ export const API = {
   forecastDays: 16,
 };
 
-// Must track pastDays; never derive from the device clock.
-export const TODAY_INDEX = API.pastDays;
-
 export const SPRINKLER_RATE = 0.063;
 export const RAIN_EFFECTIVENESS = 0.8;
 export const WATERING_EFFICIENCY = 0.9;
-
-export const MIN_DAYS = TODAY_INDEX + 1;
 
 export const PLANTINGS = {
   "Turf": { kc: 0.85, rootDepth: 0.15, p: 0.45 },
@@ -67,11 +62,6 @@ export function normalizeWeather(json) {
 
   const time = daily.time;
   const n = time.length;
-  if (n < MIN_DAYS) {
-    throw new Error(
-      `Malformed weather response: expected at least ${MIN_DAYS} days, got ${n}`,
-    );
-  }
 
   const rawRain = daily.precipitation_sum;
   const rawEt0 = daily.et0_fao_evapotranspiration;
@@ -191,23 +181,7 @@ export function runBalance(weather, params, wateredSet, dose) {
 }
 
 export function compute(controls, weather) {
-  if (
-    !weather ||
-    !Array.isArray(weather.time) ||
-    !Array.isArray(weather.rain) ||
-    !Array.isArray(weather.et0) ||
-    !Array.isArray(weather.tempMax) ||
-    weather.et0.length < MIN_DAYS
-  ) {
-    throw new Error(
-      "Invalid weather: expected a normalized object from normalizeWeather/fetchWeather",
-    );
-  }
-
   const merged = { ...DEFAULTS, ...controls };
-  if (!Array.isArray(merged.watered)) {
-    throw new Error("Invalid controls: watered must be an array of day indices");
-  }
   const params = deriveParams(merged);
   const dose = SPRINKLER_RATE * merged.wateringMinutes;
   const wateredSet = new Set(merged.watered);
@@ -220,7 +194,6 @@ export function compute(controls, weather) {
     ...params,
     dose,
     thresholdFraction: fraction(params.threshold),
-    todayIndex: TODAY_INDEX,
     series,
     wateredSet,
     weather,
