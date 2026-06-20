@@ -708,7 +708,7 @@ function ledgerRow(lbl, hint, dir, width, amt, dot) {
   const dotEl = dot ? `<span class="dot ${dot}"></span>` : "";
   const sub = hint ? ` <span style="color:var(--ink-faint);font-size:12px">${hint}</span>` : "";
   return `<div class="row">
-    <span class="lbl">${dotEl}${lbl}</span>
+    <span class="lbl">${dotEl}${lbl}${sub}</span>
     <span class="bar-track"><span class="bar ${dir === "up" ? "water" : "et"}" style="width:${width}"></span></span>
     <span class="amt ${dir}">${amt}</span>
   </div>`;
