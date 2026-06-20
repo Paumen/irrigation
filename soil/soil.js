@@ -8,8 +8,8 @@ export const API = {
   base: "https://api.open-meteo.com/v1/forecast",
   daily: "precipitation_sum,temperature_2m_max,et0_fao_evapotranspiration",
   timezone: "Europe/Amsterdam",
-  pastDays: 16,
-  forecastDays: 16,
+  pastDays: 14,
+  forecastDays: 14,
 };
 
 export const SPRINKLER_RATE = 0.063;
