@@ -12,9 +12,9 @@ export const API = {
   forecastDays: 16,
 };
 
-// Fixed; never derived from the device clock. Equals pastDays: today sits
-// right after the past-days window in the series.
-export const TODAY_INDEX = 16;
+// Fixed; never derived from the device clock. Today sits right after the
+// past-days window in the series, so it tracks pastDays by construction.
+export const TODAY_INDEX = API.pastDays;
 
 export const SPRINKLER_RATE = 0.063; // mm/min gross
 export const RAIN_EFFECTIVENESS = 0.8;
