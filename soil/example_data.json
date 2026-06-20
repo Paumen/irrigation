@@ -1,9 +1,4 @@
 {
-  "site": {
-    "name": "Vormersesluisweg 3A, Wijchen",
-    "lat": 51.79733,
-    "lon": 5.70643
-  },
   "kc": 0.9,
   "rootDepth": 0.3,
   "p": 0.45,
