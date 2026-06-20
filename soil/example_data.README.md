@@ -39,7 +39,8 @@ soil **Sandy loam** (130 mm·m⁻¹), watering 60 min, **no days watered**.
 - `series[]` — one entry per fetched day: `index`, `start`, `ks`, `et0`, `loss`,
   `rain`, `applied`, `gain`, `level` (all mm of plant-available water; 0 =
   wilting, `tankSize` = field capacity).
-- `weather` — `time`, `rain`, `et0`, `tempMax` (parallel arrays).
+- `weather` — `time`, `weekday`, `rain`, `et0`, `tempMax` (parallel arrays;
+  `weekday` is the day-of-week name for each `time` date).
 - `wateredSet` — serialized as an array of watered day indices (empty here).
 
 32 days total (`pastDays` 16 + today + `forecastDays` 15); **today is index 16**
