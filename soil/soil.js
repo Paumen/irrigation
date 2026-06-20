@@ -55,7 +55,9 @@ const WEEKDAYS = [
 // local-timezone shift that bare Date string parsing would introduce.
 export function dayOfWeek(dateStr) {
   const [y, m, d] = String(dateStr).split("-").map(Number);
-  if (!y || !m || !d) return null;
+  if (!y || !m || !d) {
+    throw new Error(`Malformed weather response: invalid date "${dateStr}"`);
+  }
   return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
 }
 
