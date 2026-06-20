@@ -12,11 +12,10 @@ export const API = {
   forecastDays: 16,
 };
 
-// Fixed; never derived from the device clock. Today sits right after the
-// past-days window in the series, so it tracks pastDays by construction.
+// Must track pastDays; never derive from the device clock.
 export const TODAY_INDEX = API.pastDays;
 
-export const SPRINKLER_RATE = 0.063; // mm/min gross
+export const SPRINKLER_RATE = 0.063;
 export const RAIN_EFFECTIVENESS = 0.8;
 export const WATERING_EFFICIENCY = 0.9;
 
@@ -28,7 +27,7 @@ export const PLANTINGS = {
   "Shrubs": { kc: 0.70, rootDepth: 0.50, p: 0.50 },
 };
 
-// Plant-available water per metre of depth (field capacity − wilting), mm/m.
+// Plant-available water (field capacity − wilting), mm/m.
 export const SOILS = {
   "Sand": 60,
   "Sandy loam": 130,
@@ -40,7 +39,7 @@ export const DEFAULTS = {
   planting: "Flower bed",
   soil: "Sandy loam",
   wateringMinutes: 60,
-  watered: [], // absolute day indices into the series
+  watered: [],
 };
 
 function clamp(x, lo, hi) {
@@ -59,8 +58,7 @@ export function buildUrl() {
   return `${API.base}?${params.toString()}`;
 }
 
-// Null rules: rain → 0, et0 → previous day's value (0 would be wrong; first-day
-// null → 0), temperature → null. Throws on a malformed/short response.
+// Null fill: rain → 0, et0 → previous day's value (not 0), temperature → null.
 export function normalizeWeather(json) {
   const daily = json && json.daily;
   if (!daily || !Array.isArray(daily.time)) {
@@ -75,7 +73,6 @@ export function normalizeWeather(json) {
     );
   }
 
-  // rain/et0 must fail loudly, never zero-fill; temperature degrades to blanks.
   const rawRain = daily.precipitation_sum;
   const rawEt0 = daily.et0_fao_evapotranspiration;
   if (
@@ -133,7 +130,6 @@ export async function fetchWeather(signal) {
   return normalizeWeather(json);
 }
 
-// threshold = TAW − RAW = (1−p)·TAW.
 export function deriveParams(controls) {
   const planting = PLANTINGS[controls.planting];
   const soilAW = SOILS[controls.soil];
@@ -161,8 +157,7 @@ export function ks(stored, threshold) {
   return clamp(stored / threshold, 0, 1);
 }
 
-// Seed full at field capacity on day 0; overflow above full is discarded. Ks
-// uses the previous day's closing level. `dose` is gross mm on watered days.
+// Ks uses the previous day's closing level, not the current day's.
 export function runBalance(weather, params, wateredSet, dose) {
   const { tankSize, threshold, kc } = params;
   const n = weather.et0.length;
@@ -214,7 +209,7 @@ export function compute(controls, weather) {
     throw new Error("Invalid controls: watered must be an array of day indices");
   }
   const params = deriveParams(merged);
-  const dose = SPRINKLER_RATE * merged.wateringMinutes; // gross mm
+  const dose = SPRINKLER_RATE * merged.wateringMinutes;
   const wateredSet = new Set(merged.watered);
   const series = runBalance(weather, params, wateredSet, dose);
 
