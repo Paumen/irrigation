@@ -153,9 +153,13 @@
       String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
     const WD = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-    const parseUTC = (s) => { const [Y, M, D] = s.split("-").map(Number); return new Date(Date.UTC(Y, M - 1, D)); };
-    const dayNum = (s) => String(parseUTC(s).getUTCDate());
-    const weekday = (s) => WD[parseUTC(s).getUTCDay()];
+    const parseUTC = (s) => {
+      if (!s) return null;
+      const [Y, M, D] = s.split("-").map(Number);
+      return new Date(Date.UTC(Y, M - 1, D));
+    };
+    const dayNum = (s) => { const d = parseUTC(s); return d ? String(d.getUTCDate()) : ""; };
+    const weekday = (s) => { const d = parseUTC(s); return d ? WD[d.getUTCDay()] : ""; };
 
     function nextText(nw) {
       if (nw.days === 0) return "now";
@@ -248,11 +252,11 @@
 
       // stepped water fill (UIX-1: continuous, bottom-up, no gaps)
       let d = `M ${PAD} ${SOIL_BOT}`;
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < days.length; i++) {
         const ly = levelY(days[i].levelFraction);
         d += ` L ${f1(colX(i))} ${f1(ly)} L ${f1(colX(i + 1))} ${f1(ly)}`;
       }
-      d += ` L ${f1(colX(16))} ${SOIL_BOT} Z`;
+      d += ` L ${f1(colX(days.length))} ${SOIL_BOT} Z`;
       s.push(`<path d="${d}" fill="url(#water)"/>`);
 
       // threshold marker (UIX-4)
@@ -261,7 +265,7 @@
       s.push(`<text x="${VW - PAD - 2}" y="${f1(ty - 4)}" text-anchor="end" class="g-thr">refill at ${pct(thrFrac)}%</text>`);
 
       // per-day: roots, plant, bars, temp, watering droplet
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < days.length; i++) {
         const d0 = days[i], X = colCx(i);
         s.push(rootsSvg(X, SOIL_TOP, rdepth));
         s.push(plantSvg(r.planting, X, SOIL_TOP));
@@ -284,14 +288,14 @@
       }
 
       // day labels
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < days.length; i++) {
         const d0 = days[i], X = colCx(i);
         s.push(`<text x="${f1(X)}" y="${LABEL_Y1}" text-anchor="middle" class="g-day${d0.isToday ? " on" : ""}">${dayNum(d0.date)}</text>`);
         s.push(`<text x="${f1(X)}" y="${LABEL_Y2}" text-anchor="middle" class="g-wd">${weekday(d0.date)}</text>`);
       }
 
       // click-to-water hit areas on top (CTR-4)
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < days.length; i++) {
         const d0 = days[i];
         const tip = `${d0.date} — ${pct(d0.levelFraction)}%${d0.watered ? " (watered)" : ""}. Tap to ${d0.watered ? "undo" : "water"}.`;
         s.push(`<rect class="hit" x="${f1(colX(i))}" y="0" width="${f1(COLW)}" height="${SOIL_BOT}" data-action="water" data-index="${d0.index}"><title>${esc(tip)}</title></rect>`);
