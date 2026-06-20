@@ -4,12 +4,16 @@ A real snapshot of `soil.js`'s `compute({}, weather)` output, captured against
 live Open-Meteo weather for the built-in site on 2026-06-20. Use it to build the
 UI without hitting the network or re-running the balance.
 
-Regenerate with:
+Regenerate by running this from the `soil/` directory (`node regen.mjs > example_data.json`):
 
 ```js
+import { writeFileSync } from "node:fs";
 import { compute, fetchWeather } from "./soil.js";
-const out = compute({}, await fetchWeather());
-// wateredSet is a Set; serialize as [...out.wateredSet]
+
+const result = compute({}, await fetchWeather());
+// wateredSet is a Set, which JSON.stringify drops to {}; serialize it as an array.
+const out = { ...result, wateredSet: [...result.wateredSet] };
+writeFileSync("example_data.json", JSON.stringify(out, null, 2) + "\n");
 ```
 
 ## Controls used
