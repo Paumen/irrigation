@@ -8,12 +8,13 @@ export const API = {
   base: "https://api.open-meteo.com/v1/forecast",
   daily: "precipitation_sum,temperature_2m_max,et0_fao_evapotranspiration",
   timezone: "Europe/Amsterdam",
-  pastDays: 24,
+  pastDays: 16,
   forecastDays: 16,
 };
 
-// Fixed; never derived from the device clock.
-export const TODAY_INDEX = 24;
+// Fixed; never derived from the device clock. Equals pastDays: today sits
+// right after the past-days window in the series.
+export const TODAY_INDEX = 16;
 
 export const SPRINKLER_RATE = 0.063; // mm/min gross
 export const RAIN_EFFECTIVENESS = 0.8;
@@ -219,15 +220,6 @@ export function compute(controls, weather) {
 
   const fraction = (mm) => (params.tankSize > 0 ? mm / params.tankSize : 0);
 
-  const todayRec = series[TODAY_INDEX];
-  const today = {
-    index: TODAY_INDEX,
-    date: weather.time[TODAY_INDEX],
-    levelMm: todayRec.level,
-    levelFraction: fraction(todayRec.level),
-    tempMax: weather.tempMax[TODAY_INDEX],
-  };
-
   return {
     site: SITE,
     ...params,
@@ -237,6 +229,5 @@ export function compute(controls, weather) {
     series,
     wateredSet,
     weather,
-    today,
   };
 }
