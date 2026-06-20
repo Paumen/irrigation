@@ -41,6 +41,26 @@ function clamp(x, lo, hi) {
   return Math.min(hi, Math.max(lo, x));
 }
 
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+// Day of week for a "YYYY-MM-DD" date string. Parsed as UTC to avoid the
+// local-timezone shift that bare Date string parsing would introduce.
+export function dayOfWeek(dateStr) {
+  const [y, m, d] = String(dateStr).split("-").map(Number);
+  if (!y || !m || !d) {
+    throw new Error(`Malformed weather response: invalid date "${dateStr}"`);
+  }
+  return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+}
+
 export function buildUrl() {
   const params = new URLSearchParams({
     latitude: SITE.lat,
@@ -62,6 +82,7 @@ export function normalizeWeather(json) {
 
   const time = daily.time;
   const n = time.length;
+  const weekday = time.map(dayOfWeek);
 
   const rawRain = daily.precipitation_sum;
   const rawEt0 = daily.et0_fao_evapotranspiration;
@@ -96,7 +117,7 @@ export function normalizeWeather(json) {
     tempMax.push(rawTemp[i] == null ? null : rawTemp[i]);
   }
 
-  return { time, rain, et0, tempMax };
+  return { time, weekday, rain, et0, tempMax };
 }
 
 export async function fetchWeather(signal) {
