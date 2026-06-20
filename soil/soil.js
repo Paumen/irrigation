@@ -37,6 +37,10 @@ export const RAIN_EFFECTIVENESS = 0.8;
 export const WATERING_EFFICIENCY = 0.9;
 export const PROJECTION_DAYS = 14;
 
+// Minimum gapless days the maths need: today (index 24) plus the 14-day
+// projection horizon (index 38) → 39 days.
+export const MIN_DAYS = TODAY_INDEX + PROJECTION_DAYS + 1;
+
 // ── Presets & defaults (CTR-1, CTR-2, CTR-5) ─────────────────────────────────
 
 export const PLANTINGS = {
@@ -92,16 +96,28 @@ export function normalizeWeather(json) {
 
   const time = daily.time;
   const n = time.length;
-  const minDays = TODAY_INDEX + PROJECTION_DAYS + 1; // need index 38 for LOG-4
-  if (n < minDays) {
+  if (n < MIN_DAYS) {
     throw new Error(
-      `Malformed weather response: expected at least ${minDays} days, got ${n}`,
+      `Malformed weather response: expected at least ${MIN_DAYS} days, got ${n}`,
     );
   }
 
-  const rawRain = daily.precipitation_sum || [];
-  const rawEt0 = daily.et0_fao_evapotranspiration || [];
-  const rawTemp = daily.temperature_2m_max || [];
+  // Rain and et0 drive the maths: a missing/short array must fail loudly, never
+  // silently zero-fill (DAT-4). Temperature is display-only, so a missing array
+  // degrades to blanks per DAT-1 ("temperature → shown blank").
+  const rawRain = daily.precipitation_sum;
+  const rawEt0 = daily.et0_fao_evapotranspiration;
+  if (
+    !Array.isArray(rawRain) || rawRain.length < n ||
+    !Array.isArray(rawEt0) || rawEt0.length < n
+  ) {
+    throw new Error(
+      "Malformed weather response: precipitation_sum / et0_fao_evapotranspiration missing or too short",
+    );
+  }
+  const rawTemp = Array.isArray(daily.temperature_2m_max)
+    ? daily.temperature_2m_max
+    : [];
 
   const rain = [];
   const et0 = [];
@@ -227,6 +243,9 @@ export function runBalance(weather, params, wateredSet, dose) {
 // watering is already baked into `series`). Today at/below threshold → now (+0);
 // first day to/below threshold → +N; none within 14 days → >14.
 export function projectNextWatering(series, threshold) {
+  if (!Array.isArray(series) || series.length <= TODAY_INDEX) {
+    throw new Error(`Invalid series: expected more than ${TODAY_INDEX} days`);
+  }
   if (series[TODAY_INDEX].level <= threshold) {
     return { days: 0, beyond14: false };
   }
@@ -250,7 +269,23 @@ export function projectNextWatering(series, threshold) {
 // Returns the view-model: derived params, the dose, the 16-day window, today's
 // entry, the next-watering projection, and the full per-day series.
 export function compute(controls, weather) {
+  if (
+    !weather ||
+    !Array.isArray(weather.time) ||
+    !Array.isArray(weather.rain) ||
+    !Array.isArray(weather.et0) ||
+    !Array.isArray(weather.tempMax) ||
+    weather.et0.length < MIN_DAYS
+  ) {
+    throw new Error(
+      "Invalid weather: expected a normalized object from normalizeWeather/fetchWeather",
+    );
+  }
+
   const merged = { ...DEFAULTS, ...controls };
+  if (!Array.isArray(merged.watered)) {
+    throw new Error("Invalid controls: watered must be an array of day indices");
+  }
   const params = deriveParams(merged);
   const dose = SPRINKLER_RATE * merged.wateringMinutes; // gross mm (CTR-3)
   const wateredSet = new Set(merged.watered);
