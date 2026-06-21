@@ -2,7 +2,7 @@
 
 ## 1. scope
 
-- **SCO-1** The user can tell whether the garden needs water now or soon with enough confidence to act on it, instead of guessing.
+- **SCO-1** The user can tell when the garden needs water with enough confidence to act on it, instead of guessing.
 - **SCO-2** The user can test a watering plan and see its effect before committing to it.
 - **SCO-3** One user, one zone, one built-in site (Vormersesluisweg 3A, Wijchen; 51.79733 °N, 5.70643 °E).
 - **SCO-4** No build step, framework (unless buildless like Alpine.js), server, or water-flow maths in the browser (the sprinkler rate is precomputed). Deployable to GitHub Pages. Nothing is saved; all settings reset on reload.
@@ -22,16 +22,15 @@
 
 ## 4. controls
 
-- **CTR-1** Watering duration (minutes, default is 60, steps of +/- 15) → dose applied to each watered day = sprinkler rate × minutes.
-- **CTR-2** The user can record or plan a watering on any day, past or future, as one fast reversible action.
+- **CTR-1** The user can record or plan a watering on each day, past or future, as one instant, fast, obvious, and reversible action on phone, so what-if exploration isn't a chore. Watering duration (minutes, default is 60).
 - **CTR-3** Planting type → preset crop coefficient, root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting.
 - **CTR-4** Soil type → plant-available water held per metre (field capacity − wilting point). Presets: Sand 60 · Sandy loam 130 · Loam 170 · Clay 190 mm·m⁻¹.
 - **CTR-5** On load the screen defaults to planting = Flower bed, soil = Sandy loam.
 
 ## 5. ux/ui
 
-- **UIX-1** The user can grasp the soil-moisture trend across the window at a glance, without reading individual day values.
-
-- **UIX-2** UIX-3 The user can understand why the level changed on for each day, not just that it changed, in the same glance.
-- **UIX-3** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
-- **UIX-4** Changing any setting is fast and obvious on a phone, so what-if exploration isn't a chore.
+- **UIX-1** The user can grasp the soil-moisture trend across the most relevant window at a glance, without reading individual day values.
+- **UIX-2** The user can clearly see why the level changes, not just that it changes, in the same glance, without reading individual day values.
+- **UIX-3** Aesthetic: Calm & natural — soft greens/blues/earth tones, friendly, reassuring.
+- **UIX-4** Soil Cross-Section — the chart is a soil column: water held inside a soil block with a surface line. Distinctive metaphor.
+- **UIX-5** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
