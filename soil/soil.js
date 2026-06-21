@@ -41,6 +41,13 @@ function clamp(x, lo, hi) {
   return Math.min(hi, Math.max(lo, x));
 }
 
+// Round to 5 decimal places, trimming floating-point noise (e.g.
+// 3.7800000000000002 -> 3.78). Values already within 5 decimals are
+// unchanged.
+function round5(x) {
+  return Math.round(x * 1e5) / 1e5;
+}
+
 const WEEKDAYS = [
   "Sunday",
   "Monday",
@@ -176,13 +183,13 @@ export function runBalance(weather, params, wateredSet, dose) {
       date: weather.time[i],
       weekday: weather.weekday[i],
       tempMax: weather.tempMax[i],
-      start,
+      start: round5(start),
       et0: weather.et0[i],
-      loss,
+      loss: round5(loss),
       rain: weather.rain[i],
-      applied,
-      gain,
-      level,
+      applied: round5(applied),
+      gain: round5(gain),
+      level: round5(level),
     });
     prev = level;
   }
@@ -193,7 +200,7 @@ export function runBalance(weather, params, wateredSet, dose) {
 export function compute(controls, weather) {
   const merged = { ...DEFAULTS, ...controls };
   const params = deriveParams(merged);
-  const dose = SPRINKLER_RATE * merged.wateringMinutes;
+  const dose = round5(SPRINKLER_RATE * merged.wateringMinutes);
   const wateredSet = new Set(merged.watered);
   const series = runBalance(weather, params, wateredSet, dose);
 
