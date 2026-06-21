@@ -30,10 +30,6 @@ export const SOILS = {
   "Clay": 190,
 };
 
-// Depletion fraction p — fixed for all plantings; only sets the watering
-// threshold marker (LOG-2 / UIX-4). It no longer throttles losses.
-export const DEPLETION_FRACTION = 0.5;
-
 export const DEFAULTS = {
   planting: "Flower bed",
   soil: "Sandy loam",
@@ -152,17 +148,12 @@ export function deriveParams(controls) {
   if (soilAW == null) throw new Error(`Unknown soil: ${controls.soil}`);
 
   const tankSize = soilAW * planting.rootDepth;
-  const raw = DEPLETION_FRACTION * tankSize;
-  const threshold = tankSize - raw;
 
   return {
     kc: planting.kc,
     rootDepth: planting.rootDepth,
-    p: DEPLETION_FRACTION,
     soilAW,
     tankSize,
-    raw,
-    threshold,
   };
 }
 

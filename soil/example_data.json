@@ -6,11 +6,8 @@
   },
   "kc": 0.9,
   "rootDepth": 0.3,
-  "p": 0.5,
   "soilAW": 130,
   "tankSize": 39,
-  "raw": 19.5,
-  "threshold": 19.5,
   "dose": 3.7800000000000002,
   "series": [
     {
