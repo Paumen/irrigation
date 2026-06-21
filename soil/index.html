@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soil Balance</title>
+<style>
+  :root {
+    --bg: #f6f8f4;
+    --card: #ffffff;
+    --ink: #1f2a22;
+    --muted: #6b7a6f;
+    --line: #e3e9e0;
+    --accent: #3f7d5c;
+    --accent-soft: #e6f1ea;
+    --moist: #3f9d6b;     /* healthy / no action */
+    --moist-bg: #e7f4ec;
+    --dry: #d99a23;       /* drying / water soon */
+    --dry-bg: #fbf2dd;
+    --crit: #cc4b37;      /* dry / water now */
+    --crit-bg: #f8e4df;
+    --rain: #4a89c8;
+    --shadow: 0 1px 2px rgba(31,42,34,.06), 0 4px 16px rgba(31,42,34,.06);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 24px) env(safe-area-inset-left);
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 16px 14px 0; }
+
+  header.app { padding: 6px 2px 14px; }
+  header.app .site { font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+  header.app h1 { font-size: 20px; margin: 2px 0 0; font-weight: 650; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  /* ---- Today headline ---- */
+  .today {
+    position: relative;
+    overflow: hidden;
+  }
+  .today .verdict { display: flex; align-items: center; gap: 12px; }
+  .today .dot {
+    width: 16px; height: 16px; border-radius: 50%; flex: 0 0 auto;
+    box-shadow: 0 0 0 5px var(--ring, transparent);
+  }
+  .today h2 { font-size: 24px; margin: 0; font-weight: 700; letter-spacing: -.01em; }
+  .today .sub { color: var(--muted); font-size: 14px; margin: 6px 0 14px; }
+  .gauge {
+    height: 12px; border-radius: 99px; background: var(--line); overflow: hidden; position: relative;
+  }
+  .gauge > i { display: block; height: 100%; border-radius: 99px; transition: width .35s ease, background .35s; }
+  .gauge-scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .pct { font-variant-numeric: tabular-nums; font-weight: 650; }
+
+  /* ---- Section titles ---- */
+  .sec-title { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 2px 2px 8px; font-weight: 600; }
+
+  /* ---- Controls ---- */
+  .ctrl-row { margin-bottom: 14px; }
+  .ctrl-row:last-child { margin-bottom: 0; }
+  .ctrl-row > label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+  .seg {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px;
+  }
+  .seg button {
+    appearance: none; border: 0; background: transparent; color: var(--ink);
+    font: inherit; font-size: 13px; padding: 9px 4px; border-radius: 9px; cursor: pointer;
+    line-height: 1.15; transition: background .15s, color .15s, box-shadow .15s;
+  }
+  .seg button small { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+  .seg button[aria-pressed="true"] { background: var(--card); color: var(--accent); box-shadow: var(--shadow); font-weight: 650; }
+  .seg button[aria-pressed="true"] small { color: var(--accent); opacity: .8; }
+
+  .stepper { display: flex; align-items: stretch; gap: 8px; }
+  .stepper button {
+    flex: 0 0 48px; font-size: 22px; font-weight: 600; border: 1px solid var(--line);
+    background: var(--card); color: var(--accent); border-radius: 12px; cursor: pointer;
+  }
+  .stepper button:active { background: var(--accent-soft); }
+  .stepper .val {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--bg);
+  }
+  .stepper .val b { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .stepper .val span { font-size: 11px; color: var(--muted); }
+
+  /* ---- Chart ---- */
+  .chart-meta { display: flex; justify-content: space-between; align-items: baseline; margin: -2px 2px 10px; }
+  .chart-meta .legend { font-size: 11px; color: var(--muted); }
+  .chart-meta .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 3px 0 8px; vertical-align: -1px; }
+  svg.chart { width: 100%; height: 190px; display: block; touch-action: pan-y; }
+  svg.chart text { font: 10px -apple-system, sans-serif; fill: var(--muted); }
+
+  /* ---- Day strip ---- */
+  .strip {
+    display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  }
+  .strip::-webkit-scrollbar { height: 0; }
+  .day {
+    flex: 0 0 64px; scroll-snap-align: center; text-align: center; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 14px; padding: 8px 4px 9px; background: var(--card);
+    transition: border-color .15s, transform .1s, box-shadow .15s;
+  }
+  .day.future { background: repeating-linear-gradient(135deg, var(--card), var(--card) 7px, #fbfcfa 7px, #fbfcfa 14px); }
+  .day.today { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .day.sel { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(31,42,34,.12); }
+  .day .wd { font-size: 11px; color: var(--muted); }
+  .day .dm { font-size: 15px; font-weight: 650; line-height: 1.1; }
+  .day .temp { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .day .rn { font-size: 10px; color: var(--rain); height: 13px; }
+  .day .bar { height: 34px; width: 8px; margin: 6px auto 0; background: var(--line); border-radius: 99px; position: relative; overflow: hidden; }
+  .day .bar > i { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 99px; }
+  .day .wmark { font-size: 11px; margin-top: 4px; height: 14px; color: var(--accent); }
+
+  /* ---- Detail ---- */
+  .detail .dhead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2px; }
+  .detail .dhead h3 { margin: 0; font-size: 17px; }
+  .detail .dhead .tag { font-size: 11px; padding: 3px 8px; border-radius: 99px; font-weight: 600; }
+  .detail .dwhen { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .ledger { font-variant-numeric: tabular-nums; }
+  .ledger .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+  .ledger .row:last-child { border-bottom: 0; }
+  .ledger .row.total { border-top: 2px solid var(--line); border-bottom: 0; margin-top: 2px; padding-top: 11px; font-weight: 700; }
+  .ledger .lbl { display: flex; align-items: center; gap: 9px; }
+  .ledger .ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: 13px; flex: 0 0 auto; }
+  .ledger .lbl small { display: block; color: var(--muted); font-weight: 400; font-size: 11.5px; }
+  .ledger .amt { font-weight: 600; }
+  .amt.pos { color: var(--moist); }
+  .amt.neg { color: var(--crit); }
+  .ic.rain { background: #e4eefa; color: var(--rain); }
+  .ic.water { background: var(--accent-soft); color: var(--accent); }
+  .ic.loss { background: var(--crit-bg); color: var(--crit); }
+  .ic.start { background: var(--bg); color: var(--muted); }
+  .ic.end { background: var(--moist-bg); color: var(--moist); }
+
+  .wbtn {
+    margin-top: 14px; width: 100%; padding: 13px; border-radius: 12px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; font: inherit; font-weight: 650; cursor: pointer; font-size: 15px;
+  }
+  .wbtn.on { background: var(--card); color: var(--accent); }
+  .wbtn:active { transform: scale(.99); }
+
+  .foot { text-align: center; color: var(--muted); font-size: 11.5px; margin: 6px 0 2px; }
+
+  /* ---- Error / loading ---- */
+  .state { text-align: center; padding: 40px 20px; }
+  .state .em { font-size: 30px; }
+  .state h2 { font-size: 18px; margin: 10px 0 6px; }
+  .state p { color: var(--muted); margin: 0; font-size: 14px; }
+  .state.err .em { color: var(--crit); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <div class="site" id="siteName">…</div>
+    <h1>Soil moisture balance</h1>
+  </header>
+
+  <!-- loading / error states -->
+  <div class="card state" id="loading">
+    <div class="em">🌱</div>
+    <h2>Reading the forecast…</h2>
+    <p>Fetching 14 days of weather plus the outlook.</p>
+  </div>
+  <div class="card state err" id="error" hidden>
+    <div class="em">⚠️</div>
+    <h2>Weather unavailable</h2>
+    <p>Couldn't load the forecast, so there's nothing reliable to show.
+       No estimates are shown in its place — try again later.</p>
+  </div>
+
+  <!-- app -->
+  <main id="app" hidden>
+
+    <section class="card today" id="todayCard">
+      <div class="verdict">
+        <span class="dot" id="todayDot"></span>
+        <h2 id="todayVerdict">—</h2>
+      </div>
+      <div class="sub" id="todaySub">—</div>
+      <div class="gauge"><i id="todayGauge"></i></div>
+      <div class="gauge-scale">
+        <span>Empty</span>
+        <span><span class="pct" id="todayPct">—</span> of full</span>
+        <span>Full</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-title">Garden</div>
+      <div class="ctrl-row">
+        <label>Planting</label>
+        <div class="seg" id="plantingSeg"></div>
+      </div>
+      <div class="ctrl-row">
+        <label>Soil</label>
+        <div class="seg" id="soilSeg"></div>
+      </div>
+      <div class="ctrl-row">
+        <label>Watering duration <span id="doseHint" style="color:var(--accent)"></span></label>
+        <div class="stepper">
+          <button id="minDown" aria-label="Less">−</button>
+          <div class="val"><b id="minVal">60</b><span>minutes per watering</span></div>
+          <button id="minUp" aria-label="More">+</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-title">Moisture over the window</div>
+      <div class="chart-meta">
+        <div class="legend">Tank: <b id="tankLbl">—</b></div>
+        <div class="legend">
+          <i style="background:var(--moist)"></i>moist<i style="background:var(--dry)"></i>soon<i style="background:var(--crit)"></i>dry
+        </div>
+      </div>
+      <svg class="chart" id="chart" preserveAspectRatio="none" aria-label="Soil moisture trend"></svg>
+    </section>
+
+    <section class="card">
+      <div class="sec-title">Days — tap to inspect or water</div>
+      <div class="strip" id="strip"></div>
+    </section>
+
+    <section class="card detail" id="detail"></section>
+
+    <p class="foot" id="foot"></p>
+  </main>
+
+</div>
+
+<script>
+"use strict";
+
+/* ---- Precomputed constants (no water-flow maths in the browser) ---- */
+const SPRINKLER_RATE = 0.063;   // mm/min gross, BL4.0 / 180° I-20  (DAT-2)
+const RAIN_EFF = 0.8;           // LOG-3
+const IRR_EFF  = 0.9;           // LOG-3
+const TODAY_ISO = "2026-06-21"; // mockup "now"
+
+const PLANTINGS = {             // CTR-3
+  turf:      { label: "Turf",       kc: 0.85, root: 0.15 },
+  flowerbed: { label: "Flower bed", kc: 0.90, root: 0.30 },
+  shrubs:    { label: "Shrubs",     kc: 0.70, root: 0.50 },
+};
+const SOILS = {                 // CTR-4  (plant-available water, mm·m⁻¹)
+  sand:      { label: "Sand",       aw: 60  },
+  sandyloam: { label: "Sandy loam", aw: 130 },
+  loam:      { label: "Loam",       aw: 170 },
+  clay:      { label: "Clay",       aw: 190 },
+};
+
+/* depletion thresholds, as fraction of full tank */
+const MOIST = 0.50, SOON = 0.25;   // ≥50% moist · 25–50% water soon · <25% water now
+
+const state = {                  // CTR-5 defaults
+  planting: "flowerbed",
+  soil: "sandyloam",
+  minutes: 60,
+  watered: new Set(),            // ISO date strings
+};
+
+let WEATHER = null;              // raw inputs only: {date, weekday, tempMax, et0, rain}
+let SITE = null;
+let selectedIso = TODAY_ISO;
+
+const $ = (id) => document.getElementById(id);
+const r1 = (n) => (Math.round(n * 10) / 10).toFixed(1);   // UIX-4: 1 decimal mm
+const r0 = (n) => Math.round(n);                          // UIX-4: integer °C
+
+/* ---------- data ---------- */
+async function boot() {
+  try {
+    const res = await fetch("example_data.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("http " + res.status);
+    const data = await res.json();
+    SITE = data.site;
+    WEATHER = (data.series || []).map((d) => ({
+      date: d.date, weekday: d.weekday, tempMax: d.tempMax, et0: d.et0, rain: d.rain,
+    }));
+    if (!WEATHER.length) throw new Error("empty series");
+    if (!WEATHER.some((d) => d.date === selectedIso)) selectedIso = WEATHER[0].date;
+    $("siteName").textContent = SITE.name;
+    $("loading").hidden = true;
+    $("app").hidden = false;
+    buildControls();
+    render();
+  } catch (e) {
+    $("loading").hidden = true;
+    $("error").hidden = false;     // DAT-3: explicit unavailable state, no fallback
+  }
+}
+
+/* ---------- the balance (LOG-1..3) ---------- */
+function compute() {
+  const p = PLANTINGS[state.planting];
+  const s = SOILS[state.soil];
+  const tankSize = s.aw * p.root;            // LOG-1 / LOG-2: TAW
+  const dose = SPRINKLER_RATE * state.minutes; // CTR-1
+  let start = tankSize;                       // begin full
+  const series = WEATHER.map((d) => {
+    const loss = d.et0 * p.kc;                              // LOG-2
+    const applied = state.watered.has(d.date) ? dose : 0;  // CTR-1/CTR-2
+    const rainGain = d.rain * RAIN_EFF;                     // LOG-3
+    const irrGain = applied * IRR_EFF;                      // LOG-3
+    let level = start + rainGain + irrGain - loss;          // LOG-1
+    level = Math.max(0, Math.min(tankSize, level));
+    const row = { ...d, start, loss, applied, rainGain, irrGain, level };
+    start = level;
+    return row;
+  });
+  return { tankSize, dose, kc: p.kc, root: p.root, aw: s.aw, series };
+}
+
+function statusOf(frac) {
+  if (frac >= MOIST) return { key: "moist", word: "Moist — no need to water",
+    color: "var(--moist)", ring: "var(--moist-bg)", tagBg: "var(--moist-bg)" };
+  if (frac >= SOON)  return { key: "soon", word: "Drying — water soon",
+    color: "var(--dry)", ring: "var(--dry-bg)", tagBg: "var(--dry-bg)" };
+  return { key: "dry", word: "Dry — water now", color: "var(--crit)",
+    ring: "var(--crit-bg)", tagBg: "var(--crit-bg)" };
+}
+
+/* ---------- controls ---------- */
+function buildControls() {
+  const pseg = $("plantingSeg");
+  pseg.innerHTML = "";
+  for (const [k, v] of Object.entries(PLANTINGS)) {
+    const b = document.createElement("button");
+    b.dataset.k = k;
+    b.innerHTML = `${v.label}<small>Kc ${v.kc} · ${v.root} m</small>`;
+    b.onclick = () => { state.planting = k; render(); };
+    pseg.appendChild(b);
+  }
+  const sseg = $("soilSeg");
+  sseg.innerHTML = "";
+  for (const [k, v] of Object.entries(SOILS)) {
+    const b = document.createElement("button");
+    b.dataset.k = k;
+    b.innerHTML = `${v.label}<small>${v.aw} mm·m⁻¹</small>`;
+    b.onclick = () => { state.soil = k; render(); };
+    sseg.appendChild(b);
+  }
+  $("minDown").onclick = () => { state.minutes = Math.max(0, state.minutes - 15); render(); };
+  $("minUp").onclick   = () => { state.minutes += 15; render(); };
+}
+
+/* ---------- render ---------- */
+function render() {
+  const m = compute();
+  // segmented selections
+  document.querySelectorAll("#plantingSeg button").forEach((b) =>
+    b.setAttribute("aria-pressed", b.dataset.k === state.planting));
+  document.querySelectorAll("#soilSeg button").forEach((b) =>
+    b.setAttribute("aria-pressed", b.dataset.k === state.soil));
+  $("minVal").textContent = state.minutes;
+  $("doseHint").textContent = `→ +${r1(m.dose)} mm per watering`;
+  $("tankLbl").textContent = `${r1(m.tankSize)} mm full`;
+
+  renderToday(m);
+  renderChart(m);
+  renderStrip(m);
+  renderDetail(m);
+
+  const watered = state.watered.size;
+  $("foot").textContent =
+    `${m.series.length} days · ${watered} watering${watered === 1 ? "" : "s"} planned · resets on reload`;
+}
+
+function renderToday(m) {
+  const row = m.series.find((d) => d.date === TODAY_ISO) || m.series[0];
+  const frac = m.tankSize ? row.level / m.tankSize : 0;
+  const st = statusOf(frac);
+  $("todayDot").style.background = st.color;
+  $("todayCard").style.setProperty("--ring", st.ring);
+  $("todayDot").style.setProperty("--ring", st.ring);
+  $("todayVerdict").textContent = st.word;
+  $("todayVerdict").style.color = st.color;
+  $("todayGauge").style.width = Math.max(2, frac * 100) + "%";
+  $("todayGauge").style.background = st.color;
+  $("todayPct").textContent = r0(frac * 100) + "%";
+  $("todaySub").textContent =
+    `${r1(row.level)} of ${r1(m.tankSize)} mm plant-available · ${row.weekday}, high ${r0(row.tempMax)}°C`;
+}
+
+function renderChart(m) {
+  const svg = $("chart");
+  const W = svg.clientWidth || 520, H = 190;
+  const padL = 30, padR = 8, padT = 8, padB = 18;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const n = m.series.length;
+  const tank = m.tankSize || 1;
+  const x = (i) => padL + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
+  const y = (v) => padT + (1 - v / tank) * ih;
+
+  let svgStr = "";
+  // threshold bands
+  const bands = [
+    { from: MOIST, to: 1,     c: "var(--moist-bg)" },
+    { from: SOON,  to: MOIST, c: "var(--dry-bg)" },
+    { from: 0,     to: SOON,  c: "var(--crit-bg)" },
+  ];
+  for (const b of bands) {
+    const yTop = y(b.to * tank), yBot = y(b.from * tank);
+    svgStr += `<rect x="${padL}" y="${yTop.toFixed(1)}" width="${iw}" height="${(yBot - yTop).toFixed(1)}" fill="${b.c}"/>`;
+  }
+  // y labels
+  svgStr += `<text x="${padL - 4}" y="${y(tank) + 3}" text-anchor="end">${r0(tank)}</text>`;
+  svgStr += `<text x="${padL - 4}" y="${y(0)}" text-anchor="end">0</text>`;
+  svgStr += `<text x="${padL - 4}" y="${y(SOON * tank) + 3}" text-anchor="end">${r0(SOON * tank)}</text>`;
+
+  // today divider (forecast boundary)
+  const ti = m.series.findIndex((d) => d.date === TODAY_ISO);
+  if (ti >= 0) {
+    const tx = x(ti);
+    svgStr += `<line x1="${tx.toFixed(1)}" y1="${padT}" x2="${tx.toFixed(1)}" y2="${padT + ih}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3" opacity=".6"/>`;
+    svgStr += `<text x="${tx.toFixed(1)}" y="${padT + 8}" text-anchor="middle" fill="var(--accent)">now</text>`;
+  }
+
+  // area + line
+  let line = "", area = `M ${x(0).toFixed(1)} ${y(0).toFixed(1)} `;
+  m.series.forEach((d, i) => {
+    const px = x(i).toFixed(1), py = y(d.level).toFixed(1);
+    line += (i ? "L" : "M") + ` ${px} ${py} `;
+    area += `L ${px} ${py} `;
+  });
+  area += `L ${x(n - 1).toFixed(1)} ${y(0).toFixed(1)} Z`;
+  svgStr += `<path d="${area}" fill="var(--accent)" opacity=".10"/>`;
+  svgStr += `<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+  // watered markers + selected dot
+  m.series.forEach((d, i) => {
+    if (state.watered.has(d.date))
+      svgStr += `<circle cx="${x(i).toFixed(1)}" cy="${y(d.level).toFixed(1)}" r="3.4" fill="#fff" stroke="var(--accent)" stroke-width="2"/>`;
+  });
+  const si = m.series.findIndex((d) => d.date === selectedIso);
+  if (si >= 0) {
+    const stt = statusOf(m.series[si].level / tank);
+    svgStr += `<circle cx="${x(si).toFixed(1)}" cy="${y(m.series[si].level).toFixed(1)}" r="5" fill="${stt.color}" stroke="#fff" stroke-width="2"/>`;
+  }
+  svg.innerHTML = svgStr;
+}
+
+function renderStrip(m) {
+  const strip = $("strip");
+  strip.innerHTML = "";
+  m.series.forEach((d) => {
+    const frac = m.tankSize ? d.level / m.tankSize : 0;
+    const st = statusOf(frac);
+    const isFuture = d.date > TODAY_ISO;
+    const cls = ["day"];
+    if (d.date === TODAY_ISO) cls.push("today");
+    else if (isFuture) cls.push("future");
+    if (d.date === selectedIso) cls.push("sel");
+
+    const dm = Number(d.date.slice(8, 10));
+    const el = document.createElement("div");
+    el.className = cls.join(" ");
+    el.innerHTML =
+      `<div class="wd">${d.weekday.slice(0, 3)}</div>` +
+      `<div class="dm">${dm}</div>` +
+      `<div class="temp">${r0(d.tempMax)}°</div>` +
+      `<div class="rn">${d.rain >= 0.05 ? "💧" + r1(d.rain) : ""}</div>` +
+      `<div class="bar"><i style="height:${Math.max(3, frac * 100)}%;background:${st.color}"></i></div>` +
+      `<div class="wmark">${state.watered.has(d.date) ? "🚿" : ""}</div>`;
+    el.onclick = () => { selectedIso = d.date; render(); };
+    strip.appendChild(el);
+  });
+  const selEl = strip.querySelector(".sel");
+  if (selEl) selEl.scrollIntoView({ inline: "center", block: "nearest" });
+}
+
+function renderDetail(m) {
+  const det = $("detail");
+  const row = m.series.find((d) => d.date === selectedIso) || m.series[0];
+  const frac = m.tankSize ? row.level / m.tankSize : 0;
+  const st = statusOf(frac);
+  const isWatered = state.watered.has(row.date);
+  const future = row.date > TODAY_ISO;
+  const when = row.date === TODAY_ISO ? "Today" : (future ? "Planned" : "Past");
+
+  const ledgerRow = (ic, cls, label, sub, amt, amtCls) =>
+    `<div class="row">
+       <div class="lbl"><span class="ic ${cls}">${ic}</span><div>${label}<small>${sub}</small></div></div>
+       <div class="amt ${amtCls || ""}">${amt}</div>
+     </div>`;
+
+  det.innerHTML =
+    `<div class="dhead">
+       <h3>${row.weekday}</h3>
+       <span class="tag" style="background:${st.tagBg};color:${st.color}">${r0(frac * 100)}% full</span>
+     </div>
+     <div class="dwhen">${when} · ${row.date} · high ${r0(row.tempMax)}°C</div>
+     <div class="ledger">
+       ${ledgerRow("▢", "start", "Started at", "yesterday's level", r1(row.start) + " mm", "")}
+       ${ledgerRow("💧", "rain", "Rain", `${r1(row.rain)} mm × 0.8 effective`, "+" + r1(row.rainGain) + " mm", "pos")}
+       ${ledgerRow("🚿", "water", "Watering", isWatered ? `${r1(m.dose)} mm × 0.9 efficiency` : "none this day", (isWatered ? "+" + r1(row.irrGain) : "0.0") + " mm", isWatered ? "pos" : "")}
+       ${ledgerRow("☀️", "loss", "Evaporation & plants", `ET₀ ${r1(row.et0)} mm × Kc ${m.kc}`, "−" + r1(row.loss) + " mm", "neg")}
+       ${ledgerRow("●", "end", "Ended at", row.level === 0 ? "tank empty" : (row.level === m.tankSize ? "tank full (capped)" : "new level"), "<b>" + r1(row.level) + " mm</b>", "")}
+     </div>
+     <button class="wbtn ${isWatered ? "on" : ""}" id="toggleWater">
+       ${isWatered ? "🚿 Remove watering on this day" : "🚿 Water this day (" + r1(m.dose) + " mm)"}
+     </button>`;
+
+  $("toggleWater").onclick = () => {           // CTR-2: fast reversible
+    if (state.watered.has(row.date)) state.watered.delete(row.date);
+    else state.watered.add(row.date);
+    render();
+  };
+}
+
+window.addEventListener("resize", () => { if (WEATHER) renderChart(compute()); });
+boot();
+</script>
+</body>
+</html>
