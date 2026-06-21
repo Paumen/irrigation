@@ -7,6 +7,7 @@ calm/natural palette (UIX-3); they differ only in HOW the cross-section
 metaphor is drawn.
 """
 import json
+import math
 import os
 
 import cairosvg
@@ -247,7 +248,79 @@ def mockup_C():
             + forecast_wash() + fill + "".join(flux) + line
             + block + today_divider() + axis_labels() + legend + "</svg>")
 
-for name, fn in [("A-ribbon", mockup_A), ("B-cores", mockup_B), ("C-flux", mockup_C)]:
+# ----------------------------------------------------------------------
+# Mockup D — weather sky (literal)
+#   the moisture line/area stays clean; the daily "why" lives in the sky as
+#   real weather: blue rain falling (water in) and a warm sun (heat that
+#   dries the soil out). In vs out reads at a glance — rain is blue and
+#   falls, the sun is amber and glows. Nothing sits on the line.
+# ----------------------------------------------------------------------
+def sun_glyph(x, y, r, op):
+    rays = []
+    for k in range(8):
+        a = k * math.pi / 4
+        rays.append(
+            f'<line x1="{x+math.cos(a)*(r+1.5):.1f}" y1="{y+math.sin(a)*(r+1.5):.1f}" '
+            f'x2="{x+math.cos(a)*(r+4):.1f}" y2="{y+math.sin(a)*(r+4):.1f}" '
+            f'stroke="{SUN}" stroke-width="1.1" stroke-linecap="round" opacity="{op}"/>')
+    return (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r:.1f}" fill="{SUN}" '
+            f'opacity="{op}"/>' + "".join(rays))
+
+def raindrop(x, y, s, op):
+    # small teardrop: a circle with a pointed top
+    return (f'<path d="M {x:.1f} {y-2*s:.1f} Q {x+s:.1f} {y-s*0.3:.1f} {x:.1f} {y:.1f} '
+            f'Q {x-s:.1f} {y-s*0.3:.1f} {x:.1f} {y-2*s:.1f} Z" '
+            f'fill="{RAIN}" opacity="{op}"/>')
+
+def mockup_D():
+    pts = surface_pts()
+    grad = (f'<defs><linearGradient id="soilD" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{SOIL_WET}"/>'
+            f'<stop offset="1" stop-color="{SOIL_DRY}"/></linearGradient></defs>')
+    p = smooth_path(pts)
+    fill = (f'<path d="{p} L {pts[-1][0]:.1f} {SOIL_BOT} L {pts[0][0]:.1f} '
+            f'{SOIL_BOT} Z" fill="url(#soilD)"/>')
+    line = f'<path d="{p}" fill="none" stroke="{LINE}" stroke-width="2.5"/>'
+
+    weather = []
+    sun_y = SKY_TOP + 20
+    for i in range(N):
+        d = S[i]
+        x = cx(i)
+        # sun for the heat that pulls water out — size by ET loss, only when
+        # it's a meaningfully drying day so the sky stays calm on mild ones.
+        if d["loss"] >= 0.35 * MAXLOSS:
+            r = 2.6 + (d["loss"] / MAXLOSS) * 4.4
+            op = 0.30 + (d["loss"] / MAXLOSS) * 0.45
+            weather.append(sun_glyph(x, sun_y, r, f"{op:.2f}"))
+        # rain falling — water in. Droplet count + size scale with mm.
+        if d["rain"] > 0.2:
+            drops = min(3, 1 + int(d["rain"] / 4))
+            s = 1.6 + (d["rain"] / MAXRAIN) * 2.4
+            for k in range(drops):
+                dy = SKY_TOP + 44 + k * (s * 2.6 + 2)
+                weather.append(raindrop(x, dy, s, "0.8"))
+        # hose watering — water in, but green so it's not mistaken for rain.
+        if d["applied"] > 0:
+            weather.append(
+                f'<circle cx="{x:.1f}" cy="{SOIL_TOP-8:.1f}" r="3" fill="{CAN}"/>')
+
+    block = (f'<rect x="{PL}" y="{SOIL_TOP}" width="{PLOTW}" '
+             f'height="{SOIL_BOT-SOIL_TOP}" fill="none" stroke="{FULL_LN}"/>')
+    legend = (f'<g font-family="Segoe UI,sans-serif" font-size="9.5" fill="{INK}">'
+              + sun_glyph(PL + 5, 345, 4, "0.7")
+              + f'<text x="{PL+16}" y="349">sun dries it out</text>'
+              + raindrop(PL + 118, 348, 2.6, "0.8")
+              + f'<text x="{PL+126}" y="349">rain feeds it</text>'
+              + f'<rect x="{PL+212}" y="341" width="12" height="9" fill="{SOIL_WET}"/>'
+              + f'<text x="{PL+228}" y="349">water held</text></g>')
+    return (svg_open() + grad + header("Soil moisture &#183; rain vs sun")
+            + f'<rect x="{PL}" y="{SKY_TOP}" width="{PLOTW}" height="{SOIL_TOP-SKY_TOP}" fill="{SKY}"/>'
+            + forecast_wash() + "".join(weather) + fill + line
+            + block + today_divider() + axis_labels() + legend + "</svg>")
+
+for name, fn in [("A-ribbon", mockup_A), ("B-cores", mockup_B),
+                 ("C-flux", mockup_C), ("D-weather", mockup_D)]:
     svg = fn()
     path = os.path.join(HERE, f"soil-graph-{name}.svg")
     with open(path, "w") as out:
