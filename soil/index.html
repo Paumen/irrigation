@@ -285,6 +285,8 @@ let selectedIso = TODAY_ISO;
 const $ = (id) => document.getElementById(id);
 const r1 = (n) => (Math.round(n * 10) / 10).toFixed(1);   // UIX-4: 1 decimal mm
 const r0 = (n) => Math.round(n);                          // UIX-4: integer °C
+const degHi = (v) => (v == null ? "—" : r0(v) + "°C");    // guard missing forecast temp
+const degSm = (v) => (v == null ? "—" : r0(v) + "°");
 
 /* ---------- data ---------- */
 async function boot() {
@@ -398,12 +400,13 @@ function renderToday(m) {
   $("todayGauge").style.background = st.color;
   $("todayPct").textContent = r0(frac * 100) + "%";
   $("todaySub").textContent =
-    `${r1(row.level)} of ${r1(m.tankSize)} mm plant-available · ${row.weekday}, high ${r0(row.tempMax)}°C`;
+    `${r1(row.level)} of ${r1(m.tankSize)} mm plant-available · ${row.weekday}, high ${degHi(row.tempMax)}`;
 }
 
 function renderChart(m) {
   const svg = $("chart");
-  const W = svg.clientWidth || 520, H = 190;
+  const W = 520, H = 190;                       // fixed coord space; viewBox + preserveAspectRatio scale it responsively (no clientWidth==0 clipping)
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   const padL = 30, padR = 8, padT = 8, padB = 18;
   const iw = W - padL - padR, ih = H - padT - padB;
   const n = m.series.length;
@@ -477,7 +480,7 @@ function renderStrip(m) {
     el.innerHTML =
       `<div class="wd">${d.weekday.slice(0, 3)}</div>` +
       `<div class="dm">${dm}</div>` +
-      `<div class="temp">${r0(d.tempMax)}°</div>` +
+      `<div class="temp">${degSm(d.tempMax)}</div>` +
       `<div class="rn">${d.rain >= 0.05 ? "💧" + r1(d.rain) : ""}</div>` +
       `<div class="bar"><i style="height:${Math.max(3, frac * 100)}%;background:${st.color}"></i></div>` +
       `<div class="wmark">${state.watered.has(d.date) ? "🚿" : ""}</div>`;
@@ -508,7 +511,7 @@ function renderDetail(m) {
        <h3>${row.weekday}</h3>
        <span class="tag" style="background:${st.tagBg};color:${st.color}">${r0(frac * 100)}% full</span>
      </div>
-     <div class="dwhen">${when} · ${row.date} · high ${r0(row.tempMax)}°C</div>
+     <div class="dwhen">${when} · ${row.date} · high ${degHi(row.tempMax)}</div>
      <div class="ledger">
        ${ledgerRow("▢", "start", "Started at", "yesterday's level", r1(row.start) + " mm", "")}
        ${ledgerRow("💧", "rain", "Rain", `${r1(row.rain)} mm × 0.8 effective`, "+" + r1(row.rainGain) + " mm", "pos")}
@@ -527,7 +530,6 @@ function renderDetail(m) {
   };
 }
 
-window.addEventListener("resize", () => { if (WEATHER) renderChart(compute()); });
 boot();
 </script>
 </body>
