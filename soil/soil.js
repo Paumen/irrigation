@@ -17,9 +17,9 @@ export const RAIN_EFFECTIVENESS = 0.8;
 export const WATERING_EFFICIENCY = 0.9;
 
 export const PLANTINGS = {
-  "Turf": { kc: 0.85, rootDepth: 0.15, p: 0.45 },
-  "Flower bed": { kc: 0.90, rootDepth: 0.30, p: 0.45 },
-  "Shrubs": { kc: 0.70, rootDepth: 0.50, p: 0.50 },
+  "Turf": { kc: 0.85, rootDepth: 0.15 },
+  "Flower bed": { kc: 0.90, rootDepth: 0.30 },
+  "Shrubs": { kc: 0.70, rootDepth: 0.50 },
 };
 
 // Plant-available water (field capacity − wilting), mm/m.
@@ -29,6 +29,10 @@ export const SOILS = {
   "Loam": 170,
   "Clay": 190,
 };
+
+// Depletion fraction p — fixed for all plantings; only sets the watering
+// threshold marker (LOG-2 / UIX-4). It no longer throttles losses.
+export const DEPLETION_FRACTION = 0.5;
 
 export const DEFAULTS = {
   planting: "Flower bed",
@@ -148,13 +152,13 @@ export function deriveParams(controls) {
   if (soilAW == null) throw new Error(`Unknown soil: ${controls.soil}`);
 
   const tankSize = soilAW * planting.rootDepth;
-  const raw = planting.p * tankSize;
+  const raw = DEPLETION_FRACTION * tankSize;
   const threshold = tankSize - raw;
 
   return {
     kc: planting.kc,
     rootDepth: planting.rootDepth,
-    p: planting.p,
+    p: DEPLETION_FRACTION,
     soilAW,
     tankSize,
     raw,
@@ -162,23 +166,15 @@ export function deriveParams(controls) {
   };
 }
 
-export function ks(stored, threshold) {
-  if (threshold <= 0) return 1;
-  if (stored >= threshold) return 1;
-  return clamp(stored / threshold, 0, 1);
-}
-
-// Ks uses the previous day's closing level, not the current day's.
 export function runBalance(weather, params, wateredSet, dose) {
-  const { tankSize, threshold, kc } = params;
+  const { tankSize, kc } = params;
   const n = weather.et0.length;
   const series = [];
   let prev = tankSize;
 
   for (let i = 0; i < n; i++) {
     const start = prev;
-    const k = ks(start, threshold);
-    const loss = weather.et0[i] * kc * k;
+    const loss = weather.et0[i] * kc;
     const applied = wateredSet.has(i) ? dose : 0;
     const gain =
       weather.rain[i] * RAIN_EFFECTIVENESS + applied * WATERING_EFFICIENCY;
@@ -190,7 +186,6 @@ export function runBalance(weather, params, wateredSet, dose) {
       weekday: weather.weekday[i],
       tempMax: weather.tempMax[i],
       start,
-      ks: k,
       et0: weather.et0[i],
       loss,
       rain: weather.rain[i],
