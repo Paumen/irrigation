@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Generate 3 competing mockups of the Soil-Balance graph (UIX-1,2,4).
+"""Generate 3 competing mockups of the Soil-Balance graph (UIX-2,3,4).
 
 Reads soil/example_data.json (the fixture) — no maths in here, just drawing.
 Each mockup is one SVG rendered to PNG. They share the data and the
-calm/natural palette (UIX-3); they differ only in HOW the cross-section
+calm/natural palette (UIX-1); they differ only in HOW the cross-section
 metaphor is drawn.
 """
 import json
@@ -28,7 +28,7 @@ except StopIteration:
 MAXRAIN = max(d["rain"] for d in S) or 1
 MAXLOSS = max(d["loss"] for d in S) or 1
 
-# ---- calm & natural palette (UIX-3) ----
+# ---- calm & natural palette (UIX-1) ----
 SKY      = "#eaf3f5"
 SKY_FC   = "#f1f5f3"   # forecast sky, even softer
 SOIL_DRY = "#e3d2b4"   # parched earth
