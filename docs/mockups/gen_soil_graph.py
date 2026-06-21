@@ -266,11 +266,11 @@ def sun_glyph(x, y, r, op):
     return (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r:.1f}" fill="{SUN}" '
             f'opacity="{op}"/>' + "".join(rays))
 
-def raindrop(x, y, s, op):
+def raindrop(x, y, s, op, color=RAIN):
     # small teardrop: a circle with a pointed top
     return (f'<path d="M {x:.1f} {y-2*s:.1f} Q {x+s:.1f} {y-s*0.3:.1f} {x:.1f} {y:.1f} '
             f'Q {x-s:.1f} {y-s*0.3:.1f} {x:.1f} {y-2*s:.1f} Z" '
-            f'fill="{RAIN}" opacity="{op}"/>')
+            f'fill="{color}" opacity="{op}"/>')
 
 def mockup_D():
     pts = surface_pts()
@@ -300,10 +300,12 @@ def mockup_D():
             for k in range(drops):
                 dy = SKY_TOP + 44 + k * (s * 2.6 + 2)
                 weather.append(raindrop(x, dy, s, "0.8"))
-        # hose watering — water in, but green so it's not mistaken for rain.
+        # hose watering — water in at ground level, green so it's not
+        # mistaken for blue sky-rain.
         if d["applied"] > 0:
-            weather.append(
-                f'<circle cx="{x:.1f}" cy="{SOIL_TOP-8:.1f}" r="3" fill="{CAN}"/>')
+            for k in range(2):
+                weather.append(
+                    raindrop(x, SOIL_TOP - 3 - k * 6, 2.3, "0.9", color=CAN))
 
     block = (f'<rect x="{PL}" y="{SOIL_TOP}" width="{PLOTW}" '
              f'height="{SOIL_BOT-SOIL_TOP}" fill="none" stroke="{FULL_LN}"/>')
@@ -319,11 +321,39 @@ def mockup_D():
             + forecast_wash() + "".join(weather) + fill + line
             + block + today_divider() + axis_labels() + legend + "</svg>")
 
-for name, fn in [("A-ribbon", mockup_A), ("B-cores", mockup_B),
-                 ("C-flux", mockup_C), ("D-weather", mockup_D)]:
-    svg = fn()
+def watered_series(indices):
+    # What-if: same fixture weather, but water on the given days and re-run
+    # the balance by the spec's own rule (LOG-3): gain = rain*0.8 +
+    # dose*0.9, level = clamp(prev + gain - loss, 0, tank). The committed
+    # fixture is untouched; this only exists to show the watered state,
+    # which the all-dry fixture never reaches.
+    eff_rain, eff_water = 0.8, 0.9
+    dose = DATA["dose"]
+    wi = set(indices)
+    out = []
+    prev = TANK
+    for d in S:
+        applied = dose if d["index"] in wi else 0
+        gain = d["rain"] * eff_rain + applied * eff_water
+        level = max(0.0, min(TANK, prev + gain - d["loss"]))
+        out.append(dict(d, start=prev, applied=applied, gain=gain, level=level))
+        prev = level
+    return out
+
+
+def render(name, svg):
     path = os.path.join(HERE, f"soil-graph-{name}.svg")
     with open(path, "w") as out:
         out.write(svg)
     cairosvg.svg2png(bytestring=svg.encode(), write_to=path.replace(".svg", ".png"), scale=2)
     print("wrote", path.replace(".svg", ".png"))
+
+
+for name, fn in [("A-ribbon", mockup_A), ("B-cores", mockup_B),
+                 ("C-flux", mockup_C), ("D-weather", mockup_D)]:
+    render(name, fn())
+
+# Watered what-if on the weather-sky mockup: water through the dry spell so
+# the green hose-droplets and their lift on the line are both visible.
+S = watered_series([15, 17, 19, 21, 23])
+render("D-watered", mockup_D())
