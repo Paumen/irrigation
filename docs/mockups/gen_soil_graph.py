@@ -6,16 +6,23 @@ Each mockup is one SVG rendered to PNG. They share the data and the
 calm/natural palette (UIX-3); they differ only in HOW the cross-section
 metaphor is drawn.
 """
-import json, os, math
+import json
+import os
+
+import cairosvg
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = json.load(open(os.path.join(HERE, "..", "..", "soil", "example_data.json")))
+with open(os.path.join(HERE, "..", "..", "soil", "example_data.json")) as f:
+    DATA = json.load(f)
 
 S = DATA["series"]
 N = len(S)
 TANK = DATA["tankSize"]
 TODAY_DATE = "2026-06-21"
-TODAY = next(d["index"] for d in S if d["date"] == TODAY_DATE)
+try:
+    TODAY = next(d["index"] for d in S if d["date"] == TODAY_DATE)
+except StopIteration:
+    raise ValueError(f"Today's date {TODAY_DATE} not found in the series data.")
 MAXRAIN = max(d["rain"] for d in S) or 1
 MAXLOSS = max(d["loss"] for d in S) or 1
 
@@ -96,8 +103,10 @@ def smooth_path(pts):
         p0 = pts[i-1] if i > 0 else pts[0]
         p1, p2 = pts[i], pts[i+1]
         p3 = pts[i+2] if i+2 < len(pts) else p2
-        c1x = p1[0] + (p2[0]-p0[0])/6; c1y = p1[1] + (p2[1]-p0[1])/6
-        c2x = p2[0] - (p3[0]-p1[0])/6; c2y = p2[1] - (p3[1]-p1[1])/6
+        c1x = p1[0] + (p2[0]-p0[0])/6
+        c1y = p1[1] + (p2[1]-p0[1])/6
+        c2x = p2[0] - (p3[0]-p1[0])/6
+        c2y = p2[1] - (p3[1]-p1[1])/6
         d += f'C {c1x:.1f} {c1y:.1f} {c2x:.1f} {c2y:.1f} {p2[0]:.1f} {p2[1]:.1f} '
     return d
 
@@ -129,7 +138,8 @@ def mockup_A():
     et = []
     for i in range(N):
         l = S[i]["loss"]
-        x = cx(i); ys = y_of(S[i]["level"])
+        x = cx(i)
+        ys = y_of(S[i]["level"])
         ln = (l / MAXLOSS) * 9
         et.append(f'<line x1="{x:.1f}" y1="{ys-3:.1f}" x2="{x:.1f}" '
                   f'y2="{ys-3-ln:.1f}" stroke="{SUN}" stroke-width="2" opacity="0.7"/>')
@@ -168,7 +178,8 @@ def mockup_B():
     line = f'<path d="{smooth_path(surface_pts())}" fill="none" stroke="{LINE}" stroke-width="2"/>'
     glyphs = []
     for i in range(N):
-        d = S[i]; x = cx(i)
+        d = S[i]
+        x = cx(i)
         if d["rain"] > 0:
             rr = 1.4 + (d["rain"]/MAXRAIN)*3.2
             gy = SKY_TOP + 18 - (d["rain"]/MAXRAIN)*10
@@ -208,8 +219,11 @@ def mockup_C():
     line = f'<path d="{p}" fill="none" stroke="{LINE}" stroke-width="2.5"/>'
     flux = []
     for i in range(N):
-        d = S[i]; x = cx(i); ys = y_of(d["level"])
-        inflow = d["gain"]; outflow = d["loss"]
+        d = S[i]
+        x = cx(i)
+        ys = y_of(d["level"])
+        inflow = d["gain"]
+        outflow = d["loss"]
         # blue inflow wedge above surface pointing down
         if inflow > 0.05:
             hh = min(26, inflow * 3.0)
@@ -233,10 +247,10 @@ def mockup_C():
             + forecast_wash() + fill + "".join(flux) + line
             + block + today_divider() + axis_labels() + legend + "</svg>")
 
-import cairosvg
 for name, fn in [("A-ribbon", mockup_A), ("B-cores", mockup_B), ("C-flux", mockup_C)]:
     svg = fn()
     path = os.path.join(HERE, f"soil-graph-{name}.svg")
-    open(path, "w").write(svg)
+    with open(path, "w") as out:
+        out.write(svg)
     cairosvg.svg2png(bytestring=svg.encode(), write_to=path.replace(".svg", ".png"), scale=2)
     print("wrote", path.replace(".svg", ".png"))
