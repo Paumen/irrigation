@@ -22,7 +22,7 @@
 
 ## 4. controls
 
-- **CTR-1** The user can record or plan a watering on each day, past or future, as one instant, fast, obvious, and reversible action on phone, so what-if exploration isn't a chore. Watering duration (minutes, default is 60).
+- **CTR-1** The user can record or plan a watering on any day, past or future, as one instant, fast, obvious, and reversible action on phone, so what-if exploration isn't a chore. Watering duration (minutes, default is 60).
 - **CTR-3** Planting type → preset crop coefficient, root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting.
 - **CTR-4** Soil type → plant-available water held per metre (field capacity − wilting point). Presets: Sand 60 · Sandy loam 130 · Loam 170 · Clay 190 mm·m⁻¹.
 - **CTR-5** On load the screen defaults to planting = Flower bed, soil = Sandy loam.
@@ -30,7 +30,7 @@
 ## 5. ux/ui
 
 - **UIX-1** The user can grasp the soil-moisture trend across the most relevant window at a glance, without reading individual day values.
-- **UIX-2** The user can clearly see why the level changes, not just that it changed, in the same glance, without reading individual day values.
+- **UIX-2** The user can clearly see why the level changes, not just that it changes, in the same glance, without reading individual day values.
 - **UIX-3** Aesthetic: Calm & natural — soft greens/blues/earth tones, friendly, reassuring.
 - **UIX-4** Soil Cross-Section — the chart is a soil column: water held inside a soil block with a surface line. Distinctive metaphor.
 - **UIX-5** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
