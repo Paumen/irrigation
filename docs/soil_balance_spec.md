@@ -18,12 +18,12 @@
 ## 3. logic
 
 - **LOG-1** Daily: tank level = previous level + gains − losses, then capped between empty (wilting point) and full (field capacity); water above full is discarded that day. Tank size = water the soil holds per metre of depth × root depth. All levels are tracked as plant-available water (0 = wilting point, full = tank size); absolute field-capacity/wilting volumes are never needed. Any control change re-runs the whole balance from the full (field-capacity) seed (DAT-2).
-- **LOG-2** Losses = reference evapotranspiration × crop coefficient × Ks (FAO-56 water-stress coefficient — a dryness throttle). Define total available water TAW = tank size (LOG-1), readily-available water RAW = p × TAW (p set per planting), and the watering threshold = TAW − RAW = (1 − p) × tank size, where "stored" = water held above wilting point. Ks uses the stored level at the start of each day (the previous day's closing level): at or above the threshold Ks = 1; below it Ks drops in a straight line with the stored water (Ks = stored ÷ threshold; if the threshold is 0, Ks = 1), reaching 0 at wilting point.
+- **LOG-2** Losses = reference evapotranspiration × crop coefficient (no water-stress throttle — losses do not slow down as the soil dries). Define total available water TAW = tank size (LOG-1), readily-available water RAW = p × TAW where p is a fixed 0.5 for all plantings, and the watering threshold = TAW − RAW = (1 − p) × tank size = 0.5 × tank size, where "stored" = water held above wilting point. The threshold is used only as the display marker line (UIX-4); it does not affect the loss calculation.
 - **LOG-3** Gains = rainfall × effectiveness (0.8) + applied watering × efficiency (0.9).
 
 ## 4. controls
 
-- **CTR-1** Planting type → preset crop coefficient, root depth, depletion fraction p. Presets: Turf (Kc 0.85, 0.15 m, p 0.45) · Flower bed (0.90, 0.30 m, 0.45) · Shrubs (0.70, 0.50 m, 0.50). Kc is a single constant per planting (no FAO-56 growth-stage curve).
+- **CTR-1** Planting type → preset crop coefficient and root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting (no FAO-56 growth-stage curve). The depletion fraction p is a fixed 0.5 for all plantings (LOG-2), not a per-planting preset.
 - **CTR-2** Soil type → plant-available water held per metre (field capacity − wilting point). Presets: Sand 60 · Sandy loam 130 · Loam 170 · Clay 190 mm·m⁻¹.
 - **CTR-3** Watering duration (minutes, default 60) → dose applied to each watered day (CTR-4) = sprinkler rate (DAT-3) × minutes (gross; efficiency applied in LOG-3).
 - **CTR-4** Click a day to water, past or future — first click applies the dose, second cancels. Watered-day toggles are independent of the planting/soil presets and persist when presets change.
