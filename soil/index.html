@@ -14,7 +14,8 @@
     --accent: #3f7d5c;
     --accent-soft: #e6f1ea;
     --rain: #4a89c8;
-    --loss: #b0683a;
+    --rain-soft: #cfe0f1;
+    --dry: #ddc9a0;
     --shadow: 0 1px 2px rgba(31,42,34,.06), 0 4px 16px rgba(31,42,34,.06);
     --radius: 16px;
   }
@@ -24,83 +25,90 @@
     background: var(--bg);
     color: var(--ink);
     font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 24px) env(safe-area-inset-left);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 20px) env(safe-area-inset-left);
   }
-  .wrap { max-width: 560px; margin: 0 auto; padding: 16px 14px 0; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 14px 12px 0; }
 
-  header.app { padding: 6px 2px 12px; }
-  header.app .site { font-size: 13px; color: var(--muted); }
-  header.app h1 { font-size: 20px; margin: 2px 0 0; font-weight: 650; }
+  header.app { padding: 4px 2px 10px; }
+  header.app .site { font-size: 12.5px; color: var(--muted); }
+  header.app h1 { font-size: 19px; margin: 2px 0 0; font-weight: 650; }
 
   .card {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 16px;
-    margin-bottom: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
   }
 
-  /* ---- current state (interpretable, not a verdict) ---- */
-  .now { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-  .now .big { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
-  .now .big small { font-size: 14px; font-weight: 500; color: var(--muted); }
-  .now .pct { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .tank { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; margin-bottom: 14px; }
-  .tank > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+  /* ---- moisture visual (UIX-2): the soil reservoir, filled to current wetness ---- */
+  .moist { display: flex; gap: 12px; align-items: stretch; }
+  .soil {
+    position: relative; flex: 0 0 84px; height: 92px; border-radius: 12px; overflow: hidden;
+    background: var(--dry);
+    box-shadow: inset 0 0 0 1px rgba(31,42,34,.08);
+  }
+  .soil > .water {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, #2f6f57, #6fae8d);
+    transition: height .35s ease;
+  }
+  .soil > .scale { position: absolute; inset: 0; pointer-events: none; }
+  .soil > .scale span { position: absolute; right: 5px; font-size: 9px; color: rgba(31,42,34,.5); }
+  .soil > .scale .t { top: 3px; }
+  .soil > .scale .b { bottom: 3px; }
+  .moist .read { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .moist .read .lead { font-size: 13px; color: var(--muted); }
+  .moist .read .big { font-size: 23px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1.15; }
+  .moist .read .big small { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .moist .read .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
 
-  svg.chart { width: 100%; height: 200px; display: block; touch-action: pan-y; cursor: pointer; }
+  /* ---- chart ---- */
+  .chart-head { display: flex; justify-content: space-between; align-items: baseline; margin: 2px 2px 6px; }
+  .chart-head .ttl { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+  .chart-head .key { font-size: 11px; color: var(--muted); }
+  .chart-head .key i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 3px 0 9px; vertical-align: -1px; }
+  svg.chart { width: 100%; height: 230px; display: block; touch-action: pan-y; cursor: pointer; }
   svg.chart text { font: 10px -apple-system, sans-serif; fill: var(--muted); }
+  svg.chart text.tick { font-size: 9.5px; }
 
-  /* ---- selected-day breakdown (why it changed — UIX-3) ---- */
-  .dayinfo { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
-  .dayinfo .head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
-  .dayinfo .head b { font-size: 15px; }
-  .dayinfo .head span { font-size: 12px; color: var(--muted); }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; font-variant-numeric: tabular-nums; }
-  .chip {
-    display: inline-flex; align-items: baseline; gap: 5px; font-size: 13px;
-    background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 6px 9px;
+  .hint { font-size: 12px; color: var(--muted); text-align: center; margin: 8px 2px 0; }
+  .caption {
+    margin-top: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 11px; font-size: 13px; line-height: 1.4;
   }
-  .chip small { color: var(--muted); font-size: 11px; }
-  .chip.pos b { color: var(--accent); }
-  .chip.neg b { color: var(--loss); }
-  .chip.eq { background: var(--accent-soft); border-color: var(--accent-soft); }
-  .wbtn {
-    margin-top: 12px; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--accent);
-    background: var(--accent); color: #fff; font: inherit; font-weight: 650; cursor: pointer; font-size: 15px;
-  }
-  .wbtn.on { background: var(--card); color: var(--accent); }
-  .wbtn:active { transform: scale(.99); }
+  .caption b { font-weight: 650; }
+  .caption .pos { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .caption .neg { color: #b0683a; font-variant-numeric: tabular-nums; }
 
   /* ---- controls ---- */
-  .sec-title { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 2px 10px; font-weight: 600; }
-  .ctrl-row { margin-bottom: 14px; }
+  .sec-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 2px 9px; font-weight: 600; }
+  .ctrl-row { margin-bottom: 11px; }
   .ctrl-row:last-child { margin-bottom: 0; }
-  .ctrl-row > label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+  .ctrl-row > label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
   .seg {
-    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px;
-    background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px;
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 5px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 11px; padding: 4px;
   }
   .seg button {
     appearance: none; border: 0; background: transparent; color: var(--ink);
-    font: inherit; font-size: 13px; padding: 9px 4px; border-radius: 9px; cursor: pointer; line-height: 1.15;
+    font: inherit; font-size: 13px; padding: 8px 3px; border-radius: 8px; cursor: pointer; line-height: 1.12;
   }
-  .seg button small { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+  .seg button small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
   .seg button[aria-pressed="true"] { background: var(--card); color: var(--accent); box-shadow: var(--shadow); font-weight: 650; }
   .seg button[aria-pressed="true"] small { color: var(--accent); opacity: .8; }
-
-  .stepper { display: flex; gap: 8px; }
+  .stepper { display: flex; gap: 7px; }
   .stepper button {
-    flex: 0 0 48px; font-size: 22px; font-weight: 600; border: 1px solid var(--line);
-    background: var(--card); color: var(--accent); border-radius: 12px; cursor: pointer;
+    flex: 0 0 46px; font-size: 21px; font-weight: 600; border: 1px solid var(--line);
+    background: var(--card); color: var(--accent); border-radius: 11px; cursor: pointer;
   }
   .stepper button:active { background: var(--accent-soft); }
-  .stepper .val { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
-  .stepper .val b { font-size: 20px; font-variant-numeric: tabular-nums; }
+  .stepper .val { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 11px; background: var(--bg); }
+  .stepper .val b { font-size: 19px; font-variant-numeric: tabular-nums; }
   .stepper .val span { font-size: 11px; color: var(--muted); }
 
-  .foot { text-align: center; color: var(--muted); font-size: 11.5px; margin: 4px 0 2px; }
+  .foot { text-align: center; color: var(--muted); font-size: 11.5px; margin: 2px 0; }
 
   .state { text-align: center; padding: 40px 20px; }
   .state .em { font-size: 30px; }
@@ -133,15 +141,27 @@
   <main id="app" hidden>
 
     <section class="card">
-      <div class="now">
-        <div class="big" id="nowLevel">—</div>
-        <div class="pct" id="nowPct">—</div>
+      <div class="moist">
+        <div class="soil">
+          <div class="water" id="soilWater"></div>
+          <div class="scale"><span class="t">soaked</span><span class="b">parched</span></div>
+        </div>
+        <div class="read">
+          <div class="lead">Soil moisture today</div>
+          <div class="big" id="nowLevel">—</div>
+          <div class="sub" id="nowSub">—</div>
+        </div>
       </div>
-      <div class="tank"><i id="nowFill"></i></div>
+    </section>
 
-      <svg class="chart" id="chart" preserveAspectRatio="none" aria-label="Soil water across the window"></svg>
-
-      <div class="dayinfo" id="dayinfo"></div>
+    <section class="card">
+      <div class="chart-head">
+        <span class="ttl">Past 2 weeks → next 2 weeks</span>
+        <span class="key"><i style="background:var(--accent)"></i>water stored<i style="background:var(--rain-soft)"></i>rain</span>
+      </div>
+      <svg class="chart" id="chart" preserveAspectRatio="none" aria-label="Soil water and rainfall across the window"></svg>
+      <div class="hint" id="hint">Tap any day to plan or remove a watering</div>
+      <div class="caption" id="caption"></div>
     </section>
 
     <section class="card">
@@ -177,6 +197,7 @@ const SPRINKLER_RATE = 0.063;   // mm/min gross, BL4.0 / 180° I-20  (DAT-2)
 const RAIN_EFF = 0.8;           // LOG-3
 const IRR_EFF  = 0.9;           // LOG-3
 const TODAY_ISO = "2026-06-21"; // mockup "now"
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 const PLANTINGS = {             // CTR-3
   turf:      { label: "Turf",       kc: 0.85, root: 0.15 },
@@ -204,8 +225,9 @@ let selectedIso = TODAY_ISO;
 const $ = (id) => document.getElementById(id);
 const r1 = (n) => (Math.round(n * 10) / 10).toFixed(1);   // UIX-4: 1 decimal mm
 const r0 = (n) => Math.round(n);                          // UIX-4: integer °C
-const degHi = (v) => (v == null ? "—" : r0(v) + "°C");    // guard missing forecast temp
-const degSm = (v) => (v == null ? "—" : r0(v) + "°");
+const degHi = (v) => (v == null ? "—" : r0(v) + "°C");
+const dayNum = (iso) => Number(iso.slice(8, 10));
+const tickLbl = (d) => d.weekday.slice(0, 2) + " " + dayNum(d.date);
 
 /* ---------- data ---------- */
 async function boot() {
@@ -232,7 +254,8 @@ async function boot() {
 }
 
 /* ---------- the balance (LOG-1..3) ---------- */
-function compute() {
+function compute(wateredSet) {
+  const watered = wateredSet || state.watered;
   const p = PLANTINGS[state.planting];
   const s = SOILS[state.soil];
   const tankSize = s.aw * p.root;              // LOG-1 / LOG-2: TAW
@@ -240,7 +263,7 @@ function compute() {
   let start = tankSize;                         // begin full
   const series = WEATHER.map((d) => {
     const loss = d.et0 * p.kc;                              // LOG-2
-    const applied = state.watered.has(d.date) ? dose : 0;  // CTR-1/CTR-2
+    const applied = watered.has(d.date) ? dose : 0;        // CTR-1/CTR-2
     const rainGain = d.rain * RAIN_EFF;                     // LOG-3
     const irrGain = applied * IRR_EFF;                      // LOG-3
     let level = start + rainGain + irrGain - loss;          // LOG-1
@@ -254,40 +277,37 @@ function compute() {
 
 /* ---------- controls ---------- */
 function buildControls() {
-  const seg = (host, dict, get, set) => {
+  const seg = (host, dict, mkLabel, set) => {
     host.innerHTML = "";
     for (const [k, v] of Object.entries(dict)) {
       const b = document.createElement("button");
       b.dataset.k = k;
-      b.innerHTML = v.html;
+      b.innerHTML = mkLabel(v);
       b.onclick = () => { set(k); render(); };
       host.appendChild(b);
     }
   };
-  seg($("plantingSeg"),
-    Object.fromEntries(Object.entries(PLANTINGS).map(([k, v]) =>
-      [k, { html: `${v.label}<small>Kc ${v.kc} · ${v.root} m</small>` }])),
-    () => state.planting, (k) => state.planting = k);
-  seg($("soilSeg"),
-    Object.fromEntries(Object.entries(SOILS).map(([k, v]) =>
-      [k, { html: `${v.label}<small>${v.aw} mm·m⁻¹</small>` }])),
-    () => state.soil, (k) => state.soil = k);
+  seg($("plantingSeg"), PLANTINGS, (v) => `${v.label}<small>Kc ${v.kc} · ${v.root} m</small>`, (k) => state.planting = k);
+  seg($("soilSeg"), SOILS, (v) => `${v.label}<small>${v.aw} mm·m⁻¹</small>`, (k) => state.soil = k);
   $("minDown").onclick = () => { state.minutes = Math.max(0, state.minutes - 15); render(); };
   $("minUp").onclick   = () => { state.minutes += 15; render(); };
 }
 
 /* ---------- chart geometry (fixed coord space; viewBox scales it) ---------- */
-const W = 520, H = 200, padL = 28, padR = 8, padT = 10, padB = 18;
+const W = 520, H = 230, padL = 26, padR = 10, padT = 14, padB = 26;
 const iw = W - padL - padR, ih = H - padT - padB;
 const xOf = (i, n) => padL + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
 
-function onChartTap(ev) {
+function onChartTap(ev) {                       // UIX-5: one tap on a day plans/removes a watering
   const m = compute(), n = m.series.length;
   const rect = ev.currentTarget.getBoundingClientRect();
-  const vbX = ((ev.clientX - rect.left) / rect.width) * W;        // client px → viewBox x
+  const vbX = ((ev.clientX - rect.left) / rect.width) * W;
   let i = Math.round((vbX - padL) / (iw / Math.max(1, n - 1)));
   i = Math.max(0, Math.min(n - 1, i));
-  selectedIso = m.series[i].date;
+  const iso = m.series[i].date;
+  selectedIso = iso;
+  if (state.watered.has(iso)) state.watered.delete(iso);   // CTR-2: fast, reversible
+  else state.watered.add(iso);
   render();
 }
 
@@ -299,23 +319,24 @@ function render() {
   document.querySelectorAll("#soilSeg button").forEach((b) =>
     b.setAttribute("aria-pressed", b.dataset.k === state.soil));
   $("minVal").textContent = state.minutes;
-  $("doseHint").textContent = `→ +${r1(m.dose)} mm per watering`;
+  $("doseHint").textContent = `→ +${r1(m.dose)} mm each`;
 
-  renderNow(m);
+  renderMoist(m);
   renderChart(m);
-  renderDayInfo(m);
+  renderCaption(m);
 
   const w = state.watered.size;
   $("foot").textContent =
     `${m.series.length} days · ${w} watering${w === 1 ? "" : "s"} planned · resets on reload`;
 }
 
-function renderNow(m) {
+/* UIX-2: the soil reservoir, visually filled — wet vs dry at a glance, not a figure */
+function renderMoist(m) {
   const row = m.series.find((d) => d.date === TODAY_ISO) || m.series[0];
   const frac = m.tankSize ? row.level / m.tankSize : 0;
-  $("nowLevel").innerHTML = `${r1(row.level)} <small>of ${r1(m.tankSize)} mm available</small>`;
-  $("nowPct").textContent = `${r0(frac * 100)}% of full · today`;
-  $("nowFill").style.width = Math.max(1, frac * 100) + "%";
+  $("soilWater").style.height = (frac * 100).toFixed(1) + "%";
+  $("nowLevel").innerHTML = `${r1(row.level)} <small>of ${r1(m.tankSize)} mm</small>`;
+  $("nowSub").textContent = `${r0(frac * 100)}% of what the soil can hold`;
 }
 
 function renderChart(m) {
@@ -324,24 +345,39 @@ function renderChart(m) {
   const n = m.series.length, tank = m.tankSize || 1;
   const x = (i) => xOf(i, n);
   const y = (v) => padT + (1 - v / tank) * ih;
-
+  const ti = m.series.findIndex((d) => d.date === TODAY_ISO);
+  const colW = iw / Math.max(1, n - 1);
   let s = "";
-  // capacity band: 0 → full, the soil's water reservoir (UIX-2)
-  s += `<rect x="${padL}" y="${y(tank).toFixed(1)}" width="${iw}" height="${(y(0) - y(tank)).toFixed(1)}" fill="var(--bg)"/>`;
+
+  // forecast region shaded (past = plain, future = tinted) — UIX-1 clear past/forecast split
+  if (ti >= 0 && ti < n - 1) {
+    const fx = x(ti);
+    s += `<rect x="${fx.toFixed(1)}" y="${padT}" width="${(padL + iw - fx).toFixed(1)}" height="${ih}" fill="#fbfaf4"/>`;
+  }
+  // capacity frame + y labels
   s += `<line x1="${padL}" y1="${y(tank).toFixed(1)}" x2="${padL + iw}" y2="${y(tank).toFixed(1)}" stroke="var(--line)"/>`;
   s += `<line x1="${padL}" y1="${y(0).toFixed(1)}" x2="${padL + iw}" y2="${y(0).toFixed(1)}" stroke="var(--line)"/>`;
   s += `<text x="${padL - 4}" y="${y(tank) + 3}" text-anchor="end">${r0(tank)}</text>`;
   s += `<text x="${padL - 4}" y="${y(0)}" text-anchor="end">0</text>`;
 
-  // "now" divider
-  const ti = m.series.findIndex((d) => d.date === TODAY_ISO);
-  if (ti >= 0) {
-    const tx = x(ti).toFixed(1);
-    s += `<line x1="${tx}" y1="${padT}" x2="${tx}" y2="${padT + ih}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>`;
-    s += `<text x="${tx}" y="${padT + 8}" text-anchor="middle" fill="var(--accent)">now</text>`;
+  // rain bars (driver, behind the line) — UIX-1/UIX-3: see why the line rises
+  const maxRain = Math.max(0.0001, ...m.series.map((d) => d.rain));
+  const barMax = ih * 0.45, bw = Math.min(9, colW * 0.6);
+  m.series.forEach((d, i) => {
+    if (d.rain < 0.05) return;
+    const h = (d.rain / maxRain) * barMax;
+    s += `<rect x="${(x(i) - bw / 2).toFixed(1)}" y="${(y(0) - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="var(--rain-soft)" rx="1.5"/>`;
+  });
+
+  // baseline (no watering) ghost — UIX-5: the effect of your plan is the gap to this line
+  if (state.watered.size) {
+    const base = compute(new Set()).series;
+    let bl = "";
+    base.forEach((d, i) => { bl += (i ? "L" : "M") + ` ${x(i).toFixed(1)} ${y(d.level).toFixed(1)} `; });
+    s += `<path d="${bl}" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="2 3" opacity=".7"/>`;
   }
 
-  // level line + soft fill
+  // stored-water line + soft fill
   let line = "", area = `M ${x(0).toFixed(1)} ${y(0).toFixed(1)} `;
   m.series.forEach((d, i) => {
     const px = x(i).toFixed(1), py = y(d.level).toFixed(1);
@@ -349,55 +385,59 @@ function renderChart(m) {
     area += `L ${px} ${py} `;
   });
   area += `L ${x(n - 1).toFixed(1)} ${y(0).toFixed(1)} Z`;
-  s += `<path d="${area}" fill="var(--accent)" opacity=".10"/>`;
-  s += `<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  s += `<path d="${area}" fill="var(--accent)" opacity=".12"/>`;
+  s += `<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`;
 
-  // watered-day markers
+  // watering markers (your plan) — green droplets on watered days
   m.series.forEach((d, i) => {
-    if (state.watered.has(d.date))
-      s += `<circle cx="${x(i).toFixed(1)}" cy="${y(d.level).toFixed(1)}" r="3.4" fill="#fff" stroke="var(--accent)" stroke-width="2"/>`;
+    if (!state.watered.has(d.date)) return;
+    const cx = x(i).toFixed(1), cy = y(d.level).toFixed(1);
+    s += `<circle cx="${cx}" cy="${cy}" r="4.5" fill="var(--accent)" stroke="#fff" stroke-width="2"/>`;
+    s += `<text x="${cx}" y="${(padT + 9).toFixed(1)}" text-anchor="middle" fill="var(--accent)" font-size="11">🚿</text>`;
   });
-  // selected day: vertical guide + dot
+
+  // today divider
+  if (ti >= 0) {
+    const tx = x(ti).toFixed(1);
+    s += `<line x1="${tx}" y1="${padT}" x2="${tx}" y2="${padT + ih}" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="3 3"/>`;
+    s += `<text x="${tx}" y="${(padT - 4).toFixed(1)}" text-anchor="middle" fill="var(--accent)">today</text>`;
+  }
+
+  // x-axis date ticks — UIX-1: a real timeline
+  const step = Math.max(1, Math.ceil(n / 6));
+  let lastMonth = "";
+  for (let i = 0; i < n; i += step) {
+    const d = m.series[i], tx = x(i).toFixed(1);
+    s += `<text class="tick" x="${tx}" y="${(padT + ih + 12).toFixed(1)}" text-anchor="middle">${tickLbl(d)}</text>`;
+    const mo = MONTHS[Number(d.date.slice(5, 7)) - 1];
+    if (mo !== lastMonth) { s += `<text class="tick" x="${tx}" y="${(padT + ih + 22).toFixed(1)}" text-anchor="middle" opacity=".75">${mo}</text>`; lastMonth = mo; }
+  }
+
+  // selected day highlight
   const si = m.series.findIndex((d) => d.date === selectedIso);
   if (si >= 0) {
     const sx = x(si).toFixed(1);
-    s += `<line x1="${sx}" y1="${padT}" x2="${sx}" y2="${padT + ih}" stroke="var(--ink)" stroke-width="1" opacity=".18"/>`;
-    s += `<circle cx="${sx}" cy="${y(m.series[si].level).toFixed(1)}" r="5" fill="var(--accent)" stroke="#fff" stroke-width="2"/>`;
+    s += `<line x1="${sx}" y1="${padT}" x2="${sx}" y2="${padT + ih}" stroke="var(--ink)" stroke-width="1" opacity=".16"/>`;
   }
   svg.innerHTML = s;
 }
 
-function renderDayInfo(m) {
+/* UIX-3: plain-language why for the tapped day, in step with the chart */
+function renderCaption(m) {
   const row = m.series.find((d) => d.date === selectedIso) || m.series[0];
-  const isWatered = state.watered.has(row.date);
-  const future = row.date > TODAY_ISO;
-  const when = row.date === TODAY_ISO ? "Today" : (future ? "Planned" : "Past");
+  const watered = state.watered.has(row.date);
+  const when = row.date === TODAY_ISO ? "today" : (row.date > TODAY_ISO ? "forecast" : "past");
+  const parts = [];
+  if (row.rainGain > 0.05) parts.push(`rain added <span class="pos">+${r1(row.rainGain)}</span>`);
+  if (watered) parts.push(`watering added <span class="pos">+${r1(row.irrGain)}</span>`);
+  parts.push(`heat &amp; plants took <span class="neg">−${r1(row.loss)}</span>`);
+  const verb = row.level > row.start ? "rose to" : (row.level < row.start ? "fell to" : "held at");
+  const cap = row.level === 0 ? " (soil empty)" : (row.level === m.tankSize ? " (soil full)" : "");
 
-  const chip = (cls, label, val, sub) =>
-    `<span class="chip ${cls}"><span>${label}</span><b>${val}</b>${sub ? `<small>${sub}</small>` : ""}</span>`;
-
-  // why the level changed that day (UIX-3): start → +rain → +water → −ET → end
-  $("dayinfo").innerHTML =
-    `<div class="head">
-       <b>${row.weekday} · ${row.date}</b>
-       <span>${when} · high ${degHi(row.tempMax)}</span>
-     </div>
-     <div class="chips">
-       ${chip("", "Start", r1(row.start), "mm")}
-       ${chip("pos", "Rain", "+" + r1(row.rainGain), `${r1(row.rain)}×0.8`)}
-       ${chip(isWatered ? "pos" : "", "Water", (isWatered ? "+" : "") + r1(row.irrGain), isWatered ? `${r1(m.dose)}×0.9` : "off")}
-       ${chip("neg", "ET", "−" + r1(row.loss), `${r1(row.et0)}×${m.kc}`)}
-       ${chip("eq", "End", r1(row.level), row.level === 0 ? "empty" : (row.level === m.tankSize ? "full" : "mm"))}
-     </div>
-     <button class="wbtn ${isWatered ? "on" : ""}" id="toggleWater">
-       ${isWatered ? "Remove watering on this day" : "Water this day (+" + r1(m.dose) + " mm)"}
-     </button>`;
-
-  $("toggleWater").onclick = () => {           // CTR-2: fast reversible
-    if (state.watered.has(row.date)) state.watered.delete(row.date);
-    else state.watered.add(row.date);
-    render();
-  };
+  $("caption").innerHTML =
+    `<b>${row.weekday} ${dayNum(row.date)} ${MONTHS[Number(row.date.slice(5,7))-1]}</b> · ${when} · high ${degHi(row.tempMax)}<br>` +
+    `From ${r1(row.start)} mm, ${parts.join(", ")} → <b>${verb} ${r1(row.level)} mm</b>${cap}.` +
+    (watered ? ` <i>Tap again to remove.</i>` : ``);
 }
 
 boot();
