@@ -9,6 +9,7 @@ metaphor is drawn.
 import json
 import math
 import os
+import random
 
 import cairosvg
 
@@ -292,15 +293,55 @@ def watering_can(x, gy, scale=1.0):
         raindrop(tipx, gy + 2 + k * 4.5, 1.6 * u, "0.9", color=c) for k in range(3))
     return body + rim + handle + spout + drops
 
+def soil_texture(seed=7):
+    # deterministic earthy speckle + a few pebbles + faint strata, so the
+    # block reads as real soil rather than a flat fill. Clipped to the block.
+    rnd = random.Random(seed)
+    out = []
+    for fy in (0.30, 0.56, 0.80):
+        y = SOIL_TOP + fy * (SOIL_BOT - SOIL_TOP)
+        out.append(f'<line x1="{PL}" y1="{y:.1f}" x2="{PR}" y2="{y:.1f}" '
+                   f'stroke="#6f5236" stroke-width="1" opacity="0.06"/>')
+    shades = ["#6f5236", "#7d5d3e", "#b9966a", "#caa878", "#8a6a45"]
+    for _ in range(240):
+        x = rnd.uniform(PL + 1, PR - 1)
+        y = rnd.uniform(SOIL_TOP + 1, SOIL_BOT - 1)
+        r = rnd.uniform(0.5, 1.5)
+        out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r:.2f}" '
+                   f'fill="{rnd.choice(shades)}" opacity="{rnd.uniform(0.15, 0.4):.2f}"/>')
+    for _ in range(7):
+        x = rnd.uniform(PL + 8, PR - 8)
+        y = rnd.uniform(SOIL_TOP + 36, SOIL_BOT - 8)
+        rx = rnd.uniform(2.4, 3.8)
+        out.append(f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{rx:.1f}" '
+                   f'ry="{rx*rnd.uniform(0.6,0.8):.1f}" fill="#9b8b76" opacity="0.5"/>')
+    return "".join(out)
+
 def mockup_D():
     pts = surface_pts()
-    grad = (f'<defs><linearGradient id="soilD" x1="0" y1="0" x2="0" y2="1">'
-            f'<stop offset="0" stop-color="{SOIL_WET}"/>'
-            f'<stop offset="1" stop-color="{SOIL_DRY}"/></linearGradient></defs>')
+    defs = (
+        '<defs>'
+        '<linearGradient id="earth" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0" stop-color="#8b6a47"/>'
+        '<stop offset="0.3" stop-color="#a37f55"/>'
+        '<stop offset="1" stop-color="#c8ad83"/></linearGradient>'
+        '<linearGradient id="water" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0" stop-color="#86bcd8"/>'
+        '<stop offset="1" stop-color="#5e94b3"/></linearGradient>'
+        f'<clipPath id="blk"><rect x="{PL}" y="{SOIL_TOP}" width="{PLOTW}" '
+        f'height="{SOIL_BOT-SOIL_TOP}"/></clipPath></defs>')
     p = smooth_path(pts)
-    fill = (f'<path d="{p} L {pts[-1][0]:.1f} {SOIL_BOT} L {pts[0][0]:.1f} '
-            f'{SOIL_BOT} Z" fill="url(#soilD)"/>')
-    line = f'<path d="{p}" fill="none" stroke="{LINE}" stroke-width="2.5"/>'
+    soil_bg = (f'<rect x="{PL}" y="{SOIL_TOP}" width="{PLOTW}" '
+               f'height="{SOIL_BOT-SOIL_TOP}" fill="url(#earth)"/>')
+    water = (f'<path d="{p} L {pts[-1][0]:.1f} {SOIL_BOT} L {pts[0][0]:.1f} '
+             f'{SOIL_BOT} Z" fill="url(#water)" opacity="0.66"/>')
+    soil_group = f'<g clip-path="url(#blk)">{soil_bg}{soil_texture()}{water}</g>'
+    # the water table — top of the held water, smoothed
+    water_top = (f'<path d="{p}" fill="none" stroke="#3f7e9c" stroke-width="2.5" '
+                 f'clip-path="url(#blk)"/>')
+    # the ground surface line (top of the soil block)
+    ground = (f'<line x1="{PL}" y1="{SOIL_TOP}" x2="{PR}" y2="{SOIL_TOP}" '
+              f'stroke="#6f5236" stroke-width="2" opacity="0.7"/>')
 
     weather = []
     sun_y = SKY_TOP + 20
@@ -332,16 +373,16 @@ def mockup_D():
             + watering_can(PL + 218, 340, 0.85)
             + f'<text x="{PL+232}" y="349">you watered</text></g>') if watered else (
             f'<g font-family="Segoe UI,sans-serif" font-size="9.5" fill="{INK}">'
-            + f'<rect x="{PL+218}" y="341" width="12" height="9" fill="{SOIL_WET}"/>'
+            + f'<rect x="{PL+218}" y="341" width="12" height="9" fill="#6fa9c9"/>'
             + f'<text x="{PL+234}" y="349">water held</text></g>')
     legend = (f'<g font-family="Segoe UI,sans-serif" font-size="9.5" fill="{INK}">'
               + sun_glyph(PL + 5, 345, 4, "0.7")
               + f'<text x="{PL+16}" y="349">sun dries it out</text>'
               + raindrop(PL + 118, 348, 2.6, "0.8")
               + f'<text x="{PL+126}" y="349">rain feeds it</text></g>' + last)
-    return (svg_open() + grad + header("Soil moisture &#183; rain vs sun")
+    return (svg_open() + defs + header("Soil moisture &#183; rain vs sun")
             + f'<rect x="{PL}" y="{SKY_TOP}" width="{PLOTW}" height="{SOIL_TOP-SKY_TOP}" fill="{SKY}"/>'
-            + forecast_wash() + "".join(weather) + fill + line
+            + soil_group + forecast_wash() + ground + water_top + "".join(weather)
             + block + today_divider() + axis_labels() + legend + "</svg>")
 
 def watered_series(indices):
