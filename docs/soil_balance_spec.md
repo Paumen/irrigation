@@ -17,14 +17,14 @@
 ## 3. logic
 
 - **LOG-1** Daily: tank level = previous level + gains − losses. Tank size = water the soil holds per metre of depth × root depth. All levels are tracked as plant-available water. Any control change re-runs the whole balance.
-- **LOG-2** Losses = reference evapotranspiration × crop coefficient (no water-stress throttle — losses do not slow as the soil dries). Total available water TAW = tank size (LOG-1); readily-available water RAW = p × TAW with p a fixed 0.5 for all plantings, giving a watering threshold = (1 − p) × tank size = 0.5 × tank size. The threshold does not affect the loss calculation.
+- **LOG-2** Losses = reference evapotranspiration × crop coefficient (no water-stress throttle — losses do not slow as the soil dries). Total available water TAW = tank size (LOG-1).
 - **LOG-3** Gains = rainfall × effectiveness (0.8) + applied watering × efficiency (0.9).
 
 ## 4. controls
 
 - **CTR-1** Watering duration (minutes, default is 60, steps of +/- 15) → dose applied to each watered day = sprinkler rate × minutes.
 - **CTR-2** The user can record or plan a watering on any day, past or future, as one fast reversible action.
-- **CTR-3** Planting type → preset crop coefficient, root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting. The depletion fraction p is a fixed 0.5 for all plantings (LOG-2), not a per-planting preset.
+- **CTR-3** Planting type → preset crop coefficient, root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting.
 - **CTR-4** Soil type → plant-available water held per metre (field capacity − wilting point). Presets: Sand 60 · Sandy loam 130 · Loam 170 · Clay 190 mm·m⁻¹.
 - **CTR-5** On load the screen defaults to planting = Flower bed, soil = Sandy loam.
 
