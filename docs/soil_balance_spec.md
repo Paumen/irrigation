@@ -2,38 +2,36 @@
 
 ## 1. scope
 
-- **SCO-1** Single-screen tool that judges watering need for one fixed garden by estimating soil moisture from recent + forecast weather and watering, instead of guessing.
-- **SCO-2** Let the user try "what-if" watering on any day and see the soil respond immediately.
+- **SCO-1** The user can tell whether the garden needs water now or soon with enough confidence to act on it, instead of guessing.
+- **SCO-2** The user can test a watering plan and see its effect before committing to it.
 - **SCO-3** One user, one zone, one built-in site (Vormersesluisweg 3A, Wijchen; 51.79733 °N, 5.70643 °E).
 - **SCO-4** No build step, framework (unless buildless like Alpine.js), server, or water-flow maths in the browser (the sprinkler rate is precomputed). Deployable to GitHub Pages. Nothing is saved; all settings reset on reload.
 - **SCO-5** Mobile-first; light colour theme.
 
 ## 2. data
 
-- **DAT-1** Weather from Open-Meteo's Forecast API (`api.open-meteo.com/v1/forecast`) in a single request — `past_days=14`, `forecast_days=14`, `timezone=Europe/Amsterdam` — giving 14 past days + today + 13 forecast days as one gapless series (today is at index 14; never work it out from the device clock). Daily variables: `precipitation_sum` (rain), `temperature_2m_max` (shown only, not used in maths), `et0_fao_evapotranspiration` (reference water loss, fetched ready-made — never computed in the browser). Missing (null) values: precipitation → 0, et0 → the previous day's value (0 would be wrong), temperature → shown blank. Each day's weekday is derived from its date string (parsed as UTC, to avoid a local-timezone day shift) for display labels.
-- **DAT-2** Of the days fetched (DAT-1), the earliest ones — before the shown window — are run-up that settles the soil estimate; the tank starts full (field capacity) on the first fetched day. The graph shows a 16-day window: last 8 days, today, next 7.
-- **DAT-3** Sprinkler rate, 0.063 mm/min (3.78 mm/hr gross), from BL4.0 / 180° nozzle (Hunter I-20).
-- **DAT-4** If the weather request fails, the screen shows a clear unavailable/error state rather than estimated, stale, or zero-filled data — no silent fallback.
+- **DAT-1** Weather from Open-Meteo's Forecast API (`api.open-meteo.com/v1/forecast`) in a single request — `past_days=14`, `forecast_days=14`, `timezone=Europe/Amsterdam` — giving 14 past days + today + 13 forecast days. Daily variables: `precipitation_sum` (rain), `temperature_2m_max` (°), `et0_fao_evapotranspiration` (reference water loss, fetched ready-made — never computed in the browser). Each day's weekday is derived from its date string for display labels.
+- **DAT-2** Sprinkler rate, 0.063 mm/min (3.78 mm/hr gross), from BL4.0 / 180° nozzle (Hunter I-20).
+- **DAT-3** If the weather request fails, the screen shows a clear unavailable/error state rather than estimated, stale, or zero-filled data — no silent fallback.
 
 ## 3. logic
 
-- **LOG-1** Daily: tank level = previous level + gains − losses, then capped between empty (wilting point) and full (field capacity); water above full is discarded that day. Tank size = water the soil holds per metre of depth × root depth. All levels are tracked as plant-available water (0 = wilting point, full = tank size); absolute field-capacity/wilting volumes are never needed. Any control change re-runs the whole balance from the full (field-capacity) seed (DAT-2).
-- **LOG-2** Losses = reference evapotranspiration × crop coefficient (no water-stress throttle — losses do not slow down as the soil dries). Define total available water TAW = tank size (LOG-1), readily-available water RAW = p × TAW where p is a fixed 0.5 for all plantings, and the watering threshold = TAW − RAW = (1 − p) × tank size = 0.5 × tank size, where "stored" = water held above wilting point. The threshold is used only as the display marker line (UIX-4); it does not affect the loss calculation.
+- **LOG-1** Daily: tank level = previous level + gains − losses. Tank size = water the soil holds per metre of depth × root depth. All levels are tracked as plant-available water. Any control change re-runs the whole balance.
+- **LOG-2** Losses = reference evapotranspiration × crop coefficient (no water-stress throttle — losses do not slow as the soil dries). Total available water TAW = tank size (LOG-1); readily-available water RAW = p × TAW with p a fixed 0.5 for all plantings, giving a watering threshold = (1 − p) × tank size = 0.5 × tank size. The threshold does not affect the loss calculation.
 - **LOG-3** Gains = rainfall × effectiveness (0.8) + applied watering × efficiency (0.9).
 
 ## 4. controls
 
-- **CTR-1** Planting type → preset crop coefficient and root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting (no FAO-56 growth-stage curve). The depletion fraction p is a fixed 0.5 for all plantings (LOG-2), not a per-planting preset.
-- **CTR-2** Soil type → plant-available water held per metre (field capacity − wilting point). Presets: Sand 60 · Sandy loam 130 · Loam 170 · Clay 190 mm·m⁻¹.
-- **CTR-3** Watering duration (minutes, default 60) → dose applied to each watered day (CTR-4) = sprinkler rate (DAT-3) × minutes (gross; efficiency applied in LOG-3).
-- **CTR-4** Click a day to water, past or future — first click applies the dose, second cancels. Watered-day toggles are independent of the planting/soil presets and persist when presets change.
-- **CTR-5** On load the screen defaults to planting = Flower bed, soil = Sandy loam, and no days watered (watering duration default in CTR-3).
+- **CTR-1** Watering duration (minutes, default is 60, steps of +/- 15) → dose applied to each watered day = sprinkler rate × minutes.
+- **CTR-2** The user can record or plan a watering on any day, past or future, as one fast reversible action.
+- **CTR-3** Planting type → preset crop coefficient, root depth. Presets: Turf (Kc 0.85, 0.15 m) · Flower bed (0.90, 0.30 m) · Shrubs (0.70, 0.50 m). Kc is a single constant per planting. The depletion fraction p is a fixed 0.5 for all plantings (LOG-2), not a per-planting preset.
+- **CTR-4** Soil type → plant-available water held per metre (field capacity − wilting point). Presets: Sand 60 · Sandy loam 130 · Loam 170 · Clay 190 mm·m⁻¹.
+- **CTR-5** On load the screen defaults to planting = Flower bed, soil = Sandy loam.
 
 ## 5. ux/ui
 
-- **UIX-1** Soil moisture across the window is a continuous stepped fill, there's no whitespace between days; water rises bottom-up to each day's level.
-- **UIX-2** Planting with roots on the surface (turf / flowers / plants) and sun on top.
-- **UIX-3** Per day: ET loss, rain in, and watering on graph; daily max temperature as a number.
-- **UIX-4** Horizontal marker line at the watering threshold; today's level labelled as a percentage of available water (0% = wilting, 100% = field capacity).
-- **UIX-5** Display rounding (display only — the balance computes at full precision): stored level as an integer %, temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
-- **UIX-6** Controls: planting type and soil type as segmented buttons (every option visible, single tap); watering duration as a +/− minute stepper.
+- **UIX-1** The user can grasp the soil-moisture trend across the window at a glance, without reading individual day values.
+- **UIX-2** The moisture state is interpretable and trustworthy to someone who isn't tracking the underlying numbers, rather than reading as an abstract figure.
+- **UIX-3** The user can understand why the level changed on a given day, not just that it changed, which builds trust in the estimate.
+- **UIX-4** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
+- **UIX-5** Changing any setting is fast and obvious on a phone, so what-if exploration isn't a chore.
