@@ -186,6 +186,9 @@ export function runBalance(weather, params, wateredSet, dose) {
 
     series.push({
       index: i,
+      date: weather.time[i],
+      weekday: weather.weekday[i],
+      tempMax: weather.tempMax[i],
       start,
       ks: k,
       et0: weather.et0[i],
@@ -208,15 +211,11 @@ export function compute(controls, weather) {
   const wateredSet = new Set(merged.watered);
   const series = runBalance(weather, params, wateredSet, dose);
 
-  const fraction = (mm) => (params.tankSize > 0 ? mm / params.tankSize : 0);
-
   return {
     site: SITE,
     ...params,
     dose,
-    thresholdFraction: fraction(params.threshold),
     series,
     wateredSet,
-    weather,
   };
 }

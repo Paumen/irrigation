@@ -10,7 +10,7 @@
 
 ## 2. data
 
-- **DAT-1** Weather from Open-Meteo's Forecast API (`api.open-meteo.com/v1/forecast`) in a single request — `past_days=24`, `forecast_days=16`, `timezone=Europe/Amsterdam` — giving 24 past days + today + 15 forecast days as one gapless series (today is at index 24; never work it out from the device clock). Daily variables: `precipitation_sum` (rain), `temperature_2m_max` (shown only, not used in maths), `et0_fao_evapotranspiration` (reference water loss, fetched ready-made — never computed in the browser). Missing (null) values: precipitation → 0, et0 → the previous day's value (0 would be wrong), temperature → shown blank.
+- **DAT-1** Weather from Open-Meteo's Forecast API (`api.open-meteo.com/v1/forecast`) in a single request — `past_days=14`, `forecast_days=14`, `timezone=Europe/Amsterdam` — giving 14 past days + today + 13 forecast days as one gapless series (today is at index 14; never work it out from the device clock). Daily variables: `precipitation_sum` (rain), `temperature_2m_max` (shown only, not used in maths), `et0_fao_evapotranspiration` (reference water loss, fetched ready-made — never computed in the browser). Missing (null) values: precipitation → 0, et0 → the previous day's value (0 would be wrong), temperature → shown blank. Each day's weekday is derived from its date string (parsed as UTC, to avoid a local-timezone day shift) for display labels.
 - **DAT-2** Of the days fetched (DAT-1), the earliest ones — before the shown window — are run-up that settles the soil estimate; the tank starts full (field capacity) on the first fetched day. The graph shows a 16-day window: last 8 days, today, next 7.
 - **DAT-3** Sprinkler rate, 0.063 mm/min (3.78 mm/hr gross), from BL4.0 / 180° nozzle (Hunter I-20).
 - **DAT-4** If the weather request fails, the screen shows a clear unavailable/error state rather than estimated, stale, or zero-filled data — no silent fallback.
@@ -20,7 +20,6 @@
 - **LOG-1** Daily: tank level = previous level + gains − losses, then capped between empty (wilting point) and full (field capacity); water above full is discarded that day. Tank size = water the soil holds per metre of depth × root depth. All levels are tracked as plant-available water (0 = wilting point, full = tank size); absolute field-capacity/wilting volumes are never needed. Any control change re-runs the whole balance from the full (field-capacity) seed (DAT-2).
 - **LOG-2** Losses = reference evapotranspiration × crop coefficient × Ks (FAO-56 water-stress coefficient — a dryness throttle). Define total available water TAW = tank size (LOG-1), readily-available water RAW = p × TAW (p set per planting), and the watering threshold = TAW − RAW = (1 − p) × tank size, where "stored" = water held above wilting point. Ks uses the stored level at the start of each day (the previous day's closing level): at or above the threshold Ks = 1; below it Ks drops in a straight line with the stored water (Ks = stored ÷ threshold; if the threshold is 0, Ks = 1), reaching 0 at wilting point.
 - **LOG-3** Gains = rainfall × effectiveness (0.8) + applied watering × efficiency (0.9).
-- **LOG-4** Next-watering projection: step the tank forward over the next 14 days, honouring any toggled future watering, to find the first day it drops to/below the watering threshold; if today is already at or below it, report "now" (+0); if none within 14 days, report ">14 days".
 
 ## 4. controls
 
@@ -35,7 +34,6 @@
 - **UIX-1** Soil moisture across the window is a continuous stepped fill, there's no whitespace between days; water rises bottom-up to each day's level.
 - **UIX-2** Planting with roots on the surface (turf / flowers / plants) and sun on top.
 - **UIX-3** Per day: ET loss, rain in, and watering on graph; daily max temperature as a number.
-- **UIX-4** Horizontal marker line at the watering threshold, which sits at (1 − p) × 100% of available water; today's level labelled as a percentage of available water (0% = wilting, 100% = field capacity).
-- **UIX-5** 'Next watering in +N days' counter (uses LOG-4); ">14 days" when none within 14 days.
-- **UIX-6** Display rounding (display only — the balance computes at full precision): stored level as an integer %, temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
-- **UIX-7** Controls: planting type and soil type as segmented buttons (every option visible, single tap); watering duration as a +/− minute stepper.
+- **UIX-4** Horizontal marker line at the watering threshold; today's level labelled as a percentage of available water (0% = wilting, 100% = field capacity).
+- **UIX-5** Display rounding (display only — the balance computes at full precision): stored level as an integer %, temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
+- **UIX-6** Controls: planting type and soil type as segmented buttons (every option visible, single tap); watering duration as a +/− minute stepper.
