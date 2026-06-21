@@ -7,7 +7,6 @@
   "raw": 17.55,
   "threshold": 21.45,
   "dose": 3.78,
-  "thresholdFraction": 0.55,
   "series": [
     {
       "index": 0,

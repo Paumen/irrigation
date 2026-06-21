@@ -211,13 +211,10 @@ export function compute(controls, weather) {
   const wateredSet = new Set(merged.watered);
   const series = runBalance(weather, params, wateredSet, dose);
 
-  const fraction = (mm) => (params.tankSize > 0 ? mm / params.tankSize : 0);
-
   return {
     site: SITE,
     ...params,
     dose,
-    thresholdFraction: fraction(params.threshold),
     series,
     wateredSet,
   };

@@ -35,7 +35,7 @@
 - **UIX-1** Soil moisture across the window is a continuous stepped fill, there's no whitespace between days; water rises bottom-up to each day's level.
 - **UIX-2** Planting with roots on the surface (turf / flowers / plants) and sun on top.
 - **UIX-3** Per day: ET loss, rain in, and watering on graph; daily max temperature as a number.
-- **UIX-4** Horizontal marker line at the watering threshold, which sits at (1 − p) × 100% of available water; today's level labelled as a percentage of available water (0% = wilting, 100% = field capacity).
+- **UIX-4** Horizontal marker line at the watering threshold; today's level labelled as a percentage of available water (0% = wilting, 100% = field capacity).
 - **UIX-5** 'Next watering in +N days' counter (uses LOG-4); ">14 days" when none within 14 days.
 - **UIX-6** Display rounding (display only — the balance computes at full precision): stored level as an integer %, temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
 - **UIX-7** Controls: planting type and soil type as segmented buttons (every option visible, single tap); watering duration as a +/− minute stepper.
