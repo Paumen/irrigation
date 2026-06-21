@@ -272,6 +272,26 @@ def raindrop(x, y, s, op, color=RAIN):
             f'Q {x-s:.1f} {y-s*0.3:.1f} {x:.1f} {y-2*s:.1f} Z" '
             f'fill="{color}" opacity="{op}"/>')
 
+def watering_can(x, gy, scale=1.0):
+    # compact watering can tipped to pour, with green water falling from the
+    # rose down toward the soil. gy is the can's top edge; x its centre.
+    c = CAN
+    u = scale
+    body = (f'<path d="M {x-3.5*u:.1f} {gy:.1f} h {7*u:.1f} v {5*u:.1f} '
+            f'q 0 {2*u:.1f} {-2*u:.1f} {2*u:.1f} h {-3*u:.1f} '
+            f'q {-2*u:.1f} 0 {-2*u:.1f} {-2*u:.1f} z" fill="{c}"/>')
+    rim = (f'<rect x="{x-4.2*u:.1f}" y="{gy-1.6*u:.1f}" width="{8.4*u:.1f}" '
+           f'height="{2*u:.1f}" rx="{u:.1f}" fill="{c}"/>')
+    handle = (f'<path d="M {x-2*u:.1f} {gy-0.8*u:.1f} q {3*u:.1f} {-5.5*u:.1f} '
+              f'{6*u:.1f} 0" stroke="{c}" stroke-width="{1.3*u:.1f}" fill="none"/>')
+    spout = (f'<path d="M {x+3*u:.1f} {gy+1.5*u:.1f} l {5*u:.1f} {-3*u:.1f} '
+             f'l {1*u:.1f} {2*u:.1f} l {-4.5*u:.1f} {3*u:.1f} z" fill="{c}"/>')
+    # water from the rose tip (upper-right) falling down to the soil
+    tipx = x + 8.5 * u
+    drops = "".join(
+        raindrop(tipx, gy + 2 + k * 4.5, 1.6 * u, "0.9", color=c) for k in range(3))
+    return body + rim + handle + spout + drops
+
 def mockup_D():
     pts = surface_pts()
     grad = (f'<defs><linearGradient id="soilD" x1="0" y1="0" x2="0" y2="1">'
@@ -300,22 +320,25 @@ def mockup_D():
             for k in range(drops):
                 dy = SKY_TOP + 44 + k * (s * 2.6 + 2)
                 weather.append(raindrop(x, dy, s, "0.8"))
-        # hose watering — water in at ground level, green so it's not
-        # mistaken for blue sky-rain.
+        # hose watering — a watering can pouring onto the soil that day, set
+        # at ground level and clearly different from sky weather.
         if d["applied"] > 0:
-            for k in range(2):
-                weather.append(
-                    raindrop(x, SOIL_TOP - 3 - k * 6, 2.3, "0.9", color=CAN))
+            weather.append(watering_can(x, SOIL_TOP - 16))
 
+    watered = any(d["applied"] > 0 for d in S)
     block = (f'<rect x="{PL}" y="{SOIL_TOP}" width="{PLOTW}" '
              f'height="{SOIL_BOT-SOIL_TOP}" fill="none" stroke="{FULL_LN}"/>')
+    last = (f'<g font-family="Segoe UI,sans-serif" font-size="9.5" fill="{INK}">'
+            + watering_can(PL + 218, 340, 0.85)
+            + f'<text x="{PL+232}" y="349">you watered</text></g>') if watered else (
+            f'<g font-family="Segoe UI,sans-serif" font-size="9.5" fill="{INK}">'
+            + f'<rect x="{PL+218}" y="341" width="12" height="9" fill="{SOIL_WET}"/>'
+            + f'<text x="{PL+234}" y="349">water held</text></g>')
     legend = (f'<g font-family="Segoe UI,sans-serif" font-size="9.5" fill="{INK}">'
               + sun_glyph(PL + 5, 345, 4, "0.7")
               + f'<text x="{PL+16}" y="349">sun dries it out</text>'
               + raindrop(PL + 118, 348, 2.6, "0.8")
-              + f'<text x="{PL+126}" y="349">rain feeds it</text>'
-              + f'<rect x="{PL+212}" y="341" width="12" height="9" fill="{SOIL_WET}"/>'
-              + f'<text x="{PL+228}" y="349">water held</text></g>')
+              + f'<text x="{PL+126}" y="349">rain feeds it</text></g>' + last)
     return (svg_open() + grad + header("Soil moisture &#183; rain vs sun")
             + f'<rect x="{PL}" y="{SKY_TOP}" width="{PLOTW}" height="{SOIL_TOP-SKY_TOP}" fill="{SKY}"/>'
             + forecast_wash() + "".join(weather) + fill + line
