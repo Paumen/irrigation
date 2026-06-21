@@ -186,6 +186,9 @@ export function runBalance(weather, params, wateredSet, dose) {
 
     series.push({
       index: i,
+      date: weather.time[i],
+      weekday: weather.weekday[i],
+      tempMax: weather.tempMax[i],
       start,
       ks: k,
       et0: weather.et0[i],
@@ -217,6 +220,5 @@ export function compute(controls, weather) {
     thresholdFraction: fraction(params.threshold),
     series,
     wateredSet,
-    weather,
   };
 }
