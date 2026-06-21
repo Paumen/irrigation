@@ -32,5 +32,5 @@
 - **UIX-1** The user can grasp the soil-moisture trend across the most relevant window at a glance, without reading individual day values.
 - **UIX-2** The user can clearly see why the level changes, not just that it changes, in the same glance, without reading individual day values.
 - **UIX-3** Aesthetic: Calm & natural — soft greens/blues/earth tones, friendly, reassuring.
-- **UIX-4** Soil Cross-Section — the chart is a soil column: water held inside a soil block with a surface line. Distinctive metaphor.
+- **UIX-4** Soil Cross-Section — the chart is a soil column: water held inside a soil block with a surface line. Distinctive metaphor. Rain as rain etc.
 - **UIX-5** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
