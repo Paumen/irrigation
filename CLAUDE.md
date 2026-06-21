@@ -28,6 +28,8 @@ A physics engine for the system's hydraulics **and** control wiring, in progress
 
 `.claude/hooks/session-start.sh` (via `.claude/settings.json`) runs at session start: `pip install -r requirements.txt` (MCP SDK, pyyaml). Synchronous, so the session is ready on open.
 
+The environment setup script also installs the **GitHub CLI (`gh`)** and authenticates it via the `GH_TOKEN` env var (account `Paumen`). So `gh` is available in Bash and can read/operate on all of the user's repos within the token's grants — not just `paumen/irrigation`. Prefer `gh` for GitHub work outside this repo; the `mcp__github__*` tools are scoped to `paumen/irrigation`.
+
 ## Gotchas
 
 - Bash cwd persists across calls, so a `cd` silently changes cwd for every later call — and file tools (`SendUserFile`) resolve relative paths against it. Use absolute paths, or avoid `cd` (e.g. `ls dir/` not `cd dir`).
