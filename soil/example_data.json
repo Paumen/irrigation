@@ -110,159 +110,159 @@
       "et0": 3.6,
       "loss": 3.24,
       "rain": 0.2,
-      "applied": 0,
-      "gain": 0.16000000000000003,
-      "level": 33.739
+      "applied": 3.7800000000000002,
+      "gain": 3.5620000000000003,
+      "level": 37.141
     },
     {
       "index": 8,
       "date": "2026-06-15",
       "weekday": "Monday",
       "tempMax": 19,
-      "start": 33.739,
+      "start": 37.141,
       "et0": 3.19,
       "loss": 2.871,
       "rain": 0,
-      "applied": 0,
-      "gain": 0,
-      "level": 30.868
+      "applied": 3.7800000000000002,
+      "gain": 3.402,
+      "level": 37.672
     },
     {
       "index": 9,
       "date": "2026-06-16",
       "weekday": "Tuesday",
       "tempMax": 23.5,
-      "start": 30.868,
+      "start": 37.672,
       "et0": 4.24,
       "loss": 3.8160000000000003,
       "rain": 0.1,
       "applied": 0,
       "gain": 0.08000000000000002,
-      "level": 27.131999999999998
+      "level": 33.93599999999999
     },
     {
       "index": 10,
       "date": "2026-06-17",
       "weekday": "Wednesday",
       "tempMax": 23.8,
-      "start": 27.131999999999998,
+      "start": 33.93599999999999,
       "et0": 2.9,
       "loss": 2.61,
       "rain": 0.2,
       "applied": 0,
       "gain": 0.16000000000000003,
-      "level": 24.682
+      "level": 31.48599999999999
     },
     {
       "index": 11,
       "date": "2026-06-18",
       "weekday": "Thursday",
       "tempMax": 29.2,
-      "start": 24.682,
+      "start": 31.48599999999999,
       "et0": 5.5,
       "loss": 4.95,
       "rain": 0,
-      "applied": 0,
-      "gain": 0,
-      "level": 19.732
+      "applied": 3.7800000000000002,
+      "gain": 3.402,
+      "level": 29.93799999999999
     },
     {
       "index": 12,
       "date": "2026-06-19",
       "weekday": "Friday",
       "tempMax": 33.7,
-      "start": 19.732,
+      "start": 29.93799999999999,
       "et0": 5.62,
       "loss": 5.058,
       "rain": 3.4,
       "applied": 0,
       "gain": 2.72,
-      "level": 17.394
+      "level": 27.599999999999994
     },
     {
       "index": 13,
       "date": "2026-06-20",
       "weekday": "Saturday",
       "tempMax": 28.9,
-      "start": 17.394,
+      "start": 27.599999999999994,
       "et0": 5.62,
       "loss": 5.058,
       "rain": 3.4,
-      "applied": 0,
-      "gain": 2.72,
-      "level": 15.055999999999997
+      "applied": 3.7800000000000002,
+      "gain": 6.122,
+      "level": 28.663999999999994
     },
     {
       "index": 14,
       "date": "2026-06-21",
       "weekday": "Sunday",
       "tempMax": 29.7,
-      "start": 15.055999999999997,
+      "start": 28.663999999999994,
       "et0": 5.39,
       "loss": 4.851,
       "rain": 0,
       "applied": 0,
       "gain": 0,
-      "level": 10.204999999999998
+      "level": 23.812999999999995
     },
     {
       "index": 15,
       "date": "2026-06-22",
       "weekday": "Monday",
       "tempMax": 30.4,
-      "start": 10.204999999999998,
+      "start": 23.812999999999995,
       "et0": 6.44,
       "loss": 5.796,
       "rain": 0,
       "applied": 0,
       "gain": 0,
-      "level": 4.408999999999998
+      "level": 18.016999999999996
     },
     {
       "index": 16,
       "date": "2026-06-23",
       "weekday": "Tuesday",
       "tempMax": 27.2,
-      "start": 4.408999999999998,
+      "start": 18.016999999999996,
       "et0": 5.62,
       "loss": 5.058,
       "rain": 0,
       "applied": 0,
       "gain": 0,
-      "level": 0
+      "level": 12.958999999999996
     },
     {
       "index": 17,
       "date": "2026-06-24",
       "weekday": "Wednesday",
       "tempMax": 31.7,
-      "start": 0,
+      "start": 12.958999999999996,
       "et0": 5.78,
       "loss": 5.202,
       "rain": 0,
       "applied": 0,
       "gain": 0,
-      "level": 0
+      "level": 7.756999999999996
     },
     {
       "index": 18,
       "date": "2026-06-25",
       "weekday": "Thursday",
       "tempMax": 33.5,
-      "start": 0,
+      "start": 7.756999999999996,
       "et0": 6.42,
       "loss": 5.7780000000000005,
       "rain": 0,
       "applied": 0,
       "gain": 0,
-      "level": 0
+      "level": 1.9789999999999957
     },
     {
       "index": 19,
       "date": "2026-06-26",
       "weekday": "Friday",
       "tempMax": 36,
-      "start": 0,
+      "start": 1.9789999999999957,
       "et0": 6.66,
       "loss": 5.994000000000001,
       "rain": 0,
@@ -388,5 +388,10 @@
       "level": 9.99900000000001
     }
   ],
-  "wateredSet": []
+  "wateredSet": [
+    7,
+    8,
+    11,
+    13
+  ]
 }
