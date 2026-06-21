@@ -317,6 +317,63 @@ def soil_texture(seed=7):
                    f'ry="{rx*rnd.uniform(0.6,0.8):.1f}" fill="#9b8b76" opacity="0.5"/>')
     return "".join(out)
 
+def roots(x, gy):
+    # a taproot + laterals reaching down into the root zone (the block)
+    col = "#6b5235"
+    rd = 0.6 * (SOIL_BOT - SOIL_TOP)
+    tap = (f'<path d="M {x:.1f} {gy:.1f} C {x+3:.1f} {gy+rd*0.35:.1f} '
+           f'{x-3:.1f} {gy+rd*0.7:.1f} {x+1:.1f} {gy+rd:.1f}" stroke="{col}" '
+           f'stroke-width="1.4" fill="none" opacity="0.75" stroke-linecap="round"/>')
+    lats = []
+    for fy, dxn in [(0.28, -1), (0.5, 1), (0.72, -1)]:
+        y0 = gy + rd * fy
+        lats.append(f'<path d="M {x:.1f} {y0:.1f} q {dxn*7:.1f} 5 {dxn*12:.1f} 11" '
+                    f'stroke="{col}" stroke-width="1" fill="none" opacity="0.6" '
+                    f'stroke-linecap="round"/>')
+    return tap + "".join(lats)
+
+def flower(x, gy, health):
+    # a flower on the surface whose vigour tracks the day's moisture: upright
+    # and bright when wet, bowed and faded when the root zone runs dry.
+    health = max(0.0, min(1.0, health))
+    dr = 1.0 - health
+    stem_col = "#6f9a5b" if health > 0.35 else "#9a9a6e"
+    if health > 0.5:
+        petal_col = "#e6967c"
+    elif health > 0.2:
+        petal_col = "#d8a98f"
+    else:
+        petal_col = "#bcab95"
+    ctr_col = "#ecc766" if health > 0.3 else "#cdbb8c"
+    h = 23
+    tipx = x + dr * 10
+    tipy = gy - h + dr * 16
+    c1x = x + dr * 3
+    c1y = gy - h * 0.55
+    stem = (f'<path d="M {x:.1f} {gy:.1f} Q {c1x:.1f} {c1y:.1f} {tipx:.1f} {tipy:.1f}" '
+            f'stroke="{stem_col}" stroke-width="2" fill="none" stroke-linecap="round"/>')
+    lx, ly = (x + c1x) / 2 - 2, (gy + c1y) / 2
+    leaf = (f'<ellipse cx="{lx:.1f}" cy="{ly:.1f}" rx="3.6" ry="1.8" fill="{stem_col}" '
+            f'opacity="0.9" transform="rotate({-35 + dr*40:.0f} {lx:.1f} {ly:.1f})"/>')
+    hr = 3.4 + 1.8 * health
+    petals = []
+    for k in range(6):
+        a = k * math.pi / 3 + dr * 0.4
+        px = tipx + math.cos(a) * hr
+        py = tipy + math.sin(a) * hr
+        petals.append(
+            f'<ellipse cx="{px:.1f}" cy="{py:.1f}" rx="{hr*0.62:.1f}" ry="{hr*0.34:.1f}" '
+            f'fill="{petal_col}" opacity="0.92" '
+            f'transform="rotate({math.degrees(a):.0f} {px:.1f} {py:.1f})"/>')
+    center = f'<circle cx="{tipx:.1f}" cy="{tipy:.1f}" r="{hr*0.5:.1f}" fill="{ctr_col}"/>'
+    fallen = ""
+    if health < 0.15:
+        fallen = (f'<ellipse cx="{x+5:.1f}" cy="{gy-1:.1f}" rx="2" ry="1" '
+                  f'fill="{petal_col}" opacity="0.7"/>'
+                  f'<ellipse cx="{x-4:.1f}" cy="{gy:.1f}" rx="1.8" ry="0.9" '
+                  f'fill="{petal_col}" opacity="0.55"/>')
+    return stem + leaf + "".join(petals) + center + fallen
+
 def mockup_D():
     pts = surface_pts()
     defs = (
@@ -335,7 +392,12 @@ def mockup_D():
                f'height="{SOIL_BOT-SOIL_TOP}" fill="url(#earth)"/>')
     water = (f'<path d="{p} L {pts[-1][0]:.1f} {SOIL_BOT} L {pts[0][0]:.1f} '
              f'{SOIL_BOT} Z" fill="url(#water)" opacity="0.66"/>')
-    soil_group = f'<g clip-path="url(#blk)">{soil_bg}{soil_texture()}{water}</g>'
+    flower_idx = list(range(2, N, 4))
+    roots_svg = "".join(roots(cx(i), SOIL_TOP) for i in flower_idx)
+    flowers_svg = "".join(
+        flower(cx(i), SOIL_TOP, S[i]["level"] / TANK) for i in flower_idx)
+    soil_group = (f'<g clip-path="url(#blk)">{soil_bg}{soil_texture()}{water}'
+                  f'{roots_svg}</g>')
     # the water table — top of the held water, smoothed
     water_top = (f'<path d="{p}" fill="none" stroke="#3f7e9c" stroke-width="2.5" '
                  f'clip-path="url(#blk)"/>')
@@ -382,7 +444,8 @@ def mockup_D():
               + f'<text x="{PL+126}" y="349">rain feeds it</text></g>' + last)
     return (svg_open() + defs + header("Soil moisture &#183; rain vs sun")
             + f'<rect x="{PL}" y="{SKY_TOP}" width="{PLOTW}" height="{SOIL_TOP-SKY_TOP}" fill="{SKY}"/>'
-            + soil_group + forecast_wash() + ground + water_top + "".join(weather)
+            + soil_group + forecast_wash() + ground + water_top
+            + "".join(weather) + flowers_svg
             + block + today_divider() + axis_labels() + legend + "</svg>")
 
 def watered_series(indices):
