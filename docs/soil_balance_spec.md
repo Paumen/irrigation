@@ -31,7 +31,7 @@
 ## 5. ux/ui
 
 - **UIX-1** The user can grasp the soil-moisture trend across the window at a glance, without reading individual day values.
-- **UIX-2** The moisture state is interpretable and trustworthy to someone who isn't tracking the underlying numbers, rather than reading as an abstract figure.
-- **UIX-3** The user can understand why the level changed on a given day, not just that it changed, which builds trust in the estimate.
-- **UIX-4** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
-- **UIX-5** Changing any setting is fast and obvious on a phone, so what-if exploration isn't a chore.
+
+- **UIX-2** UIX-3 The user can understand why the level changed on for each day, not just that it changed, in the same glance.
+- **UIX-3** Display rounding (display only — the balance computes at full precision): temperature as an integer °C, and water depths (dose, rain, ET) to 1 decimal mm.
+- **UIX-4** Changing any setting is fast and obvious on a phone, so what-if exploration isn't a chore.
