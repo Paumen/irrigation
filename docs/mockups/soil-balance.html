@@ -12,7 +12,7 @@
     --bg:#E7E4DA; --ink:#4A463C; --faint:#9A9484;
     --surface:#5A4A33; --table:#1FA6BE;
     /* warm-accent palette — one tone per meaning */
-    --today:#0E7C86; --amber:#D98A2B; --rust:#B5471F; --refill:#E0392B;
+    --today:#0E7C86; --amber:#D98A2B; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
     --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
     --serif: "Newsreader",Georgia,"Times New Roman",serif;
@@ -26,9 +26,9 @@
   .sw{width:13px;height:13px;border-radius:6px;display:inline-block}
   .scene{position:relative;width:auto;margin:0}
   .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:#FBFAF6;z-index:3;pointer-events:none;
-    border-right:1px solid #d8d3c6}
+    border-right:1px solid #e0dbcd}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:#5b5547;letter-spacing:.02em;white-space:nowrap}
-  .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #cdc8ba}
+  .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #e0dbcd}
   .axis .water{color:#1696ae}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
@@ -46,12 +46,11 @@
   /* ===== app shell ===== */
   header.app{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px}
   header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:#3E5639;display:flex;align-items:center;gap:8px}
-  .logo{width:11px;height:14px;background:linear-gradient(#5fc6da,#1FA6BE);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;box-shadow:inset -2px -2px 0 rgba(255,255,255,.28)}
   header.app .loc{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
   .status{margin:4px 12px 12px;padding:16px 24px 16px;background:#FBFAF6;border:1px solid #ECE7D8;border-radius:18px}
-  .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#a3a494;font-weight:600}
+  .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8270;font-weight:600}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
   .status .word{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:0;line-height:1.1;margin-top:8px}
   .status .detail{font-size:14px;color:#5b5547;margin-top:8px;line-height:1.4}
@@ -60,7 +59,7 @@
   .status .sub{font-size:12px;color:#8a8270}
   .status .bar{position:relative;height:8px;background:#ECE7D8;border-radius:6px;margin-top:12px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:6px}
-  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--refill)}
+  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rust)}
   .status .rfl{position:relative;height:13px}
   .status .rfl span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:var(--rust);font-weight:700;top:1px;white-space:nowrap}
   .view{display:none}
@@ -100,7 +99,7 @@
 </head>
 <body class="booting" data-state="ok">
   <header class="app">
-    <h1><span class="logo"></span>Soil-Balance</h1>
+    <h1>Soil-Balance</h1>
     <span class="loc" id="locline">Flower bed · Wijchen</span>
   </header>
   <main>
@@ -326,8 +325,8 @@ function build(){
   const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
   soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="var(--surface)" stroke-width="2.4"/>`
      +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#FBFAF6" stroke-width="4.6" opacity="0.5"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--refill)" stroke-width="2.8" stroke-dasharray="8 5"/>`
-     +`<rect x="${(AX+3).toFixed(1)}" y="${(refillY-16).toFixed(1)}" width="40" height="14" rx="3" fill="var(--refill)"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#E0392B" stroke-width="2.8" stroke-dasharray="8 5"/>`
+     +`<rect x="${(AX+3).toFixed(1)}" y="${(refillY-16).toFixed(1)}" width="40" height="14" rx="3" fill="#E0392B"/>`
      +`<text x="${(AX+23).toFixed(1)}" y="${(refillY-9).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="9" font-weight="700" fill="#fff" letter-spacing=".06em">refill</text>`;
 
   /* craquelure on parched columns */

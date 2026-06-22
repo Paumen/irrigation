@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="944" height="1264" viewBox="0 0 944 1264" font-family="ui-sans-serif,Segoe UI,system-ui,sans-serif">
-<rect width="944" height="1264" fill="#E7E4DA"/>
-<text x="28" y="52" font-size="22" font-weight="700" fill="#4A463C">soil-balance.html — chrome colour tokens (33 total)</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="944" height="1024" viewBox="0 0 944 1024" font-family="ui-sans-serif,Segoe UI,system-ui,sans-serif">
+<rect width="944" height="1024" fill="#E7E4DA"/>
+<text x="28" y="52" font-size="22" font-weight="700" fill="#4A463C">soil-balance.html — chrome colour tokens (27 total)</text>
 <text x="28" y="90" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">TOKENS  (:ROOT)</text>
 <rect x="28" y="98" width="210" height="46" rx="4" fill="#E7E4DA" stroke="#00000018"/>
 <text x="38" y="126" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#E7E4DA</text>
@@ -13,100 +13,81 @@
 <text x="490" y="159" font-size="12" fill="#5B5547">--faint  muted</text>
 <rect x="706" y="98" width="210" height="46" rx="4" fill="#5A4A33" stroke="#00000018"/>
 <text x="716" y="126" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#5A4A33</text>
-<text x="716" y="159" font-size="12" fill="#5B5547">--surface</text>
+<text x="716" y="159" font-size="12" fill="#5B5547">--surface  (illustration)</text>
 <rect x="28" y="178" width="210" height="46" rx="4" fill="#1FA6BE" stroke="#00000018"/>
 <text x="38" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#1FA6BE</text>
-<text x="38" y="239" font-size="12" fill="#5B5547">--table  brand</text>
+<text x="38" y="239" font-size="12" fill="#5B5547">--table  teal</text>
 <rect x="254" y="178" width="210" height="46" rx="4" fill="#0E7C86" stroke="#00000018"/>
 <text x="264" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#0E7C86</text>
-<text x="264" y="239" font-size="12" fill="#5B5547">--today</text>
+<text x="264" y="239" font-size="12" fill="#5B5547">--today  teal</text>
 <rect x="480" y="178" width="210" height="46" rx="4" fill="#D98A2B" stroke="#00000018"/>
 <text x="490" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#D98A2B</text>
 <text x="490" y="239" font-size="12" fill="#5B5547">--amber</text>
 <rect x="706" y="178" width="210" height="46" rx="4" fill="#B5471F" stroke="#00000018"/>
 <text x="716" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#B5471F</text>
 <text x="716" y="239" font-size="12" fill="#5B5547">--rust</text>
-<rect x="28" y="258" width="210" height="46" rx="4" fill="#E0392B" stroke="#00000018"/>
-<text x="38" y="286" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#E0392B</text>
-<text x="38" y="319" font-size="12" fill="#5B5547">--refill</text>
-<text x="28" y="380" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">NEUTRALS / SURFACES / BORDERS</text>
-<rect x="28" y="388" width="210" height="46" rx="4" fill="#FBFAF6" stroke="#00000018"/>
-<text x="38" y="416" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#FBFAF6</text>
-<text x="38" y="449" font-size="12" fill="#5B5547">surface</text>
-<rect x="254" y="388" width="210" height="46" rx="4" fill="#ECE7D8" stroke="#00000018"/>
-<text x="264" y="416" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#ECE7D8</text>
-<text x="264" y="449" font-size="12" fill="#5B5547">hairline / track</text>
-<rect x="480" y="388" width="210" height="46" rx="4" fill="#E0DBCD" stroke="#00000018"/>
-<text x="490" y="416" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#E0DBCD</text>
-<text x="490" y="449" font-size="12" fill="#5B5547">borders / track</text>
-<rect x="706" y="388" width="210" height="46" rx="4" fill="#F3F0E7" stroke="#00000018"/>
-<text x="716" y="416" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#F3F0E7</text>
-<text x="716" y="449" font-size="12" fill="#5B5547">controls grad top</text>
-<rect x="28" y="468" width="210" height="46" rx="4" fill="#CDBF9F" stroke="#00000018"/>
-<text x="38" y="496" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#CDBF9F</text>
-<text x="38" y="529" font-size="12" fill="#5B5547">seg hover border</text>
-<rect x="254" y="468" width="210" height="46" rx="4" fill="#D8D3C6" stroke="#00000018"/>
-<text x="264" y="496" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#D8D3C6</text>
-<text x="264" y="529" font-size="12" fill="#5B5547">axis border</text>
-<rect x="480" y="468" width="210" height="46" rx="4" fill="#CDC8BA" stroke="#00000018"/>
-<text x="490" y="496" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#CDC8BA</text>
-<text x="490" y="529" font-size="12" fill="#5B5547">axis tick</text>
-<rect x="706" y="468" width="210" height="46" rx="4" fill="#FFFFFF" stroke="#00000018"/>
-<text x="716" y="496" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#FFFFFF</text>
-<text x="716" y="529" font-size="12" fill="#5B5547">pure white</text>
-<text x="28" y="590" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">TEXT GRAYS</text>
-<rect x="28" y="598" width="210" height="46" rx="4" fill="#5B5547" stroke="#00000018"/>
-<text x="38" y="626" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#5B5547</text>
-<text x="38" y="659" font-size="12" fill="#5B5547">control text</text>
-<rect x="254" y="598" width="210" height="46" rx="4" fill="#8A8270" stroke="#00000018"/>
-<text x="264" y="626" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#8A8270</text>
-<text x="264" y="659" font-size="12" fill="#5B5547">labels / sub</text>
-<rect x="480" y="598" width="210" height="46" rx="4" fill="#A3A494" stroke="#00000018"/>
-<text x="490" y="626" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#A3A494</text>
-<text x="490" y="659" font-size="12" fill="#5B5547">status kick</text>
-<rect x="706" y="598" width="210" height="46" rx="4" fill="#BDB6A4" stroke="#00000018"/>
-<text x="716" y="626" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#BDB6A4</text>
-<text x="716" y="659" font-size="12" fill="#5B5547">scrollbar thumb</text>
-<rect x="28" y="678" width="210" height="46" rx="4" fill="#A89F8B" stroke="#00000018"/>
-<text x="38" y="706" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#A89F8B</text>
-<text x="38" y="739" font-size="12" fill="#5B5547">thumb active</text>
-<text x="28" y="800" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">GREENS</text>
-<rect x="28" y="808" width="210" height="46" rx="4" fill="#6E8E68" stroke="#00000018"/>
-<text x="38" y="836" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#6E8E68</text>
-<text x="38" y="869" font-size="12" fill="#5B5547">primary accent</text>
-<rect x="254" y="808" width="210" height="46" rx="4" fill="#3E5639" stroke="#00000018"/>
-<text x="264" y="836" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#3E5639</text>
-<text x="264" y="869" font-size="12" fill="#5B5547">h1</text>
-<rect x="480" y="808" width="210" height="46" rx="4" fill="#4F6B4A" stroke="#00000018"/>
-<text x="490" y="836" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#4F6B4A</text>
-<text x="490" y="869" font-size="12" fill="#5B5547">demo-on text</text>
-<text x="28" y="930" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">OTHER ACCENTS</text>
-<rect x="28" y="938" width="210" height="46" rx="4" fill="#5FC6DA" stroke="#00000018"/>
-<text x="38" y="966" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#5FC6DA</text>
-<text x="38" y="999" font-size="12" fill="#5B5547">logo grad top</text>
-<rect x="254" y="938" width="210" height="46" rx="4" fill="#1696AE" stroke="#00000018"/>
-<text x="264" y="966" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#1696AE</text>
-<text x="264" y="999" font-size="12" fill="#5B5547">axis water</text>
-<rect x="480" y="938" width="210" height="46" rx="4" fill="#9C4A2E" stroke="#00000018"/>
-<text x="490" y="966" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#9C4A2E</text>
-<text x="490" y="999" font-size="12" fill="#5B5547">error text</text>
-<rect x="706" y="938" width="210" height="46" rx="4" fill="#F1E1DA" stroke="#00000018"/>
-<text x="716" y="966" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#F1E1DA</text>
-<text x="716" y="999" font-size="12" fill="#5B5547">error icon bg</text>
-<rect x="28" y="1018" width="210" height="46" rx="4" fill="#E9EEE7" stroke="#00000018"/>
-<text x="38" y="1046" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#E9EEE7</text>
-<text x="38" y="1079" font-size="12" fill="#5B5547">demo-on bg</text>
-<text x="28" y="1140" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">RGBA (OVER GREY TO SHOW ALPHA)</text>
-<rect x="28" y="1148" width="210" height="46" fill="#9a9486"/>
-<rect x="28" y="1148" width="210" height="46" fill="rgba(255,255,255,.28)" stroke="#00000022"/>
-<text x="38" y="1176" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">rgba(255,255,255,.28)</text>
-<text x="38" y="1209" font-size="12" fill="#5B5547">logo inset shadow</text>
-<rect x="254" y="1148" width="210" height="46" fill="#9a9486"/>
-<rect x="254" y="1148" width="210" height="46" fill="rgba(243,240,231,0)" stroke="#00000022"/>
-<text x="264" y="1176" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">rgba(243,240,231,0)</text>
-<text x="264" y="1209" font-size="12" fill="#5B5547">controls fade</text>
-<rect x="480" y="1148" width="210" height="46" fill="#9a9486"/>
-<rect x="480" y="1148" width="210" height="46" fill="rgba(79,107,74,.7)" stroke="#00000022"/>
-<text x="490" y="1176" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">rgba(79,107,74,.7)</text>
-<text x="490" y="1209" font-size="12" fill="#5B5547">pressed shadow</text>
+<text x="28" y="300" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">NEUTRALS / SURFACES / BORDERS</text>
+<rect x="28" y="308" width="210" height="46" rx="4" fill="#FBFAF6" stroke="#00000018"/>
+<text x="38" y="336" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#FBFAF6</text>
+<text x="38" y="369" font-size="12" fill="#5B5547">surface</text>
+<rect x="254" y="308" width="210" height="46" rx="4" fill="#ECE7D8" stroke="#00000018"/>
+<text x="264" y="336" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#ECE7D8</text>
+<text x="264" y="369" font-size="12" fill="#5B5547">hairline / track</text>
+<rect x="480" y="308" width="210" height="46" rx="4" fill="#E0DBCD" stroke="#00000018"/>
+<text x="490" y="336" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#E0DBCD</text>
+<text x="490" y="369" font-size="12" fill="#5B5547">borders / track / axis</text>
+<rect x="706" y="308" width="210" height="46" rx="4" fill="#F3F0E7" stroke="#00000018"/>
+<text x="716" y="336" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#F3F0E7</text>
+<text x="716" y="369" font-size="12" fill="#5B5547">controls grad top</text>
+<rect x="28" y="388" width="210" height="46" rx="4" fill="#CDBF9F" stroke="#00000018"/>
+<text x="38" y="416" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#CDBF9F</text>
+<text x="38" y="449" font-size="12" fill="#5B5547">seg hover border</text>
+<rect x="254" y="388" width="210" height="46" rx="4" fill="#FFFFFF" stroke="#00000018"/>
+<text x="264" y="416" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#FFFFFF</text>
+<text x="264" y="449" font-size="12" fill="#5B5547">pure white</text>
+<text x="28" y="510" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">GREYS</text>
+<rect x="28" y="518" width="210" height="46" rx="4" fill="#5B5547" stroke="#00000018"/>
+<text x="38" y="546" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#5B5547</text>
+<text x="38" y="579" font-size="12" fill="#5B5547">control text</text>
+<rect x="254" y="518" width="210" height="46" rx="4" fill="#8A8270" stroke="#00000018"/>
+<text x="264" y="546" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#8A8270</text>
+<text x="264" y="579" font-size="12" fill="#5B5547">labels / sub / kick</text>
+<rect x="480" y="518" width="210" height="46" rx="4" fill="#BDB6A4" stroke="#00000018"/>
+<text x="490" y="546" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#BDB6A4</text>
+<text x="490" y="579" font-size="12" fill="#5B5547">scrollbar thumb</text>
+<rect x="706" y="518" width="210" height="46" rx="4" fill="#A89F8B" stroke="#00000018"/>
+<text x="716" y="546" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#A89F8B</text>
+<text x="716" y="579" font-size="12" fill="#5B5547">thumb active</text>
+<text x="28" y="640" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">GREENS</text>
+<rect x="28" y="648" width="210" height="46" rx="4" fill="#6E8E68" stroke="#00000018"/>
+<text x="38" y="676" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#6E8E68</text>
+<text x="38" y="709" font-size="12" fill="#5B5547">primary accent</text>
+<rect x="254" y="648" width="210" height="46" rx="4" fill="#3E5639" stroke="#00000018"/>
+<text x="264" y="676" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#3E5639</text>
+<text x="264" y="709" font-size="12" fill="#5B5547">h1</text>
+<rect x="480" y="648" width="210" height="46" rx="4" fill="#4F6B4A" stroke="#00000018"/>
+<text x="490" y="676" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#4F6B4A</text>
+<text x="490" y="709" font-size="12" fill="#5B5547">demo-on text</text>
+<text x="28" y="770" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">OTHER ACCENTS</text>
+<rect x="28" y="778" width="210" height="46" rx="4" fill="#1696AE" stroke="#00000018"/>
+<text x="38" y="806" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#1696AE</text>
+<text x="38" y="839" font-size="12" fill="#5B5547">axis water  (teal)</text>
+<rect x="254" y="778" width="210" height="46" rx="4" fill="#9C4A2E" stroke="#00000018"/>
+<text x="264" y="806" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#9C4A2E</text>
+<text x="264" y="839" font-size="12" fill="#5B5547">error text</text>
+<rect x="480" y="778" width="210" height="46" rx="4" fill="#F1E1DA" stroke="#00000018"/>
+<text x="490" y="806" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#F1E1DA</text>
+<text x="490" y="839" font-size="12" fill="#5B5547">error icon bg</text>
+<rect x="706" y="778" width="210" height="46" rx="4" fill="#E9EEE7" stroke="#00000018"/>
+<text x="716" y="806" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#E9EEE7</text>
+<text x="716" y="839" font-size="12" fill="#5B5547">demo-on bg</text>
+<text x="28" y="900" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">RGBA</text>
+<rect x="28" y="908" width="210" height="46" fill="#9a9486"/>
+<rect x="28" y="908" width="210" height="46" fill="rgba(243,240,231,0)" stroke="#00000022"/>
+<text x="38" y="936" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">rgba(243,240,231,0)</text>
+<text x="38" y="969" font-size="12" fill="#5B5547">controls fade</text>
+<rect x="254" y="908" width="210" height="46" fill="#9a9486"/>
+<rect x="254" y="908" width="210" height="46" fill="rgba(79,107,74,.7)" stroke="#00000022"/>
+<text x="264" y="936" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">rgba(79,107,74,.7)</text>
+<text x="264" y="969" font-size="12" fill="#5B5547">pressed shadow</text>
 </svg>
