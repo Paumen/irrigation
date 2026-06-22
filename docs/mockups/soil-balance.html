@@ -4,32 +4,38 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Soil-Balance — Wijchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#E7E4DA; --ink:#4A463C; --faint:#9A9484;
     --surface:#5A4A33; --table:#1FA6BE;
     /* warm-accent palette — one tone per meaning */
-    --today:#0E7C86; --amber:#D98A2B; --rust:#B5471F;
+    --today:#0E7C86; --amber:#D98A2B; --rust:#B5471F; --refill:#E0392B;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
     --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
+    --serif: "Newsreader",Georgia,"Times New Roman",serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%}
-  .key{display:flex;flex-wrap:wrap;gap:4px 11px;align-items:center;
-    font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--faint);padding:6px 12px 8px}
+  .key{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--ink);padding:10px 14px 4px}
   .key b{color:var(--ink);font-weight:600;letter-spacing:.05em;text-transform:lowercase}
   .key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
-  .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
-  .scene{position:relative;width:auto;margin:0 12px;background:#FBFAF6;
-    border:1px solid #E0DBCD;border-radius:12px;box-shadow:0 6px 20px -14px rgba(74,70,60,.45);overflow:hidden}
+  .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+  .scene{position:relative;width:auto;margin:0}
   .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:#FBFAF6;z-index:3;pointer-events:none;
     border-right:1px solid #d8d3c6}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:11px;color:#5f5948;letter-spacing:.02em;white-space:nowrap}
   .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #cdc8ba}
   .axis .water{color:#1696ae}
-  .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-  .scroll::-webkit-scrollbar{height:7px}
-  .scroll::-webkit-scrollbar-thumb{background:#cfcabd;border-radius:4px}
+  .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+  /* always-visible custom scrollbar (native bars auto-hide on mobile) */
+  .sbar{position:relative;height:9px;margin:6px 12px 0;background:#ece7d8;border-radius:5px;touch-action:none}
+  .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:#bdb6a4;border-radius:5px;cursor:grab}
+  .sthumb:active{cursor:grabbing;background:#a89f8b}
   svg{display:block;transition:opacity .7s ease}
   .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
   .booting svg{opacity:0}
@@ -43,6 +49,20 @@
   .logo{width:11px;height:14px;background:linear-gradient(#5fc6da,#1FA6BE);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;box-shadow:inset -2px -2px 0 rgba(255,255,255,.28)}
   header.app .loc{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
+  /* ===== status headline (improvement #1) ===== */
+  .status{margin:4px 12px 12px;padding:17px 18px 16px;background:#FBFAF6;border:1px solid #ECE7D8;border-radius:18px}
+  .status .kick{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#a3a494;font-weight:600}
+  .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+  .status .word{font-family:var(--serif);font-size:33px;font-weight:500;letter-spacing:0;line-height:1.05;margin-top:7px}
+  .status .detail{font-size:13px;color:#5b5547;margin-top:5px;line-height:1.4}
+  .status .metric{margin-top:11px;padding-top:10px;border-top:1px solid #EFEADD}
+  .status .pct{font-family:var(--serif);font-size:27px;font-weight:600;letter-spacing:0}
+  .status .sub{font-size:11.5px;color:#8a8270}
+  .status .bar{position:relative;height:8px;background:#eee7d6;border-radius:5px;margin-top:9px}
+  .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:5px}
+  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--refill)}
+  .status .rfl{position:relative;height:13px}
+  .status .rfl span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--rust);font-weight:700;top:1px;white-space:nowrap}
   .view{display:none}
   body[data-state="ok"] .view-ok{display:block}
   .view-loading,.view-error{flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center;min-height:260px;padding:30px 20px}
@@ -84,19 +104,20 @@
     <span class="loc" id="locline">Flower bed · Wijchen</span>
   </header>
   <main>
+    <div id="status" class="status"></div>
     <div class="board">
       <div class="view view-ok">
+  <div class="scene" id="scene">
+    <div class="scroll" id="scroll"></div>
+  </div>
+
+  <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
+
   <div class="key">
     <span><i class="sw" style="background:linear-gradient(#E8A93C,#E2640F)"></i>loss</span>
     <span><i class="sw" style="background:#3F7FA0"></i>rain</span>
     <span><i class="sw" style="background:linear-gradient(#A9C2A4,#84A37E)"></i>watering</span>
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
-    <span><i class="sw" style="background:repeating-linear-gradient(90deg,var(--rust) 0 4px,transparent 4px 7px)"></i>refill point</span>
-  </div>
-
-  <div class="scene" id="scene">
-    <div class="axis" id="axis"></div>
-    <div class="scroll" id="scroll"></div>
   </div>
       </div><!-- /board -->
 
@@ -131,9 +152,6 @@
     </section>
   </main>
 
-  <footer class="app-foot">
-    <span class="coords">Vormersesluisweg 3A, Wijchen · 51.797°N 5.706°E · resets on reload</span>
-  </footer>
 
 <script>
 const TANK=39, DOSE=3.78, START=39, TODAY="2026-06-21";
@@ -187,8 +205,8 @@ function skyColor(t){const h=clamp((t-15)/(36-15),0,1);return hexLerp('#DCE4DF',
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
 /* geometry */
-const H=460, SKY_TOP=20, SURF=160, SOIL_BOT=404, SOIL_D=SOIL_BOT-SURF;
-const AX=44, PADR=12, ROOT_REACH=SOIL_D*0.5; // roots only reach halfway, fixed
+const H=440, SKY_TOP=20, SURF=160, SOIL_BOT=404, SOIL_D=SOIL_BOT-SURF;
+const AX=0, PADR=12, ROOT_REACH=SOIL_D*0.5; // roots only reach halfway, fixed
 // soil horizons (offset from SURF): litter, topsoil A, subsoil B, substratum C
 const HORIZ=[
   {y0:0,   y1:16,  fill:'#67563C', edge:'#473a26', sp:'#4d4027', spn:0.9, peb:0},     // litter (dark organic)
@@ -234,7 +252,7 @@ function build(){
   DATA.forEach(d=>{
     const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
-    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#FBF1DC" opacity="${(0.18+heat*0.30).toFixed(2)}"/>`;
+    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#FBF1DC" opacity="${(0.10+heat*0.18).toFixed(2)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
       const sc=hexLerp('#E2640F','#E88A22',0.5);
@@ -244,15 +262,15 @@ function build(){
     // sun (saturated, punchy)
     const si=clamp((d.et0-1)/(6.5-1),0,1);
     if(si>0.04){
-      const sx=x0+dayW*0.5, sy=SKY_TOP+24, rad=lerp(4,8.5,si), core=sunCore(heat);
-      const gw=rad*lerp(2.6,4.2,heat);
-      let rays='';const nr=Math.round(lerp(6,12,si));
-      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2.2,r2=rad+lerp(3.5,10,si);
-        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(1,2.1,si).toFixed(2)}" stroke-linecap="round"/>`;}
-      weather+=`<g opacity="${future?0.9:1}">`
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.5+heat*0.4).toFixed(2)}"/>`
+      const sx=x0+dayW*0.5, sy=SKY_TOP+24, rad=lerp(3,6,si), core=sunCore(heat);
+      const gw=rad*lerp(2.2,3.2,heat);
+      let rays='';const nr=Math.round(lerp(5,9,si));
+      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2,r2=rad+lerp(2.5,7,si);
+        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(0.8,1.5,si).toFixed(2)}" stroke-linecap="round"/>`;}
+      weather+=`<g opacity="${future?0.62:0.8}">`
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.26+heat*0.22).toFixed(2)}"/>`
         +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#C0540C','#B84810',heat)}" stroke-width="0.9"/></g>`;
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#C0540C','#B84810',heat)}" stroke-width="0.8"/></g>`;
     }
     // rain
     if(d.rain>0.05){
@@ -307,9 +325,10 @@ function build(){
   // surface
   const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
   soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="var(--surface)" stroke-width="2.4"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--rust)" stroke-width="2.6" stroke-dasharray="9 4" opacity="1"/>`
-     +`<rect x="${(AX+2).toFixed(1)}" y="${(refillY-15).toFixed(1)}" width="44" height="14" rx="3" fill="var(--rust)"/>`
-     +`<text x="${(AX+6)}" y="${(refillY-5).toFixed(1)}" font-family="${SVGMONO}" font-size="9.5" font-weight="700" fill="#fff" letter-spacing=".04em">refill</text>`;
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#FBFAF6" stroke-width="4.6" opacity="0.5"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--refill)" stroke-width="2.8" stroke-dasharray="8 5"/>`
+     +`<rect x="${(AX+3).toFixed(1)}" y="${(refillY-16).toFixed(1)}" width="40" height="14" rx="3" fill="var(--refill)"/>`
+     +`<text x="${(AX+23).toFixed(1)}" y="${(refillY-9).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="9" font-weight="700" fill="#fff" letter-spacing=".06em">refill</text>`;
 
   /* craquelure on parched columns */
   let cracks='';
@@ -332,11 +351,12 @@ function build(){
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="10.5"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="9.5"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
-  const NOW='#0E7C86', fw=40, fh=14, fy=3;
+  const NOW='#0E7C86', fw=44, fh=15, fy=3;
   const today=
-     `<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="3.5" fill="${NOW}"/>`
-    +`<polygon points="${(tx-3).toFixed(1)},${(fy+fh).toFixed(1)} ${(tx+3).toFixed(1)},${(fy+fh).toFixed(1)} ${tx.toFixed(1)},${(fy+fh+3.5).toFixed(1)}" fill="${NOW}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh-3.8).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".08em">today</text>`;
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh-4.2).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
   // when to water: first day at/after today below the refill point
   let wantWater='', needIdx=-1;
   for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){ needIdx=k; break; } }
@@ -454,15 +474,41 @@ function roots(x,sY,v,rng){
 function jag(pts){let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`;return d;}
 
 /* mount + interactivity */
-const scroll=document.getElementById('scroll'),axis=document.getElementById('axis');
+const scroll=document.getElementById('scroll'),sbar=document.getElementById('sbar'),sthumb=document.getElementById('sthumb');
 let G, booted=false;
 function pct(y){return (y/H*100).toFixed(2);}
+/* status headline — gives the verdict before the chart (improvement #1) */
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dlabel=d=>`${MON[+d.date.slice(5,7)-1]} ${+d.date.slice(8,10)}`;
+function renderStatus(){
+  const ti=DATA.findIndex(d=>d.date===TODAY), tl=DATA[ti].level;
+  const pct=Math.round(tl/TANK*100), thPos=REFILL/TANK*100, N=DATA.length;
+  let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
+  const RUST='#B5471F',AMBER='#D98A2B',GREEN='#4F6B4A';
+  let word,color,kick;
+  if(tl<=0.05){ word='Water today'; color=RUST; kick='Refill point reached'; }
+  else if(tl<REFILL){ word='Water now'; color=RUST; kick='Below refill point'; }
+  else {                                   // above refill — always name the days out
+    let dd, plus=''; if(firstBelow>=0){ dd=firstBelow-ti; } else { dd=(N-1)-ti; plus='+'; }
+    word = dd===1 ? 'Water tomorrow' : `Water in ${dd}${plus} days`;
+    color = dd>=2 ? GREEN : AMBER;         // today/now rust, tomorrow amber, 2+ days green
+    kick='Above refill point';
+  }
+  document.getElementById('status').innerHTML=
+    `<div class="kick"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${kick}</div>`
+   +`<div class="word" style="color:${color}">${word}</div>`
+   +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
+   +`<span class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:#8a8270">%</span></span>`
+   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div>`
+   +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
+   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div></div>`;
+}
 function render(){
   G=build();
   scroll.innerHTML=G.svg;
-  const pctTick=p=>{const y=SOIL_BOT-(p/100)*SOIL_D;return `<div class="tick" style="top:${pct(y)}%"></div><div class="lbl" style="top:${(y/H*100-1.2).toFixed(2)}%;left:5px">${p}%</div>`;};
-  axis.innerHTML=`${pctTick(100)}${pctTick(75)}${pctTick(50)}${pctTick(25)}${pctTick(0)}`;
+  renderStatus();
   wireHits();
+  requestAnimationFrame(syncBar);
   if(!booted){scroll.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX);booted=true;requestAnimationFrame(()=>document.body.classList.remove('booting'));}
 }
 function rerender(){const sl=scroll.scrollLeft;render();scroll.scrollLeft=sl;}
@@ -478,6 +524,27 @@ function wireHits(){
   });
 }
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
+
+/* custom scrollbar — reflects + drives the chart's horizontal scroll */
+function syncBar(){
+  const cw=scroll.clientWidth, sw=scroll.scrollWidth, tw=sbar.clientWidth;
+  if(sw<=cw+1){ sbar.style.visibility='hidden'; return; }
+  sbar.style.visibility='visible';
+  const thumbW=Math.max(28, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
+  sthumb.style.width=thumbW+'px';
+  sthumb.style.left=(maxScroll>0?(scroll.scrollLeft/maxScroll)*maxLeft:0)+'px';
+}
+scroll.addEventListener('scroll',syncBar,{passive:true});
+let _drag=false,_x0=0,_l0=0;
+sthumb.addEventListener('pointerdown',e=>{_drag=true;_x0=e.clientX;_l0=parseFloat(sthumb.style.left)||0;sthumb.setPointerCapture(e.pointerId);e.preventDefault();});
+sthumb.addEventListener('pointermove',e=>{ if(!_drag)return;
+  const tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(_l0+(e.clientX-_x0),0,maxLeft)/maxLeft)*maxScroll:0; });
+sthumb.addEventListener('pointerup',()=>{_drag=false;});
+sbar.addEventListener('pointerdown',e=>{ if(e.target===sthumb)return;
+  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
+
 render();
 
 /* ---- page chrome: state switch · presets · watering duration ---- */
