@@ -51,7 +51,7 @@ const RAW = [
   ["2026-07-04","Saturday",19.4,2.97,3],["2026-07-05","Sunday",29.2,5.98,0]
 ];
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const KC = 0.9, TANK = 39, RAIN_EFF = 0.8, TODAY = 17;          // TODAY -> 2026-06-21
+const KC = 0.9, TANK = 39, RAIN_EFF = 0.8, WATER_EFF = 0.9, TODAY = 17;  // TODAY -> 2026-06-21
 const X0 = 16, DAYW = 34, SURFACE = 58, BLOCKH = 196;
 const BB = SURFACE + BLOCKH, PPM = BLOCKH / TANK;               // px per mm
 
@@ -80,7 +80,7 @@ function recompute(plan,dose){
   const rate=dose/60, out=[]; let prev=TANK;
   for(let i=0;i<RAW.length;i++){ const r=RAW[i], start=prev;
     const loss=r[3]*KC, gain=r[4]*RAIN_EFF, mins=plan[i]||0, applied=rate*mins;
-    let level=clamp(start+gain-loss+applied,0,TANK);
+    let level=clamp(start+gain-loss+applied*WATER_EFF,0,TANK);  // 0.9 watering efficiency, matches soil/soil.js
     out.push({i,date:r[0],weekday:r[1],temp:r[2],et0:r[3],rain:r[4],start,loss,gain,mins,applied,level});
     prev=level;
   }
