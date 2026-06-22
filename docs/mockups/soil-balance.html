@@ -48,7 +48,7 @@
   header.app .loc{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
-  .status{margin:2px 12px 0;padding:13px 15px 12px;background:#FBFAF6;border:1px solid #E0DBCD;border-radius:12px}
+  .status{margin:0;padding:6px 14px 12px}
   .status .kick{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a8270;font-weight:600}
   .status .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
   .status .word{font-family:var(--serif);font-size:33px;font-weight:500;letter-spacing:0;line-height:1.05;margin-top:7px}
@@ -351,11 +351,12 @@ function build(){
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="10.5"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="9.5"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
-  const NOW='#0E7C86', fw=40, fh=14, fy=3;
+  const NOW='#0E7C86', fw=44, fh=15, fy=3;
   const today=
-     `<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="3.5" fill="${NOW}"/>`
-    +`<polygon points="${(tx-3).toFixed(1)},${(fy+fh).toFixed(1)} ${(tx+3).toFixed(1)},${(fy+fh).toFixed(1)} ${tx.toFixed(1)},${(fy+fh+3.5).toFixed(1)}" fill="${NOW}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh-3.8).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".08em">today</text>`;
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh-4.2).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
   // when to water: first day at/after today below the refill point
   let wantWater='', needIdx=-1;
   for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){ needIdx=k; break; } }
@@ -499,13 +500,11 @@ function renderStatus(){
   document.getElementById('status').innerHTML=
     `<div class="kick"><span class="dot" style="background:${color}"></span>${kick}</div>`
    +`<div class="word" style="color:${color}">${word}</div>`
-   +`<div class="detail">${detail}</div>`
-   +`<div class="metric"><div style="display:flex;align-items:baseline;gap:9px">`
+   +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
    +`<span class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:#8a8270">%</span></span>`
-   +`<span class="sub">${Math.round(tl)} of ${TANK} mm in root zone</span></div>`
+   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div>`
    +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
-   +`<span class="mark" style="left:${thPos}%"></span></div>`
-   +`<div class="rfl"><span style="left:${thPos}%">refill</span></div></div>`;
+   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div></div>`;
 }
 function render(){
   G=build();
