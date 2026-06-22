@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="944" height="1024" viewBox="0 0 944 1024" font-family="ui-sans-serif,Segoe UI,system-ui,sans-serif">
 <rect width="944" height="1024" fill="#E7E4DA"/>
-<text x="28" y="52" font-size="22" font-weight="700" fill="#4A463C">soil-balance.html — chrome colour tokens (27 total)</text>
+<text x="28" y="52" font-size="22" font-weight="700" fill="#4A463C">soil-balance.html — chrome colour tokens (26 total)</text>
 <text x="28" y="90" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">TOKENS  (:ROOT)</text>
 <rect x="28" y="98" width="210" height="46" rx="4" fill="#E7E4DA" stroke="#00000018"/>
 <text x="38" y="126" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#E7E4DA</text>
@@ -17,9 +17,9 @@
 <rect x="28" y="178" width="210" height="46" rx="4" fill="#1FA6BE" stroke="#00000018"/>
 <text x="38" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#1FA6BE</text>
 <text x="38" y="239" font-size="12" fill="#5B5547">--table  teal</text>
-<rect x="254" y="178" width="210" height="46" rx="4" fill="#0E7C86" stroke="#00000018"/>
-<text x="264" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#0E7C86</text>
-<text x="264" y="239" font-size="12" fill="#5B5547">--today  teal</text>
+<rect x="254" y="178" width="210" height="46" rx="4" fill="#4F6B4A" stroke="#00000018"/>
+<text x="264" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#4F6B4A</text>
+<text x="264" y="239" font-size="12" fill="#5B5547">--today / green</text>
 <rect x="480" y="178" width="210" height="46" rx="4" fill="#D98A2B" stroke="#00000018"/>
 <text x="490" y="206" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#2a2620">#D98A2B</text>
 <text x="490" y="239" font-size="12" fill="#5B5547">--amber</text>
@@ -65,9 +65,6 @@
 <rect x="254" y="648" width="210" height="46" rx="4" fill="#3E5639" stroke="#00000018"/>
 <text x="264" y="676" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#3E5639</text>
 <text x="264" y="709" font-size="12" fill="#5B5547">h1</text>
-<rect x="480" y="648" width="210" height="46" rx="4" fill="#4F6B4A" stroke="#00000018"/>
-<text x="490" y="676" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#4F6B4A</text>
-<text x="490" y="709" font-size="12" fill="#5B5547">demo-on text</text>
 <text x="28" y="770" font-size="13" font-weight="700" letter-spacing="1.5" fill="#8A8270">OTHER ACCENTS</text>
 <rect x="28" y="778" width="210" height="46" rx="4" fill="#1696AE" stroke="#00000018"/>
 <text x="38" y="806" font-size="14" font-weight="700" font-family="ui-monospace,Menlo,monospace" fill="#ffffff">#1696AE</text>
