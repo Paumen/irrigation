@@ -1,0 +1,300 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="798" height="2526" font-family="ui-monospace,Menlo,Consolas,monospace">
+<rect width="798" height="2526" fill="#E7E4DA"/>
+<text x="24" y="22" font-size="9" fill="#9A9484"></text>
+<text x="24" y="44" font-size="15" font-weight="700" fill="#4A463C">CSS variables</text>
+<rect x="24" y="58" width="142" height="64" rx="6" fill="#E7E4DA" stroke="#00000022"/>
+<text x="34" y="110" font-size="12" font-weight="600" fill="#222">#E7E4DA</text>
+<text x="24" y="136" font-size="11" fill="#4A463C">--bg</text>
+<rect x="174" y="58" width="142" height="64" rx="6" fill="#4A463C" stroke="#00000022"/>
+<text x="184" y="110" font-size="12" font-weight="600" fill="#fff">#4A463C</text>
+<text x="174" y="136" font-size="11" fill="#4A463C">--ink</text>
+<rect x="324" y="58" width="142" height="64" rx="6" fill="#9A9484" stroke="#00000022"/>
+<text x="334" y="110" font-size="12" font-weight="600" fill="#222">#9A9484</text>
+<text x="324" y="136" font-size="11" fill="#4A463C">--faint</text>
+<rect x="474" y="58" width="142" height="64" rx="6" fill="#5A4A33" stroke="#00000022"/>
+<text x="484" y="110" font-size="12" font-weight="600" fill="#fff">#5A4A33</text>
+<text x="474" y="136" font-size="11" fill="#4A463C">--surface</text>
+<rect x="624" y="58" width="142" height="64" rx="6" fill="#1FA6BE" stroke="#00000022"/>
+<text x="634" y="110" font-size="12" font-weight="600" fill="#fff">#1FA6BE</text>
+<text x="624" y="136" font-size="11" fill="#4A463C">--table</text>
+<rect x="24" y="144" width="142" height="64" rx="6" fill="#4F6B4A" stroke="#00000022"/>
+<text x="34" y="196" font-size="12" font-weight="600" fill="#fff">#4F6B4A</text>
+<text x="24" y="222" font-size="11" fill="#4A463C">--today</text>
+<rect x="174" y="144" width="142" height="64" rx="6" fill="#D98A2B" stroke="#00000022"/>
+<text x="184" y="196" font-size="12" font-weight="600" fill="#222">#D98A2B</text>
+<text x="174" y="222" font-size="11" fill="#4A463C">--amber</text>
+<rect x="324" y="144" width="142" height="64" rx="6" fill="#B5471F" stroke="#00000022"/>
+<text x="334" y="196" font-size="12" font-weight="600" fill="#fff">#B5471F</text>
+<text x="324" y="222" font-size="11" fill="#4A463C">--rust</text>
+<text x="24" y="264" font-size="15" font-weight="700" fill="#4A463C">CSS UI (greys / surfaces)</text>
+<rect x="24" y="278" width="142" height="64" rx="6" fill="#FBFAF6" stroke="#00000022"/>
+<text x="34" y="330" font-size="12" font-weight="600" fill="#222">#FBFAF6</text>
+<text x="24" y="356" font-size="11" fill="#4A463C">FBFAF6</text>
+<rect x="174" y="278" width="142" height="64" rx="6" fill="#E0DBCD" stroke="#00000022"/>
+<text x="184" y="330" font-size="12" font-weight="600" fill="#222">#E0DBCD</text>
+<text x="174" y="356" font-size="11" fill="#4A463C">e0dbcd</text>
+<rect x="324" y="278" width="142" height="64" rx="6" fill="#5b5547" stroke="#00000022"/>
+<text x="334" y="330" font-size="12" font-weight="600" fill="#fff">#5B5547</text>
+<text x="324" y="356" font-size="11" fill="#4A463C">5b5547</text>
+<rect x="474" y="278" width="142" height="64" rx="6" fill="#1696ae" stroke="#00000022"/>
+<text x="484" y="330" font-size="12" font-weight="600" fill="#fff">#1696AE</text>
+<text x="474" y="356" font-size="11" fill="#4A463C">1696ae</text>
+<rect x="624" y="278" width="142" height="64" rx="6" fill="#bdb6a4" stroke="#00000022"/>
+<text x="634" y="330" font-size="12" font-weight="600" fill="#222">#BDB6A4</text>
+<text x="624" y="356" font-size="11" fill="#4A463C">bdb6a4</text>
+<rect x="24" y="364" width="142" height="64" rx="6" fill="#4F6B4A" stroke="#00000022"/>
+<text x="34" y="416" font-size="12" font-weight="600" fill="#fff">#4F6B4A</text>
+<text x="24" y="442" font-size="11" fill="#4A463C">4F6B4A</text>
+<rect x="174" y="364" width="142" height="64" rx="6" fill="#8a8270" stroke="#00000022"/>
+<text x="184" y="416" font-size="12" font-weight="600" fill="#fff">#8A8270</text>
+<text x="174" y="442" font-size="11" fill="#4A463C">8a8270</text>
+<rect x="324" y="364" width="142" height="64" rx="6" fill="#1FA6BE" stroke="#00000022"/>
+<text x="334" y="416" font-size="12" font-weight="600" fill="#fff">#1FA6BE</text>
+<text x="324" y="442" font-size="11" fill="#4A463C">1FA6BE</text>
+<rect x="474" y="364" width="142" height="64" rx="6" fill="#f1e1da" stroke="#00000022"/>
+<text x="484" y="416" font-size="12" font-weight="600" fill="#222">#F1E1DA</text>
+<text x="474" y="442" font-size="11" fill="#4A463C">f1e1da</text>
+<rect x="624" y="364" width="142" height="64" rx="6" fill="#9c4a2e" stroke="#00000022"/>
+<text x="634" y="416" font-size="12" font-weight="600" fill="#fff">#9C4A2E</text>
+<text x="624" y="442" font-size="11" fill="#4A463C">9c4a2e</text>
+<rect x="24" y="450" width="142" height="64" rx="6" fill="#6E8E68" stroke="#00000022"/>
+<text x="34" y="502" font-size="12" font-weight="600" fill="#fff">#6E8E68</text>
+<text x="24" y="528" font-size="11" fill="#4A463C">6E8E68</text>
+<rect x="174" y="450" width="142" height="64" rx="6" fill="#ffffff" stroke="#00000022"/>
+<text x="184" y="502" font-size="12" font-weight="600" fill="#222">#FFFFFF</text>
+<text x="174" y="528" font-size="11" fill="#4A463C">fff</text>
+<rect x="324" y="450" width="142" height="64" rx="6" fill="#cdbf9f" stroke="#00000022"/>
+<text x="334" y="502" font-size="12" font-weight="600" fill="#222">#CDBF9F</text>
+<text x="324" y="528" font-size="11" fill="#4A463C">cdbf9f</text>
+<rect x="474" y="450" width="142" height="64" rx="6" fill="#F3F0E7" stroke="#00000022"/>
+<text x="484" y="502" font-size="12" font-weight="600" fill="#222">#F3F0E7</text>
+<text x="474" y="528" font-size="11" fill="#4A463C">F3F0E7</text>
+<rect x="624" y="450" width="142" height="64" rx="6" fill="#e9eee7" stroke="#00000022"/>
+<text x="634" y="502" font-size="12" font-weight="600" fill="#222">#E9EEE7</text>
+<text x="624" y="528" font-size="11" fill="#4A463C">e9eee7</text>
+<text x="24" y="570" font-size="15" font-weight="700" fill="#4A463C">rootColor ramp</text>
+<rect x="24" y="584" width="142" height="64" rx="6" fill="#2A2620" stroke="#00000022"/>
+<text x="34" y="636" font-size="12" font-weight="600" fill="#fff">#2A2620</text>
+<text x="24" y="662" font-size="11" fill="#4A463C">2A2620</text>
+<rect x="174" y="584" width="142" height="64" rx="6" fill="#56422E" stroke="#00000022"/>
+<text x="184" y="636" font-size="12" font-weight="600" fill="#fff">#56422E</text>
+<text x="174" y="662" font-size="11" fill="#4A463C">56422E</text>
+<rect x="324" y="584" width="142" height="64" rx="6" fill="#8A6A3E" stroke="#00000022"/>
+<text x="334" y="636" font-size="12" font-weight="600" fill="#fff">#8A6A3E</text>
+<text x="324" y="662" font-size="11" fill="#4A463C">8A6A3E</text>
+<rect x="474" y="584" width="142" height="64" rx="6" fill="#6E7B3C" stroke="#00000022"/>
+<text x="484" y="636" font-size="12" font-weight="600" fill="#fff">#6E7B3C</text>
+<text x="474" y="662" font-size="11" fill="#4A463C">6E7B3C</text>
+<rect x="624" y="584" width="142" height="64" rx="6" fill="#4E7B52" stroke="#00000022"/>
+<text x="634" y="636" font-size="12" font-weight="600" fill="#fff">#4E7B52</text>
+<text x="624" y="662" font-size="11" fill="#4A463C">4E7B52</text>
+<text x="24" y="704" font-size="15" font-weight="700" fill="#4A463C">plantColor ramp</text>
+<rect x="24" y="718" width="142" height="64" rx="6" fill="#3A352C" stroke="#00000022"/>
+<text x="34" y="770" font-size="12" font-weight="600" fill="#fff">#3A352C</text>
+<text x="24" y="796" font-size="11" fill="#4A463C">3A352C</text>
+<rect x="174" y="718" width="142" height="64" rx="6" fill="#9A7A3C" stroke="#00000022"/>
+<text x="184" y="770" font-size="12" font-weight="600" fill="#fff">#9A7A3C</text>
+<text x="174" y="796" font-size="11" fill="#4A463C">9A7A3C</text>
+<rect x="324" y="718" width="142" height="64" rx="6" fill="#7E8A3E" stroke="#00000022"/>
+<text x="334" y="770" font-size="12" font-weight="600" fill="#fff">#7E8A3E</text>
+<text x="324" y="796" font-size="11" fill="#4A463C">7E8A3E</text>
+<rect x="474" y="718" width="142" height="64" rx="6" fill="#4F7F4A" stroke="#00000022"/>
+<text x="484" y="770" font-size="12" font-weight="600" fill="#fff">#4F7F4A</text>
+<text x="474" y="796" font-size="11" fill="#4A463C">4F7F4A</text>
+<rect x="624" y="718" width="142" height="64" rx="6" fill="#3F7A3B" stroke="#00000022"/>
+<text x="634" y="770" font-size="12" font-weight="600" fill="#fff">#3F7A3B</text>
+<text x="624" y="796" font-size="11" fill="#4A463C">3F7A3B</text>
+<text x="24" y="838" font-size="15" font-weight="700" fill="#4A463C">leafColor ramp</text>
+<rect x="24" y="852" width="142" height="64" rx="6" fill="#6B5A38" stroke="#00000022"/>
+<text x="34" y="904" font-size="12" font-weight="600" fill="#fff">#6B5A38</text>
+<text x="24" y="930" font-size="11" fill="#4A463C">6B5A38</text>
+<rect x="174" y="852" width="142" height="64" rx="6" fill="#9C8A45" stroke="#00000022"/>
+<text x="184" y="904" font-size="12" font-weight="600" fill="#fff">#9C8A45</text>
+<text x="174" y="930" font-size="11" fill="#4A463C">9C8A45</text>
+<rect x="324" y="852" width="142" height="64" rx="6" fill="#6FA06A" stroke="#00000022"/>
+<text x="334" y="904" font-size="12" font-weight="600" fill="#fff">#6FA06A</text>
+<text x="324" y="930" font-size="11" fill="#4A463C">6FA06A</text>
+<rect x="474" y="852" width="142" height="64" rx="6" fill="#5F9A5A" stroke="#00000022"/>
+<text x="484" y="904" font-size="12" font-weight="600" fill="#fff">#5F9A5A</text>
+<text x="474" y="930" font-size="11" fill="#4A463C">5F9A5A</text>
+<text x="24" y="972" font-size="15" font-weight="700" fill="#4A463C">sunCore / sky</text>
+<rect x="24" y="986" width="142" height="64" rx="6" fill="#E8A93C" stroke="#00000022"/>
+<text x="34" y="1038" font-size="12" font-weight="600" fill="#222">#E8A93C</text>
+<text x="24" y="1064" font-size="11" fill="#4A463C">E8A93C</text>
+<rect x="174" y="986" width="142" height="64" rx="6" fill="#E88A22" stroke="#00000022"/>
+<text x="184" y="1038" font-size="12" font-weight="600" fill="#222">#E88A22</text>
+<text x="174" y="1064" font-size="11" fill="#4A463C">E88A22</text>
+<rect x="324" y="986" width="142" height="64" rx="6" fill="#E2640F" stroke="#00000022"/>
+<text x="334" y="1038" font-size="12" font-weight="600" fill="#fff">#E2640F</text>
+<text x="324" y="1064" font-size="11" fill="#4A463C">E2640F</text>
+<rect x="474" y="986" width="142" height="64" rx="6" fill="#DCE4DF" stroke="#00000022"/>
+<text x="484" y="1038" font-size="12" font-weight="600" fill="#222">#DCE4DF</text>
+<text x="474" y="1064" font-size="11" fill="#4A463C">DCE4DF</text>
+<rect x="624" y="986" width="142" height="64" rx="6" fill="#F4E2C0" stroke="#00000022"/>
+<text x="634" y="1038" font-size="12" font-weight="600" fill="#222">#F4E2C0</text>
+<text x="624" y="1064" font-size="11" fill="#4A463C">F4E2C0</text>
+<text x="24" y="1106" font-size="15" font-weight="700" fill="#4A463C">SVG gradient defs</text>
+<rect x="24" y="1120" width="142" height="64" rx="6" fill="#34BCD2" stroke="#00000022"/>
+<text x="34" y="1172" font-size="12" font-weight="600" fill="#222">#34BCD2</text>
+<text x="24" y="1198" font-size="11" fill="#4A463C">34BCD2</text>
+<rect x="174" y="1120" width="142" height="64" rx="6" fill="#0C6478" stroke="#00000022"/>
+<text x="184" y="1172" font-size="12" font-weight="600" fill="#fff">#0C6478</text>
+<text x="174" y="1198" font-size="11" fill="#4A463C">0C6478</text>
+<rect x="324" y="1120" width="142" height="64" rx="6" fill="#F6C669" stroke="#00000022"/>
+<text x="334" y="1172" font-size="12" font-weight="600" fill="#222">#F6C669</text>
+<text x="324" y="1198" font-size="11" fill="#4A463C">F6C669</text>
+<rect x="474" y="1120" width="142" height="64" rx="6" fill="#3FC8DC" stroke="#00000022"/>
+<text x="484" y="1172" font-size="12" font-weight="600" fill="#222">#3FC8DC</text>
+<text x="474" y="1198" font-size="11" fill="#4A463C">3FC8DC</text>
+<rect x="624" y="1120" width="142" height="64" rx="6" fill="#1796AE" stroke="#00000022"/>
+<text x="634" y="1172" font-size="12" font-weight="600" fill="#fff">#1796AE</text>
+<text x="624" y="1198" font-size="11" fill="#4A463C">1796AE</text>
+<rect x="24" y="1206" width="142" height="64" rx="6" fill="#E8B576" stroke="#00000022"/>
+<text x="34" y="1258" font-size="12" font-weight="600" fill="#222">#E8B576</text>
+<text x="24" y="1284" font-size="11" fill="#4A463C">E8B576</text>
+<rect x="174" y="1206" width="142" height="64" rx="6" fill="#E0975A" stroke="#00000022"/>
+<text x="184" y="1258" font-size="12" font-weight="600" fill="#222">#E0975A</text>
+<text x="174" y="1284" font-size="11" fill="#4A463C">E0975A</text>
+<rect x="324" y="1206" width="142" height="64" rx="6" fill="#D2783C" stroke="#00000022"/>
+<text x="334" y="1258" font-size="12" font-weight="600" fill="#222">#D2783C</text>
+<text x="324" y="1284" font-size="11" fill="#4A463C">D2783C</text>
+<text x="24" y="1326" font-size="15" font-weight="700" fill="#4A463C">Soil horizons (fill/edge/speckle)</text>
+<rect x="24" y="1340" width="142" height="64" rx="6" fill="#67563C" stroke="#00000022"/>
+<text x="34" y="1392" font-size="12" font-weight="600" fill="#fff">#67563C</text>
+<text x="24" y="1418" font-size="11" fill="#4A463C">67563C</text>
+<rect x="174" y="1340" width="142" height="64" rx="6" fill="#473a26" stroke="#00000022"/>
+<text x="184" y="1392" font-size="12" font-weight="600" fill="#fff">#473A26</text>
+<text x="174" y="1418" font-size="11" fill="#4A463C">473a26</text>
+<rect x="324" y="1340" width="142" height="64" rx="6" fill="#4d4027" stroke="#00000022"/>
+<text x="334" y="1392" font-size="12" font-weight="600" fill="#fff">#4D4027</text>
+<text x="324" y="1418" font-size="11" fill="#4A463C">4d4027</text>
+<rect x="474" y="1340" width="142" height="64" rx="6" fill="#AC8856" stroke="#00000022"/>
+<text x="484" y="1392" font-size="12" font-weight="600" fill="#222">#AC8856</text>
+<text x="474" y="1418" font-size="11" fill="#4A463C">AC8856</text>
+<rect x="624" y="1340" width="142" height="64" rx="6" fill="#83632f" stroke="#00000022"/>
+<text x="634" y="1392" font-size="12" font-weight="600" fill="#fff">#83632F</text>
+<text x="624" y="1418" font-size="11" fill="#4A463C">83632f</text>
+<rect x="24" y="1426" width="142" height="64" rx="6" fill="#8f6c3a" stroke="#00000022"/>
+<text x="34" y="1478" font-size="12" font-weight="600" fill="#fff">#8F6C3A</text>
+<text x="24" y="1504" font-size="11" fill="#4A463C">8f6c3a</text>
+<rect x="174" y="1426" width="142" height="64" rx="6" fill="#8C5E3C" stroke="#00000022"/>
+<text x="184" y="1478" font-size="12" font-weight="600" fill="#fff">#8C5E3C</text>
+<text x="174" y="1504" font-size="11" fill="#4A463C">8C5E3C</text>
+<rect x="324" y="1426" width="142" height="64" rx="6" fill="#603c22" stroke="#00000022"/>
+<text x="334" y="1478" font-size="12" font-weight="600" fill="#fff">#603C22</text>
+<text x="324" y="1504" font-size="11" fill="#4A463C">603c22</text>
+<rect x="474" y="1426" width="142" height="64" rx="6" fill="#774b2c" stroke="#00000022"/>
+<text x="484" y="1478" font-size="12" font-weight="600" fill="#fff">#774B2C</text>
+<text x="474" y="1504" font-size="11" fill="#4A463C">774b2c</text>
+<rect x="624" y="1426" width="142" height="64" rx="6" fill="#C6B488" stroke="#00000022"/>
+<text x="634" y="1478" font-size="12" font-weight="600" fill="#222">#C6B488</text>
+<text x="624" y="1504" font-size="11" fill="#4A463C">C6B488</text>
+<rect x="24" y="1512" width="142" height="64" rx="6" fill="#9a875c" stroke="#00000022"/>
+<text x="34" y="1564" font-size="12" font-weight="600" fill="#fff">#9A875C</text>
+<text x="24" y="1590" font-size="11" fill="#4A463C">9a875c</text>
+<rect x="174" y="1512" width="142" height="64" rx="6" fill="#a08f63" stroke="#00000022"/>
+<text x="184" y="1564" font-size="12" font-weight="600" fill="#222">#A08F63</text>
+<text x="174" y="1590" font-size="11" fill="#4A463C">a08f63</text>
+<text x="24" y="1632" font-size="15" font-weight="700" fill="#4A463C">Key swatches</text>
+<rect x="24" y="1646" width="142" height="64" rx="6" fill="#E8A93C" stroke="#00000022"/>
+<text x="34" y="1698" font-size="12" font-weight="600" fill="#222">#E8A93C</text>
+<text x="24" y="1724" font-size="11" fill="#4A463C">E8A93C</text>
+<rect x="174" y="1646" width="142" height="64" rx="6" fill="#E2640F" stroke="#00000022"/>
+<text x="184" y="1698" font-size="12" font-weight="600" fill="#fff">#E2640F</text>
+<text x="174" y="1724" font-size="11" fill="#4A463C">E2640F</text>
+<rect x="324" y="1646" width="142" height="64" rx="6" fill="#3F7FA0" stroke="#00000022"/>
+<text x="334" y="1698" font-size="12" font-weight="600" fill="#fff">#3F7FA0</text>
+<text x="324" y="1724" font-size="11" fill="#4A463C">3F7FA0</text>
+<rect x="474" y="1646" width="142" height="64" rx="6" fill="#A9C2A4" stroke="#00000022"/>
+<text x="484" y="1698" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
+<text x="474" y="1724" font-size="11" fill="#4A463C">A9C2A4</text>
+<rect x="624" y="1646" width="142" height="64" rx="6" fill="#84A37E" stroke="#00000022"/>
+<text x="634" y="1698" font-size="12" font-weight="600" fill="#222">#84A37E</text>
+<text x="624" y="1724" font-size="11" fill="#4A463C">84A37E</text>
+<text x="24" y="1766" font-size="15" font-weight="700" fill="#4A463C">Watering can</text>
+<rect x="24" y="1780" width="142" height="64" rx="6" fill="#84A37E" stroke="#00000022"/>
+<text x="34" y="1832" font-size="12" font-weight="600" fill="#222">#84A37E</text>
+<text x="24" y="1858" font-size="11" fill="#4A463C">84A37E</text>
+<rect x="174" y="1780" width="142" height="64" rx="6" fill="#A9C2A4" stroke="#00000022"/>
+<text x="184" y="1832" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
+<text x="174" y="1858" font-size="11" fill="#4A463C">A9C2A4</text>
+<rect x="324" y="1780" width="142" height="64" rx="6" fill="#46613F" stroke="#00000022"/>
+<text x="334" y="1832" font-size="12" font-weight="600" fill="#fff">#46613F</text>
+<text x="324" y="1858" font-size="11" fill="#4A463C">46613F</text>
+<rect x="474" y="1780" width="142" height="64" rx="6" fill="#C7DCC2" stroke="#00000022"/>
+<text x="484" y="1832" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
+<text x="474" y="1858" font-size="11" fill="#4A463C">C7DCC2</text>
+<rect x="624" y="1780" width="142" height="64" rx="6" fill="#3E5639" stroke="#00000022"/>
+<text x="634" y="1832" font-size="12" font-weight="600" fill="#fff">#3E5639</text>
+<text x="624" y="1858" font-size="11" fill="#4A463C">3E5639</text>
+<text x="24" y="1900" font-size="15" font-weight="700" fill="#4A463C">Water stream / splash</text>
+<rect x="24" y="1914" width="142" height="64" rx="6" fill="#6FC8DA" stroke="#00000022"/>
+<text x="34" y="1966" font-size="12" font-weight="600" fill="#222">#6FC8DA</text>
+<text x="24" y="1992" font-size="11" fill="#4A463C">6FC8DA</text>
+<rect x="174" y="1914" width="142" height="64" rx="6" fill="#E8FAFD" stroke="#00000022"/>
+<text x="184" y="1966" font-size="12" font-weight="600" fill="#222">#E8FAFD</text>
+<text x="174" y="1992" font-size="11" fill="#4A463C">E8FAFD</text>
+<rect x="324" y="1914" width="142" height="64" rx="6" fill="#BDEAF1" stroke="#00000022"/>
+<text x="334" y="1966" font-size="12" font-weight="600" fill="#222">#BDEAF1</text>
+<text x="324" y="1992" font-size="11" fill="#4A463C">BDEAF1</text>
+<rect x="474" y="1914" width="142" height="64" rx="6" fill="#5FC0D4" stroke="#00000022"/>
+<text x="484" y="1966" font-size="12" font-weight="600" fill="#222">#5FC0D4</text>
+<text x="474" y="1992" font-size="11" fill="#4A463C">5FC0D4</text>
+<rect x="624" y="1914" width="142" height="64" rx="6" fill="#EAFBFE" stroke="#00000022"/>
+<text x="634" y="1966" font-size="12" font-weight="600" fill="#222">#EAFBFE</text>
+<text x="624" y="1992" font-size="11" fill="#4A463C">EAFBFE</text>
+<text x="24" y="2034" font-size="15" font-weight="700" fill="#4A463C">Plant / flower</text>
+<rect x="24" y="2048" width="142" height="64" rx="6" fill="#33302A" stroke="#00000022"/>
+<text x="34" y="2100" font-size="12" font-weight="600" fill="#fff">#33302A</text>
+<text x="24" y="2126" font-size="11" fill="#4A463C">33302A</text>
+<rect x="174" y="2048" width="142" height="64" rx="6" fill="#C98AB0" stroke="#00000022"/>
+<text x="184" y="2100" font-size="12" font-weight="600" fill="#222">#C98AB0</text>
+<text x="174" y="2126" font-size="11" fill="#4A463C">C98AB0</text>
+<rect x="324" y="2048" width="142" height="64" rx="6" fill="#E7C24A" stroke="#00000022"/>
+<text x="334" y="2100" font-size="12" font-weight="600" fill="#222">#E7C24A</text>
+<text x="324" y="2126" font-size="11" fill="#4A463C">E7C24A</text>
+<rect x="474" y="2048" width="142" height="64" rx="6" fill="#9C8A45" stroke="#00000022"/>
+<text x="484" y="2100" font-size="12" font-weight="600" fill="#fff">#9C8A45</text>
+<text x="474" y="2126" font-size="11" fill="#4A463C">9C8A45</text>
+<text x="24" y="2168" font-size="15" font-weight="700" fill="#4A463C">Other SVG</text>
+<rect x="24" y="2182" width="142" height="64" rx="6" fill="#FBF1DC" stroke="#00000022"/>
+<text x="34" y="2234" font-size="12" font-weight="600" fill="#222">#FBF1DC</text>
+<text x="24" y="2260" font-size="11" fill="#4A463C">FBF1DC</text>
+<rect x="174" y="2182" width="142" height="64" rx="6" fill="#C0540C" stroke="#00000022"/>
+<text x="184" y="2234" font-size="12" font-weight="600" fill="#fff">#C0540C</text>
+<text x="174" y="2260" font-size="11" fill="#4A463C">C0540C</text>
+<rect x="324" y="2182" width="142" height="64" rx="6" fill="#B84810" stroke="#00000022"/>
+<text x="334" y="2234" font-size="12" font-weight="600" fill="#fff">#B84810</text>
+<text x="324" y="2260" font-size="11" fill="#4A463C">B84810</text>
+<rect x="474" y="2182" width="142" height="64" rx="6" fill="#c9f1f6" stroke="#00000022"/>
+<text x="484" y="2234" font-size="12" font-weight="600" fill="#222">#C9F1F6</text>
+<text x="474" y="2260" font-size="11" fill="#4A463C">c9f1f6</text>
+<rect x="624" y="2182" width="142" height="64" rx="6" fill="#5C7A57" stroke="#00000022"/>
+<text x="634" y="2234" font-size="12" font-weight="600" fill="#fff">#5C7A57</text>
+<text x="624" y="2260" font-size="11" fill="#4A463C">5C7A57</text>
+<text x="24" y="2302" font-size="15" font-weight="700" fill="#4A463C">Status / ticks (JS)</text>
+<rect x="24" y="2316" width="142" height="64" rx="6" fill="#B5471F" stroke="#00000022"/>
+<text x="34" y="2368" font-size="12" font-weight="600" fill="#fff">#B5471F</text>
+<text x="24" y="2394" font-size="11" fill="#4A463C">RUST B5471F</text>
+<rect x="174" y="2316" width="142" height="64" rx="6" fill="#D98A2B" stroke="#00000022"/>
+<text x="184" y="2368" font-size="12" font-weight="600" fill="#222">#D98A2B</text>
+<text x="174" y="2394" font-size="11" fill="#4A463C">AMBER D98A2B</text>
+<rect x="324" y="2316" width="142" height="64" rx="6" fill="#4F6B4A" stroke="#00000022"/>
+<text x="334" y="2368" font-size="12" font-weight="600" fill="#fff">#4F6B4A</text>
+<text x="324" y="2394" font-size="11" fill="#4A463C">GREEN 4F6B4A</text>
+<rect x="474" y="2316" width="142" height="64" rx="6" fill="#8a8270" stroke="#00000022"/>
+<text x="484" y="2368" font-size="12" font-weight="600" fill="#fff">#8A8270</text>
+<text x="474" y="2394" font-size="11" fill="#4A463C">8a8270</text>
+<rect x="624" y="2316" width="142" height="64" rx="6" fill="#8a663f" stroke="#00000022"/>
+<text x="634" y="2368" font-size="12" font-weight="600" fill="#fff">#8A663F</text>
+<text x="624" y="2394" font-size="11" fill="#4A463C">8a663f</text>
+<rect x="24" y="2402" width="142" height="64" rx="6" fill="#7a7363" stroke="#00000022"/>
+<text x="34" y="2454" font-size="12" font-weight="600" fill="#fff">#7A7363</text>
+<text x="24" y="2480" font-size="11" fill="#4A463C">7a7363</text>
+<rect x="174" y="2402" width="142" height="64" rx="6" fill="#7a5026" stroke="#00000022"/>
+<text x="184" y="2454" font-size="12" font-weight="600" fill="#fff">#7A5026</text>
+<text x="174" y="2480" font-size="11" fill="#4A463C">7a5026</text>
+<rect x="324" y="2402" width="142" height="64" rx="6" fill="#55503f" stroke="#00000022"/>
+<text x="334" y="2454" font-size="12" font-weight="600" fill="#fff">#55503F</text>
+<text x="324" y="2480" font-size="11" fill="#4A463C">55503f</text>
+</svg>
