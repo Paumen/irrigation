@@ -26,8 +26,8 @@ export const PLANTINGS = {
 export const SOILS = {
   "Sand": 80,
   "Sandy loam": 140,
-  "Loam": 180,
-  "Clay": 200,
+  "Loam": 160,
+  "Clay": 180,
 };
 
 export const DEFAULTS = {
