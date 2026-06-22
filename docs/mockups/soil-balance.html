@@ -30,10 +30,12 @@
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:11px;color:#5f5948;letter-spacing:.02em;white-space:nowrap}
   .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #cdc8ba}
   .axis .water{color:#1696ae}
-  .scroll{overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#bdb6a4 #ece7d8}
-  .scroll::-webkit-scrollbar{height:10px}
-  .scroll::-webkit-scrollbar-track{background:#ece7d8;border-radius:5px}
-  .scroll::-webkit-scrollbar-thumb{background:#bdb6a4;border-radius:5px;border:2px solid #ece7d8}
+  .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+  /* always-visible custom scrollbar (native bars auto-hide on mobile) */
+  .sbar{position:relative;height:9px;margin:9px 12px 0;background:#ece7d8;border-radius:5px;touch-action:none}
+  .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:#bdb6a4;border-radius:5px;cursor:grab}
+  .sthumb:active{cursor:grabbing;background:#a89f8b}
   svg{display:block;transition:opacity .7s ease}
   .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
   .booting svg{opacity:0}
@@ -108,6 +110,8 @@
   <div class="scene" id="scene">
     <div class="scroll" id="scroll"></div>
   </div>
+
+  <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
 
   <div class="key">
     <span><i class="sw" style="background:linear-gradient(#E8A93C,#E2640F)"></i>loss</span>
@@ -470,7 +474,7 @@ function roots(x,sY,v,rng){
 function jag(pts){let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`;return d;}
 
 /* mount + interactivity */
-const scroll=document.getElementById('scroll');
+const scroll=document.getElementById('scroll'),sbar=document.getElementById('sbar'),sthumb=document.getElementById('sthumb');
 let G, booted=false;
 function pct(y){return (y/H*100).toFixed(2);}
 /* status headline — gives the verdict before the chart (improvement #1) */
@@ -504,6 +508,7 @@ function render(){
   scroll.innerHTML=G.svg;
   renderStatus();
   wireHits();
+  requestAnimationFrame(syncBar);
   if(!booted){scroll.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX);booted=true;requestAnimationFrame(()=>document.body.classList.remove('booting'));}
 }
 function rerender(){const sl=scroll.scrollLeft;render();scroll.scrollLeft=sl;}
@@ -519,6 +524,27 @@ function wireHits(){
   });
 }
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
+
+/* custom scrollbar — reflects + drives the chart's horizontal scroll */
+function syncBar(){
+  const cw=scroll.clientWidth, sw=scroll.scrollWidth, tw=sbar.clientWidth;
+  if(sw<=cw+1){ sbar.style.visibility='hidden'; return; }
+  sbar.style.visibility='visible';
+  const thumbW=Math.max(28, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
+  sthumb.style.width=thumbW+'px';
+  sthumb.style.left=(maxScroll>0?(scroll.scrollLeft/maxScroll)*maxLeft:0)+'px';
+}
+scroll.addEventListener('scroll',syncBar,{passive:true});
+let _drag=false,_x0=0,_l0=0;
+sthumb.addEventListener('pointerdown',e=>{_drag=true;_x0=e.clientX;_l0=parseFloat(sthumb.style.left)||0;sthumb.setPointerCapture(e.pointerId);e.preventDefault();});
+sthumb.addEventListener('pointermove',e=>{ if(!_drag)return;
+  const tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(_l0+(e.clientX-_x0),0,maxLeft)/maxLeft)*maxScroll:0; });
+sthumb.addEventListener('pointerup',()=>{_drag=false;});
+sbar.addEventListener('pointerdown',e=>{ if(e.target===sthumb)return;
+  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
+
 render();
 
 /* ---- page chrome: state switch · presets · watering duration ---- */
