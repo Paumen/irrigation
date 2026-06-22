@@ -332,7 +332,7 @@ function build(){
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="10.5"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="9.5"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
-  const NOW='#D2492C', fw=40, fh=14, fy=3;
+  const NOW='#0E7C86', fw=40, fh=14, fy=3;
   const today=
      `<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="3.5" fill="${NOW}"/>`
     +`<polygon points="${(tx-3).toFixed(1)},${(fy+fh).toFixed(1)} ${(tx+3).toFixed(1)},${(fy+fh).toFixed(1)} ${tx.toFixed(1)},${(fy+fh+3.5).toFixed(1)}" fill="${NOW}"/>`
