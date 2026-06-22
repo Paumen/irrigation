@@ -17,12 +17,16 @@ esac
 
 command -v ruff >/dev/null 2>&1 || exit 0   # ruff not installed — skip silently
 
-before=$(cat "$f")
+# Snapshot before formatting so we can detect any change (cmp handles trailing
+# newlines, which $(cat ...) would strip).
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+cp "$f" "$tmp"
 ruff format -q "$f" >/dev/null 2>&1 || true
 ruff check -q --fix "$f" >/dev/null 2>&1 || true
-after=$(cat "$f")
 
 # Nothing changed — stay quiet.
-[ "$before" = "$after" ] && exit 0
+cmp -s "$tmp" "$f" && exit 0
 
-printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"ruff reformatted/lint-fixed %s on disk. Re-read it before your next edit so your edit matches the current contents."}}' "$f"
+# Build the JSON with jq so paths with quotes/backslashes can't break it.
+jq -n --arg f "$f" '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: "ruff reformatted/lint-fixed \($f) on disk. Re-read it before your next edit so your edit matches the current contents."}}'
