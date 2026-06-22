@@ -18,7 +18,8 @@ const fs = require('fs');
   const out = path.join(outDir, `${base}-${stamp}.png`);
 
   const browser = await chromium.launch();
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+  // Phone viewport only (iPhone-class portrait).
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   await page.goto('file://' + abs, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1500); // let boot/entry animations settle
