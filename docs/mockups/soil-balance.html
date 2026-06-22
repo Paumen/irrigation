@@ -9,7 +9,7 @@
     --bg:#E7E4DA; --ink:#4A463C; --faint:#9A9484;
     --surface:#5A4A33; --table:#1FA6BE;
     /* warm-accent palette — one tone per meaning */
-    --today:#D2492C; --amber:#D98A2B; --rust:#B5471F;
+    --today:#0E7C86; --amber:#D98A2B; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
     --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
   }
@@ -328,7 +328,7 @@ function build(){
   /* refs + ticks + today + hit targets */
   let ticks='';
   DATA.forEach(d=>{const x=cx(d.idx),wk=(d.wd==='Sat'||d.wd==='Sun'),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
-    const dc=isT?'#D2492C':(fut?(wk?'#8a663f':'#7a7363'):(wk?'#7a5026':'#55503f')), wc=isT?'#D2492C':(fut?'#7a7363':'#55503f'), bold=isT?' font-weight="700"':'';
+    const dc=isT?'#0E7C86':(fut?(wk?'#8a663f':'#7a7363'):(wk?'#7a5026':'#55503f')), wc=isT?'#0E7C86':(fut?'#7a7363':'#55503f'), bold=isT?' font-weight="700"':'';
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="10.5"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="9.5"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
