@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Soil-Balance — Wijchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#E7E4DA; --ink:#4A463C; --faint:#9A9484;
@@ -12,6 +15,7 @@
     --today:#0E7C86; --amber:#D98A2B; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
     --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
+    --serif: "Newsreader",Georgia,"Times New Roman",serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%}
@@ -47,10 +51,10 @@
   .status{margin:2px 12px 0;padding:13px 15px 12px;background:#FBFAF6;border:1px solid #E0DBCD;border-radius:12px}
   .status .kick{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a8270;font-weight:600}
   .status .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-  .status .word{font-size:26px;font-weight:680;letter-spacing:-.01em;line-height:1.1;margin-top:6px}
+  .status .word{font-family:var(--serif);font-size:33px;font-weight:500;letter-spacing:0;line-height:1.05;margin-top:7px}
   .status .detail{font-size:13px;color:#5b5547;margin-top:5px;line-height:1.4}
   .status .metric{margin-top:11px;padding-top:10px;border-top:1px solid #EFEADD}
-  .status .pct{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .status .pct{font-family:var(--serif);font-size:27px;font-weight:600;letter-spacing:0}
   .status .sub{font-size:11.5px;color:#8a8270}
   .status .bar{position:relative;height:8px;background:#eee7d6;border-radius:5px;margin-top:9px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:5px}
@@ -501,7 +505,7 @@ function renderStatus(){
    +`<span class="sub">${Math.round(tl)} of ${TANK} mm in root zone</span></div>`
    +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
    +`<span class="mark" style="left:${thPos}%"></span></div>`
-   +`<div class="rfl"><span style="left:${thPos}%">refill ${Math.round(REFILL)} mm</span></div></div>`;
+   +`<div class="rfl"><span style="left:${thPos}%">refill</span></div></div>`;
 }
 function render(){
   G=build();
