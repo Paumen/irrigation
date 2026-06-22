@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soil-Balance — Wijchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E7E4DA; --card:#FBFAF6; --line:#E4DFD0; --ink:#3F3B31; --soft:#6B6555; --faint:#9A9484;
+    --surface:#5A4A33; --table:#1FA6BE;
+    --green:#4F6B4A; --green-2:#6E8E68; --amber:#D98A2B; --rust:#B5471F; --refill:#D9513A; --blue:#3F7FA0; --teal:#0C6478;
+    --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
+    --serif: "Newsreader",Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%}
+  body{max-width:920px;margin:0 auto}
+
+  /* ===== header ===== */
+  header.app{padding:18px 16px 6px}
+  header.app .brand{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:600}
+  .leaf{width:13px;height:14px;background:radial-gradient(120% 120% at 30% 20%,#7FB87C,var(--green-2));border-radius:0 70% 0 70%;transform:rotate(-12deg);flex:none}
+  header.app .loc{margin-top:6px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+
+  /* ===== verdict / status ===== */
+  .status{margin:10px 16px 4px}
+  .status .kick{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);font-weight:600}
+  .status .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .status .word{font-family:var(--serif);font-size:38px;font-weight:500;line-height:1.04;margin:8px 0 0}
+  .status .detail{font-size:14px;line-height:1.45;color:var(--soft);margin:8px 0 0;max-width:46ch}
+  .status .metric{margin-top:16px}
+  .status .mrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:13px;color:var(--soft)}
+  .status .mrow b{font-family:var(--serif);font-weight:600}
+  .status .mrow .big{font-size:21px;color:var(--ink)}
+  .status .bar{position:relative;height:9px;background:#EBE6D8;border-radius:6px;margin-top:9px;overflow:visible}
+  .status .fill{position:absolute;inset:0 auto 0 0;border-radius:6px;transition:width .5s cubic-bezier(.2,.8,.2,1),background .3s}
+  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--refill);border-radius:2px}
+  .status .mark::after{content:"refill";position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;letter-spacing:.05em;color:var(--refill);font-weight:700}
+
+  /* ===== chart board ===== */
+  .board{margin-top:16px;background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .view{display:none}
+  body[data-state="ok"] .view-ok{display:block}
+  body[data-state="loading"] .view-loading{display:flex}
+  body[data-state="error"] .view-error{display:flex}
+  .scene{position:relative}
+  .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+  svg{display:block;transition:opacity .7s ease}
+  .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
+  .booting svg{opacity:0}
+  .booting .grow{transform:translateY(10px);opacity:0}
+  @media (prefers-reduced-motion: reduce){
+    svg,.grow{transition:none!important}.booting svg{opacity:1}.booting .grow{transform:none;opacity:1}
+  }
+  /* custom always-visible scrollbar (native bars auto-hide on touch) */
+  .sbar{position:relative;height:9px;margin:8px 14px 2px;background:#ECE7D8;border-radius:6px;touch-action:none}
+  .sthumb{position:absolute;top:0;bottom:0;left:0;width:46px;min-width:30px;background:#C3BCA8;border-radius:6px;cursor:grab}
+  .sthumb:active{cursor:grabbing;background:#ABA289}
+  .hint{font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--faint);text-align:center;padding:2px 0 0}
+  .key{display:flex;flex-wrap:wrap;gap:7px 16px;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--soft);padding:9px 14px 12px}
+  .key span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+
+  /* loading / error */
+  .view-loading,.view-error{flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;min-height:300px;padding:40px 24px}
+  .spinner{width:30px;height:30px;border:3px solid #E5DFCF;border-top-color:var(--green-2);border-radius:50%;animation:spin .9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:11.5px;color:var(--faint);max-width:280px;line-height:1.7}
+  .view-error .icon{width:40px;height:40px;border-radius:50%;background:#F1E1DA;color:#9C4A2E;display:grid;place-items:center;font-size:22px;font-weight:800}
+  .view-error h2{margin:0;font-family:var(--serif);font-size:19px;color:#9C4A2E;font-weight:600}
+  .btn{appearance:none;cursor:pointer;border:1px solid var(--green-2);background:var(--green-2);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;padding:9px 20px;border-radius:999px}
+
+  /* ===== controls ===== */
+  .controls{display:grid;gap:14px;padding:18px 16px 26px}
+  .ctl .lab{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+  .seg{display:flex;flex-wrap:wrap;gap:6px}
+  .seg button{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--soft);font-family:var(--sans);font-size:13px;padding:8px 14px;border-radius:999px;line-height:1.1;transition:.15s}
+  .seg button:hover{border-color:#CBBE9E}
+  .seg button[aria-pressed="true"]{background:var(--green-2);border-color:var(--green-2);color:#fff;font-weight:600;box-shadow:0 2px 10px -5px rgba(79,107,74,.7)}
+  .dur{display:flex;align-items:stretch;max-width:230px}
+  .dur button{appearance:none;cursor:pointer;width:42px;border:1px solid var(--line);background:var(--card);font-size:20px;color:var(--soft);display:grid;place-items:center}
+  .dur button:first-child{border-radius:10px 0 0 10px}
+  .dur button:last-child{border-radius:0 10px 10px 0}
+  .dur .val{flex:1;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:4px;background:#fff;color:var(--ink)}
+  .dur .val b{font-family:var(--serif);font-size:17px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px;font-family:var(--mono)}
+  .dur-hint{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:6px}
+  @media(min-width:560px){
+    .controls{grid-template-columns:1fr 1fr;gap:16px 22px}
+    .ctl.full{grid-column:1/-1}
+  }
+</style>
+</head>
+<body class="booting" data-state="loading">
+  <header class="app">
+    <div class="brand"><span class="leaf"></span>Soil-Balance</div>
+    <div class="loc" id="locline"></div>
+  </header>
+
+  <main>
+    <div id="status" class="status view view-ok"></div>
+
+    <div class="board">
+      <!-- OK -->
+      <div class="view view-ok">
+        <div class="scene"><div class="scroll" id="scroll"></div></div>
+        <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
+        <div class="hint">tap a day to water · tap again to undo</div>
+        <div class="key">
+          <span><i class="sw" style="background:linear-gradient(#E8A93C,#E2640F)"></i>ET loss</span>
+          <span><i class="sw" style="background:#3F7FA0"></i>rain</span>
+          <span><i class="sw" style="background:linear-gradient(#A9C2A4,#84A37E)"></i>watering</span>
+          <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
+        </div>
+      </div>
+      <!-- LOADING -->
+      <div class="view view-loading">
+        <div class="spinner"></div>
+        <p>Fetching the latest weather for Wijchen…</p>
+      </div>
+      <!-- ERROR -->
+      <div class="view view-error">
+        <div class="icon">!</div>
+        <h2>Weather unavailable</h2>
+        <p id="errmsg">Couldn't reach the forecast service. Check your connection and try again.</p>
+        <button class="btn" id="retry">Try again</button>
+      </div>
+    </div>
+
+    <section class="controls view view-ok">
+      <div class="ctl"><div class="lab">Planting</div><div class="seg" data-group="planting"></div></div>
+      <div class="ctl"><div class="lab">Soil</div><div class="seg" data-group="soil"></div></div>
+      <div class="ctl"><div class="lab">Sun exposure</div><div class="seg" data-group="sun"></div></div>
+      <div class="ctl full"><div class="lab">Watering duration</div>
+        <div class="dur">
+          <button id="durMinus" aria-label="less">−</button>
+          <div class="val"><b id="durVal">60</b><span>min</span></div>
+          <button id="durPlus" aria-label="more">+</button>
+        </div>
+        <div class="dur-hint" id="durHint"></div>
+      </div>
+    </section>
+  </main>
+
+<script type="module">
+import { compute, fetchWeather, PLANTINGS, SOILS, SUN_EXPOSURES, DEFAULTS, SITE, API }
+  from "./soil.js";
+
+/* ============================== state ============================== */
+const controls = { ...DEFAULTS, watered: [] };
+let weather = null;
+let DATA = [], TANK = 39, DOSE = 3.78, REFILL = 19.5, TODAY = "", todayIdx = 0;
+
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp  = (a,b,t)=>a+(b-a)*t;
+const ease  = t=>t<0?0:t>1?1:t*t*(3-2*t);
+const d1 = v=>(Math.round(v*10)/10).toFixed(1);          // 1-decimal mm (UIX-6)
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dlabel = ds=>`${MON[+ds.slice(5,7)-1]} ${+ds.slice(8,10)}`;
+
+// today's date in the site timezone (UTC-safe, no local drift)
+function todayStr(){
+  return new Intl.DateTimeFormat("en-CA",{timeZone:API.timezone}).format(new Date());
+}
+
+/* compute()'s series -> the renderer's per-day shape */
+function adapt(s){
+  return {
+    idx:s.index, date:s.date, wd:s.weekday.slice(0,3),
+    tmax:s.tempMax, et0:s.et0, rain:s.rain, level:s.level,
+    mins: controls.watered.includes(s.index) ? controls.wateringMinutes : 0,
+  };
+}
+function recompute(){
+  const r = compute(controls, weather);
+  TANK = r.tankSize; DOSE = r.dose; REFILL = TANK * 0.5;
+  DATA = r.series.map(adapt);
+  todayIdx = DATA.findIndex(d=>d.date===TODAY);
+  if (todayIdx < 0) todayIdx = clamp(API.pastDays, 0, DATA.length-1);
+}
+
+/* ============================ colour ramps ========================= */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];}
+function hexLerp(a,b,t){const A=hx(a),B=hx(b);const m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;}
+function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){const t=(v-p0)/((p1-p0)||1);return hexLerp(c0,c1,t);}}return stops[stops.length-1][1];}
+const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#6E7B3C'],[1,'#4E7B52']],v);
+const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
+const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
+const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
+function skyColor(t){const h=clamp((t-15)/(36-15),0,1);return hexLerp('#DCE4DF','#F4E2C0',h);}
+function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
+function smoothRev(pts){const r=pts.slice().reverse();let d='';for(let i=0;i<r.length;i++)d+=` L ${r[i].x.toFixed(1)} ${r[i].y.toFixed(1)}`;return d;}
+function jag(pts){let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`;return d;}
+
+/* ============================== geometry ========================== */
+const SVGMONO="ui-monospace,Menlo,Consolas,monospace";
+const H=440, SKY_TOP=20, SURF=160, SOIL_BOT=404, SOIL_D=SOIL_BOT-SURF;
+const AX=0, PADR=12, ROOT_REACH=SOIL_D*0.5;
+const HORIZ=[
+  {y0:0,   y1:16,  fill:'#67563C', edge:'#473a26', sp:'#4d4027', spn:0.9, peb:0},
+  {y0:16,  y1:80,  fill:'#AC8856', edge:'#83632f', sp:'#8f6c3a', spn:0.7, peb:0},
+  {y0:80,  y1:170, fill:'#8C5E3C', edge:'#603c22', sp:'#774b2c', spn:0.55,peb:0.05},
+  {y0:170, y1:SOIL_D, fill:'#C6B488', edge:'#9a875c', sp:'#a08f63', spn:0.42,peb:0.12},
+];
+
+/* ============================ SVG builder ========================= */
+function build(){
+  const vw=Math.min(window.innerWidth,920);
+  const dayW=clamp((vw-AX-PADR)/9,36,94);            // ~7 days visible (UIX-5)
+  const N=DATA.length, W=AX+N*dayW+PADR;
+  const cx=i=>AX+dayW*(i+0.5);
+  const tableY=lv=>SOIL_BOT-(clamp(lv,0,TANK)/TANK)*SOIL_D;
+  const R=(W-PADR), refillY=tableY(REFILL);
+
+  let defs=`
+    <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34BCD2" stop-opacity=".55"/><stop offset="1" stop-color="#0C6478" stop-opacity=".82"/></linearGradient>
+    <linearGradient id="fringe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34BCD2" stop-opacity="0"/><stop offset="1" stop-color="#34BCD2" stop-opacity=".34"/></linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#F6C669" stop-opacity=".85"/><stop offset="1" stop-color="#F6C669" stop-opacity="0"/></radialGradient>
+    <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/><stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/><stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>
+    <linearGradient id="stress" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8B576" stop-opacity="0"/><stop offset="0.5" stop-color="#E0975A" stop-opacity=".1"/><stop offset="1" stop-color="#D2783C" stop-opacity=".24"/></linearGradient>`;
+
+  /* sky + weather */
+  let sky='',weather='',surfaceFx='';
+  DATA.forEach(d=>{
+    const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
+    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
+    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#FBF1DC" opacity="${(0.10+heat*0.18).toFixed(2)}"/>`;
+    if(heat>0.78){
+      const sc=hexLerp('#E2640F','#E88A22',0.5);
+      for(let s=0;s<3;s++){const yy=SKY_TOP+40+s*7;let p=`M ${x0+dayW*0.16} ${yy}`;for(let k=1;k<=5;k++){p+=` Q ${(x0+dayW*(0.16+0.14*k)-dayW*0.07).toFixed(1)} ${(yy+(k%2?-2.4:2.4)).toFixed(1)} ${(x0+dayW*(0.16+0.14*k)).toFixed(1)} ${yy}`;}
+        weather+=`<path d="${p}" fill="none" stroke="${sc}" stroke-width="0.7" opacity="${(0.16-s*0.04).toFixed(2)}"/>`;}
+    }
+    const si=clamp((d.et0-1)/(6.5-1),0,1);
+    if(si>0.04){
+      const sx=x0+dayW*0.5, sy=SKY_TOP+24, rad=lerp(3,6,si), core=sunCore(heat), gw=rad*lerp(2.2,3.2,heat);
+      let rays='';const nr=Math.round(lerp(5,9,si));
+      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2,r2=rad+lerp(2.5,7,si);
+        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(0.8,1.5,si).toFixed(2)}" stroke-linecap="round"/>`;}
+      weather+=`<g opacity="${future?0.62:0.8}"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.26+heat*0.22).toFixed(2)}"/>${rays}<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#C0540C','#B84810',heat)}" stroke-width="0.8"/></g>`;
+    }
+    if(d.rain>0.05){
+      const rng=mulberry32(900+d.idx), strands=Math.round(clamp(d.rain/1.0,3,16));
+      let rg='';
+      for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*0.06,dayW*0.72,rng()),ry=SKY_TOP+lerp(26,165,rng());
+        const len=lerp(10,22,Math.sqrt(clamp(d.rain/18,0,1)))*(0.7+rng()*0.6);
+        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2.5).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="#3F7FA0" stroke-width="1.5" stroke-linecap="round" opacity="${(0.5+0.4*clamp(d.rain/12,0,1)).toFixed(2)}"/>`;}
+      weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${rg}</g>`;
+    }
+    if(d.mins>0){
+      const sc=dayW*0.0040, ox=cx(d.idx)+dayW*0.02, oy=SURF-90, lx=cx(d.idx)+dayW*0.18;
+      weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${canSVG(ox,oy,sc)}${fanSVG(ox,oy,lx,SURF,dayW)}</g>`;
+      surfaceFx+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${splashSVG(lx,cx(d.idx),SURF,dayW)}</g>`;
+    }
+  });
+
+  /* soil horizons + texture */
+  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${SOIL_D}" fill="${HORIZ[1].fill}"/>`;
+  HORIZ.forEach((h,hi)=>{
+    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(h.y1-h.y0).toFixed(1)}" fill="${h.fill}"/>`;
+    soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="0.6" opacity=".5"/>`;
+    const rng=mulberry32(40+hi), band=h.y1-h.y0, step=14;
+    for(let x=AX+4;x<R-2;x+=step){
+      if(rng()>h.spn) continue;
+      const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(0.5,1.4,rng());
+      soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(0.18+rng()*0.22).toFixed(2)}"/>`;
+    }
+    if(h.peb>0){for(let x=AX+6;x<R-4;x+=26){if(rng()>h.peb*8)continue;const px=x+(rng()-0.5)*20,py=SURF+h.y0+lerp(0.2,0.8,rng())*band,rr=lerp(1.6,3.2,rng());
+      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*0.7).toFixed(1)}" fill="${h.sp}" opacity=".5"/><ellipse cx="${(px-rr*0.3).toFixed(1)}" cy="${(py-rr*0.3).toFixed(1)}" rx="${(rr*0.4).toFixed(1)}" ry="${(rr*0.28).toFixed(1)}" fill="#ffffff" opacity=".12"/>`;}}
+  });
+
+  /* aquifer + capillary fringe + table + surface */
+  const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
+  DATA.forEach(d=>tablePts.push({x:cx(d.idx),y:tableY(d.level)}));
+  tablePts.push({x:R,y:tableY(DATA[N-1].level)});
+  const tline=smooth(tablePts);
+  const aqua=`${tline} L ${R.toFixed(1)} ${SOIL_BOT} L ${AX} ${SOIL_BOT} Z`;
+  const FR=16, fringeTop=tablePts.map(p=>({x:p.x,y:Math.max(SURF,p.y-FR)}));
+  const fringe=`${smooth(tablePts)} L ${R.toFixed(1)} ${fringeTop[fringeTop.length-1].y.toFixed(1)} ${smoothRev(fringeTop)} Z`;
+  soil+=`<rect x="${AX}" y="${refillY.toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(SOIL_BOT-refillY).toFixed(1)}" fill="url(#stress)"/>`
+     +`<path d="${aqua}" fill="url(#aqua)"/>`
+     +`<path d="${fringe}" fill="url(#fringe)" opacity=".8"/>`;
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
+  soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
+     +`<path d="${tline}" fill="none" stroke="#c9f1f6" stroke-width="0.8" opacity=".6"/>`;
+  const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
+  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="var(--surface)" stroke-width="2.4"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#FBFAF6" stroke-width="4.6" opacity="0.5"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--refill)" stroke-width="2.8" stroke-dasharray="8 5"/>`
+     +`<rect x="${(AX+3).toFixed(1)}" y="${(refillY-16).toFixed(1)}" width="40" height="14" rx="3" fill="var(--refill)"/>`
+     +`<text x="${(AX+23).toFixed(1)}" y="${(refillY-9).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="9" font-weight="700" fill="#fff" letter-spacing=".06em">refill</text>`;
+
+  /* craquelure on parched columns */
+  let cracks='';
+  DATA.forEach(d=>{if(d.level>3)return;const rng=mulberry32(31+d.idx),x0=cx(d.idx)-dayW/2,dry=1-clamp(d.level/3,0,1);
+    const nc=Math.round(lerp(2,4,dry));
+    for(let k=0;k<nc;k++){let px=x0+lerp(dayW*0.15,dayW*0.85,rng()),py=SURF+2,seg=`M ${px.toFixed(1)} ${py.toFixed(1)}`;const steps=3+Math.floor(rng()*3);
+      for(let s=0;s<steps;s++){px+=(rng()-0.5)*8;py+=lerp(5,13,rng());seg+=` L ${px.toFixed(1)} ${py.toFixed(1)}`;}
+      cracks+=`<path d="${seg}" fill="none" stroke="#5A4A33" stroke-width="0.8" opacity="${(0.16+0.22*dry).toFixed(2)}"/>`;}});
+
+  /* flora: roots (fixed length) + plant (vigor varies with level) */
+  let flora='';
+  DATA.forEach(d=>{const x=cx(d.idx),sY=SURF+(mulberry32(7+d.idx)()-0.5)*2.6,v=clamp(d.level/TANK,0,1),future=d.idx>todayIdx,rng=mulberry32(101+d.idx);
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.idx*9}ms" opacity="${future?0.84:1}">`
+      +roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
+
+  /* ticks + today + water-by + hit targets */
+  let ticks='';
+  DATA.forEach(d=>{const x=cx(d.idx),wk=(d.wd==='Sat'||d.wd==='Sun'),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
+    const dc=isT?'#0E7C86':(fut?(wk?'#8a663f':'#7a7363'):(wk?'#7a5026':'#55503f')), wc=isT?'#0E7C86':(fut?'#7a7363':'#55503f'), bold=isT?' font-weight="700"':'';
+    ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="10.5"${bold} fill="${dc}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="9.5"${bold} fill="${wc}">${d.wd}</text>`;});
+  const tx=cx(todayIdx), NOW='#0E7C86', fw=44, fh=15, fy=3;
+  const today=
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh-4.2).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
+  let wantWater='', needIdx=-1;
+  for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){ needIdx=k; break; } }
+  if(needIdx>todayIdx){
+    const wx=cx(needIdx), ww=58, wy=fy, AMB='#D98A2B';
+    wantWater=`<rect x="${(wx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="#D98A2B" opacity=".14"/>`
+      +`<rect x="${(wx-ww/2).toFixed(1)}" y="${wy}" width="${ww}" height="${fh}" rx="3.5" fill="${AMB}"/>`
+      +`<polygon points="${(wx-3).toFixed(1)},${(wy+fh).toFixed(1)} ${(wx+3).toFixed(1)},${(wy+fh).toFixed(1)} ${wx.toFixed(1)},${(wy+fh+3.5).toFixed(1)}" fill="${AMB}"/>`
+      +`<text x="${wx.toFixed(1)}" y="${(wy+fh-3.8).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="9" font-weight="700" fill="#fff" letter-spacing=".03em">water by</text>`;
+  }
+  let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
+
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${H}" width="${W.toFixed(0)}" height="${H}" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif,system-ui,sans-serif">
+    <defs>${defs}</defs>${sky}${weather}${soil}${cracks}${surfaceFx}${flora}${ticks}${today}${wantWater}${hits}</svg>`;
+  return {svg,W,dayW,cx};
+}
+
+/* watering-can / fan / splash / wet column / drop / plant / roots */
+function canSVG(ox,oy,s){
+  const F='#84A37E',T='#A9C2A4',S='#46613F',Hi='#C7DCC2';
+  const shell='M 32 112 C 31 108 31 104 32 100 L 34 68 C 34 62 37 58 42 58 L 68 58 C 82 52 98 42 112 33 C 114 32 116 34 115.5 38 C 115 42 114 44 111 45 C 100 52 86 62 78 76 C 75 80 74 82 74 88 L 73 102 C 73 107 72 110 68 112 Z';
+  const inner=`<path d="${shell}" fill="${F}" stroke="${S}" stroke-width="3" stroke-linejoin="round"/>`
+    +`<path d="M 35 70 C 35 63 39 59 44 59 L 65 59 C 70 59 73 63 73 72 C 60 78 47 78 35 72 Z" fill="${T}"/>`
+    +`<path d="M 70 60 C 84 54 99 45 112 35" fill="none" stroke="${Hi}" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>`
+    +`<path d="M 37 76 C 37 92 40 104 45 110" fill="none" stroke="${Hi}" stroke-width="2.2" stroke-linecap="round" opacity=".4"/>`
+    +`<path d="M 40 57 C 43 34 63 34 66 57 L 62 57 C 61 39 45 39 44 57 Z" fill="${T}" stroke="${S}" stroke-width="2.6" stroke-linejoin="round"/>`
+    +`<ellipse cx="53" cy="58" rx="18" ry="4.4" fill="${T}" stroke="${S}" stroke-width="2.4"/><ellipse cx="53" cy="58" rx="12.5" ry="2.6" fill="#3E5639"/>`;
+  return `<g transform="translate(${ox.toFixed(1)} ${oy.toFixed(1)}) rotate(26) scale(${s.toFixed(3)}) translate(-113 -38)">${inner}</g>`;
+}
+function fanSVG(ox,oy,lx,ly,dw){
+  const wt=2.6, wb=4.4, bulge=lx+dw*0.12, my1=lerp(oy,ly,0.40), my2=lerp(oy,ly,0.80);
+  return `<path d="M ${(ox-wt).toFixed(1)} ${oy.toFixed(1)} C ${(bulge-wb).toFixed(1)} ${my1.toFixed(1)} ${(lx-wb).toFixed(1)} ${my2.toFixed(1)} ${(lx-wb).toFixed(1)} ${ly.toFixed(1)} L ${(lx+wb).toFixed(1)} ${ly.toFixed(1)} C ${(bulge+wb).toFixed(1)} ${my1.toFixed(1)} ${(ox+wt).toFixed(1)} ${(oy+1).toFixed(1)} ${(ox+wt).toFixed(1)} ${oy.toFixed(1)} Z" fill="#6FC8DA" opacity=".42"/>`
+    +`<path d="M ${ox.toFixed(1)} ${(oy+1).toFixed(1)} C ${bulge.toFixed(1)} ${my1.toFixed(1)} ${lx.toFixed(1)} ${my2.toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)}" fill="none" stroke="#E8FAFD" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>`;
+}
+function splashSVG(lx,cxp,sY,dw){
+  let s=`<ellipse cx="${lx.toFixed(1)}" cy="${sY.toFixed(1)}" rx="${(dw*0.16).toFixed(1)}" ry="2.8" fill="#6FC8DA" opacity=".42"/>`
+    +`<ellipse cx="${lx.toFixed(1)}" cy="${(sY-0.3).toFixed(1)}" rx="${(dw*0.09).toFixed(1)}" ry="1.6" fill="#BDEAF1" opacity=".45"/>`
+    +`<path d="M ${(lx-dw*0.115).toFixed(1)} ${(sY-1).toFixed(1)} Q ${lx.toFixed(1)} ${(sY-4.4).toFixed(1)} ${(lx+dw*0.115).toFixed(1)} ${(sY-1).toFixed(1)}" fill="none" stroke="#BDEAF1" stroke-width="0.9" opacity=".6"/>`;
+  [-58,-32,-8,26,56].forEach((deg)=>{const a=(deg-90)*Math.PI/180,L=12-Math.abs(deg)*0.07,ex=lx+Math.cos(a)*L,ey=sY+Math.sin(a)*L-1;
+    s+=`<line x1="${lx.toFixed(1)}" y1="${(sY-1).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#5FC0D4" stroke-width="1.3" stroke-linecap="round" opacity=".85"/>`+drop(ex,ey-1.7,2.0,'#5FC0D4','#EAFBFE');});
+  s+=drop((lx+cxp)/2,sY-4,2.2,'#5FC0D4','#EAFBFE')+drop(lerp(lx,cxp,0.72),sY-1,1.8,'#5FC0D4','#EAFBFE');
+  return s;
+}
+function wetCol(x0,w,sY){
+  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="160" fill="url(#wetE)"/>`
+    +`<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="3" fill="#34BCD2" opacity=".34"/>`;
+}
+function drop(cx,cy,s,fill,hl){
+  let d=`<path d="M ${cx.toFixed(1)} ${cy.toFixed(1)} C ${(cx-s*0.55).toFixed(1)} ${(cy+s*0.6).toFixed(1)} ${(cx-s*0.55).toFixed(1)} ${(cy+s*1.05).toFixed(1)} ${cx.toFixed(1)} ${(cy+s*1.3).toFixed(1)} C ${(cx+s*0.55).toFixed(1)} ${(cy+s*1.05).toFixed(1)} ${(cx+s*0.55).toFixed(1)} ${(cy+s*0.6).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)} Z" fill="${fill}"/>`;
+  if(hl) d+=`<ellipse cx="${(cx-s*0.2).toFixed(1)}" cy="${(cy+s*0.82).toFixed(1)}" rx="${(s*0.18).toFixed(1)}" ry="${(s*0.3).toFixed(1)}" fill="${hl}" opacity=".8"/>`;
+  return d;
+}
+function plant(x,sY,v,rng){
+  const h=ease(clamp((v-0.08)/0.44,0,1));
+  if(h<0.07){const c='#33302A';
+    return `<path d="M ${x} ${sY} L ${(x-2).toFixed(1)} ${(sY-9)}" stroke="${c}" stroke-width="1.4" stroke-linecap="round"/>`
+         +`<path d="M ${(x-1).toFixed(1)} ${(sY-6)} L ${(x+3).toFixed(1)} ${(sY-12)}" stroke="${c}" stroke-width="1.1" stroke-linecap="round"/>`;}
+  const hgt=lerp(8,54,h),droop=clamp((0.45-h)/0.45,0,1);
+  const tipX=x+lerp(0,16,droop)*(rng()<.5?-1:1)*0.6, tipY=sY-hgt+lerp(0,hgt*0.5,droop);
+  const ctrlX=x+lerp(0,10,droop), ctrlY=sY-hgt*0.55, pc=plantColor(h), lc=leafColor(h);
+  let s=`<path d="M ${x} ${sY} Q ${ctrlX.toFixed(1)} ${ctrlY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${pc}" stroke-width="${lerp(1.2,2.6,h).toFixed(2)}" stroke-linecap="round"/>`;
+  const nl=Math.round(lerp(0,5,h));
+  for(let k=0;k<nl;k++){
+    if(nl===5&&k===4) continue;
+    const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
+    const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
+    s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
+  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#C98AB0"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#E7C24A"/>`;}
+  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#C98AB0',(h-0.42)/0.2)}"/>`;}
+  return s;
+}
+function roots(x,sY,v,rng){
+  const h=ease(clamp((v-0.08)/0.44,0,1));
+  const dead=h<0.08, depth=ROOT_REACH+(rng()-0.5)*8, col=rootColor(h), wMain=lerp(0.8,2.8,h);
+  let pts=[{x,y:sY}];const segs=5;
+  for(let k=1;k<=segs;k++){const t=k/segs;pts.push({x:x+(rng()-0.5)*(dead?8:4),y:sY+depth*t});}
+  let s=`<path d="${dead?jag(pts):smooth(pts)}" fill="none" stroke="${col}" stroke-width="${wMain.toFixed(2)}" stroke-linecap="round" opacity="${dead?0.85:1}"/>`;
+  const nl=Math.round(lerp(1,5,h)), lats=[];
+  for(let k=0;k<nl;k++){const startT=lerp(0.18,0.82,(k+0.4)/nl),sx=x+(rng()-0.5)*4,sy0=sY+depth*startT,dir=(rng()<0.5?-1:1);
+    const ex=sx+dir*lerp(7,16,rng()), ey=sy0+lerp(8,22,rng()), mx=(sx+ex)/2+dir*4, my=(sy0+ey)/2;
+    lats.push({sx,sy0,ex,ey,mx,my,dir});
+    if(dead) s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} L ${mx.toFixed(1)} ${my.toFixed(1)} L ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*0.5).toFixed(2)}" stroke-linecap="round" opacity=".8"/>`;
+    else s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*0.55).toFixed(2)}" stroke-linecap="round"/>`;}
+  if(h>0.2){
+    const hairC=rootColor(clamp(h+0.05,0,1)), nh=Math.round(lerp(0,5,h));
+    pts.slice(1).forEach((p)=>{for(let k=0;k<nh;k++){if(rng()>0.6)continue;const side=rng()<0.5?-1:1,hl=lerp(2,5,h);
+      s+=`<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${(p.x+side*hl).toFixed(1)}" y2="${(p.y+lerp(1,4,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="0.5" opacity="${(0.4+0.3*h).toFixed(2)}"/>`;}});
+    lats.forEach(L=>{for(let k=0;k<nh;k++){if(rng()>0.55)continue;const t=rng(),hx2=lerp(L.sx,L.ex,t),hy2=lerp(L.sy0,L.ey,t),hl=lerp(1.5,4,h);
+      s+=`<line x1="${hx2.toFixed(1)}" y1="${hy2.toFixed(1)}" x2="${(hx2+L.dir*hl).toFixed(1)}" y2="${(hy2+lerp(0.5,2.5,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="0.45" opacity="${(0.35+0.3*h).toFixed(2)}"/>`;}});
+  }
+  return s;
+}
+
+/* ============================ verdict / status ===================== */
+function renderStatus(){
+  const tl=DATA[todayIdx].level, N=DATA.length;
+  const pct=Math.round(tl/TANK*100), thPos=REFILL/TANK*100;
+  let firstBelow=-1; for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
+
+  const GREEN='#4F6B4A', AMBER='#D98A2B', RUST='#B5471F';
+  let word,color,kick,detail;
+  if(tl<REFILL){
+    word='Water today'; color=RUST; kick='Below refill line';
+    detail = tl<=0.05
+      ? 'Soil is at the bottom of the root zone — water today.'
+      : 'Soil has dropped to the watering threshold — water today.';
+  }else{
+    kick='Above refill line';
+    if(firstBelow<0){
+      word='Holding steady'; color=GREEN;
+      detail=`Comfortable — stays above the refill line through ${dlabel(DATA[N-1].date)}.`;
+    }else{
+      const dd=firstBelow-todayIdx, when=dlabel(DATA[firstBelow].date);
+      if(dd===1){ word='Water tomorrow'; color=AMBER; detail=`Projected to reach the refill line tomorrow (${when}).`; }
+      else if(dd<=3){ word=`Water in ${dd} days`; color=AMBER; detail=`Projected to reach the refill line in ${dd} days (${when}).`; }
+      else { word='Holding steady'; color=GREEN; detail=`Comfortable for now — projected to reach the refill line in ${dd} days (${when}).`; }
+    }
+  }
+
+  document.getElementById('status').innerHTML=
+     `<div class="kick"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${kick}</div>`
+    +`<div class="word" style="color:${color}">${word}</div>`
+    +`<div class="detail">${detail}</div>`
+    +`<div class="metric">`
+    +`<div class="mrow"><span><b class="big" style="color:${color}">${d1(tl)} mm</b> in root zone</span>`
+    +`<span><b style="color:${color}">${pct}%</b> of ${Math.round(TANK)} mm</span></div>`
+    +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
+    +`<span class="mark" style="left:${thPos}%"></span></div></div>`;
+}
+
+/* ============================ mount + interactivity ================ */
+const scroll=document.getElementById('scroll'), sbar=document.getElementById('sbar'), sthumb=document.getElementById('sthumb');
+let G, booted=false;
+
+function render(){
+  G=build();
+  scroll.innerHTML=G.svg;
+  renderStatus();
+  wireHits();
+  requestAnimationFrame(syncBar);
+  if(!booted){ scroll.scrollLeft=Math.max(0,G.cx(todayIdx)-G.dayW*1.4-AX); booted=true; requestAnimationFrame(()=>document.body.classList.remove('booting')); }
+}
+function rerender(){ const sl=scroll.scrollLeft; render(); scroll.scrollLeft=sl; }
+function update(){ recompute(); rerender(); }
+
+function toggleWater(i){
+  const at=controls.watered.indexOf(i);
+  if(at>=0) controls.watered.splice(at,1); else controls.watered.push(i);
+  update();
+}
+function wireHits(){
+  scroll.querySelector('svg').querySelectorAll('.hit').forEach(h=>{
+    const i=+h.dataset.i; h.style.cursor='pointer';
+    h.addEventListener('click',()=>toggleWater(i));
+  });
+}
+let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{ if(weather) rerender(); },180);});
+
+/* custom scrollbar */
+function syncBar(){
+  const cw=scroll.clientWidth, sw=scroll.scrollWidth, tw=sbar.clientWidth;
+  if(sw<=cw+1){ sbar.style.visibility='hidden'; return; }
+  sbar.style.visibility='visible';
+  const thumbW=Math.max(30, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
+  sthumb.style.width=thumbW+'px';
+  sthumb.style.left=(maxScroll>0?(scroll.scrollLeft/maxScroll)*maxLeft:0)+'px';
+}
+scroll.addEventListener('scroll',syncBar,{passive:true});
+let _drag=false,_x0=0,_l0=0;
+sthumb.addEventListener('pointerdown',e=>{_drag=true;_x0=e.clientX;_l0=parseFloat(sthumb.style.left)||0;sthumb.setPointerCapture(e.pointerId);e.preventDefault();});
+sthumb.addEventListener('pointermove',e=>{ if(!_drag)return;
+  const tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(_l0+(e.clientX-_x0),0,maxLeft)/maxLeft)*maxScroll:0; });
+sthumb.addEventListener('pointerup',()=>{_drag=false;});
+sbar.addEventListener('pointerdown',e=>{ if(e.target===sthumb)return;
+  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
+
+/* ============================ controls ============================ */
+function buildSeg(group, keys){
+  const seg=document.querySelector(`.seg[data-group="${group}"]`);
+  seg.innerHTML=keys.map(k=>`<button${k===controls[group]?' aria-pressed="true"':''}>${k}</button>`).join('');
+  seg.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+    controls[group]=b.textContent.trim();
+    if(group==='planting') setLoc();
+    update();
+  });
+}
+function setLoc(){ document.getElementById('locline').textContent=`${SITE.name} · ${controls.planting}`; }
+function setDurHint(){ document.getElementById('durHint').textContent=`≈ ${d1(DOSE)} mm applied per watered day`; }
+function bumpDur(delta){
+  controls.wateringMinutes=clamp(controls.wateringMinutes+delta,15,240);
+  document.getElementById('durVal').textContent=controls.wateringMinutes;
+  update(); setDurHint();
+}
+buildSeg('planting', Object.keys(PLANTINGS));
+buildSeg('soil', Object.keys(SOILS));
+buildSeg('sun', Object.keys(SUN_EXPOSURES));
+document.getElementById('durVal').textContent=controls.wateringMinutes;
+document.getElementById('durMinus').addEventListener('click',()=>bumpDur(-15));
+document.getElementById('durPlus').addEventListener('click',()=>bumpDur(15));
+setLoc();
+
+/* ============================ load (DAT-3) ======================== */
+function setState(s){ document.body.dataset.state=s; }
+async function load(){
+  setState('loading');
+  try { weather = await fetchWeather(); }
+  catch(e){
+    document.getElementById('errmsg').textContent =
+      (e && e.message ? e.message : 'Could not load the weather forecast.') +
+      ' No data is shown rather than a guess — please try again.';
+    setState('error');
+    return;
+  }
+  TODAY = todayStr();
+  recompute();
+  setDurHint();
+  setState('ok');
+  render();
+}
+document.getElementById('retry').addEventListener('click',load);
+load();
+</script>
+</body>
+</html>
