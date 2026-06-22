@@ -347,15 +347,15 @@ function build(){
   let ticks='';
   DATA.forEach(d=>{const x=cx(d.idx),wk=(d.wd==='Sat'||d.wd==='Sun'),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
     const dc=isT?'var(--today)':(fut?(wk?'#8a663f':'#7a7363'):(wk?'#7a5026':'#55503f')), wc=isT?'var(--today)':(fut?'#7a7363':'#55503f'), bold=isT?' font-weight="700"':'';
-    ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="10"${bold} fill="${dc}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="10"${bold} fill="${wc}">${d.wd}</text>`;});
+    ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${dc}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
   const NOW='var(--today)', fw=44, fh=15, fy=3;
   const today=
      `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
     +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh-4.2).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
   // when to water: first day at/after today below the refill point
   let wantWater='', needIdx=-1;
   for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){ needIdx=k; break; } }
@@ -364,7 +364,7 @@ function build(){
     wantWater=`<rect x="${(wx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="#D98A2B" opacity=".14"/>`
       +`<rect x="${(wx-ww/2).toFixed(1)}" y="${wy}" width="${ww}" height="${fh}" rx="3.5" fill="${AMB}"/>`
       +`<polygon points="${(wx-3).toFixed(1)},${(wy+fh).toFixed(1)} ${(wx+3).toFixed(1)},${(wy+fh).toFixed(1)} ${wx.toFixed(1)},${(wy+fh+3.5).toFixed(1)}" fill="${AMB}"/>`
-      +`<text x="${wx.toFixed(1)}" y="${(wy+fh-3.8).toFixed(1)}" text-anchor="middle" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".03em">water by</text>`;
+      +`<text x="${wx.toFixed(1)}" y="${(wy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".03em">water by</text>`;
   }
   let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
 
