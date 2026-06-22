@@ -24,15 +24,16 @@
   .key b{color:var(--ink);font-weight:600;letter-spacing:.05em;text-transform:lowercase}
   .key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
   .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
-  .scene{position:relative;width:auto;margin:0 12px;overflow:hidden}
+  .scene{position:relative;width:auto;margin:0;overflow:hidden}
   .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:#FBFAF6;z-index:3;pointer-events:none;
     border-right:1px solid #d8d3c6}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:11px;color:#5f5948;letter-spacing:.02em;white-space:nowrap}
   .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #cdc8ba}
   .axis .water{color:#1696ae}
-  .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-  .scroll::-webkit-scrollbar{height:7px}
-  .scroll::-webkit-scrollbar-thumb{background:#cfcabd;border-radius:4px}
+  .scroll{overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#bdb6a4 #ece7d8}
+  .scroll::-webkit-scrollbar{height:10px}
+  .scroll::-webkit-scrollbar-track{background:#ece7d8;border-radius:5px}
+  .scroll::-webkit-scrollbar-thumb{background:#bdb6a4;border-radius:5px;border:2px solid #ece7d8}
   svg{display:block;transition:opacity .7s ease}
   .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
   .booting svg{opacity:0}
@@ -498,9 +499,7 @@ function renderStatus(){
    +`<div class="word" style="color:${color}">${word}</div>`
    +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
    +`<span class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:#8a8270">%</span></span>`
-   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div>`
-   +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
-   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div></div>`;
+   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div></div>`;
 }
 function render(){
   G=build();
