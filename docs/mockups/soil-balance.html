@@ -484,19 +484,16 @@ function renderStatus(){
   const ti=DATA.findIndex(d=>d.date===TODAY), tl=DATA[ti].level;
   const pct=Math.round(tl/TANK*100), thPos=REFILL/TANK*100, N=DATA.length;
   let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
-  let dry=null; for(let k=ti;k<N;k++){ if(DATA[k].level<=0.05){dry=DATA[k];break;} }
   const RUST='#B5471F',AMBER='#D98A2B',GREEN='#4F6B4A';
-  let word,color,kick,detail;
-  if(tl<=0.05){ word='Water today'; color=RUST; kick='Refill point reached';
-    detail='The root zone is empty — water as soon as you can.'; }
-  else if(tl<REFILL){ word='Water now'; color=RUST; kick='Below refill point';
-    detail = dry ? `Trending down — dry by ${dlabel(dry)} without water.` : 'Past the refill point — time to top up.'; }
-  else if(firstBelow>=0){ const dd=firstBelow-ti;
-    word = dd===1 ? 'Water tomorrow' : `Water in ${dd} days`;
-    color = dd<=2 ? AMBER : GREEN; kick='Above refill point';
-    detail = `Reaches the refill point ${dlabel(DATA[firstBelow])}.`; }
-  else { word='Holding steady'; color=GREEN; kick='Above refill point';
-    detail='Stays above the refill point all window.'; }
+  let word,color,kick;
+  if(tl<=0.05){ word='Water today'; color=RUST; kick='Refill point reached'; }
+  else if(tl<REFILL){ word='Water now'; color=RUST; kick='Below refill point'; }
+  else {                                   // above refill — always name the days out
+    let dd, plus=''; if(firstBelow>=0){ dd=firstBelow-ti; } else { dd=(N-1)-ti; plus='+'; }
+    word = dd===1 ? 'Water tomorrow' : `Water in ${dd}${plus} days`;
+    color = dd>=2 ? GREEN : AMBER;         // today/now rust, tomorrow amber, 2+ days green
+    kick='Above refill point';
+  }
   document.getElementById('status').innerHTML=
     `<div class="kick"><span class="dot" style="background:${color}"></span>${kick}</div>`
    +`<div class="word" style="color:${color}">${word}</div>`
