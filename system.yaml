@@ -412,8 +412,8 @@ water:
   Z3_hose.ldpe25_3: {to: [Z3_joint.c25bf34_2], l_m: 10, h_m: 11.2}
   Z3_valve.auto:    {to: [Z3_joint.bm1c25], h_m: 11.2}
 
-  Z5_head.rotor_1: {nozzle: "BL5.0", arc: 270, h_m: 10.0, gr: riser_1}
-  Z5_head.rotor_2: {nozzle: "BL2.5", arc: 180, h_m: 10.0, gr: riser_2}
+  Z5_head.rotor_1: {nozzle: "BL4.0", arc: 270, h_m: 10.0, gr: riser_1}
+  Z5_head.rotor_2: {nozzle: "BL4.0", arc: 180, h_m: 10.0, gr: riser_2}
   Z5_joint.sm1bm1: {to: [Z5_valve.auto], h_m: 11.2}
   Z5_joint.bm1c25: {to: [Z5_hose.ldpe25_1], h_m: 11.2}
   Z5_joint.c25bf34_1: {to: [Z5_joint.sj34x34_1], h_m: 10.0, gr: riser_1}
