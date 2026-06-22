@@ -63,7 +63,7 @@ items:
     installed_yyyy: 2023
     price_eur: 350
     model: "DAB AQUAJET 132 M"
-    max_outlet_bar: 4.7
+    max_outlet_bar: 4.8
     interfaces: [bf1, bf1, ac_line, ac_neutral, ac_earth]
     items:
       tank_hose:
@@ -503,7 +503,7 @@ electrical:
 
 pump.jet_curves:
   DAB JET 112 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6], head_m: [61, 54, 47.8, 42.8, 38.8, 34.8, 20]}
-  DAB AQUAJET 132 M: {flow_m3h: [0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.6, 4.2, 4.8], head_m: [48.3, 45.6, 42.8, 40, 37.6, 35, 32.5, 30, 27.2]}
+  DAB AQUAJET 132 M: {flow_m3h: [0.6, 1.2, 1.8, 2.4, 3.0, 3.6, 4.2, 4.8, 5.4], head_m: [48.3, 45.6, 42.8, 40.0, 37.6, 35.0, 32.5, 30.0, 27.2]}
 
 valve.auto_loss:
   flow_m3h: [0.2, 1.1, 2.3, 4.5, 6.8, 9.1]
