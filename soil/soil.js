@@ -24,10 +24,10 @@ export const PLANTINGS = {
 
 // Plant-available water (field capacity − wilting), mm/m.
 export const SOILS = {
-  "Sand": 60,
-  "Sandy loam": 130,
-  "Loam": 170,
-  "Clay": 190,
+  "Sand": 80,
+  "Sandy loam": 140,
+  "Loam": 180,
+  "Clay": 200,
 };
 
 export const DEFAULTS = {
