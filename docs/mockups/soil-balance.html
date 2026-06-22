@@ -72,7 +72,7 @@
   .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);max-width:270px;line-height:1.65}
   .view-error .icon{width:38px;height:38px;border-radius:50%;background:#f1e1da;color:#9c4a2e;display:grid;place-items:center;font-size:20px;font-weight:700}
   .view-error h2{margin:0;font-size:14px;color:#9c4a2e;font-weight:600}
-  .btn{appearance:none;cursor:pointer;border:1px solid #6E8E68;background:#6E8E68;color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
+  .btn{appearance:none;cursor:pointer;border:1px solid #6E8E68;background:#6E8E68;color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls ===== */
   .controls{display:grid;gap:12px;padding:12px 12px 8px;border-top:1px solid #E0DBCD;margin-top:8px;background:linear-gradient(#F3F0E7,rgba(243,240,231,0) 46px)}
   .ctl{display:grid;gap:8px}
@@ -80,12 +80,12 @@
   .seg{display:flex;flex-wrap:wrap;gap:8px}
   .seg button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:#5b5547;font-family:var(--sans);font-size:14px;padding:8px 12px;border-radius:999px;line-height:1.1;transition:.15s}
   .seg button:hover{border-color:#cdbf9f}
-  .seg button[aria-pressed="true"]{background:#6E8E68;border-color:#6E8E68;color:#fff;font-weight:600;box-shadow:0 2px 9px -5px rgba(79,107,74,.7)}
+  .seg button[aria-pressed="true"]{background:#6E8E68;border-color:#6E8E68;color:#FBFAF6;font-weight:600;box-shadow:0 2px 9px -5px rgba(79,107,74,.7)}
   .dur{display:flex;align-items:stretch}
   .dur button{appearance:none;cursor:pointer;width:36px;border:1px solid #E0DBCD;background:#FBFAF6;font-size:20px;color:#5b5547;display:grid;place-items:center}
   .dur button:first-child{border-radius:6px 0 0 6px}
   .dur button:last-child{border-radius:0 6px 6px 0}
-  .dur .val{min-width:80px;padding:8px 0;border-top:1px solid #E0DBCD;border-bottom:1px solid #E0DBCD;display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);background:#fff;color:var(--ink)}
+  .dur .val{min-width:80px;padding:8px 0;border-top:1px solid #E0DBCD;border-bottom:1px solid #E0DBCD;display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);background:#FBFAF6;color:var(--ink)}
   .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:#8a8270;font-size:12px}
   .dur-hint{font-family:var(--mono);font-size:12px;color:#8a8270;margin-top:2px}
   /* ===== footer ===== */
@@ -236,7 +236,7 @@ function build(){
       <stop offset="1" stop-color="#F6C669" stop-opacity="0"/></radialGradient>
     <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#3FC8DC" stop-opacity=".5"/>
-      <stop offset="1" stop-color="#1796AE" stop-opacity=".16"/></linearGradient>
+      <stop offset="1" stop-color="#1696ae" stop-opacity=".16"/></linearGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
       <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
@@ -302,7 +302,7 @@ function build(){
     }
     // pebbles
     if(h.peb>0){for(let x=AX+6;x<R-4;x+=26){if(rng()>h.peb*8)continue;const px=x+(rng()-0.5)*20,py=SURF+h.y0+lerp(0.2,0.8,rng())*band,rr=lerp(1.6,3.2,rng());
-      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*0.7).toFixed(1)}" fill="${h.sp}" opacity=".5"/><ellipse cx="${(px-rr*0.3).toFixed(1)}" cy="${(py-rr*0.3).toFixed(1)}" rx="${(rr*0.4).toFixed(1)}" ry="${(rr*0.28).toFixed(1)}" fill="#ffffff" opacity=".12"/>`;}}
+      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*0.7).toFixed(1)}" fill="${h.sp}" opacity=".5"/><ellipse cx="${(px-rr*0.3).toFixed(1)}" cy="${(py-rr*0.3).toFixed(1)}" rx="${(rr*0.4).toFixed(1)}" ry="${(rr*0.28).toFixed(1)}" fill="#FBFAF6" opacity=".12"/>`;}}
   });
 
   /* aquifer + capillary fringe + table + surface */
@@ -319,7 +319,7 @@ function build(){
      +`<path d="${fringe}" fill="url(#fringe)" opacity=".8"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
   soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
-     +`<path d="${tline}" fill="none" stroke="#c9f1f6" stroke-width="0.8" opacity=".6"/>`;
+     +`<path d="${tline}" fill="none" stroke="#BDEAF1" stroke-width="0.8" opacity=".6"/>`;
   // sediment lines within saturated zone (subtle horizontal strata in water)
   // surface
   const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
@@ -327,7 +327,7 @@ function build(){
      +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#FBFAF6" stroke-width="4.6" opacity="0.5"/>`
      +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--rust)" stroke-width="2.8" stroke-dasharray="8 5"/>`
      +`<rect x="${(AX+3).toFixed(1)}" y="${(refillY-16).toFixed(1)}" width="40" height="14" rx="3" fill="var(--rust)"/>`
-     +`<text x="${(AX+23).toFixed(1)}" y="${(refillY-9).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".06em">refill</text>`;
+     +`<text x="${(AX+23).toFixed(1)}" y="${(refillY-9).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".06em">refill</text>`;
 
   /* craquelure on parched columns */
   let cracks='';
@@ -345,8 +345,8 @@ function build(){
 
   /* refs + ticks + today + hit targets */
   let ticks='';
-  DATA.forEach(d=>{const x=cx(d.idx),wk=(d.wd==='Sat'||d.wd==='Sun'),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
-    const dc=isT?'var(--today)':(fut?(wk?'#8a663f':'#7a7363'):(wk?'#7a5026':'#55503f')), wc=isT?'var(--today)':(fut?'#7a7363':'#55503f'), bold=isT?' font-weight="700"':'';
+  DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
+    const dc=isT?'var(--today)':(fut?'#7a7363':'#5b5547'), wc=dc, bold=isT?' font-weight="700"':'';
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
@@ -355,7 +355,7 @@ function build(){
      `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
     +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".1em">TODAY</text>`;
   // when to water: first day at/after today below the refill point
   let wantWater='', needIdx=-1;
   for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){ needIdx=k; break; } }
@@ -364,7 +364,7 @@ function build(){
     wantWater=`<rect x="${(wx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="#D98A2B" opacity=".14"/>`
       +`<rect x="${(wx-ww/2).toFixed(1)}" y="${wy}" width="${ww}" height="${fh}" rx="3.5" fill="${AMB}"/>`
       +`<polygon points="${(wx-3).toFixed(1)},${(wy+fh).toFixed(1)} ${(wx+3).toFixed(1)},${(wy+fh).toFixed(1)} ${wx.toFixed(1)},${(wy+fh+3.5).toFixed(1)}" fill="${AMB}"/>`
-      +`<text x="${wx.toFixed(1)}" y="${(wy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#fff" letter-spacing=".03em">water by</text>`;
+      +`<text x="${wx.toFixed(1)}" y="${(wy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".03em">water by</text>`;
   }
   let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
 
@@ -398,18 +398,18 @@ function splashSVG(lx,cxp,sY,dw){
     +`<ellipse cx="${lx.toFixed(1)}" cy="${(sY-0.3).toFixed(1)}" rx="${(dw*0.09).toFixed(1)}" ry="1.6" fill="#BDEAF1" opacity=".45"/>`
     +`<path d="M ${(lx-dw*0.115).toFixed(1)} ${(sY-1).toFixed(1)} Q ${lx.toFixed(1)} ${(sY-4.4).toFixed(1)} ${(lx+dw*0.115).toFixed(1)} ${(sY-1).toFixed(1)}" fill="none" stroke="#BDEAF1" stroke-width="0.9" opacity=".6"/>`;
   [-58,-32,-8,26,56].forEach((deg)=>{const a=(deg-90)*Math.PI/180,L=12-Math.abs(deg)*0.07,ex=lx+Math.cos(a)*L,ey=sY+Math.sin(a)*L-1;
-    s+=`<line x1="${lx.toFixed(1)}" y1="${(sY-1).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#5FC0D4" stroke-width="1.3" stroke-linecap="round" opacity=".85"/>`+drop(ex,ey-1.7,2.0,'#5FC0D4','#EAFBFE');});
-  s+=drop((lx+cxp)/2,sY-4,2.2,'#5FC0D4','#EAFBFE')+drop(lerp(lx,cxp,0.72),sY-1,1.8,'#5FC0D4','#EAFBFE');
+    s+=`<line x1="${lx.toFixed(1)}" y1="${(sY-1).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#6FC8DA" stroke-width="1.3" stroke-linecap="round" opacity=".85"/>`+drop(ex,ey-1.7,2.0,'#6FC8DA','#E8FAFD');});
+  s+=drop((lx+cxp)/2,sY-4,2.2,'#6FC8DA','#E8FAFD')+drop(lerp(lx,cxp,0.72),sY-1,1.8,'#6FC8DA','#E8FAFD');
   return s;
 }
 /* per-day toggle: faint ring when off, bold green disc with a tiny can when on */
 function btnSVG(cxp,y,on){
   if(on){return `<g class="grow"><circle cx="${cxp.toFixed(1)}" cy="${y}" r="8.4" fill="none" stroke="#5C7A57" stroke-width="1" opacity=".28"/>`
     +`<circle cx="${cxp.toFixed(1)}" cy="${y}" r="6.6" fill="#5C7A57"/>`
-    +`<rect x="${(cxp-2.6).toFixed(1)}" y="${(y-1.4).toFixed(1)}" width="4.4" height="4.4" rx="0.8" fill="#fff"/>`
-    +`<path d="M ${(cxp-2.6).toFixed(1)} ${(y-0.2).toFixed(1)} L ${(cxp-4.9).toFixed(1)} ${(y-1).toFixed(1)} L ${(cxp-4.9).toFixed(1)} ${(y+1).toFixed(1)} Z" fill="#fff"/>`
-    +`<path d="M ${(cxp-1.4).toFixed(1)} ${(y-1.4).toFixed(1)} Q ${cxp.toFixed(1)} ${(y-3.3).toFixed(1)} ${(cxp+1.4).toFixed(1)} ${(y-1.4).toFixed(1)}" fill="none" stroke="#fff" stroke-width="0.8"/></g>`;}
-  return `<circle cx="${cxp.toFixed(1)}" cy="${y}" r="5.4" fill="#fbfaf6" fill-opacity=".3" stroke="#5A4A33" stroke-width="1" opacity=".2"/>`;
+    +`<rect x="${(cxp-2.6).toFixed(1)}" y="${(y-1.4).toFixed(1)}" width="4.4" height="4.4" rx="0.8" fill="#FBFAF6"/>`
+    +`<path d="M ${(cxp-2.6).toFixed(1)} ${(y-0.2).toFixed(1)} L ${(cxp-4.9).toFixed(1)} ${(y-1).toFixed(1)} L ${(cxp-4.9).toFixed(1)} ${(y+1).toFixed(1)} Z" fill="#FBFAF6"/>`
+    +`<path d="M ${(cxp-1.4).toFixed(1)} ${(y-1.4).toFixed(1)} Q ${cxp.toFixed(1)} ${(y-3.3).toFixed(1)} ${(cxp+1.4).toFixed(1)} ${(y-1.4).toFixed(1)}" fill="none" stroke="#FBFAF6" stroke-width="0.8"/></g>`;}
+  return `<circle cx="${cxp.toFixed(1)}" cy="${y}" r="5.4" fill="#FBFAF6" fill-opacity=".3" stroke="#5A4A33" stroke-width="1" opacity=".2"/>`;
 }
 /* darkened, saturated soil under a watered column */
 function wetCol(x0,w,sY){
@@ -425,7 +425,7 @@ function drop(cx,cy,s,fill,hl){
 
 function plant(x,sY,v,rng){
   const h=ease(clamp((v-0.08)/0.44,0,1));   // plant health: ~full above 52% tank, declines below
-  if(h<0.07){const c='#33302A';
+  if(h<0.07){const c='#3A352C';
     return `<path d="M ${x} ${sY} L ${(x-2).toFixed(1)} ${(sY-9)}" stroke="${c}" stroke-width="1.4" stroke-linecap="round"/>`
          +`<path d="M ${(x-1).toFixed(1)} ${(sY-6)} L ${(x+3).toFixed(1)} ${(sY-12)}" stroke="${c}" stroke-width="1.1" stroke-linecap="round"/>`;}
   const hgt=lerp(8,54,h),droop=clamp((0.45-h)/0.45,0,1);
