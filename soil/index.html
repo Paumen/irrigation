@@ -481,7 +481,7 @@ let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{ if(w
 /* custom scrollbar */
 function syncBar(){
   const cw=scroll.clientWidth, sw=scroll.scrollWidth, tw=sbar.clientWidth;
-  if(sw<=cw+1){ sbar.style.visibility='hidden'; return; }
+  if(sw<=cw+1 || sw===0 || tw===0){ sbar.style.visibility='hidden'; return; }
   sbar.style.visibility='visible';
   const thumbW=Math.max(30, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
   sthumb.style.width=thumbW+'px';
@@ -493,7 +493,9 @@ sthumb.addEventListener('pointerdown',e=>{_drag=true;_x0=e.clientX;_l0=parseFloa
 sthumb.addEventListener('pointermove',e=>{ if(!_drag)return;
   const tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
   scroll.scrollLeft=maxLeft>0?(clamp(_l0+(e.clientX-_x0),0,maxLeft)/maxLeft)*maxScroll:0; });
-sthumb.addEventListener('pointerup',()=>{_drag=false;});
+const endDrag=()=>{_drag=false;};
+sthumb.addEventListener('pointerup',endDrag);
+sthumb.addEventListener('pointercancel',endDrag);
 sbar.addEventListener('pointerdown',e=>{ if(e.target===sthumb)return;
   const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
   scroll.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
@@ -529,7 +531,12 @@ setLoc();
 function setState(s){ document.body.dataset.state=s; }
 async function load(){
   setState('loading');
-  try { weather = await fetchWeather(); }
+  try {
+    weather = await fetchWeather();
+    if (!weather || !weather.time || weather.time.length === 0) {
+      throw new Error("The weather service returned no data.");
+    }
+  }
   catch(e){
     document.getElementById('errmsg').textContent =
       (e && e.message ? e.message : 'Could not load the weather forecast.') +
