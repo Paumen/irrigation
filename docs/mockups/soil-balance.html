@@ -58,7 +58,7 @@
   .status .sub{font-size:11.5px;color:#8a8270}
   .status .bar{position:relative;height:8px;background:#eee7d6;border-radius:5px;margin-top:9px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:5px}
-  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rust)}
+  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--refill)}
   .status .rfl{position:relative;height:13px}
   .status .rfl span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--rust);font-weight:700;top:1px;white-space:nowrap}
   .view{display:none}
@@ -496,13 +496,15 @@ function renderStatus(){
    +`<div class="word" style="color:${color}">${word}</div>`
    +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
    +`<span class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:#8a8270">%</span></span>`
-   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div></div>`;
+   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div>`
+   +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
+   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div></div>`;
 }
 function render(){
   G=build();
   scroll.innerHTML=G.svg;
   renderStatus();
-  const pctTick=p=>{const y=SOIL_BOT-(p/100)*SOIL_D;return `<div class="tick" style="top:${pct(y)}%"></div><div class="lbl" style="top:${(y/H*100-1.2).toFixed(2)}%;left:5px">${p}%</div>`;};
+  const pctTick=p=>{const y=SOIL_BOT-(p/100)*SOIL_D;const mmv=Math.round(p/100*TANK);return `<div class="tick" style="top:${pct(y)}%"></div><div class="lbl" style="top:${(y/H*100-1.2).toFixed(2)}%;left:5px">${mmv}${p===100?' mm':''}</div>`;};
   axis.innerHTML=`${pctTick(100)}${pctTick(75)}${pctTick(50)}${pctTick(25)}${pctTick(0)}`;
   wireHits();
   if(!booted){scroll.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX);booted=true;requestAnimationFrame(()=>document.body.classList.remove('booting'));}
