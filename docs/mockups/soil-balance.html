@@ -489,8 +489,7 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
   if(seg.dataset.group==='planting') document.getElementById('locline').textContent=b.textContent.trim()+' · Wijchen';
 }));
 function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
-  document.getElementById('durVal').textContent=WATER_MIN;
-  document.getElementById('durMm').textContent=(WATER_MIN*0.063).toFixed(1);}
+  document.getElementById('durVal').textContent=WATER_MIN;}
 </script>
 </body>
 </html>
