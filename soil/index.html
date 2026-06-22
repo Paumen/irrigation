@@ -9,46 +9,43 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F3F0E7; --panel:#FBF9F3; --edge:#E6E0D2;
-    --ink:#34302A; --muted:#7C7565; --faint:#A8A192;
-    --leaf:#5B7F54; --leaf-deep:#3F5C3A;
-    --water:#4FA0BE; --water-deep:#2C748E;
-    --sun:#E59A38; --hot:#D9662C;
-    --dry:#C0663A; --refill:#C25A38;
+    --paper:#F4F1E8; --panel:#FCFAF4; --edge:#E7E1D3;
+    --ink:#33302A; --muted:#7B7464; --faint:#A9A292;
+    --leaf:#5B7F54; --leaf-deep:#3E5B39;
+    --water:#54A7C6; --water-deep:#296F8A;
+    --sun:#E7A23E; --hot:#D9662C;
+    --dry:#BE5C39; --refill:#BE5638;
     --serif:"Fraunces",Georgia,serif;
     --sans:"Inter",system-ui,-apple-system,Segoe UI,sans-serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
   body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
-    -webkit-text-size-adjust:100%;max-width:760px;margin:0 auto;padding-bottom:36px}
+    -webkit-text-size-adjust:100%;max-width:760px;margin:0 auto;padding-bottom:40px}
 
-  /* ---------- masthead ---------- */
-  .top{padding:22px 20px 4px}
-  .eyebrow{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
-  .place{display:flex;align-items:baseline;gap:9px;margin-top:3px}
-  .place h1{font-family:var(--serif);font-weight:500;font-size:22px;margin:0;letter-spacing:-.01em}
+  .top{padding:24px 22px 0}
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+  .place{display:flex;align-items:baseline;gap:9px;margin-top:4px}
+  .place h1{font-family:var(--serif);font-weight:500;font-size:23px;margin:0;letter-spacing:-.01em}
   .place .where{font-size:12.5px;color:var(--muted)}
 
-  /* ---------- verdict ---------- */
-  .verdict{padding:14px 20px 22px}
-  .v-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.12em;
+  .verdict{padding:18px 22px 24px}
+  .v-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.13em;
     text-transform:uppercase;color:var(--muted)}
   .v-tag .pip{width:8px;height:8px;border-radius:50%}
-  .v-head{font-family:var(--serif);font-weight:500;font-size:clamp(34px,9vw,44px);line-height:1.02;margin:9px 0 0;letter-spacing:-.015em}
-  .v-note{font-size:14.5px;color:var(--muted);margin:9px 0 0;max-width:44ch}
-  .gauge{margin-top:20px}
-  .gauge .nums{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
-  .gauge .big{font-family:var(--serif);font-size:20px;font-weight:600}
-  .gauge .lab{font-size:12.5px;color:var(--muted)}
-  .track{position:relative;height:12px;border-radius:7px;background:#E9E3D5;overflow:visible}
-  .track .wet{position:absolute;inset:0 auto 0 0;border-radius:7px;transition:width .55s cubic-bezier(.2,.8,.2,1),background .3s}
-  .track .refill{position:absolute;top:-4px;bottom:-4px;width:2px;border-radius:2px;background:var(--refill)}
+  .v-head{font-family:var(--serif);font-weight:500;font-size:clamp(36px,9.5vw,46px);line-height:1.0;margin:10px 0 0;letter-spacing:-.02em}
+  .v-note{font-size:14.5px;color:var(--muted);margin:10px 0 0;max-width:45ch}
+  .gauge{margin-top:22px}
+  .gauge .nums{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .gauge .big{font-family:var(--serif);font-size:21px;font-weight:600}
+  .gauge .lab{font-size:12.5px;color:var(--muted);font-weight:400}
+  .track{position:relative;height:13px;border-radius:7px;background:#EAE4D6;overflow:visible}
+  .track .wet{position:absolute;inset:0 auto 0 0;border-radius:7px;transition:width .6s cubic-bezier(.2,.8,.2,1),background .3s}
+  .track .refill{position:absolute;top:-5px;bottom:-5px;width:2px;border-radius:2px;background:var(--refill)}
   .track .refill::after{content:"refill";position:absolute;left:50%;top:-15px;transform:translateX(-50%);
     font-size:8.5px;font-weight:700;letter-spacing:.04em;color:var(--refill)}
 
-  /* ---------- chart ---------- */
-  .chart-wrap{margin:6px 0 0;background:var(--panel);border-top:1px solid var(--edge);border-bottom:1px solid var(--edge)}
+  .chart-wrap{margin:8px 0 0;background:var(--panel);border-top:1px solid var(--edge);border-bottom:1px solid var(--edge)}
   .view{display:none}
   body[data-state="ok"] .v-ok{display:block}
   body[data-state="ok"] .verdict.v-ok{display:block}
@@ -56,19 +53,18 @@
   body[data-state="error"] .v-err{display:flex}
   .ground{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .ground::-webkit-scrollbar{display:none}
-  svg.cross{display:block}
+  svg.cross{display:block;transition:opacity .6s ease}
   .cross .day{cursor:pointer}
   .boot svg.cross{opacity:0}
-  svg.cross{transition:opacity .6s ease}
-  .scrollrail{height:6px;margin:9px 16px 0;border-radius:4px;background:#E9E3D5;position:relative;touch-action:none}
-  .scrollrail .grip{position:absolute;top:0;bottom:0;left:0;width:48px;min-width:32px;border-radius:4px;background:#CBC3B0;cursor:grab}
-  .scrollrail .grip:active{cursor:grabbing;background:#B4AB95}
-  .swipe{font-size:11px;color:var(--faint);text-align:center;padding:6px 0 0}
-  .legend{display:flex;flex-wrap:wrap;gap:6px 15px;justify-content:center;padding:11px 16px 14px;font-size:11.5px;color:var(--muted)}
+  .scrollrail{height:6px;margin:11px 18px 0;border-radius:4px;background:#EAE4D6;position:relative;touch-action:none}
+  .scrollrail .grip{position:absolute;top:0;bottom:0;left:0;width:48px;min-width:32px;border-radius:4px;background:#CDC5B2;cursor:grab}
+  .scrollrail .grip:active{cursor:grabbing;background:#B5AC96}
+  .swipe{font-size:11px;color:var(--faint);text-align:center;padding:7px 0 0}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;padding:12px 16px 15px;font-size:11.5px;color:var(--muted)}
   .legend span{display:inline-flex;align-items:center;gap:5px}
   .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
 
-  .v-load,.v-err{flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center;min-height:300px;padding:44px 26px}
+  .v-load,.v-err{flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center;min-height:320px;padding:48px 26px}
   .spin{width:28px;height:28px;border:3px solid #E5DFCF;border-top-color:var(--leaf);border-radius:50%;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .v-load p,.v-err p{margin:0;font-size:13px;color:var(--muted);max-width:300px}
@@ -76,27 +72,26 @@
   .v-err h2{font-family:var(--serif);font-weight:500;font-size:20px;margin:0;color:var(--dry)}
   .again{appearance:none;border:0;cursor:pointer;background:var(--leaf);color:#fff;font:600 14px var(--sans);padding:10px 22px;border-radius:999px}
 
-  /* ---------- controls ---------- */
-  .setup{padding:20px 20px 0}
-  .setup .row{margin-bottom:18px}
-  .setup .name{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  .setup{padding:22px 22px 0}
+  .setup .row{margin-bottom:19px}
+  .setup .name{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chips button{appearance:none;cursor:pointer;font:500 14px var(--serif);padding:9px 17px;border-radius:11px;
+  .chips button{appearance:none;cursor:pointer;font:500 14.5px var(--serif);padding:9px 18px;border-radius:11px;
     border:1px solid var(--edge);background:var(--panel);color:var(--ink);transition:.14s}
-  .chips button:hover{border-color:#CDBF9D}
-  .chips button[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff;box-shadow:0 4px 14px -8px rgba(63,92,58,.9)}
-  .stepper{display:flex;align-items:center;gap:0;width:fit-content;border:1px solid var(--edge);border-radius:11px;overflow:hidden;background:var(--panel)}
-  .stepper button{appearance:none;border:0;cursor:pointer;width:46px;height:44px;font-size:21px;color:var(--muted);background:transparent}
+  .chips button:hover{border-color:#CFC1A0}
+  .chips button[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff;box-shadow:0 5px 16px -9px rgba(62,91,57,.95)}
+  .stepper{display:flex;align-items:center;width:fit-content;border:1px solid var(--edge);border-radius:11px;overflow:hidden;background:var(--panel)}
+  .stepper button{appearance:none;border:0;cursor:pointer;width:48px;height:46px;font-size:22px;color:var(--muted);background:transparent}
   .stepper button:hover{background:#EFEADC}
-  .stepper .read{min-width:96px;text-align:center;border-left:1px solid var(--edge);border-right:1px solid var(--edge);height:44px;
+  .stepper .read{min-width:100px;text-align:center;border-left:1px solid var(--edge);border-right:1px solid var(--edge);height:46px;
     display:flex;align-items:baseline;justify-content:center;gap:5px}
-  .stepper .read b{font-family:var(--serif);font-size:17px;font-weight:600}
+  .stepper .read b{font-family:var(--serif);font-size:18px;font-weight:600}
   .stepper .read span{font-size:11px;color:var(--faint)}
-  .dose{font-size:12px;color:var(--muted);margin-top:8px}
-  .summary{margin-top:6px;padding:14px 20px 0;font-size:12.5px;color:var(--muted);border-top:1px solid var(--edge)}
+  .dose{font-size:12px;color:var(--muted);margin-top:9px}
+  .summary{margin-top:6px;padding:16px 22px 0;font-size:12.5px;color:var(--muted);border-top:1px solid var(--edge)}
   .summary b{color:var(--ink);font-weight:600}
   @media(min-width:560px){
-    .setup{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+    .setup{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
     .setup .row.wide{grid-column:1/-1}
   }
 </style>
@@ -114,7 +109,7 @@
     <div class="view v-ok">
       <div class="ground" id="ground"></div>
       <div class="scrollrail" id="rail"><div class="grip" id="grip"></div></div>
-      <div class="swipe">tap a day to water it · tap again to undo · swipe to see all 28 days</div>
+      <div class="swipe">tap a day to water it · tap again to undo · swipe for all 28 days</div>
       <div class="legend">
         <span><i style="background:var(--sun)"></i>sun · drying</span>
         <span><i style="background:var(--water)"></i>rain</span>
@@ -156,9 +151,7 @@ import { compute, fetchWeather, PLANTINGS, SOILS, SUN_EXPOSURES, DEFAULTS, SITE 
 
 /* ====================== state ====================== */
 const ctrl = { ...DEFAULTS, watered: [] };
-let wx = null;
-let model = null;          // last compute() result, adapted
-let today = 0;             // index of today in the series
+let wx = null, model = null, today = 0;
 
 const clamp = (v,a,b)=>v<a?a:v>b?b:v;
 const lerp  = (a,b,t)=>a+(b-a)*t;
@@ -171,18 +164,16 @@ function recompute(){
   const r = compute(ctrl, wx);
   const watered = new Set(ctrl.watered);
   const days = r.series.map(s=>({
-    i:s.index, date:s.date, dow:s.weekday.slice(0,2),
-    weekend:/^(Sat|Sun)/.test(s.weekday),
+    i:s.index, date:s.date, dow:s.weekday.slice(0,2), weekend:/^(Sat|Sun)/.test(s.weekday),
     tmax:s.tempMax, et0:s.et0, rain:s.rain,
     watered:watered.has(s.index), frac:clamp(s.level/r.tankSize,0,1), level:s.level,
   }));
   today = days.findIndex(d=>d.date===todayISO());
-  if(today<0) today = clamp(DEFAULTS.watered.length? 14:14, 0, days.length-1);
+  if(today<0) today = clamp(14,0,days.length-1);
   model = { tank:r.tankSize, refill:r.tankSize*0.5, dose:r.dose, days };
 }
 
 /* ====================== drawing ====================== */
-// rounded smooth path through points (Catmull-Rom → cubic Bézier)
 function curve(pts){
   if(!pts.length) return "";
   let d=`M${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
@@ -194,159 +185,159 @@ function curve(pts){
   }
   return d;
 }
-// deterministic per-day jitter
-const wob = (i,k)=>{ const s=Math.sin(i*12.9898+k*78.233)*43758.5453; return s-Math.floor(s); };
+const wob=(i,k)=>{ const s=Math.sin(i*12.9898+k*78.233)*43758.5453; return s-Math.floor(s); };
+const etN=e=>clamp((e-1)/5.5,0,1);
+const heatN=t=>clamp((t-15)/21,0,1);
 
-// vertical metrics
-const SKY=0, SURF=134, BOT=314, SOILH=BOT-SURF, ROOT=SOILH*0.52, LBL=BOT+20;
-const Hsvg=372;
+// vertical metrics — generous sky, deep soil
+const SKY=0, HORIZON=66, SURF=158, BOT=358, SOILH=BOT-SURF, ROOT=SOILH*0.5, LBL=BOT+22, Hsvg=400;
 
-function sun(cx,cy,et0,heat){
-  const r = lerp(5,9, clamp((et0-1)/5.5,0,1));
-  const col = heat>0.6 ? "var(--hot)" : "var(--sun)";
-  let rays=""; const n=8;
-  for(let k=0;k<n;k++){ const a=k/n*6.283, r1=r+2.5, r2=r+2.5+lerp(2,6,clamp((et0-1)/5.5,0,1));
-    rays+=`<line x1="${(cx+Math.cos(a)*r1).toFixed(1)}" y1="${(cy+Math.sin(a)*r1).toFixed(1)}" x2="${(cx+Math.cos(a)*r2).toFixed(1)}" y2="${(cy+Math.sin(a)*r2).toFixed(1)}" stroke="${col}" stroke-width="1.4" stroke-linecap="round" opacity=".75"/>`; }
-  return `${rays}<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${col}"/>`;
+// a calm sun: soft halo + disc, size by ET, warmth by heat (no spiky rays)
+function sun(cx,et0,heat){
+  const r=lerp(5.5,10,etN(et0)), col=`color-mix(in srgb, var(--sun), var(--hot) ${Math.round(heat*100)}%)`;
+  const cy=lerp(40,26,etN(et0));
+  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(r*2.4).toFixed(1)}" fill="${col}" opacity="${(0.06+heat*0.10).toFixed(2)}"/>`
+       + `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(r*1.5).toFixed(1)}" fill="${col}" opacity="${(0.10+heat*0.12).toFixed(2)}"/>`
+       + `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" fill="${col}"/>`;
 }
 function rain(x0,w,amount,i){
   if(amount<=0.05) return "";
-  const n = Math.round(clamp(amount/1.2,2,9)); let s="";
-  for(let k=0;k<n;k++){ const rx=x0+lerp(w*0.18,w*0.82,wob(i,k)), ry=SURF-78+wob(i,k+5)*54, len=lerp(7,15,wob(i,k+9));
-    s+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="var(--water)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`; }
+  const n=Math.round(clamp(amount/1.4,2,7)); let s="";
+  for(let k=0;k<n;k++){ const rx=x0+lerp(w*0.2,w*0.8,wob(i,k)), ry=HORIZON+wob(i,k+5)*54, len=lerp(8,15,wob(i,k+9));
+    s+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="var(--water)" stroke-width="1.7" stroke-linecap="round" opacity=".68"/>`; }
   return s;
 }
-function wateringDrop(cx){
-  return `<g opacity=".95"><path d="M${cx.toFixed(1)} ${(SURF-66).toFixed(1)} c-4 5 -4 9 0 12 c4 -3 4 -7 0 -12 z" fill="var(--leaf)"/>`
-       +`<circle cx="${cx.toFixed(1)}" cy="${(SURF-49).toFixed(1)}" r="1.8" fill="var(--leaf)" opacity=".7"/></g>`;
+// a small tilted watering can with a soft pour, drawn over watered days
+function canPour(cx){
+  const x=cx-7, y=SURF-58;
+  return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">`
+    + `<path d="M0 4 h11 a2 2 0 0 1 2 2 v7 a6 6 0 0 1 -6 6 h-3 a6 6 0 0 1 -6 -6 v-7 a2 2 0 0 1 2 -2 z" fill="var(--leaf)"/>`
+    + `<path d="M11 5 l7 -4 l1.4 2 l-6.4 4 z" fill="var(--leaf)"/>`
+    + `<path d="M2 4 q3 -5 7 0" fill="none" stroke="var(--leaf)" stroke-width="1.6"/>`
+    + `<path d="M18.5 4 q3 8 1.5 ${(SURF-y-4).toFixed(1)}" fill="none" stroke="var(--water)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`
+    + `</g>`;
 }
 function roots(cx,vigor,i){
-  const reach = ROOT*lerp(0.55,1,vigor);
-  const col = vigor>0.45 ? "var(--leaf-deep)" : (vigor>0.18? "#8A7038":"#9A8A6E");
-  const wTap = lerp(1,2.4,vigor);
+  const reach=ROOT*lerp(0.5,1,vigor);
+  const col = vigor>0.45?"var(--leaf-deep)":(vigor>0.18?"#86702F":"#9C8C6E");
+  const wTap=lerp(1.2,2.8,vigor);
   const main=[{x:cx,y:SURF+1}];
-  const segs=4;
-  for(let k=1;k<=segs;k++){ const t=k/segs; main.push({x:cx+(wob(i,k)-0.5)*6, y:SURF+reach*t}); }
+  for(let k=1;k<=4;k++){ const t=k/4; main.push({x:cx+(wob(i,k)-0.5)*7,y:SURF+reach*t}); }
   let s=`<path d="${curve(main)}" fill="none" stroke="${col}" stroke-width="${wTap.toFixed(2)}" stroke-linecap="round"/>`;
-  const nLat = Math.round(lerp(1,4,vigor));
-  for(let k=0;k<nLat;k++){ const t=lerp(0.3,0.9,(k+0.5)/nLat), y0=SURF+reach*t, dir=k%2?1:-1;
-    const ex=cx+dir*lerp(6,15,wob(i,k+2)), ey=y0+lerp(5,16,wob(i,k+7));
-    s+=`<path d="M${cx.toFixed(1)} ${y0.toFixed(1)} Q ${((cx+ex)/2+dir*3).toFixed(1)} ${((y0+ey)/2).toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wTap*0.55).toFixed(2)}" stroke-linecap="round" opacity=".9"/>`; }
+  const nLat=Math.round(lerp(2,5,vigor));
+  for(let k=0;k<nLat;k++){ const t=lerp(0.28,0.92,(k+0.5)/nLat), y0=SURF+reach*t, dir=k%2?1:-1;
+    const ex=cx+dir*lerp(7,17,wob(i,k+2)), ey=y0+lerp(6,18,wob(i,k+7));
+    s+=`<path d="M${cx.toFixed(1)} ${y0.toFixed(1)} Q ${((cx+ex)/2+dir*3).toFixed(1)} ${((y0+ey)/2).toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wTap*0.5).toFixed(2)}" stroke-linecap="round" opacity=".92"/>`;
+    if(vigor>0.5){ s+=`<path d="M${ex.toFixed(1)} ${ey.toFixed(1)} q ${(dir*4)} 4 ${(dir*5)} 8" fill="none" stroke="${col}" stroke-width="${(wTap*0.3).toFixed(2)}" stroke-linecap="round" opacity=".7"/>`; }
+  }
   return s;
 }
 function flower(cx,vigor,future){
-  const op = future? 0.85 : 1;
-  if(vigor<0.12){ // barely alive sprout
-    return `<g opacity="${op}"><path d="M${cx} ${SURF} q -2 -6 -4 -9" stroke="#8A7E62" stroke-width="1.4" fill="none" stroke-linecap="round"/></g>`;
-  }
-  const h = lerp(12,46,vigor), droop = clamp((0.4-vigor)/0.4,0,1);
-  const tipX = cx + droop*8*(wob(cx,1)<.5?-1:1), tipY = SURF - h + droop*h*0.4;
-  const stem = `<path d="M${cx} ${SURF} Q ${(cx+droop*5).toFixed(1)} ${(SURF-h*0.55).toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${vigor>0.4?'var(--leaf)':'#9A8B45'}" stroke-width="${lerp(1.4,2.4,vigor).toFixed(2)}" stroke-linecap="round"/>`;
-  let leaves=""; const nl=Math.round(lerp(1,4,vigor));
-  for(let k=0;k<nl;k++){ const t=lerp(0.3,0.85,(k+0.5)/nl), lx=lerp(cx,tipX,t), ly=lerp(SURF,tipY,t), side=k%2?1:-1, ll=lerp(5,10,vigor);
-    leaves+=`<ellipse cx="${(lx+side*ll*0.5).toFixed(1)}" cy="${ly.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.3).toFixed(1)}" fill="${vigor>0.4?'#6F9A66':'#A89A55'}" transform="rotate(${side*30} ${(lx+side*ll*0.5).toFixed(1)} ${ly.toFixed(1)})"/>`; }
-  let bloom="";
-  if(vigor>0.62){ for(let k=0;k<5;k++){ const a=k/5*6.283; bloom+=`<circle cx="${(tipX+Math.cos(a)*3.6).toFixed(1)}" cy="${(tipY+Math.sin(a)*3.6).toFixed(1)}" r="2.5" fill="#D08AB0"/>`; } bloom+=`<circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="2" fill="#E8C24A"/>`; }
-  else if(vigor>0.38){ bloom=`<circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="3" fill="#C9A24A"/>`; }
-  return `<g opacity="${op}">${stem}${leaves}${bloom}</g>`;
+  const op=future?0.86:1;
+  if(vigor<0.1) return `<g opacity="${op}"><path d="M${cx} ${SURF} q -3 -7 -6 -10" stroke="#8C8064" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>`;
+  const h=lerp(16,62,vigor), droop=clamp((0.4-vigor)/0.4,0,1), bend=droop*9*(wob(cx,1)<.5?-1:1);
+  const tipX=cx+bend, tipY=SURF-h+droop*h*0.35;
+  const stemCol=vigor>0.4?"var(--leaf)":"#9B8B43";
+  let s=`<path d="M${cx} ${SURF} Q ${(cx+bend*0.5).toFixed(1)} ${(SURF-h*0.55).toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${stemCol}" stroke-width="${lerp(1.6,2.8,vigor).toFixed(2)}" stroke-linecap="round"/>`;
+  const nl=Math.round(lerp(2,4,vigor));
+  for(let k=0;k<nl;k++){ const t=lerp(0.3,0.82,(k+0.5)/nl), lx=lerp(cx,tipX,t), ly=lerp(SURF,tipY,t), side=k%2?1:-1, ll=lerp(7,12,vigor);
+    const ex=lx+side*ll*0.95, ey=ly-ll*0.25;
+    s+=`<path d="M${lx.toFixed(1)} ${ly.toFixed(1)} Q ${(lx+side*ll*0.55).toFixed(1)} ${(ly-ll*0.5).toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)} Q ${(lx+side*ll*0.5).toFixed(1)} ${(ly+ll*0.1).toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)} z" fill="${vigor>0.4?'#6E9B65':'#A89A55'}"/>`; }
+  if(vigor>0.6){ for(let k=0;k<5;k++){ const a=k/5*6.283-1.57; s+=`<ellipse cx="${(tipX+Math.cos(a)*4).toFixed(1)}" cy="${(tipY+Math.sin(a)*4).toFixed(1)}" rx="2.4" ry="3.4" fill="#D58FB3" transform="rotate(${(a*57.3+90).toFixed(0)} ${(tipX+Math.cos(a)*4).toFixed(1)} ${(tipY+Math.sin(a)*4).toFixed(1)})"/>`; } s+=`<circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="2.3" fill="#EAC44C"/>`; }
+  else if(vigor>0.36){ s+=`<circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="3.1" fill="#C9A24A"/>`; }
+  return `<g opacity="${op}">${s}</g>`;
 }
 
 function drawChart(){
-  const m = model, N = m.days.length;
-  const vw = Math.min(window.innerWidth, 760);
-  const colW = clamp(vw/7, 46, 96);          // ~7 days visible (UIX-5)
-  const W = colW*N;
-  const cx = i=>colW*(i+0.5);
-  const ty = lv=>BOT - clamp(lv/m.tank,0,1)*SOILH;   // water-table y for a level
-  const refillY = ty(m.refill);
+  const m=model, N=m.days.length;
+  const vw=Math.min(window.innerWidth,760);
+  const colW=clamp(vw/7,50,104);
+  const W=colW*N, cx=i=>colW*(i+0.5);
+  const ty=lv=>BOT-clamp(lv/m.tank,0,1)*SOILH;
+  const refillY=ty(m.refill);
 
-  // sky tints + weather above ground
-  let sky="", weather="";
-  m.days.forEach(d=>{
-    const x0=colW*d.i, heat=clamp((d.tmax-15)/21,0,1), future=d.i>today;
-    sky += `<rect x="${x0.toFixed(1)}" y="${SKY}" width="${colW.toFixed(1)}" height="${SURF}" fill="${heat>0.5?`rgba(231,190,120,${(0.10+heat*0.22).toFixed(2)})`:`rgba(206,214,205,${(0.12+(0.5-heat)*0.1).toFixed(2)})`}"/>`;
-    weather += `<g opacity="${future?0.7:1}">${sun(cx(d.i), 30, d.et0, heat)}${rain(x0,colW,d.rain,d.i)}${d.watered?wateringDrop(cx(d.i)):""}</g>`;
-  });
+  // sky: one soft gradient, then a per-day warmth wash by heat (low-contrast, no hard seams)
+  let sky=`<rect x="0" y="0" width="${W.toFixed(1)}" height="${SURF}" fill="url(#sky)"/>`, heatWash="";
+  m.days.forEach(d=>{ const h=heatN(d.tmax); if(h>0.45) heatWash+=`<rect x="${(colW*d.i).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${SURF}" fill="var(--sun)" opacity="${((h-0.45)*0.16).toFixed(3)}"/>`; });
 
-  // soil body — two flat horizons
-  let soil = `<rect x="0" y="${SURF}" width="${W.toFixed(1)}" height="${SOILH}" fill="#B7986C"/>`
-           + `<rect x="0" y="${(SURF+SOILH*0.42).toFixed(1)}" width="${W.toFixed(1)}" height="${(SOILH*0.58).toFixed(1)}" fill="#9A7850"/>`;
+  // weather glyphs
+  let weather="";
+  m.days.forEach(d=>{ const future=d.i>today;
+    weather+=`<g opacity="${future?0.72:1}">${sun(cx(d.i),d.et0,heatN(d.tmax))}${rain(colW*d.i,colW,d.rain,d.i)}${d.watered?canPour(cx(d.i)):""}</g>`; });
 
-  // watered-day soil highlight
-  m.days.forEach(d=>{ if(d.watered) soil += `<rect x="${(colW*d.i).toFixed(1)}" y="${SURF}" width="${colW.toFixed(1)}" height="${SOILH}" fill="var(--leaf)" opacity=".10"/>`; });
+  // soil — one warm tone; water area overlaid reads as "wet soil"
+  let soil=`<rect x="0" y="${SURF}" width="${W.toFixed(1)}" height="${SOILH}" fill="url(#soil)"/>`;
+  m.days.forEach(d=>{ if(d.watered) soil+=`<rect x="${(colW*d.i).toFixed(1)}" y="${SURF}" width="${colW.toFixed(1)}" height="${SOILH}" fill="var(--leaf)" opacity=".09"/>`; });
 
-  // water in soil — area under the smooth water table
   const pts=[{x:0,y:ty(m.days[0].level)}];
   m.days.forEach(d=>pts.push({x:cx(d.i),y:ty(d.level)}));
   pts.push({x:W,y:ty(m.days[N-1].level)});
-  const tableLine=curve(pts);
-  soil += `<path d="${tableLine} L ${W.toFixed(1)} ${BOT} L 0 ${BOT} Z" fill="url(#wg)"/>`
-        + `<path d="${tableLine}" fill="none" stroke="var(--water-deep)" stroke-width="2"/>`;
+  const table=curve(pts);
+  soil+=`<path d="${table} L ${W.toFixed(1)} ${BOT} L 0 ${BOT} Z" fill="url(#wg)"/>`
+      + `<path d="${table}" fill="none" stroke="var(--water-deep)" stroke-width="2.4"/>`
+      + `<path d="${table}" fill="none" stroke="#CFEFF7" stroke-width="1" opacity=".55"/>`;
 
-  // refill line
-  soil += `<line x1="0" y1="${refillY.toFixed(1)}" x2="${W.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--refill)" stroke-width="1.6" stroke-dasharray="7 5" opacity=".9"/>`
-        + `<rect x="6" y="${(refillY-15).toFixed(1)}" width="42" height="14" rx="4" fill="var(--refill)"/>`
-        + `<text x="27" y="${(refillY-5).toFixed(1)}" text-anchor="middle" font-family="var(--sans)" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".05em">refill</text>`;
+  // refill line + tag
+  soil+=`<line x1="0" y1="${refillY.toFixed(1)}" x2="${W.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--refill)" stroke-width="1.5" stroke-dasharray="6 5" opacity=".85"/>`
+      + `<rect x="8" y="${(refillY-15).toFixed(1)}" width="46" height="14" rx="4" fill="var(--refill)"/>`
+      + `<text x="31" y="${(refillY-5).toFixed(1)}" text-anchor="middle" font-family="var(--sans)" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".05em">refill</text>`;
 
   // surface line
-  const surfPts=[{x:0,y:SURF}]; m.days.forEach(d=>surfPts.push({x:cx(d.i),y:SURF+(wob(d.i,3)-0.5)*2})); surfPts.push({x:W,y:SURF});
-  soil += `<path d="${curve(surfPts)}" fill="none" stroke="#6B5536" stroke-width="2.2"/>`;
+  const sp=[{x:0,y:SURF}]; m.days.forEach(d=>sp.push({x:cx(d.i),y:SURF+(wob(d.i,3)-0.5)*1.6})); sp.push({x:W,y:SURF});
+  soil+=`<path d="${curve(sp)}" fill="none" stroke="#6A5436" stroke-width="2.4"/>`;
 
   // flora
-  let flora="";
-  m.days.forEach(d=>{ flora += `<g>${roots(cx(d.i),d.frac,d.i)}${flower(cx(d.i),d.frac,d.i>today)}</g>`; });
+  let flora=""; m.days.forEach(d=>{ flora+=`<g>${roots(cx(d.i),d.frac,d.i)}${flower(cx(d.i),d.frac,d.i>today)}</g>`; });
 
-  // axis + today + water-by + hit targets
-  let axis="", marks="", hits="";
-  let needBy=-1; for(let k=today;k<N;k++){ if(m.days[k].level<m.refill){ needBy=k; break; } }
-  m.days.forEach(d=>{
-    const x=cx(d.i), isT=d.i===today, fut=d.i>today;
-    const c = isT?"var(--leaf-deep)":(d.weekend?"#9A6A3E":(fut?"#9A9282":"#6C6555"));
-    axis += `<text x="${x.toFixed(1)}" y="${LBL}" text-anchor="middle" font-family="var(--sans)" font-size="10.5" font-weight="${isT?700:500}" fill="${c}">${d.date.slice(8)}</text>`
-          + `<text x="${x.toFixed(1)}" y="${(LBL+13)}" text-anchor="middle" font-family="var(--sans)" font-size="9" fill="${c}" opacity=".8">${d.dow}</text>`;
-    hits += `<rect class="day" data-i="${d.i}" x="${(colW*d.i).toFixed(1)}" y="${SKY}" width="${colW.toFixed(1)}" height="${BOT-SKY}" fill="transparent"/>`;
+  // axis + markers + hit targets
+  let axis="",hits="";
+  m.days.forEach(d=>{ const x=cx(d.i), isT=d.i===today, fut=d.i>today;
+    const c=isT?"var(--leaf-deep)":(d.weekend?"#9A6A3E":(fut?"#A39B8A":"#6C6555"));
+    axis+=`<text x="${x.toFixed(1)}" y="${LBL}" text-anchor="middle" font-family="var(--sans)" font-size="11" font-weight="${isT?700:500}" fill="${c}">${d.date.slice(8)}</text>`
+        + `<text x="${x.toFixed(1)}" y="${LBL+13}" text-anchor="middle" font-family="var(--sans)" font-size="9" fill="${c}" opacity=".8">${d.dow}</text>`;
+    hits+=`<rect class="day" data-i="${d.i}" x="${(colW*d.i).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${BOT}" fill="transparent"/>`;
   });
-  // today band + pill
   const tx=cx(today);
-  marks += `<rect x="${(colW*today).toFixed(1)}" y="${SKY}" width="${colW.toFixed(1)}" height="${BOT-SKY}" fill="var(--leaf)" opacity=".07"/>`
-        + `<rect x="${(tx-22).toFixed(1)}" y="2" width="44" height="15" rx="7.5" fill="var(--leaf-deep)"/>`
-        + `<text x="${tx.toFixed(1)}" y="12.5" text-anchor="middle" font-family="var(--sans)" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
-  if(needBy>today){ const wx2=cx(needBy);
-    marks += `<rect x="${(colW*needBy).toFixed(1)}" y="${SKY}" width="${colW.toFixed(1)}" height="${BOT-SKY}" fill="var(--dry)" opacity=".09"/>`
-          + `<rect x="${(wx2-26).toFixed(1)}" y="2" width="52" height="15" rx="4" fill="var(--dry)"/>`
-          + `<text x="${wx2.toFixed(1)}" y="12.5" text-anchor="middle" font-family="var(--sans)" font-size="8.5" font-weight="700" fill="#fff">water by</text>`; }
+  let needBy=-1; for(let k=today;k<N;k++){ if(m.days[k].level<m.refill){ needBy=k; break; } }
+  let marks=`<rect x="${(colW*today).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${BOT}" fill="var(--leaf)" opacity=".06"/>`
+    + `<rect x="${(tx-23).toFixed(1)}" y="3" width="46" height="15" rx="7.5" fill="var(--leaf-deep)"/>`
+    + `<text x="${tx.toFixed(1)}" y="13.5" text-anchor="middle" font-family="var(--sans)" font-size="8.5" font-weight="700" fill="#fff" letter-spacing=".1em">TODAY</text>`;
+  if(needBy>today){ const wb=cx(needBy);
+    marks+=`<rect x="${(colW*needBy).toFixed(1)}" y="0" width="${colW.toFixed(1)}" height="${BOT}" fill="var(--dry)" opacity=".08"/>`
+      + `<rect x="${(wb-27).toFixed(1)}" y="3" width="54" height="15" rx="4" fill="var(--dry)"/>`
+      + `<text x="${wb.toFixed(1)}" y="13.5" text-anchor="middle" font-family="var(--sans)" font-size="8.5" font-weight="700" fill="#fff">water by</text>`; }
 
-  const svg = `<svg class="cross" viewBox="0 0 ${W.toFixed(0)} ${Hsvg}" width="${W.toFixed(0)}" height="${Hsvg}" xmlns="http://www.w3.org/2000/svg">`
-    + `<defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--water)" stop-opacity=".5"/><stop offset="1" stop-color="var(--water-deep)" stop-opacity=".82"/></linearGradient></defs>`
-    + sky + weather + soil + flora + marks + axis + hits + `</svg>`;
+  const svg=`<svg class="cross" viewBox="0 0 ${W.toFixed(0)} ${Hsvg}" width="${W.toFixed(0)}" height="${Hsvg}" xmlns="http://www.w3.org/2000/svg">`
+    + `<defs>`
+    + `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCE8E4"/><stop offset="1" stop-color="#F0E9D8"/></linearGradient>`
+    + `<linearGradient id="soil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFA078"/><stop offset="1" stop-color="#A07C53"/></linearGradient>`
+    + `<linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--water)" stop-opacity=".52"/><stop offset="1" stop-color="var(--water-deep)" stop-opacity=".85"/></linearGradient>`
+    + `</defs>`
+    + sky + heatWash + weather + soil + flora + marks + axis + hits + `</svg>`;
   return { svg, W, colW, cx };
 }
 
 /* ====================== verdict ====================== */
 function drawVerdict(){
-  const m=model, d=m.days[today], tl=d.level, pct=Math.round(tl/m.tank*100), N=m.days.length;
+  const m=model, tl=m.days[today].level, pct=Math.round(tl/m.tank*100), N=m.days.length;
   let firstBelow=-1; for(let k=today;k<N;k++){ if(m.days[k].level<m.refill){ firstBelow=k; break; } }
   const GREEN="var(--leaf)", AMBER="var(--sun)", RUST="var(--dry)";
-  let head, note, color, tag;
-  if(tl<m.refill){
-    color=RUST; tag="Below refill line"; head="Water today";
-    note = tl<=0.05 ? "The root zone is nearly empty — water today." : "Soil has fallen to the watering threshold — time to water.";
-  } else {
-    tag="Above refill line";
+  let head,note,color,tag;
+  if(tl<m.refill){ color=RUST; tag="Below refill line"; head="Water today";
+    note=tl<=0.05?"The root zone is nearly empty — water today.":"Soil has fallen to the watering threshold — time to water."; }
+  else { tag="Above refill line";
     if(firstBelow<0){ color=GREEN; head="Holding steady"; note=`Comfortably wet — stays above the refill line through ${asDate(m.days[N-1].date)}.`; }
     else { const dd=firstBelow-today, when=asDate(m.days[firstBelow].date);
       if(dd===1){ color=AMBER; head="Water tomorrow"; note=`On track to reach the refill line tomorrow (${when}).`; }
       else if(dd<=3){ color=AMBER; head=`Water in ${dd} days`; note=`On track to reach the refill line in ${dd} days (${when}).`; }
-      else { color=GREEN; head="Holding steady"; note=`Comfortable for now — projected to reach the refill line in ${dd} days (${when}).`; }
-    }
-  }
-  document.getElementById("verdict").innerHTML =
+      else { color=GREEN; head="Holding steady"; note=`Comfortable for now — projected to reach the refill line in ${dd} days (${when}).`; } } }
+  document.getElementById("verdict").innerHTML=
      `<span class="v-tag"><span class="pip" style="background:${color}"></span>${tag}</span>`
     +`<div class="v-head" style="color:${color}">${head}</div>`
     +`<p class="v-note">${note}</p>`
     +`<div class="gauge"><div class="nums">`
-    +`<span class="big" style="color:${color}">${mm1(tl)} mm <span class="lab" style="font-weight:400">in the root zone</span></span>`
-    +`<span class="big" style="color:${color}">${pct}<span class="lab" style="font-weight:400">% of ${Math.round(m.tank)} mm</span></span></div>`
+    +`<span class="big" style="color:${color}">${mm1(tl)} mm <span class="lab">in the root zone</span></span>`
+    +`<span class="big" style="color:${color}">${pct}<span class="lab">% of ${Math.round(m.tank)} mm</span></span></div>`
     +`<div class="track"><div class="wet" style="width:${clamp(pct,0,100)}%;background:${color}"></div>`
     +`<div class="refill" style="left:${(m.refill/m.tank*100).toFixed(1)}%"></div></div></div>`;
 }
@@ -354,56 +345,49 @@ function drawVerdict(){
 /* ====================== mount + interaction ====================== */
 const ground=document.getElementById("ground"), rail=document.getElementById("rail"), grip=document.getElementById("grip");
 let geo, booted=false;
-
 function paint(){
-  geo = drawChart();
-  ground.innerHTML = geo.svg;
-  drawVerdict();
-  drawSummary();
+  geo=drawChart(); ground.innerHTML=geo.svg; drawVerdict(); drawSummary();
   ground.querySelectorAll(".day").forEach(el=>el.addEventListener("click",()=>toggle(+el.dataset.i)));
   requestAnimationFrame(syncRail);
-  if(!booted){ ground.scrollLeft = Math.max(0, geo.cx(today) - geo.colW*1.5); booted=true; requestAnimationFrame(()=>document.body.classList.remove("boot")); }
+  if(!booted){ ground.scrollLeft=Math.max(0,geo.cx(today)-geo.colW*1.5); booted=true; requestAnimationFrame(()=>document.body.classList.remove("boot")); }
 }
 function repaint(){ const sl=ground.scrollLeft; paint(); ground.scrollLeft=sl; }
 function refresh(){ recompute(); repaint(); }
 function toggle(i){ const at=ctrl.watered.indexOf(i); if(at>=0) ctrl.watered.splice(at,1); else ctrl.watered.push(i); refresh(); }
-
 let rz; addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{ if(wx) repaint(); },160);});
 
-/* drag-rail */
 function syncRail(){
   const cw=ground.clientWidth, sw=ground.scrollWidth, rw=rail.clientWidth;
-  if(!rw || sw<=cw+1){ rail.style.visibility="hidden"; return; }
+  if(!rw||sw<=cw+1){ rail.style.visibility="hidden"; return; }
   rail.style.visibility="visible";
-  const gw=Math.max(32, rw*cw/sw), maxL=rw-gw, maxS=sw-cw;
+  const gw=Math.max(32,rw*cw/sw), maxL=rw-gw, maxS=sw-cw;
   grip.style.width=gw+"px"; grip.style.left=(maxS>0?(ground.scrollLeft/maxS)*maxL:0)+"px";
 }
 ground.addEventListener("scroll",syncRail,{passive:true});
 let drag=false,dx=0,dl=0;
 grip.addEventListener("pointerdown",e=>{drag=true;dx=e.clientX;dl=parseFloat(grip.style.left)||0;grip.setPointerCapture(e.pointerId);e.preventDefault();});
 grip.addEventListener("pointermove",e=>{ if(!drag)return; const rw=rail.clientWidth,gw=grip.offsetWidth,maxL=rw-gw,maxS=ground.scrollWidth-ground.clientWidth;
-  ground.scrollLeft = maxL>0?(clamp(dl+(e.clientX-dx),0,maxL)/maxL)*maxS:0; });
+  ground.scrollLeft=maxL>0?(clamp(dl+(e.clientX-dx),0,maxL)/maxL)*maxS:0; });
 const endDrag=()=>{drag=false;};
 grip.addEventListener("pointerup",endDrag); grip.addEventListener("pointercancel",endDrag);
 rail.addEventListener("pointerdown",e=>{ if(e.target===grip)return; const r=rail.getBoundingClientRect(),rw=rail.clientWidth,gw=grip.offsetWidth,maxL=rw-gw,maxS=ground.scrollWidth-ground.clientWidth;
-  ground.scrollLeft = maxL>0?(clamp(e.clientX-r.left-gw/2,0,maxL)/maxL)*maxS:0; });
+  ground.scrollLeft=maxL>0?(clamp(e.clientX-r.left-gw/2,0,maxL)/maxL)*maxS:0; });
 
 /* ====================== controls ====================== */
-function chips(key, names){
+function chips(key,names){
   const box=document.querySelector(`.chips[data-key="${key}"]`);
   box.innerHTML=names.map(n=>`<button${n===ctrl[key]?' aria-pressed="true"':''}>${n}</button>`).join("");
   box.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return;
-    box.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
+    box.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));
     ctrl[key]=b.textContent.trim(); refresh(); });
 }
 function drawSummary(){
-  document.getElementById("summary").innerHTML =
+  document.getElementById("summary").innerHTML=
     `This zone is <b>${ctrl.planting}</b> on <b>${ctrl.soil}</b> in <b>${ctrl.sun.toLowerCase()}</b>. `
    +`A <b>${ctrl.wateringMinutes}-minute</b> run adds <b>${mm1(model.dose)} mm</b>; the soil holds <b>${Math.round(model.tank)} mm</b> of plant-available water.`;
-  document.getElementById("dose").textContent = `≈ ${mm1(model.dose)} mm reaches the root zone per watered day`;
+  document.getElementById("dose").textContent=`≈ ${mm1(model.dose)} mm reaches the root zone per watered day`;
 }
-function bumpDur(step){ ctrl.wateringMinutes=clamp(ctrl.wateringMinutes+step,15,240);
-  document.getElementById("durRead").textContent=ctrl.wateringMinutes; refresh(); }
+function bumpDur(step){ ctrl.wateringMinutes=clamp(ctrl.wateringMinutes+step,15,240); document.getElementById("durRead").textContent=ctrl.wateringMinutes; refresh(); }
 document.getElementById("durDown").addEventListener("click",()=>bumpDur(-15));
 document.getElementById("durUp").addEventListener("click",()=>bumpDur(15));
 
@@ -411,26 +395,18 @@ document.getElementById("durUp").addEventListener("click",()=>bumpDur(15));
 function setState(s){ document.body.dataset.state=s; }
 async function load(){
   setState("loading");
-  try{
-    wx = await fetchWeather();
-    if(!wx || !wx.time || wx.time.length===0) throw new Error("The forecast service returned no data.");
-  }catch(e){
-    document.getElementById("errText").textContent =
-      (e&&e.message? e.message : "Couldn't reach the forecast service.") + " Nothing is estimated — please try again.";
-    setState("error"); return;
-  }
-  recompute();
-  setState("ok");
-  paint();
+  try{ wx=await fetchWeather(); if(!wx||!wx.time||wx.time.length===0) throw new Error("The forecast service returned no data."); }
+  catch(e){ document.getElementById("errText").textContent=(e&&e.message?e.message:"Couldn't reach the forecast service.")+" Nothing is estimated — please try again."; setState("error"); return; }
+  recompute(); setState("ok"); paint();
 }
 
 /* init */
-document.getElementById("siteName").textContent = SITE.name.split(",")[0];
-document.getElementById("siteWhere").textContent = SITE.name.split(",").slice(1).join(",").trim() || "Wijchen";
-chips("planting", Object.keys(PLANTINGS));
-chips("soil", Object.keys(SOILS));
-chips("sun", Object.keys(SUN_EXPOSURES));
-document.getElementById("durRead").textContent = ctrl.wateringMinutes;
+document.getElementById("siteName").textContent=SITE.name.split(",")[0];
+document.getElementById("siteWhere").textContent=SITE.name.split(",").slice(1).join(",").trim()||"Wijchen";
+chips("planting",Object.keys(PLANTINGS));
+chips("soil",Object.keys(SOILS));
+chips("sun",Object.keys(SUN_EXPOSURES));
+document.getElementById("durRead").textContent=ctrl.wateringMinutes;
 document.getElementById("again").addEventListener("click",load);
 load();
 </script>
