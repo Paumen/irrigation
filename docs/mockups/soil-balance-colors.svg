@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="798" height="2150" font-family="ui-monospace,Menlo,Consolas,monospace">
-<rect width="798" height="2150" fill="#E7E4DA"/>
-<text x="24" y="42" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 74 unique colors, grouped by family</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="798" height="2062" font-family="ui-monospace,Menlo,Consolas,monospace">
+<rect width="798" height="2062" fill="#E7E4DA"/>
+<text x="24" y="42" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 61 unique colors, grouped by family</text>
 <text x="24" y="78" font-size="14" font-weight="700" fill="#4A463C">Reds / rust</text>
 <rect x="24" y="90" width="142" height="58" rx="6" fill="#9C4A2E" stroke="#00000022"/>
 <text x="34" y="137" font-size="12" font-weight="600" fill="#FBFAF6">#9C4A2E</text>
@@ -24,212 +24,173 @@
 <rect x="474" y="222" width="142" height="58" rx="6" fill="#D2783C" stroke="#00000022"/>
 <text x="484" y="269" font-size="12" font-weight="600" fill="#FBFAF6">#D2783C</text>
 <text x="474" y="293" font-size="10" fill="#4A463C">stress grad</text>
-<rect x="624" y="222" width="142" height="58" rx="6" fill="#774B2C" stroke="#00000022"/>
-<text x="634" y="269" font-size="12" font-weight="600" fill="#FBFAF6">#774B2C</text>
-<text x="624" y="293" font-size="10" fill="#4A463C">subsoil speckle</text>
-<rect x="24" y="310" width="142" height="58" rx="6" fill="#603C22" stroke="#00000022"/>
-<text x="34" y="357" font-size="12" font-weight="600" fill="#FBFAF6">#603C22</text>
-<text x="24" y="381" font-size="10" fill="#4A463C">subsoil edge</text>
-<rect x="174" y="310" width="142" height="58" rx="6" fill="#8C5E3C" stroke="#00000022"/>
-<text x="184" y="357" font-size="12" font-weight="600" fill="#FBFAF6">#8C5E3C</text>
-<text x="174" y="381" font-size="10" fill="#4A463C">subsoil fill</text>
-<rect x="324" y="310" width="142" height="58" rx="6" fill="#E0975A" stroke="#00000022"/>
-<text x="334" y="357" font-size="12" font-weight="600" fill="#222">#E0975A</text>
-<text x="324" y="381" font-size="10" fill="#4A463C">stress grad</text>
-<rect x="474" y="310" width="142" height="58" rx="6" fill="#56422E" stroke="#00000022"/>
-<text x="484" y="357" font-size="12" font-weight="600" fill="#FBFAF6">#56422E</text>
-<text x="474" y="381" font-size="10" fill="#4A463C">rootColor</text>
-<rect x="624" y="310" width="142" height="58" rx="6" fill="#E88A22" stroke="#00000022"/>
-<text x="634" y="357" font-size="12" font-weight="600" fill="#222">#E88A22</text>
-<text x="624" y="381" font-size="10" fill="#4A463C">sunCore</text>
-<rect x="24" y="398" width="142" height="58" rx="6" fill="#D98A2B" stroke="#00000022"/>
-<text x="34" y="445" font-size="12" font-weight="600" fill="#222">#D98A2B</text>
-<text x="24" y="469" font-size="10" fill="#4A463C">--amber</text>
-<rect x="174" y="398" width="142" height="58" rx="6" fill="#E8B576" stroke="#00000022"/>
-<text x="184" y="445" font-size="12" font-weight="600" fill="#222">#E8B576</text>
-<text x="174" y="469" font-size="10" fill="#4A463C">stress grad</text>
-<rect x="324" y="398" width="142" height="58" rx="6" fill="#8A6A3E" stroke="#00000022"/>
-<text x="334" y="445" font-size="12" font-weight="600" fill="#FBFAF6">#8A6A3E</text>
-<text x="324" y="469" font-size="10" fill="#4A463C">rootColor</text>
-<rect x="474" y="398" width="142" height="58" rx="6" fill="#AC8856" stroke="#00000022"/>
-<text x="484" y="445" font-size="12" font-weight="600" fill="#222">#AC8856</text>
-<text x="474" y="469" font-size="10" fill="#4A463C">topsoil fill</text>
-<rect x="624" y="398" width="142" height="58" rx="6" fill="#5A4A33" stroke="#00000022"/>
-<text x="634" y="445" font-size="12" font-weight="600" fill="#FBFAF6">#5A4A33</text>
-<text x="624" y="469" font-size="10" fill="#4A463C">--surface / cracks</text>
-<rect x="24" y="486" width="142" height="58" rx="6" fill="#8F6C3A" stroke="#00000022"/>
-<text x="34" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#8F6C3A</text>
-<text x="24" y="557" font-size="10" fill="#4A463C">topsoil speckle</text>
-<rect x="174" y="486" width="142" height="58" rx="6" fill="#2A2620" stroke="#00000022"/>
-<text x="184" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#2A2620</text>
-<text x="174" y="557" font-size="10" fill="#4A463C">rootColor</text>
-<rect x="324" y="486" width="142" height="58" rx="6" fill="#473A26" stroke="#00000022"/>
-<text x="334" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#473A26</text>
-<text x="324" y="557" font-size="10" fill="#4A463C">litter edge</text>
-<rect x="474" y="486" width="142" height="58" rx="6" fill="#67563C" stroke="#00000022"/>
-<text x="484" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#67563C</text>
-<text x="474" y="557" font-size="10" fill="#4A463C">litter fill</text>
-<rect x="624" y="486" width="142" height="58" rx="6" fill="#83632F" stroke="#00000022"/>
-<text x="634" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#83632F</text>
-<text x="624" y="557" font-size="10" fill="#4A463C">topsoil edge</text>
-<rect x="24" y="574" width="142" height="58" rx="6" fill="#E8A93C" stroke="#00000022"/>
-<text x="34" y="621" font-size="12" font-weight="600" fill="#222">#E8A93C</text>
-<text x="24" y="645" font-size="10" fill="#4A463C">sunCore / loss</text>
-<rect x="174" y="574" width="142" height="58" rx="6" fill="#3A352C" stroke="#00000022"/>
-<text x="184" y="621" font-size="12" font-weight="600" fill="#FBFAF6">#3A352C</text>
-<text x="174" y="645" font-size="10" fill="#4A463C">plantColor / dead plant</text>
-<rect x="324" y="574" width="142" height="58" rx="6" fill="#F4E2C0" stroke="#00000022"/>
-<text x="334" y="621" font-size="12" font-weight="600" fill="#222">#F4E2C0</text>
-<text x="324" y="645" font-size="10" fill="#4A463C">sky</text>
-<rect x="474" y="574" width="142" height="58" rx="6" fill="#4D4027" stroke="#00000022"/>
-<text x="484" y="621" font-size="12" font-weight="600" fill="#FBFAF6">#4D4027</text>
-<text x="474" y="645" font-size="10" fill="#4A463C">litter speckle</text>
-<rect x="624" y="574" width="142" height="58" rx="6" fill="#9A7A3C" stroke="#00000022"/>
-<text x="634" y="621" font-size="12" font-weight="600" fill="#FBFAF6">#9A7A3C</text>
-<text x="624" y="645" font-size="10" fill="#4A463C">plantColor</text>
-<rect x="24" y="662" width="142" height="58" rx="6" fill="#F6C669" stroke="#00000022"/>
-<text x="34" y="709" font-size="12" font-weight="600" fill="#222">#F6C669</text>
-<text x="24" y="733" font-size="10" fill="#4A463C">glow</text>
-<rect x="174" y="662" width="142" height="58" rx="6" fill="#6B5A38" stroke="#00000022"/>
-<text x="184" y="709" font-size="12" font-weight="600" fill="#FBFAF6">#6B5A38</text>
-<text x="174" y="733" font-size="10" fill="#4A463C">leafColor</text>
-<rect x="324" y="662" width="142" height="58" rx="6" fill="#FBF1DC" stroke="#00000022"/>
-<text x="334" y="709" font-size="12" font-weight="600" fill="#222">#FBF1DC</text>
-<text x="324" y="733" font-size="10" fill="#4A463C">heat haze</text>
-<rect x="474" y="662" width="142" height="58" rx="6" fill="#9A875C" stroke="#00000022"/>
-<text x="484" y="709" font-size="12" font-weight="600" fill="#FBFAF6">#9A875C</text>
-<text x="474" y="733" font-size="10" fill="#4A463C">substratum edge</text>
-<rect x="624" y="662" width="142" height="58" rx="6" fill="#CDBF9F" stroke="#00000022"/>
-<text x="634" y="709" font-size="12" font-weight="600" fill="#222">#CDBF9F</text>
-<text x="624" y="733" font-size="10" fill="#4A463C">seg hover</text>
-<rect x="24" y="750" width="142" height="58" rx="6" fill="#5B5547" stroke="#00000022"/>
-<text x="34" y="797" font-size="12" font-weight="600" fill="#FBFAF6">#5B5547</text>
-<text x="24" y="821" font-size="10" fill="#4A463C">text / weekday tick</text>
-<rect x="174" y="750" width="142" height="58" rx="6" fill="#C6B488" stroke="#00000022"/>
-<text x="184" y="797" font-size="12" font-weight="600" fill="#222">#C6B488</text>
-<text x="174" y="821" font-size="10" fill="#4A463C">substratum fill</text>
-<rect x="324" y="750" width="142" height="58" rx="6" fill="#A08F63" stroke="#00000022"/>
-<text x="334" y="797" font-size="12" font-weight="600" fill="#222">#A08F63</text>
-<text x="324" y="821" font-size="10" fill="#4A463C">substratum speckle</text>
-<rect x="474" y="750" width="142" height="58" rx="6" fill="#BDB6A4" stroke="#00000022"/>
-<text x="484" y="797" font-size="12" font-weight="600" fill="#222">#BDB6A4</text>
-<text x="474" y="821" font-size="10" fill="#4A463C">scrollbar</text>
-<rect x="624" y="750" width="142" height="58" rx="6" fill="#E0DBCD" stroke="#00000022"/>
-<text x="634" y="797" font-size="12" font-weight="600" fill="#222">#E0DBCD</text>
-<text x="624" y="821" font-size="10" fill="#4A463C">borders</text>
-<text x="24" y="870" font-size="14" font-weight="700" fill="#4A463C">Yellows / golds</text>
-<rect x="24" y="882" width="142" height="58" rx="6" fill="#F3F0E7" stroke="#00000022"/>
-<text x="34" y="929" font-size="12" font-weight="600" fill="#222">#F3F0E7</text>
-<text x="24" y="953" font-size="10" fill="#4A463C">controls grad</text>
-<rect x="174" y="882" width="142" height="58" rx="6" fill="#E7C24A" stroke="#00000022"/>
-<text x="184" y="929" font-size="12" font-weight="600" fill="#222">#E7C24A</text>
-<text x="174" y="953" font-size="10" fill="#4A463C">flower center</text>
-<rect x="324" y="882" width="142" height="58" rx="6" fill="#E7E4DA" stroke="#00000022"/>
-<text x="334" y="929" font-size="12" font-weight="600" fill="#222">#E7E4DA</text>
-<text x="324" y="953" font-size="10" fill="#4A463C">--bg</text>
-<rect x="474" y="882" width="142" height="58" rx="6" fill="#9C8A45" stroke="#00000022"/>
-<text x="484" y="929" font-size="12" font-weight="600" fill="#FBFAF6">#9C8A45</text>
-<text x="474" y="953" font-size="10" fill="#4A463C">leafColor / bud</text>
-<rect x="624" y="882" width="142" height="58" rx="6" fill="#FBFAF6" stroke="#00000022"/>
-<text x="634" y="929" font-size="12" font-weight="600" fill="#222">#FBFAF6</text>
-<text x="624" y="953" font-size="10" fill="#4A463C">surfaces / white (buttons,text,badges)</text>
-<rect x="24" y="970" width="142" height="58" rx="6" fill="#7E8A3E" stroke="#00000022"/>
-<text x="34" y="1017" font-size="12" font-weight="600" fill="#FBFAF6">#7E8A3E</text>
-<text x="24" y="1041" font-size="10" fill="#4A463C">plantColor</text>
-<text x="24" y="1090" font-size="14" font-weight="700" fill="#4A463C">Olive / yellow-green</text>
-<rect x="24" y="1102" width="142" height="58" rx="6" fill="#6E7B3C" stroke="#00000022"/>
-<text x="34" y="1149" font-size="12" font-weight="600" fill="#FBFAF6">#6E7B3C</text>
-<text x="24" y="1173" font-size="10" fill="#4A463C">rootColor</text>
-<text x="24" y="1222" font-size="14" font-weight="700" fill="#4A463C">Greens</text>
-<rect x="24" y="1234" width="142" height="58" rx="6" fill="#E9EEE7" stroke="#00000022"/>
-<text x="34" y="1281" font-size="12" font-weight="600" fill="#222">#E9EEE7</text>
-<text x="24" y="1305" font-size="10" fill="#4A463C">demo on</text>
-<rect x="174" y="1234" width="142" height="58" rx="6" fill="#46613F" stroke="#00000022"/>
-<text x="184" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#46613F</text>
-<text x="174" y="1305" font-size="10" fill="#4A463C">can stroke</text>
-<rect x="324" y="1234" width="142" height="58" rx="6" fill="#C7DCC2" stroke="#00000022"/>
-<text x="334" y="1281" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
-<text x="324" y="1305" font-size="10" fill="#4A463C">can hl</text>
-<rect x="474" y="1234" width="142" height="58" rx="6" fill="#3E5639" stroke="#00000022"/>
-<text x="484" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#3E5639</text>
-<text x="474" y="1305" font-size="10" fill="#4A463C">can spout</text>
-<rect x="624" y="1234" width="142" height="58" rx="6" fill="#84A37E" stroke="#00000022"/>
-<text x="634" y="1281" font-size="12" font-weight="600" fill="#222">#84A37E</text>
-<text x="624" y="1305" font-size="10" fill="#4A463C">watering / can</text>
-<rect x="24" y="1322" width="142" height="58" rx="6" fill="#A9C2A4" stroke="#00000022"/>
-<text x="34" y="1369" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
-<text x="24" y="1393" font-size="10" fill="#4A463C">watering / can</text>
-<rect x="174" y="1322" width="142" height="58" rx="6" fill="#6E8E68" stroke="#00000022"/>
-<text x="184" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#6E8E68</text>
-<text x="174" y="1393" font-size="10" fill="#4A463C">button green</text>
-<rect x="324" y="1322" width="142" height="58" rx="6" fill="#4F6B4A" stroke="#00000022"/>
-<text x="334" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#4F6B4A</text>
-<text x="324" y="1393" font-size="10" fill="#4A463C">--today / GREEN</text>
-<rect x="474" y="1322" width="142" height="58" rx="6" fill="#5C7A57" stroke="#00000022"/>
-<text x="484" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#5C7A57</text>
-<text x="474" y="1393" font-size="10" fill="#4A463C">day button</text>
-<rect x="624" y="1322" width="142" height="58" rx="6" fill="#4F7F4A" stroke="#00000022"/>
-<text x="634" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#4F7F4A</text>
-<text x="624" y="1393" font-size="10" fill="#4A463C">plantColor</text>
-<rect x="24" y="1410" width="142" height="58" rx="6" fill="#6FA06A" stroke="#00000022"/>
-<text x="34" y="1457" font-size="12" font-weight="600" fill="#FBFAF6">#6FA06A</text>
-<text x="24" y="1481" font-size="10" fill="#4A463C">leafColor</text>
-<rect x="174" y="1410" width="142" height="58" rx="6" fill="#5F9A5A" stroke="#00000022"/>
-<text x="184" y="1457" font-size="12" font-weight="600" fill="#FBFAF6">#5F9A5A</text>
-<text x="174" y="1481" font-size="10" fill="#4A463C">leafColor</text>
-<rect x="324" y="1410" width="142" height="58" rx="6" fill="#3F7A3B" stroke="#00000022"/>
-<text x="334" y="1457" font-size="12" font-weight="600" fill="#FBFAF6">#3F7A3B</text>
-<text x="324" y="1481" font-size="10" fill="#4A463C">plantColor</text>
-<rect x="474" y="1410" width="142" height="58" rx="6" fill="#4E7B52" stroke="#00000022"/>
-<text x="484" y="1457" font-size="12" font-weight="600" fill="#FBFAF6">#4E7B52</text>
-<text x="474" y="1481" font-size="10" fill="#4A463C">rootColor</text>
-<rect x="624" y="1410" width="142" height="58" rx="6" fill="#DCE4DF" stroke="#00000022"/>
-<text x="634" y="1457" font-size="12" font-weight="600" fill="#222">#DCE4DF</text>
-<text x="624" y="1481" font-size="10" fill="#4A463C">sky</text>
-<text x="24" y="1530" font-size="14" font-weight="700" fill="#4A463C">Teals / cyan</text>
-<rect x="24" y="1542" width="142" height="58" rx="6" fill="#3FC8DC" stroke="#00000022"/>
-<text x="34" y="1589" font-size="12" font-weight="600" fill="#222">#3FC8DC</text>
-<text x="24" y="1613" font-size="10" fill="#4A463C">pour grad</text>
-<rect x="174" y="1542" width="142" height="58" rx="6" fill="#BDEAF1" stroke="#00000022"/>
-<text x="184" y="1589" font-size="12" font-weight="600" fill="#222">#BDEAF1</text>
-<text x="174" y="1613" font-size="10" fill="#4A463C">splash / water-line hl</text>
-<rect x="324" y="1542" width="142" height="58" rx="6" fill="#34BCD2" stroke="#00000022"/>
-<text x="334" y="1589" font-size="12" font-weight="600" fill="#222">#34BCD2</text>
-<text x="324" y="1613" font-size="10" fill="#4A463C">aqua grads</text>
-<rect x="474" y="1542" width="142" height="58" rx="6" fill="#E8FAFD" stroke="#00000022"/>
-<text x="484" y="1589" font-size="12" font-weight="600" fill="#222">#E8FAFD</text>
-<text x="474" y="1613" font-size="10" fill="#4A463C">fan / droplet hl</text>
-<rect x="624" y="1542" width="142" height="58" rx="6" fill="#1FA6BE" stroke="#00000022"/>
-<text x="634" y="1589" font-size="12" font-weight="600" fill="#FBFAF6">#1FA6BE</text>
-<text x="624" y="1613" font-size="10" fill="#4A463C">--table / water line</text>
-<rect x="24" y="1630" width="142" height="58" rx="6" fill="#1696AE" stroke="#00000022"/>
-<text x="34" y="1677" font-size="12" font-weight="600" fill="#FBFAF6">#1696AE</text>
-<text x="24" y="1701" font-size="10" fill="#4A463C">axis water / pour grad</text>
-<rect x="174" y="1630" width="142" height="58" rx="6" fill="#6FC8DA" stroke="#00000022"/>
-<text x="184" y="1677" font-size="12" font-weight="600" fill="#222">#6FC8DA</text>
-<text x="174" y="1701" font-size="10" fill="#4A463C">fan / splash</text>
-<rect x="324" y="1630" width="142" height="58" rx="6" fill="#0C6478" stroke="#00000022"/>
-<text x="334" y="1677" font-size="12" font-weight="600" fill="#FBFAF6">#0C6478</text>
-<text x="324" y="1701" font-size="10" fill="#4A463C">aqua / key</text>
-<text x="24" y="1750" font-size="14" font-weight="700" fill="#4A463C">Blues</text>
-<rect x="24" y="1762" width="142" height="58" rx="6" fill="#3F7FA0" stroke="#00000022"/>
-<text x="34" y="1809" font-size="12" font-weight="600" fill="#FBFAF6">#3F7FA0</text>
-<text x="24" y="1833" font-size="10" fill="#4A463C">rain</text>
-<text x="24" y="1882" font-size="14" font-weight="700" fill="#4A463C">Purples / pinks</text>
-<rect x="24" y="1894" width="142" height="58" rx="6" fill="#C98AB0" stroke="#00000022"/>
-<text x="34" y="1941" font-size="12" font-weight="600" fill="#222">#C98AB0</text>
-<text x="24" y="1965" font-size="10" fill="#4A463C">flower petal</text>
-<text x="24" y="2014" font-size="14" font-weight="700" fill="#4A463C">Neutrals (grey / near-white / near-black)</text>
-<rect x="24" y="2026" width="142" height="58" rx="6" fill="#8A8270" stroke="#00000022"/>
-<text x="34" y="2073" font-size="12" font-weight="600" fill="#FBFAF6">#8A8270</text>
-<text x="24" y="2097" font-size="10" fill="#4A463C">muted text</text>
-<rect x="174" y="2026" width="142" height="58" rx="6" fill="#7A7363" stroke="#00000022"/>
-<text x="184" y="2073" font-size="12" font-weight="600" fill="#FBFAF6">#7A7363</text>
-<text x="174" y="2097" font-size="10" fill="#4A463C">future tick</text>
-<rect x="324" y="2026" width="142" height="58" rx="6" fill="#4A463C" stroke="#00000022"/>
-<text x="334" y="2073" font-size="12" font-weight="600" fill="#FBFAF6">#4A463C</text>
-<text x="324" y="2097" font-size="10" fill="#4A463C">--ink</text>
-<rect x="474" y="2026" width="142" height="58" rx="6" fill="#9A9484" stroke="#00000022"/>
-<text x="484" y="2073" font-size="12" font-weight="600" fill="#222">#9A9484</text>
-<text x="474" y="2097" font-size="10" fill="#4A463C">--faint</text>
+<rect x="624" y="222" width="142" height="58" rx="6" fill="#8C5E3C" stroke="#00000022"/>
+<text x="634" y="269" font-size="12" font-weight="600" fill="#FBFAF6">#8C5E3C</text>
+<text x="624" y="293" font-size="10" fill="#4A463C">subsoil fill</text>
+<rect x="24" y="310" width="142" height="58" rx="6" fill="#E0975A" stroke="#00000022"/>
+<text x="34" y="357" font-size="12" font-weight="600" fill="#222">#E0975A</text>
+<text x="24" y="381" font-size="10" fill="#4A463C">stress grad</text>
+<rect x="174" y="310" width="142" height="58" rx="6" fill="#56422E" stroke="#00000022"/>
+<text x="184" y="357" font-size="12" font-weight="600" fill="#FBFAF6">#56422E</text>
+<text x="174" y="381" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="324" y="310" width="142" height="58" rx="6" fill="#E88A22" stroke="#00000022"/>
+<text x="334" y="357" font-size="12" font-weight="600" fill="#222">#E88A22</text>
+<text x="324" y="381" font-size="10" fill="#4A463C">sunCore</text>
+<rect x="474" y="310" width="142" height="58" rx="6" fill="#D98A2B" stroke="#00000022"/>
+<text x="484" y="357" font-size="12" font-weight="600" fill="#222">#D98A2B</text>
+<text x="474" y="381" font-size="10" fill="#4A463C">--amber</text>
+<rect x="624" y="310" width="142" height="58" rx="6" fill="#E8B576" stroke="#00000022"/>
+<text x="634" y="357" font-size="12" font-weight="600" fill="#222">#E8B576</text>
+<text x="624" y="381" font-size="10" fill="#4A463C">stress grad</text>
+<rect x="24" y="398" width="142" height="58" rx="6" fill="#8A6A3E" stroke="#00000022"/>
+<text x="34" y="445" font-size="12" font-weight="600" fill="#FBFAF6">#8A6A3E</text>
+<text x="24" y="469" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="174" y="398" width="142" height="58" rx="6" fill="#AC8856" stroke="#00000022"/>
+<text x="184" y="445" font-size="12" font-weight="600" fill="#222">#AC8856</text>
+<text x="174" y="469" font-size="10" fill="#4A463C">topsoil fill</text>
+<rect x="324" y="398" width="142" height="58" rx="6" fill="#5A4A33" stroke="#00000022"/>
+<text x="334" y="445" font-size="12" font-weight="600" fill="#FBFAF6">#5A4A33</text>
+<text x="324" y="469" font-size="10" fill="#4A463C">--surface / cracks</text>
+<rect x="474" y="398" width="142" height="58" rx="6" fill="#2A2620" stroke="#00000022"/>
+<text x="484" y="445" font-size="12" font-weight="600" fill="#FBFAF6">#2A2620</text>
+<text x="474" y="469" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="624" y="398" width="142" height="58" rx="6" fill="#67563C" stroke="#00000022"/>
+<text x="634" y="445" font-size="12" font-weight="600" fill="#FBFAF6">#67563C</text>
+<text x="624" y="469" font-size="10" fill="#4A463C">litter fill</text>
+<rect x="24" y="486" width="142" height="58" rx="6" fill="#E8A93C" stroke="#00000022"/>
+<text x="34" y="533" font-size="12" font-weight="600" fill="#222">#E8A93C</text>
+<text x="24" y="557" font-size="10" fill="#4A463C">sunCore / loss</text>
+<rect x="174" y="486" width="142" height="58" rx="6" fill="#3A352C" stroke="#00000022"/>
+<text x="184" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#3A352C</text>
+<text x="174" y="557" font-size="10" fill="#4A463C">plantColor / dead plant</text>
+<rect x="324" y="486" width="142" height="58" rx="6" fill="#F4E2C0" stroke="#00000022"/>
+<text x="334" y="533" font-size="12" font-weight="600" fill="#222">#F4E2C0</text>
+<text x="324" y="557" font-size="10" fill="#4A463C">sky</text>
+<rect x="474" y="486" width="142" height="58" rx="6" fill="#9A7A3C" stroke="#00000022"/>
+<text x="484" y="533" font-size="12" font-weight="600" fill="#FBFAF6">#9A7A3C</text>
+<text x="474" y="557" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="624" y="486" width="142" height="58" rx="6" fill="#F6C669" stroke="#00000022"/>
+<text x="634" y="533" font-size="12" font-weight="600" fill="#222">#F6C669</text>
+<text x="624" y="557" font-size="10" fill="#4A463C">glow</text>
+<rect x="24" y="574" width="142" height="58" rx="6" fill="#6B5A38" stroke="#00000022"/>
+<text x="34" y="621" font-size="12" font-weight="600" fill="#FBFAF6">#6B5A38</text>
+<text x="24" y="645" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="174" y="574" width="142" height="58" rx="6" fill="#CDBF9F" stroke="#00000022"/>
+<text x="184" y="621" font-size="12" font-weight="600" fill="#222">#CDBF9F</text>
+<text x="174" y="645" font-size="10" fill="#4A463C">seg hover</text>
+<rect x="324" y="574" width="142" height="58" rx="6" fill="#5B5547" stroke="#00000022"/>
+<text x="334" y="621" font-size="12" font-weight="600" fill="#FBFAF6">#5B5547</text>
+<text x="324" y="645" font-size="10" fill="#4A463C">text / weekday tick</text>
+<rect x="474" y="574" width="142" height="58" rx="6" fill="#C6B488" stroke="#00000022"/>
+<text x="484" y="621" font-size="12" font-weight="600" fill="#222">#C6B488</text>
+<text x="474" y="645" font-size="10" fill="#4A463C">substratum fill</text>
+<rect x="624" y="574" width="142" height="58" rx="6" fill="#BDB6A4" stroke="#00000022"/>
+<text x="634" y="621" font-size="12" font-weight="600" fill="#222">#BDB6A4</text>
+<text x="624" y="645" font-size="10" fill="#4A463C">scrollbar</text>
+<rect x="24" y="662" width="142" height="58" rx="6" fill="#E0DBCD" stroke="#00000022"/>
+<text x="34" y="709" font-size="12" font-weight="600" fill="#222">#E0DBCD</text>
+<text x="24" y="733" font-size="10" fill="#4A463C">borders</text>
+<text x="24" y="782" font-size="14" font-weight="700" fill="#4A463C">Yellows / golds</text>
+<rect x="24" y="794" width="142" height="58" rx="6" fill="#F3F0E7" stroke="#00000022"/>
+<text x="34" y="841" font-size="12" font-weight="600" fill="#222">#F3F0E7</text>
+<text x="24" y="865" font-size="10" fill="#4A463C">controls grad</text>
+<rect x="174" y="794" width="142" height="58" rx="6" fill="#E7C24A" stroke="#00000022"/>
+<text x="184" y="841" font-size="12" font-weight="600" fill="#222">#E7C24A</text>
+<text x="174" y="865" font-size="10" fill="#4A463C">flower center</text>
+<rect x="324" y="794" width="142" height="58" rx="6" fill="#E7E4DA" stroke="#00000022"/>
+<text x="334" y="841" font-size="12" font-weight="600" fill="#222">#E7E4DA</text>
+<text x="324" y="865" font-size="10" fill="#4A463C">--bg</text>
+<rect x="474" y="794" width="142" height="58" rx="6" fill="#9C8A45" stroke="#00000022"/>
+<text x="484" y="841" font-size="12" font-weight="600" fill="#FBFAF6">#9C8A45</text>
+<text x="474" y="865" font-size="10" fill="#4A463C">leafColor / bud</text>
+<rect x="624" y="794" width="142" height="58" rx="6" fill="#FBFAF6" stroke="#00000022"/>
+<text x="634" y="841" font-size="12" font-weight="600" fill="#222">#FBFAF6</text>
+<text x="624" y="865" font-size="10" fill="#4A463C">surfaces / white (buttons,text,badges)</text>
+<rect x="24" y="882" width="142" height="58" rx="6" fill="#7E8A3E" stroke="#00000022"/>
+<text x="34" y="929" font-size="12" font-weight="600" fill="#FBFAF6">#7E8A3E</text>
+<text x="24" y="953" font-size="10" fill="#4A463C">plantColor</text>
+<text x="24" y="1002" font-size="14" font-weight="700" fill="#4A463C">Olive / yellow-green</text>
+<rect x="24" y="1014" width="142" height="58" rx="6" fill="#6E7B3C" stroke="#00000022"/>
+<text x="34" y="1061" font-size="12" font-weight="600" fill="#FBFAF6">#6E7B3C</text>
+<text x="24" y="1085" font-size="10" fill="#4A463C">rootColor</text>
+<text x="24" y="1134" font-size="14" font-weight="700" fill="#4A463C">Greens</text>
+<rect x="24" y="1146" width="142" height="58" rx="6" fill="#E9EEE7" stroke="#00000022"/>
+<text x="34" y="1193" font-size="12" font-weight="600" fill="#222">#E9EEE7</text>
+<text x="24" y="1217" font-size="10" fill="#4A463C">demo on</text>
+<rect x="174" y="1146" width="142" height="58" rx="6" fill="#46613F" stroke="#00000022"/>
+<text x="184" y="1193" font-size="12" font-weight="600" fill="#FBFAF6">#46613F</text>
+<text x="174" y="1217" font-size="10" fill="#4A463C">can stroke</text>
+<rect x="324" y="1146" width="142" height="58" rx="6" fill="#C7DCC2" stroke="#00000022"/>
+<text x="334" y="1193" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
+<text x="324" y="1217" font-size="10" fill="#4A463C">can hl</text>
+<rect x="474" y="1146" width="142" height="58" rx="6" fill="#84A37E" stroke="#00000022"/>
+<text x="484" y="1193" font-size="12" font-weight="600" fill="#222">#84A37E</text>
+<text x="474" y="1217" font-size="10" fill="#4A463C">watering / can</text>
+<rect x="624" y="1146" width="142" height="58" rx="6" fill="#A9C2A4" stroke="#00000022"/>
+<text x="634" y="1193" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
+<text x="624" y="1217" font-size="10" fill="#4A463C">watering / can</text>
+<rect x="24" y="1234" width="142" height="58" rx="6" fill="#6E8E68" stroke="#00000022"/>
+<text x="34" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#6E8E68</text>
+<text x="24" y="1305" font-size="10" fill="#4A463C">button green</text>
+<rect x="174" y="1234" width="142" height="58" rx="6" fill="#4F6B4A" stroke="#00000022"/>
+<text x="184" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#4F6B4A</text>
+<text x="174" y="1305" font-size="10" fill="#4A463C">--today / GREEN</text>
+<rect x="324" y="1234" width="142" height="58" rx="6" fill="#5C7A57" stroke="#00000022"/>
+<text x="334" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#5C7A57</text>
+<text x="324" y="1305" font-size="10" fill="#4A463C">day button</text>
+<rect x="474" y="1234" width="142" height="58" rx="6" fill="#4F7F4A" stroke="#00000022"/>
+<text x="484" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#4F7F4A</text>
+<text x="474" y="1305" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="624" y="1234" width="142" height="58" rx="6" fill="#6FA06A" stroke="#00000022"/>
+<text x="634" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#6FA06A</text>
+<text x="624" y="1305" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="24" y="1322" width="142" height="58" rx="6" fill="#5F9A5A" stroke="#00000022"/>
+<text x="34" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#5F9A5A</text>
+<text x="24" y="1393" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="174" y="1322" width="142" height="58" rx="6" fill="#3F7A3B" stroke="#00000022"/>
+<text x="184" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#3F7A3B</text>
+<text x="174" y="1393" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="324" y="1322" width="142" height="58" rx="6" fill="#4E7B52" stroke="#00000022"/>
+<text x="334" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#4E7B52</text>
+<text x="324" y="1393" font-size="10" fill="#4A463C">rootColor</text>
+<text x="24" y="1442" font-size="14" font-weight="700" fill="#4A463C">Teals / cyan</text>
+<rect x="24" y="1454" width="142" height="58" rx="6" fill="#BDEAF1" stroke="#00000022"/>
+<text x="34" y="1501" font-size="12" font-weight="600" fill="#222">#BDEAF1</text>
+<text x="24" y="1525" font-size="10" fill="#4A463C">splash / water-line hl</text>
+<rect x="174" y="1454" width="142" height="58" rx="6" fill="#34BCD2" stroke="#00000022"/>
+<text x="184" y="1501" font-size="12" font-weight="600" fill="#222">#34BCD2</text>
+<text x="174" y="1525" font-size="10" fill="#4A463C">aqua grads</text>
+<rect x="324" y="1454" width="142" height="58" rx="6" fill="#E8FAFD" stroke="#00000022"/>
+<text x="334" y="1501" font-size="12" font-weight="600" fill="#222">#E8FAFD</text>
+<text x="324" y="1525" font-size="10" fill="#4A463C">fan / droplet hl</text>
+<rect x="474" y="1454" width="142" height="58" rx="6" fill="#1FA6BE" stroke="#00000022"/>
+<text x="484" y="1501" font-size="12" font-weight="600" fill="#FBFAF6">#1FA6BE</text>
+<text x="474" y="1525" font-size="10" fill="#4A463C">--table / water line</text>
+<rect x="624" y="1454" width="142" height="58" rx="6" fill="#6FC8DA" stroke="#00000022"/>
+<text x="634" y="1501" font-size="12" font-weight="600" fill="#222">#6FC8DA</text>
+<text x="624" y="1525" font-size="10" fill="#4A463C">fan / splash</text>
+<rect x="24" y="1542" width="142" height="58" rx="6" fill="#0C6478" stroke="#00000022"/>
+<text x="34" y="1589" font-size="12" font-weight="600" fill="#FBFAF6">#0C6478</text>
+<text x="24" y="1613" font-size="10" fill="#4A463C">aqua / key</text>
+<text x="24" y="1662" font-size="14" font-weight="700" fill="#4A463C">Blues</text>
+<rect x="24" y="1674" width="142" height="58" rx="6" fill="#3F7FA0" stroke="#00000022"/>
+<text x="34" y="1721" font-size="12" font-weight="600" fill="#FBFAF6">#3F7FA0</text>
+<text x="24" y="1745" font-size="10" fill="#4A463C">rain</text>
+<text x="24" y="1794" font-size="14" font-weight="700" fill="#4A463C">Purples / pinks</text>
+<rect x="24" y="1806" width="142" height="58" rx="6" fill="#C98AB0" stroke="#00000022"/>
+<text x="34" y="1853" font-size="12" font-weight="600" fill="#222">#C98AB0</text>
+<text x="24" y="1877" font-size="10" fill="#4A463C">flower petal</text>
+<text x="24" y="1926" font-size="14" font-weight="700" fill="#4A463C">Neutrals (grey / near-white / near-black)</text>
+<rect x="24" y="1938" width="142" height="58" rx="6" fill="#8A8270" stroke="#00000022"/>
+<text x="34" y="1985" font-size="12" font-weight="600" fill="#FBFAF6">#8A8270</text>
+<text x="24" y="2009" font-size="10" fill="#4A463C">muted text</text>
+<rect x="174" y="1938" width="142" height="58" rx="6" fill="#7A7363" stroke="#00000022"/>
+<text x="184" y="1985" font-size="12" font-weight="600" fill="#FBFAF6">#7A7363</text>
+<text x="174" y="2009" font-size="10" fill="#4A463C">future tick</text>
+<rect x="324" y="1938" width="142" height="58" rx="6" fill="#4A463C" stroke="#00000022"/>
+<text x="334" y="1985" font-size="12" font-weight="600" fill="#FBFAF6">#4A463C</text>
+<text x="324" y="2009" font-size="10" fill="#4A463C">--ink</text>
+<rect x="474" y="1938" width="142" height="58" rx="6" fill="#9A9484" stroke="#00000022"/>
+<text x="484" y="1985" font-size="12" font-weight="600" fill="#222">#9A9484</text>
+<text x="474" y="2009" font-size="10" fill="#4A463C">--faint</text>
 </svg>

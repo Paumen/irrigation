@@ -29,7 +29,7 @@
     border-right:1px solid #e0dbcd}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:#5b5547;letter-spacing:.02em;white-space:nowrap}
   .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #e0dbcd}
-  .axis .water{color:#1696ae}
+  .axis .water{color:#1FA6BE}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
   /* always-visible custom scrollbar (native bars auto-hide on mobile) */
@@ -200,19 +200,22 @@ const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
 const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
-function skyColor(t){const h=clamp((t-15)/(36-15),0,1);return hexLerp('#DCE4DF','#F4E2C0',h);}
+function skyColor(t){const h=clamp((t-15)/(36-15),0,1);return hexLerp('#E7E4DA','#F4E2C0',h);}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
 /* geometry */
 const H=440, SKY_TOP=20, SURF=160, SOIL_BOT=404, SOIL_D=SOIL_BOT-SURF;
 const AX=0, PADR=12, ROOT_REACH=SOIL_D*0.5; // roots only reach halfway, fixed
 // soil horizons (offset from SURF): litter, topsoil A, subsoil B, substratum C
+function shade(hex,f){const[r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,'0');return`#${m(r)}${m(g)}${m(b)}`;}
 const HORIZ=[
-  {y0:0,   y1:16,  fill:'#67563C', edge:'#473a26', sp:'#4d4027', spn:0.9, peb:0},     // litter (dark organic)
-  {y0:16,  y1:80,  fill:'#AC8856', edge:'#83632f', sp:'#8f6c3a', spn:0.7, peb:0},     // topsoil A (warm loam)
-  {y0:80,  y1:170, fill:'#8C5E3C', edge:'#603c22', sp:'#774b2c', spn:0.55,peb:0.05},  // subsoil B (red-brown clay)
-  {y0:170, y1:SOIL_D, fill:'#C6B488', edge:'#9a875c', sp:'#a08f63', spn:0.42,peb:0.12},// substratum C (pale sandy/gravel)
+  {y0:0,   y1:16,  fill:'#67563C', spn:0.9, peb:0},     // litter (dark organic)
+  {y0:16,  y1:80,  fill:'#AC8856', spn:0.7, peb:0},     // topsoil A (warm loam)
+  {y0:80,  y1:170, fill:'#8C5E3C', spn:0.55,peb:0.05},  // subsoil B (red-brown clay)
+  {y0:170, y1:SOIL_D, fill:'#C6B488', spn:0.42,peb:0.12},// substratum C (pale sandy/gravel)
 ];
+// edge line + mineral speckle are derived as darker shades of each horizon fill
+HORIZ.forEach(h=>{h.edge=shade(h.fill,0.70); h.sp=shade(h.fill,0.82);});
 
 function build(){
   const vw=Math.min(window.innerWidth,920);
@@ -235,8 +238,8 @@ function build(){
       <stop offset="0" stop-color="#F6C669" stop-opacity=".85"/>
       <stop offset="1" stop-color="#F6C669" stop-opacity="0"/></radialGradient>
     <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3FC8DC" stop-opacity=".5"/>
-      <stop offset="1" stop-color="#1696ae" stop-opacity=".16"/></linearGradient>
+      <stop offset="0" stop-color="#34BCD2" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#1FA6BE" stop-opacity=".16"/></linearGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
       <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
@@ -251,7 +254,7 @@ function build(){
   DATA.forEach(d=>{
     const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
-    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#FBF1DC" opacity="${(0.10+heat*0.18).toFixed(2)}"/>`;
+    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#F4E2C0" opacity="${(0.10+heat*0.18).toFixed(2)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
       const sc=hexLerp('#E2640F','#E88A22',0.5);
@@ -383,7 +386,7 @@ function canSVG(ox,oy,s){
     +`<path d="M 70 60 C 84 54 99 45 112 35" fill="none" stroke="${Hi}" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>`
     +`<path d="M 37 76 C 37 92 40 104 45 110" fill="none" stroke="${Hi}" stroke-width="2.2" stroke-linecap="round" opacity=".4"/>`
     +`<path d="M 40 57 C 43 34 63 34 66 57 L 62 57 C 61 39 45 39 44 57 Z" fill="${T}" stroke="${S}" stroke-width="2.6" stroke-linejoin="round"/>`
-    +`<ellipse cx="53" cy="58" rx="18" ry="4.4" fill="${T}" stroke="${S}" stroke-width="2.4"/><ellipse cx="53" cy="58" rx="12.5" ry="2.6" fill="#3E5639"/>`;
+    +`<ellipse cx="53" cy="58" rx="18" ry="4.4" fill="${T}" stroke="${S}" stroke-width="2.4"/><ellipse cx="53" cy="58" rx="12.5" ry="2.6" fill="#46613F"/>`;
   return `<g transform="translate(${ox.toFixed(1)} ${oy.toFixed(1)}) rotate(26) scale(${s.toFixed(3)}) translate(-113 -38)">${inner}</g>`;
 }
 /* arced translucent water ribbon from the spout opening to the landing, with a bright highlight */
