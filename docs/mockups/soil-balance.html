@@ -24,7 +24,7 @@
   .key b{color:var(--ink);font-weight:600;letter-spacing:.05em;text-transform:lowercase}
   .key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
   .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
-  .scene{position:relative;width:auto;margin:0;overflow:hidden}
+  .scene{position:relative;width:auto;margin:0}
   .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:#FBFAF6;z-index:3;pointer-events:none;
     border-right:1px solid #d8d3c6}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:11px;color:#5f5948;letter-spacing:.02em;white-space:nowrap}
@@ -48,9 +48,9 @@
   header.app .loc{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
-  .status{margin:2px 12px 11px;padding:13px 15px 13px;background:#FBFAF6;border:1px solid #E0DBCD;border-radius:12px;box-shadow:0 6px 20px -14px rgba(74,70,60,.45)}
-  .status .kick{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a8270;font-weight:600}
-  .status .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .status{margin:4px 12px 12px;padding:17px 18px 16px;background:#FBFAF6;border:1px solid #ECE7D8;border-radius:18px}
+  .status .kick{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#a3a494;font-weight:600}
+  .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
   .status .word{font-family:var(--serif);font-size:33px;font-weight:500;letter-spacing:0;line-height:1.05;margin-top:7px}
   .status .detail{font-size:13px;color:#5b5547;margin-top:5px;line-height:1.4}
   .status .metric{margin-top:11px;padding-top:10px;border-top:1px solid #EFEADD}
@@ -491,7 +491,7 @@ function renderStatus(){
     kick='Above refill point';
   }
   document.getElementById('status').innerHTML=
-    `<div class="kick"><span class="dot" style="background:${color}"></span>${kick}</div>`
+    `<div class="kick"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${kick}</div>`
    +`<div class="word" style="color:${color}">${word}</div>`
    +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
    +`<span class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:#8a8270">%</span></span>`
