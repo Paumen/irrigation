@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="798" height="2062" font-family="ui-monospace,Menlo,Consolas,monospace">
 <rect width="798" height="2062" fill="#E7E4DA"/>
-<text x="24" y="42" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 61 unique colors, grouped by family</text>
+<text x="24" y="42" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 58 unique colors, grouped by family</text>
 <text x="24" y="78" font-size="14" font-weight="700" fill="#4A463C">Reds / rust</text>
 <rect x="24" y="90" width="142" height="58" rx="6" fill="#9C4A2E" stroke="#00000022"/>
 <text x="34" y="137" font-size="12" font-weight="600" fill="#FBFAF6">#9C4A2E</text>
@@ -8,9 +8,6 @@
 <rect x="174" y="90" width="142" height="58" rx="6" fill="#B5471F" stroke="#00000022"/>
 <text x="184" y="137" font-size="12" font-weight="600" fill="#FBFAF6">#B5471F</text>
 <text x="174" y="161" font-size="10" fill="#4A463C">--rust</text>
-<rect x="324" y="90" width="142" height="58" rx="6" fill="#F1E1DA" stroke="#00000022"/>
-<text x="334" y="137" font-size="12" font-weight="600" fill="#222">#F1E1DA</text>
-<text x="324" y="161" font-size="10" fill="#4A463C">error bg</text>
 <text x="24" y="210" font-size="14" font-weight="700" fill="#4A463C">Oranges</text>
 <rect x="24" y="222" width="142" height="58" rx="6" fill="#B84810" stroke="#00000022"/>
 <text x="34" y="269" font-size="12" font-weight="600" fill="#FBFAF6">#B84810</text>
@@ -117,42 +114,36 @@
 <rect x="24" y="1146" width="142" height="58" rx="6" fill="#E9EEE7" stroke="#00000022"/>
 <text x="34" y="1193" font-size="12" font-weight="600" fill="#222">#E9EEE7</text>
 <text x="24" y="1217" font-size="10" fill="#4A463C">demo on</text>
-<rect x="174" y="1146" width="142" height="58" rx="6" fill="#46613F" stroke="#00000022"/>
-<text x="184" y="1193" font-size="12" font-weight="600" fill="#FBFAF6">#46613F</text>
-<text x="174" y="1217" font-size="10" fill="#4A463C">can stroke</text>
-<rect x="324" y="1146" width="142" height="58" rx="6" fill="#C7DCC2" stroke="#00000022"/>
-<text x="334" y="1193" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
-<text x="324" y="1217" font-size="10" fill="#4A463C">can hl</text>
-<rect x="474" y="1146" width="142" height="58" rx="6" fill="#84A37E" stroke="#00000022"/>
-<text x="484" y="1193" font-size="12" font-weight="600" fill="#222">#84A37E</text>
+<rect x="174" y="1146" width="142" height="58" rx="6" fill="#C7DCC2" stroke="#00000022"/>
+<text x="184" y="1193" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
+<text x="174" y="1217" font-size="10" fill="#4A463C">can hl</text>
+<rect x="324" y="1146" width="142" height="58" rx="6" fill="#84A37E" stroke="#00000022"/>
+<text x="334" y="1193" font-size="12" font-weight="600" fill="#222">#84A37E</text>
+<text x="324" y="1217" font-size="10" fill="#4A463C">watering / can</text>
+<rect x="474" y="1146" width="142" height="58" rx="6" fill="#A9C2A4" stroke="#00000022"/>
+<text x="484" y="1193" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
 <text x="474" y="1217" font-size="10" fill="#4A463C">watering / can</text>
-<rect x="624" y="1146" width="142" height="58" rx="6" fill="#A9C2A4" stroke="#00000022"/>
-<text x="634" y="1193" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
-<text x="624" y="1217" font-size="10" fill="#4A463C">watering / can</text>
-<rect x="24" y="1234" width="142" height="58" rx="6" fill="#6E8E68" stroke="#00000022"/>
-<text x="34" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#6E8E68</text>
-<text x="24" y="1305" font-size="10" fill="#4A463C">button green</text>
-<rect x="174" y="1234" width="142" height="58" rx="6" fill="#4F6B4A" stroke="#00000022"/>
-<text x="184" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#4F6B4A</text>
-<text x="174" y="1305" font-size="10" fill="#4A463C">--today / GREEN</text>
-<rect x="324" y="1234" width="142" height="58" rx="6" fill="#5C7A57" stroke="#00000022"/>
-<text x="334" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#5C7A57</text>
-<text x="324" y="1305" font-size="10" fill="#4A463C">day button</text>
-<rect x="474" y="1234" width="142" height="58" rx="6" fill="#4F7F4A" stroke="#00000022"/>
-<text x="484" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#4F7F4A</text>
-<text x="474" y="1305" font-size="10" fill="#4A463C">plantColor</text>
-<rect x="624" y="1234" width="142" height="58" rx="6" fill="#6FA06A" stroke="#00000022"/>
-<text x="634" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#6FA06A</text>
-<text x="624" y="1305" font-size="10" fill="#4A463C">leafColor</text>
-<rect x="24" y="1322" width="142" height="58" rx="6" fill="#5F9A5A" stroke="#00000022"/>
-<text x="34" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#5F9A5A</text>
-<text x="24" y="1393" font-size="10" fill="#4A463C">leafColor</text>
-<rect x="174" y="1322" width="142" height="58" rx="6" fill="#3F7A3B" stroke="#00000022"/>
-<text x="184" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#3F7A3B</text>
-<text x="174" y="1393" font-size="10" fill="#4A463C">plantColor</text>
-<rect x="324" y="1322" width="142" height="58" rx="6" fill="#4E7B52" stroke="#00000022"/>
-<text x="334" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#4E7B52</text>
-<text x="324" y="1393" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="624" y="1146" width="142" height="58" rx="6" fill="#6E8E68" stroke="#00000022"/>
+<text x="634" y="1193" font-size="12" font-weight="600" fill="#FBFAF6">#6E8E68</text>
+<text x="624" y="1217" font-size="10" fill="#4A463C">button green</text>
+<rect x="24" y="1234" width="142" height="58" rx="6" fill="#4F6B4A" stroke="#00000022"/>
+<text x="34" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#4F6B4A</text>
+<text x="24" y="1305" font-size="10" fill="#4A463C">--today / GREEN</text>
+<rect x="174" y="1234" width="142" height="58" rx="6" fill="#4F7F4A" stroke="#00000022"/>
+<text x="184" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#4F7F4A</text>
+<text x="174" y="1305" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="324" y="1234" width="142" height="58" rx="6" fill="#6FA06A" stroke="#00000022"/>
+<text x="334" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#6FA06A</text>
+<text x="324" y="1305" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="474" y="1234" width="142" height="58" rx="6" fill="#5F9A5A" stroke="#00000022"/>
+<text x="484" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#5F9A5A</text>
+<text x="474" y="1305" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="624" y="1234" width="142" height="58" rx="6" fill="#3F7A3B" stroke="#00000022"/>
+<text x="634" y="1281" font-size="12" font-weight="600" fill="#FBFAF6">#3F7A3B</text>
+<text x="624" y="1305" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="24" y="1322" width="142" height="58" rx="6" fill="#4E7B52" stroke="#00000022"/>
+<text x="34" y="1369" font-size="12" font-weight="600" fill="#FBFAF6">#4E7B52</text>
+<text x="24" y="1393" font-size="10" fill="#4A463C">rootColor</text>
 <text x="24" y="1442" font-size="14" font-weight="700" fill="#4A463C">Teals / cyan</text>
 <rect x="24" y="1454" width="142" height="58" rx="6" fill="#BDEAF1" stroke="#00000022"/>
 <text x="34" y="1501" font-size="12" font-weight="600" fill="#222">#BDEAF1</text>
