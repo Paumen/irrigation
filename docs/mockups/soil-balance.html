@@ -33,9 +33,9 @@
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
   /* always-visible custom scrollbar (native bars auto-hide on mobile) */
-  .sbar{position:relative;height:9px;margin:8px 12px 0;background:#ece7d8;border-radius:6px;touch-action:none}
+  .sbar{position:relative;height:9px;margin:8px 12px 0;background:var(--bg);border-radius:6px;touch-action:none}
   .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:#bdb6a4;border-radius:6px;cursor:grab}
-  .sthumb:active{cursor:grabbing;background:#a89f8b}
+  .sthumb:active{cursor:grabbing;background:var(--faint)}
   svg{display:block;transition:opacity .7s ease}
   .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
   .booting svg{opacity:0}
@@ -45,19 +45,19 @@
   }
   /* ===== app shell ===== */
   header.app{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px}
-  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:#3E5639;display:flex;align-items:center;gap:8px}
+  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:#4F6B4A;display:flex;align-items:center;gap:8px}
   header.app .loc{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
-  .status{margin:4px 12px 12px;padding:16px 24px 16px;background:#FBFAF6;border:1px solid #ECE7D8;border-radius:18px}
+  .status{margin:4px 12px 12px;padding:16px 24px 16px;background:#FBFAF6;border:1px solid var(--bg);border-radius:18px}
   .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8270;font-weight:600}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
   .status .word{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:0;line-height:1.1;margin-top:8px}
   .status .detail{font-size:14px;color:#5b5547;margin-top:8px;line-height:1.4}
-  .status .metric{margin-top:12px;padding-top:12px;border-top:1px solid #ECE7D8}
+  .status .metric{margin-top:12px;padding-top:12px;border-top:1px solid var(--bg)}
   .status .pct{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:0}
   .status .sub{font-size:12px;color:#8a8270}
-  .status .bar{position:relative;height:8px;background:#ECE7D8;border-radius:6px;margin-top:12px}
+  .status .bar{position:relative;height:8px;background:var(--bg);border-radius:6px;margin-top:12px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:6px}
   .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rust)}
   .status .rfl{position:relative;height:13px}
