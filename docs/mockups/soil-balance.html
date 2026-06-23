@@ -201,7 +201,7 @@ function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0
 const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#6E7B3C'],[1,'#4E7B52']],v);
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
-const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
+const sunCore   =h=>ramp([[0,'#D98C5A'],[0.5,'#C66536'],[1,'#B5471F']],h);
 function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
@@ -237,8 +237,8 @@ function build(){
       <stop offset="0" stop-color="#34BCD2" stop-opacity="0"/>
       <stop offset="1" stop-color="#34BCD2" stop-opacity=".34"/></linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#F6C669" stop-opacity=".85"/>
-      <stop offset="1" stop-color="#F6C669" stop-opacity="0"/></radialGradient>
+      <stop offset="0" stop-color="#E0A074" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#E0A074" stop-opacity="0"/></radialGradient>
     <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".5"/>
       <stop offset="1" stop-color="#1FA6BE" stop-opacity=".16"/></linearGradient>
@@ -254,7 +254,7 @@ function build(){
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
-      const sc=hexLerp('#E2640F','#E88A22',0.5);
+      const sc=hexLerp('#B5471F','#C66536',0.5);
       for(let s=0;s<3;s++){const yy=SKY_TOP+40+s*7;let p=`M ${x0+dayW*0.16} ${yy}`;for(let k=1;k<=5;k++){p+=` Q ${(x0+dayW*(0.16+0.14*k)-dayW*0.07).toFixed(1)} ${(yy+(k%2?-2.4:2.4)).toFixed(1)} ${(x0+dayW*(0.16+0.14*k)).toFixed(1)} ${yy}`;}
         weather+=`<path d="${p}" fill="none" stroke="${sc}" stroke-width="0.7" opacity="${(0.16-s*0.04).toFixed(2)}"/>`;}
     }
@@ -269,7 +269,7 @@ function build(){
       weather+=`<g opacity="${future?0.62:0.8}">`
         +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.26+heat*0.22).toFixed(2)}"/>`
         +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#C0540C','#B84810',heat)}" stroke-width="0.8"/></g>`;
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#9C3D18','#8A3214',heat)}" stroke-width="0.8"/></g>`;
     }
     // rain
     if(d.rain>0.05){
