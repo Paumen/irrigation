@@ -115,7 +115,7 @@
   <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
 
   <div class="key">
-    <span><i class="sw" style="background:linear-gradient(#E8A93C,#E2640F)"></i>loss</span>
+    <span><i class="sw" style="background:linear-gradient(#D98C5A,#B5471F)"></i>loss</span>
     <span><i class="sw" style="background:#3F7FA0"></i>rain</span>
     <span><i class="sw" style="background:#34BCD2"></i>watering</span>
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
@@ -201,7 +201,7 @@ function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0
 const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#6E7B3C'],[1,'#4E7B52']],v);
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
-const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
+const sunCore   =h=>ramp([[0,'#E2965A'],[0.5,'#C25A2A'],[1,'#9E3712']],h);
 function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
@@ -237,8 +237,8 @@ function build(){
       <stop offset="0" stop-color="#34BCD2" stop-opacity="0"/>
       <stop offset="1" stop-color="#34BCD2" stop-opacity=".34"/></linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#F6C669" stop-opacity=".85"/>
-      <stop offset="1" stop-color="#F6C669" stop-opacity="0"/></radialGradient>
+      <stop offset="0" stop-color="#E0A074" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#E0A074" stop-opacity="0"/></radialGradient>
     <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".5"/>
       <stop offset="1" stop-color="#1FA6BE" stop-opacity=".16"/></linearGradient>
@@ -250,26 +250,26 @@ function build(){
   /* sky + sun + rain + watering */
   let sky='',weather='',surfaceFx='',btns='';
   DATA.forEach(d=>{
-    const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
+    const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1);
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
-      const sc=hexLerp('#E2640F','#E88A22',0.5);
+      const sc=hexLerp('#B5471F','#C66536',0.5);
       for(let s=0;s<3;s++){const yy=SKY_TOP+40+s*7;let p=`M ${x0+dayW*0.16} ${yy}`;for(let k=1;k<=5;k++){p+=` Q ${(x0+dayW*(0.16+0.14*k)-dayW*0.07).toFixed(1)} ${(yy+(k%2?-2.4:2.4)).toFixed(1)} ${(x0+dayW*(0.16+0.14*k)).toFixed(1)} ${yy}`;}
         weather+=`<path d="${p}" fill="none" stroke="${sc}" stroke-width="0.7" opacity="${(0.16-s*0.04).toFixed(2)}"/>`;}
     }
     // sun (saturated, punchy)
     const si=clamp((d.et0-1)/(6.5-1),0,1);
     if(si>0.04){
-      const sx=x0+dayW*0.5, sy=SKY_TOP+24, rad=lerp(3,6,si), core=sunCore(heat);
-      const gw=rad*lerp(2.2,3.2,heat);
-      let rays='';const nr=Math.round(lerp(5,9,si));
-      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2,r2=rad+lerp(2.5,7,si);
-        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(0.8,1.5,si).toFixed(2)}" stroke-linecap="round"/>`;}
-      weather+=`<g opacity="${future?0.62:0.8}">`
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.26+heat*0.22).toFixed(2)}"/>`
+      const sx=x0+dayW*0.5, sy=SKY_TOP+24, rad=lerp(2.5,7.5,si), core=sunCore(heat);
+      const gw=rad*lerp(2.1,3.4,heat);
+      let rays='';const nr=Math.round(lerp(4,10,si));
+      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2,r2=rad+lerp(2,9.5,si);
+        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(0.7,1.7,si).toFixed(2)}" stroke-linecap="round"/>`;}
+      weather+=`<g opacity="0.92">`
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.2+heat*0.34).toFixed(2)}"/>`
         +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#C0540C','#B84810',heat)}" stroke-width="0.8"/></g>`;
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#9C3D18','#8A3214',heat)}" stroke-width="0.8"/></g>`;
     }
     // rain
     if(d.rain>0.05){
@@ -337,8 +337,8 @@ function build(){
 
   /* flora: roots (fixed length) + plant (varies) */
   let flora='';
-  DATA.forEach(d=>{const x=cx(d.idx),sY=SURF+(mulberry32(7+d.idx)()-0.5)*2.6,v=clamp(d.level/TANK,0,1),future=d.idx>todayIdx,rng=mulberry32(101+d.idx);
-    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.idx*9}ms" opacity="${future?0.84:1}">`
+  DATA.forEach(d=>{const x=cx(d.idx),sY=SURF+(mulberry32(7+d.idx)()-0.5)*2.6,v=clamp(d.level/TANK,0,1),rng=mulberry32(101+d.idx);
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.idx*9}ms">`
       +roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
 
   /* refs + ticks + today + hit targets */
@@ -412,8 +412,8 @@ function plant(x,sY,v,rng){
     const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
     const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
     s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
-  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#C98AB0"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#E7C24A"/>`;}
-  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#C98AB0',(h-0.42)/0.2)}"/>`;}
+  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#FBFAF6" stroke="#BEB6A0" stroke-width="0.6"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#AF6E4B"/>`;}
+  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#FBFAF6',(h-0.42)/0.2)}"/>`;}
   return s;
 }
 
