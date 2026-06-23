@@ -1,0 +1,18 @@
+{
+  "name": "irrigation-lint",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Lint tooling for the soil UI (Stylelint for CSS, paumen-lint for the markup contract).",
+  "scripts": {
+    "lint": "npm run lint:css && npm run lint:markup",
+    "lint:fix": "npm run lint:css:fix",
+    "lint:css": "stylelint \"soil/**/*.css\"",
+    "lint:css:fix": "stylelint \"soil/**/*.css\" --fix",
+    "lint:markup": "bash scripts/paumen-lint.sh"
+  },
+  "devDependencies": {
+    "stylelint": "^17.13.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-declaration-strict-value": "^1.11.1"
+  }
+}

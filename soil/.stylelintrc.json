@@ -1,0 +1,44 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "plugins": ["stylelint-declaration-strict-value"],
+  "rules": {
+    "alpha-value-notation": "number",
+    "hue-degree-notation": "number",
+    "color-named": "never",
+    "font-weight-notation": "numeric",
+    "declaration-no-important": [
+      true,
+      { "message": "!important is not allowed — use the @layer cascade or a more specific selector." }
+    ],
+    "selector-max-id": [
+      0,
+      { "message": "ID selectors are not allowed — style elements, [data-*] attributes, or .ph-* icons." }
+    ],
+    "unit-disallowed-list": [
+      ["pt", "pc", "in", "cm", "mm", "q"],
+      { "message": "Print/absolute units are not allowed — use rem, em, %, vw, or dvh." }
+    ],
+    "property-disallowed-list": [
+      ["float", "clear"],
+      { "message": "float/clear are not allowed — use the grid (place-* / [data-colspan])." }
+    ],
+    "declaration-property-value-disallowed-list": [
+      { "display": ["/^table/"] },
+      { "message": "display: table* is not allowed — use grid or flex." }
+    ],
+    "custom-property-pattern": [
+      "^(accent|surface|jump|neutral|text|danger|success|color|0|xs|s|m|l|xl)(-[a-z0-9]+)*$",
+      { "message": "Custom properties must use the soil token vocabulary (e.g. --accent-up, --text-mute, --m). See soil/PAUMEN.css :root." }
+    ],
+    "scale-unlimited/declaration-strict-value": [
+      ["/color$/", "gap", "padding", "padding-inline", "padding-block", "font-size", "border-radius"],
+      {
+        "ignoreValues": ["inherit", "initial", "unset", "revert", "auto", "currentColor", "transparent", "none", "0", "/^var\\(/", "/^calc\\(/", "/^clamp\\(/", "/^min\\(/", "/^max\\(/"],
+        "severity": "warning",
+        "message": "Expected a token (var(--…)) for \"${property}\", found \"${value}\"."
+      }
+    ],
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": null
+  }
+}
