@@ -30,9 +30,17 @@ export const SOILS = {
   "Clay": 180,
 };
 
+// Sun-exposure loss factor (LOG-4 / CTR-6): scales evapotranspiration losses.
+export const SUN_EXPOSURES = {
+  "Shade": 0.5,
+  "Half sun": 0.75,
+  "Full sun": 1.0,
+};
+
 export const DEFAULTS = {
   planting: "Flower bed",
   soil: "Sandy loam",
+  sun: "Full sun",
   wateringMinutes: 60,
   watered: [],
 };
@@ -151,8 +159,10 @@ export async function fetchWeather(signal) {
 export function deriveParams(controls) {
   const planting = PLANTINGS[controls.planting];
   const soilAW = SOILS[controls.soil];
+  const sunFactor = SUN_EXPOSURES[controls.sun];
   if (!planting) throw new Error(`Unknown planting: ${controls.planting}`);
   if (soilAW == null) throw new Error(`Unknown soil: ${controls.soil}`);
+  if (sunFactor == null) throw new Error(`Unknown sun exposure: ${controls.sun}`);
 
   const tankSize = soilAW * planting.rootDepth;
 
@@ -160,19 +170,20 @@ export function deriveParams(controls) {
     kc: planting.kc,
     rootDepth: planting.rootDepth,
     soilAW,
+    sunFactor,
     tankSize,
   };
 }
 
 export function runBalance(weather, params, wateredSet, dose) {
-  const { tankSize, kc } = params;
+  const { tankSize, kc, sunFactor } = params;
   const n = weather.et0.length;
   const series = [];
   let prev = tankSize;
 
   for (let i = 0; i < n; i++) {
     const start = prev;
-    const loss = weather.et0[i] * kc;
+    const loss = weather.et0[i] * kc * sunFactor;
     const applied = wateredSet.has(i) ? dose : 0;
     const gain =
       weather.rain[i] * RAIN_EFFECTIVENESS + applied * WATERING_EFFICIENCY;
