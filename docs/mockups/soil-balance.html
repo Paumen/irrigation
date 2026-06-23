@@ -97,6 +97,18 @@
   .demo button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:var(--faint);font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:6px}
   .demo button.on{background:#e9eee7;border-color:var(--today);color:#4F6B4A}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
+  /* ===== color palette ===== */
+  .palette{margin:10px 8px 28px;background:#FBFAF6;border:1px solid #E0DBCD;border-radius:14px;padding:14px 16px 18px}
+  .palette > h2{margin:0 0 2px;font-family:var(--serif);font-size:20px;font-weight:600;color:#4F6B4A}
+  .palette > p{margin:0 0 12px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+  .pgroup{margin-top:14px}
+  .pgroup h3{margin:0 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+  .pchip{border:1px solid #E0DBCD;border-radius:10px;overflow:hidden;background:#fff}
+  .pchip .col{height:46px}
+  .pchip .meta{padding:5px 8px 6px}
+  .pchip .hex{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
+  .pchip .lbl{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.02em}
 </style>
 </head>
 <body class="booting" data-state="ok">
@@ -151,6 +163,8 @@
 
       </div>
     </section>
+
+    <section class="palette" id="palette" aria-label="Color palette"></section>
   </main>
 
 
@@ -530,6 +544,52 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 }));
 function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   document.getElementById('durVal').textContent=WATER_MIN;}
+
+/* ---- color palette: every color used on this page, grouped by role ---- */
+(function renderPalette(){
+  const groups=[
+    ['CSS variables (:root)',[
+      ['#E7E4DA','--bg'],['#4A463C','--ink'],['#8A8270','--faint'],['#5A4A33','--surface'],
+      ['#1FA6BE','--table'],['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
+    ]],
+    ['UI surfaces / chrome',[
+      ['#FBFAF6','surface / card'],['#F3F0E7','controls bg'],['#E7E2D5','seg track'],
+      ['#E6E1D3','ctl divider'],['#E0DBCD','borders'],['#EAF0E5','dur hover'],
+      ['#E9EEE7','demo on'],['#BDB6A4','scrollbar'],
+    ]],
+    ['Legend & water tints',[
+      ['#3F7FA0','rain'],['#34BCD2','watering'],['#0C6478','water held (dark)'],
+      ['#1FA6BE','pour end'],['#BDEAF1','water tint'],['#E8FAFD','water tint lt'],
+      ['#D98C5A','loss top'],['#B5471F','loss bottom'],
+    ]],
+    ['Sun / heat',[
+      ['#E0A074','glow'],['#E2965A','sunCore 0'],['#C25A2A','sunCore .5'],['#9E3712','sunCore 1'],
+      ['#C66536','shimmer'],['#9C3D18','sun stroke 0'],['#8A3214','sun stroke 1'],
+    ]],
+    ['rootColor ramp (0→1)',[
+      ['#2A2620','0'],['#56422E','.10'],['#8A6A3E','.30'],['#6E7B3C','.60'],['#4E7B52','1'],
+    ]],
+    ['plantColor ramp (0→1)',[
+      ['#3A352C','0'],['#9A7A3C','.10'],['#7E8A3E','.25'],['#4F7F4A','.55'],['#3F7A3B','1'],
+    ]],
+    ['leafColor ramp (0→1)',[
+      ['#6B5A38','0'],['#9C8A45','.25'],['#6FA06A','.6'],['#5F9A5A','1'],
+    ]],
+    ['Soil horizons',[
+      ['#67563C','litter'],['#AC8856','topsoil A'],['#8C5E3C','subsoil B'],['#C6B488','substratum C'],
+    ]],
+  ];
+  let html='<h2>Color palette</h2><p>Every color used on this page, grouped by role.</p>';
+  for(const [name,chips] of groups){
+    html+=`<div class="pgroup"><h3>${name}</h3><div class="pgrid">`;
+    for(const [hex,lbl] of chips){
+      html+=`<div class="pchip"><div class="col" style="background:${hex}"></div>`
+           +`<div class="meta"><div class="hex">${hex}</div><div class="lbl">${lbl}</div></div></div>`;
+    }
+    html+='</div></div>';
+  }
+  document.getElementById('palette').innerHTML=html;
+})();
 </script>
 </body>
 </html>
