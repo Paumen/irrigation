@@ -250,7 +250,7 @@ function build(){
   /* sky + sun + rain + watering */
   let sky='',weather='',surfaceFx='',btns='';
   DATA.forEach(d=>{
-    const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
+    const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1);
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
@@ -266,7 +266,7 @@ function build(){
       let rays='';const nr=Math.round(lerp(4,10,si));
       for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2,r2=rad+lerp(2,9.5,si);
         rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(0.7,1.7,si).toFixed(2)}" stroke-linecap="round"/>`;}
-      weather+=`<g opacity="${future?0.74:0.92}">`
+      weather+=`<g opacity="0.92">`
         +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.2+heat*0.34).toFixed(2)}"/>`
         +rays
         +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#9C3D18','#8A3214',heat)}" stroke-width="0.8"/></g>`;
@@ -337,8 +337,8 @@ function build(){
 
   /* flora: roots (fixed length) + plant (varies) */
   let flora='';
-  DATA.forEach(d=>{const x=cx(d.idx),sY=SURF+(mulberry32(7+d.idx)()-0.5)*2.6,v=clamp(d.level/TANK,0,1),future=d.idx>todayIdx,rng=mulberry32(101+d.idx);
-    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.idx*9}ms" opacity="${future?0.84:1}">`
+  DATA.forEach(d=>{const x=cx(d.idx),sY=SURF+(mulberry32(7+d.idx)()-0.5)*2.6,v=clamp(d.level/TANK,0,1),rng=mulberry32(101+d.idx);
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.idx*9}ms">`
       +roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
 
   /* refs + ticks + today + hit targets */
