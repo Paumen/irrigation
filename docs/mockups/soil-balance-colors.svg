@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="798" height="1920" font-family="ui-monospace,Menlo,Consolas,monospace">
 <rect width="798" height="1920" fill="#E7E4DA"/>
 <text x="24" y="40" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 58 colors, clustered by similarity</text>
-<text x="24" y="58" font-size="11" fill="#4A463C">badge:  <tspan font-weight="700" fill="#4F6B4A">SVG</tspan> = drawn in the chart (48)    <tspan font-weight="700" fill="#9C4A2E">UI</tspan> = CSS/chrome only (10)</text>
+<text x="24" y="58" font-size="11" fill="#4A463C"><tspan font-weight="700" fill="#4F6B4A">SVG</tspan> badge = drawn in the chart (48)    ·    unbadged = CSS/UI chrome only (10)</text>
 <text x="24" y="86" font-size="13" font-weight="700" fill="#4A463C">Greens</text>
 <rect x="24" y="98" width="142" height="58" rx="6" fill="#FBFAF6" stroke="#00000022"/>
 <text x="34" y="145" font-size="12" font-weight="600" fill="#222">#FBFAF6</text>
@@ -10,13 +10,9 @@
 <text x="24" y="169" font-size="10" fill="#4A463C">white/surfaces</text>
 <rect x="174" y="98" width="142" height="58" rx="6" fill="#F3F0E7" stroke="#00000022"/>
 <text x="184" y="145" font-size="12" font-weight="600" fill="#222">#F3F0E7</text>
-<rect x="290" y="104" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="300.0" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#F3F0E7">UI</text>
 <text x="174" y="169" font-size="10" fill="#4A463C">controls grad</text>
 <rect x="324" y="98" width="142" height="58" rx="6" fill="#E9EEE7" stroke="#00000022"/>
 <text x="334" y="145" font-size="12" font-weight="600" fill="#222">#E9EEE7</text>
-<rect x="440" y="104" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="450.0" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#E9EEE7">UI</text>
 <text x="324" y="169" font-size="10" fill="#4A463C">demo on</text>
 <rect x="474" y="98" width="142" height="58" rx="6" fill="#E7E4DA" stroke="#00000022"/>
 <text x="484" y="145" font-size="12" font-weight="600" fill="#222">#E7E4DA</text>
@@ -25,8 +21,6 @@
 <text x="474" y="169" font-size="10" fill="#4A463C">--bg / sky</text>
 <rect x="624" y="98" width="142" height="58" rx="6" fill="#E0DBCD" stroke="#00000022"/>
 <text x="634" y="145" font-size="12" font-weight="600" fill="#222">#E0DBCD</text>
-<rect x="740" y="104" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="750.0" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#E0DBCD">UI</text>
 <text x="624" y="169" font-size="10" fill="#4A463C">borders</text>
 <rect x="24" y="186" width="142" height="58" rx="6" fill="#C7DCC2" stroke="#00000022"/>
 <text x="34" y="233" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
@@ -45,8 +39,6 @@
 <text x="324" y="257" font-size="10" fill="#4A463C">watering/can</text>
 <rect x="474" y="186" width="142" height="58" rx="6" fill="#6E8E68" stroke="#00000022"/>
 <text x="484" y="233" font-size="12" font-weight="600" fill="#222">#6E8E68</text>
-<rect x="590" y="192" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="600.0" y="202" text-anchor="middle" font-size="9" font-weight="700" fill="#6E8E68">UI</text>
 <text x="474" y="257" font-size="10" fill="#4A463C">button</text>
 <rect x="624" y="186" width="142" height="58" rx="6" fill="#4E7B52" stroke="#00000022"/>
 <text x="634" y="233" font-size="12" font-weight="600" fill="#FBFAF6">#4E7B52</text>
@@ -81,8 +73,6 @@
 <text x="24" y="475" font-size="10" fill="#4A463C">sky warm</text>
 <rect x="174" y="404" width="142" height="58" rx="6" fill="#CDBF9F" stroke="#00000022"/>
 <text x="184" y="451" font-size="12" font-weight="600" fill="#222">#CDBF9F</text>
-<rect x="290" y="410" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="300.0" y="420" text-anchor="middle" font-size="9" font-weight="700" fill="#CDBF9F">UI</text>
 <text x="174" y="475" font-size="10" fill="#4A463C">seg hover</text>
 <rect x="324" y="404" width="142" height="58" rx="6" fill="#C6B488" stroke="#00000022"/>
 <text x="334" y="451" font-size="12" font-weight="600" fill="#222">#C6B488</text>
@@ -91,18 +81,12 @@
 <text x="324" y="475" font-size="10" fill="#4A463C">substratum fill</text>
 <rect x="474" y="404" width="142" height="58" rx="6" fill="#BDB6A4" stroke="#00000022"/>
 <text x="484" y="451" font-size="12" font-weight="600" fill="#222">#BDB6A4</text>
-<rect x="590" y="410" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="600.0" y="420" text-anchor="middle" font-size="9" font-weight="700" fill="#BDB6A4">UI</text>
 <text x="474" y="475" font-size="10" fill="#4A463C">scrollbar</text>
 <rect x="624" y="404" width="142" height="58" rx="6" fill="#9A9484" stroke="#00000022"/>
 <text x="634" y="451" font-size="12" font-weight="600" fill="#222">#9A9484</text>
-<rect x="740" y="410" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="750.0" y="420" text-anchor="middle" font-size="9" font-weight="700" fill="#9A9484">UI</text>
 <text x="624" y="475" font-size="10" fill="#4A463C">--faint</text>
 <rect x="24" y="492" width="142" height="58" rx="6" fill="#8A8270" stroke="#00000022"/>
 <text x="34" y="539" font-size="12" font-weight="600" fill="#222">#8A8270</text>
-<rect x="140" y="498" width="20" height="14" rx="7" fill="#222" opacity="0.9"/>
-<text x="150.0" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#8A8270">UI</text>
 <text x="24" y="563" font-size="10" fill="#4A463C">muted text</text>
 <rect x="174" y="492" width="142" height="58" rx="6" fill="#7A7363" stroke="#00000022"/>
 <text x="184" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#7A7363</text>
@@ -116,8 +100,6 @@
 <text x="324" y="563" font-size="10" fill="#4A463C">text/tick</text>
 <rect x="474" y="492" width="142" height="58" rx="6" fill="#4A463C" stroke="#00000022"/>
 <text x="484" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#4A463C</text>
-<rect x="590" y="498" width="20" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
-<text x="600.0" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#4A463C">UI</text>
 <text x="474" y="563" font-size="10" fill="#4A463C">--ink</text>
 <rect x="624" y="492" width="142" height="58" rx="6" fill="#5A4A33" stroke="#00000022"/>
 <text x="634" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#5A4A33</text>
@@ -252,8 +234,6 @@
 <text x="474" y="1519" font-size="10" fill="#4A463C">--rust/refill</text>
 <rect x="624" y="1448" width="142" height="58" rx="6" fill="#9C4A2E" stroke="#00000022"/>
 <text x="634" y="1495" font-size="12" font-weight="600" fill="#FBFAF6">#9C4A2E</text>
-<rect x="740" y="1454" width="20" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
-<text x="750.0" y="1464" text-anchor="middle" font-size="9" font-weight="700" fill="#9C4A2E">UI</text>
 <text x="624" y="1519" font-size="10" fill="#4A463C">error icon</text>
 <text x="24" y="1566" font-size="13" font-weight="700" fill="#4A463C">Oranges/browns</text>
 <rect x="24" y="1578" width="142" height="58" rx="6" fill="#F6C669" stroke="#00000022"/>
