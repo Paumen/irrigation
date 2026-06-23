@@ -343,7 +343,7 @@ function build(){
   /* refs + ticks + today + hit targets */
   let ticks='';
   DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
-    const dc=isT?'var(--today)':(fut?'var(--faint)':'var(--ink)'), wc=dc, bold=isT?' font-weight="700"':'';
+    const dc=isT?'var(--today)':'var(--ink)', wc=dc, bold=isT?' font-weight="700"':'';
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
