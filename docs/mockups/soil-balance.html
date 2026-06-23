@@ -10,7 +10,7 @@
 <style>
   :root{
     --bg:#E7E4DA; --ink:#4A463C; --faint:#8a8270;
-    --surface:#5A4A33; --table:#1FA6BE;
+    --surface:#6E5C42; --table:#3E8E9C;
     /* warm-accent palette — one tone per meaning */
     --today:#4F6B4A; --amber:#D98A2B; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
@@ -29,7 +29,7 @@
     border-right:1px solid #e0dbcd}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.02em;white-space:nowrap}
   .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #e0dbcd}
-  .axis .water{color:#1FA6BE}
+  .axis .water{color:#3E8E9C}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
   /* always-visible custom scrollbar (native bars auto-hide on mobile) */
@@ -67,7 +67,7 @@
   .view-loading,.view-error{flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;min-height:260px;padding:32px 24px}
   body[data-state="loading"] .view-loading{display:flex}
   body[data-state="error"] .view-error{display:flex}
-  .spinner{width:30px;height:30px;border:3px solid #e0dbcd;border-top-color:#1FA6BE;border-radius:50%;animation:spin .9s linear infinite}
+  .spinner{width:30px;height:30px;border:3px solid #e0dbcd;border-top-color:#3E8E9C;border-radius:50%;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);max-width:270px;line-height:1.65}
   .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:var(--rust);display:grid;place-items:center;font-size:20px;font-weight:700}
@@ -115,10 +115,10 @@
   <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
 
   <div class="key">
-    <span><i class="sw" style="background:linear-gradient(#E8A93C,#E2640F)"></i>loss</span>
-    <span><i class="sw" style="background:#3F7FA0"></i>rain</span>
-    <span><i class="sw" style="background:#34BCD2"></i>watering</span>
-    <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
+    <span><i class="sw" style="background:linear-gradient(#DDA85A,#C2763A)"></i>loss</span>
+    <span><i class="sw" style="background:#5E83A0"></i>rain</span>
+    <span><i class="sw" style="background:#62A6AE"></i>watering</span>
+    <span><i class="sw" style="background:linear-gradient(#62A6AE,#1E5663)"></i>water held</span>
   </div>
       </div><!-- /board -->
 
@@ -199,9 +199,9 @@ function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.s
 function hexLerp(a,b,t){const A=hx(a),B=hx(b);const m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;}
 function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){const t=(v-p0)/((p1-p0)||1);return hexLerp(c0,c1,t);}}return stops[stops.length-1][1];}
 const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#6E7B3C'],[1,'#4E7B52']],v);
-const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
-const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
-const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
+const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#557D54'],[1,'#4D7A4A']],v);
+const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#739770'],[1,'#6A9265']],v);
+const sunCore   =h=>ramp([[0,'#DDA85A'],[0.5,'#D5904A'],[1,'#C2763A']],h);
 function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
@@ -211,10 +211,10 @@ const AX=0, PADR=12, ROOT_REACH=SOIL_D*0.5; // roots only reach halfway, fixed
 // soil horizons (offset from SURF): litter, topsoil A, subsoil B, substratum C
 function shade(hex,f){const[r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,'0');return`#${m(r)}${m(g)}${m(b)}`;}
 const HORIZ=[
-  {y0:0,   y1:12,  fill:'#67563C', spn:0.9, peb:0},     // litter (dark organic)
-  {y0:12,  y1:60,  fill:'#AC8856', spn:0.7, peb:0},     // topsoil A (warm loam)
-  {y0:60,  y1:128, fill:'#8C5E3C', spn:0.55,peb:0.05},  // subsoil B (red-brown clay)
-  {y0:128, y1:SOIL_D, fill:'#C6B488', spn:0.42,peb:0.12},// substratum C (pale sandy/gravel)
+  {y0:0,   y1:12,  fill:'#7A6C53', spn:0.9, peb:0},     // litter (dark organic)
+  {y0:12,  y1:60,  fill:'#BCA47E', spn:0.7, peb:0},     // topsoil A (warm loam)
+  {y0:60,  y1:128, fill:'#A2825F', spn:0.55,peb:0.05},  // subsoil B (red-brown clay)
+  {y0:128, y1:SOIL_D, fill:'#CFC2A0', spn:0.42,peb:0.12},// substratum C (pale sandy/gravel)
 ];
 // edge line + mineral speckle are derived as darker shades of each horizon fill
 HORIZ.forEach(h=>{h.edge=shade(h.fill,0.70); h.sp=shade(h.fill,0.82);});
@@ -231,21 +231,21 @@ function build(){
 
   let defs=`
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#0C6478" stop-opacity=".82"/></linearGradient>
+      <stop offset="0" stop-color="#62A6AE" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#1E5663" stop-opacity=".82"/></linearGradient>
     <linearGradient id="fringe" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity="0"/>
-      <stop offset="1" stop-color="#34BCD2" stop-opacity=".34"/></linearGradient>
+      <stop offset="0" stop-color="#62A6AE" stop-opacity="0"/>
+      <stop offset="1" stop-color="#62A6AE" stop-opacity=".34"/></linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#F6C669" stop-opacity=".85"/>
-      <stop offset="1" stop-color="#F6C669" stop-opacity="0"/></radialGradient>
+      <stop offset="0" stop-color="#EBCB86" stop-opacity=".8"/>
+      <stop offset="1" stop-color="#EBCB86" stop-opacity="0"/></radialGradient>
     <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity=".5"/>
-      <stop offset="1" stop-color="#1FA6BE" stop-opacity=".16"/></linearGradient>
+      <stop offset="0" stop-color="#62A6AE" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#3E8E9C" stop-opacity=".16"/></linearGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
-      <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
-      <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>`;
+      <stop offset="0" stop-color="#62A6AE" stop-opacity=".34"/>
+      <stop offset="0.55" stop-color="#62A6AE" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#62A6AE" stop-opacity=".06"/></linearGradient>`;
 
   /* sky + sun + rain + watering */
   let sky='',weather='',surfaceFx='',btns='';
@@ -254,7 +254,7 @@ function build(){
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
-      const sc=hexLerp('#E2640F','#E88A22',0.5);
+      const sc=hexLerp('#C2763A','#D5904A',0.5);
       for(let s=0;s<3;s++){const yy=SKY_TOP+40+s*7;let p=`M ${x0+dayW*0.16} ${yy}`;for(let k=1;k<=5;k++){p+=` Q ${(x0+dayW*(0.16+0.14*k)-dayW*0.07).toFixed(1)} ${(yy+(k%2?-2.4:2.4)).toFixed(1)} ${(x0+dayW*(0.16+0.14*k)).toFixed(1)} ${yy}`;}
         weather+=`<path d="${p}" fill="none" stroke="${sc}" stroke-width="0.7" opacity="${(0.16-s*0.04).toFixed(2)}"/>`;}
     }
@@ -269,7 +269,7 @@ function build(){
       weather+=`<g opacity="${future?0.62:0.8}">`
         +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.26+heat*0.22).toFixed(2)}"/>`
         +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#C0540C','#B84810',heat)}" stroke-width="0.8"/></g>`;
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#A86A34','#9E6234',heat)}" stroke-width="0.8"/></g>`;
     }
     // rain
     if(d.rain>0.05){
@@ -277,7 +277,7 @@ function build(){
       let rg='';
       for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*0.06,dayW*0.72,rng()),ry=SKY_TOP+lerp(26,165,rng());
         const len=lerp(10,22,Math.sqrt(clamp(d.rain/18,0,1)))*(0.7+rng()*0.6);
-        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2.5).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="#3F7FA0" stroke-width="1.5" stroke-linecap="round" opacity="${(0.5+0.4*clamp(d.rain/12,0,1)).toFixed(2)}"/>`;}
+        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2.5).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="#5E83A0" stroke-width="1.5" stroke-linecap="round" opacity="${(0.5+0.4*clamp(d.rain/12,0,1)).toFixed(2)}"/>`;}
       weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${rg}</g>`;
     }
     // watering — a single droplet icon floats above the column; wet earth shows below (soil loop)
@@ -316,8 +316,8 @@ function build(){
   soil+=`<path d="${aqua}" fill="url(#aqua)"/>`
      +`<path d="${fringe}" fill="url(#fringe)" opacity=".8"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
-  soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
-     +`<path d="${tline}" fill="none" stroke="#BDEAF1" stroke-width="0.8" opacity=".6"/>`;
+  soil+=`<path d="${tline}" fill="none" stroke="#3E8E9C" stroke-width="2.2"/>`
+     +`<path d="${tline}" fill="none" stroke="#CFE3E6" stroke-width="0.8" opacity=".6"/>`;
   // sediment lines within saturated zone (subtle horizontal strata in water)
   // surface
   const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
@@ -379,8 +379,8 @@ function dropIcon(cx,cy,r){
     +`C ${(cx+0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
     +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
     +`C ${(cx-r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx-0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
-  return `<path d="${d}" fill="#34BCD2" stroke="#1FA6BE" stroke-width="1.3" stroke-linejoin="round"/>`
-    +`<ellipse cx="${(cx-r*0.34).toFixed(1)}" cy="${(cy+r*0.02).toFixed(1)}" rx="${(r*0.2).toFixed(1)}" ry="${(r*0.42).toFixed(1)}" fill="#E8FAFD" opacity=".8"/>`;
+  return `<path d="${d}" fill="#62A6AE" stroke="#3E8E9C" stroke-width="1.3" stroke-linejoin="round"/>`
+    +`<ellipse cx="${(cx-r*0.34).toFixed(1)}" cy="${(cy+r*0.02).toFixed(1)}" rx="${(r*0.2).toFixed(1)}" ry="${(r*0.42).toFixed(1)}" fill="#EAF4F5" opacity=".8"/>`;
 }
 /* per-day toggle: faint ring when off, bold green disc with a tiny can when on */
 function btnSVG(cxp,y,on){
@@ -394,7 +394,7 @@ function btnSVG(cxp,y,on){
 /* darkened, saturated soil under a watered column */
 function wetCol(x0,w,sY){
   return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="160" fill="url(#wetE)"/>`
-    +`<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="3" fill="#34BCD2" opacity=".34"/>`;
+    +`<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="3" fill="#62A6AE" opacity=".34"/>`;
 }
 
 function plant(x,sY,v,rng){
@@ -412,8 +412,8 @@ function plant(x,sY,v,rng){
     const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
     const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
     s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
-  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#C98AB0"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#E7C24A"/>`;}
-  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#C98AB0',(h-0.42)/0.2)}"/>`;}
+  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#C193AC"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#D8BA64"/>`;}
+  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#C193AC',(h-0.42)/0.2)}"/>`;}
   return s;
 }
 
