@@ -27,11 +27,6 @@
   .key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
   .sw{width:13px;height:13px;border-radius:6px;display:inline-block}
   .scene{position:relative;width:auto;margin:0}
-  .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:var(--card);z-index:3;pointer-events:none;
-    border-right:1px solid var(--line)}
-  .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.02em;white-space:nowrap}
-  .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid var(--line)}
-  .axis .water{color:var(--water)}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
   /* always-visible custom scrollbar (native bars auto-hide on mobile) */
@@ -50,7 +45,7 @@
   header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:8px}
   header.app .loc{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
-  /* ===== status headline (improvement #1) ===== */
+  /* ===== status headline ===== */
   .status{margin:4px 12px 12px;padding:13px 20px 14px;background:var(--card);border:1px solid var(--bg);border-radius:18px}
   .status .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
@@ -60,17 +55,6 @@
   .status .bar{position:relative;height:8px;background:var(--bg);border-radius:6px;margin-top:10px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:6px}
   .status .mark{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:#FBFAF6;box-shadow:0 0 0 1px rgba(60,40,20,.45)}
-  .view{display:none}
-  body[data-state="ok"] .view-ok{display:block}
-  .view-loading,.view-error{flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;min-height:260px;padding:32px 24px}
-  body[data-state="loading"] .view-loading{display:flex}
-  body[data-state="error"] .view-error{display:flex}
-  .spinner{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--water);border-radius:50%;animation:spin .9s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);max-width:270px;line-height:1.65}
-  .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:var(--rust);display:grid;place-items:center;font-size:20px;font-weight:700}
-  .view-error h2{margin:0;font-size:14px;color:var(--rust);font-weight:600}
-  .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:var(--card);font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls — compact settings list: label left, connected segmented control right ===== */
   .controls{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
   .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px 10px;padding:9px 0}
@@ -87,14 +71,13 @@
   .dur button:hover{color:var(--today);background:var(--line)}
   .dur .val{min-width:70px;padding:5px 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);color:var(--ink)}
   .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px}
-  .dur-hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:2px}
   /* ===== footer ===== */
   .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid var(--line);margin-top:12px}
   .app-foot .coords{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
 </style>
 </head>
-<body class="booting" data-state="ok">
+<body class="booting">
   <header class="app">
     <h1>Soil-Balance</h1>
     <span class="loc" id="locline">Flower bed · Wijchen</span>
@@ -102,7 +85,7 @@
   <main>
     <div id="status" class="status"></div>
     <div class="board">
-      <div class="view view-ok">
+      <div>
   <div class="scene" id="scene">
     <div class="scroll" id="scroll"></div>
   </div>
@@ -199,7 +182,6 @@ const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#67563C'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
 const sunCore   =h=>ramp([[0,'#E2965A'],[0.5,'#C25A2A'],[1,'#9E3712']],h);
-function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
 /* geometry */
@@ -242,10 +224,10 @@ function build(){
       <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>`;
 
   /* sky + sun + rain + watering */
-  let sky='',weather='',surfaceFx='',btns='';
+  let sky='',weather='';
   DATA.forEach(d=>{
     const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1);
-    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
+    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="var(--bg)"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
       const sc=hexLerp('#B5471F','#C25A2A',0.5);
@@ -308,7 +290,6 @@ function build(){
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
   soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
      +`<path d="${tline}" fill="none" stroke="#BDEAF1" stroke-width="0.8" opacity=".6"/>`;
-  // sediment lines within saturated zone (subtle horizontal strata in water)
   // surface
   const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
   soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="var(--surface)" stroke-width="2.4"/>`
@@ -331,7 +312,7 @@ function build(){
 
   /* refs + ticks + today + hit targets */
   let ticks='';
-  DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
+  DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx;
     const dc=isT?'var(--today)':'var(--ink)', wc=dc, bold=isT?' font-weight="700"':'';
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${wc}">${d.wd}</text>`;});
@@ -345,7 +326,7 @@ function build(){
   let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
 
   const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${H}" width="${W.toFixed(0)}" height="${H}" xmlns="http://www.w3.org/2000/svg" font-family="${'ui-sans-serif,system-ui,sans-serif'}">
-    <defs>${defs}</defs>${sky}${weather}${btns}${soil}${cracks}${surfaceFx}${flora}${ticks}${today}${hits}</svg>`;
+    <defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
   return {svg,W,dayW,todayIdx,cx,tableY};
 }
 
@@ -358,15 +339,6 @@ function dropIcon(cx,cy,r){
     +`C ${(cx-r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx-0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
   return `<path d="${d}" fill="#34BCD2" stroke="#1FA6BE" stroke-width="1.3" stroke-linejoin="round"/>`
     +`<ellipse cx="${(cx-r*0.34).toFixed(1)}" cy="${(cy+r*0.02).toFixed(1)}" rx="${(r*0.2).toFixed(1)}" ry="${(r*0.42).toFixed(1)}" fill="#E8FAFD" opacity=".8"/>`;
-}
-/* per-day toggle: faint ring when off, bold green disc with a tiny can when on */
-function btnSVG(cxp,y,on){
-  if(on){return `<g class="grow"><circle cx="${cxp.toFixed(1)}" cy="${y}" r="8.4" fill="none" stroke="#4F6B4A" stroke-width="1" opacity=".28"/>`
-    +`<circle cx="${cxp.toFixed(1)}" cy="${y}" r="6.6" fill="#4F6B4A"/>`
-    +`<rect x="${(cxp-2.6).toFixed(1)}" y="${(y-1.4).toFixed(1)}" width="4.4" height="4.4" rx="0.8" fill="#FBFAF6"/>`
-    +`<path d="M ${(cxp-2.6).toFixed(1)} ${(y-0.2).toFixed(1)} L ${(cxp-4.9).toFixed(1)} ${(y-1).toFixed(1)} L ${(cxp-4.9).toFixed(1)} ${(y+1).toFixed(1)} Z" fill="#FBFAF6"/>`
-    +`<path d="M ${(cxp-1.4).toFixed(1)} ${(y-1.4).toFixed(1)} Q ${cxp.toFixed(1)} ${(y-3.3).toFixed(1)} ${(cxp+1.4).toFixed(1)} ${(y-1.4).toFixed(1)}" fill="none" stroke="#FBFAF6" stroke-width="0.8"/></g>`;}
-  return `<circle cx="${cxp.toFixed(1)}" cy="${y}" r="5.4" fill="#FBFAF6" fill-opacity=".3" stroke="#5A4A33" stroke-width="1" opacity=".2"/>`;
 }
 /* darkened, saturated soil under a watered column */
 function wetCol(x0,w,sY){
@@ -428,10 +400,7 @@ function jag(pts){let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(le
 /* mount + interactivity */
 const scroll=document.getElementById('scroll'),sbar=document.getElementById('sbar'),sthumb=document.getElementById('sthumb');
 let G, booted=false;
-function pct(y){return (y/H*100).toFixed(2);}
-/* status headline — gives the verdict before the chart (improvement #1) */
-const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const dlabel=d=>`${MON[+d.date.slice(5,7)-1]} ${+d.date.slice(8,10)}`;
+/* status headline — gives the verdict before the chart */
 function renderStatus(){
   const ti=DATA.findIndex(d=>d.date===TODAY), tl=DATA[ti].level;
   const pct=Math.round(tl/TANK*100), thPos=REFILL/TANK*100, N=DATA.length;
