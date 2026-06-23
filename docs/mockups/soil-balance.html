@@ -94,18 +94,6 @@
   .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid #E0DBCD;margin-top:12px}
   .app-foot .coords{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
-  /* ===== color palette — inline, placed near where each color is used ===== */
-  .palette{margin:6px 12px 14px}
-  .palette.in-controls{margin:2px 8px 18px}
-  .pgroup{margin-top:12px}
-  .pgroup:first-child{margin-top:0}
-  .pgroup h3{margin:0 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
-  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px}
-  .pchip{border:1px solid #E0DBCD;border-radius:10px;overflow:hidden;background:#FBFAF6}
-  .pchip .col{height:42px}
-  .pchip .meta{padding:5px 8px 6px}
-  .pchip .hex{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
-  .pchip .lbl{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.02em}
 </style>
 </head>
 <body class="booting" data-state="ok">
@@ -114,7 +102,6 @@
     <span class="loc" id="locline">Flower bed · Wijchen</span>
   </header>
   <main>
-    <section class="palette" id="pal-theme" aria-label="Theme colors"></section>
     <div id="status" class="status"></div>
     <div class="board">
       <div class="view view-ok">
@@ -131,7 +118,6 @@
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
   </div>
 
-  <section class="palette" id="pal-scene" aria-label="Colors drawn in the chart"></section>
       </div><!-- /board -->
 
     <section class="controls">
@@ -164,7 +150,6 @@
       </div>
     </section>
 
-    <section class="palette in-controls" id="pal-ui" aria-label="UI surface colors"></section>
   </main>
 
 
@@ -542,64 +527,6 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 }));
 function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   document.getElementById('durVal').textContent=WATER_MIN;}
-
-/* ---- color palette: each group rendered inline, next to where its colors are used ---- */
-(function renderPalettes(){
-  // theme tokens — placed by the header, they set the whole shell
-  const theme=[
-    ['CSS variables (:root)',[
-      ['#E7E4DA','--bg'],['#3A352C','--ink'],['#8A8270','--faint / scrollbar'],['#5A4A33','--surface'],
-      ['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
-    ]],
-  ];
-  // colors drawn in the chart — placed under the chart legend
-  const scene=[
-    ['Legend & water tints',[
-      ['#3F7FA0','rain'],['#34BCD2','watering'],['#0C6478','water held (dark)'],
-      ['#1FA6BE','pour end'],['#BDEAF1','water tint'],['#E8FAFD','water tint lt'],
-      ['#D98C5A','loss top'],['#B5471F','loss bottom'],
-    ]],
-    ['Sun / heat',[
-      ['#E0A074','glow'],['#E2965A','sunCore 0'],['#C25A2A','sunCore .5 / shimmer'],
-      ['#9E3712','sunCore 1 / sun stroke 0'],['#8A3214','sun stroke 1'],
-    ]],
-    ['rootColor ramp (0→1)',[
-      ['#2A2620','0'],['#56422E','.10'],['#8A6A3E','.30'],['#7E8A3E','.60'],['#4F7F4A','1'],
-    ]],
-    ['plantColor ramp (0→1)',[
-      ['#3A352C','0'],['#9A7A3C','.10'],['#7E8A3E','.25'],['#4F7F4A','.55'],['#3F7A3B','1'],
-    ]],
-    ['leafColor ramp (0→1)',[
-      ['#67563C','0'],['#9C8A45','.25'],['#6FA06A','.6'],['#5F9A5A','1'],
-    ]],
-    ['Soil horizons',[
-      ['#67563C','litter'],['#AC8856','topsoil A'],['#8C5E3C','subsoil B'],['#C6B488','substratum C'],
-    ]],
-  ];
-  // UI surfaces — placed by the controls
-  const ui=[
-    ['UI surfaces / chrome',[
-      ['#FBFAF6','surface / card'],
-      ['#E0DBCD','borders / divider / track / dur hover'],
-    ]],
-  ];
-  const render=(id,groups)=>{
-    const el=document.getElementById(id); if(!el) return;
-    let html='';
-    for(const [name,chips] of groups){
-      html+=`<div class="pgroup"><h3>${name}</h3><div class="pgrid">`;
-      for(const [hex,lbl] of chips){
-        html+=`<div class="pchip"><div class="col" style="background:${hex}"></div>`
-             +`<div class="meta"><div class="hex">${hex}</div><div class="lbl">${lbl}</div></div></div>`;
-      }
-      html+='</div></div>';
-    }
-    el.innerHTML=html;
-  };
-  render('pal-theme',theme);
-  render('pal-scene',scene);
-  render('pal-ui',ui);
-})();
 </script>
 </body>
 </html>
