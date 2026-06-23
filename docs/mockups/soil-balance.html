@@ -11,8 +11,8 @@
   :root{
     --bg:#E7E4DA; --ink:#3A352C; --faint:#8a8270;
     --surface:#5A4A33;
-    --card:#FBFAF6; --line:#E0DBCD; --water:#1FA6BE;
-    --today:#4F6B4A; --amber:#D98A2B; --rust:#B5471F;
+    --card:#FBFAF6; --line:#E0DBCD;
+    --today:#4F6B4A; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
     --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
     --serif: "Newsreader",Georgia,"Times New Roman",serif;
@@ -59,8 +59,6 @@
   .dur button:hover{color:var(--today);background:var(--line)}
   .dur .val{min-width:70px;padding:5px 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);color:var(--ink)}
   .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px}
-  .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid var(--line);margin-top:12px}
-  .app-foot .coords{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
 </style>
 </head>
@@ -189,9 +187,6 @@ function build(){
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
       <stop offset="0" stop-color="#E0A074" stop-opacity=".85"/>
       <stop offset="1" stop-color="#E0A074" stop-opacity="0"/></radialGradient>
-    <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity=".5"/>
-      <stop offset="1" stop-color="#1FA6BE" stop-opacity=".16"/></linearGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
       <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
