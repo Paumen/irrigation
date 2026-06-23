@@ -10,7 +10,7 @@
 <style>
   :root{
     --bg:#E7E4DA; --ink:#3A352C; --faint:#8a8270;
-    --surface:#5A4A33; --table:#1FA6BE;
+    --surface:#5A4A33;
     /* warm-accent palette — one tone per meaning */
     --today:#4F6B4A; --amber:#D98A2B; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
@@ -74,7 +74,7 @@
   .view-error h2{margin:0;font-size:14px;color:var(--rust);font-weight:600}
   .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls — compact settings list: label left, connected segmented control right ===== */
-  .controls{display:flex;flex-direction:column;background:#F3F0E7;border:1px solid #E0DBCD;border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
+  .controls{display:flex;flex-direction:column;background:#FBFAF6;border:1px solid #E0DBCD;border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
   .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px 10px;padding:9px 0}
   .ctl + .ctl{border-top:1px solid #E0DBCD}
   .ctl .seg,.ctl .dur{justify-self:end}
@@ -426,7 +426,7 @@ function plant(x,sY,v,rng){
     const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
     const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
     s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
-  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#FBFAF6" stroke="#BEB6A0" stroke-width="0.6"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#AF6E4B"/>`;}
+  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#FBFAF6" stroke="#E0DBCD" stroke-width="0.6"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#AF6E4B"/>`;}
   else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#FBFAF6',(h-0.42)/0.2)}"/>`;}
   return s;
 }
@@ -549,7 +549,7 @@ function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   const theme=[
     ['CSS variables (:root)',[
       ['#E7E4DA','--bg'],['#3A352C','--ink'],['#8A8270','--faint / scrollbar'],['#5A4A33','--surface'],
-      ['#1FA6BE','--table'],['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
+      ['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
     ]],
   ];
   // colors drawn in the chart — placed under the chart legend
@@ -579,7 +579,7 @@ function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   // UI surfaces — placed by the controls
   const ui=[
     ['UI surfaces / chrome',[
-      ['#FBFAF6','surface / card'],['#F3F0E7','controls bg'],
+      ['#FBFAF6','surface / card'],
       ['#E0DBCD','borders / divider / track / dur hover'],
     ]],
   ];
