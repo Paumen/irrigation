@@ -13,9 +13,10 @@
     <style>
       /* ── Warm, earthy skin: override the PAUMEN tokens for a paper/cream
          look with a deep-green brand accent and a terracotta alert colour.
-         (This <style> is unlayered, so it wins over PAUMEN's @layer tokens.) */
+         (This \3c style> is unlayered, so it wins over PAUMEN's @layer tokens.) */
       :root {
         color-scheme: light;
+
         --accent: oklch(46% 0.085 150);
         --accent-hue: 150;
         --danger-hue: 33;
@@ -28,8 +29,8 @@
         --text-on-accent: oklch(97% 0.02 130);
         --track: oklch(89% 0.025 82);
         --pill: oklch(99% 0.008 86);
-        --serif: Georgia, "Times New Roman", serif;
-        --mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+        --font-serif: "Georgia", "Times New Roman", serif;
+        --font-mono: ui-monospace, "Cascadia Code", "Menlo", "Consolas", monospace;
       }
 
       body {
@@ -71,7 +72,7 @@
         display: inline-flex;
         align-items: center;
         gap: var(--xs);
-        font-family: var(--mono);
+        font-family: var(--font-mono);
         text-transform: uppercase;
         letter-spacing: 0.09em;
         font-size: var(--s);
@@ -79,7 +80,7 @@
       }
 
       [data-el="verdict"] {
-        font-family: var(--serif);
+        font-family: var(--font-serif);
         font-size: var(--xl);
         font-weight: 400;
         line-height: 1.05;
@@ -99,7 +100,7 @@
       }
 
       [data-el="moisture"] b {
-        font-family: var(--serif);
+        font-family: var(--font-serif);
         font-size: var(--l);
         margin-inline-end: var(--xs);
       }
@@ -117,8 +118,7 @@
         justify-self: stretch;
         inline-size: 100vw;
         margin-inline: calc(50% - 50vw);
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow: auto hidden;
         overscroll-behavior-x: contain;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
@@ -177,7 +177,7 @@
       [data-rowlabel] {
         flex: 0 0 auto;
         inline-size: 5.5rem;
-        font-family: var(--mono);
+        font-family: var(--font-mono);
         text-transform: uppercase;
         letter-spacing: 0.08em;
         font-size: var(--s);
