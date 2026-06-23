@@ -3,19 +3,116 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Soil Balance — Wijchen</title>
+    <title>Soil-Balance — Wijchen</title>
     <link rel="stylesheet" href="PAUMEN.css" />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap"
     />
     <style>
-      /* Graph-specific layout. Colour/metaphor lives on the inline SVG as
-         presentation attributes; this is only the full-bleed scroll frame. */
+      /* ── Warm, earthy skin: override the PAUMEN tokens for a paper/cream
+         look with a deep-green brand accent and a terracotta alert colour.
+         (This <style> is unlayered, so it wins over PAUMEN's @layer tokens.) */
+      :root {
+        color-scheme: light;
+        --accent: oklch(46% 0.085 150);
+        --accent-hue: 150;
+        --danger-hue: 33;
+        --color-danger: oklch(52% 0.15 33);
+        --neutral: oklch(94% 0.022 84);
+        --neutral-mute: oklch(97.5% 0.016 86);
+        --neutral-edge: oklch(85% 0.03 82);
+        --text: oklch(34% 0.035 145);
+        --text-mute: oklch(53% 0.025 92);
+        --text-on-accent: oklch(97% 0.02 130);
+        --track: oklch(89% 0.025 82);
+        --pill: oklch(99% 0.008 86);
+        --serif: Georgia, "Times New Roman", serif;
+        --mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+      }
+
+      body {
+        font-family: Nunito, system-ui, sans-serif;
+        gap: var(--l);
+      }
+
+      [data-el="head"] {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: var(--s);
+      }
+
+      [data-el="head"] h1 {
+        font-size: var(--xl);
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: -0.01em;
+      }
+
+      [data-el="subtitle"] {
+        color: var(--text-mute);
+        font-size: var(--m);
+      }
+
+      /* ── Verdict card ───────────────────────────────────────────────── */
+      [data-el="card"] {
+        display: grid;
+        gap: var(--s);
+        background: var(--neutral-mute);
+        border: 1px solid var(--neutral-edge);
+        border-radius: var(--l);
+        padding: var(--m);
+        box-shadow: 0 1px 3px oklch(0% 0 0 / 0.06);
+      }
+
+      [data-el="refillLabel"] {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--xs);
+        font-family: var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        font-size: var(--s);
+        color: var(--text-mute);
+      }
+
+      [data-el="verdict"] {
+        font-family: var(--serif);
+        font-size: var(--xl);
+        font-weight: 400;
+        line-height: 1.05;
+      }
+
+      [data-el="card"] hr {
+        inline-size: 100%;
+        block-size: 1px;
+        border: none;
+        background: var(--neutral-edge);
+        margin-block: var(--xs);
+      }
+
+      [data-el="moisture"] {
+        color: var(--text-mute);
+        font-size: var(--m);
+      }
+
+      [data-el="moisture"] b {
+        font-family: var(--serif);
+        font-size: var(--l);
+        margin-inline-end: var(--xs);
+      }
+
+      [data-el="card"][data-mood="dry"] :is([data-el="verdict"], [data-el="moisture"] b) {
+        color: var(--color-danger);
+      }
+
+      [data-el="card"][data-mood="ok"] :is([data-el="verdict"], [data-el="moisture"] b) {
+        color: var(--accent);
+      }
+
+      /* ── Graph: full-bleed, horizontally scrollable ─────────────────── */
       [data-graph] {
         justify-self: stretch;
         inline-size: 100vw;
@@ -24,11 +121,21 @@
         overflow-y: hidden;
         overscroll-behavior-x: contain;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
       }
 
       [data-graph] svg {
         display: block;
         block-size: auto;
+      }
+
+      [data-graph]::-webkit-scrollbar {
+        block-size: 8px;
+      }
+
+      [data-graph]::-webkit-scrollbar-thumb {
+        background: var(--neutral-edge);
+        border-radius: 999px;
       }
 
       [data-day] {
@@ -39,6 +146,7 @@
         outline: var(--xs) solid var(--accent);
       }
 
+      /* ── Legend ─────────────────────────────────────────────────────── */
       [data-legend] {
         display: flex;
         flex-wrap: wrap;
@@ -52,70 +160,160 @@
         align-items: center;
         gap: var(--xs);
       }
+
+      /* ── Controls: segmented pill toggles + stepper ─────────────────── */
+      [data-el="controls"] {
+        gap: var(--m);
+      }
+
+      [data-row] {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--s);
+        grid-column: span 12;
+      }
+
+      [data-rowlabel] {
+        flex: 0 0 auto;
+        inline-size: 5.5rem;
+        font-family: var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: var(--s);
+        color: var(--text-mute);
+      }
+
+      [data-toggle],
+      [data-stepper] {
+        flex: 1 1 12rem;
+        display: inline-flex;
+        align-items: stretch;
+        gap: 0;
+        min-inline-size: 0;
+        background: var(--track);
+        border: 1px solid var(--neutral-edge);
+        border-radius: 999px;
+        padding: 0.25rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      [data-toggle]::-webkit-scrollbar,
+      [data-stepper]::-webkit-scrollbar {
+        display: none;
+      }
+
+      [data-toggle] input[type="radio"] {
+        position: absolute;
+        inline-size: 0;
+        block-size: 0;
+        margin: 0;
+        padding: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      [data-toggle] label {
+        flex: 1 1 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        padding: 0.4rem 0.6rem;
+        border-radius: 999px;
+        color: var(--text-mute);
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition:
+          background-color 0.15s ease,
+          color 0.15s ease;
+      }
+
+      [data-toggle] label:hover {
+        color: var(--text);
+      }
+
+      [data-toggle] input:checked + label {
+        background: var(--pill);
+        color: var(--accent);
+        font-weight: 700;
+        box-shadow: 0 1px 3px oklch(0% 0 0 / 0.16);
+      }
+
+      [data-toggle] input:focus-visible + label {
+        outline: var(--xs) solid var(--accent);
+        outline-offset: -2px;
+      }
+
+      [data-stepper] {
+        flex: 0 1 12rem;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.2rem;
+      }
+
+      [data-stepper] button {
+        flex: 0 0 auto;
+        inline-size: 2rem;
+        block-size: 2rem;
+        padding: 0;
+        border: 1px solid var(--neutral-edge);
+        border-radius: 999px;
+        background: var(--pill);
+        color: var(--accent);
+        font-weight: 700;
+        font-size: var(--l);
+        line-height: 1;
+      }
+
+      [data-stepper] output {
+        flex: 1 1 auto;
+        text-align: center;
+        font-weight: 700;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+      }
+
+      [data-el="reset"] {
+        grid-column: span 12;
+        justify-self: start;
+        border: none;
+        background: transparent;
+        color: var(--text-mute);
+        padding-inline: 0;
+        gap: var(--xs);
+      }
+
+      [data-el="reset"]:hover:not(:disabled) {
+        color: var(--color-danger);
+        background: transparent;
+      }
+
+      footer p {
+        color: var(--text-mute);
+        font-size: var(--s);
+      }
     </style>
   </head>
   <body>
-    <header data-colspan="12">
-      <hgroup data-colspan="12">
-        <h1>Soil Balance</h1>
-        <p data-skin="mute" data-el="site">Vormersesluisweg 3A, Wijchen</p>
-      </hgroup>
+    <header data-el="head" data-colspan="12">
+      <h1>Soil-Balance</h1>
+      <p data-el="subtitle">Flower bed · Wijchen</p>
     </header>
 
-    <form data-colspan="12" data-el="controls">
-      <section data-colspan="6">
-        <label for="planting" data-colspan="12">Planting</label>
-        <select id="planting" data-el="planting" data-colspan="12"></select>
-      </section>
-
-      <section data-colspan="6">
-        <label for="soil" data-colspan="12">Soil</label>
-        <select id="soil" data-el="soil" data-colspan="12"></select>
-      </section>
-
-      <section data-colspan="6">
-        <label for="sun" data-colspan="12">Sun exposure</label>
-        <select id="sun" data-el="sun" data-colspan="12"></select>
-      </section>
-
-      <section data-colspan="6">
-        <label for="minutes" data-colspan="12">Watering (minutes)</label>
-        <input
-          id="minutes"
-          data-el="minutes"
-          data-colspan="12"
-          type="number"
-          inputmode="numeric"
-          min="0"
-          max="600"
-          step="5"
-        />
-        <p data-colspan="12" data-skin="mute" data-el="dose"></p>
-      </section>
-
-      <section data-colspan="12">
-        <button type="button" data-el="reset" data-colspan="6" data-skin="ghost">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path
-              d="M5 12a7 7 0 1 1 2 4.9"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-            <path
-              d="M4 7v4h4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          Reset waterings
-        </button>
-      </section>
-    </form>
+    <article data-el="card" data-colspan="12" data-mood="ok" hidden>
+      <p data-el="refillLabel">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <circle data-el="dot" cx="7" cy="7" r="5" fill="currentColor" />
+        </svg>
+        <output data-el="refillText">At refill point</output>
+      </p>
+      <h2 data-el="verdict">—</h2>
+      <hr />
+      <p data-el="moisture"></p>
+      <figure data-el="bar"></figure>
+    </article>
 
     <p data-el="status" data-state="loading" data-colspan="12">
       Loading weather…
@@ -125,44 +323,87 @@
 
     <ul data-legend data-colspan="12">
       <li>
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <circle cx="8" cy="8" r="3.4" fill="#f3b94d" />
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" fill="#c2643a" />
         </svg>
-        Sun &amp; heat dry the soil
+        loss
       </li>
       <li>
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <path d="M8 3 C11 8 11 11 8 12 C5 11 5 8 8 3 Z" fill="#6db4e6" />
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" fill="#3f7fae" />
         </svg>
-        Rain adds water
+        rain
       </li>
       <li>
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <path d="M8 2 C12 8 12 12 8 13 C4 12 4 8 8 2 Z" fill="#2f7fb0" />
-          <circle
-            cx="8"
-            cy="9"
-            r="6.2"
-            fill="none"
-            stroke="#2f7fb0"
-            stroke-width="1.2"
-          />
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" fill="#1fb6c9" />
         </svg>
-        You watered (tap a day)
+        watering
       </li>
       <li>
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <rect x="3" y="4" width="10" height="9" rx="1.5" fill="#5aa9d6" />
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" fill="#2f9aa0" />
         </svg>
-        Soil moisture held
+        water held
       </li>
     </ul>
 
+    <form data-el="controls" data-colspan="12">
+      <section data-row>
+        <p data-rowlabel>Planting</p>
+        <fieldset data-toggle data-el="planting"></fieldset>
+      </section>
+
+      <section data-row>
+        <p data-rowlabel>Soil</p>
+        <fieldset data-toggle data-el="soil"></fieldset>
+      </section>
+
+      <section data-row>
+        <p data-rowlabel>Exposure</p>
+        <fieldset data-toggle data-el="sun"></fieldset>
+      </section>
+
+      <section data-row>
+        <p data-rowlabel>Duration</p>
+        <fieldset data-stepper>
+          <button type="button" data-el="durMinus" aria-label="Less watering">
+            −
+          </button>
+          <output data-el="durOut">60 min</output>
+          <button type="button" data-el="durPlus" aria-label="More watering">
+            +
+          </button>
+        </fieldset>
+      </section>
+
+      <button type="button" data-el="reset">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            d="M5 12a7 7 0 1 1 2 4.9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M4 7v4h4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Reset waterings
+      </button>
+    </form>
+
     <footer data-colspan="12">
-      <p data-skin="mute" data-colspan="12">
+      <p data-colspan="12">
         Weather from
-        <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a>. Plans
-        are not saved — reload resets everything.
+        <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a>. Tap any
+        day to plan a watering — nothing is saved, reload resets everything.
       </p>
     </footer>
 

@@ -177,6 +177,9 @@ export function deriveParams(controls) {
 
 export function runBalance(weather, params, wateredSet, dose) {
   const { tankSize, kc, sunFactor } = params;
+  if (sunFactor === undefined) {
+    throw new Error("runBalance: missing required param sunFactor");
+  }
   const n = weather.et0.length;
   const series = [];
   let prev = tankSize;
