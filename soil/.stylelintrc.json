@@ -27,8 +27,8 @@
       { "message": "display: table* is not allowed — use grid or flex." }
     ],
     "custom-property-pattern": [
-      "^(accent|surface|jump|neutral|text|danger|success|color|font|track|pill|0|xs|s|m|l|xl)(-[a-z0-9]+)*$",
-      { "message": "Custom properties must use the soil token vocabulary (e.g. --accent-up, --text-mute, --m, --font-serif). See soil/PAUMEN.css :root." }
+      "^(accent|surface|jump|neutral|text|danger|success|color|0|xs|s|m|l|xl)(-[a-z0-9]+)*$",
+      { "message": "Custom properties must use the soil token vocabulary (e.g. --accent-up, --text-mute, --m). See soil/PAUMEN.css :root." }
     ],
     "scale-unlimited/declaration-strict-value": [
       ["/color$/", "gap", "padding", "padding-inline", "padding-block", "font-size", "border-radius"],
@@ -40,11 +40,5 @@
     ],
     "no-descending-specificity": null,
     "no-duplicate-selectors": null
-  },
-  "overrides": [
-    {
-      "files": ["**/*.html"],
-      "customSyntax": "postcss-html"
-    }
-  ]
+  }
 }
