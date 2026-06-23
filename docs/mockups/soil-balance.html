@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#E7E4DA; --ink:#4A463C; --faint:#8a8270;
+    --bg:#E7E4DA; --ink:#3A352C; --faint:#8a8270;
     --surface:#5A4A33; --table:#1FA6BE;
     /* warm-accent palette — one tone per meaning */
     --today:#4F6B4A; --amber:#D98A2B; --rust:#B5471F;
@@ -34,7 +34,7 @@
   .scroll::-webkit-scrollbar{display:none}
   /* always-visible custom scrollbar (native bars auto-hide on mobile) */
   .sbar{position:relative;height:9px;margin:8px 12px 0;background:var(--bg);border-radius:6px;touch-action:none}
-  .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:#bdb6a4;border-radius:6px;cursor:grab}
+  .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:var(--faint);border-radius:6px;cursor:grab}
   .sthumb:active{cursor:grabbing;background:var(--faint)}
   svg{display:block;transition:opacity .7s ease}
   .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
@@ -76,27 +76,36 @@
   /* ===== controls — compact settings list: label left, connected segmented control right ===== */
   .controls{display:flex;flex-direction:column;background:#F3F0E7;border:1px solid #E0DBCD;border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
   .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px 10px;padding:9px 0}
-  .ctl + .ctl{border-top:1px solid #E6E1D3}
+  .ctl + .ctl{border-top:1px solid #E0DBCD}
   .ctl .seg,.ctl .dur{justify-self:end}
   .ctl .lab{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
   /* segmented control — iOS sliding-thumb: active option rides a raised pill on an inset track (weight, not inversion) */
-  .seg{display:inline-flex;gap:2px;padding:3px;border:1px solid #E0DBCD;border-radius:999px;background:#E7E2D5}
+  .seg{display:inline-flex;gap:2px;padding:3px;border:1px solid #E0DBCD;border-radius:999px;background:#E0DBCD}
   .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:5px 11px;line-height:1.1;border-radius:999px;white-space:nowrap;transition:.15s}
   .seg button:hover{color:var(--ink)}
   .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:#FBFAF6;box-shadow:0 1px 3px rgba(0,0,0,.18)}
   .dur{display:inline-flex;align-items:stretch;border:1px solid #E0DBCD;border-radius:999px;background:#FBFAF6;overflow:hidden}
   .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:17px;color:var(--ink);display:grid;place-items:center;transition:.15s}
-  .dur button:hover{color:var(--today);background:#EAF0E5}
+  .dur button:hover{color:var(--today);background:#E0DBCD}
   .dur .val{min-width:70px;padding:5px 0;border-left:1px solid #E0DBCD;border-right:1px solid #E0DBCD;display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);color:var(--ink)}
   .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px}
   .dur-hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:2px}
   /* ===== footer ===== */
   .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid #E0DBCD;margin-top:12px}
   .app-foot .coords{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
-  .demo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--faint)}
-  .demo button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:var(--faint);font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:6px}
-  .demo button.on{background:#e9eee7;border-color:var(--today);color:#4F6B4A}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
+  /* ===== color palette — inline, placed near where each color is used ===== */
+  .palette{margin:6px 12px 14px}
+  .palette.in-controls{margin:2px 8px 18px}
+  .pgroup{margin-top:12px}
+  .pgroup:first-child{margin-top:0}
+  .pgroup h3{margin:0 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px}
+  .pchip{border:1px solid #E0DBCD;border-radius:10px;overflow:hidden;background:#FBFAF6}
+  .pchip .col{height:42px}
+  .pchip .meta{padding:5px 8px 6px}
+  .pchip .hex{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
+  .pchip .lbl{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.02em}
 </style>
 </head>
 <body class="booting" data-state="ok">
@@ -105,6 +114,7 @@
     <span class="loc" id="locline">Flower bed · Wijchen</span>
   </header>
   <main>
+    <section class="palette" id="pal-theme" aria-label="Theme colors"></section>
     <div id="status" class="status"></div>
     <div class="board">
       <div class="view view-ok">
@@ -120,6 +130,8 @@
     <span><i class="sw" style="background:#34BCD2"></i>watering</span>
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
   </div>
+
+  <section class="palette" id="pal-scene" aria-label="Colors drawn in the chart"></section>
       </div><!-- /board -->
 
     <section class="controls">
@@ -151,6 +163,8 @@
 
       </div>
     </section>
+
+    <section class="palette in-controls" id="pal-ui" aria-label="UI surface colors"></section>
   </main>
 
 
@@ -198,9 +212,9 @@ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a
 function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];}
 function hexLerp(a,b,t){const A=hx(a),B=hx(b);const m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;}
 function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){const t=(v-p0)/((p1-p0)||1);return hexLerp(c0,c1,t);}}return stops[stops.length-1][1];}
-const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#6E7B3C'],[1,'#4E7B52']],v);
+const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#7E8A3E'],[1,'#4F7F4A']],v);
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
-const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
+const leafColor =v=>ramp([[0,'#67563C'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
 const sunCore   =h=>ramp([[0,'#E2965A'],[0.5,'#C25A2A'],[1,'#9E3712']],h);
 function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
@@ -254,7 +268,7 @@ function build(){
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
-      const sc=hexLerp('#B5471F','#C66536',0.5);
+      const sc=hexLerp('#B5471F','#C25A2A',0.5);
       for(let s=0;s<3;s++){const yy=SKY_TOP+40+s*7;let p=`M ${x0+dayW*0.16} ${yy}`;for(let k=1;k<=5;k++){p+=` Q ${(x0+dayW*(0.16+0.14*k)-dayW*0.07).toFixed(1)} ${(yy+(k%2?-2.4:2.4)).toFixed(1)} ${(x0+dayW*(0.16+0.14*k)).toFixed(1)} ${yy}`;}
         weather+=`<path d="${p}" fill="none" stroke="${sc}" stroke-width="0.7" opacity="${(0.16-s*0.04).toFixed(2)}"/>`;}
     }
@@ -269,7 +283,7 @@ function build(){
       weather+=`<g opacity="0.92">`
         +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.2+heat*0.34).toFixed(2)}"/>`
         +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#9C3D18','#8A3214',heat)}" stroke-width="0.8"/></g>`;
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#9E3712','#8A3214',heat)}" stroke-width="0.8"/></g>`;
     }
     // rain
     if(d.rain>0.05){
@@ -520,9 +534,7 @@ sbar.addEventListener('pointerdown',e=>{ if(e.target===sthumb)return;
 
 render();
 
-/* ---- page chrome: state switch · presets · watering duration ---- */
-function setState(s){document.body.dataset.state=s;
-  document.querySelectorAll('.demo button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));}
+/* ---- page chrome: presets · watering duration ---- */
 document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b)return;
   seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
@@ -530,6 +542,64 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 }));
 function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   document.getElementById('durVal').textContent=WATER_MIN;}
+
+/* ---- color palette: each group rendered inline, next to where its colors are used ---- */
+(function renderPalettes(){
+  // theme tokens — placed by the header, they set the whole shell
+  const theme=[
+    ['CSS variables (:root)',[
+      ['#E7E4DA','--bg'],['#3A352C','--ink'],['#8A8270','--faint / scrollbar'],['#5A4A33','--surface'],
+      ['#1FA6BE','--table'],['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
+    ]],
+  ];
+  // colors drawn in the chart — placed under the chart legend
+  const scene=[
+    ['Legend & water tints',[
+      ['#3F7FA0','rain'],['#34BCD2','watering'],['#0C6478','water held (dark)'],
+      ['#1FA6BE','pour end'],['#BDEAF1','water tint'],['#E8FAFD','water tint lt'],
+      ['#D98C5A','loss top'],['#B5471F','loss bottom'],
+    ]],
+    ['Sun / heat',[
+      ['#E0A074','glow'],['#E2965A','sunCore 0'],['#C25A2A','sunCore .5 / shimmer'],
+      ['#9E3712','sunCore 1 / sun stroke 0'],['#8A3214','sun stroke 1'],
+    ]],
+    ['rootColor ramp (0→1)',[
+      ['#2A2620','0'],['#56422E','.10'],['#8A6A3E','.30'],['#7E8A3E','.60'],['#4F7F4A','1'],
+    ]],
+    ['plantColor ramp (0→1)',[
+      ['#3A352C','0'],['#9A7A3C','.10'],['#7E8A3E','.25'],['#4F7F4A','.55'],['#3F7A3B','1'],
+    ]],
+    ['leafColor ramp (0→1)',[
+      ['#67563C','0'],['#9C8A45','.25'],['#6FA06A','.6'],['#5F9A5A','1'],
+    ]],
+    ['Soil horizons',[
+      ['#67563C','litter'],['#AC8856','topsoil A'],['#8C5E3C','subsoil B'],['#C6B488','substratum C'],
+    ]],
+  ];
+  // UI surfaces — placed by the controls
+  const ui=[
+    ['UI surfaces / chrome',[
+      ['#FBFAF6','surface / card'],['#F3F0E7','controls bg'],
+      ['#E0DBCD','borders / divider / track / dur hover'],
+    ]],
+  ];
+  const render=(id,groups)=>{
+    const el=document.getElementById(id); if(!el) return;
+    let html='';
+    for(const [name,chips] of groups){
+      html+=`<div class="pgroup"><h3>${name}</h3><div class="pgrid">`;
+      for(const [hex,lbl] of chips){
+        html+=`<div class="pchip"><div class="col" style="background:${hex}"></div>`
+             +`<div class="meta"><div class="hex">${hex}</div><div class="lbl">${lbl}</div></div></div>`;
+      }
+      html+='</div></div>';
+    }
+    el.innerHTML=html;
+  };
+  render('pal-theme',theme);
+  render('pal-scene',scene);
+  render('pal-ui',ui);
+})();
 </script>
 </body>
 </html>
