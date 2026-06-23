@@ -1,0 +1,293 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="798" height="1920" font-family="ui-monospace,Menlo,Consolas,monospace">
+<rect width="798" height="1920" fill="#E7E4DA"/>
+<text x="24" y="40" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 58 colors, clustered by similarity</text>
+<text x="24" y="58" font-size="11" fill="#4A463C"><tspan font-weight="700" fill="#4F6B4A">SVG</tspan> = drawn in chart (48)  ·  unbadged = CSS/UI only (10)  ·  <tspan font-weight="700" fill="#9C4A2E">text</tspan> = used on chart labels (4)</text>
+<text x="24" y="86" font-size="13" font-weight="700" fill="#4A463C">Greens — light</text>
+<rect x="24" y="98" width="142" height="58" rx="6" fill="#FBFAF6" stroke="#00000022"/>
+<text x="34" y="145" font-size="12" font-weight="600" fill="#222">#FBFAF6</text>
+<rect x="133" y="104" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#FBFAF6">SVG</text>
+<rect x="30" y="104" width="30" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="45" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#FBFAF6">text</text>
+<text x="24" y="169" font-size="10" fill="#4A463C">white/surfaces</text>
+<rect x="174" y="98" width="142" height="58" rx="6" fill="#F3F0E7" stroke="#00000022"/>
+<text x="184" y="145" font-size="12" font-weight="600" fill="#222">#F3F0E7</text>
+<text x="174" y="169" font-size="10" fill="#4A463C">controls grad</text>
+<rect x="324" y="98" width="142" height="58" rx="6" fill="#E9EEE7" stroke="#00000022"/>
+<text x="334" y="145" font-size="12" font-weight="600" fill="#222">#E9EEE7</text>
+<text x="324" y="169" font-size="10" fill="#4A463C">demo on</text>
+<rect x="474" y="98" width="142" height="58" rx="6" fill="#E7E4DA" stroke="#00000022"/>
+<text x="484" y="145" font-size="12" font-weight="600" fill="#222">#E7E4DA</text>
+<rect x="583" y="104" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="596.5" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#E7E4DA">SVG</text>
+<text x="474" y="169" font-size="10" fill="#4A463C">--bg / sky</text>
+<rect x="624" y="98" width="142" height="58" rx="6" fill="#E0DBCD" stroke="#00000022"/>
+<text x="634" y="145" font-size="12" font-weight="600" fill="#222">#E0DBCD</text>
+<text x="624" y="169" font-size="10" fill="#4A463C">borders</text>
+<rect x="24" y="186" width="142" height="58" rx="6" fill="#C7DCC2" stroke="#00000022"/>
+<text x="34" y="233" font-size="12" font-weight="600" fill="#222">#C7DCC2</text>
+<rect x="133" y="192" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="202" text-anchor="middle" font-size="9" font-weight="700" fill="#C7DCC2">SVG</text>
+<text x="24" y="257" font-size="10" fill="#4A463C">can hl</text>
+<rect x="174" y="186" width="142" height="58" rx="6" fill="#A9C2A4" stroke="#00000022"/>
+<text x="184" y="233" font-size="12" font-weight="600" fill="#222">#A9C2A4</text>
+<rect x="283" y="192" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="296.5" y="202" text-anchor="middle" font-size="9" font-weight="700" fill="#A9C2A4">SVG</text>
+<text x="174" y="257" font-size="10" fill="#4A463C">watering/can</text>
+<rect x="324" y="186" width="142" height="58" rx="6" fill="#84A37E" stroke="#00000022"/>
+<text x="334" y="233" font-size="12" font-weight="600" fill="#222">#84A37E</text>
+<rect x="433" y="192" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="202" text-anchor="middle" font-size="9" font-weight="700" fill="#84A37E">SVG</text>
+<text x="324" y="257" font-size="10" fill="#4A463C">watering/can</text>
+<rect x="474" y="186" width="142" height="58" rx="6" fill="#6E8E68" stroke="#00000022"/>
+<text x="484" y="233" font-size="12" font-weight="600" fill="#222">#6E8E68</text>
+<text x="474" y="257" font-size="10" fill="#4A463C">button</text>
+<rect x="624" y="186" width="142" height="58" rx="6" fill="#4E7B52" stroke="#00000022"/>
+<text x="634" y="233" font-size="12" font-weight="600" fill="#FBFAF6">#4E7B52</text>
+<rect x="733" y="192" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="746.5" y="202" text-anchor="middle" font-size="9" font-weight="700" fill="#4E7B52">SVG</text>
+<text x="624" y="257" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="24" y="274" width="142" height="58" rx="6" fill="#4F7F4A" stroke="#00000022"/>
+<text x="34" y="321" font-size="12" font-weight="600" fill="#FBFAF6">#4F7F4A</text>
+<rect x="133" y="280" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="290" text-anchor="middle" font-size="9" font-weight="700" fill="#4F7F4A">SVG</text>
+<text x="24" y="345" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="174" y="274" width="142" height="58" rx="6" fill="#3F7A3B" stroke="#00000022"/>
+<text x="184" y="321" font-size="12" font-weight="600" fill="#FBFAF6">#3F7A3B</text>
+<rect x="283" y="280" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="296.5" y="290" text-anchor="middle" font-size="9" font-weight="700" fill="#3F7A3B">SVG</text>
+<text x="174" y="345" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="324" y="274" width="142" height="58" rx="6" fill="#5F9A5A" stroke="#00000022"/>
+<text x="334" y="321" font-size="12" font-weight="600" fill="#222">#5F9A5A</text>
+<rect x="433" y="280" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="290" text-anchor="middle" font-size="9" font-weight="700" fill="#5F9A5A">SVG</text>
+<text x="324" y="345" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="474" y="274" width="142" height="58" rx="6" fill="#6FA06A" stroke="#00000022"/>
+<text x="484" y="321" font-size="12" font-weight="600" fill="#222">#6FA06A</text>
+<rect x="583" y="280" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="596.5" y="290" text-anchor="middle" font-size="9" font-weight="700" fill="#6FA06A">SVG</text>
+<text x="474" y="345" font-size="10" fill="#4A463C">leafColor</text>
+<text x="24" y="392" font-size="13" font-weight="700" fill="#4A463C">Oranges/browns — light</text>
+<rect x="24" y="404" width="142" height="58" rx="6" fill="#F4E2C0" stroke="#00000022"/>
+<text x="34" y="451" font-size="12" font-weight="600" fill="#222">#F4E2C0</text>
+<rect x="133" y="410" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="420" text-anchor="middle" font-size="9" font-weight="700" fill="#F4E2C0">SVG</text>
+<text x="24" y="475" font-size="10" fill="#4A463C">sky warm</text>
+<rect x="174" y="404" width="142" height="58" rx="6" fill="#CDBF9F" stroke="#00000022"/>
+<text x="184" y="451" font-size="12" font-weight="600" fill="#222">#CDBF9F</text>
+<text x="174" y="475" font-size="10" fill="#4A463C">seg hover</text>
+<rect x="324" y="404" width="142" height="58" rx="6" fill="#C6B488" stroke="#00000022"/>
+<text x="334" y="451" font-size="12" font-weight="600" fill="#222">#C6B488</text>
+<rect x="433" y="410" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="420" text-anchor="middle" font-size="9" font-weight="700" fill="#C6B488">SVG</text>
+<text x="324" y="475" font-size="10" fill="#4A463C">substratum fill</text>
+<rect x="474" y="404" width="142" height="58" rx="6" fill="#BDB6A4" stroke="#00000022"/>
+<text x="484" y="451" font-size="12" font-weight="600" fill="#222">#BDB6A4</text>
+<text x="474" y="475" font-size="10" fill="#4A463C">scrollbar</text>
+<rect x="624" y="404" width="142" height="58" rx="6" fill="#9A9484" stroke="#00000022"/>
+<text x="634" y="451" font-size="12" font-weight="600" fill="#222">#9A9484</text>
+<text x="624" y="475" font-size="10" fill="#4A463C">--faint</text>
+<rect x="24" y="492" width="142" height="58" rx="6" fill="#8A8270" stroke="#00000022"/>
+<text x="34" y="539" font-size="12" font-weight="600" fill="#222">#8A8270</text>
+<text x="24" y="563" font-size="10" fill="#4A463C">muted text</text>
+<rect x="174" y="492" width="142" height="58" rx="6" fill="#7A7363" stroke="#00000022"/>
+<text x="184" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#7A7363</text>
+<rect x="283" y="498" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="296.5" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#7A7363">SVG</text>
+<rect x="180" y="498" width="30" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="195" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#7A7363">text</text>
+<text x="174" y="563" font-size="10" fill="#4A463C">future tick</text>
+<rect x="324" y="492" width="142" height="58" rx="6" fill="#5B5547" stroke="#00000022"/>
+<text x="334" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#5B5547</text>
+<rect x="433" y="498" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="446.5" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#5B5547">SVG</text>
+<rect x="330" y="498" width="30" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="345" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#5B5547">text</text>
+<text x="324" y="563" font-size="10" fill="#4A463C">text/tick</text>
+<rect x="474" y="492" width="142" height="58" rx="6" fill="#4A463C" stroke="#00000022"/>
+<text x="484" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#4A463C</text>
+<text x="474" y="563" font-size="10" fill="#4A463C">--ink</text>
+<rect x="624" y="492" width="142" height="58" rx="6" fill="#5A4A33" stroke="#00000022"/>
+<text x="634" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#5A4A33</text>
+<rect x="733" y="498" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="746.5" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#5A4A33">SVG</text>
+<text x="624" y="563" font-size="10" fill="#4A463C">--surface/cracks</text>
+<rect x="24" y="580" width="142" height="58" rx="6" fill="#56422E" stroke="#00000022"/>
+<text x="34" y="627" font-size="12" font-weight="600" fill="#FBFAF6">#56422E</text>
+<rect x="133" y="586" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="596" text-anchor="middle" font-size="9" font-weight="700" fill="#56422E">SVG</text>
+<text x="24" y="651" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="174" y="580" width="142" height="58" rx="6" fill="#67563C" stroke="#00000022"/>
+<text x="184" y="627" font-size="12" font-weight="600" fill="#FBFAF6">#67563C</text>
+<rect x="283" y="586" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="296.5" y="596" text-anchor="middle" font-size="9" font-weight="700" fill="#67563C">SVG</text>
+<text x="174" y="651" font-size="10" fill="#4A463C">litter fill</text>
+<rect x="324" y="580" width="142" height="58" rx="6" fill="#6B5A38" stroke="#00000022"/>
+<text x="334" y="627" font-size="12" font-weight="600" fill="#FBFAF6">#6B5A38</text>
+<rect x="433" y="586" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="446.5" y="596" text-anchor="middle" font-size="9" font-weight="700" fill="#6B5A38">SVG</text>
+<text x="324" y="651" font-size="10" fill="#4A463C">leafColor</text>
+<rect x="474" y="580" width="142" height="58" rx="6" fill="#8A6A3E" stroke="#00000022"/>
+<text x="484" y="627" font-size="12" font-weight="600" fill="#FBFAF6">#8A6A3E</text>
+<rect x="583" y="586" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="596.5" y="596" text-anchor="middle" font-size="9" font-weight="700" fill="#8A6A3E">SVG</text>
+<text x="474" y="651" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="624" y="580" width="142" height="58" rx="6" fill="#8C5E3C" stroke="#00000022"/>
+<text x="634" y="627" font-size="12" font-weight="600" fill="#FBFAF6">#8C5E3C</text>
+<rect x="733" y="586" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="746.5" y="596" text-anchor="middle" font-size="9" font-weight="700" fill="#8C5E3C">SVG</text>
+<text x="624" y="651" font-size="10" fill="#4A463C">subsoil fill</text>
+<rect x="24" y="668" width="142" height="58" rx="6" fill="#9A7A3C" stroke="#00000022"/>
+<text x="34" y="715" font-size="12" font-weight="600" fill="#FBFAF6">#9A7A3C</text>
+<rect x="133" y="674" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="684" text-anchor="middle" font-size="9" font-weight="700" fill="#9A7A3C">SVG</text>
+<text x="24" y="739" font-size="10" fill="#4A463C">plantColor</text>
+<rect x="174" y="668" width="142" height="58" rx="6" fill="#9C8A45" stroke="#00000022"/>
+<text x="184" y="715" font-size="12" font-weight="600" fill="#222">#9C8A45</text>
+<rect x="283" y="674" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="296.5" y="684" text-anchor="middle" font-size="9" font-weight="700" fill="#9C8A45">SVG</text>
+<text x="174" y="739" font-size="10" fill="#4A463C">leafColor/bud</text>
+<rect x="324" y="668" width="142" height="58" rx="6" fill="#AC8856" stroke="#00000022"/>
+<text x="334" y="715" font-size="12" font-weight="600" fill="#222">#AC8856</text>
+<rect x="433" y="674" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="684" text-anchor="middle" font-size="9" font-weight="700" fill="#AC8856">SVG</text>
+<text x="324" y="739" font-size="10" fill="#4A463C">topsoil fill</text>
+<rect x="474" y="668" width="142" height="58" rx="6" fill="#6E7B3C" stroke="#00000022"/>
+<text x="484" y="715" font-size="12" font-weight="600" fill="#FBFAF6">#6E7B3C</text>
+<rect x="583" y="674" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="596.5" y="684" text-anchor="middle" font-size="9" font-weight="700" fill="#6E7B3C">SVG</text>
+<text x="474" y="739" font-size="10" fill="#4A463C">rootColor</text>
+<rect x="624" y="668" width="142" height="58" rx="6" fill="#7E8A3E" stroke="#00000022"/>
+<text x="634" y="715" font-size="12" font-weight="600" fill="#FBFAF6">#7E8A3E</text>
+<rect x="733" y="674" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="746.5" y="684" text-anchor="middle" font-size="9" font-weight="700" fill="#7E8A3E">SVG</text>
+<text x="624" y="739" font-size="10" fill="#4A463C">plantColor</text>
+<text x="24" y="786" font-size="13" font-weight="700" fill="#4A463C">Teals — light</text>
+<rect x="24" y="798" width="142" height="58" rx="6" fill="#E8FAFD" stroke="#00000022"/>
+<text x="34" y="845" font-size="12" font-weight="600" fill="#222">#E8FAFD</text>
+<rect x="133" y="804" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="814" text-anchor="middle" font-size="9" font-weight="700" fill="#E8FAFD">SVG</text>
+<text x="24" y="869" font-size="10" fill="#4A463C">fan hl</text>
+<rect x="174" y="798" width="142" height="58" rx="6" fill="#BDEAF1" stroke="#00000022"/>
+<text x="184" y="845" font-size="12" font-weight="600" fill="#222">#BDEAF1</text>
+<rect x="283" y="804" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="296.5" y="814" text-anchor="middle" font-size="9" font-weight="700" fill="#BDEAF1">SVG</text>
+<text x="174" y="869" font-size="10" fill="#4A463C">splash/line hl</text>
+<text x="24" y="916" font-size="13" font-weight="700" fill="#4A463C">Teals — deep</text>
+<rect x="24" y="928" width="142" height="58" rx="6" fill="#6FC8DA" stroke="#00000022"/>
+<text x="34" y="975" font-size="12" font-weight="600" fill="#222">#6FC8DA</text>
+<rect x="133" y="934" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="944" text-anchor="middle" font-size="9" font-weight="700" fill="#6FC8DA">SVG</text>
+<text x="24" y="999" font-size="10" fill="#4A463C">fan/splash</text>
+<rect x="174" y="928" width="142" height="58" rx="6" fill="#34BCD2" stroke="#00000022"/>
+<text x="184" y="975" font-size="12" font-weight="600" fill="#222">#34BCD2</text>
+<rect x="283" y="934" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="296.5" y="944" text-anchor="middle" font-size="9" font-weight="700" fill="#34BCD2">SVG</text>
+<text x="174" y="999" font-size="10" fill="#4A463C">aqua</text>
+<rect x="324" y="928" width="142" height="58" rx="6" fill="#1FA6BE" stroke="#00000022"/>
+<text x="334" y="975" font-size="12" font-weight="600" fill="#222">#1FA6BE</text>
+<rect x="433" y="934" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="944" text-anchor="middle" font-size="9" font-weight="700" fill="#1FA6BE">SVG</text>
+<text x="324" y="999" font-size="10" fill="#4A463C">--table/water line</text>
+<text x="24" y="1046" font-size="13" font-weight="700" fill="#4A463C">Blues</text>
+<rect x="24" y="1058" width="142" height="58" rx="6" fill="#3F7FA0" stroke="#00000022"/>
+<text x="34" y="1105" font-size="12" font-weight="600" fill="#FBFAF6">#3F7FA0</text>
+<rect x="133" y="1064" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="1074" text-anchor="middle" font-size="9" font-weight="700" fill="#3F7FA0">SVG</text>
+<text x="24" y="1129" font-size="10" fill="#4A463C">rain</text>
+<rect x="174" y="1058" width="142" height="58" rx="6" fill="#0C6478" stroke="#00000022"/>
+<text x="184" y="1105" font-size="12" font-weight="600" fill="#FBFAF6">#0C6478</text>
+<rect x="283" y="1064" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="296.5" y="1074" text-anchor="middle" font-size="9" font-weight="700" fill="#0C6478">SVG</text>
+<text x="174" y="1129" font-size="10" fill="#4A463C">aqua/key</text>
+<text x="24" y="1176" font-size="13" font-weight="700" fill="#4A463C">Greens — deep</text>
+<rect x="24" y="1188" width="142" height="58" rx="6" fill="#4F6B4A" stroke="#00000022"/>
+<text x="34" y="1235" font-size="12" font-weight="600" fill="#FBFAF6">#4F6B4A</text>
+<rect x="133" y="1194" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="1204" text-anchor="middle" font-size="9" font-weight="700" fill="#4F6B4A">SVG</text>
+<rect x="30" y="1194" width="30" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="45" y="1204" text-anchor="middle" font-size="9" font-weight="700" fill="#4F6B4A">text</text>
+<text x="24" y="1259" font-size="10" fill="#4A463C">--today/can/btn</text>
+<text x="24" y="1306" font-size="13" font-weight="700" fill="#4A463C">Oranges/browns — deep</text>
+<rect x="24" y="1318" width="142" height="58" rx="6" fill="#3A352C" stroke="#00000022"/>
+<text x="34" y="1365" font-size="12" font-weight="600" fill="#FBFAF6">#3A352C</text>
+<rect x="133" y="1324" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="1334" text-anchor="middle" font-size="9" font-weight="700" fill="#3A352C">SVG</text>
+<text x="24" y="1389" font-size="10" fill="#4A463C">plantColor/dead</text>
+<rect x="174" y="1318" width="142" height="58" rx="6" fill="#2A2620" stroke="#00000022"/>
+<text x="184" y="1365" font-size="12" font-weight="600" fill="#FBFAF6">#2A2620</text>
+<rect x="283" y="1324" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="296.5" y="1334" text-anchor="middle" font-size="9" font-weight="700" fill="#2A2620">SVG</text>
+<text x="174" y="1389" font-size="10" fill="#4A463C">rootColor</text>
+<text x="24" y="1436" font-size="13" font-weight="700" fill="#4A463C">Oranges/browns — mid</text>
+<rect x="24" y="1448" width="142" height="58" rx="6" fill="#E2640F" stroke="#00000022"/>
+<text x="34" y="1495" font-size="12" font-weight="600" fill="#FBFAF6">#E2640F</text>
+<rect x="133" y="1454" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="146.5" y="1464" text-anchor="middle" font-size="9" font-weight="700" fill="#E2640F">SVG</text>
+<text x="24" y="1519" font-size="10" fill="#4A463C">sunCore/loss</text>
+<rect x="174" y="1448" width="142" height="58" rx="6" fill="#C0540C" stroke="#00000022"/>
+<text x="184" y="1495" font-size="12" font-weight="600" fill="#FBFAF6">#C0540C</text>
+<rect x="283" y="1454" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="296.5" y="1464" text-anchor="middle" font-size="9" font-weight="700" fill="#C0540C">SVG</text>
+<text x="174" y="1519" font-size="10" fill="#4A463C">sun stroke</text>
+<rect x="324" y="1448" width="142" height="58" rx="6" fill="#B84810" stroke="#00000022"/>
+<text x="334" y="1495" font-size="12" font-weight="600" fill="#FBFAF6">#B84810</text>
+<rect x="433" y="1454" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="446.5" y="1464" text-anchor="middle" font-size="9" font-weight="700" fill="#B84810">SVG</text>
+<text x="324" y="1519" font-size="10" fill="#4A463C">sun stroke</text>
+<rect x="474" y="1448" width="142" height="58" rx="6" fill="#B5471F" stroke="#00000022"/>
+<text x="484" y="1495" font-size="12" font-weight="600" fill="#FBFAF6">#B5471F</text>
+<rect x="583" y="1454" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="596.5" y="1464" text-anchor="middle" font-size="9" font-weight="700" fill="#B5471F">SVG</text>
+<text x="474" y="1519" font-size="10" fill="#4A463C">--rust/refill</text>
+<rect x="624" y="1448" width="142" height="58" rx="6" fill="#9C4A2E" stroke="#00000022"/>
+<text x="634" y="1495" font-size="12" font-weight="600" fill="#FBFAF6">#9C4A2E</text>
+<text x="624" y="1519" font-size="10" fill="#4A463C">error icon</text>
+<text x="24" y="1566" font-size="13" font-weight="700" fill="#4A463C">Oranges/browns — pale</text>
+<rect x="24" y="1578" width="142" height="58" rx="6" fill="#F6C669" stroke="#00000022"/>
+<text x="34" y="1625" font-size="12" font-weight="600" fill="#222">#F6C669</text>
+<rect x="133" y="1584" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="1594" text-anchor="middle" font-size="9" font-weight="700" fill="#F6C669">SVG</text>
+<text x="24" y="1649" font-size="10" fill="#4A463C">glow</text>
+<rect x="174" y="1578" width="142" height="58" rx="6" fill="#E7C24A" stroke="#00000022"/>
+<text x="184" y="1625" font-size="12" font-weight="600" fill="#222">#E7C24A</text>
+<rect x="283" y="1584" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="296.5" y="1594" text-anchor="middle" font-size="9" font-weight="700" fill="#E7C24A">SVG</text>
+<text x="174" y="1649" font-size="10" fill="#4A463C">flower ctr</text>
+<rect x="324" y="1578" width="142" height="58" rx="6" fill="#E8A93C" stroke="#00000022"/>
+<text x="334" y="1625" font-size="12" font-weight="600" fill="#222">#E8A93C</text>
+<rect x="433" y="1584" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="1594" text-anchor="middle" font-size="9" font-weight="700" fill="#E8A93C">SVG</text>
+<text x="324" y="1649" font-size="10" fill="#4A463C">sunCore/loss</text>
+<rect x="474" y="1578" width="142" height="58" rx="6" fill="#D98A2B" stroke="#00000022"/>
+<text x="484" y="1625" font-size="12" font-weight="600" fill="#222">#D98A2B</text>
+<rect x="583" y="1584" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="596.5" y="1594" text-anchor="middle" font-size="9" font-weight="700" fill="#D98A2B">SVG</text>
+<text x="474" y="1649" font-size="10" fill="#4A463C">--amber</text>
+<rect x="624" y="1578" width="142" height="58" rx="6" fill="#E88A22" stroke="#00000022"/>
+<text x="634" y="1625" font-size="12" font-weight="600" fill="#222">#E88A22</text>
+<rect x="733" y="1584" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="746.5" y="1594" text-anchor="middle" font-size="9" font-weight="700" fill="#E88A22">SVG</text>
+<text x="624" y="1649" font-size="10" fill="#4A463C">sunCore</text>
+<rect x="24" y="1666" width="142" height="58" rx="6" fill="#D2783C" stroke="#00000022"/>
+<text x="34" y="1713" font-size="12" font-weight="600" fill="#222">#D2783C</text>
+<rect x="133" y="1672" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="1682" text-anchor="middle" font-size="9" font-weight="700" fill="#D2783C">SVG</text>
+<text x="24" y="1737" font-size="10" fill="#4A463C">stress</text>
+<rect x="174" y="1666" width="142" height="58" rx="6" fill="#E0975A" stroke="#00000022"/>
+<text x="184" y="1713" font-size="12" font-weight="600" fill="#222">#E0975A</text>
+<rect x="283" y="1672" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="296.5" y="1682" text-anchor="middle" font-size="9" font-weight="700" fill="#E0975A">SVG</text>
+<text x="174" y="1737" font-size="10" fill="#4A463C">stress</text>
+<rect x="324" y="1666" width="142" height="58" rx="6" fill="#E8B576" stroke="#00000022"/>
+<text x="334" y="1713" font-size="12" font-weight="600" fill="#222">#E8B576</text>
+<rect x="433" y="1672" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="446.5" y="1682" text-anchor="middle" font-size="9" font-weight="700" fill="#E8B576">SVG</text>
+<text x="324" y="1737" font-size="10" fill="#4A463C">stress</text>
+<text x="24" y="1784" font-size="13" font-weight="700" fill="#4A463C">Pinks</text>
+<rect x="24" y="1796" width="142" height="58" rx="6" fill="#C98AB0" stroke="#00000022"/>
+<text x="34" y="1843" font-size="12" font-weight="600" fill="#222">#C98AB0</text>
+<rect x="133" y="1802" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="146.5" y="1812" text-anchor="middle" font-size="9" font-weight="700" fill="#C98AB0">SVG</text>
+<text x="24" y="1867" font-size="10" fill="#4A463C">flower</text>
+</svg>
