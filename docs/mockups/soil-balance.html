@@ -208,7 +208,7 @@ function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${
 
 /* geometry */
 const H=380, SKY_TOP=20, SURF=160, SOIL_BOT=344, SOIL_D=SOIL_BOT-SURF;
-const AX=0, PADR=12, ROOT_REACH=SOIL_D*0.5; // roots only reach halfway, fixed
+const AX=0, PADR=12; // root depth scales with water held (see roots())
 // soil horizons (offset from SURF): litter, topsoil A, subsoil B, substratum C
 function shade(hex,f){const[r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,'0');return`#${m(r)}${m(g)}${m(b)}`;}
 const HORIZ=[
@@ -421,7 +421,9 @@ function plant(x,sY,v,rng){
 function roots(x,sY,v,rng){
   const h=ease(clamp((v-0.08)/0.44,0,1));      // same health curve as the plant above
   const dead=h<0.08;
-  const depth=ROOT_REACH+(rng()-0.5)*8;        // FIXED length (organic jitter only)
+  let depthFrac=lerp(0.18,0.92,clamp(v,0,1));  // length scales with water held
+  if(dead) depthFrac=Math.min(depthFrac,0.16+0.05*rng()); // dieback caps depth
+  const depth=SOIL_D*depthFrac+(rng()-0.5)*8;  // organic jitter
   const col=rootColor(h), wMain=lerp(0.8,2.8,h);
   // taproot
   let pts=[{x,y:sY}];const segs=5;
