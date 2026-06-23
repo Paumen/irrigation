@@ -421,7 +421,7 @@ function plant(x,sY,v,rng){
 function roots(x,sY,v,rng){
   const h=ease(clamp((v-0.08)/0.44,0,1));      // same health curve as the plant above
   const dead=h<0.08;
-  let depthFrac=lerp(0.18,0.92,clamp(v,0,1));  // length scales with water held
+  let depthFrac=lerp(0.18,0.92,v);             // length scales with water held (v already clamped by caller)
   if(dead) depthFrac=Math.min(depthFrac,0.16+0.05*rng()); // dieback caps depth
   const depth=SOIL_D*depthFrac+(rng()-0.5)*8;  // organic jitter
   const col=rootColor(h), wMain=lerp(0.8,2.8,h);
