@@ -234,9 +234,6 @@ function build(){
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".55"/>
       <stop offset="1" stop-color="#0C6478" stop-opacity=".82"/></linearGradient>
-    <linearGradient id="fringe" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity="0"/>
-      <stop offset="1" stop-color="#34BCD2" stop-opacity=".34"/></linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
       <stop offset="0" stop-color="#E0A074" stop-opacity=".85"/>
       <stop offset="1" stop-color="#E0A074" stop-opacity="0"/></radialGradient>
@@ -305,17 +302,13 @@ function build(){
       soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*0.7).toFixed(1)}" fill="${h.sp}" opacity=".5"/><ellipse cx="${(px-rr*0.3).toFixed(1)}" cy="${(py-rr*0.3).toFixed(1)}" rx="${(rr*0.4).toFixed(1)}" ry="${(rr*0.28).toFixed(1)}" fill="#FBFAF6" opacity=".12"/>`;}}
   });
 
-  /* aquifer + capillary fringe + table + surface */
+  /* aquifer + table + surface */
   const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
   DATA.forEach(d=>tablePts.push({x:cx(d.idx),y:tableY(d.level)}));
   tablePts.push({x:R,y:tableY(DATA[N-1].level)});
   const tline=smooth(tablePts);
   const aqua=`${tline} L ${R.toFixed(1)} ${SOIL_BOT} L ${AX} ${SOIL_BOT} Z`;
-  // fringe band (above table, ~16px, clipped to soil)
-  const FR=16, fringeTop=tablePts.map(p=>({x:p.x,y:Math.max(SURF,p.y-FR)}));
-  const fringe=`${smooth(tablePts)} L ${R.toFixed(1)} ${fringeTop[fringeTop.length-1].y.toFixed(1)} ${smoothRev(fringeTop)} Z`;
-  soil+=`<path d="${aqua}" fill="url(#aqua)"/>`
-     +`<path d="${fringe}" fill="url(#fringe)" opacity=".8"/>`;
+  soil+=`<path d="${aqua}" fill="url(#aqua)"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
   soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
      +`<path d="${tline}" fill="none" stroke="#BDEAF1" stroke-width="0.8" opacity=".6"/>`;
@@ -371,7 +364,6 @@ function build(){
     <defs>${defs}</defs>${sky}${weather}${btns}${soil}${cracks}${surfaceFx}${flora}${ticks}${today}${wantWater}${hits}</svg>`;
   return {svg,W,dayW,todayIdx,cx,tableY};
 }
-function smoothRev(pts){const r=pts.slice().reverse();let d='';for(let i=0;i<r.length;i++)d+=` L ${r[i].x.toFixed(1)} ${r[i].y.toFixed(1)}`;return d;}
 
 /* single water-drop icon, centered at (cx,cy); r = radius of the round bottom */
 function dropIcon(cx,cy,r){
