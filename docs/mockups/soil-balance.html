@@ -70,8 +70,8 @@
   .spinner{width:30px;height:30px;border:3px solid #e0dbcd;border-top-color:#1FA6BE;border-radius:50%;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);max-width:270px;line-height:1.65}
-  .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:#9c4a2e;display:grid;place-items:center;font-size:20px;font-weight:700}
-  .view-error h2{margin:0;font-size:14px;color:#9c4a2e;font-weight:600}
+  .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:var(--rust);display:grid;place-items:center;font-size:20px;font-weight:700}
+  .view-error h2{margin:0;font-size:14px;color:var(--rust);font-weight:600}
   .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls ===== */
   .controls{display:grid;gap:12px;padding:12px 12px 8px;border-top:1px solid #E0DBCD;margin-top:8px;background:linear-gradient(#F3F0E7,rgba(243,240,231,0) 46px)}
@@ -200,7 +200,7 @@ const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
 const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
-function skyColor(t){const h=clamp((t-15)/(36-15),0,1);return hexLerp('#E7E4DA','#F4E2C0',h);}
+function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
 /* geometry */
@@ -243,18 +243,13 @@ function build(){
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
       <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
-      <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>
-    <linearGradient id="stress" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#E8B576" stop-opacity="0"/>
-      <stop offset="0.5" stop-color="#E0975A" stop-opacity=".1"/>
-      <stop offset="1" stop-color="#D2783C" stop-opacity=".24"/></linearGradient>`;
+      <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>`;
 
   /* sky + sun + rain + watering */
   let sky='',weather='',surfaceFx='',btns='';
   DATA.forEach(d=>{
     const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
-    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#F4E2C0" opacity="${(0.10+heat*0.18).toFixed(2)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
       const sc=hexLerp('#E2640F','#E88A22',0.5);
@@ -317,8 +312,7 @@ function build(){
   // fringe band (above table, ~16px, clipped to soil)
   const FR=16, fringeTop=tablePts.map(p=>({x:p.x,y:Math.max(SURF,p.y-FR)}));
   const fringe=`${smooth(tablePts)} L ${R.toFixed(1)} ${fringeTop[fringeTop.length-1].y.toFixed(1)} ${smoothRev(fringeTop)} Z`;
-  soil+=`<rect x="${AX}" y="${refillY.toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(SOIL_BOT-refillY).toFixed(1)}" fill="url(#stress)"/>`
-     +`<path d="${aqua}" fill="url(#aqua)"/>`
+  soil+=`<path d="${aqua}" fill="url(#aqua)"/>`
      +`<path d="${fringe}" fill="url(#fringe)" opacity=".8"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
   soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
