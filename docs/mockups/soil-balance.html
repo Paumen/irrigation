@@ -80,10 +80,10 @@
   .ctl .lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
   /* connected segmented control — options share one track; selected stands out by weight (bold accent + faint shade), not inversion */
   .seg{display:inline-flex;border:1px solid #E0DBCD;border-radius:999px;background:#FBFAF6;overflow:hidden}
-  .seg button{appearance:none;cursor:pointer;border:0;border-left:1px solid #E0DBCD;background:transparent;color:var(--ink);font-family:var(--sans);font-size:13px;padding:5px 11px;line-height:1.1;transition:.15s}
+  .seg button{appearance:none;cursor:pointer;border:0;border-left:1px solid #E0DBCD;background:transparent;color:var(--ink);font-family:var(--sans);font-size:13px;padding:6px 12px;line-height:1.1;transition:.15s}
   .seg button:first-child{border-left:0}
-  .seg button:hover{background:#F1EEE4}
-  .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:#EAF0E5}
+  .seg button:hover{color:var(--today)}
+  .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;box-shadow:inset 0 -2.5px 0 var(--today)}
   .dur{display:inline-flex;align-items:stretch;border:1px solid #E0DBCD;border-radius:999px;background:#FBFAF6;overflow:hidden}
   .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:17px;color:var(--ink);display:grid;place-items:center;transition:.15s}
   .dur button:hover{color:var(--today);background:#EAF0E5}
