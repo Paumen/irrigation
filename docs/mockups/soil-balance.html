@@ -283,7 +283,7 @@ function build(){
     }
     // watering — a single droplet icon floats above the column; wet earth shows below (soil loop)
     if(d.mins>0){
-      const dx=cx(d.idx), dy=SURF-60, dr=clamp(dayW*0.15,6,9);
+      const dx=cx(d.idx), dy=SURF-72, dr=clamp(dayW*0.15,6,9);
       weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${dropIcon(dx,dy,dr)}</g>`;
     }
   });
