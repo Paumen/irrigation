@@ -115,7 +115,7 @@
   <div class="key">
     <span><i class="sw" style="background:linear-gradient(#E8A93C,#E2640F)"></i>loss</span>
     <span><i class="sw" style="background:#3F7FA0"></i>rain</span>
-    <span><i class="sw" style="background:linear-gradient(#A9C2A4,#84A37E)"></i>watering</span>
+    <span><i class="sw" style="background:#34BCD2"></i>watering</span>
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
   </div>
       </div><!-- /board -->
@@ -278,11 +278,10 @@ function build(){
         rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2.5).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="#3F7FA0" stroke-width="1.5" stroke-linecap="round" opacity="${(0.5+0.4*clamp(d.rain/12,0,1)).toFixed(2)}"/>`;}
       weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${rg}</g>`;
     }
-    // watering — one-piece can pours a fan onto the plant; splash on surface, wet earth in soil
+    // watering — a single droplet icon floats above the column; wet earth shows below (soil loop)
     if(d.mins>0){
-      const sc=dayW*0.0040, ox=cx(d.idx)+dayW*0.02, oy=SURF-90, lx=cx(d.idx)+dayW*0.18;
-      weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${canSVG(ox,oy,sc)}${fanSVG(ox,oy,lx,SURF,dayW)}</g>`;
-      surfaceFx+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${splashSVG(lx,cx(d.idx),SURF,dayW)}</g>`;
+      const dx=cx(d.idx), dy=SURF-46, dr=clamp(dayW*0.15,6,9);
+      weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${dropIcon(dx,dy,dr)}</g>`;
     }
   });
 
@@ -371,33 +370,15 @@ function build(){
 }
 function smoothRev(pts){const r=pts.slice().reverse();let d='';for(let i=0;i<r.length;i++)d+=` L ${r[i].x.toFixed(1)} ${r[i].y.toFixed(1)}`;return d;}
 
-/* one-piece enamel watering can (C1), tilted to pour; opening sits at (ox,oy) */
-function canSVG(ox,oy,s){
-  const F='#84A37E',T='#A9C2A4',S='#4F6B4A',Hi='#C7DCC2';
-  const shell='M 32 112 C 31 108 31 104 32 100 L 34 68 C 34 62 37 58 42 58 L 68 58 C 82 52 98 42 112 33 C 114 32 116 34 115.5 38 C 115 42 114 44 111 45 C 100 52 86 62 78 76 C 75 80 74 82 74 88 L 73 102 C 73 107 72 110 68 112 Z';
-  const inner=`<path d="${shell}" fill="${F}" stroke="${S}" stroke-width="3" stroke-linejoin="round"/>`
-    +`<path d="M 35 70 C 35 63 39 59 44 59 L 65 59 C 70 59 73 63 73 72 C 60 78 47 78 35 72 Z" fill="${T}"/>`
-    +`<path d="M 70 60 C 84 54 99 45 112 35" fill="none" stroke="${Hi}" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>`
-    +`<path d="M 37 76 C 37 92 40 104 45 110" fill="none" stroke="${Hi}" stroke-width="2.2" stroke-linecap="round" opacity=".4"/>`
-    +`<path d="M 40 57 C 43 34 63 34 66 57 L 62 57 C 61 39 45 39 44 57 Z" fill="${T}" stroke="${S}" stroke-width="2.6" stroke-linejoin="round"/>`
-    +`<ellipse cx="53" cy="58" rx="18" ry="4.4" fill="${T}" stroke="${S}" stroke-width="2.4"/><ellipse cx="53" cy="58" rx="12.5" ry="2.6" fill="#4F6B4A"/>`;
-  return `<g transform="translate(${ox.toFixed(1)} ${oy.toFixed(1)}) rotate(26) scale(${s.toFixed(3)}) translate(-113 -38)">${inner}</g>`;
-}
-/* arced translucent water ribbon from the spout opening to the landing, with a bright highlight */
-function fanSVG(ox,oy,lx,ly,dw){
-  const wt=2.6, wb=4.4, bulge=lx+dw*0.12, my1=lerp(oy,ly,0.40), my2=lerp(oy,ly,0.80);
-  return `<path d="M ${(ox-wt).toFixed(1)} ${oy.toFixed(1)} C ${(bulge-wb).toFixed(1)} ${my1.toFixed(1)} ${(lx-wb).toFixed(1)} ${my2.toFixed(1)} ${(lx-wb).toFixed(1)} ${ly.toFixed(1)} L ${(lx+wb).toFixed(1)} ${ly.toFixed(1)} C ${(bulge+wb).toFixed(1)} ${my1.toFixed(1)} ${(ox+wt).toFixed(1)} ${(oy+1).toFixed(1)} ${(ox+wt).toFixed(1)} ${oy.toFixed(1)} Z" fill="#6FC8DA" opacity=".42"/>`
-    +`<path d="M ${ox.toFixed(1)} ${(oy+1).toFixed(1)} C ${bulge.toFixed(1)} ${my1.toFixed(1)} ${lx.toFixed(1)} ${my2.toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)}" fill="none" stroke="#E8FAFD" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>`;
-}
-/* crown splash + wet sheen at the landing, a couple of droplets grazing the plant */
-function splashSVG(lx,cxp,sY,dw){
-  let s=`<ellipse cx="${lx.toFixed(1)}" cy="${sY.toFixed(1)}" rx="${(dw*0.16).toFixed(1)}" ry="2.8" fill="#6FC8DA" opacity=".42"/>`
-    +`<ellipse cx="${lx.toFixed(1)}" cy="${(sY-0.3).toFixed(1)}" rx="${(dw*0.09).toFixed(1)}" ry="1.6" fill="#BDEAF1" opacity=".45"/>`
-    +`<path d="M ${(lx-dw*0.115).toFixed(1)} ${(sY-1).toFixed(1)} Q ${lx.toFixed(1)} ${(sY-4.4).toFixed(1)} ${(lx+dw*0.115).toFixed(1)} ${(sY-1).toFixed(1)}" fill="none" stroke="#BDEAF1" stroke-width="0.9" opacity=".6"/>`;
-  [-58,-32,-8,26,56].forEach((deg)=>{const a=(deg-90)*Math.PI/180,L=12-Math.abs(deg)*0.07,ex=lx+Math.cos(a)*L,ey=sY+Math.sin(a)*L-1;
-    s+=`<line x1="${lx.toFixed(1)}" y1="${(sY-1).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#6FC8DA" stroke-width="1.3" stroke-linecap="round" opacity=".85"/>`+drop(ex,ey-1.7,2.0,'#6FC8DA','#E8FAFD');});
-  s+=drop((lx+cxp)/2,sY-4,2.2,'#6FC8DA','#E8FAFD')+drop(lerp(lx,cxp,0.72),sY-1,1.8,'#6FC8DA','#E8FAFD');
-  return s;
+/* single water-drop icon, centered at (cx,cy); r = radius of the round bottom */
+function dropIcon(cx,cy,r){
+  const topY=cy-2.1*r;
+  const d=`M ${cx.toFixed(1)} ${topY.toFixed(1)} `
+    +`C ${(cx+0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
+    +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
+    +`C ${(cx-r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx-0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
+  return `<path d="${d}" fill="#34BCD2" stroke="#1FA6BE" stroke-width="1.3" stroke-linejoin="round"/>`
+    +`<ellipse cx="${(cx-r*0.34).toFixed(1)}" cy="${(cy+r*0.02).toFixed(1)}" rx="${(r*0.2).toFixed(1)}" ry="${(r*0.42).toFixed(1)}" fill="#E8FAFD" opacity=".8"/>`;
 }
 /* per-day toggle: faint ring when off, bold green disc with a tiny can when on */
 function btnSVG(cxp,y,on){
@@ -412,12 +393,6 @@ function btnSVG(cxp,y,on){
 function wetCol(x0,w,sY){
   return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="160" fill="url(#wetE)"/>`
     +`<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="3" fill="#34BCD2" opacity=".34"/>`;
-}
-
-function drop(cx,cy,s,fill,hl){
-  let d=`<path d="M ${cx.toFixed(1)} ${cy.toFixed(1)} C ${(cx-s*0.55).toFixed(1)} ${(cy+s*0.6).toFixed(1)} ${(cx-s*0.55).toFixed(1)} ${(cy+s*1.05).toFixed(1)} ${cx.toFixed(1)} ${(cy+s*1.3).toFixed(1)} C ${(cx+s*0.55).toFixed(1)} ${(cy+s*1.05).toFixed(1)} ${(cx+s*0.55).toFixed(1)} ${(cy+s*0.6).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)} Z" fill="${fill}"/>`;
-  if(hl) d+=`<ellipse cx="${(cx-s*0.2).toFixed(1)}" cy="${(cy+s*0.82).toFixed(1)}" rx="${(s*0.18).toFixed(1)}" ry="${(s*0.3).toFixed(1)}" fill="${hl}" opacity=".8"/>`;
-  return d;
 }
 
 function plant(x,sY,v,rng){
