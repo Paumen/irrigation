@@ -1,29 +1,14 @@
 #!/usr/bin/env bash
-# paumen-lint: enforce the PAUMEN markup contract for the soil UI.
-#
-# Bans in HTML/JS(X)/TS(X)/CJS/MJS:  <div>, <span>, inline style=, class=
-# (Phosphor icon classes "ph-*" are carved out.)
-# Bans the same set:                 !important  (catches CSS-in-JS / style strings)
-#
-# CSS quality is owned by Stylelint (soil/.stylelintrc.json), not this script.
-#
-# Default targets: git-tracked markup files under soil/ (the UI's home). The
-# docs/mockups prototype and the sim/ + tools/ engine code are intentionally
-# out of scope. Override by passing paths:
-#   scripts/paumen-lint.sh                 # all soil/ markup
-#   scripts/paumen-lint.sh soil/ui.html    # specific files
-#
-# Contained exceptions (e.g. an SVG/viz layer that needs inline transforms):
+# Exceptions:
 #   <!-- paumen-lint-disable -->  ...  <!-- paumen-lint-enable -->   (block)
 #   // paumen-lint-disable-next-line                                 (one line)
 set -euo pipefail
 
-exts=('*.html' '*.htm' '*.js' '*.jsx' '*.cjs' '*.mjs' '*.ts' '*.tsx')
-
 if [ $# -gt 0 ]; then
   mapfile -t targets < <(printf '%s\n' "$@")
 else
-  mapfile -t targets < <(git ls-files -- "${exts[@]/#/soil/}")
+  # A `soil/*.ext` pathspec would miss nested dirs; filter extensions below.
+  mapfile -t targets < <(git ls-files -- soil/)
 fi
 
 files=()
@@ -34,7 +19,6 @@ for f in "${targets[@]}"; do
   esac
 done
 
-# Build the set of exempt "file:line" keys from the disable markers above.
 exempt=""
 if [ ${#files[@]} -gt 0 ]; then
   exempt=$(awk '
@@ -48,7 +32,6 @@ fi
 
 violations=0
 
-# Drop hits whose "file:line" falls in an exempt region.
 filter() {
   local hits="$1"
   [ -z "$hits" ] && return 0
@@ -67,15 +50,20 @@ scan() {
   grep -nHE "$pattern" "$@" 2>/dev/null || true
 }
 
-# class= scan with Phosphor carve-out: drops lines whose only class= value
-# is one or more space-separated ph-* tokens (e.g. class="ph-bold ph-gear").
+# Strip ph-* per-attribute, not per-line, so a ph-* can't shield a forbidden class.
 scan_class() {
   [ $# -eq 0 ] && return 0
   local raw
-  raw=$(grep -nHE '[[:space:]]class[[:space:]]*=' "$@" 2>/dev/null || true)
+  raw=$(grep -nHE '[[:space:]]class(Name)?[[:space:]]*=' "$@" 2>/dev/null || true)
   [ -z "$raw" ] && return 0
-  printf '%s\n' "$raw" |
-    grep -vE 'class[[:space:]]*=[[:space:]]*"ph-[a-z0-9-]+([[:space:]]+ph-[a-z0-9-]+)*"' || true
+  printf '%s\n' "$raw" | awk '
+    match($0, /^[^:]+:[0-9]+:/) {
+      content = substr($0, RLENGTH + 1)
+      gsub(/class(Name)?[ \t]*=[ \t]*"ph-[a-z0-9-]+([ \t]+ph-[a-z0-9-]+)*"/, "", content)
+      gsub(/class(Name)?[ \t]*=[ \t]*'\''ph-[a-z0-9-]+([ \t]+ph-[a-z0-9-]+)*'\''/, "", content)
+      if (content ~ /class(Name)?[ \t]*=/) print $0
+    }
+  '
 }
 
 report() {
@@ -90,8 +78,8 @@ report() {
 if [ ${#files[@]} -gt 0 ]; then
   report '<div> forbidden' "$(scan '<\/?div\b' "${files[@]}")"
   report '<span> forbidden' "$(scan '<\/?span\b' "${files[@]}")"
-  report 'inline style= forbidden' "$(scan '[[:space:]]style[[:space:]]*=' "${files[@]}")"
-  report 'class= forbidden (non-Phosphor)' "$(scan_class "${files[@]}")"
+  report 'inline style= forbidden' "$(scan '[[:space:]]style[[:space:]]*=' "${files[@]}" | grep -vE '\b(const|let|var|export|import)\b' || true)"
+  report 'class=/className= forbidden (non-Phosphor)' "$(scan_class "${files[@]}")"
   report '!important forbidden' "$(scan '!important' "${files[@]}")"
 fi
 

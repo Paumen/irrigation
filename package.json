@@ -5,6 +5,7 @@
   "description": "Lint tooling for the soil UI (Stylelint for CSS, paumen-lint for the markup contract).",
   "scripts": {
     "lint": "npm run lint:css && npm run lint:markup",
+    "lint:fix": "npm run lint:css:fix",
     "lint:css": "stylelint \"soil/**/*.css\"",
     "lint:css:fix": "stylelint \"soil/**/*.css\" --fix",
     "lint:markup": "bash scripts/paumen-lint.sh"
