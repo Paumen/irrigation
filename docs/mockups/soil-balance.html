@@ -215,7 +215,7 @@ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a
 function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];}
 function hexLerp(a,b,t){const A=hx(a),B=hx(b);const m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;}
 function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){const t=(v-p0)/((p1-p0)||1);return hexLerp(c0,c1,t);}}return stops[stops.length-1][1];}
-const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#6E7B3C'],[1,'#4E7B52']],v);
+const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#7E8A3E'],[1,'#4F7F4A']],v);
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
 const sunCore   =h=>ramp([[0,'#E2965A'],[0.5,'#C25A2A'],[1,'#9E3712']],h);
@@ -569,7 +569,7 @@ function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
       ['#C66536','shimmer'],['#9C3D18','sun stroke 0'],['#8A3214','sun stroke 1'],
     ]],
     ['rootColor ramp (0→1)',[
-      ['#2A2620','0'],['#56422E','.10'],['#8A6A3E','.30'],['#6E7B3C','.60'],['#4E7B52','1'],
+      ['#2A2620','0'],['#56422E','.10'],['#8A6A3E','.30'],['#7E8A3E','.60'],['#4F7F4A','1'],
     ]],
     ['plantColor ramp (0→1)',[
       ['#3A352C','0'],['#9A7A3C','.10'],['#7E8A3E','.25'],['#4F7F4A','.55'],['#3F7A3B','1'],
