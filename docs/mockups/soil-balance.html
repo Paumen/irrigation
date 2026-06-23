@@ -412,8 +412,8 @@ function plant(x,sY,v,rng){
     const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
     const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
     s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
-  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#BFC09A"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#C2632A"/>`;}
-  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#BFC09A',(h-0.42)/0.2)}"/>`;}
+  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#D5D6BD"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#C2632A"/>`;}
+  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#D5D6BD',(h-0.42)/0.2)}"/>`;}
   return s;
 }
 
