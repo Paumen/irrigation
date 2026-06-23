@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soil-Balance — palette</title>
+<style>
+  :root{ --bg:#E7E4DA; --ink:#4A463C; --faint:#9A9484; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);width:1320px;
+    font-family:ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;padding:26px 26px 32px}
+  h1{margin:0 0 4px;font-size:24px;font-weight:600;color:#4F6B4A}
+  .sub{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#5b5547;
+    letter-spacing:.02em;margin-bottom:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#5b5547}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid #00000018}
+  .cols{column-count:2;column-gap:26px}
+  .section{break-inside:avoid;margin-bottom:18px}
+  h2{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:#5b5547;margin:0 0 10px;
+    padding-bottom:6px;border-bottom:1px solid #E0DBCD}
+  h2 small{font-weight:400;text-transform:none;letter-spacing:0;color:#5b5547}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+  .sw{border-radius:10px;overflow:hidden;background:#FBFAF6;border:1px solid #E0DBCD;
+    box-shadow:0 1px 3px -2px rgba(0,0,0,.25)}
+  .chip{height:54px;position:relative;display:flex;align-items:flex-end;justify-content:flex-end;padding:5px}
+  .chip .tag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:8.5px;font-weight:700;
+    letter-spacing:.04em;padding:1px 4px;border-radius:4px;background:#FBFAF6cc;color:#4A463C}
+  .chip .tag.dark{background:#1f1c17aa;color:#FBFAF6}
+  .meta{padding:7px 9px 9px}
+  .meta .hex{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;font-weight:600;
+    letter-spacing:.02em;text-transform:uppercase}
+  .meta .role{font-size:10.5px;color:#5b5547;margin-top:2px;line-height:1.3}
+  .twin{margin-top:5px;display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:8.5px;font-weight:700;letter-spacing:.03em;color:#B5471F;background:#B5471F18;
+    border-radius:4px;padding:1px 5px}
+  .grad{font-style:italic}
+  .note{break-inside:avoid;margin-top:6px;font-size:12px;color:#5b5547;line-height:1.6}
+  .note b{color:#4A463C}
+</style>
+</head>
+<body>
+  <h1>Soil-Balance — color palette</h1>
+  <div class="sub">docs/mockups/soil-balance.html · every distinct color, grouped by role</div>
+  <div class="legend">
+    <span><i style="background:#E7E4DA"></i>BG = background surface</span>
+    <span><i style="background:#4A463C"></i>TXT = text</span>
+    <span><i style="background:#1FA6BE"></i>SVG = artwork fill/stroke</span>
+    <span><i style="background:#B5471F18;border-color:#B5471F"></i>≈ near-duplicate flagged</span>
+  </div>
+
+  <div class="cols">
+    <!-- ============ TOKENS ============ -->
+    <div class="section">
+    <h2>Named tokens <small>:root custom properties</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#E7E4DA"><span class="tag">BG·SVG</span></div>
+        <div class="meta"><div class="hex">#E7E4DA</div><div class="role">--bg · page + sky base</div></div></div>
+      <div class="sw"><div class="chip" style="background:#4A463C"><span class="tag dark">TXT</span></div>
+        <div class="meta"><div class="hex">#4A463C</div><div class="role">--ink · body text</div><span class="twin">≈ #5b5547</span></div></div>
+      <div class="sw"><div class="chip" style="background:#9A9484"><span class="tag dark">TXT</span></div>
+        <div class="meta"><div class="hex">#9A9484</div><div class="role">--faint · muted text</div><span class="twin">≈ #8a8270</span></div></div>
+      <div class="sw"><div class="chip" style="background:#5A4A33"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#5A4A33</div><div class="role">--surface · soil top line, cracks</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1FA6BE"><span class="tag dark">SVG·TXT</span></div>
+        <div class="meta"><div class="hex">#1FA6BE</div><div class="role">--table · water-table line, spinner</div></div></div>
+      <div class="sw"><div class="chip" style="background:#4F6B4A"><span class="tag dark">TXT·SVG</span></div>
+        <div class="meta"><div class="hex">#4F6B4A</div><div class="role">--today · green accent</div><span class="twin">≈ #6E8E68</span></div></div>
+      <div class="sw"><div class="chip" style="background:#D98A2B"><span class="tag dark">SVG·TXT</span></div>
+        <div class="meta"><div class="hex">#D98A2B</div><div class="role">--amber · "water-by" warning</div><span class="twin">≈ loss orange</span></div></div>
+      <div class="sw"><div class="chip" style="background:#B5471F"><span class="tag dark">SVG·TXT</span></div>
+        <div class="meta"><div class="hex">#B5471F</div><div class="role">--rust · refill / "water now"</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ BACKGROUNDS ============ -->
+    <div class="section">
+    <h2>Backgrounds <small>cards, controls, surfaces</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#FBFAF6"><span class="tag">BG·TXT</span></div>
+        <div class="meta"><div class="hex">#FBFAF6</div><div class="role">"paper white" — cards, axis, white text on chips/button</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F3F0E7"><span class="tag">BG</span></div>
+        <div class="meta"><div class="hex">#F3F0E7</div><div class="role">controls gradient top</div></div></div>
+      <div class="sw"><div class="chip" style="background:#e9eee7"><span class="tag">BG</span></div>
+        <div class="meta"><div class="hex">#E9EEE7</div><div class="role">demo toggle "on" (pale green)</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ BORDERS / GRAYS ============ -->
+    <div class="section">
+    <h2>Borders, dividers, scrollbar <small>light tan-grays</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#E0DBCD"><span class="tag">BORDER</span></div>
+        <div class="meta"><div class="hex">#E0DBCD</div><div class="role">axis, ticks, all control borders, spinner ring</div><span class="twin">2 casings in file</span></div></div>
+      <div class="sw"><div class="chip" style="background:#cdbf9f"><span class="tag">BORDER</span></div>
+        <div class="meta"><div class="hex">#CDBF9F</div><div class="role">segment hover border</div></div></div>
+      <div class="sw"><div class="chip" style="background:#bdb6a4"><span class="tag">BG</span></div>
+        <div class="meta"><div class="hex">#BDB6A4</div><div class="role">scrollbar thumb</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ TEXT ============ -->
+    <div class="section">
+    <h2>Text tones <small>warm grays — several near-twins</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#5b5547"><span class="tag dark">TXT</span></div>
+        <div class="meta"><div class="hex">#5B5547</div><div class="role">detail, axis labels, button labels</div><span class="twin">≈ --ink #4A463C</span></div></div>
+      <div class="sw"><div class="chip" style="background:#8a8270"><span class="tag dark">TXT</span></div>
+        <div class="meta"><div class="hex">#8A8270</div><div class="role">kicker, labels, hints, footer</div><span class="twin">≈ --faint #9A9484</span></div></div>
+      <div class="sw"><div class="chip" style="background:#7a7363"><span class="tag dark">TXT</span></div>
+        <div class="meta"><div class="hex">#7A7363</div><div class="role">future-date ticks</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ GREENS ============ -->
+    <div class="section">
+    <h2>Greens <small>plant · can · UI buttons</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#6E8E68"><span class="tag dark">BG·SVG</span></div>
+        <div class="meta"><div class="hex">#6E8E68</div><div class="role">primary button + pressed segment</div><span class="twin">≈ --today #4F6B4A</span></div></div>
+      <div class="sw"><div class="chip" style="background:#84A37E"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#84A37E</div><div class="role">watering-can body / watering swatch</div></div></div>
+      <div class="sw"><div class="chip" style="background:#A9C2A4"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#A9C2A4</div><div class="role">can mid-tone / watering swatch</div></div></div>
+      <div class="sw"><div class="chip" style="background:#C7DCC2"><span class="tag">SVG</span></div>
+        <div class="meta"><div class="hex">#C7DCC2</div><div class="role">can highlight</div></div></div>
+      <div class="sw"><div class="chip" style="background:linear-gradient(90deg,#9A7A3C,#6E7B3C,#4E7B52,#3F7A3B,#5F9A5A)"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex grad">ramp</div><div class="role">plant / leaf / root health (#9A7A3C→#3F7A3B…)</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ BLUES / CYANS ============ -->
+    <div class="section">
+    <h2>Blues &amp; cyans <small>water</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:linear-gradient(#34BCD2,#0C6478)"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex grad">#34BCD2 → #0C6478</div><div class="role">held water (aquifer) / "water held" swatch</div></div></div>
+      <div class="sw"><div class="chip" style="background:#6FC8DA"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#6FC8DA</div><div class="role">pour / splash / droplets</div></div></div>
+      <div class="sw"><div class="chip" style="background:#BDEAF1"><span class="tag">SVG</span></div>
+        <div class="meta"><div class="hex">#BDEAF1</div><div class="role">water-line + splash highlight</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E8FAFD"><span class="tag">SVG</span></div>
+        <div class="meta"><div class="hex">#E8FAFD</div><div class="role">brightest water highlight</div></div></div>
+      <div class="sw"><div class="chip" style="background:#3F7FA0"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#3F7FA0</div><div class="role">rain (lone cool blue) / "rain" swatch</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ ORANGES ============ -->
+    <div class="section">
+    <h2>Oranges, ambers, rust <small>heat · loss · warnings</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:linear-gradient(#E8A93C,#E88A22,#E2640F)"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex grad">#E8A93C → #E2640F</div><div class="role">sun core / loss swatch</div><span class="twin">≈ --amber</span></div></div>
+      <div class="sw"><div class="chip" style="background:#F6C669"><span class="tag">SVG</span></div>
+        <div class="meta"><div class="hex">#F6C669</div><div class="role">sun glow</div></div></div>
+      <div class="sw"><div class="chip" style="background:#C0540C"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#C0540C</div><div class="role">sun outline (→ #B84810)</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E7C24A"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#E7C24A</div><div class="role">flower center</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ SOIL ============ -->
+    <div class="section">
+    <h2>Soil horizons &amp; roots <small>browns, top → bottom</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#67563C"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#67563C</div><div class="role">litter (organic)</div></div></div>
+      <div class="sw"><div class="chip" style="background:#AC8856"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#AC8856</div><div class="role">topsoil A</div></div></div>
+      <div class="sw"><div class="chip" style="background:#8C5E3C"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#8C5E3C</div><div class="role">subsoil B</div></div></div>
+      <div class="sw"><div class="chip" style="background:#C6B488"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#C6B488</div><div class="role">substratum C</div></div></div>
+      <div class="sw"><div class="chip" style="background:linear-gradient(90deg,#2A2620,#56422E,#8A6A3E)"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex grad">ramp</div><div class="role">root / stem browns (#2A2620→#8A6A3E)</div></div></div>
+    </div>
+    </div>
+
+    <!-- ============ FLOWER ============ -->
+    <div class="section">
+    <h2>Flower <small>the only pinks</small></h2>
+    <div class="grid">
+      <div class="sw"><div class="chip" style="background:#C98AB0"><span class="tag dark">SVG</span></div>
+        <div class="meta"><div class="hex">#C98AB0</div><div class="role">flower petals (unique to palette)</div></div></div>
+    </div>
+    </div>
+
+    <div class="note section">
+      <b>Near-duplicate clusters (≈):</b> two warm-gray text tones each split into pairs
+      (<b>#4A463C ≈ #5b5547</b>, <b>#9A9484 ≈ #8a8270</b>); two brand greens
+      (<b>#4F6B4A ≈ #6E8E68</b>); the warning <b>--amber #D98A2B</b> sits inside the decorative
+      sun/loss orange ramp; <b>#E0DBCD</b> appears in two casings; <b>#FBFAF6</b> is overloaded as
+      both background and white foreground text. Rain <b>#3F7FA0</b> is deliberately the one cool blue.
+    </div>
+  </div>
+</body>
+</html>

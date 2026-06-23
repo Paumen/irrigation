@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#E7E4DA; --ink:#4A463C; --faint:#9A9484;
+    --bg:#E7E4DA; --ink:#4A463C; --faint:#8a8270;
     --surface:#5A4A33; --table:#1FA6BE;
     /* warm-accent palette — one tone per meaning */
     --today:#4F6B4A; --amber:#D98A2B; --rust:#B5471F;
@@ -27,7 +27,7 @@
   .scene{position:relative;width:auto;margin:0}
   .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:#FBFAF6;z-index:3;pointer-events:none;
     border-right:1px solid #e0dbcd}
-  .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:#5b5547;letter-spacing:.02em;white-space:nowrap}
+  .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.02em;white-space:nowrap}
   .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #e0dbcd}
   .axis .water{color:#1FA6BE}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -50,13 +50,13 @@
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
   .status{margin:4px 12px 12px;padding:16px 24px 16px;background:#FBFAF6;border:1px solid var(--bg);border-radius:18px}
-  .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8270;font-weight:600}
+  .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
   .status .word{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:0;line-height:1.1;margin-top:8px}
-  .status .detail{font-size:14px;color:#5b5547;margin-top:8px;line-height:1.4}
+  .status .detail{font-size:14px;color:var(--ink);margin-top:8px;line-height:1.4}
   .status .metric{margin-top:12px;padding-top:12px;border-top:1px solid var(--bg)}
   .status .pct{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:0}
-  .status .sub{font-size:12px;color:#8a8270}
+  .status .sub{font-size:12px;color:var(--faint)}
   .status .bar{position:relative;height:8px;background:var(--bg);border-radius:6px;margin-top:12px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:6px}
   .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rust)}
@@ -70,30 +70,30 @@
   .spinner{width:30px;height:30px;border:3px solid #e0dbcd;border-top-color:#1FA6BE;border-radius:50%;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);max-width:270px;line-height:1.65}
-  .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:#9c4a2e;display:grid;place-items:center;font-size:20px;font-weight:700}
-  .view-error h2{margin:0;font-size:14px;color:#9c4a2e;font-weight:600}
-  .btn{appearance:none;cursor:pointer;border:1px solid #6E8E68;background:#6E8E68;color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
+  .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:var(--rust);display:grid;place-items:center;font-size:20px;font-weight:700}
+  .view-error h2{margin:0;font-size:14px;color:var(--rust);font-weight:600}
+  .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls ===== */
   .controls{display:grid;gap:12px;padding:12px 12px 8px;border-top:1px solid #E0DBCD;margin-top:8px;background:linear-gradient(#F3F0E7,rgba(243,240,231,0) 46px)}
   .ctl{display:grid;gap:8px}
-  .ctl .lab{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8270}
+  .ctl .lab{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
   .seg{display:flex;flex-wrap:wrap;gap:8px}
-  .seg button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:#5b5547;font-family:var(--sans);font-size:14px;padding:8px 12px;border-radius:999px;line-height:1.1;transition:.15s}
+  .seg button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:var(--ink);font-family:var(--sans);font-size:14px;padding:8px 12px;border-radius:999px;line-height:1.1;transition:.15s}
   .seg button:hover{border-color:#cdbf9f}
-  .seg button[aria-pressed="true"]{background:#6E8E68;border-color:#6E8E68;color:#FBFAF6;font-weight:600;box-shadow:0 2px 9px -5px rgba(79,107,74,.7)}
+  .seg button[aria-pressed="true"]{background:var(--today);border-color:var(--today);color:#FBFAF6;font-weight:600;box-shadow:0 2px 9px -5px rgba(79,107,74,.7)}
   .dur{display:flex;align-items:stretch}
-  .dur button{appearance:none;cursor:pointer;width:36px;border:1px solid #E0DBCD;background:#FBFAF6;font-size:20px;color:#5b5547;display:grid;place-items:center}
+  .dur button{appearance:none;cursor:pointer;width:36px;border:1px solid #E0DBCD;background:#FBFAF6;font-size:20px;color:var(--ink);display:grid;place-items:center}
   .dur button:first-child{border-radius:6px 0 0 6px}
   .dur button:last-child{border-radius:0 6px 6px 0}
   .dur .val{min-width:80px;padding:8px 0;border-top:1px solid #E0DBCD;border-bottom:1px solid #E0DBCD;display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);background:#FBFAF6;color:var(--ink)}
-  .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:#8a8270;font-size:12px}
-  .dur-hint{font-family:var(--mono);font-size:12px;color:#8a8270;margin-top:2px}
+  .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:12px}
+  .dur-hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:2px}
   /* ===== footer ===== */
   .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid #E0DBCD;margin-top:12px}
-  .app-foot .coords{font-family:var(--mono);font-size:12px;color:#8a8270;letter-spacing:.02em}
-  .demo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:#8a8270}
-  .demo button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:#8a8270;font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:6px}
-  .demo button.on{background:#e9eee7;border-color:#6E8E68;color:#4F6B4A}
+  .app-foot .coords{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
+  .demo{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+  .demo button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:var(--faint);font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:6px}
+  .demo button.on{background:#e9eee7;border-color:var(--today);color:#4F6B4A}
   @media(min-width:560px){ .controls{grid-template-columns:1fr 1fr;gap:12px 24px} .ctl:last-child{grid-column:1/-1} }
 </style>
 </head>
@@ -200,7 +200,7 @@ const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,
 const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
 const leafColor =v=>ramp([[0,'#6B5A38'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
 const sunCore   =h=>ramp([[0,'#E8A93C'],[0.5,'#E88A22'],[1,'#E2640F']],h);
-function skyColor(t){const h=clamp((t-15)/(36-15),0,1);return hexLerp('#E7E4DA','#F4E2C0',h);}
+function skyColor(t){return 'var(--bg)';}
 function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
 
 /* geometry */
@@ -243,18 +243,13 @@ function build(){
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
       <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
-      <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>
-    <linearGradient id="stress" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#E8B576" stop-opacity="0"/>
-      <stop offset="0.5" stop-color="#E0975A" stop-opacity=".1"/>
-      <stop offset="1" stop-color="#D2783C" stop-opacity=".24"/></linearGradient>`;
+      <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>`;
 
   /* sky + sun + rain + watering */
   let sky='',weather='',surfaceFx='',btns='';
   DATA.forEach(d=>{
     const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1), future=d.idx>todayIdx;
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${skyColor(d.tmax)}"/>`;
-    if(heat>0.5) sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(30+heat*26).toFixed(0)}" fill="#F4E2C0" opacity="${(0.10+heat*0.18).toFixed(2)}"/>`;
     // heat shimmer on extreme days
     if(heat>0.78){
       const sc=hexLerp('#E2640F','#E88A22',0.5);
@@ -317,8 +312,7 @@ function build(){
   // fringe band (above table, ~16px, clipped to soil)
   const FR=16, fringeTop=tablePts.map(p=>({x:p.x,y:Math.max(SURF,p.y-FR)}));
   const fringe=`${smooth(tablePts)} L ${R.toFixed(1)} ${fringeTop[fringeTop.length-1].y.toFixed(1)} ${smoothRev(fringeTop)} Z`;
-  soil+=`<rect x="${AX}" y="${refillY.toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(SOIL_BOT-refillY).toFixed(1)}" fill="url(#stress)"/>`
-     +`<path d="${aqua}" fill="url(#aqua)"/>`
+  soil+=`<path d="${aqua}" fill="url(#aqua)"/>`
      +`<path d="${fringe}" fill="url(#fringe)" opacity=".8"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
   soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
@@ -349,7 +343,7 @@ function build(){
   /* refs + ticks + today + hit targets */
   let ticks='';
   DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx,fut=d.idx>todayIdx;
-    const dc=isT?'var(--today)':(fut?'#7a7363':'#5b5547'), wc=dc, bold=isT?' font-weight="700"':'';
+    const dc=isT?'var(--today)':'var(--ink)', wc=dc, bold=isT?' font-weight="700"':'';
     ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${dc}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
@@ -500,7 +494,7 @@ function renderStatus(){
     `<div class="kick"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${kick}</div>`
    +`<div class="word" style="color:${color}">${word}</div>`
    +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
-   +`<span class="pct" style="color:${color}">${pct}<span style="font-size:14px;color:#8a8270">%</span></span>`
+   +`<span class="pct" style="color:${color}">${pct}<span style="font-size:14px;color:var(--faint)">%</span></span>`
    +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div>`
    +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
    +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div></div>`;
