@@ -317,9 +317,7 @@ function build(){
   const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
   soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="var(--surface)" stroke-width="2.4"/>`
      +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#FBFAF6" stroke-width="4.6" opacity="0.5"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--rust)" stroke-width="2.8" stroke-dasharray="8 5"/>`
-     +`<rect x="${(AX+3).toFixed(1)}" y="${(refillY-16).toFixed(1)}" width="40" height="14" rx="3" fill="var(--rust)"/>`
-     +`<text x="${(AX+23).toFixed(1)}" y="${(refillY-9).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".06em">refill</text>`;
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--rust)" stroke-width="2.8" stroke-dasharray="8 5"/>`;
 
   /* craquelure on parched columns */
   let cracks='';
@@ -348,20 +346,10 @@ function build(){
     +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
     +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".1em">TODAY</text>`;
-  // when to water: first day at/after today below the refill point
-  let wantWater='', needIdx=-1;
-  for(let k=todayIdx;k<N;k++){ if(DATA[k].level<REFILL){ needIdx=k; break; } }
-  if(needIdx>todayIdx){
-    const wx=cx(needIdx), ww=58, wy=fy, AMB='#D98A2B';
-    wantWater=`<rect x="${(wx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="#D98A2B" opacity=".14"/>`
-      +`<rect x="${(wx-ww/2).toFixed(1)}" y="${wy}" width="${ww}" height="${fh}" rx="3.5" fill="${AMB}"/>`
-      +`<polygon points="${(wx-3).toFixed(1)},${(wy+fh).toFixed(1)} ${(wx+3).toFixed(1)},${(wy+fh).toFixed(1)} ${wx.toFixed(1)},${(wy+fh+3.5).toFixed(1)}" fill="${AMB}"/>`
-      +`<text x="${wx.toFixed(1)}" y="${(wy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".03em">water by</text>`;
-  }
   let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
 
   const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${H}" width="${W.toFixed(0)}" height="${H}" xmlns="http://www.w3.org/2000/svg" font-family="${'ui-sans-serif,system-ui,sans-serif'}">
-    <defs>${defs}</defs>${sky}${weather}${btns}${soil}${cracks}${surfaceFx}${flora}${ticks}${today}${wantWater}${hits}</svg>`;
+    <defs>${defs}</defs>${sky}${weather}${btns}${soil}${cracks}${surfaceFx}${flora}${ticks}${today}${hits}</svg>`;
   return {svg,W,dayW,todayIdx,cx,tableY};
 }
 
