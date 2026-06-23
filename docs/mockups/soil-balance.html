@@ -97,15 +97,15 @@
   .demo button{appearance:none;cursor:pointer;border:1px solid #E0DBCD;background:#FBFAF6;color:var(--faint);font-family:var(--mono);font-size:12px;padding:4px 8px;border-radius:6px}
   .demo button.on{background:#e9eee7;border-color:var(--today);color:#4F6B4A}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
-  /* ===== color palette ===== */
-  .palette{margin:10px 8px 28px;background:#FBFAF6;border:1px solid #E0DBCD;border-radius:14px;padding:14px 16px 18px}
-  .palette > h2{margin:0 0 2px;font-family:var(--serif);font-size:20px;font-weight:600;color:#4F6B4A}
-  .palette > p{margin:0 0 12px;font-family:var(--mono);font-size:12px;color:var(--faint)}
-  .pgroup{margin-top:14px}
-  .pgroup h3{margin:0 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
-  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
-  .pchip{border:1px solid #E0DBCD;border-radius:10px;overflow:hidden;background:#fff}
-  .pchip .col{height:46px}
+  /* ===== color palette — inline, placed near where each color is used ===== */
+  .palette{margin:6px 12px 14px}
+  .palette.in-controls{margin:2px 8px 18px}
+  .pgroup{margin-top:12px}
+  .pgroup:first-child{margin-top:0}
+  .pgroup h3{margin:0 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px}
+  .pchip{border:1px solid #E0DBCD;border-radius:10px;overflow:hidden;background:#FBFAF6}
+  .pchip .col{height:42px}
   .pchip .meta{padding:5px 8px 6px}
   .pchip .hex{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
   .pchip .lbl{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.02em}
@@ -117,6 +117,7 @@
     <span class="loc" id="locline">Flower bed · Wijchen</span>
   </header>
   <main>
+    <section class="palette" id="pal-theme" aria-label="Theme colors"></section>
     <div id="status" class="status"></div>
     <div class="board">
       <div class="view view-ok">
@@ -132,6 +133,8 @@
     <span><i class="sw" style="background:#34BCD2"></i>watering</span>
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
   </div>
+
+  <section class="palette" id="pal-scene" aria-label="Colors drawn in the chart"></section>
       </div><!-- /board -->
 
     <section class="controls">
@@ -164,7 +167,7 @@
       </div>
     </section>
 
-    <section class="palette" id="palette" aria-label="Color palette"></section>
+    <section class="palette in-controls" id="pal-ui" aria-label="UI surface colors"></section>
   </main>
 
 
@@ -545,18 +548,17 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   document.getElementById('durVal').textContent=WATER_MIN;}
 
-/* ---- color palette: every color used on this page, grouped by role ---- */
-(function renderPalette(){
-  const groups=[
+/* ---- color palette: each group rendered inline, next to where its colors are used ---- */
+(function renderPalettes(){
+  // theme tokens — placed by the header, they set the whole shell
+  const theme=[
     ['CSS variables (:root)',[
       ['#E7E4DA','--bg'],['#4A463C','--ink'],['#8A8270','--faint'],['#5A4A33','--surface'],
       ['#1FA6BE','--table'],['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
     ]],
-    ['UI surfaces / chrome',[
-      ['#FBFAF6','surface / card'],['#F3F0E7','controls bg'],['#E7E2D5','seg track'],
-      ['#E6E1D3','ctl divider'],['#E0DBCD','borders'],['#EAF0E5','dur hover'],
-      ['#E9EEE7','demo on'],['#BDB6A4','scrollbar'],
-    ]],
+  ];
+  // colors drawn in the chart — placed under the chart legend
+  const scene=[
     ['Legend & water tints',[
       ['#3F7FA0','rain'],['#34BCD2','watering'],['#0C6478','water held (dark)'],
       ['#1FA6BE','pour end'],['#BDEAF1','water tint'],['#E8FAFD','water tint lt'],
@@ -579,16 +581,30 @@ function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
       ['#67563C','litter'],['#AC8856','topsoil A'],['#8C5E3C','subsoil B'],['#C6B488','substratum C'],
     ]],
   ];
-  let html='<h2>Color palette</h2><p>Every color used on this page, grouped by role.</p>';
-  for(const [name,chips] of groups){
-    html+=`<div class="pgroup"><h3>${name}</h3><div class="pgrid">`;
-    for(const [hex,lbl] of chips){
-      html+=`<div class="pchip"><div class="col" style="background:${hex}"></div>`
-           +`<div class="meta"><div class="hex">${hex}</div><div class="lbl">${lbl}</div></div></div>`;
+  // UI surfaces — placed by the controls
+  const ui=[
+    ['UI surfaces / chrome',[
+      ['#FBFAF6','surface / card'],['#F3F0E7','controls bg'],['#E7E2D5','seg track'],
+      ['#E6E1D3','ctl divider'],['#E0DBCD','borders'],['#EAF0E5','dur hover'],
+      ['#E9EEE7','demo on'],['#BDB6A4','scrollbar'],
+    ]],
+  ];
+  const render=(id,groups)=>{
+    const el=document.getElementById(id); if(!el) return;
+    let html='';
+    for(const [name,chips] of groups){
+      html+=`<div class="pgroup"><h3>${name}</h3><div class="pgrid">`;
+      for(const [hex,lbl] of chips){
+        html+=`<div class="pchip"><div class="col" style="background:${hex}"></div>`
+             +`<div class="meta"><div class="hex">${hex}</div><div class="lbl">${lbl}</div></div></div>`;
+      }
+      html+='</div></div>';
     }
-    html+='</div></div>';
-  }
-  document.getElementById('palette').innerHTML=html;
+    el.innerHTML=html;
+  };
+  render('pal-theme',theme);
+  render('pal-scene',scene);
+  render('pal-ui',ui);
 })();
 </script>
 </body>
