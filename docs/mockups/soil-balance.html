@@ -52,18 +52,14 @@
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
   .status{margin:4px 12px 12px;padding:13px 20px 14px;background:var(--card);border:1px solid var(--bg);border-radius:18px}
-  .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .status .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-  .status .word{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:0;line-height:1.1;margin-top:6px}
-  .status .detail{font-size:14px;color:var(--ink);margin-top:8px;line-height:1.4}
-  .status .metric{margin-top:10px;padding-top:10px;border-top:1px solid var(--bg)}
-  .status .pct{font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:0}
-  .status .sub{font-size:12px;color:var(--faint)}
+  .status .word{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:0;line-height:1.1;display:flex;align-items:center;gap:10px}
+  .status .pct{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:0;flex:none}
+  .status .sub{font-size:12px;color:var(--faint);margin-top:8px}
   .status .bar{position:relative;height:8px;background:var(--bg);border-radius:6px;margin-top:10px}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:6px}
-  .status .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--rust)}
-  .status .rfl{position:relative;height:13px}
-  .status .rfl span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:var(--rust);font-weight:700;top:1px;white-space:nowrap}
+  .status .mark{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:#FBFAF6;box-shadow:0 0 0 1px rgba(60,40,20,.45)}
   .view{display:none}
   body[data-state="ok"] .view-ok{display:block}
   .view-loading,.view-error{flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;min-height:260px;padding:32px 24px}
@@ -451,13 +447,11 @@ function renderStatus(){
     kick='Above refill point';
   }
   document.getElementById('status').innerHTML=
-    `<div class="kick"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${kick}</div>`
-   +`<div class="word" style="color:${color}">${word}</div>`
-   +`<div class="metric"><div style="display:flex;align-items:baseline;gap:8px">`
-   +`<span class="pct" style="color:${color}">${pct}<span style="font-size:14px;color:var(--faint)">%</span></span>`
-   +`<span class="sub">${Math.round(tl)} / ${TANK} mm held</span></div>`
+    `<div class="top"><div class="word" style="color:${color}"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${word}</div>`
+   +`<div class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:var(--faint)">%</span></div></div>`
    +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
-   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div></div>`;
+   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div>`
+   +`<div class="sub">${Math.round(tl)} / ${TANK} mm held · ${kick.toLowerCase()}</div>`;
 }
 function render(){
   G=build();
