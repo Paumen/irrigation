@@ -74,13 +74,14 @@
   .view-error h2{margin:0;font-size:14px;color:var(--rust);font-weight:600}
   .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls — compact settings list: label left, connected segmented control right ===== */
-  .controls{display:flex;flex-direction:column;background:#F3F0E7;border:1px solid #E0DBCD;border-radius:14px;margin:10px 12px 18px;padding:2px 16px}
-  .ctl{display:flex;align-items:center;justify-content:space-between;gap:6px 12px;flex-wrap:wrap;padding:9px 0}
+  .controls{display:flex;flex-direction:column;background:#F3F0E7;border:1px solid #E0DBCD;border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
+  .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px 10px;padding:9px 0}
   .ctl + .ctl{border-top:1px solid #E6E1D3}
-  .ctl .lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .ctl .seg,.ctl .dur{justify-self:end}
+  .ctl .lab{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
   /* segmented control — iOS sliding-thumb: active option rides a raised pill on an inset track (weight, not inversion) */
   .seg{display:inline-flex;gap:2px;padding:3px;border:1px solid #E0DBCD;border-radius:999px;background:#E7E2D5}
-  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:5px 13px;line-height:1.1;border-radius:999px;transition:.15s}
+  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:5px 11px;line-height:1.1;border-radius:999px;white-space:nowrap;transition:.15s}
   .seg button:hover{color:var(--ink)}
   .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:#FBFAF6;box-shadow:0 1px 3px rgba(0,0,0,.18)}
   .dur{display:inline-flex;align-items:stretch;border:1px solid #E0DBCD;border-radius:999px;background:#FBFAF6;overflow:hidden}
@@ -135,13 +136,13 @@
           <button>Loam</button>
           <button>Clay</button>
         </div></div>
-      <div class="ctl"><div class="lab">Sun exposure</div>
+      <div class="ctl"><div class="lab">Exposure</div>
         <div class="seg" data-group="sun">
           <button>Shade</button>
           <button>Half sun</button>
           <button aria-pressed="true">Full sun</button>
         </div></div>
-      <div class="ctl"><div class="lab">Watering duration</div>
+      <div class="ctl"><div class="lab">Duration</div>
         <div class="dur">
           <button onclick="bumpDur(-15)" aria-label="less">−</button>
           <div class="val"><b id="durVal">60</b><span>min</span></div>
