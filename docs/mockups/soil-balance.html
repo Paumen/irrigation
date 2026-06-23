@@ -10,7 +10,9 @@
 <style>
   :root{
     --bg:#E7E4DA; --ink:#3A352C; --faint:#8a8270;
-    --surface:#5A4A33; --table:#1FA6BE;
+    --surface:#5A4A33;
+    /* UI chrome */
+    --card:#FBFAF6; --line:#E0DBCD; --water:#1FA6BE;
     /* warm-accent palette — one tone per meaning */
     --today:#4F6B4A; --amber:#D98A2B; --rust:#B5471F;
     --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
@@ -25,11 +27,11 @@
   .key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
   .sw{width:13px;height:13px;border-radius:6px;display:inline-block}
   .scene{position:relative;width:auto;margin:0}
-  .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:#FBFAF6;z-index:3;pointer-events:none;
-    border-right:1px solid #e0dbcd}
+  .axis{position:absolute;top:0;left:0;width:44px;height:100%;background:var(--card);z-index:3;pointer-events:none;
+    border-right:1px solid var(--line)}
   .axis .lbl{position:absolute;left:3px;font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.02em;white-space:nowrap}
-  .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid #e0dbcd}
-  .axis .water{color:#1FA6BE}
+  .axis .tick{position:absolute;right:0;width:4px;border-top:1px solid var(--line)}
+  .axis .water{color:var(--water)}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
   /* always-visible custom scrollbar (native bars auto-hide on mobile) */
@@ -45,11 +47,11 @@
   }
   /* ===== app shell ===== */
   header.app{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px}
-  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:#4F6B4A;display:flex;align-items:center;gap:8px}
+  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:8px}
   header.app .loc{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
   /* ===== status headline (improvement #1) ===== */
-  .status{margin:4px 12px 12px;padding:13px 20px 14px;background:#FBFAF6;border:1px solid var(--bg);border-radius:18px}
+  .status{margin:4px 12px 12px;padding:13px 20px 14px;background:var(--card);border:1px solid var(--bg);border-radius:18px}
   .status .kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
   .status .word{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:0;line-height:1.1;margin-top:6px}
@@ -67,45 +69,33 @@
   .view-loading,.view-error{flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;min-height:260px;padding:32px 24px}
   body[data-state="loading"] .view-loading{display:flex}
   body[data-state="error"] .view-error{display:flex}
-  .spinner{width:30px;height:30px;border:3px solid #e0dbcd;border-top-color:#1FA6BE;border-radius:50%;animation:spin .9s linear infinite}
+  .spinner{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--water);border-radius:50%;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .view-loading p,.view-error p{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);max-width:270px;line-height:1.65}
   .view-error .icon{width:38px;height:38px;border-radius:50%;background:var(--bg);color:var(--rust);display:grid;place-items:center;font-size:20px;font-weight:700}
   .view-error h2{margin:0;font-size:14px;color:var(--rust);font-weight:600}
-  .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:#FBFAF6;font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
+  .btn{appearance:none;cursor:pointer;border:1px solid var(--today);background:var(--today);color:var(--card);font-family:var(--sans);font-size:14px;font-weight:600;line-height:1.1;padding:8px 16px;border-radius:999px}
   /* ===== controls — compact settings list: label left, connected segmented control right ===== */
-  .controls{display:flex;flex-direction:column;background:#F3F0E7;border:1px solid #E0DBCD;border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
+  .controls{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 8px 18px;padding:2px 11px}
   .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px 10px;padding:9px 0}
-  .ctl + .ctl{border-top:1px solid #E0DBCD}
+  .ctl + .ctl{border-top:1px solid var(--line)}
   .ctl .seg,.ctl .dur{justify-self:end}
   .ctl .lab{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
   /* segmented control — iOS sliding-thumb: active option rides a raised pill on an inset track (weight, not inversion) */
-  .seg{display:inline-flex;gap:2px;padding:3px;border:1px solid #E0DBCD;border-radius:999px;background:#E0DBCD}
+  .seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--line)}
   .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:5px 11px;line-height:1.1;border-radius:999px;white-space:nowrap;transition:.15s}
   .seg button:hover{color:var(--ink)}
-  .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:#FBFAF6;box-shadow:0 1px 3px rgba(0,0,0,.18)}
-  .dur{display:inline-flex;align-items:stretch;border:1px solid #E0DBCD;border-radius:999px;background:#FBFAF6;overflow:hidden}
+  .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+  .dur{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:999px;background:var(--card);overflow:hidden}
   .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:17px;color:var(--ink);display:grid;place-items:center;transition:.15s}
-  .dur button:hover{color:var(--today);background:#E0DBCD}
-  .dur .val{min-width:70px;padding:5px 0;border-left:1px solid #E0DBCD;border-right:1px solid #E0DBCD;display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);color:var(--ink)}
+  .dur button:hover{color:var(--today);background:var(--line)}
+  .dur .val{min-width:70px;padding:5px 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);color:var(--ink)}
   .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px}
   .dur-hint{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:2px}
   /* ===== footer ===== */
-  .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid #E0DBCD;margin-top:12px}
+  .app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 24px;border-top:1px solid var(--line);margin-top:12px}
   .app-foot .coords{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
-  /* ===== color palette — inline, placed near where each color is used ===== */
-  .palette{margin:6px 12px 14px}
-  .palette.in-controls{margin:2px 8px 18px}
-  .pgroup{margin-top:12px}
-  .pgroup:first-child{margin-top:0}
-  .pgroup h3{margin:0 0 7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
-  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px}
-  .pchip{border:1px solid #E0DBCD;border-radius:10px;overflow:hidden;background:#FBFAF6}
-  .pchip .col{height:42px}
-  .pchip .meta{padding:5px 8px 6px}
-  .pchip .hex{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink)}
-  .pchip .lbl{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.02em}
 </style>
 </head>
 <body class="booting" data-state="ok">
@@ -114,7 +104,6 @@
     <span class="loc" id="locline">Flower bed · Wijchen</span>
   </header>
   <main>
-    <section class="palette" id="pal-theme" aria-label="Theme colors"></section>
     <div id="status" class="status"></div>
     <div class="board">
       <div class="view view-ok">
@@ -125,13 +114,12 @@
   <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
 
   <div class="key">
-    <span><i class="sw" style="background:linear-gradient(#D98C5A,#B5471F)"></i>loss</span>
+    <span><i class="sw" style="background:linear-gradient(#E2965A,#B5471F)"></i>loss</span>
     <span><i class="sw" style="background:#3F7FA0"></i>rain</span>
     <span><i class="sw" style="background:#34BCD2"></i>watering</span>
     <span><i class="sw" style="background:linear-gradient(#34BCD2,#0C6478)"></i>water held</span>
   </div>
 
-  <section class="palette" id="pal-scene" aria-label="Colors drawn in the chart"></section>
       </div><!-- /board -->
 
     <section class="controls">
@@ -164,7 +152,6 @@
       </div>
     </section>
 
-    <section class="palette in-controls" id="pal-ui" aria-label="UI surface colors"></section>
   </main>
 
 
@@ -426,7 +413,7 @@ function plant(x,sY,v,rng){
     const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
     const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
     s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
-  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#FBFAF6" stroke="#BEB6A0" stroke-width="0.6"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#AF6E4B"/>`;}
+  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#FBFAF6" stroke="#8A8270" stroke-width="0.6"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#AF6E4B"/>`;}
   else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#FBFAF6',(h-0.42)/0.2)}"/>`;}
   return s;
 }
@@ -542,64 +529,6 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 }));
 function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
   document.getElementById('durVal').textContent=WATER_MIN;}
-
-/* ---- color palette: each group rendered inline, next to where its colors are used ---- */
-(function renderPalettes(){
-  // theme tokens — placed by the header, they set the whole shell
-  const theme=[
-    ['CSS variables (:root)',[
-      ['#E7E4DA','--bg'],['#3A352C','--ink'],['#8A8270','--faint / scrollbar'],['#5A4A33','--surface'],
-      ['#1FA6BE','--table'],['#4F6B4A','--today'],['#D98A2B','--amber'],['#B5471F','--rust'],
-    ]],
-  ];
-  // colors drawn in the chart — placed under the chart legend
-  const scene=[
-    ['Legend & water tints',[
-      ['#3F7FA0','rain'],['#34BCD2','watering'],['#0C6478','water held (dark)'],
-      ['#1FA6BE','pour end'],['#BDEAF1','water tint'],['#E8FAFD','water tint lt'],
-      ['#D98C5A','loss top'],['#B5471F','loss bottom'],
-    ]],
-    ['Sun / heat',[
-      ['#E0A074','glow'],['#E2965A','sunCore 0'],['#C25A2A','sunCore .5 / shimmer'],
-      ['#9E3712','sunCore 1 / sun stroke 0'],['#8A3214','sun stroke 1'],
-    ]],
-    ['rootColor ramp (0→1)',[
-      ['#2A2620','0'],['#56422E','.10'],['#8A6A3E','.30'],['#7E8A3E','.60'],['#4F7F4A','1'],
-    ]],
-    ['plantColor ramp (0→1)',[
-      ['#3A352C','0'],['#9A7A3C','.10'],['#7E8A3E','.25'],['#4F7F4A','.55'],['#3F7A3B','1'],
-    ]],
-    ['leafColor ramp (0→1)',[
-      ['#67563C','0'],['#9C8A45','.25'],['#6FA06A','.6'],['#5F9A5A','1'],
-    ]],
-    ['Soil horizons',[
-      ['#67563C','litter'],['#AC8856','topsoil A'],['#8C5E3C','subsoil B'],['#C6B488','substratum C'],
-    ]],
-  ];
-  // UI surfaces — placed by the controls
-  const ui=[
-    ['UI surfaces / chrome',[
-      ['#FBFAF6','surface / card'],['#F3F0E7','controls bg'],
-      ['#E0DBCD','borders / divider / track / dur hover'],
-    ]],
-  ];
-  const render=(id,groups)=>{
-    const el=document.getElementById(id); if(!el) return;
-    let html='';
-    for(const [name,chips] of groups){
-      html+=`<div class="pgroup"><h3>${name}</h3><div class="pgrid">`;
-      for(const [hex,lbl] of chips){
-        html+=`<div class="pchip"><div class="col" style="background:${hex}"></div>`
-             +`<div class="meta"><div class="hex">${hex}</div><div class="lbl">${lbl}</div></div></div>`;
-      }
-      html+='</div></div>';
-    }
-    el.innerHTML=html;
-  };
-  render('pal-theme',theme);
-  render('pal-scene',scene);
-  render('pal-ui',ui);
-})();
 </script>
 </body>
 </html>
