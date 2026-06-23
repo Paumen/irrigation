@@ -270,7 +270,7 @@ function build(){
       weather+=`<g opacity="0.92">`
         +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.2+heat*0.34).toFixed(2)}"/>`
         +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${hexLerp('#9E3712','#8A3214',heat)}" stroke-width="0.8"/></g>`;
+        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="#9E3712" stroke-width="0.8"/></g>`;
     }
     // rain
     if(d.rain>0.05){
