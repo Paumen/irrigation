@@ -1,12 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="798" height="1920" font-family="ui-monospace,Menlo,Consolas,monospace">
 <rect width="798" height="1920" fill="#E7E4DA"/>
 <text x="24" y="40" font-size="16" font-weight="700" fill="#4A463C">Soil-Balance palette — 58 colors, clustered by similarity</text>
-<text x="24" y="58" font-size="11" fill="#4A463C"><tspan font-weight="700" fill="#4F6B4A">SVG</tspan> badge = drawn in the chart (48)    ·    unbadged = CSS/UI chrome only (10)</text>
+<text x="24" y="58" font-size="11" fill="#4A463C"><tspan font-weight="700" fill="#4F6B4A">SVG</tspan> = drawn in chart (48)  ·  unbadged = CSS/UI only (10)  ·  <tspan font-weight="700" fill="#9C4A2E">text</tspan> = used on chart labels (4)</text>
 <text x="24" y="86" font-size="13" font-weight="700" fill="#4A463C">Greens — light</text>
 <rect x="24" y="98" width="142" height="58" rx="6" fill="#FBFAF6" stroke="#00000022"/>
 <text x="34" y="145" font-size="12" font-weight="600" fill="#222">#FBFAF6</text>
 <rect x="133" y="104" width="27" height="14" rx="7" fill="#222" opacity="0.9"/>
 <text x="146.5" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#FBFAF6">SVG</text>
+<rect x="30" y="104" width="30" height="14" rx="7" fill="#222" opacity="0.9"/>
+<text x="45" y="114" text-anchor="middle" font-size="9" font-weight="700" fill="#FBFAF6">text</text>
 <text x="24" y="169" font-size="10" fill="#4A463C">white/surfaces</text>
 <rect x="174" y="98" width="142" height="58" rx="6" fill="#F3F0E7" stroke="#00000022"/>
 <text x="184" y="145" font-size="12" font-weight="600" fill="#222">#F3F0E7</text>
@@ -92,11 +94,15 @@
 <text x="184" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#7A7363</text>
 <rect x="283" y="498" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
 <text x="296.5" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#7A7363">SVG</text>
+<rect x="180" y="498" width="30" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="195" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#7A7363">text</text>
 <text x="174" y="563" font-size="10" fill="#4A463C">future tick</text>
 <rect x="324" y="492" width="142" height="58" rx="6" fill="#5B5547" stroke="#00000022"/>
 <text x="334" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#5B5547</text>
 <rect x="433" y="498" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
 <text x="446.5" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#5B5547">SVG</text>
+<rect x="330" y="498" width="30" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="345" y="508" text-anchor="middle" font-size="9" font-weight="700" fill="#5B5547">text</text>
 <text x="324" y="563" font-size="10" fill="#4A463C">text/tick</text>
 <rect x="474" y="492" width="142" height="58" rx="6" fill="#4A463C" stroke="#00000022"/>
 <text x="484" y="539" font-size="12" font-weight="600" fill="#FBFAF6">#4A463C</text>
@@ -199,6 +205,8 @@
 <text x="34" y="1235" font-size="12" font-weight="600" fill="#FBFAF6">#4F6B4A</text>
 <rect x="133" y="1194" width="27" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
 <text x="146.5" y="1204" text-anchor="middle" font-size="9" font-weight="700" fill="#4F6B4A">SVG</text>
+<rect x="30" y="1194" width="30" height="14" rx="7" fill="#FBFAF6" opacity="0.9"/>
+<text x="45" y="1204" text-anchor="middle" font-size="9" font-weight="700" fill="#4F6B4A">text</text>
 <text x="24" y="1259" font-size="10" fill="#4A463C">--today/can/btn</text>
 <text x="24" y="1306" font-size="13" font-weight="700" fill="#4A463C">Oranges/browns — deep</text>
 <rect x="24" y="1318" width="142" height="58" rx="6" fill="#3A352C" stroke="#00000022"/>
