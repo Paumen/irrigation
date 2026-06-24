@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soil-Balance — Wijchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="PAUMEN.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header>
+    <h1>Soil-Balance</h1>
+    <p data-role="loc">Flower bed · Wijchen</p>
+  </header>
+
+  <main>
+    <!-- STATUS (SCO-1): when to water, at a glance. -->
+    <article data-region="status" data-state="loading">
+      <p data-role="headline">
+        <output data-role="verdict">Reading the soil…</output>
+        <output data-role="percent"></output>
+      </p>
+      <p data-role="bar">
+        <b data-role="fill"></b>
+        <i data-role="refill"></i>
+      </p>
+      <p data-role="reading">Fetching four weeks of weather.</p>
+    </article>
+
+    <!-- GRAPH (UIX-4/UIX-5): soil cross-section, full-bleed, horizontal scroll.
+         The SVG is injected into the viewport by the renderer in a later step. -->
+    <figure data-region="graph" data-state="loading">
+      <p data-role="message">Loading weather…</p>
+      <figure data-role="viewport"></figure>
+      <figcaption data-role="scrollbar">
+        <button type="button" data-role="thumb" aria-label="Scroll the timeline"></button>
+      </figcaption>
+    </figure>
+
+    <!-- CONTROLS (CTR-*): defaults per CTR-5 / CTR-1 (checked + value 60). -->
+    <form data-region="controls">
+      <fieldset data-skin="toggle" data-control="planting">
+        <legend>Planting</legend>
+        <p data-role="seg">
+          <label><input type="radio" name="planting" value="Turf">Turf</label>
+          <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+          <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+        </p>
+      </fieldset>
+
+      <fieldset data-skin="toggle" data-control="soil">
+        <legend>Soil</legend>
+        <p data-role="seg">
+          <label><input type="radio" name="soil" value="Sand">Sand</label>
+          <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+          <label><input type="radio" name="soil" value="Loam">Loam</label>
+          <label><input type="radio" name="soil" value="Clay">Clay</label>
+        </p>
+      </fieldset>
+
+      <fieldset data-skin="toggle" data-control="sun">
+        <legend>Exposure</legend>
+        <p data-role="seg">
+          <label><input type="radio" name="sun" value="Shade">Shade</label>
+          <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+          <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+        </p>
+      </fieldset>
+
+      <fieldset data-control="duration">
+        <legend>Duration</legend>
+        <p data-role="stepper">
+          <button type="button" data-step="-15" aria-label="Less watering time">−</button>
+          <output data-role="minutes">60</output>
+          <small data-role="unit">min</small>
+          <button type="button" data-step="15" aria-label="More watering time">+</button>
+        </p>
+      </fieldset>
+    </form>
+  </main>
+</body>
+</html>
