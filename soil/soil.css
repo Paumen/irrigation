@@ -44,12 +44,13 @@
 
 @layer default {
   :root {
-    --accent-hue: 200;
-    --accent-chroma: 0.14;
-    --surface-hue: 250;
+    /* Soil-Balance inputs: green accent, warm-paper surfaces, light only. */
+    --accent-hue: 145;
+    --accent-chroma: 0.08;
+    --surface-hue: 95;
     --jump: 0.17;
 
-    color-scheme: light dark;
+    color-scheme: light;
 
     --accent: oklch(58% var(--accent-chroma) var(--accent-hue));
     --accent-up: oklch(
@@ -79,14 +80,15 @@
       oklch(72% 0.01 var(--surface-hue))
     );
     --text-on-accent: oklch(96% 0.01 var(--accent-hue));
-    --danger-hue: 25;
-    --success-hue: 145;
+    --danger-hue: 35;
+    --success-hue: 150;
     --color-danger: oklch(
       58% max(var(--accent-chroma), 0.12) var(--danger-hue)
     );
     --color-success: oklch(
       58% max(var(--accent-chroma), 0.12) var(--success-hue)
     );
+    --color-warning: oklch(72% max(var(--accent-chroma), 0.13) 75);
     --0: 0;
     --xs: clamp(0.2rem, 0.4vw, 0.4rem);
     --s: clamp(0.4rem, 1vw, 0.8rem);
@@ -591,4 +593,142 @@
     border-color: var(--color-success);
     color: var(--text-on-accent);
   }
+}
+
+/* ═══════════════════════════ Soil-Balance ═══════════════════════════
+   App extensions to the kit above — same spirit: token-driven, element +
+   attribute selectors only, the bespoke graph quarantined behind
+   data-skin="freeform". No invented styling-hook classes. */
+
+@layer default {
+  body {
+    max-inline-size: 920px;
+  }
+
+  /* App header: title + location sit inline, not in the 12-col grid. */
+  header {
+    grid-template-columns: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--xs) var(--s);
+  }
+
+  /* Status + controls cards: a tighter stack than the kit's default --l. */
+  article:not([data-skin~="freeform"]) {
+    gap: var(--m);
+  }
+
+  /* Control rows read as one tight segmented control rather than spreading
+     across the 12-col grid (only the controls card uses fieldsets). */
+  fieldset {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: var(--xs);
+  }
+
+  /* Moisture gauge — styled <meter>, the same appearance:none + vendor
+     pseudo-element technique the kit uses for select / range. low and high
+     split the track into water-now / soon / comfortable; the colour change
+     at `low` is the refill point, so no separate marker is needed. */
+  meter {
+    inline-size: 100%;
+    block-size: var(--s);
+    appearance: none;
+    border: none;
+    border-radius: var(--s);
+    background: var(--neutral-edge);
+    overflow: hidden;
+  }
+
+  meter::-webkit-meter-bar {
+    border: none;
+    border-radius: var(--s);
+    background: var(--neutral-edge);
+  }
+
+  meter::-webkit-meter-optimum-value {
+    background: var(--color-success);
+  }
+
+  meter::-webkit-meter-suboptimum-value {
+    background: var(--color-warning);
+  }
+
+  meter::-webkit-meter-even-less-good-value {
+    background: var(--color-danger);
+  }
+
+  meter::-moz-meter-bar {
+    background: var(--accent);
+  }
+}
+
+@layer skin {
+  /* The amber "water soon" tier the kit's error|success states omit. */
+  [data-skin~="warn"] {
+    color: var(--color-warning);
+  }
+}
+
+/* ── Graph (UIX-4/5): generated SVG + horizontal scroll, irreducibly
+   custom, so it lives behind data-skin="freeform". Unlayered so these win
+   over the skin-layer `all: revert`; element + :has() selectors keep them
+   free of styling-hook attributes. ── */
+article[data-skin~="freeform"] {
+  display: grid;
+  gap: var(--s);
+  margin-inline: calc(-1 * var(--m));
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+article[data-skin~="freeform"] p:has(> svg) {
+  margin: 0;
+  overflow: auto hidden;
+  scrollbar-width: none;
+}
+
+article[data-skin~="freeform"] p:has(> svg)::-webkit-scrollbar {
+  display: none;
+}
+
+article[data-skin~="freeform"] svg {
+  display: block;
+}
+
+article[data-skin~="freeform"] p:has(> button) {
+  position: relative;
+  margin: 0 var(--m);
+  block-size: 0.6rem;
+  background: var(--neutral-mute);
+  border-radius: var(--s);
+}
+
+article[data-skin~="freeform"] p:has(> button) > button {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 2.5rem;
+  min-inline-size: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--s);
+  background: var(--neutral-edge);
+  cursor: grab;
+}
+
+article[data-skin~="freeform"] p:not(:has(svg, button)) {
+  display: grid;
+  place-items: center;
+  min-block-size: 22rem;
+  text-align: center;
+  color: var(--text-mute);
+}
+
+article[data-skin~="freeform"][data-state="error"] p:not(:has(svg, button)) {
+  color: var(--color-danger);
 }
