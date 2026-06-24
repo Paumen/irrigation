@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soil-Balance — Wijchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="soil.css">
+</head>
+<body>
+  <header>
+    <h1>Soil-Balance</h1>
+    <p data-skin="mute"><small>Flower bed · Wijchen</small></p>
+  </header>
+
+  <!-- STATUS (SCO-1): when to water. Sample "ready" snapshot until the engine
+       is wired; the three urgency tones are error (rust) / warn (amber) /
+       success (green), carried by the verdict and the meter together. -->
+  <article>
+    <p><strong>Reading the soil…</strong><strong></strong></p>
+    <meter min="0" max="39" low="19.5" high="27" optimum="39" value="20" aria-label="Soil moisture, share of capacity"></meter>
+    <p data-skin="mute"><small>Fetching weather…</small></p>
+  </article>
+
+  <!-- GRAPH (UIX-4/5): generated soil-column SVG + horizontal scroll, behind
+       data-skin="freeform". The renderer injects the scroll viewport (a <p>
+       holding the <svg>) and the scrollbar (a <p> holding the thumb <button>);
+       until then the loading message is the only child. -->
+  <article data-skin="freeform" data-state="loading" aria-label="Soil moisture over time">
+    <p>Loading weather…</p>
+  </article>
+
+  <!-- CONTROLS (CTR-*): a card of fieldset rows; toggle skin for the
+       single-selects. Defaults per CTR-5 (Flower bed / Sandy loam / Full sun)
+       and CTR-1 (60 min). -->
+  <article>
+    <fieldset data-skin="toggle">
+      <legend>Planting</legend>
+      <label><input type="radio" name="planting" value="Turf">Turf</label>
+      <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+      <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+    </fieldset>
+
+    <fieldset data-skin="toggle">
+      <legend>Soil</legend>
+      <label><input type="radio" name="soil" value="Sand">Sand</label>
+      <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+      <label><input type="radio" name="soil" value="Loam">Loam</label>
+      <label><input type="radio" name="soil" value="Clay">Clay</label>
+    </fieldset>
+
+    <fieldset data-skin="toggle">
+      <legend>Exposure</legend>
+      <label><input type="radio" name="sun" value="Shade">Shade</label>
+      <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+      <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Duration</legend>
+      <button type="button" data-skin="ghost" aria-label="Less watering time">−</button>
+      <p><strong>60</strong> <small>min</small></p>
+      <button type="button" data-skin="ghost" aria-label="More watering time">+</button>
+    </fieldset>
+  </article>
+
+  <script src="app.js"></script>
+</body>
+</html>
