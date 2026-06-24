@@ -21,8 +21,10 @@
     /* shadows */
     --shadow-mark:0 0 0 1px rgba(60,40,20,.45);
     --shadow-seg:0 1px 3px rgba(0,0,0,.18);
-    /* spacing — 4px grid; all box spacing normalized onto this scale */
-    --sp-1:2px; --sp-2:4px; --sp-3:8px; --sp-4:12px; --sp-5:16px; --sp-6:20px;
+    /* spacing + type — PAUMEN fluid scale (clamp); --sp-* remapped onto it */
+    --xs:clamp(0.2rem,0.4vw,0.4rem); --s:clamp(0.4rem,1vw,0.8rem);
+    --m:clamp(0.8rem,2vw,1.6rem); --l:clamp(1.2rem,4vw,2.4rem); --xl:clamp(1.6rem,6vw,3.6rem);
+    --sp-1:var(--xs); --sp-2:var(--xs); --sp-3:var(--s); --sp-4:var(--m); --sp-5:var(--l); --sp-6:var(--l);
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%}
@@ -40,15 +42,15 @@
     svg,.grow{transition:none!important}.booting svg{opacity:1}.booting .grow{transform:none;opacity:1}
   }
   header.app{display:flex;align-items:center;gap:var(--sp-4);flex-wrap:wrap;padding:var(--sp-4)}
-  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:var(--sp-3)}
-  header.app .loc{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
+  header.app h1{margin:0;font-size:var(--l);font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:var(--sp-3)}
+  header.app .loc{font-family:var(--mono);font-size:var(--m);color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
   .status{margin:var(--sp-2) var(--sp-4) var(--sp-4);padding:var(--sp-4) var(--sp-6) var(--sp-5);background:var(--card);border:1px solid var(--bg);border-radius:var(--r-lg)}
   .status .top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-4)}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-  .status .word{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:0;line-height:1.1;display:flex;align-items:center;gap:var(--sp-4)}
-  .status .pct{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:0;flex:none}
-  .status .sub{font-size:12px;color:var(--faint);margin-top:var(--sp-3)}
+  .status .word{font-family:var(--serif);font-size:var(--xl);font-weight:500;letter-spacing:0;line-height:1.1;display:flex;align-items:center;gap:var(--sp-4)}
+  .status .pct{font-family:var(--serif);font-size:var(--xl);font-weight:600;letter-spacing:0;flex:none}
+  .status .sub{font-size:var(--m);color:var(--faint);margin-top:var(--sp-3)}
   .status .bar{position:relative;height:8px;background:var(--bg);border-radius:var(--r-sm);margin-top:var(--sp-4)}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:var(--r-sm)}
   .status .mark{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:var(--r-xs);background:var(--card);box-shadow:var(--shadow-mark)}
@@ -56,16 +58,16 @@
   .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:var(--sp-3) var(--sp-4);padding:var(--sp-3) 0}
   .ctl + .ctl{border-top:1px solid var(--line)}
   .ctl .seg,.ctl .dur{justify-self:end}
-  .ctl .lab{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+  .ctl .lab{font-family:var(--mono);font-size:var(--m);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
   .seg{display:inline-flex;gap:var(--sp-1);padding:var(--sp-2);border:1px solid var(--line);border-radius:var(--r-pill);background:var(--line)}
-  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:var(--sp-2) var(--sp-4);line-height:1.1;border-radius:var(--r-pill);white-space:nowrap;transition:.15s}
+  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:var(--m);padding:var(--sp-2) var(--sp-4);line-height:1.1;border-radius:var(--r-pill);white-space:nowrap;transition:.15s}
   .seg button:hover{color:var(--ink)}
   .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:var(--card);box-shadow:var(--shadow-seg)}
   .dur{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--card);overflow:hidden}
-  .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:17px;color:var(--ink);display:grid;place-items:center;transition:.15s}
+  .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:var(--m);color:var(--ink);display:grid;place-items:center;transition:.15s}
   .dur button:hover{color:var(--today);background:var(--line)}
   .dur .val{min-width:70px;padding:var(--sp-2) 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:var(--sp-2);font-family:var(--mono);color:var(--ink)}
-  .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px}
+  .dur .val b{font-size:var(--m);font-weight:600}.dur .val span{color:var(--faint);font-size:var(--m)}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
 </style>
 </head>
@@ -184,6 +186,7 @@ function build(){
   const cx=i=>AX+dayW*(i+0.5);
   const tableY=lv=>SOIL_BOT-(clamp(lv,0,TANK)/TANK)*SOIL_D;
   const todayIdx=DATA.findIndex(d=>d.date===TODAY);
+  const _m=Math.min(25.6,Math.max(12.8,0.02*Math.min(window.innerWidth,920))), K=_m/12, Hd=H+Math.ceil(60*(K-1));
   const R=(W-PADR);
   const refillY=tableY(REFILL);
 
@@ -277,18 +280,18 @@ function build(){
   let ticks='';
   DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx;
     const dc=isT?'var(--today)':'var(--ink)', wc=dc, bold=isT?' font-weight="700"':'';
-    ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+17}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${dc}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+30}" text-anchor="middle" font-family="${SVGMONO}" font-size="12"${bold} fill="${wc}">${d.wd}</text>`;});
+    ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+5+12*K}" text-anchor="middle" font-family="${SVGMONO}" font-size="${(12*K).toFixed(1)}"${bold} fill="${dc}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+5+25*K}" text-anchor="middle" font-family="${SVGMONO}" font-size="${(12*K).toFixed(1)}"${bold} fill="${wc}">${d.wd}</text>`;});
   const tx=cx(todayIdx);
-  const NOW='var(--today)', fw=44, fh=15, fy=3;
+  const NOW='var(--today)', fw=44*K, fh=15*K, fy=3;
   const today=
      `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
     +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
-    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="7.5" fill="${NOW}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="10" font-weight="700" fill="#FBFAF6" letter-spacing=".1em">TODAY</text>`;
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(7.5*K).toFixed(1)}" fill="${NOW}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="${(10*K).toFixed(1)}" font-weight="700" fill="#FBFAF6" letter-spacing=".1em">TODAY</text>`;
   let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${H}" width="${W.toFixed(0)}" height="${H}" xmlns="http://www.w3.org/2000/svg" font-family="${'ui-sans-serif,system-ui,sans-serif'}">
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="${'ui-sans-serif,system-ui,sans-serif'}">
     <defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
   return {svg,W,dayW,todayIdx,cx,tableY};
 }
