@@ -21,13 +21,15 @@
     /* shadows */
     --shadow-mark:0 0 0 1px rgba(60,40,20,.45);
     --shadow-seg:0 1px 3px rgba(0,0,0,.18);
+    /* spacing — 4px grid; all box spacing normalized onto this scale */
+    --sp-1:2px; --sp-2:4px; --sp-3:8px; --sp-4:12px; --sp-5:16px; --sp-6:20px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%}
   .scene{position:relative;width:auto;margin:0}
   .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .scroll::-webkit-scrollbar{display:none}
-  .sbar{position:relative;height:9px;margin:8px 12px 0;background:var(--bg);border-radius:var(--r-sm);touch-action:none}
+  .sbar{position:relative;height:9px;margin:var(--sp-3) var(--sp-4) 0;background:var(--bg);border-radius:var(--r-sm);touch-action:none}
   .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:var(--faint);border-radius:var(--r-sm);cursor:grab}
   .sthumb:active{cursor:grabbing;background:var(--faint)}
   svg{display:block;transition:opacity .7s ease}
@@ -37,32 +39,32 @@
   @media (prefers-reduced-motion: reduce){
     svg,.grow{transition:none!important}.booting svg{opacity:1}.booting .grow{transform:none;opacity:1}
   }
-  header.app{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px}
-  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:8px}
+  header.app{display:flex;align-items:center;gap:var(--sp-4);flex-wrap:wrap;padding:var(--sp-4) var(--sp-4) var(--sp-4)}
+  header.app h1{margin:0;font-size:20px;font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:var(--sp-3)}
   header.app .loc{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
   .board{position:relative}
-  .status{margin:4px 12px 12px;padding:13px 20px 14px;background:var(--card);border:1px solid var(--bg);border-radius:var(--r-lg)}
-  .status .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+  .status{margin:var(--sp-2) var(--sp-4) var(--sp-4);padding:var(--sp-4) var(--sp-6) var(--sp-5);background:var(--card);border:1px solid var(--bg);border-radius:var(--r-lg)}
+  .status .top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-4)}
   .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-  .status .word{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:0;line-height:1.1;display:flex;align-items:center;gap:10px}
+  .status .word{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:0;line-height:1.1;display:flex;align-items:center;gap:var(--sp-4)}
   .status .pct{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:0;flex:none}
-  .status .sub{font-size:12px;color:var(--faint);margin-top:8px}
-  .status .bar{position:relative;height:8px;background:var(--bg);border-radius:var(--r-sm);margin-top:10px}
+  .status .sub{font-size:12px;color:var(--faint);margin-top:var(--sp-3)}
+  .status .bar{position:relative;height:8px;background:var(--bg);border-radius:var(--r-sm);margin-top:var(--sp-4)}
   .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:var(--r-sm)}
   .status .mark{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:var(--r-xs);background:var(--card);box-shadow:var(--shadow-mark)}
-  .controls{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);margin:10px 8px 18px;padding:2px 11px}
-  .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:9px 10px;padding:9px 0}
+  .controls{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);margin:var(--sp-4) var(--sp-3) var(--sp-6);padding:var(--sp-1) var(--sp-4)}
+  .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:var(--sp-3) var(--sp-4);padding:var(--sp-3) 0}
   .ctl + .ctl{border-top:1px solid var(--line)}
   .ctl .seg,.ctl .dur{justify-self:end}
   .ctl .lab{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
-  .seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--line)}
-  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:5px 11px;line-height:1.1;border-radius:var(--r-pill);white-space:nowrap;transition:.15s}
+  .seg{display:inline-flex;gap:var(--sp-1);padding:var(--sp-2);border:1px solid var(--line);border-radius:var(--r-pill);background:var(--line)}
+  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:13px;padding:var(--sp-2) var(--sp-4);line-height:1.1;border-radius:var(--r-pill);white-space:nowrap;transition:.15s}
   .seg button:hover{color:var(--ink)}
   .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:var(--card);box-shadow:var(--shadow-seg)}
   .dur{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--card);overflow:hidden}
   .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:17px;color:var(--ink);display:grid;place-items:center;transition:.15s}
   .dur button:hover{color:var(--today);background:var(--line)}
-  .dur .val{min-width:70px;padding:5px 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:4px;font-family:var(--mono);color:var(--ink)}
+  .dur .val{min-width:70px;padding:var(--sp-2) 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:var(--sp-2);font-family:var(--mono);color:var(--ink)}
   .dur .val b{font-size:14px;font-weight:600}.dur .val span{color:var(--faint);font-size:11px}
   @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
 </style>
