@@ -22,7 +22,6 @@
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    grid-template-columns: none;
     gap: var(--s);
   }
 
@@ -106,6 +105,10 @@
   [data-role="viewport"] {
     overflow: auto hidden;
     scrollbar-width: none;
+  }
+
+  [data-role="viewport"]::-webkit-scrollbar {
+    display: none;
   }
 
   /* Loading / error message (DAT-3) — shown only in those states. */
