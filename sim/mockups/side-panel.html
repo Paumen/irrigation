@@ -1,0 +1,190 @@
+<!doctype html>
+<!--
+  STUB — side panel, per docs/sim_ui.md. Static mockup to react to, not wired to the engine.
+  Concern: the overlaying inspector (U8, U17–U23). Right-edge drawer (chosen), rotor head selected.
+  Numbers/labels are hand-faked placeholders. U-IDs are tagged inline so the spec can be checked
+  against the pixels.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>side panel · stub</title>
+<style>
+  /* U1 light · U2 phone-portrait first · U3 very compact · U5 modern Chromium only */
+  :root {
+    --bg: #f6f7f5;
+    --ink: #1c2420;
+    --muted: #6b7770;
+    --line: #d8ded8;
+    --panel: #ffffff;
+    --accent: #2f7d4f;      /* watering / good */
+    --warn: #c4781f;        /* starved / attention */
+    --water: #2f6fd0;
+    --r: 10px;
+    --pad: 10px;
+    font-synthesis: none;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    font: 13px/1.35 system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* ---- diagram: always the main view, never shrunk (U7, U8) ---- */
+  .diagram {
+    position: fixed; inset: 0;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(circle at 30% 35%, #eef2ee, var(--bg) 60%);
+  }
+  .diagram svg { width: min(92vw, 420px); height: auto; opacity: .9; }
+  .hint { fill: var(--muted); font-size: 9px; }
+  .selected { outline: 2px dashed var(--accent); outline-offset: 3px; }
+
+  /* the arc wedge lives ON the diagram — arc's one home is the wedge (U22) */
+  .wedge { fill: color-mix(in srgb, var(--water) 22%, transparent); stroke: var(--water); stroke-width: 1; }
+  .throw-label { fill: var(--water); font-size: 8px; }
+
+  /* ---- side panel: right-edge drawer overlaying the diagram (U8, U23) ----
+     open only while an item is selected; the one inspector pattern on every screen (U23) */
+  .panel {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(86vw, 320px);
+    background: var(--panel);
+    border-left: 1px solid var(--line);
+    box-shadow: -8px 0 24px rgba(0,0,0,.10);
+    display: flex; flex-direction: column;
+    padding: var(--pad);
+    gap: 8px;
+    overflow-y: auto;
+  }
+
+  .head { display: flex; align-items: baseline; gap: 6px; }
+  .head h1 { font-size: 14px; font-weight: 650; }
+  .head .kind { color: var(--muted); font-size: 11px; }
+  .head button {
+    margin-left: auto; border: 0; background: none; color: var(--muted);
+    font-size: 18px; line-height: 1; cursor: pointer; padding: 2px 4px;
+  }
+
+  /* status chips = the readings (U9): head -> watering / starved */
+  .status { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip {
+    font-size: 10px; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--muted); background: #fbfcfb;
+  }
+  .chip.on   { color: #fff; background: var(--accent); border-color: var(--accent); }
+  .chip.warn { color: #fff; background: var(--warn);   border-color: var(--warn); }
+
+  /* dense number block — live values (U17) read against catalog range (U18) */
+  .nums { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: center; }
+  .nums dt { color: var(--muted); font-size: 11px; }
+  .nums dd { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; white-space: nowrap; }
+  .nums dd.bar { grid-column: 1 / -1; }
+  .nums dd.bar meter { display: block; width: 100%; height: 5px; }
+
+  .group { border-top: 1px solid var(--line); padding-top: 7px; display: grid; gap: 6px; }
+  .group > .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+
+  /* controls live at item level (U19) — only the ones this item owns */
+  .row { display: flex; align-items: center; gap: 8px; }
+  .row > .name { flex: 1; }
+  select, .toggle { font: inherit; }
+  select {
+    border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; background: #fff; color: var(--ink);
+  }
+  .toggle {
+    appearance: none; width: 38px; height: 22px; border-radius: 999px; background: var(--line);
+    position: relative; cursor: pointer; transition: background .15s; border: 0; flex: none;
+  }
+  .toggle::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+    border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: left .15s;
+  }
+  .toggle:checked { background: var(--accent); }
+  .toggle:checked::after { left: 18px; }
+
+  .note { color: var(--muted); font-size: 10px; }
+  .deferred { color: #b04a4a; }
+</style>
+</head>
+<body>
+
+<!-- diagram behind the panel, with one head selected and its arc wedge drawn (U6, U14) -->
+<div class="diagram" aria-hidden="true">
+  <svg viewBox="0 0 300 220">
+    <line x1="20" y1="60" x2="120" y2="60" stroke="#9bb8e6" stroke-width="3"/>
+    <line x1="120" y1="60" x2="120" y2="150" stroke="#9bb8e6" stroke-width="3"/>
+    <circle cx="120" cy="60" r="3" fill="#2f6fd0"/>
+    <!-- the selected rotor head -->
+    <g class="selected" transform="translate(120,150)">
+      <path class="wedge" d="M0,0 L62,-36 A72 72 0 0 0 72,4 Z"/>
+      <circle r="5" fill="#2f7d4f"/>
+      <text class="throw-label" x="40" y="-30">7.2 m</text>
+    </g>
+    <text class="hint" x="14" y="200">diagram fills the view; tap an item to inspect (U7, U23)</text>
+  </svg>
+</div>
+
+<!-- ============ SIDE PANEL ============ -->
+<aside class="panel" aria-label="inspector">
+
+  <div class="head">
+    <h1>Z2 head 1</h1>
+    <span class="kind">head.rotor</span>
+    <button title="close — deselect (U23)">×</button>
+  </div>
+
+  <!-- readings as status chips (U9) -->
+  <div class="status">
+    <span class="chip on">watering</span>
+    <span class="chip">starved</span>
+    <span class="chip">pressurised</span>
+  </div>
+
+  <!-- live numbers vs what the head can actually do (U17, U18); units per U4 -->
+  <dl class="nums">
+    <dt>pressure</dt><dd>2.9 bar</dd><dd class="note">/ 4.5 max</dd>
+    <dd class="bar"><meter min="0" max="4.5" low="1.5" optimum="3" value="2.9"></meter></dd>
+
+    <dt>flow</dt><dd>0.62 m³/h</dd><dd class="note">0.3–0.9 span</dd>
+    <dd class="bar"><meter min="0.3" max="0.9" value="0.62"></meter></dd>
+
+    <dt>throw</dt><dd>7.2 m</dd><dd class="note">/ 9.0 max</dd>
+    <dt>precip</dt><dd>14 mm/h</dd><dd class="note">U15</dd>
+  </dl>
+
+  <!-- controls this item owns — head subset of the eight (U19); units per U4 -->
+  <div class="group">
+    <span class="label">controls</span>
+
+    <div class="row">
+      <span class="name">nozzle</span>
+      <select>
+        <option>#3 · 0.6 m³/h</option>
+        <option>#2 · 0.4 m³/h</option>
+        <option>#4 · 0.9 m³/h</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <span class="name">flo-stop (head shut-off)</span>
+      <input class="toggle" type="checkbox" checked>
+    </div>
+
+    <div class="row">
+      <span class="name">arc <span class="note">210°</span></span>
+      <span class="note">set on the wedge → (U22)</span>
+    </div>
+  </div>
+
+  <p class="note deferred">fault injection — deferred to M8 (sim_ui.md “Deferred”); no fault UI here.</p>
+
+</aside>
+
+</body>
+</html>
