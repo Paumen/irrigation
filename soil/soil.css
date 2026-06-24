@@ -732,3 +732,44 @@ article[data-skin~="freeform"] p:not(:has(svg, button)) {
 article[data-skin~="freeform"][data-state="error"] p:not(:has(svg, button)) {
   color: var(--color-danger);
 }
+
+@layer default {
+  /* Status headline: verdict left, % right, both in the tier colour. */
+  article:has(meter) {
+    gap: var(--s);
+  }
+
+  article:has(meter) > p:first-of-type {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s);
+    font-size: var(--l);
+    font-weight: 700;
+  }
+
+  /* Brand-green title, like the mockup. */
+  header h1 {
+    color: var(--accent);
+  }
+
+  /* Controls as a compact divided list rather than airy rows. */
+  article:has(fieldset) {
+    gap: 0;
+  }
+
+  article:has(fieldset) > fieldset {
+    padding-block: var(--s);
+  }
+
+  article:has(fieldset) > fieldset + fieldset {
+    border-block-start: 1px solid var(--neutral-edge);
+  }
+}
+
+@layer skin {
+  /* Rounder, pill-like toggle segments. */
+  [data-skin~="toggle"] label:has(input[type="radio"]) {
+    border-radius: var(--l);
+  }
+}

@@ -3,7 +3,7 @@
    adapted to inject into the freeform graph slot and the composed status card.
    Sample data for now; live weather + soil.js compute() get wired next. */
 (function () {
-  const TANK = 39, DOSE = 3.78, START = 39, TODAY = "2026-06-24";
+  const TANK = 39, DOSE = 3.78, START = 39, TODAY = "2026-06-21";
   const REFILL = TANK * 0.5;
   const SVGMONO = "ui-monospace,Menlo,Consolas,monospace";
 
@@ -254,12 +254,15 @@
       word = dd === 1 ? "Water tomorrow" : `Water in ${dd}${plus} days`;
       tone = dd >= 2 ? "success" : "warn"; }
 
-    const verdict = status.querySelector("p");
-    verdict.removeAttribute("data-state");
-    verdict.removeAttribute("data-skin");
-    if (tone === "warn") verdict.setAttribute("data-skin", "warn");
-    else verdict.setAttribute("data-state", tone);
-    verdict.querySelector("strong").textContent = word;
+    const pct = Math.round(tl / TANK * 100);
+    const head = status.querySelector("p");
+    head.removeAttribute("data-state");
+    head.removeAttribute("data-skin");
+    if (tone === "warn") head.setAttribute("data-skin", "warn");
+    else head.setAttribute("data-state", tone);
+    const strs = head.querySelectorAll("strong");
+    strs[0].textContent = "● " + word;
+    strs[1].textContent = pct + "%";
 
     const meter = status.querySelector("meter");
     meter.max = TANK; meter.value = tl;
