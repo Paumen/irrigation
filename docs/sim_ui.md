@@ -6,9 +6,26 @@ Requirements carry stable `U` IDs so milestones can cite them (`sim_build_plan.m
 An ID is permanent once assigned; the "Ideas to reach outcome" lists under a
 requirement are non-binding menus (apply none, one, or several), not requirements.
 
+## Review status
+Tracks which requirements are settled vs. still being worked. Locked = wording agreed,
+treat as ground. Open = unresolved question noted below; not final.
+
+- **Locked (final):** U1, U2, U4, U5, U7, U8, U23
+- **Open / to improve:**
+  - **U3** — degree of "very compact" unresolved: "tight, professional-dense" vs.
+    "ultra-minimal, hide-until-tapped". Deferred — too much to settle now.
+  - **U6** — wording sharpened (integrated diagram, coupling legible) but not yet final.
+  - **U9** — per-item status indicator mapping; not yet final.
+  - **U10** — (U11 merged in) to be validated against a diagram mockup: connections
+    unambiguous and traceable end to end.
+  - **U12** — flow visualization (direction + rough magnitude); pending mockup.
+  - **U13** — pressurised graduated by magnitude (not on/off); pending mockup.
+  - **U14** — meaning settled as spatial footprint (labels deferred); footprint pending mockup.
+
 ## Style
 - **U1** — Light theme.
-- **U2** — Mobile-first, phone portrait.
+- **U2** — Mobile-first, phone portrait is the primary target; on wider screens the layout scales
+  up to a comfortable bounded width (neither a thin phone-width strip nor full-bleed).
 - **U3** — Very compact.
   - Ideas to reach outcome (apply none, one, or several):
     - minimal whitespace/padding
@@ -17,12 +34,12 @@ requirement are non-binding menus (apply none, one, or several), not requirement
     - progressive disclosure
     - dense/tabular number layout
     - icon-only controls
-- **U4** — Units:
-  - flow: m³/h
-  - pressure: bar
-  - length / distance / height / throw: m
-  - arc: degrees
-  - precipitation rate: mm/h
+- **U4** — Units (with display precision):
+  - flow: m³/h — 2 decimals
+  - pressure: bar — 1 decimal
+  - length / distance / height / throw: m — 1 decimal
+  - arc: degrees — 0 decimals
+  - precipitation rate: mm/h — 1 decimal
 - **U5** — Assume latest Chromium; latest/modern HTML elements and CSS features can be
   used (legacy fallbacks are a non-goal, see Deferred).
   - Ideas to reach outcome (apply none, one, or several):
@@ -35,10 +52,12 @@ requirement are non-binding menus (apply none, one, or several), not requirement
     - meter
 
 ## Diagram
-- **U6** — Holistic hydraulics and electrical.
-- **U7** — Comprehensible in one view; nothing hidden behind a mode.
-- **U8** — Diagram stays the main view; most text and numbers live in the panel (U25), not on
-  the diagram.
+- **U6** — One integrated diagram showing both the hydraulic network and the control wiring
+  together — complete, with the coupling between them (coil energizes → valve opens → flow)
+  legible, not two separate pictures.
+- **U7** — The diagram is comprehensible in one view; nothing hidden behind a mode.
+- **U8** — The diagram stays the main view; detail (text, and numbers beyond U23's two) lives
+  in the panel (U25), not on the diagram.
 - **U23** — Only two kinds of number appear on the diagram itself — pump pressure and each
   head's flow rate; every other number lives in the panel.
 - **U9** — Each item carries status indicator(s) — the per-item readings in
@@ -53,9 +72,10 @@ requirement are non-binding menus (apply none, one, or several), not requirement
   never left blank: head idle (no `pressure`/`flow`, neither `watering` nor `starved`), valve
   closed (not `open`), hydraulic item dry (not `pressurised`), pump unprimed (not `primed`),
   electrical item de-energised (not `live`).
-- **U10** — Every connection traceable end to end.
-- **U11** — No ambiguous crossing or dangling connection.
-  - Ideas to reach outcome for U10–U11 (apply none, one, or several):
+- **U10** — Every connection is unambiguous and traceable end to end: no crossing reads as a
+  join, no line dangles.
+- **U11** — *(retired — merged into U10; ID never reused)*
+  - Ideas to reach outcome for U10 (apply none, one, or several):
     - orthogonal routing
     - per-terminal colour-coding
     - lane spacing for parallel runs
@@ -75,16 +95,17 @@ requirement are non-binding menus (apply none, one, or several), not requirement
   graduated by pressure magnitude, not just on/off.
   - Ideas to reach outcome (apply none, one, or several):
     - hose fill/saturation scaling with pressure
-    - a pressure number/badge on pressurised items
+    - a pressure number/badge on pressurised items (subject to U23 — no pressure numbers on
+      the diagram except pump pressure)
     - line weight or glow scaling with pressure
     - gauge glyphs at key nodes.
-- **U14** — Each head shows its coverage.
+- **U14** — Each head shows its spatial coverage footprint: a fan wedge at the installed arc,
+  radius scaled to throw against the head's max range. (Coverage *labels* — throw distance,
+  output flow, nozzle/rotor type icon — are deferred; see Deferred.)
   - Ideas to reach outcome (apply none, one, or several):
     - fan wedge at the installed arc, radius scaled to throw against the head's max range
-    - drag the wedge edges to set the arc
-    - a throw-distance label
-    - an output-flow label
-    - a nozzle/rotor type icon.
+    - drag the wedge edges to set the arc (subject to U22 — the wedge is a read-only
+      reflection; arc is set only in the panel, so this idea is excluded)
 - **U15** — Each head shows its precipitation rate (mm/h).
 
 ### Electrical visualization
@@ -119,3 +140,5 @@ requirement are non-binding menus (apply none, one, or several), not requirement
 - HTML and CSS legacy browser fallbacks.
 - Accessibility functionalities like ARIA, reduced motion, colorblindness.
 - Scenario lifecycle — reset, presets, persistence.
+- Per-head coverage **labels** (throw distance, output flow, nozzle/rotor type icon) — U14 covers
+  the spatial footprint only for now; labels are a later improvement.
