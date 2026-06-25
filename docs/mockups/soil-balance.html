@@ -270,6 +270,14 @@ const ENGINE = {
 
   plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
   soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
+  // Per-soil look for the A (topsoil) / B (subsoil) horizons: B carries the
+  // characteristic colour, plus grain texture (speckle prob, pebble prob).
+  soilLook: {
+    "Sand":       { A:"#7A6440", B:"#CDB57E", spnA:.55, spnB:.40, peb:.18 },
+    "Sandy loam": { A:"#4E3A22", B:"#8C6638", spnA:.85, spnB:.55, peb:.08 },
+    "Loam":       { A:"#3A2A17", B:"#6B4F2E", spnA:.90, spnB:.60, peb:.04 },
+    "Clay":       { A:"#5A3422", B:"#A05636", spnA:.95, spnB:.82, peb:.01 },
+  },
   sun:   { "Shade":.5, "Half sun":.75, "Full sun":1.0 },
   applyRate:  0.063,
   rainEff:    0.8,
@@ -286,11 +294,12 @@ const CFG = {
   },
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
+  // O/A/B horizons. Depth boundaries (y0/y1) are wired from the refill depth
+  // and planting root zone below (see "Depth scale"), so bands/refill/roots align.
   horizons: [
-    { y0:0,   y1:12,  fill:"#67563C", spn:0.9  },
-    { y0:12,  y1:60,  fill:"#AC8856", spn:0.7  },
-    { y0:60,  y1:128, fill:"#8C5E3C", spn:0.55, peb:0.05 },
-    { y0:128, y1:184, fill:"#C6B488", spn:0.42, peb:0.10 },
+    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
+    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
+    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08, label:"B" },
   ],
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
@@ -329,7 +338,7 @@ const DRAW = {
   },
 
   root: {
-    deadMax:0.08, depthFracMin:0.18, depthFracMax:0.50, deadCapBase:0.16, deadCapJit:0.05,
+    deadMax:0.08, deadCapBase:0.16, deadCapJit:0.05,
     depthJit:8, mainWMin:0.8, mainWMax:2.8, deadOp:0.85,
     segs:5, segJitLive:4, segJitDead:8,
     latMin:1, latMax:5, latStartMin:0.18, latStartMax:0.82, latStartOfs:0.4, latSxJit:4,
@@ -359,7 +368,7 @@ const DRAW = {
   },
 
   table: {
-    wetH:160, lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
+    lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
     refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
   },
 
@@ -372,6 +381,14 @@ const DRAW = {
 const C = CFG.color, HORIZ = CFG.horizons, TODAY = ENGINE.today, VIT = DRAW.vitality;
 const { axisX:AX, padR:PADR, skyTop:SKY_TOP, surf:SURF, soilBot:SOIL_BOT, h:H } = CFG.geom;
 const SOIL_D = SOIL_BOT - SURF;
+
+// Depth scale: the soil column represents COLUMN_CM of real soil depth, so bands
+// and root zones can be placed at true centimetre depths.
+const COLUMN_CM = 60;
+const PX_PER_CM = SOIL_D / COLUMN_CM;
+HORIZ[0].y0 = 0;              HORIZ[0].y1 = 3 * PX_PER_CM;   // O: organic litter, ~3 cm
+HORIZ[1].y0 = 3 * PX_PER_CM;  HORIZ[1].y1 = 30 * PX_PER_CM;  // A: topsoil, to ~30 cm
+HORIZ[2].y0 = 30 * PX_PER_CM; HORIZ[2].y1 = SOIL_D;          // B: subsoil, to 60 cm
 const MONO = "ui-monospace,Menlo,Consolas,monospace";
 
 const SAMPLE = [
@@ -418,7 +435,7 @@ function compute(ctrl) {
       mins: watered.has(i) ? ctrl.minutes : 0, level,
     });
   }
-  return { series, tank, dose, refill: tank * ENGINE.refillFrac };
+  return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root, soil: ctrl.soil };
 }
 
 const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
@@ -433,7 +450,7 @@ function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.im
 function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
 function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`; return d; }
 
-HORIZ.forEach(h => { h.edge = shade(h.fill,0.70); h.sp = shade(h.fill,0.82); });
+HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
 
 function dropIcon(cx,cy,r){
   const D=DRAW.drop, topY=cy-D.topK*r;
@@ -444,8 +461,8 @@ function dropIcon(cx,cy,r){
   return `<path d="${d}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
     +`<ellipse cx="${(cx-r*D.hiDxK).toFixed(1)}" cy="${(cy+r*D.hiDyK).toFixed(1)}" rx="${(r*D.hiRxK).toFixed(1)}" ry="${(r*D.hiRyK).toFixed(1)}" fill="${C.dropHi}" opacity="${D.hiOp}"/>`;
 }
-function wetCol(x0,w,sY){
-  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${DRAW.table.wetH}" fill="url(#wetE)"/>`;
+function wetCol(x0,w,sY,hgt){
+  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
 }
 
 function plant(x,sY,v,rng){
@@ -469,11 +486,10 @@ function plant(x,sY,v,rng){
   return s;
 }
 
-function roots(x,sY,v,rng){
+function roots(x,sY,v,rng,rootPx){
   const R=DRAW.root, h=health(v), dead=h<R.deadMax;
-  let depthFrac=lerp(R.depthFracMin,R.depthFracMax,v);
-  if(dead) depthFrac=Math.min(depthFrac,R.deadCapBase+R.deadCapJit*rng());
-  const depth=SOIL_D*depthFrac+(rng()-0.5)*R.depthJit;
+  let depth=rootPx+(rng()-0.5)*R.depthJit;
+  if(dead) depth=Math.min(depth,SOIL_D*(R.deadCapBase+R.deadCapJit*rng()));
   const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
   let pts=[{x,y:sY}]; const segs=R.segs;
   for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
@@ -500,10 +516,14 @@ function build(model){
   const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
-  const tableY=lv=>SOIL_BOT-(clamp(lv,0,TANK)/TANK)*SOIL_D;
+  const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
+  // Panel hugs the plant: the soil column ends at the root tips.
+  const VBOT=ROOT_BOT, soilDepth=VBOT-SURF;
+  // Water reservoir is confined to the root zone: full = surface, empty = root tips.
+  const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
   const refillY=tableY(REFILL);
   const todayIdx=DATA.findIndex(d=>d.date===TODAY);
-  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=H+Math.ceil(T.heightSlack*(K-1));
+  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1));
 
   const defs=`
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
@@ -514,7 +534,15 @@ function build(model){
       <stop offset="1" stop-color="${C.glow}" stop-opacity="0"/></radialGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".30"/>
-      <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>`;
+      <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>
+    <linearGradient id="wline" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+      <stop offset="0" stop-color="${C.waterLine}"/>
+      <stop offset=".5" stop-color="${C.waterLine}"/>
+      <stop offset=".82" stop-color="${C.waterLine}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+      <stop offset="0" stop-color="${C.waterHi}"/>
+      <stop offset=".5" stop-color="${C.waterHi}"/>
+      <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
 
   let sky="", weather="";
   DATA.forEach(d=>{
@@ -541,11 +569,24 @@ function build(model){
     }
   });
 
-  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${SOIL_D}" fill="${HORIZ[1].fill}"/>`;
-  HORIZ.forEach((h,hi)=>{
-    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(h.y1-h.y0).toFixed(1)}" fill="${h.fill}"/>`;
+  // Recolour/texture the A & B horizons for the chosen soil (O litter is shared).
+  const look=ENGINE.soilLook[model.soil]||ENGINE.soilLook["Sandy loam"];
+  const HZ=HORIZ.map((h,i)=>{ if(i===0) return h;
+    const fill=i===1?look.A:look.B;
+    return {...h, fill, edge:shade(fill,0.70), sp:shade(fill,0.82),
+            spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
+
+  // The soil column ends at the root tips, so each planting shows just the
+  // soil its roots draw from.
+  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
+  let hlabels="";
+  HZ.forEach((h,hi)=>{
+    if(h.y0>=soilDepth) return;                     // horizon lies below the drawn column
+    const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
+    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
+    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
     soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
-    const rng=mulberry32(SD.soil+hi), band=h.y1-h.y0, step=SL.speckStep;
+    const rng=mulberry32(SD.soil+hi), step=SL.speckStep;
     for(let x=AX+SL.speckPadL;x<R-SL.speckPadR;x+=step){ if(rng()>h.spn) continue;
       const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(SL.speckRMin,SL.speckRMax,rng());
       soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(SL.speckOpBase+rng()*SL.speckOpK).toFixed(2)}"/>`;
@@ -558,10 +599,10 @@ function build(model){
   DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
   tablePts.push({x:R,y:tableY(DATA[N-1].level)});
   const tline=smooth(tablePts);
-  soil+=`<path d="${tline} L ${R.toFixed(1)} ${SOIL_BOT} L ${AX} ${SOIL_BOT} Z" fill="url(#aqua)"/>`;
-  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF); });
-  soil+=`<path d="${tline}" fill="none" stroke="${C.waterLine}" stroke-width="${TB.lineW}"/>`
-     +`<path d="${tline}" fill="none" stroke="${C.waterHi}" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
+  soil+=`<path d="${tline} L ${R.toFixed(1)} ${ROOT_BOT.toFixed(1)} L ${AX} ${ROOT_BOT.toFixed(1)} Z" fill="url(#aqua)"/>`;
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
+  soil+=`<path d="${tline}" fill="none" stroke="url(#wline)" stroke-width="${TB.lineW}"/>`
+     +`<path d="${tline}" fill="none" stroke="url(#whi)" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
 
   const surfPts=[{x:AX,y:SURF}];
   DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
@@ -578,23 +619,23 @@ function build(model){
 
   let flora="";
   DATA.forEach(d=>{const x=cx(d.i),sY=SURF+(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit,v=clamp(d.level/TANK,0,1),rng=mulberry32(SD.flora+d.i);
-    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
 
   let ticks="";
   DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
-    ticks+=`<text x="${x.toFixed(1)}" y="${(SOIL_BOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${(SOIL_BOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd}</text>`;});
+    ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd}</text>`;});
 
   const tx=cx(todayIdx), fw=MK.wK*K, fh=MK.hK*K, fy=MK.y;
   const today=
-     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
-    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
     +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
-  let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
+  let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
 }
 
