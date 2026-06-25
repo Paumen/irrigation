@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
-@layer reset, tokens, base, components, states;
+@layer reset, tokens, base, components;
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
@@ -22,8 +22,7 @@
     --neutral:             oklch(91.8% 0.014  93);
     --neutral-raised:      oklch(98.5% 0.005  95);
     --neutral-mute:        oklch(89.2% 0.020  91);
-    --neutral-edge:        oklch(89.2% 0.020  91);
-    --neutral-edge-strong: oklch(80.8% 0.046  87);
+    --neutral-mute-strong: oklch(80.8% 0.046  87);
     --text:                oklch(33.1% 0.017  82);
     --text-mute:           oklch(58.5% 0.028  87);
     --accent:              oklch(49.6% 0.061 141);
@@ -37,11 +36,6 @@
     --fw-semibold: 600;
     --fw-bold:     700;
 
-    --fs-sm: clamp(.7rem, 1.5vw, .78rem);
-    --fs-md: clamp(.9rem, 2.2vw, 1rem);
-    --fs-lg: clamp(1rem, 2.4vw, 1.25rem);
-    --fs-xl: clamp(1.35rem, 4.5vw, 2rem);
-
     --tracking-wide:  .08em;
     
     --leading-tight:  1.15;
@@ -51,7 +45,7 @@
     --s:  clamp(.3rem, 1vw, .5rem);
     --m:  clamp(.5rem, 1.5vw, .9rem);
     --l:  clamp(.9rem, 2.5vw, 1.3rem);
-    --xl: clamp(1.3rem, 4vw, 2rem);
+    --xl: clamp(1.3rem, 4.5vw, 2rem);
     --xxl: clamp(2rem, 6vw, 3rem);
 
     --r-sm: 5px; 
@@ -61,11 +55,9 @@
     --bw: 1px;
 
     --op-hidden: 0;   
-    --op-mute:   .6;  
 
-    --t-quick: .15s; 
-    --t-base:  .3s; 
-    --t-slow:  .6s;
+    --t-quick: .2s; 
+    --t-slow:  1.2s; 
     
     --lift:      0 1px 3px oklch(33% .02 82 / .22);
 
@@ -81,28 +73,19 @@
     padding: var(--m);
     overflow-x: hidden;
     font-family: var(--sans);
-    font-size: var(--fs-md);
+    font-size: var(--l);
     line-height: var(--leading-normal);
     color: var(--text);
     background: var(--neutral);
   }
 
-  article {
-    display: grid;
-    gap: var(--l);
-  }
-
   header { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s); }
   header h1 {
-    font-weight: var(--fw-semibold); font-size: var(--fs-lg); color: var(--accent);
-  }
-  header small {
-    font-family: var(--mono); font-size: var(--fs-sm); color: var(--text-mute);
+    font-weight: var(--fw-semibold); font-size: var(--l); color: var(--accent);
   }
 
   svg { display: block; transition: opacity var(--t-slow) ease; }
   .grow { transition: transform var(--t-slow) cubic-bezier(.2,.8,.2,1), opacity var(--t-slow) ease; }
-  body.booting svg { opacity: var(--op-hidden); }
   body.booting .grow { transform: translateY(8px); opacity: var(--op-hidden); }
 }
 
@@ -120,48 +103,48 @@
     gap: var(--xs) var(--m);
     padding: var(--m) var(--l);
     background: var(--neutral-raised);
-    border: var(--bw) solid var(--neutral-edge);
+    border: var(--bw) solid var(--neutral-mute);
     border-radius: var(--r-lg);
     --c: var(--accent);
   }
-  .status[data-level="soon"] { --c: var(--color-warn); }
-  .status[data-level="now"]  { --c: var(--color-danger); }
+  [data-level="soon"] { --c: var(--color-warn); }
+  [data-level="now"]  { --c: var(--color-danger); }
 
-  .status .word {
+  .word {
     grid-column: 1;
     display: flex; align-items: center; gap: var(--s);
-    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--fs-xl);
+    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--xl);
     line-height: var(--leading-tight); color: var(--c);
   }
-  .status .pct {
+  .pct {
     grid-column: 2; justify-self: end;
-    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--fs-xl);
+    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--xl);
     color: var(--c);
   }
-  .status .pct small { font-family: var(--serif); font-size: var(--fs-sm); color: var(--text-mute); }
-  .status .dot {
+  .pct small { font-family: var(--serif); font-size: var(--m); color: var(--text-mute); }
+  .dot {
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c);
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c) 18%, transparent);
   }
-  .status .bar {
+  .bar {
     grid-column: 1 / -1; position: relative;
     block-size: var(--m); background: var(--neutral); border-radius: var(--r-sm);
   }
-  .status .fill {
+  .fill {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--p, 0%); background: var(--c);
-    border-radius: var(--r-sm); transition: width var(--t-base) ease, background var(--t-base) ease;
+    border-radius: var(--r-sm); transition: width var(--t-slow) ease, background var(--t-slow) ease;
   }
-  .status .mark {
+  .mark {
     position: absolute; inset-block: -2px; inline-size: var(--xs);
     inset-inline-start: var(--refill, 50%);
     background: var(--neutral-raised); border-radius: var(--r-sm);
     box-shadow: 0 0 0 var(--bw) color-mix(in oklab, var(--text) 32%, transparent);
   }
-  .status .sub {
+  .sub {
     grid-column: 1 / -1;
-    font-family: var(--sans); font-size: var(--fs-sm); color: var(--text-mute);
+    font-size: var(--m); color: var(--text-mute);
   }
 
   .scene {
@@ -178,121 +161,115 @@
   .sbar .thumb {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--xxl); min-inline-size: var(--xl);
-    background: var(--neutral-edge-strong); border-radius: var(--r-sm); cursor: grab;
+    background: var(--neutral-mute-strong); border-radius: var(--r-sm); cursor: grab;
   }
   .sbar .thumb:active { cursor: grabbing; }
 
-  .controls {
+  .card {
     display: grid; gap: var(--l);
     padding: var(--m) var(--l);
     background: var(--neutral-raised);
-    border: var(--bw) solid var(--neutral-edge);
+    border: var(--bw) solid var(--neutral-mute);
     border-radius: var(--r-lg);
   }
 
-  .controls fieldset {
+  fieldset {
     position: relative;
     display: flex; gap: 0;
     margin-block-start: 1.15em;
     padding: var(--xs);
     background: var(--neutral-mute);
-    border: var(--bw) solid var(--neutral-edge);
+    border: var(--bw) solid var(--neutral-mute);
     border-radius: var(--r-pill);
   }
-  .controls legend {
+  legend {
     position: absolute; inset-block-start: -1.25em; inset-inline-start: .35em;
     padding: 0;
-    font-family: var(--mono); font-size: var(--fs-sm); letter-spacing: var(--tracking-wide);
+    font-family: var(--mono); font-size: var(--m); letter-spacing: var(--tracking-wide);
     text-transform: uppercase; color: var(--text-mute);
   }
-  .controls fieldset label {
+  fieldset label {
     flex: 1 1 0; min-inline-size: 0;
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--leading-tight);
     color: var(--text-mute); cursor: pointer; border-radius: var(--r-pill);
     transition: color var(--t-quick) ease, background var(--t-quick) ease, box-shadow var(--t-quick) ease;
   }
-  .controls fieldset input {
+  fieldset input {
     position: absolute; inline-size: 1px; block-size: 1px;
     opacity: var(--op-hidden); pointer-events: none;
   }
-  .controls fieldset label:has(input:checked) {
+  fieldset label:has(input:checked) {
     background: var(--neutral-raised); color: var(--accent); font-weight: var(--fw-bold);
     box-shadow: var(--lift);
   }
 
-  .controls fieldset.stepper {
+  fieldset.stepper {
     display: inline-flex; justify-self: start; align-self: start;
     gap: 0; padding: 0; background: var(--neutral-raised);
-    border-color: var(--neutral-edge-strong);
+    border-color: var(--neutral-mute-strong);
   }
-  .controls fieldset.stepper button {
+  fieldset.stepper button {
     inline-size: var(--xxl); border: 0; background: transparent;
     color: var(--text); cursor: pointer; border-radius: var(--r-pill);
-    font-size: var(--fs-lg); line-height: var(--leading-tight);
+    font-size: var(--l); line-height: var(--leading-tight);
   }
-  .controls fieldset.stepper output {
+  fieldset.stepper output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     font-family: var(--mono); color: var(--text);
-    border-inline: var(--bw) solid var(--neutral-edge);
+    border-inline: var(--bw) solid var(--neutral-mute);
   }
-  .controls fieldset.stepper output small { font-size: var(--fs-sm); color: var(--text-mute); }
+  fieldset.stepper output small { font-size: var(--m); color: var(--text-mute); }
 }
 
-@layer states {
-  [data-state="loading"] { opacity: var(--op-mute); }
-  [data-state="error"] .status { --c: var(--color-danger); }
-}
 </style>
 </head>
 <body class="booting">
-  <article>
-    <header>
-      <h1>Soil-Balance</h1>
-    </header>
+  <header>
+    <h1>Soil-Balance</h1>
+  </header>
 
-    <section class="status" id="status" data-level="ok">
-      <p class="word"><i class="dot"></i><output id="word">—</output></p>
-      <p class="pct"><output id="pct">—</output><small>%</small></p>
-      <p class="bar"><i class="fill"></i><i class="mark"></i></p>
-      <p class="sub" id="sub">—</p>
-    </section>
+  <section class="status" id="status" data-level="ok">
+    <p class="word"><i class="dot"></i><output id="word">—</output></p>
+    <p class="pct"><output id="pct">—</output><small>%</small></p>
+    <p class="bar"><i class="fill"></i><i class="mark"></i></p>
+    <p class="sub" id="sub">—</p>
+  </section>
 
-    <figure class="scene" id="scroll" data-skin="ghost"></figure>
-    <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
+  <figure class="scene" id="scroll" data-skin="ghost"></figure>
+  <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
 
-    <form class="controls" id="controls" autocomplete="off">
-      <fieldset data-group="planting">
-        <legend>Planting</legend>
-        <label><input type="radio" name="planting" value="Turf">Turf</label>
-        <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
-        <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
-      </fieldset>
+  <form class="card" id="controls" autocomplete="off">
+    <fieldset data-group="planting">
+      <legend>Planting</legend>
+      <label><input type="radio" name="planting" value="Turf">Turf</label>
+      <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+      <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+    </fieldset>
 
-      <fieldset data-group="soil">
-        <legend>Soil</legend>
-        <label><input type="radio" name="soil" value="Sand">Sand</label>
-        <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
-        <label><input type="radio" name="soil" value="Loam">Loam</label>
-        <label><input type="radio" name="soil" value="Clay">Clay</label>
-      </fieldset>
+    <fieldset data-group="soil">
+      <legend>Soil</legend>
+      <label><input type="radio" name="soil" value="Sand">Sand</label>
+      <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+      <label><input type="radio" name="soil" value="Loam">Loam</label>
+      <label><input type="radio" name="soil" value="Clay">Clay</label>
+    </fieldset>
 
-      <fieldset data-group="sun">
-        <legend>Exposure</legend>
-        <label><input type="radio" name="sun" value="Shade">Shade</label>
-        <label><input type="radio" name="sun" value="Half sun">Half sun</label>
-        <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
-      </fieldset>
+    <fieldset data-group="sun">
+      <legend>Exposure</legend>
+      <label><input type="radio" name="sun" value="Shade">Shade</label>
+      <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+      <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+    </fieldset>
 
-      <fieldset class="stepper" data-group="duration">
-        <legend>Duration</legend>
-        <button type="button" id="durDown">−</button>
-        <output id="durVal">60<small>min</small></output>
-        <button type="button" id="durUp">+</button>
-      </fieldset>
-    </form>
-  </article>
+    <fieldset class="stepper" data-group="duration">
+      <legend>Duration</legend>
+      <button type="button" id="durDown">−</button>
+      <output id="durVal">60<small>min</small></output>
+      <button type="button" id="durUp">+</button>
+    </fieldset>
+  </form>
 
 <script>
 "use strict";
@@ -528,7 +505,7 @@ function roots(x,sY,v,rng){
 function build(model){
   const DATA=model.series, N=DATA.length, TANK=model.tank, REFILL=model.refill;
   const sc=CFG.scale, G=CFG.geom, T=DRAW.text, TK=DRAW.ticks, MK=DRAW.marker, SUN=DRAW.sun, RN=DRAW.rain, SL=DRAW.soil, TB=DRAW.table, CR=DRAW.crack, DP=DRAW.drop, SD=DRAW.seeds, ST=DRAW.bootStagger;
-  const vw=(typeof scroll!=="undefined" && scroll && scroll.clientWidth) || window.innerWidth;
+  const vw=(typeof scene!=="undefined" && scene && scene.clientWidth) || window.innerWidth;
   const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
@@ -654,21 +631,21 @@ function renderStatus(model){
 }
 
 const ctrl={ planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:ENGINE.dur.start, watered:[7,11] };
-const scroll=document.getElementById("scroll");
+const scene=document.getElementById("scroll");
 const sbar=document.getElementById("sbar"), thumb=document.getElementById("thumb");
 let G, booted=false;
 
 function render(){
   const model=compute(ctrl);
   G=build(model);
-  scroll.innerHTML=G.svg;
+  scene.innerHTML=G.svg;
   renderStatus(model);
   wireHits();
   requestAnimationFrame(syncBar);
-  if(!booted){ scroll.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
+  if(!booted){ scene.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
     requestAnimationFrame(()=>document.body.classList.remove("booting")); }
 }
-function rerender(){ const sl=scroll.scrollLeft; render(); scroll.scrollLeft=sl; }
+function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
 function toggleWater(i){
   const set=new Set(ctrl.watered);
@@ -677,7 +654,7 @@ function toggleWater(i){
   rerender();
 }
 function wireHits(){
-  scroll.querySelector("svg").querySelectorAll(".hit").forEach(h=>{
+  scene.querySelector("svg").querySelectorAll(".hit").forEach(h=>{
     h.style.cursor="pointer";
     h.addEventListener("click",()=>toggleWater(+h.dataset.i));
   });
@@ -698,23 +675,23 @@ document.getElementById("durDown").addEventListener("click",()=>bumpDur(-ENGINE.
 document.getElementById("durUp").addEventListener("click",()=>bumpDur(ENGINE.dur.step));
 
 function syncBar(){
-  const cw=scroll.clientWidth, sw=scroll.scrollWidth, tw=sbar.clientWidth;
+  const cw=scene.clientWidth, sw=scene.scrollWidth, tw=sbar.clientWidth;
   if(sw<=cw+1){ sbar.style.visibility="hidden"; return; }
   sbar.style.visibility="visible";
   const thumbW=Math.max(28, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
   thumb.style.width=thumbW+"px";
-  thumb.style.left=(maxScroll>0?(scroll.scrollLeft/maxScroll)*maxLeft:0)+"px";
+  thumb.style.left=(maxScroll>0?(scene.scrollLeft/maxScroll)*maxLeft:0)+"px";
 }
-scroll.addEventListener("scroll",syncBar,{passive:true});
+scene.addEventListener("scroll",syncBar,{passive:true});
 let drag=false,x0=0,l0=0;
 thumb.addEventListener("pointerdown",e=>{drag=true;x0=e.clientX;l0=parseFloat(thumb.style.left)||0;thumb.setPointerCapture(e.pointerId);e.preventDefault();});
 thumb.addEventListener("pointermove",e=>{ if(!drag)return;
-  const tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
-  scroll.scrollLeft=maxLeft>0?(clamp(l0+(e.clientX-x0),0,maxLeft)/maxLeft)*maxScroll:0; });
+  const tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
+  scene.scrollLeft=maxLeft>0?(clamp(l0+(e.clientX-x0),0,maxLeft)/maxLeft)*maxScroll:0; });
 thumb.addEventListener("pointerup",()=>{drag=false;});
 sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
-  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
-  scroll.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
+  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
+  scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
 
 let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
 
