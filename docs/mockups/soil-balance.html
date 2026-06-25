@@ -22,7 +22,6 @@
     --neutral:             oklch(91.8% 0.014  93);
     --neutral-raised:      oklch(98.5% 0.005  95);
     --neutral-mute:        oklch(89.2% 0.020  91);
-    --neutral-mute-strong: oklch(80.8% 0.046  87);
     --text:                oklch(33.1% 0.017  82);
     --text-mute:           oklch(58.5% 0.028  87);
     --accent:              oklch(49.6% 0.061 141);
@@ -34,7 +33,6 @@
     --sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
 
     --fw-semibold: 600;
-    --fw-bold:     700;
 
     --tracking-wide:  .08em;
     
@@ -48,8 +46,7 @@
     --xl: clamp(1.3rem, 4.5vw, 2rem);
     --xxl: clamp(2rem, 6vw, 3rem);
 
-    --r-sm: 5px; 
-    --r-lg: 14px; 
+    --r-sm: 5px;
     --r-pill: 999px;
 
     --bw: 1px;
@@ -74,7 +71,7 @@
     overflow-x: hidden;
     font-family: var(--sans);
     font-size: var(--l);
-    line-height: var(--leading-normal);
+    line-height: 1.4;
     color: var(--text);
     background: var(--neutral);
   }
@@ -101,7 +98,7 @@
     padding: var(--m) var(--l);
     background: var(--neutral-raised);
     border: var(--bw) solid var(--neutral-mute);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-sm);
   }
   .status {
     grid-template-columns: 1fr auto;
@@ -195,14 +192,13 @@
     opacity: var(--op-hidden); pointer-events: none;
   }
   fieldset label:has(input:checked) {
-    background: var(--neutral-raised); color: var(--accent); font-weight: var(--fw-bold);
+    background: var(--neutral-raised); color: var(--accent); font-weight: var(--fw-semibold);
     box-shadow: var(--lift);
   }
 
   fieldset.stepper {
     display: inline-flex; justify-self: start; align-self: start;
     gap: 0; background: var(--neutral-raised);
-    border-color: var(--neutral-mute-strong);
   }
   fieldset.stepper button {
     inline-size: var(--xxl); border: 0; background: transparent;
