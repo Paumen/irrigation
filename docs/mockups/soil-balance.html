@@ -66,7 +66,7 @@
 }
 
 @layer base {
-  html, body { -webkit-text-size-adjust: 100%; }
+  html, body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
   body {
     display: grid;
     gap: var(--l);
@@ -96,8 +96,8 @@
     padding: 0; border: 0; background: none; box-shadow: none;
   }
 
-  .status, .card {
-    display: grid;
+  .card {
+    display: grid; gap: var(--l);
     padding: var(--m) var(--l);
     background: var(--neutral-raised);
     border: var(--bw) solid var(--neutral-mute);
@@ -164,11 +164,9 @@
   .sbar .thumb {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--xxl); min-inline-size: var(--xl);
-    background: var(--neutral-mute-strong); border-radius: var(--r-sm); cursor: grab;
+    background: var(--text-mute); border-radius: var(--r-sm); cursor: grab;
   }
   .sbar .thumb:active { cursor: grabbing; }
-
-  .card { gap: var(--l); }
 
   fieldset {
     position: relative;
@@ -204,7 +202,7 @@
   fieldset.stepper {
     display: inline-flex; justify-self: start; align-self: start;
     gap: 0; background: var(--neutral-raised);
-    border-color: var(--neutral-mute-strong);
+    border-color: var(--text-mute);
   }
   fieldset.stepper button {
     inline-size: var(--xxl); border: 0; background: transparent;
@@ -213,7 +211,7 @@
   }
   fieldset.stepper output {
     min-inline-size: var(--xl);
-    display: inline-flex; align-items: center; justify-content: center; gap: var(--xs);
+    display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--leading-tight);
     font-family: var(--mono); color: var(--text);
     border-inline: var(--bw) solid var(--neutral-mute);
@@ -227,7 +225,7 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="status" id="status" data-level="ok">
+  <section class="card status" id="status" data-level="ok">
     <p class="word"><i class="dot"></i><output id="word">—</output></p>
     <p class="pct"><output id="pct">—</output><small>%</small></p>
     <p class="bar"><i class="fill"></i><i class="mark"></i></p>
