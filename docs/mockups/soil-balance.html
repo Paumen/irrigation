@@ -532,10 +532,7 @@ function build(model){
     <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
       <stop offset="0" stop-color="${C.waterHi}"/>
       <stop offset=".5" stop-color="${C.waterHi}"/>
-      <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>
-    <linearGradient id="subsoil" gradientUnits="userSpaceOnUse" x1="0" y1="${ROOT_BOT.toFixed(1)}" x2="0" y2="${SOIL_BOT}">
-      <stop offset="0" stop-color="${C.aqua1}" stop-opacity="0"/>
-      <stop offset="1" stop-color="${C.aqua1}" stop-opacity=".34"/></linearGradient>`;
+      <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
 
   let sky="", weather="";
   DATA.forEach(d=>{
@@ -562,13 +559,17 @@ function build(model){
     }
   });
 
-  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${SOIL_D}" fill="${HORIZ[1].fill}"/>`;
+  // Only the reservoir soil is drawn: the column ends at the root tips (ROOT_BOT),
+  // so each planting shows just the soil its roots draw water from.
+  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${rootPx.toFixed(1)}" fill="${HORIZ[1].fill}"/>`;
   let hlabels="";
   HORIZ.forEach((h,hi)=>{
-    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+h.y1)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
-    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(h.y1-h.y0).toFixed(1)}" fill="${h.fill}"/>`;
+    if(h.y0>=rootPx) return;                       // horizon lies entirely below the root zone
+    const yb=Math.min(h.y1,rootPx), band=yb-h.y0;
+    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
+    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
     soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
-    const rng=mulberry32(SD.soil+hi), band=h.y1-h.y0, step=SL.speckStep;
+    const rng=mulberry32(SD.soil+hi), step=SL.speckStep;
     for(let x=AX+SL.speckPadL;x<R-SL.speckPadR;x+=step){ if(rng()>h.spn) continue;
       const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(SL.speckRMin,SL.speckRMax,rng());
       soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(SL.speckOpBase+rng()*SL.speckOpK).toFixed(2)}"/>`;
@@ -576,10 +577,6 @@ function build(model){
     if(h.peb>0){ for(let x=AX+SL.pebPadL;x<R-SL.pebPadR;x+=SL.pebStep){ if(rng()>h.peb*SL.pebProbK)continue; const px=x+(rng()-0.5)*SL.pebXJit,py=SURF+h.y0+lerp(SL.pebYMin,SL.pebYMax,rng())*band,rr=lerp(SL.pebRMin,SL.pebRMax,rng());
       soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*SL.pebRyK).toFixed(1)}" fill="${h.sp}" opacity="${SL.pebOp}"/>`; }}
   });
-
-  // Deep subsoil moisture: water that has drained below the root tips and sits there,
-  // out of the plant's reach. Static damp tint (not the dynamic root-zone reservoir).
-  if(ROOT_BOT<SOIL_BOT) soil+=`<rect x="${AX}" y="${ROOT_BOT.toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(SOIL_BOT-ROOT_BOT).toFixed(1)}" fill="url(#subsoil)"/>`;
 
   const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
   DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
