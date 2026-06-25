@@ -8,428 +8,717 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#E7E4DA; --ink:#3A352C; --faint:#8a8270;
-    --surface:#5A4A33;
-    --card:#FBFAF6; --line:#E0DBCD;
-    --today:#4F6B4A; --rust:#B5471F;
-    --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
-    --sans: ui-sans-serif,"Inter","Segoe UI",system-ui,sans-serif;
-    --serif: "Newsreader",Georgia,"Times New Roman",serif;
-    /* radii */
-    --r-xs:2px; --r-sm:6px; --r-md:14px; --r-lg:18px; --r-pill:999px;
-    /* shadows */
-    --shadow-mark:0 0 0 1px rgba(60,40,20,.45);
-    --shadow-seg:0 1px 3px rgba(0,0,0,.18);
-    /* spacing + type — PAUMEN fluid scale (clamp); --sp-* remapped onto it */
-    --xs:clamp(0.2rem,0.4vw,0.4rem); --s:clamp(0.4rem,1vw,0.8rem);
-    --m:clamp(0.8rem,2vw,1.6rem); --l:clamp(1.2rem,3vw,2.4rem); --xl:clamp(1.6rem,4vw,3.0rem);
-    --sp-1:var(--xs); --sp-2:var(--xs); --sp-3:var(--s); --sp-4:var(--m); --sp-5:var(--l); --sp-6:var(--l);
+@layer reset, tokens, base, components, states;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, p, figure, fieldset, legend, output { margin: 0; }
+  fieldset { border: 0; padding: 0; min-inline-size: 0; }
+  button, input { font: inherit; color: inherit; }
+}
+
+@layer tokens {
+  :root {
+    --neutral:             oklch(91.8% 0.014  93);
+    --neutral-raised:      oklch(98.5% 0.005  95);
+    --neutral-mute:        oklch(89.2% 0.020  91);
+    --neutral-edge:        oklch(89.2% 0.020  91);
+    --neutral-edge-strong: oklch(80.8% 0.046  87);
+    --text:                oklch(33.1% 0.017  82);
+    --text-mute:           oklch(58.5% 0.028  87);
+    --accent:              oklch(49.6% 0.061 141);
+    --color-warn:          oklch(65.1% 0.130  71);
+    --color-danger:        oklch(54.1% 0.152  39);
+
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --mono:  ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
+
+    --fw-semibold: 600;
+    --fw-bold:     700;
+
+    --fs-sm: clamp(.7rem, 1.5vw, .78rem);
+    --fs-md: clamp(.9rem, 2.2vw, 1rem);
+    --fs-lg: clamp(1rem, 2.4vw, 1.25rem);
+    --fs-xl: clamp(1.35rem, 4.5vw, 2rem);
+
+    --tracking-wide:  .08em;
+    
+    --leading-tight:  1.15;
+    --leading-normal: 1.4;
+
+    --xs: clamp(.2rem, .5vw, .3rem);
+    --s:  clamp(.3rem, 1vw, .5rem);
+    --m:  clamp(.5rem, 1.5vw, .9rem);
+    --l:  clamp(.9rem, 2.5vw, 1.3rem);
+    --xl: clamp(1.3rem, 4vw, 2rem);
+    --xxl: clamp(2rem, 6vw, 3rem);
+
+    --r-sm: 5px; 
+    --r-lg: 14px; 
+    --r-pill: 999px;
+
+    --bw: 1px;
+
+    --op-hidden: 0;   
+    --op-mute:   .6;  
+
+    --t-quick: .15s; 
+    --t-base:  .3s; 
+    --t-slow:  .6s;
+    
+    --lift:      0 1px 3px oklch(33% .02 82 / .22);
+
+    color-scheme: light;
   }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%}
-  .scene{position:relative;width:auto;margin:0}
-  .scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .scroll::-webkit-scrollbar{display:none}
-  .sbar{position:relative;height:9px;margin:var(--sp-3) var(--sp-4) 0;background:var(--bg);border-radius:var(--r-sm);touch-action:none}
-  .sthumb{position:absolute;top:0;bottom:0;left:0;width:40px;min-width:28px;background:var(--faint);border-radius:var(--r-sm);cursor:grab}
-  .sthumb:active{cursor:grabbing;background:var(--faint)}
-  svg{display:block;transition:opacity .7s ease}
-  .grow{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease}
-  .booting svg{opacity:0}
-  .booting .grow{transform:translateY(10px);opacity:0}
-  @media (prefers-reduced-motion: reduce){
-    svg,.grow{transition:none!important}.booting svg{opacity:1}.booting .grow{transform:none;opacity:1}
+}
+
+@layer base {
+  html, body { -webkit-text-size-adjust: 100%; }
+  body {
+    display: grid;
+    gap: var(--l);
+    padding: var(--m);
+    overflow-x: hidden;
+    font-family: var(--sans);
+    font-size: var(--fs-md);
+    line-height: var(--leading-normal);
+    color: var(--text);
+    background: var(--neutral);
   }
-  header.app{display:flex;align-items:center;gap:var(--sp-4);flex-wrap:wrap;padding:var(--sp-4)}
-  header.app h1{margin:0;font-size:var(--l);font-weight:600;letter-spacing:0;color:var(--today);display:flex;align-items:center;gap:var(--sp-3)}
-  header.app .loc{font-family:var(--mono);font-size:var(--m);color:var(--faint);letter-spacing:.02em}
-  .board{position:relative}
-  .status{margin:var(--sp-2) var(--sp-4) var(--sp-4);padding:var(--sp-4) var(--sp-6) var(--sp-5);background:var(--card);border:1px solid var(--bg);border-radius:var(--r-lg)}
-  .status .top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-4)}
-  .status .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-  .status .word{font-family:var(--serif);font-size:var(--xl);font-weight:500;letter-spacing:0;line-height:1.1;display:flex;align-items:center;gap:var(--sp-4)}
-  .status .pct{font-family:var(--serif);font-size:var(--xl);font-weight:600;letter-spacing:0;flex:none}
-  .status .sub{font-size:var(--m);color:var(--faint);margin-top:var(--sp-3)}
-  .status .bar{position:relative;height:8px;background:var(--bg);border-radius:var(--r-sm);margin-top:var(--sp-4)}
-  .status .fill{position:absolute;top:0;bottom:0;left:0;border-radius:var(--r-sm)}
-  .status .mark{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:var(--r-xs);background:var(--card);box-shadow:var(--shadow-mark)}
-  .controls{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);margin:var(--sp-4) var(--sp-3) var(--sp-6);padding:var(--sp-1) var(--sp-4)}
-  .ctl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:var(--sp-3) var(--sp-4);padding:var(--sp-3) 0}
-  .ctl + .ctl{border-top:1px solid var(--line)}
-  .ctl .seg,.ctl .dur{justify-self:end}
-  .ctl .lab{font-family:var(--mono);font-size:var(--m);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
-  .seg{display:inline-flex;gap:var(--sp-1);padding:var(--sp-2);border:1px solid var(--line);border-radius:var(--r-pill);background:var(--line)}
-  .seg button{appearance:none;cursor:pointer;border:0;background:transparent;color:var(--faint);font-family:var(--sans);font-size:var(--m);padding:var(--sp-2) var(--sp-4);line-height:1.1;border-radius:var(--r-pill);white-space:nowrap;transition:.15s}
-  .seg button:hover{color:var(--ink)}
-  .seg button[aria-pressed="true"]{color:var(--today);font-weight:700;background:var(--card);box-shadow:var(--shadow-seg)}
-  .dur{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--card);overflow:hidden}
-  .dur button{appearance:none;cursor:pointer;width:34px;border:0;background:transparent;font-size:var(--m);color:var(--ink);display:grid;place-items:center;transition:.15s}
-  .dur button:hover{color:var(--today);background:var(--line)}
-  .dur .val{min-width:70px;padding:var(--sp-2) 0;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:baseline;justify-content:center;gap:var(--sp-2);font-family:var(--mono);color:var(--ink)}
-  .dur .val b{font-size:var(--m);font-weight:600}.dur .val span{color:var(--faint);font-size:var(--m)}
-  @media(min-width:560px){ .ctl .lab{min-width:132px;flex:none} }
+
+  article {
+    display: grid;
+    gap: var(--l);
+  }
+
+  header { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s); }
+  header h1 {
+    font-weight: var(--fw-semibold); font-size: var(--fs-lg); color: var(--accent);
+  }
+  header small {
+    font-family: var(--mono); font-size: var(--fs-sm); color: var(--text-mute);
+  }
+
+  svg { display: block; transition: opacity var(--t-slow) ease; }
+  .grow { transition: transform var(--t-slow) cubic-bezier(.2,.8,.2,1), opacity var(--t-slow) ease; }
+  body.booting svg { opacity: var(--op-hidden); }
+  body.booting .grow { transform: translateY(8px); opacity: var(--op-hidden); }
+}
+
+@layer components {
+
+  [data-skin="ghost"] {
+    margin-inline: calc(50% - 50vw);
+    padding: 0; border: 0; background: none; box-shadow: none;
+  }
+
+  .status {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: var(--xs) var(--m);
+    padding: var(--m) var(--l);
+    background: var(--neutral-raised);
+    border: var(--bw) solid var(--neutral-edge);
+    border-radius: var(--r-lg);
+    --c: var(--accent);
+  }
+  .status[data-level="soon"] { --c: var(--color-warn); }
+  .status[data-level="now"]  { --c: var(--color-danger); }
+
+  .status .word {
+    grid-column: 1;
+    display: flex; align-items: center; gap: var(--s);
+    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--fs-xl);
+    line-height: var(--leading-tight); color: var(--c);
+  }
+  .status .pct {
+    grid-column: 2; justify-self: end;
+    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--fs-xl);
+    color: var(--c);
+  }
+  .status .pct small { font-family: var(--serif); font-size: var(--fs-sm); color: var(--text-mute); }
+  .status .dot {
+    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c) 18%, transparent);
+  }
+  .status .bar {
+    grid-column: 1 / -1; position: relative;
+    block-size: var(--m); background: var(--neutral); border-radius: var(--r-sm);
+  }
+  .status .fill {
+    position: absolute; inset-block: 0; inset-inline-start: 0;
+    inline-size: var(--p, 0%); background: var(--c);
+    border-radius: var(--r-sm); transition: width var(--t-base) ease, background var(--t-base) ease;
+  }
+  .status .mark {
+    position: absolute; inset-block: -2px; inline-size: var(--xs);
+    inset-inline-start: var(--refill, 50%);
+    background: var(--neutral-raised); border-radius: var(--r-sm);
+    box-shadow: 0 0 0 var(--bw) color-mix(in oklab, var(--text) 32%, transparent);
+  }
+  .status .sub {
+    grid-column: 1 / -1;
+    font-family: var(--sans); font-size: var(--fs-sm); color: var(--text-mute);
+  }
+
+  .scene {
+    overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    touch-action: pan-x;
+  }
+  .scene::-webkit-scrollbar { display: none; }
+
+  .sbar {
+    position: relative; block-size: var(--m); margin-block-start: var(--xs);
+    background: var(--neutral-mute); border-radius: var(--r-sm); touch-action: none;
+  }
+  .sbar .thumb {
+    position: absolute; inset-block: 0; inset-inline-start: 0;
+    inline-size: var(--xxl); min-inline-size: var(--xl);
+    background: var(--neutral-edge-strong); border-radius: var(--r-sm); cursor: grab;
+  }
+  .sbar .thumb:active { cursor: grabbing; }
+
+  .controls {
+    display: grid; gap: var(--l);
+    padding: var(--m) var(--l);
+    background: var(--neutral-raised);
+    border: var(--bw) solid var(--neutral-edge);
+    border-radius: var(--r-lg);
+  }
+
+  .controls fieldset {
+    position: relative;
+    display: flex; gap: 0;
+    margin-block-start: 1.15em;
+    padding: var(--xs);
+    background: var(--neutral-mute);
+    border: var(--bw) solid var(--neutral-edge);
+    border-radius: var(--r-pill);
+  }
+  .controls legend {
+    position: absolute; inset-block-start: -1.25em; inset-inline-start: .35em;
+    padding: 0;
+    font-family: var(--mono); font-size: var(--fs-sm); letter-spacing: var(--tracking-wide);
+    text-transform: uppercase; color: var(--text-mute);
+  }
+  .controls fieldset label {
+    flex: 1 1 0; min-inline-size: 0;
+    padding: var(--xs) var(--s);
+    text-align: center; white-space: nowrap; line-height: var(--leading-tight);
+    color: var(--text-mute); cursor: pointer; border-radius: var(--r-pill);
+    transition: color var(--t-quick) ease, background var(--t-quick) ease, box-shadow var(--t-quick) ease;
+  }
+  .controls fieldset input {
+    position: absolute; inline-size: 1px; block-size: 1px;
+    opacity: var(--op-hidden); pointer-events: none;
+  }
+  .controls fieldset label:has(input:checked) {
+    background: var(--neutral-raised); color: var(--accent); font-weight: var(--fw-bold);
+    box-shadow: var(--lift);
+  }
+
+  .controls fieldset.stepper {
+    display: inline-flex; justify-self: start; align-self: start;
+    gap: 0; padding: 0; background: var(--neutral-raised);
+    border-color: var(--neutral-edge-strong);
+  }
+  .controls fieldset.stepper button {
+    inline-size: var(--xxl); border: 0; background: transparent;
+    color: var(--text); cursor: pointer; border-radius: var(--r-pill);
+    font-size: var(--fs-lg); line-height: var(--leading-tight);
+  }
+  .controls fieldset.stepper output {
+    min-inline-size: var(--xl);
+    display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
+    font-family: var(--mono); color: var(--text);
+    border-inline: var(--bw) solid var(--neutral-edge);
+  }
+  .controls fieldset.stepper output small { font-size: var(--fs-sm); color: var(--text-mute); }
+}
+
+@layer states {
+  [data-state="loading"] { opacity: var(--op-mute); }
+  [data-state="error"] .status { --c: var(--color-danger); }
+}
 </style>
 </head>
 <body class="booting">
-  <header class="app">
-    <h1>Soil-Balance</h1>
-  </header>
-  <main>
-    <div id="status" class="status"></div>
-    <div class="board">
-      <div>
-  <div class="scene" id="scene">
-    <div class="scroll" id="scroll"></div>
-  </div>
+  <article>
+    <header>
+      <h1>Soil-Balance</h1>
+    </header>
 
-  <div class="sbar" id="sbar"><div class="sthumb" id="sthumb"></div></div>
-
-      </div>
-
-    <section class="controls">
-      <div class="ctl"><div class="lab">Planting</div>
-        <div class="seg" data-group="planting">
-          <button>Turf</button>
-          <button aria-pressed="true">Flower bed</button>
-          <button>Shrubs</button>
-        </div></div>
-      <div class="ctl"><div class="lab">Soil</div>
-        <div class="seg" data-group="soil">
-          <button>Sand</button>
-          <button aria-pressed="true">Sandy loam</button>
-          <button>Loam</button>
-          <button>Clay</button>
-        </div></div>
-      <div class="ctl"><div class="lab">Exposure</div>
-        <div class="seg" data-group="sun">
-          <button>Shade</button>
-          <button>Half sun</button>
-          <button aria-pressed="true">Full sun</button>
-        </div></div>
-      <div class="ctl"><div class="lab">Duration</div>
-        <div class="dur">
-          <button onclick="bumpDur(-15)" aria-label="less">−</button>
-          <div class="val"><b id="durVal">60</b><span>min</span></div>
-          <button onclick="bumpDur(15)" aria-label="more">+</button>
-        </div>
-
-      </div>
+    <section class="status" id="status" data-level="ok">
+      <p class="word"><i class="dot"></i><output id="word">—</output></p>
+      <p class="pct"><output id="pct">—</output><small>%</small></p>
+      <p class="bar"><i class="fill"></i><i class="mark"></i></p>
+      <p class="sub" id="sub">—</p>
     </section>
 
-  </main>
+    <figure class="scene" id="scroll" data-skin="ghost"></figure>
+    <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
 
+    <form class="controls" id="controls" autocomplete="off">
+      <fieldset data-group="planting">
+        <legend>Planting</legend>
+        <label><input type="radio" name="planting" value="Turf">Turf</label>
+        <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+        <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+      </fieldset>
+
+      <fieldset data-group="soil">
+        <legend>Soil</legend>
+        <label><input type="radio" name="soil" value="Sand">Sand</label>
+        <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+        <label><input type="radio" name="soil" value="Loam">Loam</label>
+        <label><input type="radio" name="soil" value="Clay">Clay</label>
+      </fieldset>
+
+      <fieldset data-group="sun">
+        <legend>Exposure</legend>
+        <label><input type="radio" name="sun" value="Shade">Shade</label>
+        <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+        <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+      </fieldset>
+
+      <fieldset class="stepper" data-group="duration">
+        <legend>Duration</legend>
+        <button type="button" id="durDown">−</button>
+        <output id="durVal">60<small>min</small></output>
+        <button type="button" id="durUp">+</button>
+      </fieldset>
+    </form>
+  </article>
 
 <script>
-const TANK=39, DOSE=3.78, START=39, TODAY="2026-06-21";
-const REFILL=TANK*0.5;
-const SVGMONO="ui-monospace,Menlo,Consolas,monospace";
+"use strict";
 
-const RAW=[
- [4,"2026-06-11","Thu",16.6,2.53,5.3],[5,"2026-06-12","Fri",19.2,0.85,5.1],
- [6,"2026-06-13","Sat",17.4,2.69,0.3],[7,"2026-06-14","Sun",17.6,3.60,0.2],
- [8,"2026-06-15","Mon",19.0,3.19,0.0],[9,"2026-06-16","Tue",23.5,4.24,0.1],
- [10,"2026-06-17","Wed",23.8,2.90,0.2],[11,"2026-06-18","Thu",29.2,5.50,0.0],
- [12,"2026-06-19","Fri",33.7,5.62,3.4],[13,"2026-06-20","Sat",28.9,5.62,3.4],
- [14,"2026-06-21","Sun",29.7,5.39,0.0],[15,"2026-06-22","Mon",30.4,6.44,0.0],
- [16,"2026-06-23","Tue",27.2,5.62,0.0],[17,"2026-06-24","Wed",31.7,5.78,0.0],
- [18,"2026-06-25","Thu",33.5,6.42,0.0],[19,"2026-06-26","Fri",36.0,6.66,0.0],
- [20,"2026-06-27","Sat",31.4,5.65,1.8],[21,"2026-06-28","Sun",29.0,5.85,0.0],
- [22,"2026-06-29","Mon",32.6,5.89,3.6],[23,"2026-06-30","Tue",24.6,2.80,10.5],
- [24,"2026-07-01","Wed",18.1,1.42,18.3],[25,"2026-07-02","Thu",20.8,4.06,1.8],
- [26,"2026-07-03","Fri",19.8,3.66,2.4],[27,"2026-07-04","Sat",19.4,2.97,3.0],
- [28,"2026-07-05","Sun",29.2,5.98,0.0],
+const ENGINE = {
+  today: "2026-06-21",
+
+  plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
+  soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
+  sun:   { "Shade":.5, "Half sun":.75, "Full sun":1.0 },
+  applyRate:  0.063,
+  rainEff:    0.8,
+  waterEff:   0.9,
+  refillFrac: 0.5,
+  emptyFrac:  0.05,
+  dur: { step:15, min:15, max:240, start:60 },
+};
+
+const CFG = {
+  geom: {
+    h: 380, skyTop: 20, surf: 160, soilBot: 344, axisX: 0, padR: 12,
+    daysPerView: 9, dayMin: 36, dayMax: 94,
+  },
+  scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
+
+  horizons: [
+    { y0:0,   y1:12,  fill:"#67563C", spn:0.9  },
+    { y0:12,  y1:60,  fill:"#AC8856", spn:0.7  },
+    { y0:60,  y1:128, fill:"#8C5E3C", spn:0.55, peb:0.05 },
+    { y0:128, y1:184, fill:"#C6B488", spn:0.42, peb:0.10 },
+  ],
+  color: {
+    sky:"#E7E4DA", surf:"#5A4A33",
+    aqua0:"#34BCD2", aqua1:"#0C6478", waterLine:"#1FA6BE", waterHi:"#BDEAF1",
+    rain:"#3F7FA0", glow:"#E0A074", drop:"#34BCD2", dropEdge:"#1FA6BE", dropHi:"#E8FAFD",
+    paper:"#FBFAF6", flower:"#C98AB0", flowerC:"#E7C24A",
+    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge:"#9E3712", leafGold:"#9C8A45",
+    green:"#4F6B4A", rust:"#B5471F",
+  },
+};
+
+const DRAW = {
+  vitality: { lo:0.08, span:0.44 },
+  bootStagger: { weather:8, flora:9 },
+  seeds: { rain:900, soil:40, crack:31, surf:7, flora:101 },
+
+  text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
+  ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
+  marker: { wK:44, hK:15, y:3, rxK:7.5, fsK:10, tracking:0.1,
+            fillOp:0.07, edgeOp:0.32, dash:"3 4", edgeW:1 },
+
+  drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
+          hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
+          yOfs:72, rK:0.15, rMin:6, rMax:9 },
+
+  plant: {
+    sproutMax:0.07,
+    sprout:{ e1:[-2,-9], s2:[-1,-6], e2:[3,-12], w1:1.4, w2:1.1 },
+    htMin:8, htMax:54, droopOnset:0.45, droopX:16, tipXK:0.6, tipYK:0.5, ctrlX:10, ctrlYK:0.55,
+    stemWMin:1.2, stemWMax:2.6,
+    leafMax:5, leafTMin:0.28, leafTMax:0.92, leafLenMin:5, leafLenMax:11,
+    leafMidK:0.5, leafDroopK:0.4, leafRxK:0.6, leafRyK:0.32, leafRotMin:18, leafRotMax:40, leafDroopRot:20,
+    flowerFull:0.66, flowerBud:0.5, flowerYOfs:1,
+    petals:5, petalRing:3.9, petalR:2.6, centerR:2.1, petalEdgeW:0.5,
+    budRx:2.6, budRy:3.6, budSpan:0.16,
+  },
+
+  root: {
+    deadMax:0.08, depthFracMin:0.18, depthFracMax:0.50, deadCapBase:0.16, deadCapJit:0.05,
+    depthJit:8, mainWMin:0.8, mainWMax:2.8, deadOp:0.85,
+    segs:5, segJitLive:4, segJitDead:8,
+    latMin:1, latMax:5, latStartMin:0.18, latStartMax:0.82, latStartOfs:0.4, latSxJit:4,
+    latLenMin:7, latLenMax:16, latDropMin:8, latDropMax:22, latMidK:4,
+    latWLive:0.55, latWDead:0.5, latDeadOp:0.8,
+    hairOnset:0.25, hairHueOfs:0.05, hairMax:3, hairProb:0.45,
+    hairLenMin:2, hairLenMax:5, hairDropMin:1, hairDropMax:4, hairW:0.5, hairOpBase:0.35, hairOpK:0.3,
+  },
+
+  sun: {
+    minVis:0.04, yOfs:24, radMin:2.5, radMax:7.5, glowKMin:2.1, glowKMax:3.4,
+    rayMin:3, rayMax:8, rayInner:2, rayOuterMin:2, rayOuterMax:9, rayWMin:0.7, rayWMax:1.6,
+    glowOpBase:0.2, glowOpK:0.32, groupOp:0.92, coreEdgeW:0.8,
+  },
+
+  rain: {
+    minVis:0.05, perMm:1.4, strandMin:2, strandMax:12, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:165,
+    lenMin:10, lenMax:22, lenNorm:18, lenJitBase:0.7, lenJitK:0.6, slant:2.5, w:1.4,
+    opBase:0.45, opK:0.4, opNorm:12,
+  },
+
+  soil: {
+    speckStep:20, speckPadL:4, speckPadR:2, speckRMin:0.5, speckRMax:1.3, speckOpBase:0.15, speckOpK:0.18,
+    edgeW:0.6, edgeOp:0.5,
+    pebStep:30, pebPadL:6, pebPadR:4, pebProbK:8, pebXJit:22, pebYMin:0.2, pebYMax:0.8,
+    pebRMin:1.6, pebRMax:3.0, pebRyK:0.7, pebOp:0.5,
+  },
+
+  table: {
+    wetH:160, lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
+    refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
+  },
+
+  crack: {
+    moistMax:3, countMin:2, countMax:4, xMinK:0.15, xMaxK:0.85, yOfs:2,
+    stepMin:3, stepRand:3, xJit:8, dyMin:5, dyMax:13, w:0.8, opBase:0.14, opK:0.2,
+  },
+};
+
+const C = CFG.color, HORIZ = CFG.horizons, TODAY = ENGINE.today, VIT = DRAW.vitality;
+const { axisX:AX, padR:PADR, skyTop:SKY_TOP, surf:SURF, soilBot:SOIL_BOT, h:H } = CFG.geom;
+const SOIL_D = SOIL_BOT - SURF;
+const MONO = "ui-monospace,Menlo,Consolas,monospace";
+
+const SAMPLE = [
+  ["2026-06-11","Thu",16.6,2.53,5.3],["2026-06-12","Fri",19.2,0.85,5.1],
+  ["2026-06-13","Sat",17.4,2.69,0.3],["2026-06-14","Sun",17.6,3.60,0.2],
+  ["2026-06-15","Mon",19.0,3.19,0.0],["2026-06-16","Tue",23.5,4.24,0.1],
+  ["2026-06-17","Wed",23.8,2.90,0.2],["2026-06-18","Thu",29.2,5.50,0.0],
+  ["2026-06-19","Fri",33.7,5.62,3.4],["2026-06-20","Sat",28.9,5.62,3.4],
+  ["2026-06-21","Sun",29.7,5.39,0.0],["2026-06-22","Mon",30.4,6.44,0.0],
+  ["2026-06-23","Tue",27.2,5.62,0.0],["2026-06-24","Wed",31.7,5.78,0.0],
+  ["2026-06-25","Thu",33.5,6.42,0.0],["2026-06-26","Fri",36.0,6.66,0.0],
+  ["2026-06-27","Sat",31.4,5.65,1.8],["2026-06-28","Sun",29.0,5.85,0.0],
+  ["2026-06-29","Mon",32.6,5.89,3.6],["2026-06-30","Tue",24.6,2.80,10.5],
+  ["2026-07-01","Wed",18.1,1.42,18.3],["2026-07-02","Thu",20.8,4.06,1.8],
+  ["2026-07-03","Fri",19.8,3.66,2.4],["2026-07-04","Sat",19.4,2.97,3.0],
+  ["2026-07-05","Sun",29.2,5.98,0.0],
 ];
-let WATER_MIN=60;
-let plan={7:WATER_MIN, 11:WATER_MIN};
+const WEATHER = {
+  time:    SAMPLE.map(r => r[0]),
+  weekday: SAMPLE.map(r => r[1]),
+  tempMax: SAMPLE.map(r => r[2]),
+  et0:     SAMPLE.map(r => r[3]),
+  rain:    SAMPLE.map(r => r[4]),
+};
 
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const lerp=(a,b,t)=>a+(b-a)*t;
-const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
-function computeData(){
-  let prev=START;
-  return RAW.map((r,idx)=>{
-    const [,date,wd,tmax,et0,rain]=r;
-    const loss=0.9*et0, gain=0.8*rain, mins=plan[idx]||0, appMm=(mins/60)*DOSE;
-    const level=clamp(prev - loss + gain + appMm, 0, TANK); prev=level;
-    return {idx,date,wd,tmax,et0,rain,loss,gain,mins,appMm,level};
-  });
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp  = (a,b,t) => a + (b-a)*t;
+const ease  = t => t<0?0 : t>1?1 : t*t*(3-2*t);
+const health = v => ease(clamp((v - VIT.lo) / VIT.span, 0, 1));
+
+function compute(ctrl) {
+  const p = ENGINE.plantings[ctrl.planting], aw = ENGINE.soils[ctrl.soil], sf = ENGINE.sun[ctrl.sun];
+  const tank = aw * p.root, dose = ENGINE.applyRate * ctrl.minutes;
+  const watered = new Set(ctrl.watered);
+  const series = []; let prev = tank;
+  for (let i = 0; i < WEATHER.time.length; i++) {
+    const loss    = WEATHER.et0[i] * p.kc * sf;
+    const applied = watered.has(i) ? dose : 0;
+    const gain    = WEATHER.rain[i] * ENGINE.rainEff + applied * ENGINE.waterEff;
+    const level   = clamp(prev + gain - loss, 0, tank); prev = level;
+    series.push({
+      i, date: WEATHER.time[i], wd: WEATHER.weekday[i], tmax: WEATHER.tempMax[i],
+      et0: WEATHER.et0[i], rain: WEATHER.rain[i], loss, gain,
+      mins: watered.has(i) ? ctrl.minutes : 0, level,
+    });
+  }
+  return { series, tank, dose, refill: tank * ENGINE.refillFrac };
 }
-let DATA=computeData();
 
-function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];}
-function hexLerp(a,b,t){const A=hx(a),B=hx(b);const m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;}
-function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){const t=(v-p0)/((p1-p0)||1);return hexLerp(c0,c1,t);}}return stops[stops.length-1][1];}
-const rootColor =v=>ramp([[0,'#2A2620'],[0.10,'#56422E'],[0.30,'#8A6A3E'],[0.60,'#7E8A3E'],[1,'#4F7F4A']],v);
-const plantColor=v=>ramp([[0,'#3A352C'],[0.10,'#9A7A3C'],[0.25,'#7E8A3E'],[0.55,'#4F7F4A'],[1,'#3F7A3B']],v);
-const leafColor =v=>ramp([[0,'#67563C'],[0.25,'#9C8A45'],[0.6,'#6FA06A'],[1,'#5F9A5A']],v);
-const sunCore   =h=>ramp([[0,'#E2965A'],[0.5,'#C25A2A'],[1,'#9E3712']],h);
-function smooth(pts){if(pts.length<2)return'';let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;const c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;}return d;}
+const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
+const hexLerp = (a,b,t) => { const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1))); return `rgb(${m(0)},${m(1)},${m(2)})`; };
+function ramp(stops,v){ v=clamp(v,0,1); for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1]; if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}} return stops[stops.length-1][1]; }
+const rootColor  = v => ramp([[0,"#2A2620"],[.10,"#56422E"],[.30,"#8A6A3E"],[.60,"#7E8A3E"],[1,"#4F7F4A"]], v);
+const plantColor = v => ramp([[0,"#3A352C"],[.10,"#9A7A3C"],[.25,"#7E8A3E"],[.55,"#4F7F4A"],[1,"#3F7A3B"]], v);
+const leafColor  = v => ramp([[0,"#67563C"],[.25,"#9C8A45"],[.6,"#6FA06A"],[1,"#5F9A5A"]], v);
+const sunCore    = h => ramp([[0,"#E2A24A"],[.5,"#C25A2A"],[1,"#9E3712"]], h);
+function shade(hex,f){ const [r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,"0"); return `#${m(r)}${m(g)}${m(b)}`; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
+function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`; return d; }
 
-const H=380, SKY_TOP=20, SURF=160, SOIL_BOT=344, SOIL_D=SOIL_BOT-SURF;
-const AX=0, PADR=12;
-function shade(hex,f){const[r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,'0');return`#${m(r)}${m(g)}${m(b)}`;}
-const HORIZ=[
-  {y0:0,   y1:12,  fill:'#67563C', spn:0.9, peb:0},
-  {y0:12,  y1:60,  fill:'#AC8856', spn:0.7, peb:0},
-  {y0:60,  y1:128, fill:'#8C5E3C', spn:0.55,peb:0.05},
-  {y0:128, y1:SOIL_D, fill:'#C6B488', spn:0.42,peb:0.12},
-];
-HORIZ.forEach(h=>{h.edge=shade(h.fill,0.70); h.sp=shade(h.fill,0.82);});
+HORIZ.forEach(h => { h.edge = shade(h.fill,0.70); h.sp = shade(h.fill,0.82); });
 
-function build(){
-  const vw=Math.min(window.innerWidth,920);
-  const dayW=clamp((vw-AX-PADR)/9,36,94);
-  const N=DATA.length, W=AX+N*dayW+PADR;
+function dropIcon(cx,cy,r){
+  const D=DRAW.drop, topY=cy-D.topK*r;
+  const d=`M ${cx.toFixed(1)} ${topY.toFixed(1)} `
+    +`C ${(cx+D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
+    +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
+    +`C ${(cx-r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx-D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
+  return `<path d="${d}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
+    +`<ellipse cx="${(cx-r*D.hiDxK).toFixed(1)}" cy="${(cy+r*D.hiDyK).toFixed(1)}" rx="${(r*D.hiRxK).toFixed(1)}" ry="${(r*D.hiRyK).toFixed(1)}" fill="${C.dropHi}" opacity="${D.hiOp}"/>`;
+}
+function wetCol(x0,w,sY){
+  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${DRAW.table.wetH}" fill="url(#wetE)"/>`;
+}
+
+function plant(x,sY,v,rng){
+  const P=DRAW.plant, h=health(v);
+  if(h<P.sproutMax){ const c=C.sprout, S=P.sprout;
+    return `<path d="M ${x} ${sY} L ${(x+S.e1[0]).toFixed(1)} ${(sY+S.e1[1])}" stroke="${c}" stroke-width="${S.w1}" stroke-linecap="round"/>`
+         +`<path d="M ${(x+S.s2[0]).toFixed(1)} ${(sY+S.s2[1])} L ${(x+S.e2[0]).toFixed(1)} ${(sY+S.e2[1])}" stroke="${c}" stroke-width="${S.w2}" stroke-linecap="round"/>`; }
+  const hgt=lerp(P.htMin,P.htMax,h), droop=clamp((P.droopOnset-h)/P.droopOnset,0,1);
+  const tipX=x+lerp(0,P.droopX,droop)*(rng()<.5?-1:1)*P.tipXK, tipY=sY-hgt+lerp(0,hgt*P.tipYK,droop);
+  const ctrlX=x+lerp(0,P.ctrlX,droop), ctrlY=sY-hgt*P.ctrlYK, pc=plantColor(h), lc=leafColor(h);
+  let s=`<path d="M ${x} ${sY} Q ${ctrlX.toFixed(1)} ${ctrlY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${pc}" stroke-width="${lerp(P.stemWMin,P.stemWMax,h).toFixed(2)}" stroke-linecap="round"/>`;
+  const nl=Math.round(lerp(0,P.leafMax,h));
+  for(let k=0;k<nl;k++){
+    if(nl===P.leafMax&&k===P.leafMax-1) continue;
+    const t=lerp(P.leafTMin,P.leafTMax,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(P.leafLenMin,P.leafLenMax,h);
+    const mxp=lx+side*ll*P.leafMidK,myp=ly+droop*ll*P.leafDroopK;
+    s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*P.leafRxK).toFixed(1)}" ry="${(ll*P.leafRyK).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(P.leafRotMin,P.leafRotMax,h)+droop*P.leafDroopRot).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;
+  }
+  if(h>P.flowerFull){ const fx=tipX,fy=tipY-P.flowerYOfs; for(let k=0;k<P.petals;k++){const a=k/P.petals*Math.PI*2; s+=`<circle cx="${(fx+Math.cos(a)*P.petalRing).toFixed(1)}" cy="${(fy+Math.sin(a)*P.petalRing).toFixed(1)}" r="${P.petalR}" fill="${C.flower}" stroke="${C.petalEdge}" stroke-width="${P.petalEdgeW}"/>`;} s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="${P.centerR}" fill="${C.flowerC}"/>`; }
+  else if(h>P.flowerBud){ s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-P.flowerYOfs).toFixed(1)}" rx="${P.budRx}" ry="${P.budRy}" fill="${hexLerp(C.leafGold,C.flower,(h-P.flowerBud)/P.budSpan)}"/>`; }
+  return s;
+}
+
+function roots(x,sY,v,rng){
+  const R=DRAW.root, h=health(v), dead=h<R.deadMax;
+  let depthFrac=lerp(R.depthFracMin,R.depthFracMax,v);
+  if(dead) depthFrac=Math.min(depthFrac,R.deadCapBase+R.deadCapJit*rng());
+  const depth=SOIL_D*depthFrac+(rng()-0.5)*R.depthJit;
+  const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
+  let pts=[{x,y:sY}]; const segs=R.segs;
+  for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
+  let s=`<path d="${dead?jag(pts):smooth(pts)}" fill="none" stroke="${col}" stroke-width="${wMain.toFixed(2)}" stroke-linecap="round" opacity="${dead?R.deadOp:1}"/>`;
+  const nl=Math.round(lerp(R.latMin,R.latMax,h));
+  for(let k=0;k<nl;k++){
+    const startT=lerp(R.latStartMin,R.latStartMax,(k+R.latStartOfs)/nl),sx=x+(rng()-0.5)*R.latSxJit,sy0=sY+depth*startT,dir=(rng()<0.5?-1:1);
+    const ex=sx+dir*lerp(R.latLenMin,R.latLenMax,rng()), ey=sy0+lerp(R.latDropMin,R.latDropMax,rng()), mx=(sx+ex)/2+dir*R.latMidK, my=(sy0+ey)/2;
+    if(dead) s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} L ${mx.toFixed(1)} ${my.toFixed(1)} L ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*R.latWDead).toFixed(2)}" stroke-linecap="round" opacity="${R.latDeadOp}"/>`;
+    else    s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*R.latWLive).toFixed(2)}" stroke-linecap="round"/>`;
+  }
+  if(h>R.hairOnset){
+    const hairC=rootColor(clamp(h+R.hairHueOfs,0,1)), nh=Math.round(lerp(0,R.hairMax,h));
+    pts.slice(1).forEach(p=>{ for(let k=0;k<nh;k++){ if(rng()>R.hairProb)continue; const side=rng()<0.5?-1:1,hl=lerp(R.hairLenMin,R.hairLenMax,h);
+      s+=`<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${(p.x+side*hl).toFixed(1)}" y2="${(p.y+lerp(R.hairDropMin,R.hairDropMax,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="${R.hairW}" opacity="${(R.hairOpBase+R.hairOpK*h).toFixed(2)}"/>`; }});
+  }
+  return s;
+}
+
+function build(model){
+  const DATA=model.series, N=DATA.length, TANK=model.tank, REFILL=model.refill;
+  const sc=CFG.scale, G=CFG.geom, T=DRAW.text, TK=DRAW.ticks, MK=DRAW.marker, SUN=DRAW.sun, RN=DRAW.rain, SL=DRAW.soil, TB=DRAW.table, CR=DRAW.crack, DP=DRAW.drop, SD=DRAW.seeds, ST=DRAW.bootStagger;
+  const vw=(typeof scroll!=="undefined" && scroll && scroll.clientWidth) || window.innerWidth;
+  const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
+  const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
   const tableY=lv=>SOIL_BOT-(clamp(lv,0,TANK)/TANK)*SOIL_D;
-  const todayIdx=DATA.findIndex(d=>d.date===TODAY);
-  const _m=Math.min(25.6,Math.max(12.8,0.02*Math.min(window.innerWidth,920))), K=_m/12, Hd=H+Math.ceil(60*(K-1));
-  const R=(W-PADR);
   const refillY=tableY(REFILL);
+  const todayIdx=DATA.findIndex(d=>d.date===TODAY);
+  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=H+Math.ceil(T.heightSlack*(K-1));
 
-  let defs=`
+  const defs=`
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#0C6478" stop-opacity=".82"/></linearGradient>
+      <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".55"/>
+      <stop offset="1" stop-color="${C.aqua1}" stop-opacity=".82"/></linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#E0A074" stop-opacity=".85"/>
-      <stop offset="1" stop-color="#E0A074" stop-opacity="0"/></radialGradient>
+      <stop offset="0" stop-color="${C.glow}" stop-opacity=".85"/>
+      <stop offset="1" stop-color="${C.glow}" stop-opacity="0"/></radialGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34BCD2" stop-opacity=".34"/>
-      <stop offset="0.55" stop-color="#34BCD2" stop-opacity=".2"/>
-      <stop offset="1" stop-color="#34BCD2" stop-opacity=".06"/></linearGradient>`;
+      <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".30"/>
+      <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>`;
 
-  let sky='',weather='';
+  let sky="", weather="";
   DATA.forEach(d=>{
-    const x0=cx(d.idx)-dayW/2, heat=clamp((d.tmax-15)/(36-15),0,1);
-    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="var(--bg)"/>`;
-    if(heat>0.78){
-      const sc=hexLerp('#B5471F','#C25A2A',0.5);
-      for(let s=0;s<3;s++){const yy=SKY_TOP+40+s*7;let p=`M ${x0+dayW*0.16} ${yy}`;for(let k=1;k<=5;k++){p+=` Q ${(x0+dayW*(0.16+0.14*k)-dayW*0.07).toFixed(1)} ${(yy+(k%2?-2.4:2.4)).toFixed(1)} ${(x0+dayW*(0.16+0.14*k)).toFixed(1)} ${yy}`;}
-        weather+=`<path d="${p}" fill="none" stroke="${sc}" stroke-width="0.7" opacity="${(0.16-s*0.04).toFixed(2)}"/>`;}
+    const x0=cx(d.i)-dayW/2, heat=clamp((d.tmax-sc.tempMin)/(sc.tempMax-sc.tempMin),0,1);
+    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${C.sky}"/>`;
+    const si=clamp((d.et0-sc.et0Min)/(sc.et0Max-sc.et0Min),0,1);
+    if(si>SUN.minVis){
+      const sx=x0+dayW*0.5, sy=SKY_TOP+SUN.yOfs, rad=lerp(SUN.radMin,SUN.radMax,si), core=sunCore(heat);
+      const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat); let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
+      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si);
+        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(SUN.rayWMin,SUN.rayWMax,si).toFixed(2)}" stroke-linecap="round"/>`;}
+      weather+=`<g opacity="${SUN.groupOp}"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(SUN.glowOpBase+heat*SUN.glowOpK).toFixed(2)}"/>${rays}<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${C.sunEdge}" stroke-width="${SUN.coreEdgeW}"/></g>`;
     }
-    const si=clamp((d.et0-1)/(6.5-1),0,1);
-    if(si>0.04){
-      const sx=x0+dayW*0.5, sy=SKY_TOP+24, rad=lerp(2.5,7.5,si), core=sunCore(heat);
-      const gw=rad*lerp(2.1,3.4,heat);
-      let rays='';const nr=Math.round(lerp(4,10,si));
-      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+2,r2=rad+lerp(2,9.5,si);
-        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(0.7,1.7,si).toFixed(2)}" stroke-linecap="round"/>`;}
-      weather+=`<g opacity="0.92">`
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(0.2+heat*0.34).toFixed(2)}"/>`
-        +rays
-        +`<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="#9E3712" stroke-width="0.8"/></g>`;
-    }
-    if(d.rain>0.05){
-      const rng=mulberry32(900+d.idx), strands=Math.round(clamp(d.rain/1.0,3,16));
-      let rg='';
-      for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*0.06,dayW*0.72,rng()),ry=SKY_TOP+lerp(26,165,rng());
-        const len=lerp(10,22,Math.sqrt(clamp(d.rain/18,0,1)))*(0.7+rng()*0.6);
-        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-2.5).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="#3F7FA0" stroke-width="1.5" stroke-linecap="round" opacity="${(0.5+0.4*clamp(d.rain/12,0,1)).toFixed(2)}"/>`;}
-      weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${rg}</g>`;
+    if(d.rain>RN.minVis){
+      const rng=mulberry32(SD.rain+d.i), strands=Math.round(clamp(d.rain/RN.perMm,RN.strandMin,RN.strandMax)); let rg="";
+      for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*RN.xMinK,dayW*RN.xMaxK,rng()),ry=SKY_TOP+lerp(RN.yMin,RN.yMax,rng());
+        const len=lerp(RN.lenMin,RN.lenMax,Math.sqrt(clamp(d.rain/RN.lenNorm,0,1)))*(RN.lenJitBase+rng()*RN.lenJitK);
+        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-RN.slant).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="${C.rain}" stroke-width="${RN.w}" stroke-linecap="round" opacity="${(RN.opBase+RN.opK*clamp(d.rain/RN.opNorm,0,1)).toFixed(2)}"/>`;}
+      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${rg}</g>`;
     }
     if(d.mins>0){
-      const dx=cx(d.idx), dy=SURF-72, dr=clamp(dayW*0.15,6,9);
-      weather+=`<g class="grow" style="transition-delay:${d.idx*8}ms">${dropIcon(dx,dy,dr)}</g>`;
+      const dx=cx(d.i), dy=SURF-DP.yOfs, dr=clamp(dayW*DP.rK,DP.rMin,DP.rMax);
+      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${dropIcon(dx,dy,dr)}</g>`;
     }
   });
 
   let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${SOIL_D}" fill="${HORIZ[1].fill}"/>`;
   HORIZ.forEach((h,hi)=>{
     soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(h.y1-h.y0).toFixed(1)}" fill="${h.fill}"/>`;
-    soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="0.6" opacity=".5"/>`;
-    const rng=mulberry32(40+hi), band=h.y1-h.y0, step=14;
-    for(let x=AX+4;x<R-2;x+=step){
-      if(rng()>h.spn) continue;
-      const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(0.5,1.4,rng());
-      soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(0.18+rng()*0.22).toFixed(2)}"/>`;
+    soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
+    const rng=mulberry32(SD.soil+hi), band=h.y1-h.y0, step=SL.speckStep;
+    for(let x=AX+SL.speckPadL;x<R-SL.speckPadR;x+=step){ if(rng()>h.spn) continue;
+      const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(SL.speckRMin,SL.speckRMax,rng());
+      soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(SL.speckOpBase+rng()*SL.speckOpK).toFixed(2)}"/>`;
     }
-    if(h.peb>0){for(let x=AX+6;x<R-4;x+=26){if(rng()>h.peb*8)continue;const px=x+(rng()-0.5)*20,py=SURF+h.y0+lerp(0.2,0.8,rng())*band,rr=lerp(1.6,3.2,rng());
-      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*0.7).toFixed(1)}" fill="${h.sp}" opacity=".5"/><ellipse cx="${(px-rr*0.3).toFixed(1)}" cy="${(py-rr*0.3).toFixed(1)}" rx="${(rr*0.4).toFixed(1)}" ry="${(rr*0.28).toFixed(1)}" fill="#FBFAF6" opacity=".12"/>`;}}
+    if(h.peb>0){ for(let x=AX+SL.pebPadL;x<R-SL.pebPadR;x+=SL.pebStep){ if(rng()>h.peb*SL.pebProbK)continue; const px=x+(rng()-0.5)*SL.pebXJit,py=SURF+h.y0+lerp(SL.pebYMin,SL.pebYMax,rng())*band,rr=lerp(SL.pebRMin,SL.pebRMax,rng());
+      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*SL.pebRyK).toFixed(1)}" fill="${h.sp}" opacity="${SL.pebOp}"/>`; }}
   });
 
   const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
-  DATA.forEach(d=>tablePts.push({x:cx(d.idx),y:tableY(d.level)}));
+  DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
   tablePts.push({x:R,y:tableY(DATA[N-1].level)});
   const tline=smooth(tablePts);
-  const aqua=`${tline} L ${R.toFixed(1)} ${SOIL_BOT} L ${AX} ${SOIL_BOT} Z`;
-  soil+=`<path d="${aqua}" fill="url(#aqua)"/>`;
-  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.idx)-dayW/2, dayW, SURF); });
-  soil+=`<path d="${tline}" fill="none" stroke="#1FA6BE" stroke-width="2.2"/>`
-     +`<path d="${tline}" fill="none" stroke="#BDEAF1" stroke-width="0.8" opacity=".6"/>`;
-  const surfPts=[{x:AX,y:SURF}];DATA.forEach(d=>{const j=(mulberry32(7+d.idx)()-0.5)*2.6;surfPts.push({x:cx(d.idx),y:SURF+j});});surfPts.push({x:R,y:SURF});
-  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="var(--surface)" stroke-width="2.4"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="#FBFAF6" stroke-width="4.6" opacity="0.5"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="var(--rust)" stroke-width="2.8" stroke-dasharray="8 5"/>`;
+  soil+=`<path d="${tline} L ${R.toFixed(1)} ${SOIL_BOT} L ${AX} ${SOIL_BOT} Z" fill="url(#aqua)"/>`;
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF); });
+  soil+=`<path d="${tline}" fill="none" stroke="${C.waterLine}" stroke-width="${TB.lineW}"/>`
+     +`<path d="${tline}" fill="none" stroke="${C.waterHi}" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
 
-  let cracks='';
-  DATA.forEach(d=>{if(d.level>3)return;const rng=mulberry32(31+d.idx),x0=cx(d.idx)-dayW/2,dry=1-clamp(d.level/3,0,1);
-    const nc=Math.round(lerp(2,4,dry));
-    for(let k=0;k<nc;k++){let px=x0+lerp(dayW*0.15,dayW*0.85,rng()),py=SURF+2,seg=`M ${px.toFixed(1)} ${py.toFixed(1)}`;const steps=3+Math.floor(rng()*3);
-      for(let s=0;s<steps;s++){px+=(rng()-0.5)*8;py+=lerp(5,13,rng());seg+=` L ${px.toFixed(1)} ${py.toFixed(1)}`;}
-      cracks+=`<path d="${seg}" fill="none" stroke="#5A4A33" stroke-width="0.8" opacity="${(0.16+0.22*dry).toFixed(2)}"/>`;}});
+  const surfPts=[{x:AX,y:SURF}];
+  DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
+  surfPts.push({x:R,y:SURF});
+  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.paper}" stroke-width="${TB.refillHaloW}" opacity="${TB.refillHaloOp}"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.rust}" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
 
-  let flora='';
-  DATA.forEach(d=>{const x=cx(d.idx),sY=SURF+(mulberry32(7+d.idx)()-0.5)*2.6,v=clamp(d.level/TANK,0,1),rng=mulberry32(101+d.idx);
-    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.idx*9}ms">`
-      +roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
+  let cracks="";
+  DATA.forEach(d=>{ if(d.level>CR.moistMax)return; const rng=mulberry32(SD.crack+d.i),x0=cx(d.i)-dayW/2,dry=1-clamp(d.level/CR.moistMax,0,1),nc=Math.round(lerp(CR.countMin,CR.countMax,dry));
+    for(let k=0;k<nc;k++){let px=x0+lerp(dayW*CR.xMinK,dayW*CR.xMaxK,rng()),py=SURF+CR.yOfs,seg=`M ${px.toFixed(1)} ${py.toFixed(1)}`;const steps=CR.stepMin+Math.floor(rng()*CR.stepRand);
+      for(let s2=0;s2<steps;s2++){px+=(rng()-0.5)*CR.xJit;py+=lerp(CR.dyMin,CR.dyMax,rng());seg+=` L ${px.toFixed(1)} ${py.toFixed(1)}`;}
+      cracks+=`<path d="${seg}" fill="none" stroke="${C.surf}" stroke-width="${CR.w}" opacity="${(CR.opBase+CR.opK*dry).toFixed(2)}"/>`;}});
 
-  let ticks='';
-  DATA.forEach(d=>{const x=cx(d.idx),isT=d.idx===todayIdx;
-    const dc=isT?'var(--today)':'var(--ink)', wc=dc, bold=isT?' font-weight="700"':'';
-    ticks+=`<text x="${x.toFixed(1)}" y="${SOIL_BOT+5+12*K}" text-anchor="middle" font-family="${SVGMONO}" font-size="${(12*K).toFixed(1)}"${bold} fill="${dc}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${SOIL_BOT+5+25*K}" text-anchor="middle" font-family="${SVGMONO}" font-size="${(12*K).toFixed(1)}"${bold} fill="${wc}">${d.wd}</text>`;});
-  const tx=cx(todayIdx);
-  const NOW='var(--today)', fw=44*K, fh=15*K, fy=3;
+  let flora="";
+  DATA.forEach(d=>{const x=cx(d.i),sY=SURF+(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit,v=clamp(d.level/TANK,0,1),rng=mulberry32(SD.flora+d.i);
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
+
+  let ticks="";
+  DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
+    ticks+=`<text x="${x.toFixed(1)}" y="${(SOIL_BOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${(SOIL_BOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd}</text>`;});
+
+  const tx=cx(todayIdx), fw=MK.wK*K, fh=MK.hK*K, fy=MK.y;
   const today=
-     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${NOW}" opacity="0.08"/>`
-    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${NOW}" stroke-width="1" stroke-dasharray="3 4" opacity="0.35"/>`
-    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(7.5*K).toFixed(1)}" fill="${NOW}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${SVGMONO}" font-size="${(10*K).toFixed(1)}" font-weight="700" fill="#FBFAF6" letter-spacing=".1em">TODAY</text>`;
-  let hits='';DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.idx}" x="${(cx(d.idx)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="${'ui-sans-serif,system-ui,sans-serif'}">
-    <defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
-  return {svg,W,dayW,todayIdx,cx,tableY};
+  let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
+
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
+  return { svg, W, dayW, cx, todayIdx };
 }
 
-function dropIcon(cx,cy,r){
-  const topY=cy-2.1*r;
-  const d=`M ${cx.toFixed(1)} ${topY.toFixed(1)} `
-    +`C ${(cx+0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
-    +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
-    +`C ${(cx-r).toFixed(1)} ${(cy-0.55*r).toFixed(1)} ${(cx-0.62*r).toFixed(1)} ${(cy-1.35*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
-  return `<path d="${d}" fill="#34BCD2" stroke="#1FA6BE" stroke-width="1.3" stroke-linejoin="round"/>`
-    +`<ellipse cx="${(cx-r*0.34).toFixed(1)}" cy="${(cy+r*0.02).toFixed(1)}" rx="${(r*0.2).toFixed(1)}" ry="${(r*0.42).toFixed(1)}" fill="#E8FAFD" opacity=".8"/>`;
-}
-function wetCol(x0,w,sY){
-  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="160" fill="url(#wetE)"/>`
-    +`<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="3" fill="#34BCD2" opacity=".34"/>`;
-}
-
-function plant(x,sY,v,rng){
-  const h=ease(clamp((v-0.08)/0.44,0,1));
-  if(h<0.07){const c='#3A352C';
-    return `<path d="M ${x} ${sY} L ${(x-2).toFixed(1)} ${(sY-9)}" stroke="${c}" stroke-width="1.4" stroke-linecap="round"/>`
-         +`<path d="M ${(x-1).toFixed(1)} ${(sY-6)} L ${(x+3).toFixed(1)} ${(sY-12)}" stroke="${c}" stroke-width="1.1" stroke-linecap="round"/>`;}
-  const hgt=lerp(8,54,h),droop=clamp((0.45-h)/0.45,0,1);
-  const tipX=x+lerp(0,16,droop)*(rng()<.5?-1:1)*0.6, tipY=sY-hgt+lerp(0,hgt*0.5,droop);
-  const ctrlX=x+lerp(0,10,droop), ctrlY=sY-hgt*0.55, pc=plantColor(h), lc=leafColor(h);
-  let s=`<path d="M ${x} ${sY} Q ${ctrlX.toFixed(1)} ${ctrlY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${pc}" stroke-width="${lerp(1.2,2.6,h).toFixed(2)}" stroke-linecap="round"/>`;
-  const nl=Math.round(lerp(0,5,h));
-  for(let k=0;k<nl;k++){
-    if(nl===5&&k===4) continue;
-    const t=lerp(0.28,0.92,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(5,11,h);
-    const mxp=lx+side*ll*0.5,myp=ly+droop*ll*0.4;
-    s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*0.6).toFixed(1)}" ry="${(ll*0.32).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(18,40,h)+droop*20).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;}
-  if(h>0.62){const fx=tipX,fy=tipY-1;for(let k=0;k<5;k++){const a=k/5*Math.PI*2;s+=`<circle cx="${(fx+Math.cos(a)*3.9).toFixed(1)}" cy="${(fy+Math.sin(a)*3.9).toFixed(1)}" r="2.6" fill="#FBFAF6" stroke="#8A8270" stroke-width="0.6"/>`;}s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="2.1" fill="#AF6E4B"/>`;}
-  else if(h>0.42){s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-1).toFixed(1)}" rx="2.8" ry="3.9" fill="${hexLerp('#9C8A45','#FBFAF6',(h-0.42)/0.2)}"/>`;}
-  return s;
-}
-
-function roots(x,sY,v,rng){
-  const h=ease(clamp((v-0.08)/0.44,0,1));
-  const dead=h<0.08;
-  let depthFrac=lerp(0.18,0.50,v);
-  if(dead) depthFrac=Math.min(depthFrac,0.16+0.05*rng());
-  const depth=SOIL_D*depthFrac+(rng()-0.5)*8;
-  const col=rootColor(h), wMain=lerp(0.8,2.8,h);
-  let pts=[{x,y:sY}];const segs=5;
-  for(let k=1;k<=segs;k++){const t=k/segs;pts.push({x:x+(rng()-0.5)*(dead?8:4),y:sY+depth*t});}
-  let s=`<path d="${dead?jag(pts):smooth(pts)}" fill="none" stroke="${col}" stroke-width="${wMain.toFixed(2)}" stroke-linecap="round" opacity="${dead?0.85:1}"/>`;
-  const nl=Math.round(lerp(1,5,h));
-  const lats=[];
-  for(let k=0;k<nl;k++){const startT=lerp(0.18,0.82,(k+0.4)/nl),sx=x+(rng()-0.5)*4,sy0=sY+depth*startT,dir=(rng()<0.5?-1:1);
-    const ex=sx+dir*lerp(7,16,rng()), ey=sy0+lerp(8,22,rng()), mx=(sx+ex)/2+dir*4, my=(sy0+ey)/2;
-    lats.push({sx,sy0,ex,ey,mx,my,dir});
-    if(dead) s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} L ${mx.toFixed(1)} ${my.toFixed(1)} L ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*0.5).toFixed(2)}" stroke-linecap="round" opacity=".8"/>`;
-    else s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*0.55).toFixed(2)}" stroke-linecap="round"/>`;}
-  if(h>0.2){
-    const hairC=rootColor(clamp(h+0.05,0,1)), nh=Math.round(lerp(0,5,h));
-    pts.slice(1).forEach((p)=>{for(let k=0;k<nh;k++){if(rng()>0.6)continue;const side=rng()<0.5?-1:1,hl=lerp(2,5,h);
-      s+=`<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${(p.x+side*hl).toFixed(1)}" y2="${(p.y+lerp(1,4,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="0.5" opacity="${(0.4+0.3*h).toFixed(2)}"/>`;}});
-    lats.forEach(L=>{for(let k=0;k<nh;k++){if(rng()>0.55)continue;const t=rng(),hx2=lerp(L.sx,L.ex,t),hy2=lerp(L.sy0,L.ey,t),hl=lerp(1.5,4,h);
-      s+=`<line x1="${hx2.toFixed(1)}" y1="${hy2.toFixed(1)}" x2="${(hx2+L.dir*hl).toFixed(1)}" y2="${(hy2+lerp(0.5,2.5,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="0.45" opacity="${(0.35+0.3*h).toFixed(2)}"/>`;}});
-  }
-  return s;
-}
-function jag(pts){let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`;return d;}
-
-const scroll=document.getElementById('scroll'),sbar=document.getElementById('sbar'),sthumb=document.getElementById('sthumb');
-let G, booted=false;
-function renderStatus(){
+function renderStatus(model){
+  const DATA=model.series, TANK=model.tank, REFILL=model.refill;
   const ti=DATA.findIndex(d=>d.date===TODAY), tl=DATA[ti].level;
-  const pct=Math.round(tl/TANK*100), thPos=REFILL/TANK*100, N=DATA.length;
+  const pct=Math.round(tl/TANK*100), N=DATA.length;
   let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
-  const RUST='#B5471F',AMBER='#D98A2B',GREEN='#4F6B4A';
-  let word,color,kick;
-  if(tl<=0.05){ word='Water today'; color=RUST; kick='Refill point reached'; }
-  else if(tl<REFILL){ word='Water now'; color=RUST; kick='Below refill point'; }
+  let word,level,kick;
+  if(tl<=TANK*ENGINE.emptyFrac){ word="Water today"; level="now"; kick="Refill point reached"; }
+  else if(tl<REFILL){ word="Water now"; level="now"; kick="Below refill point"; }
   else {
-    let dd, plus=''; if(firstBelow>=0){ dd=firstBelow-ti; } else { dd=(N-1)-ti; plus='+'; }
-    word = dd===1 ? 'Water tomorrow' : `Water in ${dd}${plus} days`;
-    color = dd>=2 ? GREEN : AMBER;
-    kick='Above refill point';
+    let dd,plus=""; if(firstBelow>=0){dd=firstBelow-ti;} else {dd=(N-1)-ti;plus="+";}
+    word = dd===1 ? "Water tomorrow" : `Water in ${dd}${plus} days`;
+    level = dd>=2 ? "ok" : "soon";
+    kick="Above refill point";
   }
-  document.getElementById('status').innerHTML=
-    `<div class="top"><div class="word" style="color:${color}"><span class="dot" style="background:${color};box-shadow:0 0 0 4px ${color}22"></span>${word}</div>`
-   +`<div class="pct" style="color:${color}">${pct}<span style="font-size:13px;color:var(--faint)">%</span></div></div>`
-   +`<div class="bar"><span class="fill" style="width:${clamp(pct,0,100)}%;background:${color}"></span>`
-   +`<span class="mark" style="left:${thPos}%" title="refill point"></span></div>`
-   +`<div class="sub">${Math.round(tl)} / ${TANK} mm held · ${kick.toLowerCase()}</div>`;
+  const st=document.getElementById("status");
+  st.dataset.level=level;
+  st.style.setProperty("--p", clamp(pct,0,100)+"%");
+  st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
+  document.getElementById("word").textContent=word;
+  document.getElementById("pct").textContent=pct;
+  document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
 }
+
+const ctrl={ planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:ENGINE.dur.start, watered:[7,11] };
+const scroll=document.getElementById("scroll");
+const sbar=document.getElementById("sbar"), thumb=document.getElementById("thumb");
+let G, booted=false;
+
 function render(){
-  G=build();
+  const model=compute(ctrl);
+  G=build(model);
   scroll.innerHTML=G.svg;
-  renderStatus();
+  renderStatus(model);
   wireHits();
   requestAnimationFrame(syncBar);
-  if(!booted){scroll.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX);booted=true;requestAnimationFrame(()=>document.body.classList.remove('booting'));}
+  if(!booted){ scroll.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
+    requestAnimationFrame(()=>document.body.classList.remove("booting")); }
 }
-function rerender(){const sl=scroll.scrollLeft;render();scroll.scrollLeft=sl;}
+function rerender(){ const sl=scroll.scrollLeft; render(); scroll.scrollLeft=sl; }
+
 function toggleWater(i){
-  if(plan[i]) delete plan[i]; else plan[i]=WATER_MIN;
-  DATA=computeData();
+  const set=new Set(ctrl.watered);
+  set.has(i) ? set.delete(i) : set.add(i);
+  ctrl.watered=[...set];
   rerender();
 }
 function wireHits(){
-  scroll.querySelector('svg').querySelectorAll('.hit').forEach(h=>{
-    const i=+h.dataset.i; h.style.cursor='pointer';
-    h.addEventListener('click',()=>toggleWater(i));
+  scroll.querySelector("svg").querySelectorAll(".hit").forEach(h=>{
+    h.style.cursor="pointer";
+    h.addEventListener("click",()=>toggleWater(+h.dataset.i));
   });
 }
-let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
+
+document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
+
+document.getElementById("controls").addEventListener("change",e=>{
+  const r=e.target; if(r.type!=="radio")return;
+  ctrl[r.name]=r.value; rerender();
+});
+function bumpDur(d){
+  ctrl.minutes=clamp(ctrl.minutes+d,ENGINE.dur.min,ENGINE.dur.max);
+  document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
+  rerender();
+}
+document.getElementById("durDown").addEventListener("click",()=>bumpDur(-ENGINE.dur.step));
+document.getElementById("durUp").addEventListener("click",()=>bumpDur(ENGINE.dur.step));
 
 function syncBar(){
   const cw=scroll.clientWidth, sw=scroll.scrollWidth, tw=sbar.clientWidth;
-  if(sw<=cw+1){ sbar.style.visibility='hidden'; return; }
-  sbar.style.visibility='visible';
+  if(sw<=cw+1){ sbar.style.visibility="hidden"; return; }
+  sbar.style.visibility="visible";
   const thumbW=Math.max(28, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
-  sthumb.style.width=thumbW+'px';
-  sthumb.style.left=(maxScroll>0?(scroll.scrollLeft/maxScroll)*maxLeft:0)+'px';
+  thumb.style.width=thumbW+"px";
+  thumb.style.left=(maxScroll>0?(scroll.scrollLeft/maxScroll)*maxLeft:0)+"px";
 }
-scroll.addEventListener('scroll',syncBar,{passive:true});
-let _drag=false,_x0=0,_l0=0;
-sthumb.addEventListener('pointerdown',e=>{_drag=true;_x0=e.clientX;_l0=parseFloat(sthumb.style.left)||0;sthumb.setPointerCapture(e.pointerId);e.preventDefault();});
-sthumb.addEventListener('pointermove',e=>{ if(!_drag)return;
-  const tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
-  scroll.scrollLeft=maxLeft>0?(clamp(_l0+(e.clientX-_x0),0,maxLeft)/maxLeft)*maxScroll:0; });
-sthumb.addEventListener('pointerup',()=>{_drag=false;});
-sbar.addEventListener('pointerdown',e=>{ if(e.target===sthumb)return;
-  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=sthumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+scroll.addEventListener("scroll",syncBar,{passive:true});
+let drag=false,x0=0,l0=0;
+thumb.addEventListener("pointerdown",e=>{drag=true;x0=e.clientX;l0=parseFloat(thumb.style.left)||0;thumb.setPointerCapture(e.pointerId);e.preventDefault();});
+thumb.addEventListener("pointermove",e=>{ if(!drag)return;
+  const tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
+  scroll.scrollLeft=maxLeft>0?(clamp(l0+(e.clientX-x0),0,maxLeft)/maxLeft)*maxScroll:0; });
+thumb.addEventListener("pointerup",()=>{drag=false;});
+sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
+  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scroll.scrollWidth-scroll.clientWidth;
   scroll.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
 
-render();
+let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
 
-document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
-  const b=e.target.closest('button'); if(!b)return;
-  seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
-  if(seg.dataset.group==='planting') document.getElementById('locline').textContent=b.textContent.trim()+' · Wijchen';
-}));
-function bumpDur(d){WATER_MIN=Math.max(15,Math.min(240,WATER_MIN+d));
-  document.getElementById('durVal').textContent=WATER_MIN;}
+render();
 </script>
 </body>
 </html>
