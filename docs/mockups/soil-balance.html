@@ -286,11 +286,12 @@ const CFG = {
   },
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
+  // O/A/B horizons. Depth boundaries (y0/y1) are wired from the refill depth
+  // and planting root zone below (see "Depth scale"), so bands/refill/roots align.
   horizons: [
-    { y0:0,   y1:16,  fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
-    { y0:16,  y1:60,  fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
-    { y0:60,  y1:136, fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.06, label:"B" },
-    { y0:136, y1:184, fill:"#C9B07C", sp:"#8E7950", edge:"#A78F5D", spn:0.38, peb:0.12, label:"C" },
+    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
+    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
+    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08, label:"B" },
   ],
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
@@ -372,6 +373,16 @@ const DRAW = {
 const C = CFG.color, HORIZ = CFG.horizons, TODAY = ENGINE.today, VIT = DRAW.vitality;
 const { axisX:AX, padR:PADR, skyTop:SKY_TOP, surf:SURF, soilBot:SOIL_BOT, h:H } = CFG.geom;
 const SOIL_D = SOIL_BOT - SURF;
+
+// Depth scale: pin the A/B boundary to the refill depth, then size the column so
+// the default planting's root zone ends exactly there. Bands, refill line, and
+// (default) roots therefore line up by construction, not coincidence.
+const AB_Y = SOIL_D * (1 - ENGINE.refillFrac);                       // A/B boundary = refill depth
+const PX_PER_CM = AB_Y / (ENGINE.plantings["Flower bed"].root * 100); // px per cm of real depth
+const O_Y = 3 * PX_PER_CM;                                           // ~3 cm organic litter
+HORIZ[0].y0 = 0;    HORIZ[0].y1 = O_Y;
+HORIZ[1].y0 = O_Y;  HORIZ[1].y1 = AB_Y;
+HORIZ[2].y0 = AB_Y; HORIZ[2].y1 = SOIL_D;
 const MONO = "ui-monospace,Menlo,Consolas,monospace";
 
 const SAMPLE = [
@@ -418,7 +429,7 @@ function compute(ctrl) {
       mins: watered.has(i) ? ctrl.minutes : 0, level,
     });
   }
-  return { series, tank, dose, refill: tank * ENGINE.refillFrac };
+  return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root };
 }
 
 const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
@@ -469,11 +480,10 @@ function plant(x,sY,v,rng){
   return s;
 }
 
-function roots(x,sY,v,rng){
+function roots(x,sY,v,rng,rootPx){
   const R=DRAW.root, h=health(v), dead=h<R.deadMax;
-  let depthFrac=lerp(R.depthFracMin,R.depthFracMax,v);
-  if(dead) depthFrac=Math.min(depthFrac,R.deadCapBase+R.deadCapJit*rng());
-  const depth=SOIL_D*depthFrac+(rng()-0.5)*R.depthJit;
+  let depth=rootPx+(rng()-0.5)*R.depthJit;
+  if(dead) depth=Math.min(depth,SOIL_D*(R.deadCapBase+R.deadCapJit*rng()));
   const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
   let pts=[{x,y:sY}]; const segs=R.segs;
   for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
@@ -500,6 +510,7 @@ function build(model){
   const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
+  const rootPx=model.root*100*PX_PER_CM;
   const tableY=lv=>SOIL_BOT-(clamp(lv,0,TANK)/TANK)*SOIL_D;
   const refillY=tableY(REFILL);
   const todayIdx=DATA.findIndex(d=>d.date===TODAY);
@@ -580,7 +591,7 @@ function build(model){
 
   let flora="";
   DATA.forEach(d=>{const x=cx(d.i),sY=SURF+(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit,v=clamp(d.level/TANK,0,1),rng=mulberry32(SD.flora+d.i);
-    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng)+plant(x,sY,v,rng)+`</g>`;});
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
 
   let ticks="";
   DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
