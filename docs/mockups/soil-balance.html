@@ -509,8 +509,8 @@ function build(model){
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
   const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
-  // Panel hugs the plant: draw the root zone plus 10 cm of soil beneath it.
-  const VBOT=Math.min(ROOT_BOT+10*PX_PER_CM, SOIL_BOT), soilDepth=VBOT-SURF;
+  // Panel hugs the plant: the soil column ends at the root tips.
+  const VBOT=ROOT_BOT, soilDepth=VBOT-SURF;
   // Water reservoir is confined to the root zone: full = surface, empty = root tips.
   const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
   const refillY=tableY(REFILL);
