@@ -509,11 +509,13 @@ function build(model){
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
   const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
+  // Panel hugs the plant: draw the root zone plus 10 cm of soil beneath it.
+  const VBOT=Math.min(ROOT_BOT+10*PX_PER_CM, SOIL_BOT), soilDepth=VBOT-SURF;
   // Water reservoir is confined to the root zone: full = surface, empty = root tips.
   const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
   const refillY=tableY(REFILL);
   const todayIdx=DATA.findIndex(d=>d.date===TODAY);
-  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=H+Math.ceil(T.heightSlack*(K-1));
+  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1));
 
   const defs=`
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
@@ -559,13 +561,13 @@ function build(model){
     }
   });
 
-  // Only the reservoir soil is drawn: the column ends at the root tips (ROOT_BOT),
-  // so each planting shows just the soil its roots draw water from.
-  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${rootPx.toFixed(1)}" fill="${HORIZ[1].fill}"/>`;
+  // The soil column ends just below the roots (root zone + 10 cm), so each
+  // planting shows the soil its roots draw from plus a little context beneath.
+  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HORIZ[1].fill}"/>`;
   let hlabels="";
   HORIZ.forEach((h,hi)=>{
-    if(h.y0>=rootPx) return;                       // horizon lies entirely below the root zone
-    const yb=Math.min(h.y1,rootPx), band=yb-h.y0;
+    if(h.y0>=soilDepth) return;                     // horizon lies below the drawn column
+    const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
     if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
     soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
     soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
@@ -606,17 +608,17 @@ function build(model){
 
   let ticks="";
   DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
-    ticks+=`<text x="${x.toFixed(1)}" y="${(SOIL_BOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${(SOIL_BOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd}</text>`;});
+    ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd}</text>`;});
 
   const tx=cx(todayIdx), fw=MK.wK*K, fh=MK.hK*K, fy=MK.y;
   const today=
-     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
-    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(SOIL_BOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
     +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
-  let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
+  let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
   const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
