@@ -270,6 +270,14 @@ const ENGINE = {
 
   plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
   soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
+  // Per-soil look for the A (topsoil) / B (subsoil) horizons: B carries the
+  // characteristic colour, plus grain texture (speckle prob, pebble prob).
+  soilLook: {
+    "Sand":       { A:"#7A6440", B:"#CDB57E", spnA:.55, spnB:.40, peb:.18 },
+    "Sandy loam": { A:"#4E3A22", B:"#8C6638", spnA:.85, spnB:.55, peb:.08 },
+    "Loam":       { A:"#3A2A17", B:"#6B4F2E", spnA:.90, spnB:.60, peb:.04 },
+    "Clay":       { A:"#5A3422", B:"#A05636", spnA:.95, spnB:.82, peb:.01 },
+  },
   sun:   { "Shade":.5, "Half sun":.75, "Full sun":1.0 },
   applyRate:  0.063,
   rainEff:    0.8,
@@ -427,7 +435,7 @@ function compute(ctrl) {
       mins: watered.has(i) ? ctrl.minutes : 0, level,
     });
   }
-  return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root };
+  return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root, soil: ctrl.soil };
 }
 
 const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
@@ -561,11 +569,18 @@ function build(model){
     }
   });
 
-  // The soil column ends just below the roots (root zone + 10 cm), so each
-  // planting shows the soil its roots draw from plus a little context beneath.
-  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HORIZ[1].fill}"/>`;
+  // Recolour/texture the A & B horizons for the chosen soil (O litter is shared).
+  const look=ENGINE.soilLook[model.soil]||ENGINE.soilLook["Sandy loam"];
+  const HZ=HORIZ.map((h,i)=>{ if(i===0) return h;
+    const fill=i===1?look.A:look.B;
+    return {...h, fill, edge:shade(fill,0.70), sp:shade(fill,0.82),
+            spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
+
+  // The soil column ends at the root tips, so each planting shows just the
+  // soil its roots draw from.
+  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
   let hlabels="";
-  HORIZ.forEach((h,hi)=>{
+  HZ.forEach((h,hi)=>{
     if(h.y0>=soilDepth) return;                     // horizon lies below the drawn column
     const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
     if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
