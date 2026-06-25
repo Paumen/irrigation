@@ -524,7 +524,15 @@ function build(model){
       <stop offset="1" stop-color="${C.glow}" stop-opacity="0"/></radialGradient>
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".30"/>
-      <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>`;
+      <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>
+    <linearGradient id="wline" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+      <stop offset="0" stop-color="${C.waterLine}"/>
+      <stop offset=".5" stop-color="${C.waterLine}"/>
+      <stop offset="1" stop-color="${C.waterLine}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+      <stop offset="0" stop-color="${C.waterHi}"/>
+      <stop offset=".5" stop-color="${C.waterHi}"/>
+      <stop offset="1" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
 
   let sky="", weather="";
   DATA.forEach(d=>{
@@ -572,8 +580,8 @@ function build(model){
   const tline=smooth(tablePts);
   soil+=`<path d="${tline} L ${R.toFixed(1)} ${ROOT_BOT.toFixed(1)} L ${AX} ${ROOT_BOT.toFixed(1)} Z" fill="url(#aqua)"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
-  soil+=`<path d="${tline}" fill="none" stroke="${C.waterLine}" stroke-width="${TB.lineW}"/>`
-     +`<path d="${tline}" fill="none" stroke="${C.waterHi}" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
+  soil+=`<path d="${tline}" fill="none" stroke="url(#wline)" stroke-width="${TB.lineW}"/>`
+     +`<path d="${tline}" fill="none" stroke="url(#whi)" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
 
   const surfPts=[{x:AX,y:SURF}];
   DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
