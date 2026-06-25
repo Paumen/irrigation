@@ -22,7 +22,6 @@
     --neutral:             oklch(91.8% 0.014  93);
     --neutral-raised:      oklch(98.5% 0.005  95);
     --neutral-mute:        oklch(89.2% 0.020  91);
-    --neutral-mute-strong: oklch(80.8% 0.046  87);
     --text:                oklch(33.1% 0.017  82);
     --text-mute:           oklch(58.5% 0.028  87);
     --accent:              oklch(49.6% 0.061 141);
@@ -34,7 +33,6 @@
     --sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
 
     --fw-semibold: 600;
-    --fw-bold:     700;
 
     --tracking-wide:  .08em;
     
@@ -48,8 +46,7 @@
     --xl: clamp(1.3rem, 4.5vw, 2rem);
     --xxl: clamp(2rem, 6vw, 3rem);
 
-    --r-sm: 5px; 
-    --r-lg: 14px; 
+    --r-sm: 5px;
     --r-pill: 999px;
 
     --bw: 1px;
@@ -66,7 +63,7 @@
 }
 
 @layer base {
-  html, body { -webkit-text-size-adjust: 100%; }
+  html, body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
   body {
     display: grid;
     gap: var(--l);
@@ -74,7 +71,7 @@
     overflow-x: hidden;
     font-family: var(--sans);
     font-size: var(--l);
-    line-height: var(--leading-normal);
+    line-height: 1.4;
     color: var(--text);
     background: var(--neutral);
   }
@@ -96,32 +93,35 @@
     padding: 0; border: 0; background: none; box-shadow: none;
   }
 
-  .status {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: var(--xs) var(--m);
+  .card {
+    display: grid; gap: var(--l);
     padding: var(--m) var(--l);
     background: var(--neutral-raised);
     border: var(--bw) solid var(--neutral-mute);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-sm);
+  }
+  .status {
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: var(--xs) var(--m);
     --c: var(--accent);
   }
   [data-level="soon"] { --c: var(--color-warn); }
   [data-level="now"]  { --c: var(--color-danger); }
 
-  .word {
-    grid-column: 1;
-    display: flex; align-items: center; gap: var(--s);
-    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--xl);
-    line-height: var(--leading-tight); color: var(--c);
-  }
-  .pct {
-    grid-column: 2; justify-self: end;
+  .word, .pct {
     font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--xl);
     color: var(--c);
   }
-  .pct small { font-family: var(--serif); font-size: var(--m); color: var(--text-mute); }
+  .word {
+    grid-column: 1;
+    display: flex; align-items: center; gap: var(--s);
+    line-height: var(--leading-tight);
+  }
+  .pct {
+    grid-column: 2; justify-self: end;
+  }
+  .pct small, fieldset.stepper output small { font-size: var(--m); color: var(--text-mute); }
   .dot {
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c);
@@ -161,17 +161,9 @@
   .sbar .thumb {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--xxl); min-inline-size: var(--xl);
-    background: var(--neutral-mute-strong); border-radius: var(--r-sm); cursor: grab;
+    background: var(--text-mute); border-radius: var(--r-sm); cursor: grab;
   }
   .sbar .thumb:active { cursor: grabbing; }
-
-  .card {
-    display: grid; gap: var(--l);
-    padding: var(--m) var(--l);
-    background: var(--neutral-raised);
-    border: var(--bw) solid var(--neutral-mute);
-    border-radius: var(--r-lg);
-  }
 
   fieldset {
     position: relative;
@@ -200,27 +192,26 @@
     opacity: var(--op-hidden); pointer-events: none;
   }
   fieldset label:has(input:checked) {
-    background: var(--neutral-raised); color: var(--accent); font-weight: var(--fw-bold);
+    background: var(--neutral-raised); color: var(--accent); font-weight: var(--fw-semibold);
     box-shadow: var(--lift);
   }
 
   fieldset.stepper {
     display: inline-flex; justify-self: start; align-self: start;
-    gap: 0; padding: 0; background: var(--neutral-raised);
-    border-color: var(--neutral-mute-strong);
+    gap: 0; background: var(--neutral-raised);
   }
   fieldset.stepper button {
     inline-size: var(--xxl); border: 0; background: transparent;
     color: var(--text); cursor: pointer; border-radius: var(--r-pill);
-    font-size: var(--l); line-height: var(--leading-tight);
+    padding: var(--xs) var(--s); line-height: var(--leading-tight);
   }
   fieldset.stepper output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
+    padding: var(--xs) var(--s); line-height: var(--leading-tight);
     font-family: var(--mono); color: var(--text);
     border-inline: var(--bw) solid var(--neutral-mute);
   }
-  fieldset.stepper output small { font-size: var(--m); color: var(--text-mute); }
 }
 
 </style>
@@ -230,7 +221,7 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="status" id="status" data-level="ok">
+  <section class="card status" id="status" data-level="ok">
     <p class="word"><i class="dot"></i><output id="word">—</output></p>
     <p class="pct"><output id="pct">—</output><small>%</small></p>
     <p class="bar"><i class="fill"></i><i class="mark"></i></p>
