@@ -287,10 +287,10 @@ const CFG = {
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
   horizons: [
-    { y0:0,   y1:34,  fill:"#3D2D1E", sp:"#241813", edge:"#2A1E13", spn:0.95 },
-    { y0:34,  y1:90,  fill:"#6B4C2F", sp:"#48311E", edge:"#4E3620", spn:0.70 },
-    { y0:90,  y1:140, fill:"#946F3D", sp:"#6E5230", edge:"#785A30", spn:0.50, peb:0.06 },
-    { y0:140, y1:184, fill:"#C9B07C", sp:"#8E7950", edge:"#A78F5D", spn:0.38, peb:0.12 },
+    { y0:0,   y1:16,  fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
+    { y0:16,  y1:60,  fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
+    { y0:60,  y1:136, fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.06, label:"B" },
+    { y0:136, y1:184, fill:"#C9B07C", sp:"#8E7950", edge:"#A78F5D", spn:0.38, peb:0.12, label:"C" },
   ],
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
@@ -542,7 +542,9 @@ function build(model){
   });
 
   let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${SOIL_D}" fill="${HORIZ[1].fill}"/>`;
+  let hlabels="";
   HORIZ.forEach((h,hi)=>{
+    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+h.y1)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
     soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(h.y1-h.y0).toFixed(1)}" fill="${h.fill}"/>`;
     soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
     const rng=mulberry32(SD.soil+hi), band=h.y1-h.y0, step=SL.speckStep;
@@ -594,7 +596,7 @@ function build(model){
 
   let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SOIL_BOT-SKY_TOP}" fill="transparent"/>`;});
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
 }
 
