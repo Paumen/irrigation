@@ -96,32 +96,35 @@
     padding: 0; border: 0; background: none; box-shadow: none;
   }
 
-  .status {
+  .status, .card {
     display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: var(--xs) var(--m);
     padding: var(--m) var(--l);
     background: var(--neutral-raised);
     border: var(--bw) solid var(--neutral-mute);
     border-radius: var(--r-lg);
+  }
+  .status {
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: var(--xs) var(--m);
     --c: var(--accent);
   }
   [data-level="soon"] { --c: var(--color-warn); }
   [data-level="now"]  { --c: var(--color-danger); }
 
-  .word {
-    grid-column: 1;
-    display: flex; align-items: center; gap: var(--s);
-    font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--xl);
-    line-height: var(--leading-tight); color: var(--c);
-  }
-  .pct {
-    grid-column: 2; justify-self: end;
+  .word, .pct {
     font-family: var(--serif); font-weight: var(--fw-semibold); font-size: var(--xl);
     color: var(--c);
   }
-  .pct small { font-family: var(--serif); font-size: var(--m); color: var(--text-mute); }
+  .word {
+    grid-column: 1;
+    display: flex; align-items: center; gap: var(--s);
+    line-height: var(--leading-tight);
+  }
+  .pct {
+    grid-column: 2; justify-self: end;
+  }
+  .pct small, fieldset.stepper output small { font-size: var(--m); color: var(--text-mute); }
   .dot {
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c);
@@ -165,13 +168,7 @@
   }
   .sbar .thumb:active { cursor: grabbing; }
 
-  .card {
-    display: grid; gap: var(--l);
-    padding: var(--m) var(--l);
-    background: var(--neutral-raised);
-    border: var(--bw) solid var(--neutral-mute);
-    border-radius: var(--r-lg);
-  }
+  .card { gap: var(--l); }
 
   fieldset {
     position: relative;
@@ -206,21 +203,21 @@
 
   fieldset.stepper {
     display: inline-flex; justify-self: start; align-self: start;
-    gap: 0; padding: 0; background: var(--neutral-raised);
+    gap: 0; background: var(--neutral-raised);
     border-color: var(--neutral-mute-strong);
   }
   fieldset.stepper button {
     inline-size: var(--xxl); border: 0; background: transparent;
     color: var(--text); cursor: pointer; border-radius: var(--r-pill);
-    font-size: var(--l); line-height: var(--leading-tight);
+    padding: var(--xs) var(--s); line-height: var(--leading-tight);
   }
   fieldset.stepper output {
     min-inline-size: var(--xl);
-    display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--xs);
+    padding: var(--xs) var(--s); line-height: var(--leading-tight);
     font-family: var(--mono); color: var(--text);
     border-inline: var(--bw) solid var(--neutral-mute);
   }
-  fieldset.stepper output small { font-size: var(--m); color: var(--text-mute); }
 }
 
 </style>
