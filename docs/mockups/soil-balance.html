@@ -532,7 +532,10 @@ function build(model){
     <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
       <stop offset="0" stop-color="${C.waterHi}"/>
       <stop offset=".5" stop-color="${C.waterHi}"/>
-      <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
+      <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="subsoil" gradientUnits="userSpaceOnUse" x1="0" y1="${ROOT_BOT.toFixed(1)}" x2="0" y2="${SOIL_BOT}">
+      <stop offset="0" stop-color="${C.aqua1}" stop-opacity="0"/>
+      <stop offset="1" stop-color="${C.aqua1}" stop-opacity=".34"/></linearGradient>`;
 
   let sky="", weather="";
   DATA.forEach(d=>{
@@ -573,6 +576,10 @@ function build(model){
     if(h.peb>0){ for(let x=AX+SL.pebPadL;x<R-SL.pebPadR;x+=SL.pebStep){ if(rng()>h.peb*SL.pebProbK)continue; const px=x+(rng()-0.5)*SL.pebXJit,py=SURF+h.y0+lerp(SL.pebYMin,SL.pebYMax,rng())*band,rr=lerp(SL.pebRMin,SL.pebRMax,rng());
       soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*SL.pebRyK).toFixed(1)}" fill="${h.sp}" opacity="${SL.pebOp}"/>`; }}
   });
+
+  // Deep subsoil moisture: water that has drained below the root tips and sits there,
+  // out of the plant's reach. Static damp tint (not the dynamic root-zone reservoir).
+  if(ROOT_BOT<SOIL_BOT) soil+=`<rect x="${AX}" y="${ROOT_BOT.toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${(SOIL_BOT-ROOT_BOT).toFixed(1)}" fill="url(#subsoil)"/>`;
 
   const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
   DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
