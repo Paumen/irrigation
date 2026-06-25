@@ -330,7 +330,7 @@ const DRAW = {
   },
 
   root: {
-    deadMax:0.08, depthFracMin:0.18, depthFracMax:0.50, deadCapBase:0.16, deadCapJit:0.05,
+    deadMax:0.08, deadCapBase:0.16, deadCapJit:0.05,
     depthJit:8, mainWMin:0.8, mainWMax:2.8, deadOp:0.85,
     segs:5, segJitLive:4, segJitDead:8,
     latMin:1, latMax:5, latStartMin:0.18, latStartMax:0.82, latStartOfs:0.4, latSxJit:4,
@@ -360,7 +360,7 @@ const DRAW = {
   },
 
   table: {
-    wetH:160, lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
+    lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
     refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
   },
 
@@ -374,15 +374,13 @@ const C = CFG.color, HORIZ = CFG.horizons, TODAY = ENGINE.today, VIT = DRAW.vita
 const { axisX:AX, padR:PADR, skyTop:SKY_TOP, surf:SURF, soilBot:SOIL_BOT, h:H } = CFG.geom;
 const SOIL_D = SOIL_BOT - SURF;
 
-// Depth scale: pin the A/B boundary to the refill depth, then size the column so
-// the default planting's root zone ends exactly there. Bands, refill line, and
-// (default) roots therefore line up by construction, not coincidence.
-const AB_Y = SOIL_D * (1 - ENGINE.refillFrac);                       // A/B boundary = refill depth
-const PX_PER_CM = AB_Y / (ENGINE.plantings["Flower bed"].root * 100); // px per cm of real depth
-const O_Y = 3 * PX_PER_CM;                                           // ~3 cm organic litter
-HORIZ[0].y0 = 0;    HORIZ[0].y1 = O_Y;
-HORIZ[1].y0 = O_Y;  HORIZ[1].y1 = AB_Y;
-HORIZ[2].y0 = AB_Y; HORIZ[2].y1 = SOIL_D;
+// Depth scale: the soil column represents COLUMN_CM of real soil depth, so bands
+// and root zones can be placed at true centimetre depths.
+const COLUMN_CM = 60;
+const PX_PER_CM = SOIL_D / COLUMN_CM;
+HORIZ[0].y0 = 0;              HORIZ[0].y1 = 3 * PX_PER_CM;   // O: organic litter, ~3 cm
+HORIZ[1].y0 = 3 * PX_PER_CM;  HORIZ[1].y1 = 30 * PX_PER_CM;  // A: topsoil, to ~30 cm
+HORIZ[2].y0 = 30 * PX_PER_CM; HORIZ[2].y1 = SOIL_D;          // B: subsoil, to 60 cm
 const MONO = "ui-monospace,Menlo,Consolas,monospace";
 
 const SAMPLE = [
@@ -455,8 +453,8 @@ function dropIcon(cx,cy,r){
   return `<path d="${d}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
     +`<ellipse cx="${(cx-r*D.hiDxK).toFixed(1)}" cy="${(cy+r*D.hiDyK).toFixed(1)}" rx="${(r*D.hiRxK).toFixed(1)}" ry="${(r*D.hiRyK).toFixed(1)}" fill="${C.dropHi}" opacity="${D.hiOp}"/>`;
 }
-function wetCol(x0,w,sY){
-  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${DRAW.table.wetH}" fill="url(#wetE)"/>`;
+function wetCol(x0,w,sY,hgt){
+  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
 }
 
 function plant(x,sY,v,rng){
@@ -510,8 +508,9 @@ function build(model){
   const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
-  const rootPx=model.root*100*PX_PER_CM;
-  const tableY=lv=>SOIL_BOT-(clamp(lv,0,TANK)/TANK)*SOIL_D;
+  const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
+  // Water reservoir is confined to the root zone: full = surface, empty = root tips.
+  const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
   const refillY=tableY(REFILL);
   const todayIdx=DATA.findIndex(d=>d.date===TODAY);
   const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=H+Math.ceil(T.heightSlack*(K-1));
@@ -571,8 +570,8 @@ function build(model){
   DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
   tablePts.push({x:R,y:tableY(DATA[N-1].level)});
   const tline=smooth(tablePts);
-  soil+=`<path d="${tline} L ${R.toFixed(1)} ${SOIL_BOT} L ${AX} ${SOIL_BOT} Z" fill="url(#aqua)"/>`;
-  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF); });
+  soil+=`<path d="${tline} L ${R.toFixed(1)} ${ROOT_BOT.toFixed(1)} L ${AX} ${ROOT_BOT.toFixed(1)} Z" fill="url(#aqua)"/>`;
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
   soil+=`<path d="${tline}" fill="none" stroke="${C.waterLine}" stroke-width="${TB.lineW}"/>`
      +`<path d="${tline}" fill="none" stroke="${C.waterHi}" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
 
