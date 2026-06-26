@@ -36,35 +36,25 @@
     --accent:              oklch(49.6% 0.061 141);
     --color-warn:          oklch(65.1% 0.130  71);
     --color-danger:        oklch(54.1% 0.152  39);
-
-    --serif: "Newsreader", Georgia, "Times New Roman", serif;
-    --mono:  ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --serif: "Newsreader", georgia, "Times New Roman", serif;
+    --mono:  ui-monospace, "SF Mono", "JetBrains Mono", menlo, consolas, monospace;
     --sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
-
     --fw-semibold: 600;
-
     --tracking-wide:  .08em;
-    
     --leading-tight:  1.15;
     --leading-normal: 1.4;
-
     --xs: clamp(.2rem, .5vw, .3rem);
     --s:  clamp(.3rem, 1vw, .5rem);
     --m:  clamp(.5rem, 1.5vw, .9rem);
     --l:  clamp(.9rem, 2.5vw, 1.3rem);
     --xl: clamp(1.3rem, 4.5vw, 2rem);
     --xxl: clamp(2rem, 6vw, 3rem);
-
     --r-sm: 5px;
     --r-pill: 999px;
-
     --bw: 1px;
-
     --op-hidden: 0;   
-
     --t-quick: .2s; 
     --t-slow:  1.2s; 
-    
     --lift:      0 1px 3px oklch(33% .02 82 / .22);
 
     color-scheme: light;
@@ -73,7 +63,7 @@
 
 @layer base {
   html, body {
-    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -130,6 +120,7 @@
     grid-template-columns: 1fr auto;
     align-items: baseline;
     gap: var(--xs) var(--m);
+
     --c: var(--accent);
   }
   [data-level="soon"] { --c: var(--color-warn); }
@@ -185,7 +176,7 @@
   }
 
   .scene {
-    overflow-x: auto; overflow-y: hidden;
+    overflow: auto hidden;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
     touch-action: pan-x;
   }
@@ -239,7 +230,7 @@
   }
 
   fieldset.stepper {
-    display: inline-flex; justify-self: start; align-self: start;
+    display: inline-flex; place-self: start start;
     gap: 0; background: var(--neutral-raised);
   }
 
