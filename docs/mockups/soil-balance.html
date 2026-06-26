@@ -116,13 +116,13 @@
     border-radius: var(--radius-sm);
   }
 
-  output {                              /* live readouts → serif display */
+  output {
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
     line-height: var(--line-height-tight);
     color: var(--c, var(--color-hue));
   }
 
-  output:has(i) {                       /* the worded verdict + its status dot */
+  output:has(i) {
     display: flex; align-items: center; gap: var(--s);
   }
   output i {
@@ -132,12 +132,12 @@
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c, var(--color-hue)) 18%, transparent);
   }
 
-  p, output small {                     /* captions and units → muted small */
+  p, output small {
     font-size: var(--m);
     color: var(--color-ink-mute);
   }
 
-  section {                             /* status card → 12-col grid (the only <section>) */
+  section {
     grid-template-columns: repeat(12, 1fr);
     align-items: baseline;
   }
@@ -145,7 +145,7 @@
   [data-colspan="9"]  { grid-column: span 9; }
   [data-colspan="12"] { grid-column: span 12; }
 
-  output:has(small) { justify-self: end; }   /* the unit'd reading → flush right */
+  output:has(small) { justify-self: end; }
 
   .bar {
     grid-column: 1 / -1; position: relative;
