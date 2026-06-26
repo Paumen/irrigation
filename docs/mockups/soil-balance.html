@@ -267,14 +267,14 @@
   <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
 
   <form class="card" id="controls" autocomplete="off">
-    <fieldset data-group="planting">
+    <fieldset>
       <legend>Planting</legend>
       <label><input type="radio" name="planting" value="Turf">Turf</label>
       <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
       <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
     </fieldset>
 
-    <fieldset data-group="soil">
+    <fieldset>
       <legend>Soil</legend>
       <label><input type="radio" name="soil" value="Sand">Sand</label>
       <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
@@ -282,14 +282,14 @@
       <label><input type="radio" name="soil" value="Clay">Clay</label>
     </fieldset>
 
-    <fieldset data-group="sun">
+    <fieldset>
       <legend>Exposure</legend>
       <label><input type="radio" name="sun" value="Shade">Shade</label>
       <label><input type="radio" name="sun" value="Half sun">Half sun</label>
       <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
     </fieldset>
 
-    <fieldset class="stepper" data-group="duration">
+    <fieldset class="stepper">
       <legend>Duration</legend>
       <button type="button" id="durDown">−</button>
       <output id="durVal">60<small>min</small></output>
@@ -668,7 +668,7 @@ function build(model){
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
     +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
-  let hits=""; DATA.forEach(d=>{hits+=`<rect class="hit" data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
+  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
   const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
@@ -721,7 +721,7 @@ function toggleWater(i){
   rerender();
 }
 function wireHits(){
-  scene.querySelector("svg").querySelectorAll(".hit").forEach(h=>{
+  scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
     h.style.cursor="pointer";
     h.addEventListener("click",()=>toggleWater(+h.dataset.i));
   });
