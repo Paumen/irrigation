@@ -175,12 +175,12 @@
     font-size: var(--m); color: var(--color-ink-mute);
   }
 
-  .scene {
+  figure {
     overflow: auto hidden;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
     touch-action: pan-x;
   }
-  .scene::-webkit-scrollbar { display: none; }
+  figure::-webkit-scrollbar { display: none; }
 
   .sbar {
     position: relative; block-size: var(--m); margin-block-start: var(--xs);
@@ -263,7 +263,7 @@
     <p class="sub" id="sub">—</p>
   </section>
 
-  <figure class="scene" id="scroll" data-skin="ghost"></figure>
+  <figure id="scroll" data-skin="ghost"></figure>
   <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
 
   <form class="card" id="controls" autocomplete="off">
