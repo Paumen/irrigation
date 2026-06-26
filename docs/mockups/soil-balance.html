@@ -116,41 +116,36 @@
     border-radius: var(--radius-sm);
   }
 
-  .status {
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: var(--xs) var(--m);
-
-    --c: var(--color-hue);
-  }
-  [data-level="soon"] { --c: var(--color-alert); }
-  [data-level="now"]  { --c: var(--color-danger); }
-
-  .word, .pct {
+  output {
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
-    color: var(--c);
-  }
-
-  .word {
-    grid-column: 1;
-    display: flex; align-items: center; gap: var(--s);
     line-height: var(--line-height-tight);
+    color: var(--c, var(--color-hue));
   }
 
-  .pct {
-    grid-column: 2; justify-self: end;
+  output:has(i) {
+    display: flex; align-items: center; gap: var(--s);
+  }
+  output i {
+    flex: none;
+    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
+    background: var(--c, var(--color-hue));
+    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c, var(--color-hue)) 18%, transparent);
   }
 
-  .pct small, fieldset.stepper output small {
+  p, output small {
     font-size: var(--m);
     color: var(--color-ink-mute);
   }
 
-  .word i {
-    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
-    background: var(--c);
-    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c) 18%, transparent);
+  section {
+    grid-template-columns: repeat(12, 1fr);
+    align-items: baseline;
   }
+  [data-colspan="3"]  { grid-column: span 3; }
+  [data-colspan="9"]  { grid-column: span 9; }
+  [data-colspan="12"] { grid-column: span 12; }
+
+  output:has(small) { justify-self: end; }
 
   .bar {
     grid-column: 1 / -1; position: relative;
@@ -168,11 +163,6 @@
     inset-inline-start: var(--refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
     box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
-  }
-
-  .sub {
-    grid-column: 1 / -1;
-    font-size: var(--m); color: var(--color-ink-mute);
   }
 
   figure {
@@ -244,7 +234,7 @@
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--l); font-weight: 400; color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 }
@@ -256,11 +246,11 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="card status" id="status" data-level="ok">
-    <p class="word"><i></i><output id="word">—</output></p>
-    <p class="pct"><output id="pct">—</output><small>%</small></p>
-    <p class="bar"><i class="fill"></i><i class="mark"></i></p>
-    <p class="sub" id="sub">—</p>
+  <section class="card" id="status">
+    <output data-colspan="9" id="word"><i></i>—</output>
+    <output data-colspan="3" id="pct">—<small>%</small></output>
+    <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
+    <p data-colspan="12" id="sub">—</p>
   </section>
 
   <figure id="scroll" data-skin="ghost"></figure>
@@ -689,11 +679,11 @@ function renderStatus(model){
     kick="Above refill point";
   }
   const st=document.getElementById("status");
-  st.dataset.level=level;
+  st.style.setProperty("--c", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
   st.style.setProperty("--p", clamp(pct,0,100)+"%");
   st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
-  document.getElementById("word").textContent=word;
-  document.getElementById("pct").textContent=pct;
+  document.getElementById("word").innerHTML=`<i></i>${word}`;
+  document.getElementById("pct").innerHTML=`${pct}<small>%</small>`;
   document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
 }
 
