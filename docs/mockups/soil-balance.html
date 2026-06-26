@@ -122,11 +122,11 @@
     color: var(--c, var(--color-hue));
   }
 
-  output:not(:has(small)) {             /* the worded verdict (no unit) carries the dot */
+  output:has(i) {                       /* the worded verdict + its status dot */
     display: flex; align-items: center; gap: var(--s);
   }
-  output:not(:has(small))::before {
-    content: ""; flex: none;
+  output i {
+    flex: none;
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c, var(--color-hue));
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c, var(--color-hue)) 18%, transparent);
@@ -247,7 +247,7 @@
   </header>
 
   <section class="card" id="status">
-    <output data-colspan="9" id="word">—</output>
+    <output data-colspan="9" id="word"><i></i>—</output>
     <output data-colspan="3" id="pct">—<small>%</small></output>
     <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
     <p data-colspan="12" id="sub">—</p>
@@ -682,7 +682,7 @@ function renderStatus(model){
   st.style.setProperty("--c", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
   st.style.setProperty("--p", clamp(pct,0,100)+"%");
   st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
-  document.getElementById("word").textContent=word;
+  document.getElementById("word").innerHTML=`<i></i>${word}`;
   document.getElementById("pct").innerHTML=`${pct}<small>%</small>`;
   document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
 }
