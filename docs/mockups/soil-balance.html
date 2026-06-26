@@ -13,8 +13,16 @@
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
   body, h1, p, figure, fieldset, legend, output { margin: 0; }
-  fieldset { border: 0; padding: 0; min-inline-size: 0; }
-  button, input { font: inherit; color: inherit; }
+  fieldset {
+    border: 0;
+    padding: 0;
+    min-inline-size: 0;
+  }
+
+  button, input {
+    font: inherit;
+    color: inherit;
+  }
 }
 
 @layer tokens {
@@ -63,7 +71,10 @@
 }
 
 @layer base {
-  html, body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     display: grid;
     gap: var(--l);
@@ -76,14 +87,25 @@
     background: var(--neutral);
   }
 
-  header { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s); }
+  header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--s);
+  }
   header h1 {
     font-weight: var(--fw-semibold); font-size: var(--l); color: var(--accent);
   }
 
-  svg { display: block; transition: opacity var(--t-slow) ease; }
+  svg {
+    display: block;
+    transition: opacity var(--t-slow) ease;
+  }
   .grow { transition: transform var(--t-slow) cubic-bezier(.2,.8,.2,1), opacity var(--t-slow) ease; }
-  body.booting .grow { transform: translateY(8px); opacity: var(--op-hidden); }
+  body.booting .grow {
+    transform: translateY(8px);
+    opacity: var(--op-hidden);
+  }
 }
 
 @layer components {
@@ -121,7 +143,10 @@
   .pct {
     grid-column: 2; justify-self: end;
   }
-  .pct small, fieldset.stepper output small { font-size: var(--m); color: var(--text-mute); }
+  .pct small, fieldset.stepper output small {
+    font-size: var(--m);
+    color: var(--text-mute);
+  }
   .dot {
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c);
