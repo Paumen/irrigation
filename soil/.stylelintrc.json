@@ -27,8 +27,8 @@
       { "message": "display: table* is not allowed — use grid or flex." }
     ],
     "custom-property-pattern": [
-      "^(accent|surface|jump|neutral|text|danger|success|color|0|xs|s|m|l|xl)(-[a-z0-9]+)*$",
-      { "message": "Custom properties must use the soil token vocabulary (e.g. --accent-up, --text-mute, --m). See soil/PAUMEN.css :root." }
+      "^(color-(neutral|ink|danger|alert|success|hue)|jump|xs|s|m|l|xl|xxl|time|font|radius|line-height|font-weight|border-width|opacity|letter-spacing|box-shadow)(-[a-z0-9]+)*$",
+      { "message": "Custom properties must use the soil token vocabulary (e.g. --color-ink-mute, --hue, --radius-sm, --m)." }
     ],
     "scale-unlimited/declaration-strict-value": [
       ["/color$/", "gap", "padding", "padding-inline", "padding-block", "font-size", "border-radius"],
