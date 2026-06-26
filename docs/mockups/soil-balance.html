@@ -126,25 +126,27 @@
   [data-level="soon"] { --c: var(--color-alert); }
   [data-level="now"]  { --c: var(--color-danger); }
 
-  .lede {
+  .status output {                       /* the two live readouts → serif display */
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
     line-height: var(--line-height-tight);
     color: var(--c);
   }
 
-  .word { display: flex; align-items: center; gap: var(--s); }
-  .pct  { justify-self: end; }
-
-  .sub, .pct small, fieldset.stepper output small {
-    font-size: var(--m);
-    color: var(--color-ink-mute);
+  .status output:not(:has(small)) {      /* the worded verdict (no unit) carries the dot */
+    display: flex; align-items: center; gap: var(--s);
   }
-
-  .word i {
+  .status output:not(:has(small))::before {
+    content: ""; flex: none;
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c);
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c) 18%, transparent);
   }
+
+  .status p, .status output small, fieldset.stepper output small {
+    font-size: var(--m);
+    color: var(--color-ink-mute);
+  }
+  .status p { grid-column: 1 / -1; }
 
   .bar {
     grid-column: 1 / -1; position: relative;
@@ -162,10 +164,6 @@
     inset-inline-start: var(--refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
     box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
-  }
-
-  .sub {
-    grid-column: 1 / -1;
   }
 
   figure {
@@ -250,10 +248,10 @@
   </header>
 
   <section class="card status" id="status" data-level="ok">
-    <p class="lede word"><i></i><output id="word">—</output></p>
-    <p class="lede pct"><output id="pct">—</output><small>%</small></p>
-    <p class="bar"><i class="fill"></i><i class="mark"></i></p>
-    <p class="sub" id="sub">—</p>
+    <output id="word">—</output>
+    <output id="pct">—<small>%</small></output>
+    <div class="bar"><i class="fill"></i><i class="mark"></i></div>
+    <p id="sub">—</p>
   </section>
 
   <figure id="scroll" data-skin="ghost"></figure>
@@ -686,7 +684,7 @@ function renderStatus(model){
   st.style.setProperty("--p", clamp(pct,0,100)+"%");
   st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
   document.getElementById("word").textContent=word;
-  document.getElementById("pct").textContent=pct;
+  document.getElementById("pct").innerHTML=`${pct}<small>%</small>`;
   document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
 }
 
