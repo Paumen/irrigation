@@ -116,7 +116,7 @@
     border-radius: var(--radius-sm);
   }
 
-  .status {
+  [data-level] {
     grid-template-columns: 1fr auto;
     align-items: baseline;
     gap: var(--xs) var(--m);
@@ -126,27 +126,27 @@
   [data-level="soon"] { --c: var(--color-alert); }
   [data-level="now"]  { --c: var(--color-danger); }
 
-  .status output {                       /* the two live readouts → serif display */
+  [data-level] output {                       /* the two live readouts → serif display */
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
     line-height: var(--line-height-tight);
     color: var(--c);
   }
 
-  .status output:not(:has(small)) {      /* the worded verdict (no unit) carries the dot */
+  [data-level] output:not(:has(small)) {      /* the worded verdict (no unit) carries the dot */
     display: flex; align-items: center; gap: var(--s);
   }
-  .status output:not(:has(small))::before {
+  [data-level] output:not(:has(small))::before {
     content: ""; flex: none;
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c);
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c) 18%, transparent);
   }
 
-  .status p, .status output small, fieldset.stepper output small {
+  [data-level] p, [data-level] output small, fieldset.stepper output small {
     font-size: var(--m);
     color: var(--color-ink-mute);
   }
-  .status p { grid-column: 1 / -1; }
+  [data-level] p { grid-column: 1 / -1; }
 
   .bar {
     grid-column: 1 / -1; position: relative;
@@ -247,7 +247,7 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="card status" id="status" data-level="ok">
+  <section class="card" id="status" data-level="ok">
     <output id="word">—</output>
     <output id="pct">—<small>%</small></output>
     <div class="bar"><i class="fill"></i><i class="mark"></i></div>
