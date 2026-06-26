@@ -116,15 +116,15 @@
     border-radius: var(--radius-sm);
   }
 
-  .status {
+  section[data-level] {
     grid-template-columns: 1fr auto;
     align-items: baseline;
     gap: var(--xs) var(--m);
 
     --c: var(--color-hue);
   }
-  [data-level="soon"] { --c: var(--color-alert); }
-  [data-level="now"]  { --c: var(--color-danger); }
+  section[data-level="soon"] { --c: var(--color-alert); }
+  section[data-level="now"]  { --c: var(--color-danger); }
 
   .word, .pct {
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
@@ -256,7 +256,7 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="card status" id="status" data-level="ok">
+  <section class="card" id="status" data-level="ok">
     <p class="word"><i class="dot"></i><output id="word">—</output></p>
     <p class="pct"><output id="pct">—</output><small>%</small></p>
     <p class="bar"><i class="fill"></i><i class="mark"></i></p>
