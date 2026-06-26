@@ -846,12 +846,23 @@ sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
 
 let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
 
+function showError(){
+  document.getElementById("error").hidden=false;
+  document.body.removeAttribute("data-boot");
+}
 async function init(){
   try {
     WEATHER=await fetchWeather();
   } catch (err) {
-    document.getElementById("error").hidden=false;
-    document.body.removeAttribute("data-boot");
+    showError();
+    return;
+  }
+  // The response must cover today (index API.pastDays) for the verdict to mean
+  // anything; a shorter window is unusable, so surface it as unavailable (DAT-3)
+  // rather than silently rendering a wrong "today". This also guarantees TODAY
+  // is present in WEATHER.time, so every downstream findIndex(date===TODAY) hits.
+  if(!WEATHER.time || WEATHER.time.length<=API.pastDays){
+    showError();
     return;
   }
   TODAY=WEATHER.time[API.pastDays];
