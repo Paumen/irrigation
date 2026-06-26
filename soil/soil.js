@@ -9,7 +9,7 @@ export const API = {
   daily: "precipitation_sum,temperature_2m_max,et0_fao_evapotranspiration",
   timezone: "Europe/Amsterdam",
   pastDays: 10,
-  forecastDays: 11,
+  forecastDays: 15,
 };
 
 export const SPRINKLER_RATE = 0.063;
@@ -24,10 +24,10 @@ export const PLANTINGS = {
 
 // Plant-available water (field capacity − wilting), mm/m.
 export const SOILS = {
-  "Sand": 80,
-  "Sandy loam": 140,
-  "Loam": 160,
-  "Clay": 180,
+  "Sand": 60,
+  "Sandy loam": 130,
+  "Loam": 170,
+  "Clay": 190,
 };
 
 // Sun-exposure loss factor (LOG-4 / CTR-6): scales evapotranspiration losses.
