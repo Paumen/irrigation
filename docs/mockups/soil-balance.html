@@ -116,37 +116,36 @@
     border-radius: var(--radius-sm);
   }
 
-  [data-level] {
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: var(--xs) var(--m);
-
-    --c: var(--color-hue);
-  }
-  [data-level="soon"] { --c: var(--color-alert); }
-  [data-level="now"]  { --c: var(--color-danger); }
-
-  [data-level] output {                       /* the two live readouts → serif display */
+  output {                              /* live readouts → serif display */
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
     line-height: var(--line-height-tight);
-    color: var(--c);
+    color: var(--c, var(--color-hue));
   }
 
-  [data-level] output:not(:has(small)) {      /* the worded verdict (no unit) carries the dot */
+  output:not(:has(small)) {             /* the worded verdict (no unit) carries the dot */
     display: flex; align-items: center; gap: var(--s);
   }
-  [data-level] output:not(:has(small))::before {
+  output:not(:has(small))::before {
     content: ""; flex: none;
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
-    background: var(--c);
-    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c) 18%, transparent);
+    background: var(--c, var(--color-hue));
+    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c, var(--color-hue)) 18%, transparent);
   }
 
-  [data-level] p, [data-level] output small, fieldset.stepper output small {
+  p, output small {                     /* captions and units → muted small */
     font-size: var(--m);
     color: var(--color-ink-mute);
   }
-  [data-level] p { grid-column: 1 / -1; }
+
+  section {                             /* status card → 12-col grid (the only <section>) */
+    grid-template-columns: repeat(12, 1fr);
+    align-items: baseline;
+  }
+  [data-colspan="3"]  { grid-column: span 3; }
+  [data-colspan="9"]  { grid-column: span 9; }
+  [data-colspan="12"] { grid-column: span 12; }
+
+  output:has(small) { justify-self: end; }   /* the unit'd reading → flush right */
 
   .bar {
     grid-column: 1 / -1; position: relative;
@@ -235,7 +234,7 @@
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--l); font-weight: 400; color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 }
@@ -247,11 +246,11 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="card" id="status" data-level="ok">
-    <output id="word">—</output>
-    <output id="pct">—<small>%</small></output>
-    <div class="bar"><i class="fill"></i><i class="mark"></i></div>
-    <p id="sub">—</p>
+  <section class="card" id="status">
+    <output data-colspan="9" id="word">—</output>
+    <output data-colspan="3" id="pct">—<small>%</small></output>
+    <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
+    <p data-colspan="12" id="sub">—</p>
   </section>
 
   <figure id="scroll" data-skin="ghost"></figure>
@@ -680,7 +679,7 @@ function renderStatus(model){
     kick="Above refill point";
   }
   const st=document.getElementById("status");
-  st.dataset.level=level;
+  st.style.setProperty("--c", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
   st.style.setProperty("--p", clamp(pct,0,100)+"%");
   st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
   document.getElementById("word").textContent=word;
