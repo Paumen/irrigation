@@ -116,7 +116,7 @@
     border-radius: var(--radius-sm);
   }
 
-  .status {
+  [data-level] {
     grid-template-columns: 1fr auto;
     align-items: baseline;
     gap: var(--xs) var(--m);
@@ -256,7 +256,7 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="card status" id="status" data-level="ok">
+  <section class="card" id="status" data-level="ok">
     <p class="word"><i class="dot"></i><output id="word">—</output></p>
     <p class="pct"><output id="pct">—</output><small>%</small></p>
     <p class="bar"><i class="fill"></i><i class="mark"></i></p>
