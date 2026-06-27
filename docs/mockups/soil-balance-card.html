@@ -232,12 +232,13 @@
     border-radius: var(--radius-pill);
   }
 
+  /* −/+ keys match the toggle's raised thumb exactly: same size, font and shading. */
   [data-skin~="stepper"] button {
-    min-inline-size: var(--xl);
-    background: var(--color-neutral-raised); color: var(--color-ink);
+    background: var(--color-neutral-raised); color: var(--color-hue);
     border: 0; cursor: pointer;
     box-shadow: var(--box-shadow-lift);
-    font-size: var(--l); line-height: var(--line-height-tight);
+    font-size: var(--m); font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
     border-radius: var(--radius-pill);
     padding: var(--xs) var(--s);
     transition: background .2s ease, transform .1s ease;
@@ -245,12 +246,16 @@
   [data-skin~="stepper"] button:hover { background: var(--color-neutral); }
   [data-skin~="stepper"] button:active { transform: scale(.96); }
 
+  /* value is the flat option text: same size, font and shading as a track label. */
   [data-skin~="stepper"] output {
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     min-inline-size: var(--xxl);
     padding-inline: var(--s);
-    font-family: var(--font-mono); font-size: var(--l);
-    font-weight: 400; color: var(--color-ink);
+    font-size: var(--m); color: var(--color-ink);
+  }
+
+  [data-skin~="stepper"] output small {
+    font-size: .72em; color: var(--color-ink-mute);
   }
 }
 
