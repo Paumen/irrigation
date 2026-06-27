@@ -218,33 +218,37 @@
     box-shadow: var(--box-shadow-lift);
   }
 
-  /* stepper — NOT a track+thumb (the value is a readout, not a selection). The
-     −/+ are the interactive elements, so they carry the raised, tappable
-     surface; the value is a flat readout between them. */
+  /* stepper — same grammar as the toggles, mapped to a value-adjuster: a
+     recessed track holds the controls; the interactive elements (−/+) get the
+     raised thumb that pops off the track; the value is a flat readout (the
+     passive element, like an unselected option). */
   [data-skin~="stepper"] {
     display: inline-flex;
     align-items: center;
     justify-self: start;
-    gap: var(--s);
+    gap: var(--xs);
+    padding: var(--xs);
+    background: var(--color-neutral-mute);
+    border-radius: var(--radius-pill);
   }
 
   [data-skin~="stepper"] button {
     min-inline-size: var(--xl);
     background: var(--color-neutral-raised); color: var(--color-ink);
-    border: var(--border-width) solid var(--color-neutral-mute);
+    border: 0; cursor: pointer;
     box-shadow: var(--box-shadow-lift);
-    cursor: pointer;
     font-size: var(--l); line-height: var(--line-height-tight);
     border-radius: var(--radius-pill);
-    padding: var(--xs) var(--m);
+    padding: var(--xs) var(--s);
     transition: background .2s ease, transform .1s ease;
   }
-  [data-skin~="stepper"] button:hover { background: var(--color-neutral-mute); }
+  [data-skin~="stepper"] button:hover { background: var(--color-neutral); }
   [data-skin~="stepper"] button:active { transform: scale(.96); }
 
   [data-skin~="stepper"] output {
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     min-inline-size: var(--xxl);
+    padding-inline: var(--s);
     font-family: var(--font-mono); font-size: var(--l);
     font-weight: 400; color: var(--color-ink);
   }
