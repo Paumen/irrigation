@@ -523,6 +523,13 @@
       0 4px 12px oklch(0% 0 0 / 0.12),
       0 0 0 1px oklch(50% 0 0 / 0.06);
   }
+
+  [data-skin~="soft"] {
+    border: 2px solid var(--accent);
+    background: oklch(from var(--accent) l c h / 0.12);
+    color: var(--accent);
+    font-weight: 700;
+  }
 }
 
 @layer grid {
