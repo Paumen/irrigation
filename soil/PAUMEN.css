@@ -335,16 +335,14 @@
   }
 
   input[type="range"],
-  input[type="checkbox"],
-  input[type="radio"] {
+  input[type="checkbox"] {
     border: none;
     padding: var(--m);
     background: transparent;
     accent-color: var(--accent);
   }
 
-  input[type="checkbox"],
-  input[type="radio"] {
+  input[type="checkbox"] {
     width: var(--m);
     height: var(--m);
     cursor: pointer;
