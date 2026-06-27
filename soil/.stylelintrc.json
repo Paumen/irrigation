@@ -20,7 +20,7 @@
     ],
     "selector-attribute-name-disallowed-list": [
       ["/^(?!(?:data-(?:colspan|icon-fill|skin|state|freeform)|type|for|open|popover)$).+/"],
-      { "message": "Only [data-colspan|icon-fill|skin|state|freeform] and [type]/[for]/[open]/[popover] are allowed as selectors." }
+      { "message": "Only [data-colspan|icon-fill|skin|state|freeform] and [type]/[for]/[open]/[popover] are allowed as selectors. New data-* attributes require PO approval before being added to this allowlist." }
     ],
     "selector-pseudo-class-disallowed-list": [
       ["/^(?:nth-(?:child|of-type)|(?:first|last)-(?:child|of-type))$/"],
