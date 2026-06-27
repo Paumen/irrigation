@@ -108,7 +108,7 @@
     padding: 0; border: 0; background: none; box-shadow: none;
   }
 
-  .card {
+  article {
     display: grid; gap: var(--l);
     padding: var(--m) var(--l);
     background: var(--color-neutral-raised);
@@ -119,7 +119,7 @@
   output {
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
     line-height: var(--line-height-tight);
-    color: var(--c, var(--color-hue));
+    color: var(--v-color, var(--color-hue));
   }
 
   output + output { text-align: end; }
@@ -127,8 +127,8 @@
   output i {
     display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
-    background: var(--c, var(--color-hue));
-    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c, var(--color-hue)) 18%, transparent);
+    background: var(--v-color, var(--color-hue));
+    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--v-color, var(--color-hue)) 18%, transparent);
   }
 
   p, output small {
@@ -137,7 +137,9 @@
   }
 
   section {
+    display: grid;
     grid-template-columns: repeat(12, 1fr);
+    gap: var(--l);
     align-items: baseline;
   }
   [data-colspan="3"]  { grid-column: span 3; }
@@ -153,13 +155,13 @@
 
   .fill {
     position: absolute; inset-block: 0; inset-inline-start: 0;
-    inline-size: var(--p, 0%); background: var(--c);
+    inline-size: var(--v-fill, 0%); background: var(--v-color);
     border-radius: var(--radius-sm); transition: width var(--time-slow) ease, background var(--time-slow) ease;
   }
 
   .mark {
     position: absolute; inset-block: -2px; inline-size: var(--xs);
-    inset-inline-start: var(--refill, 50%);
+    inset-inline-start: var(--v-refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
     box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
   }
@@ -245,17 +247,19 @@
     <h1>Soil-Balance</h1>
   </header>
 
-  <section class="card" id="status">
-    <output data-colspan="9" id="word"><i></i>—</output>
-    <output data-colspan="3" id="pct">—<small>%</small></output>
-    <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
-    <p data-colspan="12" id="sub">—</p>
-  </section>
+  <article id="status">
+    <section>
+      <output data-colspan="9" id="word"><i></i>—</output>
+      <output data-colspan="3" id="pct">—<small>%</small></output>
+      <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
+      <p data-colspan="12" id="sub">—</p>
+    </section>
+  </article>
 
   <figure id="scroll" data-skin="ghost"></figure>
   <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
 
-  <form class="card" id="controls" autocomplete="off">
+  <article id="controls">
     <fieldset>
       <legend>Planting</legend>
       <label><input type="radio" name="planting" value="Turf">Turf</label>
@@ -284,7 +288,7 @@
       <output id="durVal">60<small>min</small></output>
       <button type="button" id="durUp">+</button>
     </fieldset>
-  </form>
+  </article>
 
 <script>
 "use strict";
@@ -678,9 +682,9 @@ function renderStatus(model){
     kick="Above refill point";
   }
   const st=document.getElementById("status");
-  st.style.setProperty("--c", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
-  st.style.setProperty("--p", clamp(pct,0,100)+"%");
-  st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
+  st.style.setProperty("--v-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
+  st.style.setProperty("--v-fill", clamp(pct,0,100)+"%");
+  st.style.setProperty("--v-refill", (REFILL/TANK*100)+"%");
   document.getElementById("word").innerHTML=`<i></i>${word}`;
   document.getElementById("pct").innerHTML=`${pct}<small>%</small>`;
   document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
