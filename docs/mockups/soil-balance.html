@@ -122,9 +122,6 @@
     color: var(--c, var(--color-hue));
   }
 
-  output:has(i) {
-    display: flex; align-items: center; gap: var(--s);
-  }
   output i {
     flex: none;
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
@@ -145,7 +142,7 @@
   [data-colspan="9"]  { grid-column: span 9; }
   [data-colspan="12"] { grid-column: span 12; }
 
-  output:has(small) { justify-self: end; }
+  
 
   .bar {
     grid-column: 1 / -1; position: relative;
