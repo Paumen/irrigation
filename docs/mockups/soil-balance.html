@@ -122,8 +122,10 @@
     color: var(--c, var(--color-hue));
   }
 
+  output + output { text-align: end; }
+
   output i {
-    flex: none;
+    display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
     inline-size: var(--l); block-size: var(--l); border-radius: 50%;
     background: var(--c, var(--color-hue));
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--c, var(--color-hue)) 18%, transparent);
