@@ -523,10 +523,6 @@
       0 4px 12px oklch(0% 0 0 / 0.12),
       0 0 0 1px oklch(50% 0 0 / 0.06);
   }
-
-  [data-skin~="freeform"] > *:not(summary, header) {
-    all: revert;
-  }
 }
 
 @layer grid {
