@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soil-Balance — Wijchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+@layer reset, tokens, base, components;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, p, figure, fieldset, legend, output { margin: 0; }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    min-inline-size: 0;
+  }
+
+  button, input {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer tokens {
+  :root {
+    --color-neutral:             oklch(91.8% 0.014  93);
+    --color-neutral-raised:      oklch(98.5% 0.005  95);
+    --color-neutral-mute:        oklch(89.2% 0.020  91);
+    --color-ink:                oklch(33.1% 0.017  82);
+    --color-ink-mute:           oklch(58.5% 0.028  87);
+    --color-hue:              oklch(49.6% 0.061 141);
+    --color-alert:          oklch(65.1% 0.130  71);
+    --color-danger:        oklch(54.1% 0.152  39);
+    --font-serif: "Newsreader", georgia, "Times New Roman", serif;
+    --font-mono:  ui-monospace, "SF Mono", "JetBrains Mono", menlo, consolas, monospace;
+    --font-sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
+    --font-weight-semibold: 600;
+    --letter-spacing-wide:  .08em;
+    --line-height-tight:  1.15;
+    --line-height-normal: 1.4;
+    --xs: clamp(.2rem, .5vw, .3rem);
+    --s:  clamp(.3rem, 1vw, .5rem);
+    --m:  clamp(.5rem, 1.5vw, .9rem);
+    --l:  clamp(.9rem, 2.5vw, 1.3rem);
+    --xl: clamp(1.3rem, 4.5vw, 2rem);
+    --xxl: clamp(2rem, 6vw, 3rem);
+    --radius-sm: 5px;
+    --radius-pill: 999px;
+    --border-width: 1px;
+    --opacity-hidden: 0;   
+    --time-quick: .2s; 
+    --time-slow:  1.2s; 
+    --box-shadow-lift:      0 1px 3px oklch(33% .02 82 / .22);
+
+    color-scheme: light;
+  }
+}
+
+@layer base {
+  html, body {
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    display: grid;
+    gap: var(--l);
+    padding: var(--m);
+    overflow-x: hidden;
+    font-family: var(--font-sans);
+    font-size: var(--l);
+    line-height: 1.4;
+    color: var(--color-ink);
+    background: var(--color-neutral);
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--s);
+  }
+
+  header h1 {
+    font-weight: var(--font-weight-semibold); font-size: var(--l); color: var(--color-hue);
+  }
+
+  svg {
+    display: block;
+    transition: opacity var(--time-slow) ease;
+  }
+  .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
+
+  body.booting .grow {
+    transform: translateY(8px);
+    opacity: var(--opacity-hidden);
+  }
+}
+
+@layer components {
+  [data-skin="ghost"] {
+    margin-inline: calc(50% - 50vw);
+    padding: 0; border: 0; background: none; box-shadow: none;
+  }
+
+  article {
+    display: grid; gap: var(--l);
+    padding: var(--m) var(--l);
+    background: var(--color-neutral-raised);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    border-radius: var(--radius-sm);
+  }
+
+  output {
+    font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
+    line-height: var(--line-height-tight);
+    color: var(--v-color, var(--color-hue));
+  }
+
+  output + output { text-align: end; }
+
+  output i {
+    display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
+    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
+    background: var(--v-color, var(--color-hue));
+    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--v-color, var(--color-hue)) 18%, transparent);
+  }
+
+  p, output small {
+    font-size: var(--m);
+    color: var(--color-ink-mute);
+  }
+
+  section {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--l);
+    align-items: baseline;
+  }
+  [data-colspan="3"]  { grid-column: span 3; }
+  [data-colspan="4"]  { grid-column: span 4; }
+  [data-colspan="9"]  { grid-column: span 9; }
+  [data-colspan="12"] { grid-column: span 12; }
+
+  
+
+  .bar {
+    grid-column: 1 / -1; position: relative;
+    block-size: var(--m); background: var(--color-neutral); border-radius: var(--radius-sm);
+  }
+
+  .fill {
+    position: absolute; inset-block: 0; inset-inline-start: 0;
+    inline-size: var(--v-fill, 0%); background: var(--v-color);
+    border-radius: var(--radius-sm); transition: width var(--time-slow) ease, background var(--time-slow) ease;
+  }
+
+  .mark {
+    position: absolute; inset-block: -2px; inline-size: var(--xs);
+    inset-inline-start: var(--v-refill, 50%);
+    background: var(--color-neutral-raised); border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
+  }
+
+  figure {
+    overflow: auto hidden;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    touch-action: pan-x;
+  }
+  figure::-webkit-scrollbar { display: none; }
+
+  .sbar {
+    position: relative; block-size: var(--m); margin-block-start: var(--xs);
+    background: var(--color-neutral-mute); border-radius: var(--radius-sm); touch-action: none;
+  }
+
+  .sbar .thumb {
+    position: absolute; inset-block: 0; inset-inline-start: 0;
+    inline-size: var(--xxl); min-inline-size: var(--xl);
+    background: var(--color-ink-mute); border-radius: var(--radius-sm); cursor: grab;
+  }
+  .sbar .thumb:active { cursor: grabbing; }
+
+  fieldset {
+    position: relative;
+    display: flex; gap: 0;
+    margin-block-start: 1.15em;
+    padding: var(--xs);
+    background: var(--color-neutral-mute);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    border-radius: var(--radius-pill);
+  }
+
+  legend {
+    position: absolute; inset-block-start: -1.25em; inset-inline-start: .35em;
+    padding: 0;
+    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase; color: var(--color-ink-mute);
+  }
+
+  fieldset label {
+    flex: 1 1 0; min-inline-size: 0;
+    padding: var(--xs) var(--s);
+    text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
+    color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
+    transition: color var(--time-quick) ease, background var(--time-quick) ease, box-shadow var(--time-quick) ease;
+  }
+
+  fieldset input {
+    position: absolute; inline-size: 1px; block-size: 1px;
+    opacity: var(--opacity-hidden); pointer-events: none;
+  }
+
+  fieldset label:has(input:checked) {
+    background: var(--color-neutral-raised); color: var(--color-hue); font-weight: var(--font-weight-semibold);
+    box-shadow: var(--box-shadow-lift);
+  }
+
+  /* Duration stepper — a custom element that is its own grid cell. It renders a
+     label line above a pill of [− value +]. Selected by element type (lint-clean,
+     no class); tokens cascade in because it uses light DOM (no shadow root). */
+  number-stepper {
+    display: grid; gap: var(--xs); align-content: start;
+    margin-block-start: 1.15em;
+  }
+
+  number-stepper > i {
+    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase; color: var(--color-ink-mute); font-style: normal;
+  }
+
+  number-stepper > p {
+    display: inline-flex; place-self: start start; align-items: stretch;
+    gap: 0; padding: var(--xs);
+    background: var(--color-neutral-raised);
+    border: var(--border-width) solid var(--color-neutral-mute); border-radius: var(--radius-pill);
+  }
+
+  number-stepper button {
+    inline-size: var(--xxl); border: 0; background: transparent;
+    color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
+    padding: var(--xs) var(--s); line-height: var(--line-height-tight);
+  }
+
+  number-stepper button:hover:not(:disabled) { background: var(--color-neutral-mute); }
+  number-stepper button:disabled { opacity: 0.38; cursor: not-allowed; }
+
+  number-stepper output {
+    min-inline-size: var(--xl);
+    display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
+    padding: var(--xs) var(--s); line-height: var(--line-height-tight);
+    font-family: var(--font-mono); font-size: var(--l); font-weight: 400; color: var(--color-ink);
+    border-inline: var(--border-width) solid var(--color-neutral-mute);
+  }
+
+  #msg {
+    grid-column: 1 / -1;
+    font-size: var(--m); color: var(--color-ink-mute);
+  }
+  #status[data-state="error"] #msg { color: var(--color-danger); }
+
+  /* While loading or errored, the verdict/percent/bar are placeholders, so
+     fade them and let #msg carry the state. */
+  #status[data-state="loading"] :is(#word, #pct, .bar),
+  #status[data-state="error"]   :is(#word, #pct, .bar, #sub) {
+    opacity: var(--opacity-hidden);
+  }
+  #status[data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+}
+
+</style>
+</head>
+<body class="booting">
+  <header>
+    <h1>Soil-Balance</h1>
+  </header>
+
+  <article id="status">
+    <section>
+      <output data-colspan="9" id="word"><i></i>—</output>
+      <output data-colspan="3" id="pct">—<small>%</small></output>
+      <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
+      <p data-colspan="12" id="sub">—</p>
+      <p data-colspan="12" id="msg" hidden>Loading weather…</p>
+    </section>
+  </article>
+
+  <figure id="scroll" data-skin="ghost"></figure>
+  <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
+
+  <article id="controls">
+    <section>
+      <fieldset data-colspan="12">
+        <legend>Planting</legend>
+        <label><input type="radio" name="planting" value="Turf">Turf</label>
+        <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+        <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+      </fieldset>
+
+      <fieldset data-colspan="12">
+        <legend>Soil</legend>
+        <label><input type="radio" name="soil" value="Sand">Sand</label>
+        <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+        <label><input type="radio" name="soil" value="Loam">Loam</label>
+        <label><input type="radio" name="soil" value="Clay">Clay</label>
+      </fieldset>
+
+      <fieldset data-colspan="12">
+        <legend>Exposure</legend>
+        <label><input type="radio" name="sun" value="Shade">Shade</label>
+        <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+        <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+      </fieldset>
+
+      <number-stepper data-colspan="4" id="dur"
+        label="Duration" value="60" min="15" max="240" step="15" unit="min"></number-stepper>
+    </section>
+  </article>
+
+<script type="module">
+"use strict";
+
+/* ── Engine data + weather (inlined from soil.js; single source of truth for
+   the FAO-56 balance, kept verbatim so this file stays buildless). ───────── */
+const SITE = { name: "Vormersesluisweg 3A, Wijchen", lat: 51.79733, lon: 5.70643 };
+const API = {
+  base: "https://api.open-meteo.com/v1/forecast",
+  daily: "precipitation_sum,temperature_2m_max,et0_fao_evapotranspiration",
+  timezone: "Europe/Amsterdam",
+  pastDays: 10,
+  forecastDays: 15,
+};
+
+const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+// Day of week for a "YYYY-MM-DD" string, parsed as UTC to avoid local shift.
+function dayOfWeek(dateStr) {
+  const [y, m, d] = String(dateStr).split("-").map(Number);
+  if (!y || !m || !d) throw new Error(`Malformed weather response: invalid date "${dateStr}"`);
+  return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+}
+
+function buildUrl() {
+  const params = new URLSearchParams({
+    latitude: SITE.lat, longitude: SITE.lon, daily: API.daily,
+    timezone: API.timezone, past_days: API.pastDays, forecast_days: API.forecastDays,
+  });
+  return `${API.base}?${params.toString()}`;
+}
+
+// Null fill: rain → 0, et0 → previous day's value, temperature → null.
+function normalizeWeather(json) {
+  const daily = json && json.daily;
+  if (!daily || !Array.isArray(daily.time)) throw new Error("Malformed weather response: missing daily.time");
+  const time = daily.time, n = time.length, weekday = time.map(dayOfWeek);
+  const rawRain = daily.precipitation_sum, rawEt0 = daily.et0_fao_evapotranspiration;
+  if (!Array.isArray(rawRain) || rawRain.length < n || !Array.isArray(rawEt0) || rawEt0.length < n)
+    throw new Error("Malformed weather response: precipitation_sum / et0_fao_evapotranspiration missing or too short");
+  const rawTemp = Array.isArray(daily.temperature_2m_max) ? daily.temperature_2m_max : [];
+  const rain = [], et0 = [], tempMax = []; let lastEt0 = 0;
+  for (let i = 0; i < n; i++) {
+    rain.push(rawRain[i] == null ? 0 : rawRain[i]);
+    const e = rawEt0[i];
+    if (e == null) { et0.push(lastEt0); } else { et0.push(e); lastEt0 = e; }
+    tempMax.push(rawTemp[i] == null ? null : rawTemp[i]);
+  }
+  return { time, weekday, rain, et0, tempMax };
+}
+
+async function fetchWeather(signal) {
+  let response;
+  try { response = await fetch(buildUrl(), { signal }); }
+  catch (cause) { throw new Error("Weather request failed (network error)", { cause }); }
+  if (!response.ok) throw new Error(`Weather request failed (HTTP ${response.status})`);
+  let json;
+  try { json = await response.json(); }
+  catch (cause) { throw new Error("Weather response was not valid JSON", { cause }); }
+  return normalizeWeather(json);
+}
+
+// Today as a "YYYY-MM-DD" string in the site's timezone (A3), so the TODAY
+// marker tracks the real date instead of a baked-in constant.
+function todayInTz(tz) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(new Date());
+  const get = t => parts.find(p => p.type === t).value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+const ENGINE = {
+  plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
+  soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
+  // Per-soil look for the A (topsoil) / B (subsoil) horizons: B carries the
+  // characteristic colour, plus grain texture (speckle prob, pebble prob).
+  soilLook: {
+    "Sand":       { A:"#7A6440", B:"#CDB57E", spnA:.55, spnB:.40, peb:.18 },
+    "Sandy loam": { A:"#4E3A22", B:"#8C6638", spnA:.85, spnB:.55, peb:.08 },
+    "Loam":       { A:"#3A2A17", B:"#6B4F2E", spnA:.90, spnB:.60, peb:.04 },
+    "Clay":       { A:"#5A3422", B:"#A05636", spnA:.95, spnB:.82, peb:.01 },
+  },
+  sun:   { "Shade":.5, "Half sun":.75, "Full sun":1.0 },
+  applyRate:  0.063,
+  rainEff:    0.8,
+  waterEff:   0.9,
+  refillFrac: 0.5,
+  emptyFrac:  0.05,
+  dur: { step:15, min:15, max:240, start:60 },
+};
+
+const CFG = {
+  geom: {
+    h: 380, skyTop: 20, surf: 160, soilBot: 344, axisX: 0, padR: 12,
+    daysPerView: 9, dayMin: 36, dayMax: 94,
+  },
+  scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
+
+  // O/A/B horizons. Depth boundaries (y0/y1) are wired from the refill depth
+  // and planting root zone below (see "Depth scale"), so bands/refill/roots align.
+  horizons: [
+    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
+    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
+    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08, label:"B" },
+  ],
+  color: {
+    sky:"#E7E4DA", surf:"#5A4A33",
+    aqua0:"#34BCD2", aqua1:"#0C6478", waterLine:"#1FA6BE", waterHi:"#BDEAF1",
+    rain:"#2F6E94", glow:"#E0A074", drop:"#34BCD2", dropEdge:"#1FA6BE", dropHi:"#E8FAFD",
+    paper:"#FBFAF6", flower:"#C98AB0", flowerC:"#E7C24A",
+    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge:"#8A5732", leafGold:"#9C8A45",
+    green:"#4F6B4A", rust:"#B5471F",
+  },
+};
+
+const DRAW = {
+  vitality: { lo:0.08, span:0.44 },
+  bootStagger: { weather:8, flora:9 },
+  seeds: { rain:900, soil:40, crack:31, surf:7, flora:101 },
+
+  text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
+  ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
+  marker: { wK:44, hK:15, y:3, rxK:7.5, fsK:10, tracking:0.1,
+            fillOp:0.07, edgeOp:0.32, dash:"3 4", edgeW:1 },
+
+  drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
+          hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
+          yOfs:72, rK:0.15, rMin:6, rMax:9 },
+
+  plant: {
+    sproutMax:0.07,
+    sprout:{ e1:[-2,-9], s2:[-1,-6], e2:[3,-12], w1:1.4, w2:1.1 },
+    htMin:8, htMax:54, droopOnset:0.45, droopX:16, tipXK:0.6, tipYK:0.5, ctrlX:10, ctrlYK:0.55,
+    stemWMin:1.2, stemWMax:2.6,
+    leafMax:5, leafTMin:0.28, leafTMax:0.92, leafLenMin:5, leafLenMax:11,
+    leafMidK:0.5, leafDroopK:0.4, leafRxK:0.6, leafRyK:0.32, leafRotMin:18, leafRotMax:40, leafDroopRot:20,
+    flowerFull:0.66, flowerBud:0.5, flowerYOfs:1,
+    petals:5, petalRing:3.9, petalR:2.6, centerR:2.1, petalEdgeW:0.5,
+    budRx:2.6, budRy:3.6, budSpan:0.16,
+  },
+
+  root: {
+    deadMax:0.08, deadCapBase:0.74, deadCapJit:0.10,
+    depthJit:8, mainWMin:0.8, mainWMax:2.8, deadOp:0.85,
+    segs:5, segJitLive:4, segJitDead:8,
+    latMin:5, latMax:8, latStartMin:0.18, latStartMax:0.82, latStartOfs:0.4, latSxJit:4,
+    latLenMin:7, latLenMax:16, latDropMin:8, latDropMax:22, latMidK:4,
+    latWLive:0.55, latWDead:0.5, latDeadOp:0.8,
+    hairOnset:0.25, hairHueOfs:0.05, hairMax:4, hairProb:0.5,
+    hairLenMin:2, hairLenMax:5, hairDropMin:1, hairDropMax:4, hairW:0.5, hairOpBase:0.35, hairOpK:0.3,
+  },
+
+  sun: {
+    minVis:0.04, yOfs:24, radMin:2.5, radMax:7.5, glowKMin:2.1, glowKMax:3.4,
+    rayMin:3, rayMax:8, rayInner:2, rayOuterMin:2, rayOuterMax:9, rayWMin:0.7, rayWMax:1.6,
+    glowOpBase:0.2, glowOpK:0.32, groupOp:0.92, coreEdgeW:0.8,
+  },
+
+  rain: {
+    minVis:0.05, perMm:1.4, strandMin:3, strandMax:14, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:165,
+    lenMin:11, lenMax:24, lenNorm:18, lenJitBase:0.7, lenJitK:0.6, slant:2.5, w:1.7,
+    opBase:0.58, opK:0.42, opNorm:12,
+  },
+
+  soil: {
+    speckStep:20, speckPadL:4, speckPadR:2, speckRMin:0.5, speckRMax:1.3, speckOpBase:0.15, speckOpK:0.18,
+    edgeW:0.6, edgeOp:0.5,
+    pebStep:30, pebPadL:6, pebPadR:4, pebProbK:8, pebXJit:22, pebYMin:0.2, pebYMax:0.8,
+    pebRMin:1.6, pebRMax:3.0, pebRyK:0.7, pebOp:0.5,
+  },
+
+  table: {
+    lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
+    refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
+  },
+
+  crack: {
+    moistMax:3, countMin:2, countMax:4, xMinK:0.15, xMaxK:0.85, yOfs:2,
+    stepMin:3, stepRand:3, xJit:8, dyMin:5, dyMax:13, w:0.8, opBase:0.14, opK:0.2,
+  },
+};
+
+const C = CFG.color, HORIZ = CFG.horizons, VIT = DRAW.vitality;
+let TODAY = todayInTz(API.timezone);  // A3: real current date, site timezone
+
+// Index of TODAY within a series. The live API always includes today (it sits
+// at past_days), but if the window ever shifts, fall back to the closest day
+// so the marker/status never crash on a -1.
+function resolveTodayIdx(DATA) {
+  let idx = DATA.findIndex(d => d.date === TODAY);
+  if (idx !== -1) return idx;
+  if (TODAY < DATA[0].date) return 0;
+  if (TODAY > DATA[DATA.length - 1].date) return DATA.length - 1;
+  for (let k = 0; k < DATA.length; k++) if (DATA[k].date >= TODAY) return k;
+  return DATA.length - 1;
+}
+const { axisX:AX, padR:PADR, skyTop:SKY_TOP, surf:SURF, soilBot:SOIL_BOT, h:H } = CFG.geom;
+const SOIL_D = SOIL_BOT - SURF;
+
+// Depth scale: the soil column represents COLUMN_CM of real soil depth, so bands
+// and root zones can be placed at true centimetre depths.
+const COLUMN_CM = 60;
+const PX_PER_CM = SOIL_D / COLUMN_CM;
+HORIZ[0].y0 = 0;              HORIZ[0].y1 = 3 * PX_PER_CM;   // O: organic litter, ~3 cm
+HORIZ[1].y0 = 3 * PX_PER_CM;  HORIZ[1].y1 = 30 * PX_PER_CM;  // A: topsoil, to ~30 cm
+HORIZ[2].y0 = 30 * PX_PER_CM; HORIZ[2].y1 = SOIL_D;          // B: subsoil, to 60 cm
+const MONO = "ui-monospace,Menlo,Consolas,monospace";
+
+// Weather is fetched live on boot (DAT-1); no sample/stale fallback (DAT-3).
+// Shape matches normalizeWeather(): {time, weekday, rain, et0, tempMax}.
+let WEATHER = null;
+
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp  = (a,b,t) => a + (b-a)*t;
+const ease  = t => t<0?0 : t>1?1 : t*t*(3-2*t);
+const health = v => ease(clamp((v - VIT.lo) / VIT.span, 0, 1));
+
+function compute(ctrl) {
+  const p = ENGINE.plantings[ctrl.planting], aw = ENGINE.soils[ctrl.soil], sf = ENGINE.sun[ctrl.sun];
+  const tank = aw * p.root, dose = ENGINE.applyRate * ctrl.minutes;
+  const watered = new Set(ctrl.watered);
+  const series = []; let prev = tank;
+  for (let i = 0; i < WEATHER.time.length; i++) {
+    const loss    = WEATHER.et0[i] * p.kc * sf;
+    const applied = watered.has(i) ? dose : 0;
+    const gain    = WEATHER.rain[i] * ENGINE.rainEff + applied * ENGINE.waterEff;
+    const level   = clamp(prev + gain - loss, 0, tank); prev = level;
+    series.push({
+      i, date: WEATHER.time[i], wd: WEATHER.weekday[i], tmax: WEATHER.tempMax[i],
+      et0: WEATHER.et0[i], rain: WEATHER.rain[i], loss, gain,
+      mins: watered.has(i) ? ctrl.minutes : 0, level,
+    });
+  }
+  return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root, soil: ctrl.soil };
+}
+
+const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
+const hexLerp = (a,b,t) => { const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1))); return `rgb(${m(0)},${m(1)},${m(2)})`; };
+function ramp(stops,v){ v=clamp(v,0,1); for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1]; if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}} return stops[stops.length-1][1]; }
+const rootColor  = v => ramp([[0,"#2A2620"],[.10,"#56422E"],[.30,"#8A6A3E"],[.60,"#7E8A3E"],[1,"#4F7F4A"]], v);
+const plantColor = v => ramp([[0,"#3A352C"],[.10,"#9A7A3C"],[.25,"#7E8A3E"],[.55,"#4F7F4A"],[1,"#3F7A3B"]], v);
+const leafColor  = v => ramp([[0,"#67563C"],[.25,"#9C8A45"],[.6,"#6FA06A"],[1,"#5F9A5A"]], v);
+function rgb2hsl(hex){const [r,g,b]=hx(hex).map(v=>v/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360;}const l=(mx+mn)/2;return[h,d?d/(1-Math.abs(2*l-1)):0,l];}
+function hsl2hex(h,s,l){h=((h%360)+360)%360;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,[r,g,b]=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x],f=v=>clamp(Math.round((v+m)*255),0,255).toString(16).padStart(2,"0");return`#${f(r)}${f(g)}${f(b)}`;}
+// Sun colour is derived from the terracotta token (C.rust): a hot day IS
+// terracotta; cooler days rotate the hue toward yellow and lighten into sunshine.
+const warmer=(hex,dH,dS,dL)=>{const[h,s,l]=rgb2hsl(hex);return hsl2hex(h+dH,clamp(s+dS,0,1),clamp(l+dL,0,1));};
+const TERRACOTTA=C.rust;
+const SUN_RAMP=[[0,warmer(TERRACOTTA,30,.10,.20)],[.5,warmer(TERRACOTTA,14,.05,.13)],[1,warmer(TERRACOTTA,3,0,.03)]];
+const sunCore    = h => ramp(SUN_RAMP, h);
+function shade(hex,f){ const [r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,"0"); return `#${m(r)}${m(g)}${m(b)}`; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
+function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`; return d; }
+
+HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
+
+function dropIcon(cx,cy,r){
+  const D=DRAW.drop, topY=cy-D.topK*r;
+  const d=`M ${cx.toFixed(1)} ${topY.toFixed(1)} `
+    +`C ${(cx+D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
+    +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
+    +`C ${(cx-r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx-D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
+  return `<path d="${d}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
+    +`<ellipse cx="${(cx-r*D.hiDxK).toFixed(1)}" cy="${(cy+r*D.hiDyK).toFixed(1)}" rx="${(r*D.hiRxK).toFixed(1)}" ry="${(r*D.hiRyK).toFixed(1)}" fill="${C.dropHi}" opacity="${D.hiOp}"/>`;
+}
+function wetCol(x0,w,sY,hgt){
+  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
+}
+
+function plant(x,sY,v,rng){
+  const P=DRAW.plant, h=health(v);
+  if(h<P.sproutMax){ const c=C.sprout, S=P.sprout;
+    return `<path d="M ${x} ${sY} L ${(x+S.e1[0]).toFixed(1)} ${(sY+S.e1[1])}" stroke="${c}" stroke-width="${S.w1}" stroke-linecap="round"/>`
+         +`<path d="M ${(x+S.s2[0]).toFixed(1)} ${(sY+S.s2[1])} L ${(x+S.e2[0]).toFixed(1)} ${(sY+S.e2[1])}" stroke="${c}" stroke-width="${S.w2}" stroke-linecap="round"/>`; }
+  const hgt=lerp(P.htMin,P.htMax,h), droop=clamp((P.droopOnset-h)/P.droopOnset,0,1);
+  const tipX=x+lerp(0,P.droopX,droop)*(rng()<.5?-1:1)*P.tipXK, tipY=sY-hgt+lerp(0,hgt*P.tipYK,droop);
+  const ctrlX=x+lerp(0,P.ctrlX,droop), ctrlY=sY-hgt*P.ctrlYK, pc=plantColor(h), lc=leafColor(h);
+  let s=`<path d="M ${x} ${sY} Q ${ctrlX.toFixed(1)} ${ctrlY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${pc}" stroke-width="${lerp(P.stemWMin,P.stemWMax,h).toFixed(2)}" stroke-linecap="round"/>`;
+  const nl=Math.round(lerp(0,P.leafMax,h));
+  for(let k=0;k<nl;k++){
+    if(nl===P.leafMax&&k===P.leafMax-1) continue;
+    const t=lerp(P.leafTMin,P.leafTMax,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(P.leafLenMin,P.leafLenMax,h);
+    const mxp=lx+side*ll*P.leafMidK,myp=ly+droop*ll*P.leafDroopK;
+    s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*P.leafRxK).toFixed(1)}" ry="${(ll*P.leafRyK).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(P.leafRotMin,P.leafRotMax,h)+droop*P.leafDroopRot).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;
+  }
+  if(h>P.flowerFull){ const fx=tipX,fy=tipY-P.flowerYOfs; for(let k=0;k<P.petals;k++){const a=k/P.petals*Math.PI*2; s+=`<circle cx="${(fx+Math.cos(a)*P.petalRing).toFixed(1)}" cy="${(fy+Math.sin(a)*P.petalRing).toFixed(1)}" r="${P.petalR}" fill="${C.flower}" stroke="${C.petalEdge}" stroke-width="${P.petalEdgeW}"/>`;} s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="${P.centerR}" fill="${C.flowerC}"/>`; }
+  else if(h>P.flowerBud){ s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-P.flowerYOfs).toFixed(1)}" rx="${P.budRx}" ry="${P.budRy}" fill="${hexLerp(C.leafGold,C.flower,(h-P.flowerBud)/P.budSpan)}"/>`; }
+  return s;
+}
+
+function roots(x,sY,v,rng,rootPx){
+  const R=DRAW.root, h=health(v), dead=h<R.deadMax;
+  let depth=rootPx+(rng()-0.5)*R.depthJit;
+  if(dead) depth=rootPx*(R.deadCapBase+R.deadCapJit*rng());
+  const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
+  let pts=[{x,y:sY}]; const segs=R.segs;
+  for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
+  let s=`<path d="${dead?jag(pts):smooth(pts)}" fill="none" stroke="${col}" stroke-width="${wMain.toFixed(2)}" stroke-linecap="round" opacity="${dead?R.deadOp:1}"/>`;
+  const nl=Math.round(lerp(R.latMin,R.latMax,h));
+  for(let k=0;k<nl;k++){
+    const startT=lerp(R.latStartMin,R.latStartMax,(k+R.latStartOfs)/nl),sx=x+(rng()-0.5)*R.latSxJit,sy0=sY+depth*startT,dir=(rng()<0.5?-1:1);
+    const ex=sx+dir*lerp(R.latLenMin,R.latLenMax,rng()), ey=sy0+lerp(R.latDropMin,R.latDropMax,rng()), mx=(sx+ex)/2+dir*R.latMidK, my=(sy0+ey)/2;
+    if(dead) s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} L ${mx.toFixed(1)} ${my.toFixed(1)} L ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*R.latWDead).toFixed(2)}" stroke-linecap="round" opacity="${R.latDeadOp}"/>`;
+    else    s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*R.latWLive).toFixed(2)}" stroke-linecap="round"/>`;
+  }
+  if(h>R.hairOnset){
+    const hairC=rootColor(clamp(h+R.hairHueOfs,0,1)), nh=Math.round(lerp(0,R.hairMax,h));
+    pts.slice(1).forEach(p=>{ for(let k=0;k<nh;k++){ if(rng()>R.hairProb)continue; const side=rng()<0.5?-1:1,hl=lerp(R.hairLenMin,R.hairLenMax,h);
+      s+=`<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${(p.x+side*hl).toFixed(1)}" y2="${(p.y+lerp(R.hairDropMin,R.hairDropMax,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="${R.hairW}" opacity="${(R.hairOpBase+R.hairOpK*h).toFixed(2)}"/>`; }});
+  }
+  return s;
+}
+
+function build(model){
+  const DATA=model.series, N=DATA.length, TANK=model.tank, REFILL=model.refill;
+  const sc=CFG.scale, G=CFG.geom, T=DRAW.text, TK=DRAW.ticks, MK=DRAW.marker, SUN=DRAW.sun, RN=DRAW.rain, SL=DRAW.soil, TB=DRAW.table, CR=DRAW.crack, DP=DRAW.drop, SD=DRAW.seeds, ST=DRAW.bootStagger;
+  const vw=(typeof scene!=="undefined" && scene && scene.clientWidth) || window.innerWidth;
+  const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
+  const W=AX+N*dayW+PADR, R=W-PADR;
+  const cx=i=>AX+dayW*(i+0.5);
+  const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
+  // Panel hugs the plant: the soil column ends at the root tips.
+  const VBOT=ROOT_BOT, soilDepth=VBOT-SURF;
+  // Water reservoir is confined to the root zone: full = surface, empty = root tips.
+  const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
+  const refillY=tableY(REFILL);
+  const todayIdx=resolveTodayIdx(DATA);
+  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1));
+
+  const defs=`
+    <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".55"/>
+      <stop offset="1" stop-color="${C.aqua1}" stop-opacity=".82"/></linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="${C.glow}" stop-opacity=".85"/>
+      <stop offset="1" stop-color="${C.glow}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".30"/>
+      <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>
+    <linearGradient id="wline" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+      <stop offset="0" stop-color="${C.waterLine}"/>
+      <stop offset=".5" stop-color="${C.waterLine}"/>
+      <stop offset=".82" stop-color="${C.waterLine}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+      <stop offset="0" stop-color="${C.waterHi}"/>
+      <stop offset=".5" stop-color="${C.waterHi}"/>
+      <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
+
+  let sky="", weather="";
+  DATA.forEach(d=>{
+    const x0=cx(d.i)-dayW/2, heat=clamp((d.tmax-sc.tempMin)/(sc.tempMax-sc.tempMin),0,1);
+    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${C.sky}"/>`;
+    const si=clamp((d.et0-sc.et0Min)/(sc.et0Max-sc.et0Min),0,1);
+    if(si>SUN.minVis){
+      const sx=x0+dayW*0.5, sy=SKY_TOP+SUN.yOfs, rad=lerp(SUN.radMin,SUN.radMax,si), core=sunCore(heat);
+      const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat); let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
+      for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si);
+        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(SUN.rayWMin,SUN.rayWMax,si).toFixed(2)}" stroke-linecap="round"/>`;}
+      weather+=`<g opacity="${SUN.groupOp}"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(SUN.glowOpBase+heat*SUN.glowOpK).toFixed(2)}"/>${rays}<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${C.sunEdge}" stroke-width="${SUN.coreEdgeW}"/></g>`;
+    }
+    if(d.rain>RN.minVis){
+      const rng=mulberry32(SD.rain+d.i), strands=Math.round(clamp(d.rain/RN.perMm,RN.strandMin,RN.strandMax)); let rg="";
+      for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*RN.xMinK,dayW*RN.xMaxK,rng()),ry=SKY_TOP+lerp(RN.yMin,RN.yMax,rng());
+        const len=lerp(RN.lenMin,RN.lenMax,Math.sqrt(clamp(d.rain/RN.lenNorm,0,1)))*(RN.lenJitBase+rng()*RN.lenJitK);
+        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-RN.slant).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="${C.rain}" stroke-width="${RN.w}" stroke-linecap="round" opacity="${(RN.opBase+RN.opK*clamp(d.rain/RN.opNorm,0,1)).toFixed(2)}"/>`;}
+      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${rg}</g>`;
+    }
+    if(d.mins>0){
+      const dx=cx(d.i), dy=SURF-DP.yOfs, dr=clamp(dayW*DP.rK,DP.rMin,DP.rMax);
+      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${dropIcon(dx,dy,dr)}</g>`;
+    }
+  });
+
+  // Recolour/texture the A & B horizons for the chosen soil (O litter is shared).
+  const look=ENGINE.soilLook[model.soil]||ENGINE.soilLook["Sandy loam"];
+  const HZ=HORIZ.map((h,i)=>{ if(i===0) return h;
+    const fill=i===1?look.A:look.B;
+    return {...h, fill, edge:shade(fill,0.70), sp:shade(fill,0.82),
+            spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
+
+  // The soil column ends at the root tips, so each planting shows just the
+  // soil its roots draw from.
+  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
+  let hlabels="";
+  HZ.forEach((h,hi)=>{
+    if(h.y0>=soilDepth) return;                     // horizon lies below the drawn column
+    const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
+    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
+    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
+    soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
+    const rng=mulberry32(SD.soil+hi), step=SL.speckStep;
+    for(let x=AX+SL.speckPadL;x<R-SL.speckPadR;x+=step){ if(rng()>h.spn) continue;
+      const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(SL.speckRMin,SL.speckRMax,rng());
+      soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(SL.speckOpBase+rng()*SL.speckOpK).toFixed(2)}"/>`;
+    }
+    if(h.peb>0){ for(let x=AX+SL.pebPadL;x<R-SL.pebPadR;x+=SL.pebStep){ if(rng()>h.peb*SL.pebProbK)continue; const px=x+(rng()-0.5)*SL.pebXJit,py=SURF+h.y0+lerp(SL.pebYMin,SL.pebYMax,rng())*band,rr=lerp(SL.pebRMin,SL.pebRMax,rng());
+      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*SL.pebRyK).toFixed(1)}" fill="${h.sp}" opacity="${SL.pebOp}"/>`; }}
+  });
+
+  const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
+  DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
+  tablePts.push({x:R,y:tableY(DATA[N-1].level)});
+  const tline=smooth(tablePts);
+  soil+=`<path d="${tline} L ${R.toFixed(1)} ${ROOT_BOT.toFixed(1)} L ${AX} ${ROOT_BOT.toFixed(1)} Z" fill="url(#aqua)"/>`;
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
+  soil+=`<path d="${tline}" fill="none" stroke="url(#wline)" stroke-width="${TB.lineW}"/>`
+     +`<path d="${tline}" fill="none" stroke="url(#whi)" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
+
+  const surfPts=[{x:AX,y:SURF}];
+  DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
+  surfPts.push({x:R,y:SURF});
+  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.paper}" stroke-width="${TB.refillHaloW}" opacity="${TB.refillHaloOp}"/>`
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.rust}" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
+
+  let cracks="";
+  DATA.forEach(d=>{ if(d.level>CR.moistMax)return; const rng=mulberry32(SD.crack+d.i),x0=cx(d.i)-dayW/2,dry=1-clamp(d.level/CR.moistMax,0,1),nc=Math.round(lerp(CR.countMin,CR.countMax,dry));
+    for(let k=0;k<nc;k++){let px=x0+lerp(dayW*CR.xMinK,dayW*CR.xMaxK,rng()),py=SURF+CR.yOfs,seg=`M ${px.toFixed(1)} ${py.toFixed(1)}`;const steps=CR.stepMin+Math.floor(rng()*CR.stepRand);
+      for(let s2=0;s2<steps;s2++){px+=(rng()-0.5)*CR.xJit;py+=lerp(CR.dyMin,CR.dyMax,rng());seg+=` L ${px.toFixed(1)} ${py.toFixed(1)}`;}
+      cracks+=`<path d="${seg}" fill="none" stroke="${C.surf}" stroke-width="${CR.w}" opacity="${(CR.opBase+CR.opK*dry).toFixed(2)}"/>`;}});
+
+  let flora="";
+  DATA.forEach(d=>{const x=cx(d.i),sY=SURF+(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit,v=clamp(d.level/TANK,0,1),rng=mulberry32(SD.flora+d.i);
+    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
+
+  let ticks="";
+  DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
+    ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd.slice(0,3)}</text>`;});
+
+  const tx=cx(todayIdx), fw=MK.wK*K, fh=MK.hK*K, fy=MK.y;
+  const today=
+     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
+    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
+
+  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
+
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
+  return { svg, W, dayW, cx, todayIdx };
+}
+
+function renderStatus(model){
+  const DATA=model.series, TANK=model.tank, REFILL=model.refill;
+  const ti=resolveTodayIdx(DATA), tl=DATA[ti].level;
+  const pct=Math.round(tl/TANK*100), N=DATA.length;
+  let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
+  let word,level,kick;
+  if(tl<=TANK*ENGINE.emptyFrac){ word="Water today"; level="now"; kick="Refill point reached"; }
+  else if(tl<REFILL){ word="Water now"; level="now"; kick="Below refill point"; }
+  else {
+    let dd,plus=""; if(firstBelow>=0){dd=firstBelow-ti;} else {dd=(N-1)-ti;plus="+";}
+    word = dd===1 ? "Water tomorrow" : `Water in ${dd}${plus} days`;
+    level = dd>=2 ? "ok" : "soon";
+    kick="Above refill point";
+  }
+  const st=document.getElementById("status");
+  st.style.setProperty("--v-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
+  st.style.setProperty("--v-fill", clamp(pct,0,100)+"%");
+  st.style.setProperty("--v-refill", (REFILL/TANK*100)+"%");
+  document.getElementById("word").innerHTML=`<i></i>${word}`;
+  document.getElementById("pct").innerHTML=`${pct}<small>%</small>`;
+  document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
+}
+
+const ctrl={ planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:ENGINE.dur.start, watered:[] };
+const scene=document.getElementById("scroll");
+const sbar=document.getElementById("sbar"), thumb=document.getElementById("thumb");
+const statusEl=document.getElementById("status"), msgEl=document.getElementById("msg");
+let G, booted=false;
+
+function render(){
+  if(!WEATHER) return;            // nothing to draw until the live fetch lands
+  const model=compute(ctrl);
+  G=build(model);
+  scene.innerHTML=G.svg;
+  renderStatus(model);
+  wireHits();
+  requestAnimationFrame(syncBar);
+  if(!booted){ scene.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
+    requestAnimationFrame(()=>document.body.classList.remove("booting")); }
+}
+function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
+
+function toggleWater(i){
+  const set=new Set(ctrl.watered);
+  set.has(i) ? set.delete(i) : set.add(i);
+  ctrl.watered=[...set];
+  rerender();
+}
+function wireHits(){
+  scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
+    h.style.cursor="pointer";
+    h.addEventListener("click",()=>toggleWater(+h.dataset.i));
+  });
+}
+
+document.getElementById("controls").addEventListener("change",e=>{
+  const r=e.target; if(r.type!=="radio")return;
+  ctrl[r.name]=r.value; rerender();
+});
+
+/* <number-stepper> — light-DOM custom element (no shadow root, so the page's
+   tokens style it). Renders a label + a [− value +] pill, owns clamping and
+   disabled-at-limits, and emits a native-style `input` event. */
+class NumberStepper extends HTMLElement {
+  static observedAttributes = ["value","min","max","step","unit","label"];
+  connectedCallback(){
+    if(!this._built){
+      this.innerHTML =
+        `<i></i>`+
+        `<p><button type="button" data-act="down" aria-label="Decrease duration">−</button>`+
+        `<output></output>`+
+        `<button type="button" data-act="up" aria-label="Increase duration">+</button></p>`;
+      this._label = this.querySelector("i");
+      this._out   = this.querySelector("output");
+      this._down  = this.querySelector('[data-act="down"]');
+      this._up    = this.querySelector('[data-act="up"]');
+      this.addEventListener("click",e=>{
+        const act=e.target.closest("[data-act]"); if(!act)return;
+        this.value=this.value+(act.dataset.act==="up"?this.step:-this.step);
+      });
+      this._built=true;
+    }
+    this._render();
+  }
+  attributeChangedCallback(){ if(this._built) this._render(); }
+  get value(){ return Number(this.getAttribute("value") ?? this.min); }
+  set value(v){
+    const c=clamp(Number(v),this.min,this.max);
+    if(c===this.value){ this._render(); return; }
+    this.setAttribute("value",c);
+    this.dispatchEvent(new Event("input",{bubbles:true}));
+  }
+  get min(){ return Number(this.getAttribute("min") ?? 0); }
+  get max(){ return Number(this.getAttribute("max") ?? 100); }
+  get step(){ return Number(this.getAttribute("step") ?? 1); }
+  get unit(){ return this.getAttribute("unit") ?? ""; }
+  get label(){ return this.getAttribute("label") ?? ""; }
+  _render(){
+    if(!this._out) return;
+    this._label.textContent=this.label;
+    this._out.innerHTML=this.unit?`${this.value}<small>${this.unit}</small>`:`${this.value}`;
+    this._down.disabled=this.value<=this.min;
+    this._up.disabled=this.value>=this.max;
+  }
+}
+customElements.define("number-stepper",NumberStepper);
+
+// Whole stepper integration: keep ctrl.minutes in sync, re-run the balance.
+document.getElementById("dur").addEventListener("input",e=>{
+  ctrl.minutes=e.target.value; rerender();
+});
+
+function syncBar(){
+  const cw=scene.clientWidth, sw=scene.scrollWidth, tw=sbar.clientWidth;
+  if(sw<=cw+1){ sbar.style.visibility="hidden"; return; }
+  sbar.style.visibility="visible";
+  const thumbW=Math.max(28, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
+  thumb.style.width=thumbW+"px";
+  thumb.style.left=(maxScroll>0?(scene.scrollLeft/maxScroll)*maxLeft:0)+"px";
+}
+scene.addEventListener("scroll",syncBar,{passive:true});
+let drag=false,x0=0,l0=0;
+thumb.addEventListener("pointerdown",e=>{drag=true;x0=e.clientX;l0=parseFloat(thumb.style.left)||0;thumb.setPointerCapture(e.pointerId);e.preventDefault();});
+thumb.addEventListener("pointermove",e=>{ if(!drag)return;
+  const tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
+  scene.scrollLeft=maxLeft>0?(clamp(l0+(e.clientX-x0),0,maxLeft)/maxLeft)*maxScroll:0; });
+thumb.addEventListener("pointerup",()=>{drag=false;});
+sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
+  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
+  scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
+
+let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
+
+// ── Boot (A2): show loading, fetch live weather (DAT-1), then render. On any
+// failure show a clear error state — never sample/stale/zero data (DAT-3). ──
+function showLoading(){ statusEl.dataset.state="loading"; msgEl.hidden=false; msgEl.textContent="Loading weather…"; }
+function showError(err){
+  statusEl.dataset.state="error";
+  msgEl.hidden=false;
+  msgEl.textContent="Weather unavailable — can’t compute the soil balance. Check your connection and reload.";
+  console.error(err);
+}
+function clearStatusState(){ delete statusEl.dataset.state; msgEl.hidden=true; }
+
+async function boot(){
+  showLoading();
+  try {
+    WEATHER = await fetchWeather();
+  } catch (err) {
+    showError(err);
+    return;
+  }
+  clearStatusState();
+  render();
+}
+boot();
+</script>
+</body>
+</html>
