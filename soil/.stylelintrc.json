@@ -12,7 +12,19 @@
     ],
     "selector-max-id": [
       0,
-      { "message": "ID selectors are not allowed — style elements, [data-*] attributes, or .ph-* icons." }
+      { "message": "ID selectors are not allowed — style elements or [data-*] attributes." }
+    ],
+    "selector-max-class": [
+      0,
+      { "message": "Class selectors are not allowed — style elements or [data-*] attributes." }
+    ],
+    "selector-attribute-name-disallowed-list": [
+      ["/^(?!(?:data-[\\w-]+|type|for|open|popover)$).+/"],
+      { "message": "Only [data-*] design attributes and [type]/[for]/[open]/[popover] are allowed as selectors." }
+    ],
+    "selector-pseudo-class-disallowed-list": [
+      ["/^(?:nth-(?:child|of-type)|(?:first|last)-(?:child|of-type))$/"],
+      { "message": "Positional pseudo-classes are not allowed — :nth-child/:nth-of-type, :first-child/:last-child, :first-of-type/:last-of-type." }
     ],
     "unit-disallowed-list": [
       ["pt", "pc", "in", "cm", "mm", "q"],
