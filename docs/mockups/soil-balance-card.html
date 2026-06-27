@@ -275,8 +275,6 @@
     transition: opacity var(--time-slow) ease;
   }
 
-  /* viz text follows the page's fonts, not a separate SVG typeface */
-  svg text { font-family: var(--font-sans); }
 
   .grow {
     transition: transform var(--time-slow) cubic-bezier(.2, .8, .2, 1), opacity var(--time-slow) ease;
@@ -494,7 +492,8 @@ const PX_PER_CM = SOIL_D / COLUMN_CM;
 HORIZ[0].y0 = 0;              HORIZ[0].y1 = 3 * PX_PER_CM;   // O: organic litter, ~3 cm
 HORIZ[1].y0 = 3 * PX_PER_CM;  HORIZ[1].y1 = 30 * PX_PER_CM;  // A: topsoil, to ~30 cm
 HORIZ[2].y0 = 30 * PX_PER_CM; HORIZ[2].y1 = SOIL_D;          // B: subsoil, to 60 cm
-const MONO = "ui-monospace,Menlo,Consolas,monospace";
+// SVG label font — mirror the page's --font-sans so viz text matches the page
+const MONO = "ui-sans-serif,'Inter','Segoe UI',system-ui,sans-serif";
 
 const SAMPLE = [
   ["2026-06-11","Thu",16.6,2.53,5.3],["2026-06-12","Fri",19.2,0.85,5.1],
