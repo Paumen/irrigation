@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soil-Balance — PAUMEN card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+/* Soil-Balance Status + Controls, rebuilt on the PAUMEN contract:
+   zero CSS classes, zero id selectors — styling = element + data-skin + data-colspan + data-state.
+   New system pieces demonstrated here: data-skin="joined" and data-state="warn". */
+@layer reset, tokens, base, skin, grid;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body, h1, p, figure, fieldset, legend, output { margin: 0; }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    min-inline-size: 0;
+  }
+  legend { padding: 0; }
+
+  button, input, output {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer tokens {
+  :root {
+    --color-neutral:        oklch(91.8% 0.014  93);
+    --color-neutral-raised: oklch(98.5% 0.005  95);
+    --color-neutral-mute:   oklch(89.2% 0.020  91);
+    --color-ink:            oklch(33.1% 0.017  82);
+    --color-ink-mute:       oklch(58.5% 0.028  87);
+    --color-hue:            oklch(49.6% 0.061 141);
+    --color-alert:          oklch(65.1% 0.130  71);
+    --color-danger:         oklch(54.1% 0.152  39);
+    --font-serif: "Newsreader", georgia, "Times New Roman", serif;
+    --font-mono:  ui-monospace, "SF Mono", "JetBrains Mono", menlo, consolas, monospace;
+    --font-sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --letter-spacing-wide: .08em;
+    --line-height-tight: 1.15;
+    --xs: clamp(.2rem, .5vw, .3rem);
+    --s:  clamp(.3rem, 1vw, .5rem);
+    --m:  clamp(.5rem, 1.5vw, .9rem);
+    --l:  clamp(.9rem, 2.5vw, 1.3rem);
+    --xl: clamp(1.3rem, 4.5vw, 2rem);
+    --radius-sm: 5px;
+    --border-width: 1px;
+    --box-shadow-lift: 0 1px 3px oklch(33% .02 82 / .22);
+
+    color-scheme: light;
+  }
+}
+
+@layer base {
+  body {
+    display: grid;
+    gap: var(--l);
+    max-inline-size: 460px;
+    margin-inline: auto;
+    padding: var(--m);
+    font-family: var(--font-sans);
+    font-size: var(--l);
+    line-height: 1.4;
+    color: var(--color-ink);
+    background: var(--color-neutral);
+  }
+
+  header h1 {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--l);
+    color: var(--color-hue);
+  }
+
+  /* Card — the container element carries the chrome (no .card class). */
+  article {
+    display: grid;
+    gap: var(--l);
+    padding: var(--m) var(--l);
+    background: var(--color-neutral-raised);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Row wrappers — 12-column grid, no visual chrome. */
+  section, fieldset, footer {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--m);
+    place-items: center start;
+    justify-self: stretch;
+    min-inline-size: 0;
+  }
+
+  /* form is transparent to layout (PAUMEN #58): fieldsets stack as card children. */
+  form { display: contents; }
+
+  /* Status readout. */
+  output {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--xl);
+    line-height: var(--line-height-tight);
+  }
+
+  output + output {
+    text-align: end;
+    justify-self: stretch;
+  }
+
+  output small {
+    font-size: var(--m);
+    color: var(--color-ink-mute);
+  }
+
+  /* Signal colour: data-state drives the word, dot and gauge fill — token-only. */
+  [data-state] output        { color: var(--color-hue); }
+  [data-state="warn"] output { color: var(--color-alert); }
+  [data-state="now"] output  { color: var(--color-danger); }
+
+  [data-state] output i {
+    display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
+    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
+    background: currentcolor;
+    box-shadow: 0 0 0 .26em color-mix(in oklab, currentcolor 18%, transparent);
+  }
+
+  p {
+    font-size: var(--m);
+    color: var(--color-ink-mute);
+  }
+
+  /* Gauge — bespoke widget built from data-attributes only (no class, no extra tags). */
+  p[data-gauge] {
+    position: relative; block-size: var(--m);
+    background: var(--color-neutral); border-radius: var(--radius-sm);
+  }
+  [data-state] [data-fill]        { background: var(--color-hue); }
+  [data-state="warn"] [data-fill] { background: var(--color-alert); }
+  [data-state="now"] [data-fill]  { background: var(--color-danger); }
+
+  /* --p / --refill are gauge geometry set by JS at runtime (the dynamic "freeform
+     var" case): outside the token vocabulary by design, so scope the rule off here. */
+  /* stylelint-disable custom-property-pattern -- runtime-driven gauge geometry */
+  [data-gauge] [data-fill] {
+    position: absolute; inset-block: 0; inset-inline-start: 0;
+    inline-size: var(--p, 0%);
+    border-radius: var(--radius-sm);
+    transition: inline-size .5s ease, background .5s ease;
+  }
+
+  [data-gauge] [data-mark] {
+    position: absolute; inset-block: -2px; inline-size: var(--xs);
+    inset-inline-start: var(--refill, 50%);
+    background: var(--color-neutral-raised); border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
+  }
+  /* stylelint-enable custom-property-pattern */
+
+  legend {
+    grid-column: 1 / -1;
+    font-family: var(--font-mono); font-size: var(--m);
+    letter-spacing: var(--letter-spacing-wide); text-transform: uppercase;
+    color: var(--color-ink-mute);
+  }
+}
+
+@layer skin {
+  /* toggle — radios rendered as buttons; four cues on the checked option. */
+  [data-skin~="toggle"] label {
+    display: flex; align-items: center; justify-content: center;
+    inline-size: 100%; min-inline-size: 0;
+    padding: var(--xs) var(--s);
+    text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
+    color: var(--color-ink-mute); cursor: pointer;
+    background: var(--color-neutral-raised);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    border-radius: var(--radius-sm);
+    transition: color .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+
+  [data-skin~="toggle"] input {
+    position: absolute; inline-size: 1px; block-size: 1px;
+    opacity: 0; pointer-events: none;
+  }
+
+  [data-skin~="toggle"] label:has(input:checked) {
+    background: color-mix(in oklab, var(--color-hue) 12%, var(--color-neutral-raised));
+    color: var(--color-hue); font-weight: var(--font-weight-bold);
+    box-shadow: inset 0 0 0 2px var(--color-hue);
+    position: relative; z-index: 1;
+  }
+
+  /* joined — general "fuse a row of controls into one pill" recipe.
+     Touches spacing + adjacent edges only; structure-agnostic, composable. */
+  [data-skin~="joined"] { gap: 0; }
+  [data-skin~="joined"] > :not(legend) { border-radius: 0; }
+
+  /* drop the doubled edge on every control except the first one */
+  [data-skin~="joined"] > :not(legend, legend + *) { border-inline-start: 0; }
+
+  /* round only the outer corners */
+  [data-skin~="joined"] > legend + :not(legend) {
+    border-start-start-radius: var(--radius-sm);
+    border-end-start-radius: var(--radius-sm);
+  }
+
+  [data-skin~="joined"] > :not(legend):last-child {
+    border-start-end-radius: var(--radius-sm);
+    border-end-end-radius: var(--radius-sm);
+  }
+
+  /* stepper = data-skin="joined" composed over button / output / button. */
+  [data-skin~="joined"] button {
+    inline-size: 100%;
+    background: var(--color-neutral-raised); color: var(--color-ink);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    cursor: pointer; font-size: var(--l); line-height: var(--line-height-tight);
+    padding: var(--xs) var(--s);
+  }
+  [data-skin~="joined"] button:hover { background: var(--color-neutral-mute); }
+  [data-skin~="joined"] button:active { transform: scale(.98); }
+
+  [data-skin~="joined"] output {
+    inline-size: 100%;
+    display: flex; align-items: baseline; justify-content: center; gap: var(--xs);
+    background: var(--color-neutral-raised);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    padding: var(--xs) var(--s);
+    font-family: var(--font-mono); font-size: var(--l);
+    font-weight: 400; color: var(--color-ink);
+  }
+}
+
+@layer grid {
+  [data-colspan="2"]  { grid-column: span 2; }
+  [data-colspan="3"]  { grid-column: span 3; }
+  [data-colspan="4"]  { grid-column: span 4; }
+  [data-colspan="9"]  { grid-column: span 9; }
+  [data-colspan="12"] { grid-column: span 12; }
+}
+</style>
+</head>
+<body>
+  <header><h1>Soil-Balance</h1></header>
+
+  <article id="status" data-state="warn">
+    <section>
+      <output data-colspan="9" id="word"><i></i>—</output>
+      <output data-colspan="3" id="pct">—<small>%</small></output>
+    </section>
+    <p data-gauge><i data-fill></i><i data-mark></i></p>
+    <p id="sub">—</p>
+  </article>
+
+  <article id="controls">
+    <form autocomplete="off">
+      <fieldset data-skin="toggle joined">
+        <legend data-colspan="12">Planting</legend>
+        <label data-colspan="4"><input type="radio" name="planting" value="Turf">Turf</label>
+        <label data-colspan="4"><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+        <label data-colspan="4"><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+      </fieldset>
+
+      <fieldset data-skin="toggle joined">
+        <legend data-colspan="12">Soil</legend>
+        <label data-colspan="3"><input type="radio" name="soil" value="Sand">Sand</label>
+        <label data-colspan="3"><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+        <label data-colspan="3"><input type="radio" name="soil" value="Loam">Loam</label>
+        <label data-colspan="3"><input type="radio" name="soil" value="Clay">Clay</label>
+      </fieldset>
+
+      <fieldset data-skin="toggle joined">
+        <legend data-colspan="12">Exposure</legend>
+        <label data-colspan="4"><input type="radio" name="sun" value="Shade">Shade</label>
+        <label data-colspan="4"><input type="radio" name="sun" value="Half sun">Half sun</label>
+        <label data-colspan="4"><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+      </fieldset>
+
+      <fieldset data-skin="joined" data-stepper>
+        <legend data-colspan="12">Duration</legend>
+        <button type="button" data-colspan="2" id="durDown" aria-label="Less">−</button>
+        <output data-colspan="3" id="durVal">60<small>min</small></output>
+        <button type="button" data-colspan="2" id="durUp" aria-label="More">+</button>
+      </fieldset>
+    </form>
+  </article>
+
+<script>
+"use strict";
+
+const ENGINE = {
+  today: "2026-06-21",
+  plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
+  soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
+  sun:   { "Shade":.5, "Half sun":.75, "Full sun":1.0 },
+  applyRate: 0.063, rainEff: 0.8, waterEff: 0.9, refillFrac: 0.5, emptyFrac: 0.05,
+  dur: { step:15, min:15, max:240, start:60 },
+};
+
+const SAMPLE = [
+  ["2026-06-11","Thu",16.6,2.53,5.3],["2026-06-12","Fri",19.2,0.85,5.1],
+  ["2026-06-13","Sat",17.4,2.69,0.3],["2026-06-14","Sun",17.6,3.60,0.2],
+  ["2026-06-15","Mon",19.0,3.19,0.0],["2026-06-16","Tue",23.5,4.24,0.1],
+  ["2026-06-17","Wed",23.8,2.90,0.2],["2026-06-18","Thu",29.2,5.50,0.0],
+  ["2026-06-19","Fri",33.7,5.62,3.4],["2026-06-20","Sat",28.9,5.62,3.4],
+  ["2026-06-21","Sun",29.7,5.39,0.0],["2026-06-22","Mon",30.4,6.44,0.0],
+  ["2026-06-23","Tue",27.2,5.62,0.0],["2026-06-24","Wed",31.7,5.78,0.0],
+  ["2026-06-25","Thu",33.5,6.42,0.0],["2026-06-26","Fri",36.0,6.66,0.0],
+  ["2026-06-27","Sat",31.4,5.65,1.8],["2026-06-28","Sun",29.0,5.85,0.0],
+  ["2026-06-29","Mon",32.6,5.89,3.6],["2026-06-30","Tue",24.6,2.80,10.5],
+  ["2026-07-01","Wed",18.1,1.42,18.3],["2026-07-02","Thu",20.8,4.06,1.8],
+  ["2026-07-03","Fri",19.8,3.66,2.4],["2026-07-04","Sat",19.4,2.97,3.0],
+  ["2026-07-05","Sun",29.2,5.98,0.0],
+];
+const WEATHER = {
+  time: SAMPLE.map(r=>r[0]), et0: SAMPLE.map(r=>r[3]), rain: SAMPLE.map(r=>r[4]),
+};
+
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+function compute(ctrl){
+  const p = ENGINE.plantings[ctrl.planting], aw = ENGINE.soils[ctrl.soil], sf = ENGINE.sun[ctrl.sun];
+  const tank = aw * p.root, dose = ENGINE.applyRate * ctrl.minutes;
+  const watered = new Set(ctrl.watered);
+  const series = []; let prev = tank;
+  for (let i = 0; i < WEATHER.time.length; i++) {
+    const loss = WEATHER.et0[i] * p.kc * sf;
+    const applied = watered.has(i) ? dose : 0;
+    const gain = WEATHER.rain[i] * ENGINE.rainEff + applied * ENGINE.waterEff;
+    const level = clamp(prev + gain - loss, 0, tank); prev = level;
+    series.push({ i, date: WEATHER.time[i], level });
+  }
+  return { series, tank, refill: tank * ENGINE.refillFrac };
+}
+
+function renderStatus(model){
+  const DATA = model.series, TANK = model.tank, REFILL = model.refill;
+  const ti = DATA.findIndex(d=>d.date===ENGINE.today), tl = DATA[ti].level;
+  const pct = Math.round(tl/TANK*100), N = DATA.length;
+  let firstBelow = -1; for (let k=ti;k<N;k++){ if (DATA[k].level<REFILL){ firstBelow=k; break; } }
+  let word, level, kick;
+  if (tl <= TANK*ENGINE.emptyFrac){ word="Water today"; level="now"; kick="Refill point reached"; }
+  else if (tl < REFILL){ word="Water now"; level="now"; kick="Below refill point"; }
+  else {
+    let dd, plus=""; if (firstBelow>=0){ dd=firstBelow-ti; } else { dd=(N-1)-ti; plus="+"; }
+    word = dd===1 ? "Water tomorrow" : `Water in ${dd}${plus} days`;
+    level = dd>=2 ? "ok" : "warn";
+    kick = dd>=2 ? "Above refill point" : "Nearing refill point";
+  }
+  const st = document.getElementById("status");
+  st.dataset.state = level;
+  st.style.setProperty("--p", clamp(pct,0,100)+"%");
+  st.style.setProperty("--refill", (REFILL/TANK*100)+"%");
+  document.getElementById("word").innerHTML = `<i></i>${word}`;
+  document.getElementById("pct").innerHTML = `${pct}<small>%</small>`;
+  document.getElementById("sub").textContent = `${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
+}
+
+const ctrl = { planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:ENGINE.dur.start, watered:[7,11] };
+
+function render(){ renderStatus(compute(ctrl)); }
+
+document.querySelector("form").addEventListener("change", e => {
+  const r = e.target; if (r.type !== "radio") return;
+  ctrl[r.name] = r.value; render();
+});
+function bumpDur(d){
+  ctrl.minutes = clamp(ctrl.minutes + d, ENGINE.dur.min, ENGINE.dur.max);
+  document.getElementById("durVal").innerHTML = `${ctrl.minutes}<small>min</small>`;
+  render();
+}
+document.getElementById("durDown").addEventListener("click", () => bumpDur(-ENGINE.dur.step));
+document.getElementById("durUp").addEventListener("click", () => bumpDur(ENGINE.dur.step));
+
+render();
+</script>
+</body>
+</html>
