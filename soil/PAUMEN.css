@@ -40,6 +40,14 @@
     padding: 0;
     margin: 0;
   }
+
+  input[type="radio"] {
+    appearance: none;
+    opacity: 0;
+    position: absolute;
+    inline-size: 0;
+    block-size: 0;
+  }
 }
 
 @layer default {
