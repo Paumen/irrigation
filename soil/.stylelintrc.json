@@ -19,8 +19,8 @@
       { "message": "Class selectors are not allowed — style elements or [data-*] attributes." }
     ],
     "selector-attribute-name-disallowed-list": [
-      ["/^(?!(?:data-(?:colspan|icon-fill|skin|state)|type|for|open|popover)$).+/"],
-      { "message": "Only [data-colspan|icon-fill|skin|state] and [type]/[for]/[open]/[popover] are allowed as selectors." }
+      ["/^(?!(?:data-(?:colspan|icon-fill|skin|state|freeform)|type|for|open|popover)$).+/"],
+      { "message": "Only [data-colspan|icon-fill|skin|state|freeform] and [type]/[for]/[open]/[popover] are allowed as selectors." }
     ],
     "selector-pseudo-class-disallowed-list": [
       ["/^(?:nth-(?:child|of-type)|(?:first|last)-(?:child|of-type))$/"],
