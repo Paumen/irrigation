@@ -217,42 +217,38 @@
     box-shadow: var(--box-shadow-lift);
   }
 
-  /* joined — general "fuse a row of controls into one pill" recipe.
-     Touches spacing + adjacent edges only; structure-agnostic, composable. */
-  [data-skin~="joined"] { gap: 0; }
-  [data-skin~="joined"] > :not(legend) { border-radius: 0; }
-
-  /* drop the doubled edge on every control except the first one */
-  [data-skin~="joined"] > :not(legend, legend + *) { border-inline-start: 0; }
-
-  /* round only the outer corners */
-  [data-skin~="joined"] > legend + :not(legend) {
-    border-start-start-radius: var(--radius-sm);
-    border-end-start-radius: var(--radius-sm);
+  /* stepper — same recessed-track language as toggle: a muted pill track with
+     the value as the raised "thumb", flanked by borderless −/+ controls.
+     Compact (inline-flex), so the track hugs its contents. */
+  [data-skin~="stepper"] {
+    display: inline-flex;
+    align-items: stretch;
+    justify-self: start;
+    gap: 0;
+    padding: var(--xs);
+    background: var(--color-neutral-mute);
+    border-radius: var(--radius-pill);
   }
 
-  [data-skin~="joined"] > :not(legend):last-child {
-    border-start-end-radius: var(--radius-sm);
-    border-end-end-radius: var(--radius-sm);
+  [data-skin~="stepper"] button {
+    min-inline-size: var(--xl);
+    background: transparent; color: var(--color-ink);
+    border: 0; cursor: pointer;
+    font-size: var(--l); line-height: var(--line-height-tight);
+    border-radius: var(--radius-pill);
+    padding: var(--xs) var(--m);
+    transition: background .2s ease;
   }
+  [data-skin~="stepper"] button:hover { background: var(--color-neutral); }
+  [data-skin~="stepper"] button:active { transform: scale(.96); }
 
-  /* stepper = data-skin="joined" composed over button / output / button. */
-  [data-skin~="joined"] button {
-    inline-size: 100%;
-    background: var(--color-neutral-raised); color: var(--color-ink);
-    border: var(--border-width) solid var(--color-neutral-mute);
-    cursor: pointer; font-size: var(--l); line-height: var(--line-height-tight);
-    padding: var(--xs) var(--s);
-  }
-  [data-skin~="joined"] button:hover { background: var(--color-neutral-mute); }
-  [data-skin~="joined"] button:active { transform: scale(.98); }
-
-  [data-skin~="joined"] output {
-    inline-size: 100%;
-    display: flex; align-items: baseline; justify-content: center; gap: var(--xs);
+  [data-skin~="stepper"] output {
+    display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
+    min-inline-size: var(--xl);
     background: var(--color-neutral-raised);
-    border: var(--border-width) solid var(--color-neutral-mute);
-    padding: var(--xs) var(--s);
+    box-shadow: var(--box-shadow-lift);
+    border-radius: var(--radius-pill);
+    padding: var(--xs) var(--m);
     font-family: var(--font-mono); font-size: var(--l);
     font-weight: 400; color: var(--color-ink);
   }
@@ -303,11 +299,11 @@
         <label data-colspan="4"><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
       </fieldset>
 
-      <fieldset data-skin="joined" data-stepper>
-        <legend data-colspan="12">Duration</legend>
-        <button type="button" data-colspan="2" id="durDown" aria-label="Less">−</button>
-        <output data-colspan="3" id="durVal">60<small>min</small></output>
-        <button type="button" data-colspan="2" id="durUp" aria-label="More">+</button>
+      <fieldset data-skin="stepper">
+        <legend>Duration</legend>
+        <button type="button" id="durDown" aria-label="Less">−</button>
+        <output id="durVal">60<small>min</small></output>
+        <button type="button" id="durUp" aria-label="More">+</button>
       </fieldset>
     </form>
   </article>
