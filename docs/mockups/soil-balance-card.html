@@ -275,6 +275,9 @@
     transition: opacity var(--time-slow) ease;
   }
 
+  /* viz labels sit on the page's --m scale, not the SVG's own px sizes */
+  svg text { font-size: var(--m); }
+
 
   .grow {
     transition: transform var(--time-slow) cubic-bezier(.2, .8, .2, 1), opacity var(--time-slow) ease;
