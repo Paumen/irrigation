@@ -20,13 +20,13 @@
 </head>
 <body>
   <h1>Sun glyphs — ET (across) × temperature (down)</h1>
-  <p class="note">After the refinement, the sun <b>core colour and size are driven by ET</b> (evapotranspiration / dryness demand), while <b>temperature drives only the warm glow</b> (radius + opacity). So columns differ in colour &amp; size; rows differ in halo warmth.</p>
+  <p class="note">The sun's <b>core colour and glow are driven by temperature</b> (sunshine yellow when cool → terracotta-ochre when hot), while <b>ET (dryness demand) drives the size, ray count &amp; visibility</b>. So rows differ in colour &amp; halo warmth; columns differ in size. The scale is continuous — these cells are sampled examples, not discrete steps.</p>
   <div id="grid"></div>
   <div class="legend">
-    Core ramp by ET:
-    <span class="swatch" style="background:#E8C766"></span>low
-    <span class="swatch" style="background:#D89248"></span>mid
-    <span class="swatch" style="background:#C06B36"></span>high
+    Core ramp by temperature:
+    <span class="swatch" style="background:#F1CB4C"></span>cool (sunshine)
+    <span class="swatch" style="background:#DA8C40"></span>mild
+    <span class="swatch" style="background:#BA5A2C"></span>hot (terracotta-ochre)
     &nbsp;·&nbsp; edge <span class="swatch" style="background:#8A5732"></span>
   </div>
 
@@ -38,7 +38,7 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const hx=c=>{c=c.replace("#","");return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];};
 const hexLerp=(a,b,t)=>{const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;};
 function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}}return stops[stops.length-1][1];}
-const sunCore=h=>ramp([[0,"#E8C766"],[.5,"#D89248"],[1,"#C06B36"]],h);
+const sunCore=h=>ramp([[0,"#F1CB4C"],[.5,"#DA8C40"],[1,"#BA5A2C"]],h);
 const SUN={minVis:0.04,radMin:2.5,radMax:7.5,glowKMin:2.1,glowKMax:3.4,rayMin:3,rayMax:8,rayInner:2,rayOuterMin:2,rayOuterMax:9,rayWMin:0.7,rayWMax:1.6,glowOpBase:0.2,glowOpK:0.32,groupOp:0.92,coreEdgeW:0.8};
 const C={glow:"#E0A074",sunEdge:"#8A5732"};
 
@@ -52,7 +52,7 @@ function sunCell(et0, tmax){
   const si=clamp((et0-ET0_MIN)/(ET0_MAX-ET0_MIN),0,1);
   const heat=clamp((tmax-T_MIN)/(T_MAX-T_MIN),0,1);
   if(si<=SUN.minVis) return `<svg width="120" height="120"><text x="60" y="64" text-anchor="middle" font-size="11" fill="#b3a98e" font-family="monospace">— no sun —</text></svg>`;
-  const rad=lerp(SUN.radMin,SUN.radMax,si)*K, core=sunCore(si);
+  const rad=lerp(SUN.radMin,SUN.radMax,si)*K, core=sunCore(heat);
   const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat);
   let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
   for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner*K,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si)*K;
