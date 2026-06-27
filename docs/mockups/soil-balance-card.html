@@ -52,6 +52,7 @@
     --m:  clamp(.5rem, 1.5vw, .9rem);
     --l:  clamp(.9rem, 2.5vw, 1.3rem);
     --xl: clamp(1.3rem, 4.5vw, 2rem);
+    --xxl: clamp(2rem, 6vw, 3rem);
     --radius-sm: 5px;
     --radius-pill: 999px;
     --border-width: 1px;
@@ -217,38 +218,33 @@
     box-shadow: var(--box-shadow-lift);
   }
 
-  /* stepper — same recessed-track language as toggle: a muted pill track with
-     the value as the raised "thumb", flanked by borderless −/+ controls.
-     Compact (inline-flex), so the track hugs its contents. */
+  /* stepper — NOT a track+thumb (the value is a readout, not a selection). The
+     −/+ are the interactive elements, so they carry the raised, tappable
+     surface; the value is a flat readout between them. */
   [data-skin~="stepper"] {
     display: inline-flex;
-    align-items: stretch;
+    align-items: center;
     justify-self: start;
-    gap: 0;
-    padding: var(--xs);
-    background: var(--color-neutral-mute);
-    border-radius: var(--radius-pill);
+    gap: var(--s);
   }
 
   [data-skin~="stepper"] button {
     min-inline-size: var(--xl);
-    background: transparent; color: var(--color-ink);
-    border: 0; cursor: pointer;
+    background: var(--color-neutral-raised); color: var(--color-ink);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    box-shadow: var(--box-shadow-lift);
+    cursor: pointer;
     font-size: var(--l); line-height: var(--line-height-tight);
     border-radius: var(--radius-pill);
     padding: var(--xs) var(--m);
-    transition: background .2s ease;
+    transition: background .2s ease, transform .1s ease;
   }
-  [data-skin~="stepper"] button:hover { background: var(--color-neutral); }
+  [data-skin~="stepper"] button:hover { background: var(--color-neutral-mute); }
   [data-skin~="stepper"] button:active { transform: scale(.96); }
 
   [data-skin~="stepper"] output {
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
-    min-inline-size: var(--xl);
-    background: var(--color-neutral-raised);
-    box-shadow: var(--box-shadow-lift);
-    border-radius: var(--radius-pill);
-    padding: var(--xs) var(--m);
+    min-inline-size: var(--xxl);
     font-family: var(--font-mono); font-size: var(--l);
     font-weight: 400; color: var(--color-ink);
   }
