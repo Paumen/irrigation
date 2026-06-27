@@ -517,7 +517,7 @@ function plant(x,sY,v,rng){
 function roots(x,sY,v,rng,rootPx){
   const R=DRAW.root, h=health(v), dead=h<R.deadMax;
   let depth=rootPx+(rng()-0.5)*R.depthJit;
-  if(dead) depth=Math.min(depth,rootPx*(R.deadCapBase+R.deadCapJit*rng()));
+  if(dead) depth=rootPx*(R.deadCapBase+R.deadCapJit*rng());
   const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
   let pts=[{x,y:sY}]; const segs=R.segs;
   for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
