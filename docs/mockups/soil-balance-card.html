@@ -53,6 +53,7 @@
     --l:  clamp(.9rem, 2.5vw, 1.3rem);
     --xl: clamp(1.3rem, 4.5vw, 2rem);
     --radius-sm: 5px;
+    --radius-pill: 999px;
     --border-width: 1px;
     --box-shadow-lift: 0 1px 3px oklch(33% .02 82 / .22);
 
@@ -89,6 +90,9 @@
     border: var(--border-width) solid var(--color-neutral-mute);
     border-radius: var(--radius-sm);
   }
+
+  /* extra top room for the first fieldset's floating legend */
+  article:has(form) { padding-block-start: var(--l); }
 
   /* Row wrappers — 12-column grid, no visual chrome. */
   section, fieldset, footer {
@@ -165,8 +169,14 @@
   }
   /* stylelint-enable custom-property-pattern */
 
+  fieldset {
+    position: relative;
+    margin-block-start: var(--s);
+  }
+
+  /* legend floats above the control, so a track/pill skin doesn't enclose it */
   legend {
-    grid-column: 1 / -1;
+    position: absolute; inset-block-start: -1.4em; inset-inline-start: var(--s);
     font-family: var(--font-mono); font-size: var(--m);
     letter-spacing: var(--letter-spacing-wide); text-transform: uppercase;
     color: var(--color-ink-mute);
@@ -174,18 +184,24 @@
 }
 
 @layer skin {
-  /* toggle — radios rendered as buttons; four cues on the checked option. */
+  /* toggle — a recessed pill track with a raised "thumb" on the checked option.
+     No borders or dividers: the cues are raised fill, soft shadow, accent text
+     and semibold weight. */
+  [data-skin~="toggle"] {
+    gap: 0;
+    padding: var(--xs);
+    background: var(--color-neutral-mute);
+    border-radius: var(--radius-pill);
+  }
+
   [data-skin~="toggle"] label {
-    position: relative;
     display: flex; align-items: center; justify-content: center;
     inline-size: 100%; min-inline-size: 0;
-    padding: var(--s) var(--xs);
+    padding: var(--xs) var(--s);
     font-size: var(--m);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer;
-    background: var(--color-neutral-raised);
-    border: var(--border-width) solid var(--color-neutral-mute);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-pill);
     transition: color .2s ease;
   }
 
@@ -194,19 +210,11 @@
     opacity: 0; pointer-events: none;
   }
 
-  /* checked: a floating, rounded chip inset within the segment — four cues
-     (accent text, accent-tinted fill, bold, 2px accent ring). The chip is a
-     ::before so it stays rounded in any segment position, even when fused. */
   [data-skin~="toggle"] label:has(input:checked) {
-    z-index: 0;
-    color: var(--color-hue); font-weight: var(--font-weight-bold);
-  }
-
-  [data-skin~="toggle"] label:has(input:checked)::before {
-    content: ""; position: absolute; inset: 3px; z-index: -1;
-    background: color-mix(in oklab, var(--color-hue) 12%, var(--color-neutral-raised));
-    border: 2px solid var(--color-hue);
-    border-radius: var(--radius-sm);
+    background: var(--color-neutral-raised);
+    color: var(--color-hue);
+    font-weight: var(--font-weight-semibold);
+    box-shadow: var(--box-shadow-lift);
   }
 
   /* joined — general "fuse a row of controls into one pill" recipe.
@@ -273,14 +281,14 @@
 
   <article id="controls">
     <form autocomplete="off">
-      <fieldset data-skin="toggle joined">
+      <fieldset data-skin="toggle">
         <legend data-colspan="12">Planting</legend>
         <label data-colspan="4"><input type="radio" name="planting" value="Turf">Turf</label>
         <label data-colspan="4"><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
         <label data-colspan="4"><input type="radio" name="planting" value="Shrubs">Shrubs</label>
       </fieldset>
 
-      <fieldset data-skin="toggle joined">
+      <fieldset data-skin="toggle">
         <legend data-colspan="12">Soil</legend>
         <label data-colspan="3"><input type="radio" name="soil" value="Sand">Sand</label>
         <label data-colspan="3"><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
@@ -288,7 +296,7 @@
         <label data-colspan="3"><input type="radio" name="soil" value="Clay">Clay</label>
       </fieldset>
 
-      <fieldset data-skin="toggle joined">
+      <fieldset data-skin="toggle">
         <legend data-colspan="12">Exposure</legend>
         <label data-colspan="4"><input type="radio" name="sun" value="Shade">Shade</label>
         <label data-colspan="4"><input type="radio" name="sun" value="Half sun">Half sun</label>
