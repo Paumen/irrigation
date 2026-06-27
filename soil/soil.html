@@ -44,17 +44,17 @@
     --line-height-tight:  1.15;
     --line-height-normal: 1.4;
     --xs: clamp(.2rem, .5vw, .3rem);
-    --s:  clamp(.3rem, 1vw, .5rem);
-    --m:  clamp(.5rem, 1.5vw, .9rem);
-    --l:  clamp(.9rem, 2.5vw, 1.3rem);
-    --xl: clamp(1.3rem, 4.5vw, 2rem);
+    --s:  clamp(.3rem, 1vw, .6rem);
+    --m:  clamp(.6rem, 1.5vw, 1.0rem);
+    --l:  clamp(1.0rem, 2.5vw, 1.4rem);
+    --xl: clamp(1.4rem, 4.5vw, 2rem);
     --xxl: clamp(2rem, 6vw, 3rem);
     --radius-sm: 5px;
     --radius-pill: 999px;
     --border-width: 1px;
     --opacity-hidden: 0;   
-    --time-quick: .2s; 
-    --time-slow:  1.2s; 
+    --time-quick: .4s; 
+    --time-slow:  1.4s; 
     --box-shadow-lift:      0 1px 3px oklch(33% .02 82 / .22);
 
     color-scheme: light;
@@ -143,11 +143,8 @@
     align-items: baseline;
   }
   [data-colspan="3"]  { grid-column: span 3; }
-  [data-colspan="4"]  { grid-column: span 4; }
   [data-colspan="9"]  { grid-column: span 9; }
   [data-colspan="12"] { grid-column: span 12; }
-
-  
 
   .bar {
     grid-column: 1 / -1; position: relative;
@@ -221,36 +218,18 @@
     box-shadow: var(--box-shadow-lift);
   }
 
-  /* Duration stepper — a custom element that is its own grid cell. It renders a
-     label line above a pill of [− value +]. Selected by element type (lint-clean,
-     no class); tokens cascade in because it uses light DOM (no shadow root). */
-  number-stepper {
-    display: grid; gap: var(--xs); align-content: start;
-    margin-block-start: 1.15em;
+  fieldset.stepper {
+    display: inline-flex; place-self: start start;
+    gap: 0; background: var(--color-neutral-raised);
   }
 
-  number-stepper > i {
-    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase; color: var(--color-ink-mute); font-style: normal;
-  }
-
-  number-stepper > p {
-    display: inline-flex; place-self: start start; align-items: stretch;
-    gap: 0; padding: var(--xs);
-    background: var(--color-neutral-raised);
-    border: var(--border-width) solid var(--color-neutral-mute); border-radius: var(--radius-pill);
-  }
-
-  number-stepper button {
+  fieldset.stepper button {
     inline-size: var(--xxl); border: 0; background: transparent;
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
   }
 
-  number-stepper button:hover:not(:disabled) { background: var(--color-neutral-mute); }
-  number-stepper button:disabled { opacity: 0.38; cursor: not-allowed; }
-
-  number-stepper output {
+  fieldset.stepper output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
@@ -258,16 +237,7 @@
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  #msg {
-    grid-column: 1 / -1;
-    font-size: var(--m); color: var(--color-ink-mute);
-  }
-  #status[data-state="error"] #msg { color: var(--color-danger); }
-
-  /* While loading or errored, the verdict/percent/bar are placeholders, so
-     fade them and let #msg carry the state. */
-  #status[data-state="loading"] :is(#word, #pct, .bar),
-  #status[data-state="error"]   :is(#word, #pct, .bar, #sub) {
+  #status[data-state="loading"] :is(#word, #pct, .bar), {
     opacity: var(--opacity-hidden);
   }
   #status[data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
@@ -295,39 +265,39 @@
   <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
 
   <article id="controls">
-    <section>
-      <fieldset data-colspan="12">
-        <legend>Planting</legend>
-        <label><input type="radio" name="planting" value="Turf">Turf</label>
-        <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
-        <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
-      </fieldset>
+    <fieldset>
+      <legend>Planting</legend>
+      <label><input type="radio" name="planting" value="Turf">Turf</label>
+      <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+      <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+    </fieldset>
 
-      <fieldset data-colspan="12">
-        <legend>Soil</legend>
-        <label><input type="radio" name="soil" value="Sand">Sand</label>
-        <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
-        <label><input type="radio" name="soil" value="Loam">Loam</label>
-        <label><input type="radio" name="soil" value="Clay">Clay</label>
-      </fieldset>
+    <fieldset>
+      <legend>Soil</legend>
+      <label><input type="radio" name="soil" value="Sand">Sand</label>
+      <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+      <label><input type="radio" name="soil" value="Loam">Loam</label>
+      <label><input type="radio" name="soil" value="Clay">Clay</label>
+    </fieldset>
 
-      <fieldset data-colspan="12">
-        <legend>Exposure</legend>
-        <label><input type="radio" name="sun" value="Shade">Shade</label>
-        <label><input type="radio" name="sun" value="Half sun">Half sun</label>
-        <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
-      </fieldset>
+    <fieldset>
+      <legend>Exposure</legend>
+      <label><input type="radio" name="sun" value="Shade">Shade</label>
+      <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+      <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+    </fieldset>
 
-      <number-stepper data-colspan="4" id="dur"
-        label="Duration" value="60" min="15" max="240" step="15" unit="min"></number-stepper>
-    </section>
+    <fieldset class="stepper">
+      <legend>Duration</legend>
+      <button type="button" id="durDown">−</button>
+      <output id="durVal">60<small>min</small></output>
+      <button type="button" id="durUp">+</button>
+    </fieldset>
   </article>
 
 <script type="module">
 "use strict";
 
-/* ── Engine data + weather (inlined from soil.js; single source of truth for
-   the FAO-56 balance, kept verbatim so this file stays buildless). ───────── */
 const SITE = { name: "Vormersesluisweg 3A, Wijchen", lat: 51.79733, lon: 5.70643 };
 const API = {
   base: "https://api.open-meteo.com/v1/forecast",
@@ -339,7 +309,6 @@ const API = {
 
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-// Day of week for a "YYYY-MM-DD" string, parsed as UTC to avoid local shift.
 function dayOfWeek(dateStr) {
   const [y, m, d] = String(dateStr).split("-").map(Number);
   if (!y || !m || !d) throw new Error(`Malformed weather response: invalid date "${dateStr}"`);
@@ -354,7 +323,6 @@ function buildUrl() {
   return `${API.base}?${params.toString()}`;
 }
 
-// Null fill: rain → 0, et0 → previous day's value, temperature → null.
 function normalizeWeather(json) {
   const daily = json && json.daily;
   if (!daily || !Array.isArray(daily.time)) throw new Error("Malformed weather response: missing daily.time");
@@ -384,8 +352,6 @@ async function fetchWeather(signal) {
   return normalizeWeather(json);
 }
 
-// Today as a "YYYY-MM-DD" string in the site's timezone (A3), so the TODAY
-// marker tracks the real date instead of a baked-in constant.
 function todayInTz(tz) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit",
@@ -397,8 +363,6 @@ function todayInTz(tz) {
 const ENGINE = {
   plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
   soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
-  // Per-soil look for the A (topsoil) / B (subsoil) horizons: B carries the
-  // characteristic colour, plus grain texture (speckle prob, pebble prob).
   soilLook: {
     "Sand":       { A:"#7A6440", B:"#CDB57E", spnA:.55, spnB:.40, peb:.18 },
     "Sandy loam": { A:"#4E3A22", B:"#8C6638", spnA:.85, spnB:.55, peb:.08 },
@@ -421,8 +385,6 @@ const CFG = {
   },
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
-  // O/A/B horizons. Depth boundaries (y0/y1) are wired from the refill depth
-  // and planting root zone below (see "Depth scale"), so bands/refill/roots align.
   horizons: [
     { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
     { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
@@ -506,11 +468,7 @@ const DRAW = {
 };
 
 const C = CFG.color, HORIZ = CFG.horizons, VIT = DRAW.vitality;
-let TODAY = todayInTz(API.timezone);  // A3: real current date, site timezone
-
-// Index of TODAY within a series. The live API always includes today (it sits
-// at past_days), but if the window ever shifts, fall back to the closest day
-// so the marker/status never crash on a -1.
+let TODAY = todayInTz(API.timezone); 
 function resolveTodayIdx(DATA) {
   let idx = DATA.findIndex(d => d.date === TODAY);
   if (idx !== -1) return idx;
@@ -522,17 +480,13 @@ function resolveTodayIdx(DATA) {
 const { axisX:AX, padR:PADR, skyTop:SKY_TOP, surf:SURF, soilBot:SOIL_BOT, h:H } = CFG.geom;
 const SOIL_D = SOIL_BOT - SURF;
 
-// Depth scale: the soil column represents COLUMN_CM of real soil depth, so bands
-// and root zones can be placed at true centimetre depths.
 const COLUMN_CM = 60;
 const PX_PER_CM = SOIL_D / COLUMN_CM;
-HORIZ[0].y0 = 0;              HORIZ[0].y1 = 3 * PX_PER_CM;   // O: organic litter, ~3 cm
-HORIZ[1].y0 = 3 * PX_PER_CM;  HORIZ[1].y1 = 30 * PX_PER_CM;  // A: topsoil, to ~30 cm
-HORIZ[2].y0 = 30 * PX_PER_CM; HORIZ[2].y1 = SOIL_D;          // B: subsoil, to 60 cm
+HORIZ[0].y0 = 0;              HORIZ[0].y1 = 3 * PX_PER_CM;
+HORIZ[1].y0 = 3 * PX_PER_CM;  HORIZ[1].y1 = 30 * PX_PER_CM;
+HORIZ[2].y0 = 30 * PX_PER_CM; HORIZ[2].y1 = SOIL_D;     
 const MONO = "ui-monospace,Menlo,Consolas,monospace";
 
-// Weather is fetched live on boot (DAT-1); no sample/stale fallback (DAT-3).
-// Shape matches normalizeWeather(): {time, weekday, rain, et0, tempMax}.
 let WEATHER = null;
 
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
@@ -567,8 +521,6 @@ const plantColor = v => ramp([[0,"#3A352C"],[.10,"#9A7A3C"],[.25,"#7E8A3E"],[.55
 const leafColor  = v => ramp([[0,"#67563C"],[.25,"#9C8A45"],[.6,"#6FA06A"],[1,"#5F9A5A"]], v);
 function rgb2hsl(hex){const [r,g,b]=hx(hex).map(v=>v/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360;}const l=(mx+mn)/2;return[h,d?d/(1-Math.abs(2*l-1)):0,l];}
 function hsl2hex(h,s,l){h=((h%360)+360)%360;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,[r,g,b]=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x],f=v=>clamp(Math.round((v+m)*255),0,255).toString(16).padStart(2,"0");return`#${f(r)}${f(g)}${f(b)}`;}
-// Sun colour is derived from the terracotta token (C.rust): a hot day IS
-// terracotta; cooler days rotate the hue toward yellow and lighten into sunshine.
 const warmer=(hex,dH,dS,dL)=>{const[h,s,l]=rgb2hsl(hex);return hsl2hex(h+dH,clamp(s+dS,0,1),clamp(l+dL,0,1));};
 const TERRACOTTA=C.rust;
 const SUN_RAMP=[[0,warmer(TERRACOTTA,30,.10,.20)],[.5,warmer(TERRACOTTA,14,.05,.13)],[1,warmer(TERRACOTTA,3,0,.03)]];
@@ -645,9 +597,7 @@ function build(model){
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
   const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
-  // Panel hugs the plant: the soil column ends at the root tips.
   const VBOT=ROOT_BOT, soilDepth=VBOT-SURF;
-  // Water reservoir is confined to the root zone: full = surface, empty = root tips.
   const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
   const refillY=tableY(REFILL);
   const todayIdx=resolveTodayIdx(DATA);
@@ -697,19 +647,16 @@ function build(model){
     }
   });
 
-  // Recolour/texture the A & B horizons for the chosen soil (O litter is shared).
   const look=ENGINE.soilLook[model.soil]||ENGINE.soilLook["Sandy loam"];
   const HZ=HORIZ.map((h,i)=>{ if(i===0) return h;
     const fill=i===1?look.A:look.B;
     return {...h, fill, edge:shade(fill,0.70), sp:shade(fill,0.82),
             spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
 
-  // The soil column ends at the root tips, so each planting shows just the
-  // soil its roots draw from.
   let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
   let hlabels="";
   HZ.forEach((h,hi)=>{
-    if(h.y0>=soilDepth) return;                     // horizon lies below the drawn column
+    if(h.y0>=soilDepth) return;                    
     const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
     if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
     soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
@@ -797,7 +744,7 @@ const statusEl=document.getElementById("status"), msgEl=document.getElementById(
 let G, booted=false;
 
 function render(){
-  if(!WEATHER) return;            // nothing to draw until the live fetch lands
+  if(!WEATHER) return;           
   const model=compute(ctrl);
   G=build(model);
   scene.innerHTML=G.svg;
@@ -822,62 +769,19 @@ function wireHits(){
   });
 }
 
+document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
+
 document.getElementById("controls").addEventListener("change",e=>{
   const r=e.target; if(r.type!=="radio")return;
   ctrl[r.name]=r.value; rerender();
 });
-
-/* <number-stepper> — light-DOM custom element (no shadow root, so the page's
-   tokens style it). Renders a label + a [− value +] pill, owns clamping and
-   disabled-at-limits, and emits a native-style `input` event. */
-class NumberStepper extends HTMLElement {
-  static observedAttributes = ["value","min","max","step","unit","label"];
-  connectedCallback(){
-    if(!this._built){
-      this.innerHTML =
-        `<i></i>`+
-        `<p><button type="button" data-act="down" aria-label="Decrease duration">−</button>`+
-        `<output></output>`+
-        `<button type="button" data-act="up" aria-label="Increase duration">+</button></p>`;
-      this._label = this.querySelector("i");
-      this._out   = this.querySelector("output");
-      this._down  = this.querySelector('[data-act="down"]');
-      this._up    = this.querySelector('[data-act="up"]');
-      this.addEventListener("click",e=>{
-        const act=e.target.closest("[data-act]"); if(!act)return;
-        this.value=this.value+(act.dataset.act==="up"?this.step:-this.step);
-      });
-      this._built=true;
-    }
-    this._render();
-  }
-  attributeChangedCallback(){ if(this._built) this._render(); }
-  get value(){ return Number(this.getAttribute("value") ?? this.min); }
-  set value(v){
-    const c=clamp(Number(v),this.min,this.max);
-    if(c===this.value){ this._render(); return; }
-    this.setAttribute("value",c);
-    this.dispatchEvent(new Event("input",{bubbles:true}));
-  }
-  get min(){ return Number(this.getAttribute("min") ?? 0); }
-  get max(){ return Number(this.getAttribute("max") ?? 100); }
-  get step(){ return Number(this.getAttribute("step") ?? 1); }
-  get unit(){ return this.getAttribute("unit") ?? ""; }
-  get label(){ return this.getAttribute("label") ?? ""; }
-  _render(){
-    if(!this._out) return;
-    this._label.textContent=this.label;
-    this._out.innerHTML=this.unit?`${this.value}<small>${this.unit}</small>`:`${this.value}`;
-    this._down.disabled=this.value<=this.min;
-    this._up.disabled=this.value>=this.max;
-  }
+function bumpDur(d){
+  ctrl.minutes=clamp(ctrl.minutes+d,ENGINE.dur.min,ENGINE.dur.max);
+  document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
+  rerender();
 }
-customElements.define("number-stepper",NumberStepper);
-
-// Whole stepper integration: keep ctrl.minutes in sync, re-run the balance.
-document.getElementById("dur").addEventListener("input",e=>{
-  ctrl.minutes=e.target.value; rerender();
-});
+document.getElementById("durDown").addEventListener("click",()=>bumpDur(-ENGINE.dur.step));
+document.getElementById("durUp").addEventListener("click",()=>bumpDur(ENGINE.dur.step));
 
 function syncBar(){
   const cw=scene.clientWidth, sw=scene.scrollWidth, tw=sbar.clientWidth;
@@ -900,8 +804,6 @@ sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
 
 let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
 
-// ── Boot (A2): show loading, fetch live weather (DAT-1), then render. On any
-// failure show a clear error state — never sample/stale/zero data (DAT-3). ──
 function showLoading(){ statusEl.dataset.state="loading"; msgEl.hidden=false; msgEl.textContent="Loading weather…"; }
 function showError(err){
   statusEl.dataset.state="error";
