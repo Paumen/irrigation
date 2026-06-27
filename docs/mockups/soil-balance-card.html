@@ -246,12 +246,12 @@
   [data-skin~="stepper"] button:hover { background: var(--color-neutral); }
   [data-skin~="stepper"] button:active { transform: scale(.96); }
 
-  /* value is the flat option text: same size, font and shading as a track label. */
+  /* value is a numeric readout — mono, but matched to the track label's size/shading. */
   [data-skin~="stepper"] output {
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     min-inline-size: var(--xxl);
     padding-inline: var(--s);
-    font-size: var(--m); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--m); color: var(--color-ink);
   }
 
   [data-skin~="stepper"] output small {
