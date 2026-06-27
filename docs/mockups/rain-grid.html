@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rain strands — by amount</title>
+<style>
+  body { margin:0; padding:24px; background:#E7E4DA; font-family:ui-monospace,Menlo,Consolas,monospace; color:#5A4A33; }
+  h1 { font:600 18px/1.3 georgia,serif; color:#5A4A33; margin:0 0 4px; }
+  p.note { font-size:12px; color:#7a6a50; margin:0 0 18px; max-width:680px; }
+  table { border-collapse:collapse; }
+  th.col { font-size:12px; padding:0 0 6px; color:#7a6a50; font-weight:600; }
+  th.row { font-size:12px; padding-right:10px; text-align:right; color:#7a6a50; font-weight:600; white-space:nowrap; }
+  td { width:110px; height:150px; background:#EAE7DD; border:1px solid #d8d4c6; vertical-align:top; }
+  .cap { font-size:11px; color:#9a8a70; font-weight:400; }
+  .legend { margin-top:16px; font-size:12px; color:#7a6a50; line-height:1.6; max-width:680px; }
+</style>
+</head>
+<body>
+  <h1>Rain strands — by daily amount (mm)</h1>
+  <p class="note">Rain has a single driver: the day's rainfall in mm. More rain → more strands, longer strands, higher opacity. Top row is the <b>previous</b> styling, bottom row is the <b>refined</b> styling (deeper blue, thicker, more opaque, a couple more/longer strands) so the gain signal reads more clearly.</p>
+  <div id="grid"></div>
+  <div class="legend" id="legend"></div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+// Cell sky panel geometry (proportional to soil-balance's 20..160 sky band).
+const COLW=110, SKY_TOP=8;
+
+// before / after parameter sets (after = current soil-balance.html values).
+const BEFORE={color:"#3F7FA0",minVis:0.05,perMm:1.4,strandMin:2,strandMax:12,xMinK:0.06,xMaxK:0.72,yMin:16,yMax:126,
+  lenMin:10,lenMax:22,lenNorm:18,lenJitBase:0.7,lenJitK:0.6,slant:2.5,w:1.4,opBase:0.45,opK:0.4,opNorm:12};
+const AFTER ={color:"#2F6E94",minVis:0.05,perMm:1.4,strandMin:3,strandMax:14,xMinK:0.06,xMaxK:0.72,yMin:16,yMax:126,
+  lenMin:11,lenMax:24,lenNorm:18,lenJitBase:0.7,lenJitK:0.6,slant:2.5,w:1.7,opBase:0.58,opK:0.42,opNorm:12};
+
+function rainCell(rain, RN, seed){
+  if(rain<=RN.minVis) return `<svg width="${COLW}" height="150"><text x="${COLW/2}" y="78" text-anchor="middle" font-size="11" fill="#b3a98e" font-family="monospace">— dry —</text></svg>`;
+  const rng=mulberry32(seed), strands=Math.round(clamp(rain/RN.perMm,RN.strandMin,RN.strandMax));
+  let rg="";
+  for(let k=0;k<strands;k++){
+    const rx=lerp(COLW*RN.xMinK,COLW*RN.xMaxK,rng()), ry=SKY_TOP+lerp(RN.yMin,RN.yMax,rng());
+    const len=lerp(RN.lenMin,RN.lenMax,Math.sqrt(clamp(rain/RN.lenNorm,0,1)))*(RN.lenJitBase+rng()*RN.lenJitK);
+    rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-RN.slant).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="${RN.color}" stroke-width="${RN.w}" stroke-linecap="round" opacity="${(RN.opBase+RN.opK*clamp(rain/RN.opNorm,0,1)).toFixed(2)}"/>`;
+  }
+  return `<svg width="${COLW}" height="150" xmlns="http://www.w3.org/2000/svg">${rg}<text x="${COLW/2}" y="144" text-anchor="middle" font-size="10" fill="#9a8a70" font-family="monospace">${strands} strands</text></svg>`;
+}
+
+const mm=[0.0,1.0,2.0,4.0,8.0,12.0,18.0];
+const label=v=>v<=0.05?"dry":v<2?"trace":v<5?"light":v<12?"moderate":"heavy";
+let html=`<table><tr><th class="row"></th>`;
+mm.forEach(v=>html+=`<th class="col">${v.toFixed(0)} mm<br><span class="cap">${label(v)}</span></th>`);
+html+=`</tr>`;
+[["before",BEFORE],["after",AFTER]].forEach(([name,RN],ri)=>{
+  html+=`<tr><th class="row">${name}</th>`;
+  mm.forEach((v,ci)=>html+=`<td>${rainCell(v,RN,900+ci)}</td>`);
+  html+=`</tr>`;
+});
+html+=`</table>`;
+document.getElementById("grid").innerHTML=html;
+document.getElementById("legend").innerHTML=
+  `<b>before</b> #3F7FA0 · width 1.4 · opacity 0.45–0.85 · 2–12 strands &nbsp;|&nbsp; `
+ +`<b>after</b> #2F6E94 · width 1.7 · opacity 0.58–1.0 · 3–14 strands`;
+</script>
+</body>
+</html>

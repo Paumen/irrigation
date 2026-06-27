@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sun glyphs — ET × temperature</title>
+<style>
+  body { margin:0; padding:24px; background:#E7E4DA; font-family:ui-monospace,Menlo,Consolas,monospace; color:#5A4A33; }
+  h1 { font:600 18px/1.3 georgia,serif; color:#5A4A33; margin:0 0 4px; }
+  p.note { font-size:12px; color:#7a6a50; margin:0 0 18px; max-width:640px; }
+  table { border-collapse:collapse; }
+  th, td { text-align:center; padding:0; }
+  th.col { font-size:12px; padding-bottom:6px; color:#7a6a50; font-weight:600; }
+  th.row { font-size:12px; padding-right:10px; text-align:right; color:#7a6a50; font-weight:600; white-space:nowrap; }
+  td { width:120px; height:120px; background:#EFEDE4; border:1px solid #d8d4c6; }
+  .cap { font-size:11px; color:#9a8a70; }
+  .legend { margin-top:18px; font-size:12px; color:#7a6a50; line-height:1.6; }
+  .swatch { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:middle; margin:0 4px 0 10px; border:1px solid rgba(0,0,0,.15); }
+</style>
+</head>
+<body>
+  <h1>Sun glyphs — ET (across) × temperature (down)</h1>
+  <p class="note">After the refinement, the sun <b>core colour and size are driven by ET</b> (evapotranspiration / dryness demand), while <b>temperature drives only the warm glow</b> (radius + opacity). So columns differ in colour &amp; size; rows differ in halo warmth.</p>
+  <div id="grid"></div>
+  <div class="legend">
+    Core ramp by ET:
+    <span class="swatch" style="background:#E8C766"></span>low
+    <span class="swatch" style="background:#D89248"></span>mid
+    <span class="swatch" style="background:#C06B36"></span>high
+    &nbsp;·&nbsp; edge <span class="swatch" style="background:#8A5732"></span>
+  </div>
+
+<script>
+"use strict";
+// ---- lifted verbatim from soil-balance.html ----
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const hx=c=>{c=c.replace("#","");return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];};
+const hexLerp=(a,b,t)=>{const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1)));return`rgb(${m(0)},${m(1)},${m(2)})`;};
+function ramp(stops,v){v=clamp(v,0,1);for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}}return stops[stops.length-1][1];}
+const sunCore=h=>ramp([[0,"#E8C766"],[.5,"#D89248"],[1,"#C06B36"]],h);
+const SUN={minVis:0.04,radMin:2.5,radMax:7.5,glowKMin:2.1,glowKMax:3.4,rayMin:3,rayMax:8,rayInner:2,rayOuterMin:2,rayOuterMax:9,rayWMin:0.7,rayWMax:1.6,glowOpBase:0.2,glowOpK:0.32,groupOp:0.92,coreEdgeW:0.8};
+const C={glow:"#E0A074",sunEdge:"#8A5732"};
+
+// scale endpoints from CFG.scale
+const ET0_MIN=1, ET0_MAX=6.5, T_MIN=15, T_MAX=36;
+
+// Render one sun at the given ET (mm) and temperature (°C), scaled up 4× so
+// the glyph reads clearly in a 120px cell (matches relative proportions).
+function sunCell(et0, tmax){
+  const K=4, cx=60, cy=64;
+  const si=clamp((et0-ET0_MIN)/(ET0_MAX-ET0_MIN),0,1);
+  const heat=clamp((tmax-T_MIN)/(T_MAX-T_MIN),0,1);
+  if(si<=SUN.minVis) return `<svg width="120" height="120"><text x="60" y="64" text-anchor="middle" font-size="11" fill="#b3a98e" font-family="monospace">— no sun —</text></svg>`;
+  const rad=lerp(SUN.radMin,SUN.radMax,si)*K, core=sunCore(si);
+  const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat);
+  let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
+  for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner*K,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si)*K;
+    rays+=`<line x1="${(cx+Math.cos(a)*r1).toFixed(1)}" y1="${(cy+Math.sin(a)*r1).toFixed(1)}" x2="${(cx+Math.cos(a)*r2).toFixed(1)}" y2="${(cy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${(lerp(SUN.rayWMin,SUN.rayWMax,si)*K).toFixed(2)}" stroke-linecap="round"/>`;}
+  const glowOp=(SUN.glowOpBase+heat*SUN.glowOpK).toFixed(2);
+  return `<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="g" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="${C.glow}" stop-opacity=".85"/>
+      <stop offset="1" stop-color="${C.glow}" stop-opacity="0"/></radialGradient></defs>
+    <g opacity="${SUN.groupOp}">
+      <circle cx="${cx}" cy="${cy}" r="${gw.toFixed(1)}" fill="url(#g)" opacity="${glowOp}"/>
+      ${rays}
+      <circle cx="${cx}" cy="${cy}" r="${rad.toFixed(1)}" fill="${core}" stroke="${C.sunEdge}" stroke-width="${(SUN.coreEdgeW*K).toFixed(1)}"/>
+    </g>
+    <text x="60" y="112" text-anchor="middle" font-size="10" fill="#9a8a70" font-family="monospace">ET ${et0} · ${tmax}°</text>
+  </svg>`;
+}
+
+const ETcols=[1.0,2.5,4.0,5.5,6.5];     // mm/day: none → very high demand
+const Trows=[36,28,20,15];               // °C: hot → cool
+let html=`<table><tr><th class="row"></th>`;
+ETcols.forEach(et=>html+=`<th class="col">ET ${et}<br><span class="cap">${et<=1?"~none":et<3?"low":et<5?"mid":"high"}</span></th>`);
+html+=`</tr>`;
+Trows.forEach(t=>{
+  html+=`<tr><th class="row">${t}°C<br><span class="cap">${t>=33?"hot":t>=26?"warm":t>=18?"mild":"cool"}</span></th>`;
+  ETcols.forEach(et=>html+=`<td>${sunCell(et,t)}</td>`);
+  html+=`</tr>`;
+});
+html+=`</table>`;
+document.getElementById("grid").innerHTML=html;
+</script>
+</body>
+</html>
