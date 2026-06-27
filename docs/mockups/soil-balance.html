@@ -332,9 +332,9 @@ const CFG = {
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
     aqua0:"#34BCD2", aqua1:"#0C6478", waterLine:"#1FA6BE", waterHi:"#BDEAF1",
-    rain:"#3F7FA0", glow:"#E0A074", drop:"#34BCD2", dropEdge:"#1FA6BE", dropHi:"#E8FAFD",
+    rain:"#2F6E94", glow:"#E0A074", drop:"#34BCD2", dropEdge:"#1FA6BE", dropHi:"#E8FAFD",
     paper:"#FBFAF6", flower:"#C98AB0", flowerC:"#E7C24A",
-    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge:"#9E3712", leafGold:"#9C8A45",
+    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge:"#8A5732", leafGold:"#9C8A45",
     green:"#4F6B4A", rust:"#B5471F",
   },
 };
@@ -366,13 +366,13 @@ const DRAW = {
   },
 
   root: {
-    deadMax:0.08, deadCapBase:0.16, deadCapJit:0.05,
+    deadMax:0.08, deadCapBase:0.74, deadCapJit:0.10,
     depthJit:8, mainWMin:0.8, mainWMax:2.8, deadOp:0.85,
     segs:5, segJitLive:4, segJitDead:8,
-    latMin:1, latMax:5, latStartMin:0.18, latStartMax:0.82, latStartOfs:0.4, latSxJit:4,
+    latMin:2, latMax:7, latStartMin:0.18, latStartMax:0.82, latStartOfs:0.4, latSxJit:4,
     latLenMin:7, latLenMax:16, latDropMin:8, latDropMax:22, latMidK:4,
     latWLive:0.55, latWDead:0.5, latDeadOp:0.8,
-    hairOnset:0.25, hairHueOfs:0.05, hairMax:3, hairProb:0.45,
+    hairOnset:0.25, hairHueOfs:0.05, hairMax:4, hairProb:0.5,
     hairLenMin:2, hairLenMax:5, hairDropMin:1, hairDropMax:4, hairW:0.5, hairOpBase:0.35, hairOpK:0.3,
   },
 
@@ -383,9 +383,9 @@ const DRAW = {
   },
 
   rain: {
-    minVis:0.05, perMm:1.4, strandMin:2, strandMax:12, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:165,
-    lenMin:10, lenMax:22, lenNorm:18, lenJitBase:0.7, lenJitK:0.6, slant:2.5, w:1.4,
-    opBase:0.45, opK:0.4, opNorm:12,
+    minVis:0.05, perMm:1.4, strandMin:3, strandMax:14, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:165,
+    lenMin:11, lenMax:24, lenNorm:18, lenJitBase:0.7, lenJitK:0.6, slant:2.5, w:1.7,
+    opBase:0.58, opK:0.42, opNorm:12,
   },
 
   soil: {
@@ -472,7 +472,7 @@ function ramp(stops,v){ v=clamp(v,0,1); for(let i=0;i<stops.length-1;i++){const[
 const rootColor  = v => ramp([[0,"#2A2620"],[.10,"#56422E"],[.30,"#8A6A3E"],[.60,"#7E8A3E"],[1,"#4F7F4A"]], v);
 const plantColor = v => ramp([[0,"#3A352C"],[.10,"#9A7A3C"],[.25,"#7E8A3E"],[.55,"#4F7F4A"],[1,"#3F7A3B"]], v);
 const leafColor  = v => ramp([[0,"#67563C"],[.25,"#9C8A45"],[.6,"#6FA06A"],[1,"#5F9A5A"]], v);
-const sunCore    = h => ramp([[0,"#E2A24A"],[.5,"#C25A2A"],[1,"#9E3712"]], h);
+const sunCore    = h => ramp([[0,"#E8C766"],[.5,"#D89248"],[1,"#C06B36"]], h);
 function shade(hex,f){ const [r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,"0"); return `#${m(r)}${m(g)}${m(b)}`; }
 function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
@@ -517,7 +517,7 @@ function plant(x,sY,v,rng){
 function roots(x,sY,v,rng,rootPx){
   const R=DRAW.root, h=health(v), dead=h<R.deadMax;
   let depth=rootPx+(rng()-0.5)*R.depthJit;
-  if(dead) depth=Math.min(depth,SOIL_D*(R.deadCapBase+R.deadCapJit*rng()));
+  if(dead) depth=Math.min(depth,rootPx*(R.deadCapBase+R.deadCapJit*rng()));
   const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
   let pts=[{x,y:sY}]; const segs=R.segs;
   for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
@@ -578,7 +578,7 @@ function build(model){
     sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${C.sky}"/>`;
     const si=clamp((d.et0-sc.et0Min)/(sc.et0Max-sc.et0Min),0,1);
     if(si>SUN.minVis){
-      const sx=x0+dayW*0.5, sy=SKY_TOP+SUN.yOfs, rad=lerp(SUN.radMin,SUN.radMax,si), core=sunCore(heat);
+      const sx=x0+dayW*0.5, sy=SKY_TOP+SUN.yOfs, rad=lerp(SUN.radMin,SUN.radMax,si), core=sunCore(si);
       const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat); let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
       for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si);
         rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(SUN.rayWMin,SUN.rayWMax,si).toFixed(2)}" stroke-linecap="round"/>`;}
