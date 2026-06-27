@@ -8,9 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 <style>
-/* Soil-Balance Status + Controls, rebuilt on the PAUMEN contract:
-   zero CSS classes, zero id selectors — styling = element + data-skin + data-colspan + data-state.
-   New system pieces demonstrated here: data-skin="joined" and data-state="warn". */
+/* Soil-Balance, rebuilt on the PAUMEN contract. The chrome (status readout +
+   controls) is class-free / id-free: styling = element + data-skin + data-colspan
+   + data-state, with data-skin="toggle"/"stepper" and the data-state="warn" tier.
+   Bespoke widgets (the gauge, the SVG viz, the scrollbar) are openly freeform:
+   real classes behind paumen-lint-disable — not data-attribute hooks faking clean. */
 @layer reset, tokens, base, skin, grid, viz;
 
 @layer reset {
@@ -145,26 +147,27 @@
     color: var(--color-ink-mute);
   }
 
-  /* Gauge — bespoke widget built from data-attributes only (no class, no extra tags). */
-  p[data-gauge] {
+  /* Gauge — a bespoke widget, NOT a PAUMEN primitive, so it's openly freeform:
+     real classes, marked off in the markup with paumen-lint-disable (same as the
+     viz + scrollbar). No data-attribute hooks pretending to be clean chrome. */
+  .gauge {
     position: relative; block-size: var(--m);
     background: var(--color-neutral); border-radius: var(--radius-sm);
   }
-  [data-state] [data-fill]        { background: var(--color-hue); }
-  [data-state="warn"] [data-fill] { background: var(--color-alert); }
-  [data-state="now"] [data-fill]  { background: var(--color-danger); }
+  [data-state] .fill        { background: var(--color-hue); }
+  [data-state="warn"] .fill { background: var(--color-alert); }
+  [data-state="now"] .fill  { background: var(--color-danger); }
 
-  /* --p / --refill are gauge geometry set by JS at runtime (the dynamic "freeform
-     var" case): outside the token vocabulary by design, so scope the rule off here. */
+  /* --p / --refill are gauge geometry set by JS at runtime. */
   /* stylelint-disable custom-property-pattern -- runtime-driven gauge geometry */
-  [data-gauge] [data-fill] {
+  .gauge .fill {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--p, 0%);
     border-radius: var(--radius-sm);
     transition: inline-size .5s ease, background .5s ease;
   }
 
-  [data-gauge] [data-mark] {
+  .gauge .mark {
     position: absolute; inset-block: -2px; inline-size: var(--xs);
     inset-inline-start: var(--refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
@@ -283,7 +286,7 @@
     transition: transform var(--time-slow) cubic-bezier(.2, .8, .2, 1), opacity var(--time-slow) ease;
   }
 
-  body[data-booting] .grow {
+  figure.booting .grow {
     transform: translateY(8px);
     opacity: var(--opacity-hidden);
   }
@@ -318,7 +321,7 @@
 }
 </style>
 </head>
-<body data-booting>
+<body>
   <header><h1>Soil-Balance</h1></header>
 
   <article id="status" data-state="warn">
@@ -326,12 +329,14 @@
       <output data-colspan="9" id="word"><i></i>—</output>
       <output data-colspan="3" id="pct">—<small>%</small></output>
     </section>
-    <p data-gauge><i data-fill></i><i data-mark></i></p>
+    <!-- paumen-lint-disable -- freeform gauge widget (fill bar + refill marker) -->
+    <p class="gauge"><span class="fill"></span><span class="mark"></span></p>
+    <!-- paumen-lint-enable -->
     <p id="sub">—</p>
   </article>
 
   <!-- paumen-lint-disable -- freeform data-viz panel: SVG-internal class/style + a custom scrollbar -->
-  <figure id="scroll" data-skin="freeform"></figure>
+  <figure id="scroll" data-skin="freeform" class="booting"></figure>
   <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
   <!-- paumen-lint-enable -->
 
@@ -782,7 +787,7 @@ function render(){
   wireHits();
   requestAnimationFrame(syncBar);
   if(!booted){ scene.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
-    requestAnimationFrame(()=>document.body.removeAttribute("data-booting")); }
+    requestAnimationFrame(()=>scene.classList.remove("booting")); }
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
