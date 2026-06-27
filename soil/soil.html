@@ -39,6 +39,7 @@
     --font-serif: "Newsreader", georgia, "Times New Roman", serif;
     --font-mono:  ui-monospace, "SF Mono", "JetBrains Mono", menlo, consolas, monospace;
     --font-sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
+    --font-weight-normal: 400;
     --font-weight-semibold: 600;
     --letter-spacing-wide:  .08em;
     --line-height-tight:  1.15;
@@ -55,7 +56,9 @@
     --opacity-hidden: 0;   
     --time-quick: .4s; 
     --time-slow:  1.4s; 
-    --box-shadow-lift:      0 1px 3px oklch(33% .02 82 / .22);
+    --boot-rise: 8px;
+    --opacity-dim: .6;
+    --box-shadow-lift:      0 1px 3px color-mix(in oklab, var(--color-ink) 22%, transparent);
 
     color-scheme: light;
   }
@@ -74,7 +77,7 @@
     overflow-x: hidden;
     font-family: var(--font-sans);
     font-size: var(--l);
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
     color: var(--color-ink);
     background: var(--color-neutral);
   }
@@ -97,7 +100,7 @@
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
   body.booting .grow {
-    transform: translateY(8px);
+    transform: translateY(var(--boot-rise));
     opacity: var(--opacity-hidden);
   }
 }
@@ -233,7 +236,7 @@
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); font-size: var(--l); font-weight: 400; color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--l); font-weight: var(--font-weight-normal); color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
@@ -241,7 +244,7 @@
     opacity: var(--opacity-hidden);
   }
   #status[data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
 }
 
 </style>
