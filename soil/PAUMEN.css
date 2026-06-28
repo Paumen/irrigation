@@ -52,50 +52,44 @@
 
 @layer default {
   :root {
-    --accent-hue: 200;
-    --accent-chroma: 0.14;
-    --surface-hue: 250;
+    --color-hue-accent: 200;
+    --color-hue-surface: 250;
     --jump: 0.17;
 
     color-scheme: light dark;
 
-    --accent: oklch(58% var(--accent-chroma) var(--accent-hue));
-    --accent-up: oklch(
-      calc(58% + var(--jump)) var(--accent-chroma) var(--accent-hue)
+    --color-hue: oklch(58% 0.14 var(--color-hue-accent));
+    --color-hue-up: oklch(
+      calc(58% + var(--jump)) 0.14 var(--color-hue-accent)
     );
-    --accent-dn: oklch(
-      calc(58% - var(--jump)) var(--accent-chroma) var(--accent-hue)
+    --color-hue-dn: oklch(
+      calc(58% - var(--jump)) 0.14 var(--color-hue-accent)
     );
-    --neutral: light-dark(
-      oklch(96% 0.01 var(--surface-hue)),
-      oklch(16% 0.01 var(--surface-hue))
+    --color-neutral: light-dark(
+      oklch(96% 0.01 var(--color-hue-surface)),
+      oklch(16% 0.01 var(--color-hue-surface))
     );
-    --neutral-mute: light-dark(
-      oklch(90% 0.01 var(--surface-hue)),
-      oklch(22% 0.01 var(--surface-hue))
+    --color-neutral-mute: light-dark(
+      oklch(90% 0.01 var(--color-hue-surface)),
+      oklch(22% 0.01 var(--color-hue-surface))
     );
-    --neutral-edge: light-dark(
-      oklch(82% 0.02 var(--surface-hue)),
-      oklch(34% 0.02 var(--surface-hue))
+    --color-neutral-edge: light-dark(
+      oklch(82% 0.02 var(--color-hue-surface)),
+      oklch(34% 0.02 var(--color-hue-surface))
     );
-    --text: light-dark(
-      oklch(20% 0.01 var(--surface-hue)),
-      oklch(92% 0.01 var(--surface-hue))
+    --color-ink: light-dark(
+      oklch(20% 0.01 var(--color-hue-surface)),
+      oklch(92% 0.01 var(--color-hue-surface))
     );
-    --text-mute: light-dark(
-      oklch(40% 0.01 var(--surface-hue)),
-      oklch(72% 0.01 var(--surface-hue))
+    --color-ink-mute: light-dark(
+      oklch(40% 0.01 var(--color-hue-surface)),
+      oklch(72% 0.01 var(--color-hue-surface))
     );
-    --text-on-accent: oklch(96% 0.01 var(--accent-hue));
-    --danger-hue: 25;
-    --success-hue: 145;
-    --color-danger: oklch(
-      58% max(var(--accent-chroma), 0.12) var(--danger-hue)
-    );
-    --color-success: oklch(
-      58% max(var(--accent-chroma), 0.12) var(--success-hue)
-    );
-    --0: 0;
+    --color-ink-on-accent: oklch(96% 0.01 var(--color-hue-accent));
+    --color-hue-danger: 25;
+    --color-hue-success: 145;
+    --color-danger: oklch(58% 0.14 var(--color-hue-danger));
+    --color-success: oklch(58% 0.14 var(--color-hue-success));
     --xs: clamp(0.2rem, 0.4vw, 0.4rem);
     --s: clamp(0.4rem, 1vw, 0.8rem);
     --m: clamp(0.8rem, 2vw, 1.6rem);
@@ -111,8 +105,8 @@
     padding: var(--m);
     font-family: Nunito, system-ui, sans-serif;
     font-size: var(--m);
-    color: var(--text);
-    background: var(--neutral);
+    color: var(--color-ink);
+    background: var(--color-neutral);
   }
 
   details,
@@ -120,8 +114,8 @@
   dialog {
     display: grid;
     gap: var(--l);
-    background: var(--neutral-mute);
-    border: 1px solid var(--neutral-edge);
+    background: var(--color-neutral-mute);
+    border: 1px solid var(--color-neutral-edge);
     border-radius: var(--m);
     padding: var(--m);
     overflow: hidden;
@@ -154,8 +148,8 @@
   [popover]:popover-open {
     display: grid;
     gap: var(--m);
-    background: var(--neutral-mute);
-    border: 1px solid var(--neutral-edge);
+    background: var(--color-neutral-mute);
+    border: 1px solid var(--color-neutral-edge);
     border-radius: var(--m);
     padding: var(--m);
     opacity: 1;
@@ -209,10 +203,10 @@
   input,
   textarea,
   select {
-    border: 1px solid var(--neutral-edge);
+    border: 1px solid var(--color-neutral-edge);
     border-radius: var(--s);
-    background: var(--neutral);
-    color: var(--text);
+    background: var(--color-neutral);
+    color: var(--color-ink);
     padding: var(--s);
     justify-self: stretch;
     min-width: 0;
@@ -233,7 +227,7 @@
     inset-block-start: 50%;
     transform: translateY(-50%);
     inset-inline-start: calc(var(--s) + 1px);
-    color: var(--text-mute);
+    color: var(--color-ink-mute);
     pointer-events: none;
     transition:
       inset-block-start 0.2s ease,
@@ -262,14 +256,14 @@
     inset-block-start: 0;
     transform: translateY(-50%);
     font-size: var(--m);
-    color: var(--accent);
-    background: var(--neutral-mute);
+    color: var(--color-hue);
+    background: var(--color-neutral-mute);
     padding-inline: var(--xs);
     z-index: 2;
   }
 
   :is(button, input, textarea, select, summary, a):focus-visible {
-    outline: var(--xs) solid var(--accent);
+    outline: var(--xs) solid var(--color-hue);
     position: relative;
     z-index: 1;
   }
@@ -286,19 +280,19 @@
   }
 
   :is(input:not([type="range"]), textarea):read-only {
-    background: var(--neutral-edge);
+    background: var(--color-neutral-edge);
     border-style: dashed;
-    color: var(--text-mute);
+    color: var(--color-ink-mute);
     cursor: default;
     outline: none;
     pointer-events: none;
   }
 
   button {
-    border: 2px solid var(--accent);
+    border: 2px solid var(--color-hue);
     cursor: pointer;
     background: transparent;
-    color: var(--accent);
+    color: var(--color-hue);
     font-weight: 700;
     display: inline-flex;
     place-items: center;
@@ -307,7 +301,7 @@
   }
 
   button:hover:not(:disabled) {
-    background: var(--neutral-mute);
+    background: var(--color-neutral-mute);
   }
 
   button:active:not(:disabled) {
@@ -315,7 +309,7 @@
   }
 
   a {
-    color: var(--accent);
+    color: var(--color-hue);
     text-decoration: none;
   }
 
@@ -339,7 +333,7 @@
     border: none;
     padding: var(--m);
     background: transparent;
-    accent-color: var(--accent);
+    accent-color: var(--color-hue);
   }
 
   input[type="checkbox"] {
@@ -431,14 +425,14 @@
 
 @layer skin {
   [data-skin~="filled"] {
-    background: var(--accent);
-    color: var(--text-on-accent);
-    border-color: var(--accent);
+    background: var(--color-hue);
+    color: var(--color-ink-on-accent);
+    border-color: var(--color-hue);
   }
 
   [data-skin~="filled"]:hover:not(:disabled) {
-    background: var(--accent-dn);
-    border-color: var(--accent-dn);
+    background: var(--color-hue-dn);
+    border-color: var(--color-hue-dn);
   }
 
   [data-skin~="ghost"] {
@@ -447,11 +441,11 @@
   }
 
   :is(button, a, summary)[data-skin~="ghost"]:hover {
-    background: var(--neutral-mute);
+    background: var(--color-neutral-mute);
   }
 
   [data-skin~="mute"] {
-    color: var(--text-mute);
+    color: var(--color-ink-mute);
   }
 
   [data-skin~="elevated"] {
@@ -462,9 +456,9 @@
   }
 
   [data-skin~="soft"] {
-    border: 2px solid var(--accent);
-    background: oklch(from var(--accent) l c h / 0.12);
-    color: var(--accent);
+    border: 2px solid var(--color-hue);
+    background: oklch(from var(--color-hue) l c h / 0.12);
+    color: var(--color-hue);
     font-weight: 700;
   }
 }
@@ -523,12 +517,12 @@
   [data-skin~="filled"][data-state="error"] {
     background: var(--color-danger);
     border-color: var(--color-danger);
-    color: var(--text-on-accent);
+    color: var(--color-ink-on-accent);
   }
 
   [data-skin~="filled"][data-state="success"] {
     background: var(--color-success);
     border-color: var(--color-success);
-    color: var(--text-on-accent);
+    color: var(--color-ink-on-accent);
   }
 }
