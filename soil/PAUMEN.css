@@ -354,6 +354,7 @@
     display: none;
   }
 
+  /* stylelint-disable selector-max-class -- Phosphor ph-* icon classes are sanctioned by the markup contract; there is no element/[data-*] hook that distinguishes the icons. */
   :is(a, button):is(:hover, :focus-visible) .ph-gear {
     animation: spin 1s linear infinite;
   }
@@ -396,6 +397,7 @@
       animation: none;
     }
   }
+  /* stylelint-enable selector-max-class */
 
   [data-state="error"] {
     border-color: var(--color-danger);

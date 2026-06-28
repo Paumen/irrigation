@@ -96,8 +96,10 @@
     display: block;
     transition: opacity var(--time-slow) ease;
   }
+  /* stylelint-disable-next-line selector-max-class -- .grow tags JS-generated SVG <g> nodes for the boot reveal; a follow-up may migrate it to an allowlisted data-* attribute. */
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
+  /* stylelint-disable-next-line selector-max-class -- see note above. */
   body[data-state="booting"] .grow {
     transform: translateY(var(--s));
     opacity: var(--opacity-hidden);
@@ -155,8 +157,8 @@
 
   gauge-bar::before {
     content: ""; position: absolute; inset-block: 0; inset-inline-start: 0;
-    inline-size: var(--value-fill, 0%); background: var(--value-color);
-    border-radius: var(--radius-sm); transition: width var(--time-slow) ease, background var(--time-slow) ease;
+    inline-size: var(--value-fill, 0%); background: var(--value-color, var(--color-hue));
+    border-radius: var(--radius-sm); transition: inline-size var(--time-slow) ease, background var(--time-slow) ease;
   }
 
   gauge-bar::after {
