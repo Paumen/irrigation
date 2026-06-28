@@ -52,18 +52,18 @@
 
 @layer default {
   :root {
-    --color-hue-accent: 200;
+    --color-hue-base: 200;
     --color-hue-surface: 250;
     --jump: 0.17;
 
     color-scheme: light dark;
 
-    --color-hue: oklch(58% 0.14 var(--color-hue-accent));
+    --color-hue: oklch(58% 0.14 var(--color-hue-base));
     --color-hue-up: oklch(
-      calc(58% + var(--jump)) 0.14 var(--color-hue-accent)
+      calc(58% + var(--jump)) 0.14 var(--color-hue-base)
     );
     --color-hue-dn: oklch(
-      calc(58% - var(--jump)) 0.14 var(--color-hue-accent)
+      calc(58% - var(--jump)) 0.14 var(--color-hue-base)
     );
     --color-neutral: light-dark(
       oklch(96% 0.01 var(--color-hue-surface)),
@@ -85,7 +85,7 @@
       oklch(40% 0.01 var(--color-hue-surface)),
       oklch(72% 0.01 var(--color-hue-surface))
     );
-    --color-ink-on-accent: oklch(96% 0.01 var(--color-hue-accent));
+    --color-ink-inverse: oklch(96% 0.01 var(--color-hue-base));
     --color-hue-danger: 25;
     --color-hue-success: 145;
     --color-danger: oklch(58% 0.14 var(--color-hue-danger));
@@ -426,7 +426,7 @@
 @layer skin {
   [data-skin~="filled"] {
     background: var(--color-hue);
-    color: var(--color-ink-on-accent);
+    color: var(--color-ink-inverse);
     border-color: var(--color-hue);
   }
 
@@ -517,12 +517,12 @@
   [data-skin~="filled"][data-state="error"] {
     background: var(--color-danger);
     border-color: var(--color-danger);
-    color: var(--color-ink-on-accent);
+    color: var(--color-ink-inverse);
   }
 
   [data-skin~="filled"][data-state="success"] {
     background: var(--color-success);
     border-color: var(--color-success);
-    color: var(--color-ink-on-accent);
+    color: var(--color-ink-inverse);
   }
 }
