@@ -173,17 +173,17 @@
   }
   figure::-webkit-scrollbar { display: none; }
 
-  .sbar {
-    position: relative; block-size: var(--m); margin-block-start: var(--xs);
+  scroll-bar {
+    display: block; position: relative; block-size: var(--m); margin-block-start: var(--xs);
     background: var(--color-neutral-mute); border-radius: var(--radius-sm); touch-action: none;
   }
 
-  .sbar .thumb {
+  scroll-thumb {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--xxl); min-inline-size: var(--xl);
     background: var(--color-ink-mute); border-radius: var(--radius-sm); cursor: grab;
   }
-  .sbar .thumb:active { cursor: grabbing; }
+  scroll-thumb:active { cursor: grabbing; }
 
   fieldset {
     position: relative;
@@ -269,7 +269,7 @@
   </article>
 
   <figure id="scroll" data-skin="ghost"></figure>
-  <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
+  <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
 
   <article id="controls">
     <fieldset>
