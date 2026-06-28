@@ -220,18 +220,20 @@
     box-shadow: var(--box-shadow-lift);
   }
 
-  fieldset.stepper {
+  [data-skin="elevated"] { background: var(--color-neutral-raised); }
+
+  fieldset:has(button) {
     display: inline-flex; place-self: start start;
-    gap: 0; background: var(--color-neutral-raised);
+    gap: 0;
   }
 
-  fieldset.stepper button {
+  fieldset button {
     inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
   }
 
-  fieldset.stepper output {
+  fieldset output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
@@ -239,7 +241,7 @@
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  fieldset.stepper output small { font-size: var(--s); }
+  fieldset output small { font-size: var(--s); }
 
   #status[data-state="loading"] :is(#word, #pct, .bar) {
     opacity: var(--opacity-hidden);
@@ -292,7 +294,7 @@
       <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
     </fieldset>
 
-    <fieldset class="stepper">
+    <fieldset data-skin="elevated">
       <legend>Duration</legend>
       <button type="button" id="durDown">−</button>
       <output id="durVal">60<small>min</small></output>
