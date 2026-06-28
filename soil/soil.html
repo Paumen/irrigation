@@ -56,7 +56,6 @@
     --opacity-hidden: 0;   
     --time-quick: .4s; 
     --time-slow:  1.4s; 
-    --boot-rise: 8px;
     --opacity-dim: .6;
     --box-shadow-lift:      0 1px 3px color-mix(in oklab, var(--color-ink) 22%, transparent);
 
@@ -100,7 +99,7 @@
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
   body.booting .grow {
-    transform: translateY(var(--boot-rise));
+    transform: translateY(var(--s));
     opacity: var(--opacity-hidden);
   }
 }
@@ -204,7 +203,7 @@
   }
 
   fieldset label {
-    flex: 1 1 0; min-inline-size: 0;
+    flex: 1 1 0; min-inline-size: 0; font-size: var(--m);
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
@@ -227,7 +226,7 @@
   }
 
   fieldset.stepper button {
-    inline-size: var(--xxl); border: 0; background: transparent;
+    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
   }
@@ -236,9 +235,11 @@
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); font-size: var(--l); font-weight: var(--font-weight-normal); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--m); font-weight: var(--font-weight-normal); color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
+
+  fieldset.stepper output small { font-size: var(--s); }
 
   #status[data-state="loading"] :is(#word, #pct, .bar) {
     opacity: var(--opacity-hidden);
