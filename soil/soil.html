@@ -39,6 +39,7 @@
     --font-serif: "Newsreader", georgia, "Times New Roman", serif;
     --font-mono:  ui-monospace, "SF Mono", "JetBrains Mono", menlo, consolas, monospace;
     --font-sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
+    --font-weight-normal: 400;
     --font-weight-semibold: 600;
     --letter-spacing-wide:  .08em;
     --line-height-tight:  1.15;
@@ -55,7 +56,8 @@
     --opacity-hidden: 0;   
     --time-quick: .4s; 
     --time-slow:  1.4s; 
-    --box-shadow-lift:      0 1px 3px oklch(33% .02 82 / .22);
+    --opacity-dim: .6;
+    --box-shadow-lift:      0 1px 3px color-mix(in oklab, var(--color-ink) 22%, transparent);
 
     color-scheme: light;
   }
@@ -74,7 +76,7 @@
     overflow-x: hidden;
     font-family: var(--font-sans);
     font-size: var(--l);
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
     color: var(--color-ink);
     background: var(--color-neutral);
   }
@@ -96,8 +98,8 @@
   }
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
-  body.booting .grow {
-    transform: translateY(8px);
+  body[data-state="booting"] .grow {
+    transform: translateY(var(--s));
     opacity: var(--opacity-hidden);
   }
 }
@@ -126,7 +128,7 @@
 
   output i {
     display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
-    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
+    inline-size: var(--l); block-size: var(--l); border-radius: var(--radius-pill);
     background: var(--v-color, var(--color-hue));
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--v-color, var(--color-hue)) 18%, transparent);
   }
@@ -146,19 +148,19 @@
   [data-colspan="9"]  { grid-column: span 9; }
   [data-colspan="12"] { grid-column: span 12; }
 
-  .bar {
-    grid-column: 1 / -1; position: relative;
+  gauge-bar {
+    display: block; grid-column: 1 / -1; position: relative;
     block-size: var(--m); background: var(--color-neutral); border-radius: var(--radius-sm);
   }
 
-  .fill {
-    position: absolute; inset-block: 0; inset-inline-start: 0;
+  gauge-bar::before {
+    content: ""; position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--v-fill, 0%); background: var(--v-color);
     border-radius: var(--radius-sm); transition: width var(--time-slow) ease, background var(--time-slow) ease;
   }
 
-  .mark {
-    position: absolute; inset-block: -2px; inline-size: var(--xs);
+  gauge-bar::after {
+    content: ""; position: absolute; inset-block: -2px; inline-size: var(--xs);
     inset-inline-start: var(--v-refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
     box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
@@ -171,17 +173,17 @@
   }
   figure::-webkit-scrollbar { display: none; }
 
-  .sbar {
-    position: relative; block-size: var(--m); margin-block-start: var(--xs);
+  scroll-bar {
+    display: block; position: relative; block-size: var(--m); margin-block-start: var(--xs);
     background: var(--color-neutral-mute); border-radius: var(--radius-sm); touch-action: none;
   }
 
-  .sbar .thumb {
+  scroll-thumb {
     position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--xxl); min-inline-size: var(--xl);
     background: var(--color-ink-mute); border-radius: var(--radius-sm); cursor: grab;
   }
-  .sbar .thumb:active { cursor: grabbing; }
+  scroll-thumb:active { cursor: grabbing; }
 
   fieldset {
     position: relative;
@@ -201,7 +203,7 @@
   }
 
   fieldset label {
-    flex: 1 1 0; min-inline-size: 0;
+    flex: 1 1 0; min-inline-size: 0; font-size: var(--m);
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
@@ -218,35 +220,40 @@
     box-shadow: var(--box-shadow-lift);
   }
 
-  fieldset.stepper {
+  [data-skin="elevated"] { background: var(--color-neutral-raised); }
+
+  fieldset:has(button) {
     display: inline-flex; place-self: start start;
-    gap: 0; background: var(--color-neutral-raised);
+    gap: 0;
   }
 
-  fieldset.stepper button {
-    inline-size: var(--xxl); border: 0; background: transparent;
+  fieldset button {
+    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
   }
 
-  fieldset.stepper output {
+  fieldset output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); font-size: var(--l); font-weight: 400; color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--m); font-weight: var(--font-weight-normal); color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  #status[data-state="loading"] :is(#word, #pct, .bar) {
+  fieldset output small { font-size: var(--s); }
+
+  [data-state="loading"] :is(output, gauge-bar) {
     opacity: var(--opacity-hidden);
   }
-  #status[data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+  [data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
 }
 
 </style>
 </head>
-<body class="booting">
+<body data-state="booting">
   <header>
     <h1>Soil-Balance</h1>
   </header>
@@ -255,14 +262,14 @@
     <section>
       <output data-colspan="9" id="word"><i></i>—</output>
       <output data-colspan="3" id="pct">—<small>%</small></output>
-      <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
+      <gauge-bar data-colspan="12"></gauge-bar>
       <p data-colspan="12" id="sub">—</p>
       <p data-colspan="12" id="msg" hidden>Loading weather…</p>
     </section>
   </article>
 
   <figure id="scroll" data-skin="ghost"></figure>
-  <p class="sbar" id="sbar"><i class="thumb" id="thumb"></i></p>
+  <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
 
   <article id="controls">
     <fieldset>
@@ -287,7 +294,7 @@
       <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
     </fieldset>
 
-    <fieldset class="stepper">
+    <fieldset data-skin="elevated">
       <legend>Duration</legend>
       <button type="button" id="durDown">−</button>
       <output id="durVal">60<small>min</small></output>
@@ -752,7 +759,7 @@ function render(){
   wireHits();
   requestAnimationFrame(syncBar);
   if(!booted){ scene.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
-    requestAnimationFrame(()=>document.body.classList.remove("booting")); }
+    requestAnimationFrame(()=>document.body.removeAttribute("data-state")); }
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
