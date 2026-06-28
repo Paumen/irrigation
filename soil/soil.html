@@ -98,7 +98,7 @@
   }
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
-  body.booting .grow {
+  body[data-state="booting"] .grow {
     transform: translateY(var(--s));
     opacity: var(--opacity-hidden);
   }
@@ -253,7 +253,7 @@
 
 </style>
 </head>
-<body class="booting">
+<body data-state="booting">
   <header>
     <h1>Soil-Balance</h1>
   </header>
@@ -759,7 +759,7 @@ function render(){
   wireHits();
   requestAnimationFrame(syncBar);
   if(!booted){ scene.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
-    requestAnimationFrame(()=>document.body.classList.remove("booting")); }
+    requestAnimationFrame(()=>document.body.removeAttribute("data-state")); }
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
