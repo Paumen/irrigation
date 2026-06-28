@@ -243,10 +243,10 @@
 
   fieldset output small { font-size: var(--s); }
 
-  #status[data-state="loading"] :is(#word, #pct, .bar) {
+  [data-state="loading"] :is(output, .bar) {
     opacity: var(--opacity-hidden);
   }
-  #status[data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
+  [data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
 
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
 }
