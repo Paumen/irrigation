@@ -148,19 +148,19 @@
   [data-colspan="9"]  { grid-column: span 9; }
   [data-colspan="12"] { grid-column: span 12; }
 
-  .bar {
-    grid-column: 1 / -1; position: relative;
+  gauge-bar {
+    display: block; grid-column: 1 / -1; position: relative;
     block-size: var(--m); background: var(--color-neutral); border-radius: var(--radius-sm);
   }
 
-  .fill {
-    position: absolute; inset-block: 0; inset-inline-start: 0;
+  gauge-bar::before {
+    content: ""; position: absolute; inset-block: 0; inset-inline-start: 0;
     inline-size: var(--v-fill, 0%); background: var(--v-color);
     border-radius: var(--radius-sm); transition: width var(--time-slow) ease, background var(--time-slow) ease;
   }
 
-  .mark {
-    position: absolute; inset-block: -2px; inline-size: var(--xs);
+  gauge-bar::after {
+    content: ""; position: absolute; inset-block: -2px; inline-size: var(--xs);
     inset-inline-start: var(--v-refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
     box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
@@ -243,7 +243,7 @@
 
   fieldset output small { font-size: var(--s); }
 
-  [data-state="loading"] :is(output, .bar) {
+  [data-state="loading"] :is(output, gauge-bar) {
     opacity: var(--opacity-hidden);
   }
   [data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
@@ -262,7 +262,7 @@
     <section>
       <output data-colspan="9" id="word"><i></i>—</output>
       <output data-colspan="3" id="pct">—<small>%</small></output>
-      <p class="bar" data-colspan="12"><i class="fill"></i><i class="mark"></i></p>
+      <gauge-bar data-colspan="12"></gauge-bar>
       <p data-colspan="12" id="sub">—</p>
       <p data-colspan="12" id="msg" hidden>Loading weather…</p>
     </section>
