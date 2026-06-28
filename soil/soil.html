@@ -250,6 +250,15 @@
   }
   [data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
 
+  [data-state="error"] :is(output, gauge-bar),
+  [data-state="error"] p:not([data-freeform]) { display: none; }
+
+  body > p[data-freeform] {
+    text-align: center;
+    opacity: var(--opacity-dim);
+  }
+  [data-state] ~ p[data-freeform] { display: none; }
+
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
 }
 
@@ -266,12 +275,13 @@
       <output data-colspan="3" id="pct">—<small>%</small></output>
       <gauge-bar data-colspan="12"></gauge-bar>
       <p data-colspan="12" id="sub">—</p>
-      <p data-colspan="12" id="msg" hidden>Loading weather…</p>
+      <p data-colspan="12" id="msg" data-freeform hidden>Loading weather…</p>
     </section>
   </article>
 
   <figure id="scroll" data-skin="ghost"></figure>
   <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
+  <p data-freeform>Tap any day to schedule or skip watering.</p>
 
   <article id="controls">
     <fieldset>
@@ -350,9 +360,9 @@ function normalizeWeather(json) {
   return { time, weekday, rain, et0, tempMax };
 }
 
-async function fetchWeather(signal) {
+async function fetchWeather() {
   let response;
-  try { response = await fetch(buildUrl(), { signal }); }
+  try { response = await fetch(buildUrl()); }
   catch (cause) { throw new Error("Weather request failed (network error)", { cause }); }
   if (!response.ok) throw new Error(`Weather request failed (HTTP ${response.status})`);
   let json;
@@ -756,7 +766,8 @@ const statusEl=document.getElementById("status"), msgEl=document.getElementById(
 let G, booted=false;
 
 function render(){
-  if(!WEATHER) return;           
+  if(!WEATHER) return;
+  TODAY = todayInTz(API.timezone);
   const model=compute(ctrl);
   G=build(model);
   scene.innerHTML=G.svg;
