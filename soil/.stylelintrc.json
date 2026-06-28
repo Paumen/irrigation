@@ -39,7 +39,7 @@
       { "message": "display: table* is not allowed — use grid or flex." }
     ],
     "custom-property-pattern": [
-      "^(color-(neutral|ink|danger|alert|success|hue)|jump|xs|s|m|l|xl|xxl|time|font|radius|line-height|font-weight|border-width|opacity|letter-spacing|box-shadow)(-[a-z0-9]+)*$",
+      "^(color-(neutral|ink|danger|alert|success|hue)|jump|xs|s|m|l|xl|xxl|time|font|radius|line-height|font-weight|border-width|opacity|letter-spacing|box-shadow|value)(-[a-z0-9]+)*$",
       { "message": "Custom properties must use the token vocabulary (e.g. --color-ink-mute, --color-hue, --radius-sm, --m)." }
     ],
     "scale-unlimited/declaration-strict-value": [

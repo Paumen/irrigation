@@ -121,7 +121,7 @@
   output {
     font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
     line-height: var(--line-height-tight);
-    color: var(--v-color, var(--color-hue));
+    color: var(--value-color, var(--color-hue));
   }
 
   output + output { text-align: end; }
@@ -129,8 +129,8 @@
   output i {
     display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
     inline-size: var(--l); block-size: var(--l); border-radius: var(--radius-pill);
-    background: var(--v-color, var(--color-hue));
-    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--v-color, var(--color-hue)) 18%, transparent);
+    background: var(--value-color, var(--color-hue));
+    box-shadow: 0 0 0 .26em color-mix(in oklab, var(--value-color, var(--color-hue)) 18%, transparent);
   }
 
   p, output small {
@@ -155,13 +155,13 @@
 
   gauge-bar::before {
     content: ""; position: absolute; inset-block: 0; inset-inline-start: 0;
-    inline-size: var(--v-fill, 0%); background: var(--v-color);
+    inline-size: var(--value-fill, 0%); background: var(--value-color);
     border-radius: var(--radius-sm); transition: width var(--time-slow) ease, background var(--time-slow) ease;
   }
 
   gauge-bar::after {
     content: ""; position: absolute; inset-block: -2px; inline-size: var(--xs);
-    inset-inline-start: var(--v-refill, 50%);
+    inset-inline-start: var(--value-refill, 50%);
     background: var(--color-neutral-raised); border-radius: var(--radius-sm);
     box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
   }
@@ -646,10 +646,12 @@ function build(model){
       for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*RN.xMinK,dayW*RN.xMaxK,rng()),ry=SKY_TOP+lerp(RN.yMin,RN.yMax,rng());
         const len=lerp(RN.lenMin,RN.lenMax,Math.sqrt(clamp(d.rain/RN.lenNorm,0,1)))*(RN.lenJitBase+rng()*RN.lenJitK);
         rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-RN.slant).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="${C.rain}" stroke-width="${RN.w}" stroke-linecap="round" opacity="${(RN.opBase+RN.opK*clamp(d.rain/RN.opNorm,0,1)).toFixed(2)}"/>`;}
+      // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
       weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${rg}</g>`;
     }
     if(d.mins>0){
       const dx=cx(d.i), dy=SURF-DP.yOfs, dr=clamp(dayW*DP.rK,DP.rMin,DP.rMax);
+      // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
       weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${dropIcon(dx,dy,dr)}</g>`;
     }
   });
@@ -701,6 +703,7 @@ function build(model){
 
   let flora="";
   DATA.forEach(d=>{const x=cx(d.i),sY=SURF+(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit,v=clamp(d.level/TANK,0,1),rng=mulberry32(SD.flora+d.i);
+    // paumen-lint-disable-next-line  -- dynamic per-element transform-origin/transition-delay can't move to a static stylesheet
     flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
 
   let ticks="";
@@ -736,9 +739,9 @@ function renderStatus(model){
     kick="Above refill point";
   }
   const st=document.getElementById("status");
-  st.style.setProperty("--v-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
-  st.style.setProperty("--v-fill", clamp(pct,0,100)+"%");
-  st.style.setProperty("--v-refill", (REFILL/TANK*100)+"%");
+  st.style.setProperty("--value-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
+  st.style.setProperty("--value-fill", clamp(pct,0,100)+"%");
+  st.style.setProperty("--value-refill", (REFILL/TANK*100)+"%");
   document.getElementById("word").innerHTML=`<i></i>${word}`;
   document.getElementById("pct").innerHTML=`${pct}<small>%</small>`;
   document.getElementById("sub").textContent=`${Math.round(tl)} / ${Math.round(TANK)} mm held · ${kick.toLowerCase()}`;
