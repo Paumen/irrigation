@@ -704,7 +704,7 @@ function build(model){
   surfPts.push({x:R,y:SURF});
   soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`
      +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.paper}" stroke-width="${TB.refillHaloW}" opacity="${TB.refillHaloOp}"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.rust}" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" style="stroke:var(--value-color, ${C.rust})" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
 
   let cracks="";
   DATA.forEach(d=>{ if(d.level>CR.moistMax)return; const rng=mulberry32(SD.crack+d.i),x0=cx(d.i)-dayW/2,dry=1-clamp(d.level/CR.moistMax,0,1),nc=Math.round(lerp(CR.countMin,CR.countMax,dry));
@@ -750,7 +750,7 @@ function renderStatus(model){
     kick="Above refill point";
   }
   const st=document.getElementById("status");
-  st.style.setProperty("--value-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
+  document.body.style.setProperty("--value-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
   st.style.setProperty("--value-fill", clamp(pct,0,100)+"%");
   st.style.setProperty("--value-refill", (REFILL/TANK*100)+"%");
   document.getElementById("word").innerHTML=`<i></i>${word}`;
