@@ -128,7 +128,7 @@
 
   output i {
     display: inline-block; vertical-align: middle; margin-inline-end: var(--s);
-    inline-size: var(--l); block-size: var(--l); border-radius: 50%;
+    inline-size: var(--l); block-size: var(--l); border-radius: var(--radius-pill);
     background: var(--v-color, var(--color-hue));
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--v-color, var(--color-hue)) 18%, transparent);
   }
@@ -245,6 +245,7 @@
     opacity: var(--opacity-hidden);
   }
   #status[data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
+
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
 }
 

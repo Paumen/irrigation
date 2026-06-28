@@ -52,5 +52,11 @@
     ],
     "no-descending-specificity": null,
     "no-duplicate-selectors": null
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.html"],
+      "customSyntax": "postcss-html"
+    }
+  ]
 }
