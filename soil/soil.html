@@ -229,7 +229,7 @@
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
-  [data-skin="track"] {
+  option-track {
     display: flex;
     flex: 1 1 auto;
     min-inline-size: 0;
@@ -239,7 +239,7 @@
     overflow: hidden;
   }
 
-  [data-skin="track"]:has(button) { flex: 0 1 auto; }
+  option-track:has(button) { flex: 0 1 auto; }
 
   fieldset :is(label, button, output) {
     padding: var(--xs) var(--s);
@@ -351,39 +351,39 @@
   <article id="controls">
     <fieldset>
       <legend>Planting</legend>
-      <span data-skin="track">
+      <option-track>
         <label><input type="radio" name="planting" value="Turf">Turf</label>
         <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
         <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
-      </span>
+      </option-track>
     </fieldset>
 
     <fieldset>
       <legend>Soil</legend>
-      <span data-skin="track">
+      <option-track>
         <label><input type="radio" name="soil" value="Sand">Sand</label>
         <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
         <label><input type="radio" name="soil" value="Loam">Loam</label>
         <label><input type="radio" name="soil" value="Clay">Clay</label>
-      </span>
+      </option-track>
     </fieldset>
 
     <fieldset>
       <legend>Exposure</legend>
-      <span data-skin="track">
+      <option-track>
         <label><input type="radio" name="sun" value="Shade">Shade</label>
         <label><input type="radio" name="sun" value="Half sun">Half sun</label>
         <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
-      </span>
+      </option-track>
     </fieldset>
 
     <fieldset>
       <legend>Duration</legend>
-      <span data-skin="track">
+      <option-track>
         <button type="button" id="durDown">−</button>
         <output id="durVal">60<small>min</small></output>
         <button type="button" id="durUp">+</button>
-      </span>
+      </option-track>
     </fieldset>
   </article>
 
