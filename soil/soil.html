@@ -168,10 +168,10 @@
   }
 
   gauge-bar::after {
-    content: ""; position: absolute; inset-block: -2px; inline-size: var(--xs);
+    content: ""; position: absolute; inset-block: 0; inline-size: 2px;
     inset-inline-start: var(--value-refill, 50%);
-    background: var(--color-neutral-raised); border-radius: var(--radius-sm);
-    box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--color-ink) 32%, transparent);
+    translate: -50% 0;
+    background: var(--color-danger); opacity: .8;
   }
 
   figure {
@@ -204,29 +204,44 @@
   }
   scroll-thumb:active { cursor: grabbing; }
 
-  fieldset {
-    position: relative;
-    display: flex; gap: 0;
-    margin-block-start: 1.15em;
-    padding: var(--xs);
-    background: var(--color-neutral-mute);
-    border: var(--border-width) solid var(--color-neutral-mute);
-    border-radius: var(--radius-pill);
+  article:has(fieldset) {
+    gap: 0;
+    padding-block: var(--s);
   }
 
+  fieldset {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--xs);
+    font-size: var(--m);
+    padding-block: var(--s);
+    padding-inline-start: 8em;
+  }
+
+  fieldset + fieldset { border-block-start: var(--border-width) solid var(--color-neutral-mute); }
+
   legend {
-    position: absolute; inset-block-start: -1.25em; inset-inline-start: .35em;
+    position: absolute; inset-block-start: 50%; inset-inline-start: 0;
+    translate: 0 -50%;
     padding: 0;
     font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
   fieldset label {
-    flex: 1 1 0; min-inline-size: 0; font-size: var(--m);
+    flex: 1 1 0; min-inline-size: 0;
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
-    transition: color var(--time-quick) ease, background var(--time-quick) ease, box-shadow var(--time-quick) ease;
+    transition: color var(--time-quick) ease, background var(--time-quick) ease;
+  }
+
+  fieldset label:hover { color: var(--color-ink); }
+
+  fieldset label:has(input:focus-visible) {
+    outline: 2px solid var(--color-hue);
+    outline-offset: -1px;
   }
 
   fieldset input {
@@ -235,29 +250,25 @@
   }
 
   fieldset label:has(input:checked) {
-    background: var(--color-neutral-raised); color: var(--color-hue); font-weight: var(--font-weight-semibold);
-    box-shadow: var(--box-shadow-lift);
-  }
-
-  [data-skin="elevated"] { background: var(--color-neutral-raised); }
-
-  fieldset:has(button) {
-    display: inline-flex; place-self: start start;
-    gap: 0;
+    background: color-mix(in oklab, var(--color-hue) 12%, transparent);
+    color: var(--color-hue);
+    font-weight: var(--font-weight-semibold);
   }
 
   fieldset button {
-    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
+    min-inline-size: var(--xl); border: 0; background: transparent; font-size: var(--m);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
+    transition: background var(--time-quick) ease;
   }
+
+  fieldset button:hover { background: color-mix(in oklab, var(--color-hue) 10%, transparent); }
 
   fieldset output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
     font-family: var(--font-mono); font-size: var(--m); font-weight: var(--font-weight-normal); color: var(--color-ink);
-    border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
   fieldset output small { font-size: var(--s); }
@@ -335,7 +346,7 @@
       <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
     </fieldset>
 
-    <fieldset data-skin="elevated">
+    <fieldset>
       <legend>Duration</legend>
       <button type="button" id="durDown">−</button>
       <output id="durVal">60<small>min</small></output>
@@ -455,8 +466,8 @@ const DRAW = {
 
   text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
   ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
-  marker: { wK:44, hK:15, y:3, rxK:7.5, fsK:10, tracking:0.1,
-            fillOp:0.07, edgeOp:0.32, dash:"3 4", edgeW:1 },
+  marker: { wK:44, hK:15, rxK:7.5, fsK:10, tracking:0.1,
+            fillOp:0.08, edgeOp:0.4, edgeW:1 },
 
   drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
           hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
@@ -507,7 +518,7 @@ const DRAW = {
 
   table: {
     lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
-    refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
+    refillHaloW:3, refillHaloOp:0.3, refillW:1.6, refillDash:"6 6",
   },
 
   crack: {
@@ -745,7 +756,7 @@ function build(model, pop){
   surfPts.push({x:R,y:SURF});
   soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`
      +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.paper}" stroke-width="${TB.refillHaloW}" opacity="${TB.refillHaloOp}"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" style="stroke:var(--value-color, ${C.rust})" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
+     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.rust}" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
 
   let cracks="";
   DATA.forEach(d=>{ if(d.level>CR.moistMax)return; const rng=mulberry32(SD.crack+d.i),x0=cx(d.i)-dayW/2,dry=1-clamp(d.level/CR.moistMax,0,1),nc=Math.round(lerp(CR.countMin,CR.countMax,dry));
@@ -763,12 +774,12 @@ function build(model, pop){
     ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd.slice(0,3)}</text>`;});
 
-  const tx=cx(todayIdx), fw=MK.wK*K, fh=MK.hK*K, fy=MK.y;
+  const tx=cx(todayIdx), fw=Math.max(dayW,MK.wK*K), fh=MK.hK*K, bandX=tx-dayW/2;
   const today=
-     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
-    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
-    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
+     `<rect x="${bandX.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
+    +`<path d="M ${bandX.toFixed(1)} ${SKY_TOP} V ${VBOT.toFixed(1)} M ${(bandX+dayW).toFixed(1)} ${SKY_TOP} V ${VBOT.toFixed(1)}" stroke="${C.green}" stroke-width="${MK.edgeW}" opacity="${MK.edgeOp}"/>`
+    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${(SKY_TOP-fh/2).toFixed(1)}" width="${fw.toFixed(1)}" height="${fh.toFixed(1)}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${SKY_TOP}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
   let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" data-skin="hit" tabindex="0" role="button" aria-pressed="${d.mins>0}" aria-label="Toggle watering ${d.wd} ${d.date.slice(8)}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
@@ -818,6 +829,10 @@ function render(){
     requestAnimationFrame(()=>document.body.removeAttribute("data-state")); }
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
+function smoothRerender(){
+  if(document.startViewTransition) document.startViewTransition(rerender);
+  else rerender();
+}
 
 function toggleWater(i){
   const set=new Set(ctrl.watered);
@@ -840,12 +855,12 @@ document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
 
 document.getElementById("controls").addEventListener("change",e=>{
   const r=e.target; if(r.type!=="radio")return;
-  ctrl[r.name]=r.value; rerender();
+  ctrl[r.name]=r.value; smoothRerender();
 });
 function bumpDur(d){
   ctrl.minutes=clamp(ctrl.minutes+d,ENGINE.dur.min,ENGINE.dur.max);
   document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
-  rerender();
+  smoothRerender();
 }
 document.getElementById("durDown").addEventListener("click",()=>bumpDur(-ENGINE.dur.step));
 document.getElementById("durUp").addEventListener("click",()=>bumpDur(ENGINE.dur.step));
