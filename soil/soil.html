@@ -113,7 +113,7 @@
   }
 
   article {
-    display: grid; gap: var(--l);
+    display: grid; gap: var(--m);
     padding: var(--m) var(--l);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
@@ -190,26 +190,48 @@
   fieldset {
     position: relative;
     display: flex; gap: 0;
-    margin-block-start: 1.15em;
+    margin-block-start: 1.0em;
     padding: var(--xs);
-    background: var(--color-neutral-mute);
+    background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
     border-radius: var(--radius-pill);
+    isolation: isolate;
   }
 
   legend {
-    position: absolute; inset-block-start: -1.25em; inset-inline-start: .35em;
+    position: absolute; inset-block-start: -1.15em; inset-inline-start: .35em;
     padding: 0;
-    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-mono); font-size: var(--s); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
+  /* The "selected" affordance: a bordered outline (the fieldset's lone <i>) that
+     slides to track the checked segment. Both segments share one base style
+     (dark-ish text on the light track); weight/colour/border carry the active
+     cue — never inversion. Position/size are set inline by the slider script. */
+  fieldset > i {
+    position: absolute; z-index: 0; inset-block: var(--xs); inset-inline-start: 0;
+    inline-size: 0;
+    background: color-mix(in oklab, var(--color-hue) 8%, var(--color-neutral-raised));
+    border: 1.5px solid var(--color-hue);
+    border-radius: var(--radius-pill);
+    transition: inline-size var(--time-quick) cubic-bezier(.4,.9,.3,1),
+                transform var(--time-quick) cubic-bezier(.4,.9,.3,1);
+  }
+
   fieldset label {
+    position: relative; z-index: 1;
     flex: 1 1 0; min-inline-size: 0; font-size: var(--m);
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
-    transition: color var(--time-quick) ease, background var(--time-quick) ease, box-shadow var(--time-quick) ease;
+    transition: color var(--time-quick) ease, font-weight var(--time-quick) ease;
+  }
+
+  /* slight divider lines between the joined segments */
+  fieldset label + label::before {
+    content: ""; position: absolute; inset-block: 22%; inset-inline-start: 0;
+    border-inline-start: var(--border-width) solid color-mix(in oklab, var(--color-ink) 10%, transparent);
   }
 
   fieldset input {
@@ -218,8 +240,7 @@
   }
 
   fieldset label:has(input:checked) {
-    background: var(--color-neutral-raised); color: var(--color-hue); font-weight: var(--font-weight-semibold);
-    box-shadow: var(--box-shadow-lift);
+    color: var(--color-hue); font-weight: var(--font-weight-semibold);
   }
 
   [data-skin="elevated"] { background: var(--color-neutral-raised); }
@@ -233,7 +254,9 @@
     inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
+    transition: background var(--time-quick) ease;
   }
+  fieldset button:hover { background: color-mix(in oklab, var(--color-ink) 6%, transparent); }
 
   fieldset output {
     min-inline-size: var(--xl);
@@ -285,6 +308,7 @@
   <article id="controls">
     <fieldset>
       <legend>Planting</legend>
+      <i aria-hidden="true"></i>
       <label><input type="radio" name="planting" value="Turf">Turf</label>
       <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
       <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
@@ -292,6 +316,7 @@
 
     <fieldset>
       <legend>Soil</legend>
+      <i aria-hidden="true"></i>
       <label><input type="radio" name="soil" value="Sand">Sand</label>
       <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
       <label><input type="radio" name="soil" value="Loam">Loam</label>
@@ -300,6 +325,7 @@
 
     <fieldset>
       <legend>Exposure</legend>
+      <i aria-hidden="true"></i>
       <label><input type="radio" name="sun" value="Shade">Shade</label>
       <label><input type="radio" name="sun" value="Half sun">Half sun</label>
       <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
@@ -426,7 +452,7 @@ const DRAW = {
   text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
   ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
   marker: { wK:44, hK:15, y:3, rxK:7.5, fsK:10, tracking:0.1,
-            fillOp:0.07, edgeOp:0.32, dash:"3 4", edgeW:1 },
+            fillOp:0.07, edgeOp:0.45, dash:"3 4", edgeW:1 },
 
   drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
           hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
@@ -550,14 +576,28 @@ function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(
 
 HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
 
-function dropIcon(cx,cy,r){
+// Matte, earthy watering affordance. Every tappable (today-onward) day carries a
+// ghost ring inviting a tap; a watered day resolves it into a clean, filled drop.
+const DROPUI = {
+  ghost:"#AEB9B2", ink:"#557077", fill:"#6E8E92", hi:"#DCEAEC",
+  ringRK:0.24, ringMin:11, ringMax:15,
+};
+function dropPathD(cx,cy,r){
   const D=DRAW.drop, topY=cy-D.topK*r;
-  const d=`M ${cx.toFixed(1)} ${topY.toFixed(1)} `
+  return `M ${cx.toFixed(1)} ${topY.toFixed(1)} `
     +`C ${(cx+D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
     +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
     +`C ${(cx-r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx-D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
-  return `<path d="${d}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
-    +`<ellipse cx="${(cx-r*D.hiDxK).toFixed(1)}" cy="${(cy+r*D.hiDyK).toFixed(1)}" rx="${(r*D.hiRxK).toFixed(1)}" ry="${(r*D.hiRyK).toFixed(1)}" fill="${C.dropHi}" opacity="${D.hiOp}"/>`;
+}
+function waterDrop(cx,cy,R){
+  const dr=R*0.60, dy=cy+R*0.28;
+  return `<path d="${dropPathD(cx,dy,dr)}" fill="${DROPUI.fill}" stroke="${DROPUI.ink}" stroke-width="1" stroke-linejoin="round"/>`
+    +`<ellipse cx="${(cx-dr*0.32).toFixed(1)}" cy="${(dy-dr*0.5).toFixed(1)}" rx="${(dr*0.22).toFixed(1)}" ry="${(dr*0.42).toFixed(1)}" fill="${DROPUI.hi}" opacity="0.55"/>`;
+}
+function ghostRing(cx,cy,R){
+  const dr=R*0.5, dy=cy+R*0.28;
+  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.ghost}" stroke-width="1.25" stroke-dasharray="2.5 2.5"/>`
+    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.ghost}" stroke-width="1.25" stroke-linejoin="round" opacity="0.85"/>`;
 }
 function wetCol(x0,w,sY,hgt){
   return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
@@ -660,10 +700,12 @@ function build(model){
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
       weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${rg}</g>`;
     }
+    const affX=cx(d.i), affY=SURF-DP.yOfs, ringR=clamp(dayW*DROPUI.ringRK,DROPUI.ringMin,DROPUI.ringMax);
     if(d.mins>0){
-      const dx=cx(d.i), dy=SURF-DP.yOfs, dr=clamp(dayW*DP.rK,DP.rMin,DP.rMax);
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
-      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${dropIcon(dx,dy,dr)}</g>`;
+      weather+=`<g class="grow" data-drop="${d.i}" style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
+    } else if(d.i>=todayIdx){
+      weather+=`<g>${ghostRing(affX,affY,ringR)}</g>`;
     }
   });
 
@@ -722,12 +764,18 @@ function build(model){
     ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd.slice(0,3)}</text>`;});
 
-  const tx=cx(todayIdx), fw=MK.wK*K, fh=MK.hK*K, fy=MK.y;
+  // TODAY marker + beam as one cohesive piece: a flush tab seated on a faintly
+  // washed band with hairline side edges — all one green, no dashes, no seams.
+  const tx=cx(todayIdx), bandX=tx-dayW/2, tabH=MK.hK*K, rTop=Math.min(4, dayW*0.12);
+  const tab=`M ${bandX.toFixed(1)} ${(SKY_TOP+tabH).toFixed(1)} L ${bandX.toFixed(1)} ${(SKY_TOP+rTop).toFixed(1)} `
+    +`Q ${bandX.toFixed(1)} ${SKY_TOP} ${(bandX+rTop).toFixed(1)} ${SKY_TOP} L ${(bandX+dayW-rTop).toFixed(1)} ${SKY_TOP} `
+    +`Q ${(bandX+dayW).toFixed(1)} ${SKY_TOP} ${(bandX+dayW).toFixed(1)} ${(SKY_TOP+rTop).toFixed(1)} L ${(bandX+dayW).toFixed(1)} ${(SKY_TOP+tabH).toFixed(1)} Z`;
   const today=
-     `<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
-    +`<rect x="${(tx-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="none" stroke="${C.green}" stroke-width="${MK.edgeW}" stroke-dasharray="${MK.dash}" opacity="${MK.edgeOp}"/>`
-    +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
+     `<rect x="${bandX.toFixed(1)}" y="${(SKY_TOP+tabH).toFixed(1)}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP-tabH).toFixed(1)}" fill="${C.green}" opacity="${MK.fillOp}"/>`
+    +`<line x1="${bandX.toFixed(1)}" y1="${(SKY_TOP+tabH).toFixed(1)}" x2="${bandX.toFixed(1)}" y2="${VBOT.toFixed(1)}" stroke="${C.green}" stroke-width="${MK.edgeW}" opacity="${MK.edgeOp}"/>`
+    +`<line x1="${(bandX+dayW).toFixed(1)}" y1="${(SKY_TOP+tabH).toFixed(1)}" x2="${(bandX+dayW).toFixed(1)}" y2="${VBOT.toFixed(1)}" stroke="${C.green}" stroke-width="${MK.edgeW}" opacity="${MK.edgeOp}"/>`
+    +`<path d="${tab}" fill="${C.green}"/>`
+    +`<text x="${tx.toFixed(1)}" y="${(SKY_TOP+tabH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
   let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
@@ -779,10 +827,30 @@ function render(){
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
 function toggleWater(i){
-  const set=new Set(ctrl.watered);
-  set.has(i) ? set.delete(i) : set.add(i);
+  const set=new Set(ctrl.watered), adding=!set.has(i);
+  adding ? set.add(i) : set.delete(i);
   ctrl.watered=[...set];
   rerender();
+  if(adding){
+    const g=scene.querySelector(`[data-drop="${i}"]`);
+    if(g){
+      g.style.transformBox="fill-box"; g.style.transformOrigin="50% 85%";
+      g.animate([{transform:"scale(.3)",opacity:0},{transform:"scale(1.12)",offset:.6},{transform:"scale(1)",opacity:1}],
+                {duration:380,easing:"cubic-bezier(.2,.8,.2,1)"});
+    }
+  }
+}
+
+// Slide the "selected" outline under the checked segment of each control group.
+function placeThumbs(first){
+  document.querySelectorAll("#controls fieldset").forEach(fs=>{
+    const thumb=fs.querySelector("i"), on=fs.querySelector("label:has(input:checked)");
+    if(!thumb||!on) return;
+    if(first) thumb.style.transition="none";
+    thumb.style.inlineSize=on.offsetWidth+"px";
+    thumb.style.transform=`translateX(${on.offsetLeft}px)`;
+    if(first){ void thumb.offsetWidth; thumb.style.transition=""; }
+  });
 }
 function wireHits(){
   scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
@@ -795,11 +863,13 @@ document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
 
 document.getElementById("controls").addEventListener("change",e=>{
   const r=e.target; if(r.type!=="radio")return;
-  ctrl[r.name]=r.value; rerender();
+  ctrl[r.name]=r.value; placeThumbs(); rerender();
 });
 function bumpDur(d){
   ctrl.minutes=clamp(ctrl.minutes+d,ENGINE.dur.min,ENGINE.dur.max);
-  document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
+  const dv=document.getElementById("durVal");
+  dv.innerHTML=`${ctrl.minutes}<small>min</small>`;
+  dv.animate([{transform:"scale(1)"},{transform:"scale(1.14)",offset:.4},{transform:"scale(1)"}],{duration:300,easing:"ease"});
   rerender();
 }
 document.getElementById("durDown").addEventListener("click",()=>bumpDur(-ENGINE.dur.step));
@@ -824,7 +894,10 @@ sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
   const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
   scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
 
-let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
+let rt; addEventListener("resize",()=>{placeThumbs();clearTimeout(rt);rt=setTimeout(()=>{placeThumbs();rerender();},180);});
+
+placeThumbs(true);
+addEventListener("load",()=>placeThumbs(true));
 
 function showLoading(){ statusEl.dataset.state="loading"; msgEl.hidden=false; msgEl.textContent="Loading weather…"; }
 function showError(err){
