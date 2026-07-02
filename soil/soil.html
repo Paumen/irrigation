@@ -74,6 +74,7 @@
     gap: var(--l);
     padding: var(--m);
     overflow-x: hidden;
+    container-type: inline-size;
     font-family: var(--font-sans);
     font-size: var(--l);
     line-height: var(--line-height-normal);
@@ -110,6 +111,17 @@
   [data-skin="ghost"] {
     margin-inline: calc(50% - 50vw);
     padding: 0; border: 0; background: none; box-shadow: none;
+  }
+
+  header, article, scroll-bar, body > p[data-freeform] {
+    inline-size: 100%;
+    max-inline-size: 44rem;
+    margin-inline: auto;
+  }
+
+  @container (min-width: 42rem) {
+    article:has(fieldset) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    article:has(fieldset) label { white-space: normal; }
   }
 
   article {
@@ -174,6 +186,11 @@
     touch-action: pan-x;
   }
   figure::-webkit-scrollbar { display: none; }
+
+  figure [data-i] { cursor: pointer; }
+  figure [data-i]:hover,
+  figure [data-i]:active { fill: color-mix(in oklab, #34BCD2 12%, transparent); } /* = CFG.color.drop */
+  figure [data-i]:focus-visible { outline: 2px solid var(--color-hue); outline-offset: -2px; }
 
   scroll-bar {
     display: block; position: relative; block-size: var(--m); margin-block-start: var(--xs);
@@ -253,10 +270,7 @@
   [data-state="error"] :is(output, gauge-bar),
   [data-state="error"] p:not([data-freeform]) { display: none; }
 
-  body > p[data-freeform] {
-    text-align: center;
-    opacity: var(--opacity-dim);
-  }
+  body > p[data-freeform] { text-align: center; }
   article[data-state] ~ p[data-freeform] { display: none; }
 
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
@@ -281,6 +295,7 @@
 
   <figure id="scroll" data-skin="ghost"></figure>
   <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
+  <p data-freeform>Tap a day to add or remove a watering.</p>
 
   <article id="controls">
     <fieldset>
@@ -729,7 +744,7 @@ function build(model){
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
     +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
-  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
+  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" tabindex="0" role="button" aria-pressed="${d.mins>0}" aria-label="Toggle watering ${d.wd} ${d.date.slice(8)}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
   const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
@@ -782,12 +797,14 @@ function toggleWater(i){
   const set=new Set(ctrl.watered);
   set.has(i) ? set.delete(i) : set.add(i);
   ctrl.watered=[...set];
+  const refocus=document.activeElement&&document.activeElement.hasAttribute("data-i");
   rerender();
+  if(refocus) scene.querySelector(`[data-i="${i}"]`)?.focus();
 }
 function wireHits(){
   scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
-    h.style.cursor="pointer";
     h.addEventListener("click",()=>toggleWater(+h.dataset.i));
+    h.addEventListener("keydown",e=>{ if(e.key!=="Enter"&&e.key!==" ")return; e.preventDefault(); toggleWater(+h.dataset.i); });
   });
 }
 
