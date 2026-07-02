@@ -74,7 +74,6 @@
     gap: var(--l);
     padding: var(--m);
     overflow-x: hidden;
-    container-type: inline-size;
     font-family: var(--font-sans);
     font-size: var(--l);
     line-height: var(--line-height-normal);
@@ -113,15 +112,10 @@
     padding: 0; border: 0; background: none; box-shadow: none;
   }
 
-  header, article, scroll-bar, body > p[data-freeform] {
+  header, article, scroll-bar {
     inline-size: 100%;
     max-inline-size: 44rem;
     margin-inline: auto;
-  }
-
-  @container (min-width: 42rem) {
-    article:has(fieldset) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    article:has(fieldset) label { white-space: normal; }
   }
 
   article {
@@ -276,10 +270,26 @@
   [data-state="error"] :is(output, gauge-bar),
   [data-state="error"] p:not([data-freeform]) { display: none; }
 
-  body > p[data-freeform] { text-align: center; }
-  article[data-state] ~ p[data-freeform] { display: none; }
+  g[data-state="pop"] {
+    animation: drop-pop var(--time-quick) cubic-bezier(.2, .8, .2, 1) both;
+  }
+
+  rect[data-state="pop"] {
+    animation: wet-soak var(--time-slow) ease both;
+  }
 
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
+
+  @keyframes drop-pop {
+    from {
+      opacity: var(--opacity-hidden);
+      transform: translateY(calc(-1 * var(--s))) scale(.5);
+    }
+  }
+
+  @keyframes wet-soak {
+    from { opacity: var(--opacity-hidden); }
+  }
 }
 
 </style>
@@ -301,7 +311,6 @@
 
   <figure id="scroll" data-skin="ghost"></figure>
   <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
-  <p data-freeform>Tap a day to add or remove a watering.</p>
 
   <article id="controls">
     <fieldset>
@@ -451,7 +460,8 @@ const DRAW = {
 
   drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
           hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
-          yOfs:72, rK:0.15, rMin:6, rMax:9 },
+          yOfs:72, rK:0.15, rMin:6, rMax:9,
+          ghostW:1.1, ghostDash:"2.2 2.6", ghostOp:0.3, ghostOpToday:0.55 },
 
   plant: {
     sproutMax:0.07,
@@ -571,17 +581,24 @@ function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(
 
 HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
 
-function dropIcon(cx,cy,r){
+function dropPath(cx,cy,r){
   const D=DRAW.drop, topY=cy-D.topK*r;
-  const d=`M ${cx.toFixed(1)} ${topY.toFixed(1)} `
+  return `M ${cx.toFixed(1)} ${topY.toFixed(1)} `
     +`C ${(cx+D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
     +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
     +`C ${(cx-r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx-D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
-  return `<path d="${d}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
+}
+function dropIcon(cx,cy,r){
+  const D=DRAW.drop;
+  return `<path d="${dropPath(cx,cy,r)}" fill="${C.drop}" stroke="${C.dropEdge}" stroke-width="${D.edgeW}" stroke-linejoin="round"/>`
     +`<ellipse cx="${(cx-r*D.hiDxK).toFixed(1)}" cy="${(cy+r*D.hiDyK).toFixed(1)}" rx="${(r*D.hiRxK).toFixed(1)}" ry="${(r*D.hiRyK).toFixed(1)}" fill="${C.dropHi}" opacity="${D.hiOp}"/>`;
 }
-function wetCol(x0,w,sY,hgt){
-  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
+function dropGhost(cx,cy,r,isToday){
+  const D=DRAW.drop;
+  return `<path d="${dropPath(cx,cy,r)}" fill="none" stroke="${C.dropEdge}" stroke-width="${D.ghostW}" stroke-dasharray="${D.ghostDash}" stroke-linejoin="round" opacity="${isToday?D.ghostOpToday:D.ghostOp}"/>`;
+}
+function wetCol(x0,w,sY,hgt,pop){
+  return `<rect${pop?' data-state="pop"':''} x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
 }
 
 function plant(x,sY,v,rng){
@@ -628,7 +645,7 @@ function roots(x,sY,v,rng,rootPx){
   return s;
 }
 
-function build(model){
+function build(model, pop){
   const DATA=model.series, N=DATA.length, TANK=model.tank, REFILL=model.refill;
   const sc=CFG.scale, G=CFG.geom, T=DRAW.text, TK=DRAW.ticks, MK=DRAW.marker, SUN=DRAW.sun, RN=DRAW.rain, SL=DRAW.soil, TB=DRAW.table, CR=DRAW.crack, DP=DRAW.drop, SD=DRAW.seeds, ST=DRAW.bootStagger;
   const vw=(typeof scene!=="undefined" && scene && scene.clientWidth) || window.innerWidth;
@@ -681,10 +698,13 @@ function build(model){
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
       weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${rg}</g>`;
     }
+    const dx=cx(d.i), dy=SURF-DP.yOfs, dr=clamp(dayW*DP.rK,DP.rMin,DP.rMax);
     if(d.mins>0){
-      const dx=cx(d.i), dy=SURF-DP.yOfs, dr=clamp(dayW*DP.rK,DP.rMin,DP.rMax);
+      // paumen-lint-disable-next-line  -- dynamic per-day transform-origin/transition-delay can't move to a static stylesheet
+      weather+=`<g class="grow"${d.i===pop?' data-state="pop"':''} style="transform-origin:${dx.toFixed(1)}px ${dy.toFixed(1)}px;transition-delay:${d.i*ST.weather}ms">${dropIcon(dx,dy,dr)}</g>`;
+    } else {
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
-      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${dropIcon(dx,dy,dr)}</g>`;
+      weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${dropGhost(dx,dy,dr,d.i===todayIdx)}</g>`;
     }
   });
 
@@ -716,7 +736,7 @@ function build(model){
   tablePts.push({x:R,y:tableY(DATA[N-1].level)});
   const tline=smooth(tablePts);
   soil+=`<path d="${tline} L ${R.toFixed(1)} ${ROOT_BOT.toFixed(1)} L ${AX} ${ROOT_BOT.toFixed(1)} Z" fill="url(#aqua)"/>`;
-  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx, d.i===pop); });
   soil+=`<path d="${tline}" fill="none" stroke="url(#wline)" stroke-width="${TB.lineW}"/>`
      +`<path d="${tline}" fill="none" stroke="url(#whi)" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
 
@@ -783,13 +803,13 @@ const ctrl={ planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:E
 const scene=document.getElementById("scroll");
 const sbar=document.getElementById("sbar"), thumb=document.getElementById("thumb");
 const statusEl=document.getElementById("status"), msgEl=document.getElementById("msg");
-let G, booted=false;
+let G, booted=false, popIdx=null;
 
 function render(){
   if(!WEATHER) return;
   TODAY = todayInTz(API.timezone);
   const model=compute(ctrl);
-  G=build(model);
+  G=build(model, popIdx);
   scene.innerHTML=G.svg;
   renderStatus(model);
   wireHits();
@@ -804,7 +824,9 @@ function toggleWater(i){
   set.has(i) ? set.delete(i) : set.add(i);
   ctrl.watered=[...set];
   const refocus=document.activeElement&&document.activeElement.hasAttribute("data-i");
+  popIdx=set.has(i)?i:null;
   rerender();
+  popIdx=null;
   if(refocus) scene.querySelector(`[data-i="${i}"]`)?.focus();
 }
 function wireHits(){
