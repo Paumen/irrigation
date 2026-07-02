@@ -187,10 +187,16 @@
   }
   figure::-webkit-scrollbar { display: none; }
 
-  figure [data-i] { cursor: pointer; }
-  figure [data-i]:hover,
-  figure [data-i]:active { fill: color-mix(in oklab, #34BCD2 12%, transparent); } /* = CFG.color.drop */
-  figure [data-i]:focus-visible { outline: 2px solid var(--color-hue); outline-offset: -2px; }
+  figure [data-skin="hit"] { cursor: pointer; }
+
+  figure [data-skin="hit"]:hover,
+  figure [data-skin="hit"]:active { fill: color-mix(in oklab, #34BCD2 12%, transparent); } /* = CFG.color.drop */
+
+  figure [data-skin="hit"]:focus-visible {
+    outline: none;
+    stroke: var(--color-hue);
+    stroke-width: 2px;
+  }
 
   scroll-bar {
     display: block; position: relative; block-size: var(--m); margin-block-start: var(--xs);
@@ -744,7 +750,7 @@ function build(model){
     +`<rect x="${(tx-fw/2).toFixed(1)}" y="${fy}" width="${fw}" height="${fh}" rx="${(MK.rxK*K).toFixed(1)}" fill="${C.green}"/>`
     +`<text x="${tx.toFixed(1)}" y="${(fy+fh/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
 
-  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" tabindex="0" role="button" aria-pressed="${d.mins>0}" aria-label="Toggle watering ${d.wd} ${d.date.slice(8)}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
+  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" data-skin="hit" tabindex="0" role="button" aria-pressed="${d.mins>0}" aria-label="Toggle watering ${d.wd} ${d.date.slice(8)}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
   const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
