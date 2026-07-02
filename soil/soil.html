@@ -213,7 +213,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: var(--xs);
+    gap: 0;
     font-size: var(--m);
     padding-block: var(--s);
     padding-inline-start: 8em;
@@ -229,19 +229,42 @@
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
+  [data-skin="track"] {
+    display: flex;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    background: var(--color-neutral-raised);
+    border: var(--border-width) solid var(--color-neutral-mute);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  [data-skin="track"]:has(button) { flex: 0 1 auto; }
+
+  fieldset :is(label, button, output) {
+    padding: var(--xs) var(--s);
+    line-height: var(--line-height-tight);
+    background: none;
+    border: 0;
+  }
+
+  fieldset :is(label, button, output) + :is(label, button, output) {
+    border-inline-start: var(--border-width) solid var(--color-neutral-mute);
+  }
+
   fieldset label {
     flex: 1 1 0; min-inline-size: 0;
-    padding: var(--xs) var(--s);
-    text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
-    color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
-    transition: color var(--time-quick) ease, background var(--time-quick) ease;
+    text-align: center; white-space: nowrap;
+    color: var(--color-ink-mute); cursor: pointer;
+    transition: color var(--time-quick) ease, background var(--time-quick) ease,
+                box-shadow var(--time-quick) ease;
   }
 
   fieldset label:hover { color: var(--color-ink); }
 
   fieldset label:has(input:focus-visible) {
     outline: 2px solid var(--color-hue);
-    outline-offset: -1px;
+    outline-offset: -2px;
   }
 
   fieldset input {
@@ -250,24 +273,26 @@
   }
 
   fieldset label:has(input:checked) {
-    background: color-mix(in oklab, var(--color-hue) 12%, transparent);
     color: var(--color-hue);
     font-weight: var(--font-weight-semibold);
+    background: color-mix(in oklab, var(--color-hue) 8%, var(--color-neutral-raised));
+    box-shadow: inset 0 0 0 calc(2 * var(--border-width)) color-mix(in oklab, var(--color-hue) 45%, var(--color-neutral-mute));
   }
 
   fieldset button {
-    min-inline-size: var(--xl); border: 0; background: transparent; font-size: var(--m);
-    color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
-    padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    transition: background var(--time-quick) ease;
+    min-inline-size: var(--xl); font-size: var(--m);
+    color: var(--color-ink); cursor: pointer;
+    transition: color var(--time-quick) ease, background var(--time-quick) ease;
   }
 
-  fieldset button:hover { background: color-mix(in oklab, var(--color-hue) 10%, transparent); }
+  fieldset button:hover {
+    color: var(--color-hue);
+    background: color-mix(in oklab, var(--color-hue) 8%, var(--color-neutral-raised));
+  }
 
   fieldset output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
-    padding: var(--xs) var(--s); line-height: var(--line-height-tight);
     font-family: var(--font-mono); font-size: var(--m); font-weight: var(--font-weight-normal); color: var(--color-ink);
   }
 
@@ -326,31 +351,39 @@
   <article id="controls">
     <fieldset>
       <legend>Planting</legend>
-      <label><input type="radio" name="planting" value="Turf">Turf</label>
-      <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
-      <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+      <span data-skin="track">
+        <label><input type="radio" name="planting" value="Turf">Turf</label>
+        <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+        <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+      </span>
     </fieldset>
 
     <fieldset>
       <legend>Soil</legend>
-      <label><input type="radio" name="soil" value="Sand">Sand</label>
-      <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
-      <label><input type="radio" name="soil" value="Loam">Loam</label>
-      <label><input type="radio" name="soil" value="Clay">Clay</label>
+      <span data-skin="track">
+        <label><input type="radio" name="soil" value="Sand">Sand</label>
+        <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+        <label><input type="radio" name="soil" value="Loam">Loam</label>
+        <label><input type="radio" name="soil" value="Clay">Clay</label>
+      </span>
     </fieldset>
 
     <fieldset>
       <legend>Exposure</legend>
-      <label><input type="radio" name="sun" value="Shade">Shade</label>
-      <label><input type="radio" name="sun" value="Half sun">Half sun</label>
-      <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+      <span data-skin="track">
+        <label><input type="radio" name="sun" value="Shade">Shade</label>
+        <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+        <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+      </span>
     </fieldset>
 
     <fieldset>
       <legend>Duration</legend>
-      <button type="button" id="durDown">−</button>
-      <output id="durVal">60<small>min</small></output>
-      <button type="button" id="durUp">+</button>
+      <span data-skin="track">
+        <button type="button" id="durDown">−</button>
+        <output id="durVal">60<small>min</small></output>
+        <button type="button" id="durUp">+</button>
+      </span>
     </fieldset>
   </article>
 
