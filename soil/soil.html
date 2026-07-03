@@ -71,7 +71,7 @@
 
   body {
     display: grid;
-    gap: var(--l);
+    gap: var(--m);
     padding: var(--m);
     overflow-x: hidden;
     font-family: var(--font-sans);
@@ -187,18 +187,23 @@
   }
   scroll-thumb:active { cursor: grabbing; }
 
-  /* Controls stack tightly: each group is one row — a small right-aligned label,
-     then the segmented track. No floating legends eating vertical space, no
-     dividers. */
-  [data-skin="controls"] { gap: var(--s); }
+  /* Controls: a two-column grid — label column sized to its widest label, then
+     the track. All labels right-align against their tracks; no dead gutter.
+     The card stays pinned to the bottom of the viewport while the page scrolls. */
+  [data-skin="controls"] {
+    grid-template-columns: max-content 1fr;
+    align-items: center; gap: var(--s) var(--m);
+    padding: var(--s) var(--m);
+    position: sticky; inset-block-end: var(--s); z-index: 1;
+    box-shadow: var(--box-shadow-lift);
+  }
 
   [data-skin="controls"] fieldset {
-    display: flex; align-items: center; gap: var(--m);
-    margin: 0; padding: 0; border: 0; background: none;
+    display: contents;
   }
 
   seg-label {
-    flex: 0 0 4rem; text-align: end;
+    text-align: end;
     font-family: var(--font-mono); font-size: var(--s); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
@@ -226,9 +231,11 @@
                 transform var(--time-quick) cubic-bezier(.4,.9,.3,1);
   }
 
+  /* cells size to content (flex-basis auto) so a long label like "Sandy loam"
+     never overflows its own cell — the sliding outline always encloses the text */
   seg-track label {
     position: relative; z-index: 1;
-    flex: 1 1 0; min-inline-size: 0; font-size: var(--m);
+    flex: 1 1 auto; min-inline-size: 0; font-size: var(--m);
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
@@ -430,7 +437,7 @@ const ENGINE = {
 
 const CFG = {
   geom: {
-    h: 380, skyTop: 40, surf: 160, soilBot: 344, axisX: 0, padR: 12,
+    h: 380, skyTop: 30, surf: 160, soilBot: 344, axisX: 0, padR: 12,
     daysPerView: 9, dayMin: 36, dayMax: 94,
   },
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
@@ -462,7 +469,7 @@ const DRAW = {
 
   drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
           hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
-          yOfs:72, rK:0.15, rMin:6, rMax:9 },
+          yOfs:71, rK:0.15, rMin:6, rMax:9 },
 
   plant: {
     sproutMax:0.07,
@@ -488,13 +495,15 @@ const DRAW = {
   },
 
   sun: {
-    minVis:0.04, yOfs:24, radMin:2.5, radMax:7.5, glowKMin:2.1, glowKMax:3.4,
-    rayMin:3, rayMax:8, rayInner:2, rayOuterMin:2, rayOuterMax:9, rayWMin:0.7, rayWMax:1.6,
+    minVis:0.04, yOfs:26, radMin:2.5, radMax:7.5, glowKMin:2.1, glowKMax:3.4,
+    rayMin:3, rayMax:8, rayInner:2, rayOuterMin:2, rayOuterMax:6, rayWMin:0.7, rayWMax:1.6,
     glowOpBase:0.2, glowOpK:0.32, groupOp:0.92, coreEdgeW:0.8,
   },
 
+  /* yMax keeps every strand (start + max length + jitter) above the soil
+     surface — rain must never render underground */
   rain: {
-    minVis:0.05, perMm:1.4, strandMin:3, strandMax:14, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:165,
+    minVis:0.05, perMm:1.4, strandMin:3, strandMax:14, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:95,
     lenMin:11, lenMax:24, lenNorm:18, lenJitBase:0.7, lenJitK:0.6, slant:2.5, w:1.7,
     opBase:0.58, opK:0.42, opNorm:12,
   },
@@ -779,7 +788,7 @@ function build(model){
   // flows straight into a translucent body of the same width — no gap, no rails.
   // It sits in the headroom above the sky so it never lands on the today sun.
   const tx=cx(todayIdx), bandX=tx-dayW/2, x2=bandX+dayW;
-  const capT=3, tabH=MK.hK*K, capB=capT+tabH, rTop=Math.min(5, dayW*0.14);
+  const capT=2, tabH=MK.hK*K, capB=capT+tabH, rTop=Math.min(5, dayW*0.14);
   const head=`M ${bandX.toFixed(1)} ${capB.toFixed(1)} L ${bandX.toFixed(1)} ${(capT+rTop).toFixed(1)} `
     +`Q ${bandX.toFixed(1)} ${capT} ${(bandX+rTop).toFixed(1)} ${capT} L ${(x2-rTop).toFixed(1)} ${capT} `
     +`Q ${x2.toFixed(1)} ${capT} ${x2.toFixed(1)} ${(capT+rTop).toFixed(1)} L ${x2.toFixed(1)} ${capB.toFixed(1)} Z`;
