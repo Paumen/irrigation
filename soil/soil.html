@@ -187,31 +187,21 @@
   }
   scroll-thumb:active { cursor: grabbing; }
 
-  /* Controls: a two-column grid — label column sized to its widest label, then
-     the track. All labels right-align against their tracks; no dead gutter.
-     The card stays pinned to the bottom of the viewport while the page scrolls. */
+  /* Controls: the fieldset IS the segmented track (pill); its real <legend> is
+     positioned into a reserved label column on the left, so every label
+     right-aligns against its track. The card stays pinned to the bottom of the
+     viewport while the page scrolls. */
   [data-skin="controls"] {
-    grid-template-columns: max-content 1fr;
-    align-items: center; gap: var(--s) var(--m);
+    gap: var(--s);
     padding: var(--s) var(--m);
     position: sticky; inset-block-end: var(--s); z-index: 1;
     box-shadow: var(--box-shadow-lift);
   }
 
-  [data-skin="controls"] fieldset {
-    display: contents;
-  }
-
-  seg-label {
-    text-align: end;
-    font-family: var(--font-mono); font-size: var(--s); letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase; color: var(--color-ink-mute);
-  }
-
-  /* the segmented track (pill) the options sit in */
-  seg-track {
-    position: relative; flex: 1 1 auto;
+  fieldset {
+    position: relative;
     display: flex; gap: 0;
+    margin-inline-start: 7rem;   /* reserved label column (fits DURATION at --m) */
     padding: var(--xs);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
@@ -219,21 +209,38 @@
     isolation: isolate;
   }
 
-  /* the sliding "selected" outline (opaque, never a solid dark fill) — its
-     size/position are set inline by the slider script. */
-  seg-track > i {
-    position: absolute; z-index: 0; inset-block: var(--xs); inset-inline-start: 0;
-    inline-size: 0;
-    background: color-mix(in oklab, var(--color-hue) 10%, var(--color-neutral-raised));
-    border: 1.5px solid var(--color-hue);
-    border-radius: var(--radius-pill);
-    transition: inline-size var(--time-quick) cubic-bezier(.4,.9,.3,1),
-                transform var(--time-quick) cubic-bezier(.4,.9,.3,1);
+  legend {
+    position: absolute; inset-block: 0; inset-inline-start: -7rem;
+    inline-size: 6.5rem; padding: 0;
+    display: flex; align-items: center; justify-content: flex-end;
+    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase; color: var(--color-ink-mute);
+  }
+
+  /* the sliding "selected" outline: a ::after anchored to the checked label —
+     pure CSS, no JS positioning. Anchor names are scoped to the fieldset (an
+     anchor must share the positioned box's containing block), so each track's
+     thumb follows its own checked segment. Browsers without anchor positioning
+     render no thumb; weight + colour still mark the selection. */
+  fieldset label:has(input:checked) { anchor-name: --selected; }
+
+  @supports (anchor-name: --a) {
+    fieldset:has(input:checked)::after {
+      content: ""; position: absolute; z-index: 0;
+      position-anchor: --selected;
+      inset-block-start: anchor(start); inset-inline-start: anchor(start);
+      inline-size: anchor-size(inline); block-size: anchor-size(block);
+      background: color-mix(in oklab, var(--color-hue) 10%, var(--color-neutral-raised));
+      border: 1.5px solid var(--color-hue);
+      border-radius: var(--radius-pill);
+      transition: inset-inline-start var(--time-quick) cubic-bezier(.4,.9,.3,1),
+                  inline-size var(--time-quick) cubic-bezier(.4,.9,.3,1);
+    }
   }
 
   /* cells size to content (flex-basis auto) so a long label like "Sandy loam"
      never overflows its own cell — the sliding outline always encloses the text */
-  seg-track label {
+  fieldset label {
     position: relative; z-index: 1;
     flex: 1 1 auto; min-inline-size: 0; font-size: var(--m);
     padding: var(--xs) var(--s);
@@ -242,28 +249,32 @@
     transition: color var(--time-quick) ease;
   }
 
-  seg-track input {
+  fieldset input {
     position: absolute; inline-size: 1px; block-size: 1px;
     opacity: var(--opacity-hidden); pointer-events: none;
   }
 
   /* selected: extra weight + green accent only — never inversion. */
-  seg-track label:has(input:checked) {
+  fieldset label:has(input:checked) {
     color: var(--color-hue); font-weight: var(--font-weight-semibold);
   }
 
-  /* duration stepper: a compact track that doesn't stretch to full width. */
-  seg-track[data-skin="elevated"] { flex: 0 0 auto; }
+  [data-skin="elevated"] { background: var(--color-neutral-raised); }
 
-  seg-track button {
+  /* duration stepper: a compact track sized to its content, not stretched. */
+  fieldset:has(button) {
+    display: inline-flex; place-self: start;
+  }
+
+  fieldset button {
     inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
     transition: background var(--time-quick) ease;
   }
-  seg-track button:hover { background: color-mix(in oklab, var(--color-ink) 6%, transparent); }
+  fieldset button:hover { background: color-mix(in oklab, var(--color-ink) 6%, transparent); }
 
-  seg-track output {
+  fieldset output {
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
@@ -271,7 +282,7 @@
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  seg-track output small { font-size: var(--s); }
+  fieldset output small { font-size: var(--s); }
 
   [data-state="loading"] :is(output, gauge-bar) {
     opacity: var(--opacity-hidden);
@@ -311,44 +322,33 @@
   <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
 
   <article id="controls" data-skin="controls">
-    <fieldset aria-label="Planting">
-      <seg-label>Planting</seg-label>
-      <seg-track>
-        <i aria-hidden="true"></i>
-        <label><input type="radio" name="planting" value="Turf">Turf</label>
-        <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
-        <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
-      </seg-track>
+    <fieldset>
+      <legend>Planting</legend>
+      <label><input type="radio" name="planting" value="Turf">Turf</label>
+      <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+      <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
     </fieldset>
 
-    <fieldset aria-label="Soil">
-      <seg-label>Soil</seg-label>
-      <seg-track>
-        <i aria-hidden="true"></i>
-        <label><input type="radio" name="soil" value="Sand">Sand</label>
-        <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
-        <label><input type="radio" name="soil" value="Loam">Loam</label>
-        <label><input type="radio" name="soil" value="Clay">Clay</label>
-      </seg-track>
+    <fieldset>
+      <legend>Soil</legend>
+      <label><input type="radio" name="soil" value="Sand">Sand</label>
+      <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+      <label><input type="radio" name="soil" value="Loam">Loam</label>
+      <label><input type="radio" name="soil" value="Clay">Clay</label>
     </fieldset>
 
-    <fieldset aria-label="Exposure">
-      <seg-label>Exposure</seg-label>
-      <seg-track>
-        <i aria-hidden="true"></i>
-        <label><input type="radio" name="sun" value="Shade">Shade</label>
-        <label><input type="radio" name="sun" value="Half sun">Half sun</label>
-        <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
-      </seg-track>
+    <fieldset>
+      <legend>Exposure</legend>
+      <label><input type="radio" name="sun" value="Shade">Shade</label>
+      <label><input type="radio" name="sun" value="Half sun">Half sun</label>
+      <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
     </fieldset>
 
-    <fieldset aria-label="Duration">
-      <seg-label>Duration</seg-label>
-      <seg-track data-skin="elevated">
-        <button type="button" id="durDown">−</button>
-        <output id="durVal">60<small>min</small></output>
-        <button type="button" id="durUp">+</button>
-      </seg-track>
+    <fieldset data-skin="elevated">
+      <legend>Duration</legend>
+      <button type="button" id="durDown">−</button>
+      <output id="durVal">60<small>min</small></output>
+      <button type="button" id="durUp">+</button>
     </fieldset>
   </article>
 
@@ -861,17 +861,6 @@ function toggleWater(i){
   }
 }
 
-// Slide the "selected" outline under the checked segment of each control group.
-function placeThumbs(first){
-  document.querySelectorAll("#controls seg-track").forEach(st=>{
-    const thumb=st.querySelector("i"), on=st.querySelector("label:has(input:checked)");
-    if(!thumb||!on) return;
-    if(first) thumb.style.transition="none";
-    thumb.style.inlineSize=on.offsetWidth+"px";
-    thumb.style.transform=`translateX(${on.offsetLeft}px)`;
-    if(first){ void thumb.offsetWidth; thumb.style.transition=""; }
-  });
-}
 function wireHits(){
   scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
     h.style.cursor="pointer";
@@ -883,7 +872,7 @@ document.getElementById("durVal").innerHTML=`${ctrl.minutes}<small>min</small>`;
 
 document.getElementById("controls").addEventListener("change",e=>{
   const r=e.target; if(r.type!=="radio")return;
-  ctrl[r.name]=r.value; placeThumbs(); rerender();
+  ctrl[r.name]=r.value; rerender();
 });
 function bumpDur(d){
   ctrl.minutes=clamp(ctrl.minutes+d,ENGINE.dur.min,ENGINE.dur.max);
@@ -914,10 +903,7 @@ sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
   const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
   scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
 
-let rt; addEventListener("resize",()=>{placeThumbs();clearTimeout(rt);rt=setTimeout(()=>{placeThumbs();rerender();},180);});
-
-placeThumbs(true);
-addEventListener("load",()=>placeThumbs(true));
+let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
 
 function showLoading(){ statusEl.dataset.state="loading"; msgEl.hidden=false; msgEl.textContent="Loading weather…"; }
 function showError(err){
