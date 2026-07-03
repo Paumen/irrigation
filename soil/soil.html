@@ -617,7 +617,7 @@ HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade
 // Matte, earthy watering affordance. Every tappable (today-onward) day carries a
 // ghost ring inviting a tap; a watered day resolves it into a clean, filled drop.
 const DROPUI = {
-  ghost:"#AEB9B2", fill:"#6E8E92",
+  fill:"#6E8E92", disc:"#F0EDE4", discEdge:"#D6D0BF", drop:"#7E969C",
   ringRK:0.24, ringMin:11, ringMax:15,
 };
 function dropPathD(cx,cy,r){
@@ -634,10 +634,13 @@ function waterDrop(cx,cy,R){
   return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.fill}" stroke-width="1.5"/>`
     +`<path d="${dropPathD(cx,dy,dr)}" fill="${DROPUI.fill}" stroke="none"/>`;
 }
+// Empty/tappable: a quietly raised disc (soft lift shadow = "pressable") with a
+// light slate drop outline. Sits just above the sky tone so the watered state
+// keeps the visual weight.
 function ghostRing(cx,cy,R){
   const dr=R*0.5, dy=cy+R*0.3;
-  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.ghost}" stroke-width="1.25" stroke-dasharray="2.5 2.5"/>`
-    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.ghost}" stroke-width="1.25" stroke-linejoin="round" opacity="0.85"/>`;
+  return `<g filter="url(#btnLift)"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="${DROPUI.disc}" stroke="${DROPUI.discEdge}" stroke-width="1"/></g>`
+    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.drop}" stroke-width="1.4" stroke-linejoin="round" opacity="0.9"/>`;
 }
 function wetCol(x0,w,sY,hgt){
   return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
@@ -711,6 +714,9 @@ function build(model){
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".30"/>
       <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>
+    <filter id="btnLift" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#45402f" flood-opacity="0.18"/>
+    </filter>
     <linearGradient id="todayBeam" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.green}" stop-opacity=".18"/>
       <stop offset="1" stop-color="${C.green}" stop-opacity=".03"/></linearGradient>
