@@ -194,14 +194,17 @@
   [data-skin="controls"] {
     gap: var(--s);
     padding: var(--s) var(--m);
-    position: sticky; inset-block-end: var(--s); z-index: 1;
+    position: fixed; inset-inline: var(--m); inset-block-end: var(--m); z-index: 1;
     box-shadow: var(--box-shadow-lift);
   }
 
   fieldset {
     position: relative;
     display: flex; gap: 0;
-    margin-inline-start: 7rem;   /* reserved label column (fits DURATION at --m) */
+
+    /* label column: sized in --m units to just fit the longest legend
+       ("DURATION", 8 mono chars + tracking) — no dead gutter */
+    margin-inline-start: calc(var(--m) * 5.9);
     padding: var(--xs);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
@@ -210,9 +213,9 @@
   }
 
   legend {
-    position: absolute; inset-block: 0; inset-inline-start: -7rem;
-    inline-size: 6.5rem; padding: 0;
-    display: flex; align-items: center; justify-content: flex-end;
+    position: absolute; inset-block: 0; inset-inline-end: calc(100% + var(--s));
+    inline-size: max-content; padding: 0;
+    display: flex; align-items: center;
     font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
@@ -291,6 +294,26 @@
 
   [data-state="error"] :is(output, gauge-bar),
   [data-state="error"] p:not([data-freeform]) { display: none; }
+
+  [data-state="pop"] {
+    transform-box: fill-box;
+    transform-origin: 50% 85%;
+    animation: drop-pop var(--time-quick) cubic-bezier(.2, .8, .2, 1);
+  }
+
+  @keyframes drop-pop {
+    0% {
+      transform: scale(.3);
+      opacity: 0;
+    }
+
+    60% { transform: scale(1.12); }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
 
   body > p[data-freeform] {
     text-align: center;
@@ -722,8 +745,9 @@ function build(model){
     }
     const affX=cx(d.i), affY=SURF-DP.yOfs, ringR=clamp(dayW*DROPUI.ringRK,DROPUI.ringMin,DROPUI.ringMax);
     if(d.mins>0){
+      const pop=d.i===popDay?' data-state="pop"':"";
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
-      weather+=`<g class="grow" data-drop="${d.i}" style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
+      weather+=`<g class="grow"${pop} style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
     } else if(d.i>=todayIdx){
       weather+=`<g>${ghostRing(affX,affY,ringR)}</g>`;
     }
@@ -846,19 +870,16 @@ function render(){
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
+// The day watered on the current tap: its drop is emitted with data-state="pop"
+// so the CSS entrance animation plays as the redrawn scene appears.
+let popDay=null;
 function toggleWater(i){
   const set=new Set(ctrl.watered), adding=!set.has(i);
   adding ? set.add(i) : set.delete(i);
   ctrl.watered=[...set];
+  popDay = adding ? i : null;
   rerender();
-  if(adding){
-    const g=scene.querySelector(`[data-drop="${i}"]`);
-    if(g){
-      g.style.transformBox="fill-box"; g.style.transformOrigin="50% 85%";
-      g.animate([{transform:"scale(.3)",opacity:0},{transform:"scale(1.12)",offset:.6},{transform:"scale(1)",opacity:1}],
-                {duration:380,easing:"cubic-bezier(.2,.8,.2,1)"});
-    }
-  }
+  popDay = null;
 }
 
 function wireHits(){
@@ -903,7 +924,14 @@ sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
   const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
   scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
 
-let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
+// the dock is position:fixed, so reserve its height at the page end
+function reserveDock(){
+  const c=document.getElementById("controls");
+  document.body.style.paddingBlockEnd=(c.offsetHeight+24)+"px";
+}
+reserveDock();
+
+let rt; addEventListener("resize",()=>{reserveDock();clearTimeout(rt);rt=setTimeout(rerender,180);});
 
 function showLoading(){ statusEl.dataset.state="loading"; msgEl.hidden=false; msgEl.textContent="Loading weather…"; }
 function showError(err){
