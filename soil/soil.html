@@ -206,7 +206,7 @@
     position: absolute; inset-block: 0; inset-inline-end: calc(100% + var(--s));
     inline-size: max-content; padding: 0;
     display: flex; align-items: center;
-    font-family: var(--font-mono); font-size: var(--l); letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
@@ -799,7 +799,7 @@ function renderStatus(model){
   const pct=Math.round(tl/TANK*100), N=DATA.length;
   let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
   let word,level,kick;
-  if(tl<=TANK*ENGINE.emptyFrac){ word="Water today"; level="now"; kick="Refill point reached"; }
+  if(tl<=TANK*ENGINE.emptyFrac){ word="Water today"; level="today"; kick="Refill point reached"; }
   else if(tl<REFILL){ word="Water now"; level="now"; kick="Below refill point"; }
   else {
     let dd,plus=""; if(firstBelow>=0){dd=firstBelow-ti;} else {dd=(N-1)-ti;plus="+";}
@@ -808,7 +808,7 @@ function renderStatus(model){
     kick="Above refill point";
   }
   const st=document.getElementById("status");
-  document.body.style.setProperty("--value-color", `var(--color-${ {ok:"hue",soon:"alert",now:"danger"}[level] })`);
+  document.body.style.setProperty("--value-color", `var(--color-${ {ok:"hue",soon:"alert",today:"alert",now:"danger"}[level] })`);
   st.style.setProperty("--value-fill", clamp(pct,0,100)+"%");
   st.style.setProperty("--value-refill", (REFILL/TANK*100)+"%");
   document.getElementById("word").innerHTML=`<i></i>${word}`;
