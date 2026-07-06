@@ -34,6 +34,7 @@
     --color-ink:                oklch(33.1% 0.017  82);
     --color-ink-mute:           oklch(58.5% 0.028  87);
     --color-hue:              oklch(49.6% 0.061 141);
+    --color-hue-water:        oklch(60%   0.105 213);
     --color-alert:          oklch(65.1% 0.130  71);
     --color-danger:        oklch(54.1% 0.152  39);
     --font-serif: "Newsreader", georgia, "Times New Roman", serif;
@@ -440,6 +441,45 @@ function todayInTz(tz) {
   return `${get("year")}-${get("month")}-${get("day")}`;
 }
 
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp  = (a,b,t) => a + (b-a)*t;
+const ease  = t => t<0?0 : t>1?1 : t*t*(3-2*t);
+const health = v => ease(clamp((v - VIT.lo) / VIT.span, 0, 1));
+
+const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
+const hexLerp = (a,b,t) => { const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1))); return `rgb(${m(0)},${m(1)},${m(2)})`; };
+// hex-out sibling of hexLerp, for derived palette entries that get re-parsed by hx()
+const mix = (a,b,t) => { const A=hx(a),B=hx(b),m=i=>clamp(Math.round(lerp(A[i],B[i],t)),0,255).toString(16).padStart(2,"0"); return `#${m(0)}${m(1)}${m(2)}`; };
+function ramp(stops,v){ v=clamp(v,0,1); for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1]; if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}} return stops[stops.length-1][1]; }
+const rootColor  = v => ramp([[0,"#2A2620"],[.10,"#56422E"],[.30,"#8A6A3E"],[.60,"#7E8A3E"],[1,"#4F7F4A"]], v);
+const plantColor = v => ramp([[0,"#3A352C"],[.10,"#9A7A3C"],[.25,"#7E8A3E"],[.55,"#4F7F4A"],[1,"#3F7A3B"]], v);
+const leafColor  = v => ramp([[0,"#67563C"],[.25,"#9C8A45"],[.6,"#6FA06A"],[1,"#5F9A5A"]], v);
+function shade(hex,f){ const [r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,"0"); return `#${m(r)}${m(g)}${m(b)}`; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
+function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`; return d; }
+
+// Single palette source: every hue the scene shares with the page chrome is
+// resolved from the CSS tokens at boot, so the SVG can never drift from the
+// stylesheet. A 1×1 canvas round-trips oklch() to the hex the mixers above eat.
+const TOKEN = (() => {
+  const cv=document.createElement("canvas"); cv.width=cv.height=1;
+  const c2=cv.getContext("2d",{willReadFrequently:true});
+  const root=getComputedStyle(document.documentElement);
+  return n => { c2.fillStyle="#000"; c2.fillStyle=root.getPropertyValue(n).trim(); c2.fillRect(0,0,1,1);
+    const d=c2.getImageData(0,0,1,1).data;
+    return `#${[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,"0")).join("")}`; };
+})();
+const INK=TOKEN("--color-ink"), INK_MUTE=TOKEN("--color-ink-mute");
+const PAGE=TOKEN("--color-neutral"), PAPER=TOKEN("--color-neutral-raised"), MUTE=TOKEN("--color-neutral-mute");
+const GREEN=TOKEN("--color-hue"), AMBER=TOKEN("--color-alert"), RUST=TOKEN("--color-danger"), WATER=TOKEN("--color-hue-water");
+
+// Sun cores warm from pale straw through the chrome's alert amber toward its
+// danger rust as the day's max temperature climbs — hotter reads redder, and
+// the whole ramp stays inside the page's accent family.
+const SUN_RAMP=[[0,mix(AMBER,PAPER,.42)],[.5,AMBER],[1,mix(AMBER,RUST,.55)]];
+const sunCore = h => ramp(SUN_RAMP, h);
+
 const ENGINE = {
   plantings: { "Turf":{kc:.85,root:.15}, "Flower bed":{kc:.90,root:.30}, "Shrubs":{kc:.70,root:.50} },
   soils: { "Sand":60, "Sandy loam":130, "Loam":170, "Clay":190 },
@@ -461,22 +501,26 @@ const ENGINE = {
 const CFG = {
   geom: {
     h: 380, skyTop: 30, surf: 160, soilBot: 344, axisX: 0, padR: 12,
-    daysPerView: 9, dayMin: 36, dayMax: 94,
+    daysPerView: 9, dayMin: 36, dayMax: 72,
   },
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
   horizons: [
-    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
-    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
-    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08, label:"B" },
+    { fill:"#33261A", spn:0.95, label:"O" },
+    { fill:"#4E3A22", spn:0.85, label:"A" },
+    { fill:"#8C6638", spn:0.55, peb:0.08, label:"B" },
   ],
+  // Shared hues come from the chrome tokens; the rest are mixes of those
+  // tokens, so the scene and the page pull from one palette. Only the soil
+  // pigments (horizons above, ENGINE.soilLook) and the tiny flower/leaf
+  // accents stay hand-mixed — they are illustration, not chrome.
   color: {
-    sky:"#E7E4DA", surf:"#5A4A33",
-    aqua0:"#34BCD2", aqua1:"#0C6478", waterLine:"#1FA6BE", waterHi:"#BDEAF1",
-    rain:"#2F6E94", glow:"#E0A074", drop:"#34BCD2", dropEdge:"#1FA6BE", dropHi:"#E8FAFD",
-    paper:"#FBFAF6", flower:"#C98AB0", flowerC:"#E7C24A",
-    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge:"#8A5732", leafGold:"#9C8A45",
-    green:"#4F6B4A", rust:"#B5471F",
+    sky: mix(PAGE, WATER, .18), surf:"#5A4A33",
+    aqua0: mix(WATER, PAPER, .30), aqua1: shade(WATER, .55), waterLine: WATER, waterHi: mix(WATER, PAPER, .72),
+    rain: shade(WATER, .75), glow: mix(AMBER, PAPER, .35),
+    paper: PAPER, flower:"#C98AB0", flowerC:"#E7C24A",
+    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge: shade(AMBER, .62), leafGold:"#9C8A45",
+    green: GREEN, rust: RUST,
   },
 };
 
@@ -485,10 +529,9 @@ const DRAW = {
   bootStagger: { weather:8, flora:9 },
   seeds: { rain:900, soil:40, crack:31, surf:7, flora:101 },
 
-  text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
-  ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
-  marker: { wK:44, hK:15, y:3, rxK:7.5, fsK:10, tracking:0.1,
-            fillOp:0.07, edgeOp:0.45, dash:"3 4", edgeW:1 },
+  text:   { vwToPx:0.02, pxMin:12.8, pxMax:19.2, basePx:12, heightSlack:60 },
+  ticks:  { padY:5, dateDy:12, wdDy:25, fs:12, wdK:0.85 },
+  marker: { hK:15, fsK:10, tracking:0.1 },
 
   drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
           hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
@@ -520,7 +563,7 @@ const DRAW = {
   sun: {
     minVis:0.04, yOfs:26, radMin:2.5, radMax:7.5, glowKMin:2.1, glowKMax:3.4,
     rayMin:3, rayMax:8, rayInner:2, rayOuterMin:2, rayOuterMax:6, rayWMin:0.7, rayWMax:1.6,
-    glowOpBase:0.2, glowOpK:0.32, groupOp:0.92, coreEdgeW:0.8,
+    glowOpBase:0.2, glowOpK:0.32, opMin:0.55, opMax:0.95, coreEdgeW:0.8,
   },
 
   /* yMax keeps every strand (start + max length + jitter) above the soil
@@ -540,7 +583,7 @@ const DRAW = {
 
   table: {
     lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
-    refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
+    refillHaloW:3.4, refillHaloOp:0.5, refillW:1.7, refillDash:"6 7",
   },
 
   crack: {
@@ -571,11 +614,6 @@ const MONO = "ui-monospace,Menlo,Consolas,monospace";
 
 let WEATHER = null;
 
-const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
-const lerp  = (a,b,t) => a + (b-a)*t;
-const ease  = t => t<0?0 : t>1?1 : t*t*(3-2*t);
-const health = v => ease(clamp((v - VIT.lo) / VIT.span, 0, 1));
-
 function compute(ctrl) {
   const p = ENGINE.plantings[ctrl.planting], aw = ENGINE.soils[ctrl.soil], sf = ENGINE.sun[ctrl.sun];
   const tank = aw * p.root, dose = ENGINE.applyRate * ctrl.minutes;
@@ -595,29 +633,14 @@ function compute(ctrl) {
   return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root, soil: ctrl.soil };
 }
 
-const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
-const hexLerp = (a,b,t) => { const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1))); return `rgb(${m(0)},${m(1)},${m(2)})`; };
-function ramp(stops,v){ v=clamp(v,0,1); for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1]; if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}} return stops[stops.length-1][1]; }
-const rootColor  = v => ramp([[0,"#2A2620"],[.10,"#56422E"],[.30,"#8A6A3E"],[.60,"#7E8A3E"],[1,"#4F7F4A"]], v);
-const plantColor = v => ramp([[0,"#3A352C"],[.10,"#9A7A3C"],[.25,"#7E8A3E"],[.55,"#4F7F4A"],[1,"#3F7A3B"]], v);
-const leafColor  = v => ramp([[0,"#67563C"],[.25,"#9C8A45"],[.6,"#6FA06A"],[1,"#5F9A5A"]], v);
-function rgb2hsl(hex){const [r,g,b]=hx(hex).map(v=>v/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360;}const l=(mx+mn)/2;return[h,d?d/(1-Math.abs(2*l-1)):0,l];}
-function hsl2hex(h,s,l){h=((h%360)+360)%360;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,[r,g,b]=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x],f=v=>clamp(Math.round((v+m)*255),0,255).toString(16).padStart(2,"0");return`#${f(r)}${f(g)}${f(b)}`;}
-const warmer=(hex,dH,dS,dL)=>{const[h,s,l]=rgb2hsl(hex);return hsl2hex(h+dH,clamp(s+dS,0,1),clamp(l+dL,0,1));};
-const TERRACOTTA=C.rust;
-const SUN_RAMP=[[0,warmer(TERRACOTTA,30,.10,.20)],[.5,warmer(TERRACOTTA,14,.05,.13)],[1,warmer(TERRACOTTA,3,0,.03)]];
-const sunCore    = h => ramp(SUN_RAMP, h);
-function shade(hex,f){ const [r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,"0"); return `#${m(r)}${m(g)}${m(b)}`; }
-function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
-function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`; return d; }
-
 HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
 
 // Matte, earthy watering affordance. Every tappable (today-onward) day carries a
 // ghost ring inviting a tap; a watered day resolves it into a clean, filled drop.
+// The drop wears the same water hue as rain and the water table — one entity,
+// one colour — while the empty ring stays chrome-quiet.
 const DROPUI = {
-  fill:"#6E8E92", disc:"#F0EDE4", discEdge:"#D6D0BF", drop:"#7E969C",
+  fill: mix(WATER, INK_MUTE, .30), disc: PAPER, discEdge: MUTE, drop: mix(WATER, INK_MUTE, .45),
   ringRK:0.24, ringMin:11, ringMax:15,
 };
 function dropPathD(cx,cy,r){
@@ -634,13 +657,16 @@ function waterDrop(cx,cy,R){
   return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.fill}" stroke-width="1.5"/>`
     +`<path d="${dropPathD(cx,dy,dr)}" fill="${DROPUI.fill}" stroke="none"/>`;
 }
-// Empty/tappable: a quietly raised disc (soft lift shadow = "pressable") with a
-// light slate drop outline. Sits just above the sky tone so the watered state
-// keeps the visual weight.
-function ghostRing(cx,cy,R){
+// Empty/tappable: a quiet translucent slot on most days — fifteen affordances
+// must not read as a row of buttons. Only today keeps the raised disc (soft
+// lift shadow = "pressable"): the one day where watering is the primary action.
+function ghostRing(cx,cy,R,lifted){
   const dr=R*0.5, dy=cy+R*0.3;
-  return `<g filter="url(#btnLift)"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="${DROPUI.disc}" stroke="${DROPUI.discEdge}" stroke-width="1"/></g>`
-    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.drop}" stroke-width="1.4" stroke-linejoin="round" opacity="0.9"/>`;
+  const disc = lifted
+    ? `<g filter="url(#btnLift)"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="${DROPUI.disc}" stroke="${DROPUI.discEdge}" stroke-width="1"/></g>`
+    : `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="${DROPUI.disc}" fill-opacity="0.4" stroke="${DROPUI.discEdge}" stroke-width="1" stroke-opacity="0.6"/>`;
+  return disc
+    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.drop}" stroke-width="1.4" stroke-linejoin="round" opacity="${lifted?0.9:0.55}"/>`;
 }
 function wetCol(x0,w,sY,hgt){
   return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
@@ -717,6 +743,9 @@ function build(model){
     <filter id="btnLift" x="-60%" y="-60%" width="220%" height="220%">
       <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#45402f" flood-opacity="0.18"/>
     </filter>
+    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${C.sky}" stop-opacity="0"/>
+      <stop offset="1" stop-color="${C.sky}" stop-opacity=".9"/></linearGradient>
     <linearGradient id="todayBeam" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.green}" stop-opacity=".18"/>
       <stop offset="1" stop-color="${C.green}" stop-opacity=".03"/></linearGradient>
@@ -729,17 +758,19 @@ function build(model){
       <stop offset=".5" stop-color="${C.waterHi}"/>
       <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
 
-  let sky="", weather="";
+  // One sky wash for the whole scene — a vertical fade into the tint at the
+  // surface, so the graph has a home without a hard banner edge at its top.
+  const sky=`<rect x="${AX}" y="${SKY_TOP}" width="${(R-AX).toFixed(1)}" height="${SURF-SKY_TOP}" fill="url(#skyG)"/>`;
+  let weather="";
   DATA.forEach(d=>{
     const x0=cx(d.i)-dayW/2, heat=clamp((d.tmax-sc.tempMin)/(sc.tempMax-sc.tempMin),0,1);
-    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${C.sky}"/>`;
     const si=clamp((d.et0-sc.et0Min)/(sc.et0Max-sc.et0Min),0,1);
     if(si>SUN.minVis){
       const sx=x0+dayW*0.5, sy=SKY_TOP+SUN.yOfs, rad=lerp(SUN.radMin,SUN.radMax,si), core=sunCore(heat);
       const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat); let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
       for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si);
         rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(SUN.rayWMin,SUN.rayWMax,si).toFixed(2)}" stroke-linecap="round"/>`;}
-      weather+=`<g opacity="${SUN.groupOp}"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(SUN.glowOpBase+heat*SUN.glowOpK).toFixed(2)}"/>${rays}<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${C.sunEdge}" stroke-width="${SUN.coreEdgeW}"/></g>`;
+      weather+=`<g opacity="${lerp(SUN.opMin,SUN.opMax,si).toFixed(2)}"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(SUN.glowOpBase+heat*SUN.glowOpK).toFixed(2)}"/>${rays}<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}" stroke="${C.sunEdge}" stroke-width="${SUN.coreEdgeW}"/></g>`;
     }
     if(d.rain>RN.minVis){
       const rng=mulberry32(SD.rain+d.i), strands=Math.round(clamp(d.rain/RN.perMm,RN.strandMin,RN.strandMax)); let rg="";
@@ -755,7 +786,7 @@ function build(model){
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
       weather+=`<g class="grow"${pop} style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
     } else if(d.i>=todayIdx){
-      weather+=`<g>${ghostRing(affX,affY,ringR)}</g>`;
+      weather+=`<g>${ghostRing(affX,affY,ringR,d.i===todayIdx)}</g>`;
     }
   });
 
@@ -809,10 +840,12 @@ function build(model){
     // paumen-lint-disable-next-line  -- dynamic per-element transform-origin/transition-delay can't move to a static stylesheet
     flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
 
+  // Axis text wears the page's ink tokens: dates in ink, weekdays a step
+  // smaller and muted — one primary row, one secondary, today in green.
   let ticks="";
-  DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
-    ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd.slice(0,3)}</text>`;});
+  DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'';
+    ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${isT?C.green:INK}">${d.date.slice(8)}</text>`
+       +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*TK.wdK*K).toFixed(1)}"${bold} fill="${isT?C.green:INK_MUTE}">${d.wd.slice(0,3)}</text>`;});
 
   // TODAY marker as ONE contiguous piece: a solid rounded head (the label) that
   // flows straight into a translucent body of the same width — no gap, no rails.
