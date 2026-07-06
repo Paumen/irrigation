@@ -134,7 +134,7 @@
   }
 
   p, output small {
-    font-size: var(--m);
+    font-size: var(--l);
     color: var(--color-ink-mute);
   }
 
@@ -196,7 +196,7 @@
     position: relative;
     display: flex; gap: 0;
 
-    margin-inline-start: calc(var(--m) * 5.9);
+    margin-inline-start: calc(var(--l) * 5.9);
     padding: var(--xs);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
@@ -208,7 +208,7 @@
     position: absolute; inset-block: 0; inset-inline-end: calc(100% + var(--s));
     inline-size: max-content; padding: 0;
     display: flex; align-items: center;
-    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-mono); font-size: var(--l); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
@@ -230,7 +230,7 @@
 
   fieldset label {
     position: relative; z-index: 1;
-    flex: 1 1 auto; min-inline-size: 0; font-size: var(--m);
+    flex: 1 1 auto; min-inline-size: 0; font-size: var(--l);
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
@@ -253,7 +253,7 @@
   }
 
   fieldset button {
-    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
+    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--l);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
     transition: background var(--time-quick) ease;
@@ -264,11 +264,11 @@
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); font-size: var(--m); font-weight: var(--font-weight-normal); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--l); font-weight: var(--font-weight-normal); color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  fieldset output small { font-size: var(--s); }
+  fieldset output small { font-size: var(--m); }
 
   [data-state="loading"] :is(output, gauge-bar) {
     opacity: var(--opacity-hidden);
@@ -449,9 +449,9 @@ const CFG = {
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
   horizons: [
-    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
-    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
-    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08, label:"B" },
+    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95 },
+    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85 },
+    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08 },
   ],
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
@@ -735,11 +735,9 @@ function build(model){
             spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
 
   let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
-  let hlabels="";
   HZ.forEach((h,hi)=>{
-    if(h.y0>=soilDepth) return;                    
+    if(h.y0>=soilDepth) return;
     const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
-    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
     soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
     soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
     const rng=mulberry32(SD.soil+hi), step=SL.speckStep;
@@ -793,7 +791,7 @@ function build(model){
 
   let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
 }
 
