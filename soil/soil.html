@@ -96,8 +96,10 @@
     display: block;
     transition: opacity var(--time-slow) ease;
   }
+  /* stylelint-disable-next-line selector-max-class -- .grow tags JS-generated SVG <g> nodes for the boot reveal; a follow-up may migrate it to an allowlisted data-* attribute. */
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
+  /* stylelint-disable-next-line selector-max-class -- see note above. */
   body[data-state="booting"] .grow {
     transform: translateY(var(--s));
     opacity: var(--opacity-hidden);
@@ -195,7 +197,6 @@
   fieldset {
     position: relative;
     display: flex; gap: 0;
-
     margin-inline-start: calc(var(--l) * 5.9);
     padding: var(--xs);
     background: var(--color-neutral-raised);
