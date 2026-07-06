@@ -136,7 +136,7 @@
   }
 
   p, output small {
-    font-size: var(--m);
+    font-size: var(--l);
     color: var(--color-ink-mute);
   }
 
@@ -187,10 +187,6 @@
   }
   scroll-thumb:active { cursor: grabbing; }
 
-  /* Controls: the fieldset IS the segmented track (pill); its real <legend> is
-     positioned into a reserved label column on the left, so every label
-     right-aligns against its track. The card stays pinned to the bottom of the
-     viewport while the page scrolls. */
   [data-skin="controls"] {
     gap: var(--s);
     padding: var(--s) var(--m);
@@ -201,10 +197,7 @@
   fieldset {
     position: relative;
     display: flex; gap: 0;
-
-    /* label column: sized in --m units to just fit the longest legend
-       ("DURATION", 8 mono chars + tracking) — no dead gutter */
-    margin-inline-start: calc(var(--m) * 5.9);
+    margin-inline-start: calc(var(--l) * 5.9);
     padding: var(--xs);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
@@ -216,15 +209,10 @@
     position: absolute; inset-block: 0; inset-inline-end: calc(100% + var(--s));
     inline-size: max-content; padding: 0;
     display: flex; align-items: center;
-    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-mono); font-size: var(--l); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
-  /* the sliding "selected" outline: a ::after anchored to the checked label —
-     pure CSS, no JS positioning. Anchor names are scoped to the fieldset (an
-     anchor must share the positioned box's containing block), so each track's
-     thumb follows its own checked segment. Browsers without anchor positioning
-     render no thumb; weight + colour still mark the selection. */
   fieldset label:has(input:checked) { anchor-name: --selected; }
 
   @supports (anchor-name: --a) {
@@ -241,11 +229,9 @@
     }
   }
 
-  /* cells size to content (flex-basis auto) so a long label like "Sandy loam"
-     never overflows its own cell — the sliding outline always encloses the text */
   fieldset label {
     position: relative; z-index: 1;
-    flex: 1 1 auto; min-inline-size: 0; font-size: var(--m);
+    flex: 1 1 auto; min-inline-size: 0; font-size: var(--l);
     padding: var(--xs) var(--s);
     text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
     color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
@@ -257,20 +243,18 @@
     opacity: var(--opacity-hidden); pointer-events: none;
   }
 
-  /* selected: extra weight + green accent only — never inversion. */
   fieldset label:has(input:checked) {
     color: var(--color-hue); font-weight: var(--font-weight-semibold);
   }
 
   [data-skin="elevated"] { background: var(--color-neutral-raised); }
 
-  /* duration stepper: a compact track sized to its content, not stretched. */
   fieldset:has(button) {
     display: inline-flex; place-self: start;
   }
 
   fieldset button {
-    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--m);
+    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--l);
     color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
     transition: background var(--time-quick) ease;
@@ -281,11 +265,11 @@
     min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
     padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); font-size: var(--m); font-weight: var(--font-weight-normal); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--l); font-weight: var(--font-weight-normal); color: var(--color-ink);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  fieldset output small { font-size: var(--s); }
+  fieldset output small { font-size: var(--m); }
 
   [data-state="loading"] :is(output, gauge-bar) {
     opacity: var(--opacity-hidden);
@@ -466,9 +450,9 @@ const CFG = {
   scale: { tempMin: 15, tempMax: 36, et0Min: 1, et0Max: 6.5 },
 
   horizons: [
-    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95, label:"O" },
-    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85, label:"A" },
-    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08, label:"B" },
+    { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95 },
+    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85 },
+    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08 },
   ],
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
@@ -523,8 +507,6 @@ const DRAW = {
     glowOpBase:0.2, glowOpK:0.32, groupOp:0.92, coreEdgeW:0.8,
   },
 
-  /* yMax keeps every strand (start + max length + jitter) above the soil
-     surface — rain must never render underground */
   rain: {
     minVis:0.05, perMm:1.4, strandMin:3, strandMax:14, xMinK:0.06, xMaxK:0.72, yMin:26, yMax:95,
     lenMin:11, lenMax:24, lenNorm:18, lenJitBase:0.7, lenJitK:0.6, slant:2.5, w:1.7,
@@ -540,7 +522,6 @@ const DRAW = {
 
   table: {
     lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
-    refillHaloW:4.4, refillHaloOp:0.5, refillW:2.4, refillDash:"8 5",
   },
 
   crack: {
@@ -614,10 +595,8 @@ function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(
 
 HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
 
-// Matte, earthy watering affordance. Every tappable (today-onward) day carries a
-// ghost ring inviting a tap; a watered day resolves it into a clean, filled drop.
 const DROPUI = {
-  fill:"#6E8E92", disc:"#F0EDE4", discEdge:"#D6D0BF", drop:"#7E969C",
+  fill:"#6E8E92", discEdge:"#D6D0BF", drop:"#7E969C",
   ringRK:0.24, ringMin:11, ringMax:15,
 };
 function dropPathD(cx,cy,r){
@@ -627,20 +606,15 @@ function dropPathD(cx,cy,r){
     +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
     +`C ${(cx-r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx-D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
 }
-// Watered: the ghost ring resolves into a clean SOLID ring with a filled matte
-// drop inside — the circle stays. Flat, matte, no gloss.
 function waterDrop(cx,cy,R){
   const dr=R*0.5, dy=cy+R*0.3;
   return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.fill}" stroke-width="1.5"/>`
     +`<path d="${dropPathD(cx,dy,dr)}" fill="${DROPUI.fill}" stroke="none"/>`;
 }
-// Empty/tappable: a quietly raised disc (soft lift shadow = "pressable") with a
-// light slate drop outline. Sits just above the sky tone so the watered state
-// keeps the visual weight.
 function ghostRing(cx,cy,R){
   const dr=R*0.5, dy=cy+R*0.3;
-  return `<g filter="url(#btnLift)"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="${DROPUI.disc}" stroke="${DROPUI.discEdge}" stroke-width="1"/></g>`
-    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.drop}" stroke-width="1.4" stroke-linejoin="round" opacity="0.9"/>`;
+  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.discEdge}" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.8"/>`
+    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.drop}" stroke-width="1.4" stroke-linejoin="round" opacity="0.6"/>`;
 }
 function wetCol(x0,w,sY,hgt){
   return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
@@ -691,7 +665,7 @@ function roots(x,sY,v,rng,rootPx){
 }
 
 function build(model){
-  const DATA=model.series, N=DATA.length, TANK=model.tank, REFILL=model.refill;
+  const DATA=model.series, N=DATA.length, TANK=model.tank;
   const sc=CFG.scale, G=CFG.geom, T=DRAW.text, TK=DRAW.ticks, MK=DRAW.marker, SUN=DRAW.sun, RN=DRAW.rain, SL=DRAW.soil, TB=DRAW.table, CR=DRAW.crack, DP=DRAW.drop, SD=DRAW.seeds, ST=DRAW.bootStagger;
   const vw=(typeof scene!=="undefined" && scene && scene.clientWidth) || window.innerWidth;
   const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
@@ -700,7 +674,6 @@ function build(model){
   const rootPx=model.root*100*PX_PER_CM, ROOT_BOT=SURF+rootPx;
   const VBOT=ROOT_BOT, soilDepth=VBOT-SURF;
   const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
-  const refillY=tableY(REFILL);
   const todayIdx=resolveTodayIdx(DATA);
   const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1));
 
@@ -714,9 +687,6 @@ function build(model){
     <linearGradient id="wetE" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".30"/>
       <stop offset="1" stop-color="${C.aqua0}" stop-opacity=".05"/></linearGradient>
-    <filter id="btnLift" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#45402f" flood-opacity="0.18"/>
-    </filter>
     <linearGradient id="todayBeam" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.green}" stop-opacity=".18"/>
       <stop offset="1" stop-color="${C.green}" stop-opacity=".03"/></linearGradient>
@@ -766,11 +736,9 @@ function build(model){
             spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
 
   let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
-  let hlabels="";
   HZ.forEach((h,hi)=>{
-    if(h.y0>=soilDepth) return;                    
+    if(h.y0>=soilDepth) return;
     const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
-    if(h.label) hlabels+=`<text x="${(R-6).toFixed(1)}" y="${(SURF+(h.y0+yb)/2+3.6).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" font-weight="bold" fill="${C.paper}" stroke="${C.surf}" stroke-width="2.6" paint-order="stroke" opacity="0.9">${h.label}</text>`;
     soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
     soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
     const rng=mulberry32(SD.soil+hi), step=SL.speckStep;
@@ -794,9 +762,7 @@ function build(model){
   const surfPts=[{x:AX,y:SURF}];
   DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
   surfPts.push({x:R,y:SURF});
-  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" stroke="${C.paper}" stroke-width="${TB.refillHaloW}" opacity="${TB.refillHaloOp}"/>`
-     +`<line x1="${AX}" y1="${refillY.toFixed(1)}" x2="${R.toFixed(1)}" y2="${refillY.toFixed(1)}" style="stroke:var(--value-color, ${C.rust})" stroke-width="${TB.refillW}" stroke-dasharray="${TB.refillDash}"/>`;
+  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`;
 
   let cracks="";
   DATA.forEach(d=>{ if(d.level>CR.moistMax)return; const rng=mulberry32(SD.crack+d.i),x0=cx(d.i)-dayW/2,dry=1-clamp(d.level/CR.moistMax,0,1),nc=Math.round(lerp(CR.countMin,CR.countMax,dry));
@@ -814,9 +780,6 @@ function build(model){
     ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
        +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd.slice(0,3)}</text>`;});
 
-  // TODAY marker as ONE contiguous piece: a solid rounded head (the label) that
-  // flows straight into a translucent body of the same width — no gap, no rails.
-  // It sits in the headroom above the sky so it never lands on the today sun.
   const tx=cx(todayIdx), bandX=tx-dayW/2, x2=bandX+dayW;
   const capT=2, tabH=MK.hK*K, capB=capT+tabH, rTop=Math.min(5, dayW*0.14);
   const head=`M ${bandX.toFixed(1)} ${capB.toFixed(1)} L ${bandX.toFixed(1)} ${(capT+rTop).toFixed(1)} `
@@ -829,7 +792,7 @@ function build(model){
 
   let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${hlabels}${ticks}${today}${hits}</svg>`;
+  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
   return { svg, W, dayW, cx, todayIdx };
 }
 
@@ -876,8 +839,6 @@ function render(){
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
-// The day watered on the current tap: its drop is emitted with data-state="pop"
-// so the CSS entrance animation plays as the redrawn scene appears.
 let popDay=null;
 function toggleWater(i){
   const set=new Set(ctrl.watered), adding=!set.has(i);
@@ -930,7 +891,6 @@ sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
   const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
   scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
 
-// the dock is position:fixed, so reserve its height at the page end
 function reserveDock(){
   const c=document.getElementById("controls");
   document.body.style.paddingBlockEnd=(c.offsetHeight+24)+"px";
