@@ -243,7 +243,7 @@ section, fieldset {
 
   small { font-size: var(--m); }
 
-  [data-i] { cursor: pointer; }
+  [data-index] { cursor: pointer; }
 
   [data-state="loading"] :is(output, gauge-bar),
   [data-state="loading"] p:not([data-freeform]) {
@@ -784,7 +784,7 @@ function build(model){
     +el("path",{d:head,fill:C.green})
     +el("text",{x:tx,y:capT+tabH/2,"text-anchor":"middle","dominant-baseline":"central","font-family":MONO,"font-size":MK.fsK*K,"font-weight":700,fill:C.paper,"letter-spacing":MK.tracking+"em"},"TODAY");
 
-  let hits=""; DATA.forEach(d=>{hits+=el("rect",{"data-i":d.i,x:cx(d.i)-dayW/2,y:SKY_TOP,width:dayW,height:VBOT-SKY_TOP,fill:"transparent"});});
+  let hits=""; DATA.forEach(d=>{hits+=el("rect",{"data-index":d.i,x:cx(d.i)-dayW/2,y:SKY_TOP,width:dayW,height:VBOT-SKY_TOP,fill:"transparent"});});
 
   const markup=`<svg viewBox="0 0 ${Math.round(W)} ${Hd}" width="${Math.round(W)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
   return { svg: markup, W, dayW, cx, todayIdx };
@@ -842,8 +842,8 @@ function toggleWater(i){
 }
 
 function wireHits(){
-  scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
-    h.addEventListener("click",()=>toggleWater(+h.dataset.i));
+  scene.querySelector("svg").querySelectorAll("[data-index]").forEach(h=>{
+    h.addEventListener("click",()=>toggleWater(+h.dataset.index));
   });
 }
 
