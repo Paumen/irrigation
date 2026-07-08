@@ -6,24 +6,13 @@
 <title>Soil-Balance — Wijchen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
 <style>
 @layer reset, tokens, base, components;
 
 @layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  body, h1, p, figure, fieldset, legend, output { margin: 0; }
-
-  fieldset {
-    border: 0;
-    padding: 0;
-    min-inline-size: 0;
-  }
-
-  button, input {
-    font: inherit;
-    color: inherit;
-  }
+  *, *::before, *::after { box-sizing: border-box; 
+  margin: 0; }
 }
 
 @layer tokens {
@@ -38,26 +27,22 @@
     --color-danger:        oklch(54.1% 0.152  39);
     --font-serif: "Newsreader", georgia, "Times New Roman", serif;
     --font-mono:  ui-monospace, "SF Mono", "JetBrains Mono", menlo, consolas, monospace;
-    --font-sans:  ui-sans-serif, "Inter", "Segoe UI", system-ui, sans-serif;
-    --font-weight-normal: 400;
+    --font-sans:  ui-sans-serif, "Segoe UI", system-ui, sans-serif;
     --font-weight-semibold: 600;
     --letter-spacing-wide:  .08em;
-    --line-height-tight:  1.15;
-    --line-height-normal: 1.4;
     --xs: clamp(.2rem, .5vw, .3rem);
     --s:  clamp(.3rem, 1vw, .6rem);
     --m:  clamp(.6rem, 1.5vw, 1.0rem);
-    --l:  clamp(1.0rem, 2.5vw, 1.4rem);
-    --xl: clamp(1.4rem, 4.5vw, 2rem);
+    --l:  clamp(0.8rem, 2.5vw, 1.4rem);
+    --xl: clamp(1.6rem, 4.5vw, 2.4rem);
     --xxl: clamp(2rem, 6vw, 3rem);
-    --radius-sm: 5px;
+    --radius-sm: 7px;
     --radius-pill: 999px;
     --border-width: 1px;
     --opacity-hidden: 0;   
     --time-quick: .4s; 
     --time-slow:  1.4s; 
     --opacity-dim: .6;
-    --box-shadow-lift:      0 1px 3px color-mix(in oklab, var(--color-ink) 22%, transparent);
 
     color-scheme: light;
   }
@@ -73,22 +58,14 @@
     display: grid;
     gap: var(--m);
     padding: var(--m);
-    overflow-x: hidden;
     font-family: var(--font-sans);
-    font-size: var(--l);
-    line-height: var(--line-height-normal);
-    color: var(--color-ink);
+    font-size: var(--m);
+    color: var(--color-ink-mute);
     background: var(--color-neutral);
+    timeline-scope: --chart-scroll;
   }
 
-  header {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: var(--s);
-  }
-
-  header h1 {
+  h1 {
     font-weight: var(--font-weight-semibold); font-size: var(--l); color: var(--color-hue);
   }
 
@@ -96,10 +73,12 @@
     display: block;
     transition: opacity var(--time-slow) ease;
   }
-  /* stylelint-disable-next-line selector-max-class -- .grow tags JS-generated SVG <g> nodes for the boot reveal; a follow-up may migrate it to an allowlisted data-* attribute. */
+  /* stylelint-disable-next-line selector-max-class 
+  */
   .grow { transition: transform var(--time-slow) cubic-bezier(.2,.8,.2,1), opacity var(--time-slow) ease; }
 
-  /* stylelint-disable-next-line selector-max-class -- see note above. */
+  /* stylelint-disable-next-line selector-max-class 
+  */
   body[data-state="booting"] .grow {
     transform: translateY(var(--s));
     opacity: var(--opacity-hidden);
@@ -113,16 +92,16 @@
   }
 
   article {
-    display: grid; gap: var(--m);
-    padding: var(--m) var(--l);
+    display: grid; 
+    padding: var(--m);
+    gap: var(--m);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
     border-radius: var(--radius-sm);
   }
 
   output {
-    font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xl);
-    line-height: var(--line-height-tight);
+    font-family: var(--font-serif); font-weight: var(--font-weight-semibold); font-size: var(--xxl);
     color: var(--value-color, var(--color-hue));
   }
 
@@ -135,19 +114,17 @@
     box-shadow: 0 0 0 .26em color-mix(in oklab, var(--value-color, var(--color-hue)) 18%, transparent);
   }
 
-  p, output small {
-    font-size: var(--l);
-    color: var(--color-ink-mute);
-  }
-
-  section {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--l);
-    align-items: baseline;
-  }
+  [data-colspan="1"]  { grid-column: span 1; }
+  [data-colspan="2"]  { grid-column: span 2; }
   [data-colspan="3"]  { grid-column: span 3; }
+  [data-colspan="4"]  { grid-column: span 4; }
+  [data-colspan="5"]  { grid-column: span 5; }
+  [data-colspan="6"]  { grid-column: span 6; }
+  [data-colspan="7"]  { grid-column: span 7; }
+  [data-colspan="8"]  { grid-column: span 8; }
   [data-colspan="9"]  { grid-column: span 9; }
+  [data-colspan="10"] { grid-column: span 10; }
+  [data-colspan="11"] { grid-column: span 11; }
   [data-colspan="12"] { grid-column: span 12; }
 
   gauge-bar {
@@ -172,103 +149,104 @@
     overflow: auto hidden;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
     touch-action: pan-x;
+    scroll-timeline: --chart-scroll inline;
   }
   figure::-webkit-scrollbar { display: none; }
 
   scroll-bar {
-    display: block; position: relative; block-size: var(--m); margin-block-start: var(--xs);
-    background: var(--color-neutral-mute); border-radius: var(--radius-sm); touch-action: none;
+    display: block; position: relative; block-size: var(--m);
+    background: var(--color-neutral-mute); border-radius: var(--radius-sm);
   }
 
   scroll-thumb {
     position: absolute; inset-block: 0; inset-inline-start: 0;
-    inline-size: var(--xxl); min-inline-size: var(--xl);
-    background: var(--color-ink-mute); border-radius: var(--radius-sm); cursor: grab;
+    inline-size: var(--xxl);
+    background: var(--color-ink-mute); border-radius: var(--radius-sm);
+    animation: thumb-slide linear both;
+    animation-timeline: --chart-scroll;
   }
-  scroll-thumb:active { cursor: grabbing; }
 
-  [data-skin="controls"] {
-    position: fixed; inset-inline: var(--m); inset-block-end: var(--m);
+  @keyframes thumb-slide {
+    to { inset-inline-start: calc(100% - var(--xxl)); }
+  }
+
+section, fieldset {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--m);
+    align-items: baseline;
   }
 
   fieldset {
-    position: relative;
-    display: flex; gap: 0;
-    margin-inline-start: calc(var(--l) * 5.9);
+    align-items: stretch;
     padding: var(--xs);
     background: var(--color-neutral-raised);
     border: var(--border-width) solid var(--color-neutral-mute);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     isolation: isolate;
+    anchor-scope: --selected;
   }
 
   legend {
-    position: absolute; inset-block: 0; inset-inline-end: calc(100% + var(--s));
-    inline-size: max-content; padding: 0;
-    display: flex; align-items: center;
-    font-family: var(--font-mono); font-size: var(--l); letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-mono); font-size: var(--m); letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase; color: var(--color-ink-mute);
   }
 
-  fieldset label:has(input:checked) { anchor-name: --selected; }
+  label:has(input:checked) { anchor-name: --selected; }
 
   @supports (anchor-name: --a) {
     fieldset:has(input:checked)::after {
-      content: ""; position: absolute; z-index: 0;
+      content: ""; position: absolute; z-index: -1;
       position-anchor: --selected;
       inset-block-start: anchor(start); inset-inline-start: anchor(start);
       inline-size: anchor-size(inline); block-size: anchor-size(block);
       background: color-mix(in oklab, var(--color-hue) 10%, var(--color-neutral-raised));
       border: 1.5px solid var(--color-hue);
-      border-radius: var(--radius-pill);
+      border-radius: var(--radius-sm);
       transition: inset-inline-start var(--time-quick) cubic-bezier(.4,.9,.3,1),
                   inline-size var(--time-quick) cubic-bezier(.4,.9,.3,1);
     }
   }
 
-  fieldset label {
-    position: relative; z-index: 1;
-    flex: 1 1 auto; min-inline-size: 0; font-size: var(--l);
-    padding: var(--xs) var(--s);
-    text-align: center; white-space: nowrap; line-height: var(--line-height-tight);
-    color: var(--color-ink-mute); cursor: pointer; border-radius: var(--radius-pill);
+  label {
+    display: grid; place-content: center; padding: var(--s) var(--m);
+    font-size: var(--l);
+    text-align: center; white-space: nowrap;
     transition: color var(--time-quick) ease;
   }
 
-  fieldset input {
-    position: absolute; inline-size: 1px; block-size: 1px;
+  input {
+    position: absolute;
     opacity: var(--opacity-hidden); pointer-events: none;
   }
 
-  fieldset label:has(input:checked) {
+  label:has(input:checked) {
     color: var(--color-hue); font-weight: var(--font-weight-semibold);
   }
-
-  [data-skin="elevated"] { background: var(--color-neutral-raised); }
 
   fieldset:has(button) {
     display: inline-flex; place-self: start;
   }
 
   fieldset button {
-    inline-size: var(--xxl); border: 0; background: transparent; font-size: var(--l);
-    color: var(--color-ink); cursor: pointer; border-radius: var(--radius-pill);
-    padding: var(--xs) var(--s); line-height: var(--line-height-tight);
+     border: 0; background: transparent; font-size: var(--l);
+    color: var(--color-ink); cursor: pointer;
     transition: background var(--time-quick) ease;
   }
   fieldset button:hover { background: color-mix(in oklab, var(--color-ink) 6%, transparent); }
 
   fieldset output {
-    min-inline-size: var(--xl);
     display: inline-flex; align-items: baseline; justify-content: center; gap: var(--xs);
-    padding: var(--xs) var(--s); line-height: var(--line-height-tight);
-    font-family: var(--font-mono); font-size: var(--l); font-weight: var(--font-weight-normal); color: var(--color-ink);
+    font-family: var(--font-mono); font-size: var(--l); color: var(--color-ink-mute);
     border-inline: var(--border-width) solid var(--color-neutral-mute);
   }
 
-  fieldset output small { font-size: var(--m); }
+  small { font-size: var(--m); }
 
-  [data-state="loading"] :is(output, gauge-bar) {
+  [data-i] { cursor: pointer; }
+
+  [data-state="loading"] :is(output, gauge-bar),
+  [data-state="loading"] p:not([data-freeform]) {
     opacity: var(--opacity-hidden);
   }
   [data-state="loading"] { animation: pulse var(--time-slow) ease-in-out infinite; }
@@ -276,13 +254,13 @@
   [data-state="error"] :is(output, gauge-bar),
   [data-state="error"] p:not([data-freeform]) { display: none; }
 
-  [data-state="pop"] {
+  [data-state="pressed"] {
     transform-box: fill-box;
     transform-origin: 50% 85%;
-    animation: drop-pop var(--time-quick) cubic-bezier(.2, .8, .2, 1);
+    animation: drop-pressed var(--time-quick) cubic-bezier(.2, .8, .2, 1);
   }
 
-  @keyframes drop-pop {
+  @keyframes drop-pressed {
     0% {
       transform: scale(.3);
       opacity: 0;
@@ -296,11 +274,10 @@
     }
   }
 
-  body > p[data-freeform] {
+  [data-freeform] {
     text-align: center;
     opacity: var(--opacity-dim);
   }
-  article[data-state] ~ p[data-freeform] { display: none; }
 
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: var(--opacity-dim); } }
 }
@@ -308,9 +285,8 @@
 </style>
 </head>
 <body data-state="booting">
-  <header>
-    <h1>Soil-Balance</h1>
-  </header>
+  
+  <h1>Soil-Balance</h1>
 
   <article id="status">
     <section>
@@ -323,32 +299,32 @@
   </article>
 
   <figure id="scroll" data-skin="ghost"></figure>
-  <scroll-bar id="sbar"><scroll-thumb id="thumb"></scroll-thumb></scroll-bar>
+  <scroll-bar><scroll-thumb></scroll-thumb></scroll-bar>
 
-  <article id="controls" data-skin="controls">
+  <article id="controls">
     <fieldset>
       <legend>Planting</legend>
-      <label><input type="radio" name="planting" value="Turf">Turf</label>
-      <label><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
-      <label><input type="radio" name="planting" value="Shrubs">Shrubs</label>
+      <label data-colspan="4"><input type="radio" name="planting" value="Turf">Turf</label>
+      <label data-colspan="4"><input type="radio" name="planting" value="Flower bed" checked>Flower bed</label>
+      <label data-colspan="4"><input type="radio" name="planting" value="Shrubs">Shrubs</label>
     </fieldset>
 
     <fieldset>
       <legend>Soil</legend>
-      <label><input type="radio" name="soil" value="Sand">Sand</label>
-      <label><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
-      <label><input type="radio" name="soil" value="Loam">Loam</label>
-      <label><input type="radio" name="soil" value="Clay">Clay</label>
+      <label data-colspan="3"><input type="radio" name="soil" value="Sand">Sand</label>
+      <label data-colspan="3"><input type="radio" name="soil" value="Sandy loam" checked>Sandy loam</label>
+      <label data-colspan="3"><input type="radio" name="soil" value="Loam">Loam</label>
+      <label data-colspan="3"><input type="radio" name="soil" value="Clay">Clay</label>
     </fieldset>
 
     <fieldset>
       <legend>Exposure</legend>
-      <label><input type="radio" name="sun" value="Shade">Shade</label>
-      <label><input type="radio" name="sun" value="Half sun">Half sun</label>
-      <label><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
+      <label data-colspan="4"><input type="radio" name="sun" value="Shade">Shade</label>
+      <label data-colspan="4"><input type="radio" name="sun" value="Half sun">Half sun</label>
+      <label data-colspan="4"><input type="radio" name="sun" value="Full sun" checked>Full sun</label>
     </fieldset>
 
-    <fieldset data-skin="elevated">
+    <fieldset>
       <legend>Duration</legend>
       <button type="button" id="durDown">−</button>
       <output id="durVal">60<small>min</small></output>
@@ -364,8 +340,8 @@ const API = {
   base: "https://api.open-meteo.com/v1/forecast",
   daily: "precipitation_sum,temperature_2m_max,et0_fao_evapotranspiration",
   timezone: "Europe/Amsterdam",
-  pastDays: 10,
-  forecastDays: 15,
+  pastDays: 7,
+  forecastDays: 12,
 };
 
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -394,7 +370,9 @@ function normalizeWeather(json) {
   const rawTemp = Array.isArray(daily.temperature_2m_max) ? daily.temperature_2m_max : [];
   const rain = [], et0 = [], tempMax = []; let lastEt0 = 0;
   for (let i = 0; i < n; i++) {
-    rain.push(rawRain[i] == null ? 0 : rawRain[i]);
+    // Raw rain below rainMin is trace drizzle: zero at entry so model and visuals agree
+    const r = rawRain[i] == null ? 0 : rawRain[i];
+    rain.push(r < ENGINE.rainMin ? 0 : r);
     const e = rawEt0[i];
     if (e == null) { et0.push(lastEt0); } else { et0.push(e); lastEt0 = e; }
     tempMax.push(rawTemp[i] == null ? null : rawTemp[i]);
@@ -432,6 +410,7 @@ const ENGINE = {
   },
   sun:   { "Shade":.5, "Half sun":.75, "Full sun":1.0 },
   applyRate:  0.063,
+  rainMin:    0.5,
   rainEff:    0.8,
   waterEff:   0.9,
   refillFrac: 0.5,
@@ -448,15 +427,16 @@ const CFG = {
 
   horizons: [
     { fill:"#2C2014", sp:"#160F09", edge:"#130D07", spn:0.95 },
-    { fill:"#4E3A22", sp:"#2C2013", edge:"#332518", spn:0.85 },
-    { fill:"#8C6638", sp:"#664A28", edge:"#6E4F2C", spn:0.55, peb:0.08 },
+    // [1] and [2] are restyled from ENGINE.soilLook each render; only y0/y1 (assigned below) persist
+    {},
+    {},
   ],
   color: {
     sky:"#E7E4DA", surf:"#5A4A33",
-    aqua0:"#34BCD2", aqua1:"#0C6478", waterLine:"#1FA6BE", waterHi:"#BDEAF1",
-    rain:"#2F6E94", glow:"#E0A074", drop:"#34BCD2", dropEdge:"#1FA6BE", dropHi:"#E8FAFD",
+    // aqua0/aqua1/waterLine/waterHi derived parametrically from CYAN_H (see below)
+    rain:"#2F6E94", glow:"#E0A074",
     paper:"#FBFAF6", flower:"#C98AB0", flowerC:"#E7C24A",
-    sprout:"#3A352C", petalEdge:"#9C6E89", sunEdge:"#8A5732", leafGold:"#9C8A45",
+    sprout:"#3A352C", petalEdge:"#9C6E89", leafGold:"#9C8A45",
     green:"#4F6B4A", rust:"#B5471F",
   },
 };
@@ -468,12 +448,9 @@ const DRAW = {
 
   text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
   ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
-  marker: { wK:44, hK:15, y:3, rxK:7.5, fsK:10, tracking:0.1,
-            fillOp:0.07, edgeOp:0.45, dash:"3 4", edgeW:1 },
+  marker: { hK:15, fsK:10, tracking:0.1 },
 
-  drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, edgeW:1.3, hiOp:0.8,
-          hiDxK:0.34, hiDyK:0.02, hiRxK:0.2, hiRyK:0.42,
-          yOfs:71, rK:0.15, rMin:6, rMax:9 },
+  drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, yOfs:71 },
 
   plant: {
     sproutMax:0.07,
@@ -501,7 +478,7 @@ const DRAW = {
   sun: {
     minVis:0.04, yOfs:26, radMin:2.5, radMax:7.5, glowKMin:2.1, glowKMax:3.4,
     rayMin:4, rayMax:8, rayInner:2, rayOuterMin:2, rayOuterMax:6, rayWMin:0.7, rayWMax:1.6,
-    glowOpBase:0.2, glowOpK:0.32, groupOp:0.92, coreEdgeW:0.8,
+    glowOpBase:0.2, glowOpK:0.32, groupressed:0.92,
   },
 
   rain: {
@@ -552,7 +529,23 @@ let WEATHER = null;
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
 const lerp  = (a,b,t) => a + (b-a)*t;
 const ease  = t => t<0?0 : t>1?1 : t*t*(3-2*t);
+
+// OKLCH(L%,C,H°)→sRGB hex. Single-source cyan family: rotate CYAN_H to rehue all water.
+function oklchHex(L,C,H){
+  L/=100; const h=H*Math.PI/180, a=C*Math.cos(h), b=C*Math.sin(h);
+  const l=(L+0.3963377774*a+0.2158037573*b)**3, m=(L-0.1055613458*a-0.0638541728*b)**3, s=(L-0.0894841775*a-1.2914855480*b)**3;
+  const enc=c=>{c=clamp(c,0,1);return c<=0.0031308?12.92*c:1.055*c**(1/2.4)-0.055;};
+  const H2=c=>Math.round(clamp(enc(c),0,1)*255).toString(16).padStart(2,"0");
+  return `#${H2(4.0767416621*l-3.3077115913*m+0.2309699292*s)}${H2(-1.2684380046*l+2.6097574011*m-0.3413193965*s)}${H2(-0.0041960863*l-0.7034186147*m+1.7076147010*s)}`;
+}
+const CYAN_H = 224;
+const cyan = (L,C) => oklchHex(L,C,CYAN_H);
+Object.assign(C, { aqua1:cyan(45,.076), waterLine:cyan(59,.085), aqua0:cyan(66,.080), waterHi:cyan(89,.038) });
 const health = v => ease(clamp((v - VIT.lo) / VIT.span, 0, 1));
+
+const fmt = v => typeof v !== "number" ? v ?? "" : Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/\.?0+$/, "");
+const svg = (s, ...v) => s.reduce((o, p, i) => o + fmt(v[i - 1]) + p);
+const el = (t, a, inner) => { let s = `<${t}`; for (const k in a) { const v = a[k]; if (v == null || v === "") continue; s += ` ${k}="${fmt(v)}"`; } return inner == null ? s + "/>" : s + `>${inner}</${t}>`; };
 
 function compute(ctrl) {
   const p = ENGINE.plantings[ctrl.planting], aw = ENGINE.soils[ctrl.soil], sf = ENGINE.sun[ctrl.sun];
@@ -560,17 +553,28 @@ function compute(ctrl) {
   const watered = new Set(ctrl.watered);
   const series = []; let prev = tank;
   for (let i = 0; i < WEATHER.time.length; i++) {
-    const loss    = WEATHER.et0[i] * p.kc * sf;
-    const applied = watered.has(i) ? dose : 0;
-    const gain    = WEATHER.rain[i] * ENGINE.rainEff + applied * ENGINE.waterEff;
-    const level   = clamp(prev + gain - loss, 0, tank); prev = level;
+const applied  = watered.has(i) ? dose : 0;
+    const rainAdd  = WEATHER.rain[i] * ENGINE.rainEff;   
+    const waterAdd = applied * ENGINE.waterEff;          
+    const etLoss   = WEATHER.et0[i] * p.kc * sf;         
+    const level    = clamp(prev + rainAdd + waterAdd - etLoss, 0, tank); prev = level;
     series.push({
       i, date: WEATHER.time[i], wd: WEATHER.weekday[i], tmax: WEATHER.tempMax[i],
-      et0: WEATHER.et0[i], rain: WEATHER.rain[i], loss, gain,
-      mins: watered.has(i) ? ctrl.minutes : 0, level,
+      et0: WEATHER.et0[i], rain: WEATHER.rain[i],
+      mins: watered.has(i) ? ctrl.minutes : 0,
+      level, rainAdd, waterAdd, etLoss,
     });
   }
-  return { series, tank, dose, refill: tank * ENGINE.refillFrac, root: p.root, soil: ctrl.soil };
+  return { series, tank, refill: tank * ENGINE.refillFrac, root: p.root, soil: ctrl.soil };
+}
+
+function netMm(d) {
+  return {
+    level: Math.round(d.level),
+    rain:  Math.round(d.rainAdd),
+    water: Math.round(d.waterAdd),
+    et:   -Math.round(d.etLoss),
+  };
 }
 
 const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
@@ -587,10 +591,8 @@ const SUN_RAMP=[[0,warmer(TERRACOTTA,0,-.38,.20)],[.5,warmer(TERRACOTTA,0,-.18,.
 const sunCore    = h => ramp(SUN_RAMP, h);
 function shade(hex,f){ const [r,g,b]=hx(hex),m=v=>clamp(Math.round(v*f),0,255).toString(16).padStart(2,"0"); return `#${m(r)}${m(g)}${m(b)}`; }
 function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-function smooth(pts){ if(pts.length<2)return""; let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;} return d; }
-function jag(pts){ let d=`M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`; for(let i=1;i<pts.length;i++)d+=` L ${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)}`; return d; }
-
-HORIZ.forEach(h => { h.edge = h.edge || shade(h.fill,0.70); h.sp = h.sp || shade(h.fill,0.82); });
+function smooth(pts){ if(pts.length<2)return""; let d=svg`M ${pts[0].x} ${pts[0].y}`; for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2; const c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6; d+=svg` C ${c1x} ${c1y} ${c2x} ${c2y} ${p2.x} ${p2.y}`;} return d; }
+function jag(pts){ let d=svg`M ${pts[0].x} ${pts[0].y}`; for(let i=1;i<pts.length;i++)d+=svg` L ${pts[i].x} ${pts[i].y}`; return d; }
 
 const DROPUI = {
   fill:"#6E8E92", discEdge:"#D6D0BF", drop:"#7E969C",
@@ -598,43 +600,40 @@ const DROPUI = {
 };
 function dropPathD(cx,cy,r){
   const D=DRAW.drop, topY=cy-D.topK*r;
-  return `M ${cx.toFixed(1)} ${topY.toFixed(1)} `
-    +`C ${(cx+D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx+r).toFixed(1)} ${cy.toFixed(1)} `
-    +`A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(cx-r).toFixed(1)} ${cy.toFixed(1)} `
-    +`C ${(cx-r).toFixed(1)} ${(cy-D.c2yK*r).toFixed(1)} ${(cx-D.c1xK*r).toFixed(1)} ${(cy-D.c1yK*r).toFixed(1)} ${cx.toFixed(1)} ${topY.toFixed(1)} Z`;
+  return svg`M ${cx} ${topY} C ${cx+D.c1xK*r} ${cy-D.c1yK*r} ${cx+r} ${cy-D.c2yK*r} ${cx+r} ${cy} A ${r} ${r} 0 0 1 ${cx-r} ${cy} C ${cx-r} ${cy-D.c2yK*r} ${cx-D.c1xK*r} ${cy-D.c1yK*r} ${cx} ${topY} Z`;
 }
 function waterDrop(cx,cy,R){
   const dr=R*0.5, dy=cy+R*0.3;
-  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.fill}" stroke-width="1.5"/>`
-    +`<path d="${dropPathD(cx,dy,dr)}" fill="${DROPUI.fill}" stroke="none"/>`;
+  return el("circle",{cx,cy,r:R,fill:"none",stroke:DROPUI.fill,"stroke-width":1.5})
+    +el("path",{d:dropPathD(cx,dy,dr),fill:DROPUI.fill,stroke:"none"});
 }
 function ghostRing(cx,cy,R){
   const dr=R*0.5, dy=cy+R*0.3;
-  return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${R.toFixed(1)}" fill="none" stroke="${DROPUI.discEdge}" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.8"/>`
-    +`<path d="${dropPathD(cx,dy,dr)}" fill="none" stroke="${DROPUI.drop}" stroke-width="1.4" stroke-linejoin="round" opacity="0.6"/>`;
+  return el("circle",{cx,cy,r:R,fill:"none",stroke:DROPUI.discEdge,"stroke-width":1.2,"stroke-dasharray":"3 3",opacity:0.8})
+    +el("path",{d:dropPathD(cx,dy,dr),fill:"none",stroke:DROPUI.drop,"stroke-width":1.4,"stroke-linejoin":"round",opacity:0.6});
 }
 function wetCol(x0,w,sY,hgt){
-  return `<rect x="${x0.toFixed(1)}" y="${sY.toFixed(1)}" width="${w.toFixed(1)}" height="${hgt.toFixed(1)}" fill="url(#wetE)"/>`;
+  return el("rect",{x:x0,y:sY,width:w,height:hgt,fill:"url(#wetE)"});
 }
 
 function plant(x,sY,v,rng){
   const P=DRAW.plant, h=health(v);
   if(h<P.sproutMax){ const c=C.sprout, S=P.sprout;
-    return `<path d="M ${x} ${sY} L ${(x+S.e1[0]).toFixed(1)} ${(sY+S.e1[1])}" stroke="${c}" stroke-width="${S.w1}" stroke-linecap="round"/>`
-         +`<path d="M ${(x+S.s2[0]).toFixed(1)} ${(sY+S.s2[1])} L ${(x+S.e2[0]).toFixed(1)} ${(sY+S.e2[1])}" stroke="${c}" stroke-width="${S.w2}" stroke-linecap="round"/>`; }
+    return el("path",{d:svg`M ${x} ${sY} L ${x+S.e1[0]} ${sY+S.e1[1]}`,stroke:c,"stroke-width":S.w1,"stroke-linecap":"round"})
+         +el("path",{d:svg`M ${x+S.s2[0]} ${sY+S.s2[1]} L ${x+S.e2[0]} ${sY+S.e2[1]}`,stroke:c,"stroke-width":S.w2,"stroke-linecap":"round"}); }
   const hgt=lerp(P.htMin,P.htMax,h), droop=clamp((P.droopOnset-h)/P.droopOnset,0,1);
   const tipX=x+lerp(0,P.droopX,droop)*(rng()<.5?-1:1)*P.tipXK, tipY=sY-hgt+lerp(0,hgt*P.tipYK,droop);
   const ctrlX=x+lerp(0,P.ctrlX,droop), ctrlY=sY-hgt*P.ctrlYK, pc=plantColor(h), lc=leafColor(h);
-  let s=`<path d="M ${x} ${sY} Q ${ctrlX.toFixed(1)} ${ctrlY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}" fill="none" stroke="${pc}" stroke-width="${lerp(P.stemWMin,P.stemWMax,h).toFixed(2)}" stroke-linecap="round"/>`;
+  let s=el("path",{d:svg`M ${x} ${sY} Q ${ctrlX} ${ctrlY} ${tipX} ${tipY}`,fill:"none",stroke:pc,"stroke-width":lerp(P.stemWMin,P.stemWMax,h),"stroke-linecap":"round"});
   const nl=Math.round(lerp(0,P.leafMax,h));
   for(let k=0;k<nl;k++){
     if(nl===P.leafMax&&k===P.leafMax-1) continue;
     const t=lerp(P.leafTMin,P.leafTMax,(k+0.5)/Math.max(nl,1)),lx=lerp(x,tipX,t),ly=lerp(sY,tipY,t),side=(k%2===0)?1:-1,ll=lerp(P.leafLenMin,P.leafLenMax,h);
     const mxp=lx+side*ll*P.leafMidK,myp=ly+droop*ll*P.leafDroopK;
-    s+=`<ellipse cx="${mxp.toFixed(1)}" cy="${myp.toFixed(1)}" rx="${(ll*P.leafRxK).toFixed(1)}" ry="${(ll*P.leafRyK).toFixed(1)}" fill="${lc}" transform="rotate(${(side*lerp(P.leafRotMin,P.leafRotMax,h)+droop*P.leafDroopRot).toFixed(0)} ${mxp.toFixed(1)} ${myp.toFixed(1)})"/>`;
+    s+=el("ellipse",{cx:mxp,cy:myp,rx:ll*P.leafRxK,ry:ll*P.leafRyK,fill:lc,transform:svg`rotate(${(side*lerp(P.leafRotMin,P.leafRotMax,h)+droop*P.leafDroopRot).toFixed(0)} ${mxp} ${myp})`});
   }
-  if(h>P.flowerFull){ const fx=tipX,fy=tipY-P.flowerYOfs; for(let k=0;k<P.petals;k++){const a=k/P.petals*Math.PI*2; s+=`<circle cx="${(fx+Math.cos(a)*P.petalRing).toFixed(1)}" cy="${(fy+Math.sin(a)*P.petalRing).toFixed(1)}" r="${P.petalR}" fill="${C.flower}" stroke="${C.petalEdge}" stroke-width="${P.petalEdgeW}"/>`;} s+=`<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="${P.centerR}" fill="${C.flowerC}"/>`; }
-  else if(h>P.flowerBud){ s+=`<ellipse cx="${tipX.toFixed(1)}" cy="${(tipY-P.flowerYOfs).toFixed(1)}" rx="${P.budRx}" ry="${P.budRy}" fill="${hexLerp(C.leafGold,C.flower,(h-P.flowerBud)/P.budSpan)}"/>`; }
+  if(h>P.flowerFull){ const fx=tipX,fy=tipY-P.flowerYOfs; for(let k=0;k<P.petals;k++){const a=k/P.petals*Math.PI*2; s+=el("circle",{cx:fx+Math.cos(a)*P.petalRing,cy:fy+Math.sin(a)*P.petalRing,r:P.petalR,fill:C.flower,stroke:C.petalEdge,"stroke-width":P.petalEdgeW});} s+=el("circle",{cx:fx,cy:fy,r:P.centerR,fill:C.flowerC}); }
+  else if(h>P.flowerBud){ s+=el("ellipse",{cx:tipX,cy:tipY-P.flowerYOfs,rx:P.budRx,ry:P.budRy,fill:hexLerp(C.leafGold,C.flower,(h-P.flowerBud)/P.budSpan)}); }
   return s;
 }
 
@@ -645,18 +644,18 @@ function roots(x,sY,v,rng,rootPx){
   const col=rootColor(h), wMain=lerp(R.mainWMin,R.mainWMax,h);
   let pts=[{x,y:sY}]; const segs=R.segs;
   for(let k=1;k<=segs;k++){const t=k/segs; pts.push({x:x+(rng()-0.5)*(dead?R.segJitDead:R.segJitLive),y:sY+depth*t});}
-  let s=`<path d="${dead?jag(pts):smooth(pts)}" fill="none" stroke="${col}" stroke-width="${wMain.toFixed(2)}" stroke-linecap="round" opacity="${dead?R.deadOp:1}"/>`;
+  let s=el("path",{d:dead?jag(pts):smooth(pts),fill:"none",stroke:col,"stroke-width":wMain,"stroke-linecap":"round",opacity:dead?R.deadOp:1});
   const nl=Math.round(lerp(R.latMin,R.latMax,h));
   for(let k=0;k<nl;k++){
     const startT=lerp(R.latStartMin,R.latStartMax,(k+R.latStartOfs)/nl),sx=x+(rng()-0.5)*R.latSxJit,sy0=sY+depth*startT,dir=(rng()<0.5?-1:1);
     const ex=sx+dir*lerp(R.latLenMin,R.latLenMax,rng()), ey=sy0+lerp(R.latDropMin,R.latDropMax,rng()), mx=(sx+ex)/2+dir*R.latMidK, my=(sy0+ey)/2;
-    if(dead) s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} L ${mx.toFixed(1)} ${my.toFixed(1)} L ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*R.latWDead).toFixed(2)}" stroke-linecap="round" opacity="${R.latDeadOp}"/>`;
-    else    s+=`<path d="M ${sx.toFixed(1)} ${sy0.toFixed(1)} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${col}" stroke-width="${(wMain*R.latWLive).toFixed(2)}" stroke-linecap="round"/>`;
+    if(dead) s+=el("path",{d:svg`M ${sx} ${sy0} L ${mx} ${my} L ${ex} ${ey}`,fill:"none",stroke:col,"stroke-width":wMain*R.latWDead,"stroke-linecap":"round",opacity:R.latDeadOp});
+    else    s+=el("path",{d:svg`M ${sx} ${sy0} Q ${mx} ${my} ${ex} ${ey}`,fill:"none",stroke:col,"stroke-width":wMain*R.latWLive,"stroke-linecap":"round"});
   }
   if(h>R.hairOnset){
     const hairC=rootColor(clamp(h+R.hairHueOfs,0,1)), nh=Math.round(lerp(0,R.hairMax,h));
     pts.slice(1).forEach(p=>{ for(let k=0;k<nh;k++){ if(rng()>R.hairProb)continue; const side=rng()<0.5?-1:1,hl=lerp(R.hairLenMin,R.hairLenMax,h);
-      s+=`<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${(p.x+side*hl).toFixed(1)}" y2="${(p.y+lerp(R.hairDropMin,R.hairDropMax,rng())).toFixed(1)}" stroke="${hairC}" stroke-width="${R.hairW}" opacity="${(R.hairOpBase+R.hairOpK*h).toFixed(2)}"/>`; }});
+      s+=el("line",{x1:p.x,y1:p.y,x2:p.x+side*hl,y2:p.y+lerp(R.hairDropMin,R.hairDropMax,rng()),stroke:hairC,"stroke-width":R.hairW,opacity:R.hairOpBase+R.hairOpK*h}); }});
   }
   return s;
 }
@@ -664,7 +663,7 @@ function roots(x,sY,v,rng,rootPx){
 function build(model){
   const DATA=model.series, N=DATA.length, TANK=model.tank;
   const sc=CFG.scale, G=CFG.geom, T=DRAW.text, TK=DRAW.ticks, MK=DRAW.marker, SUN=DRAW.sun, RN=DRAW.rain, SL=DRAW.soil, TB=DRAW.table, CR=DRAW.crack, DP=DRAW.drop, SD=DRAW.seeds, ST=DRAW.bootStagger;
-  const vw=(typeof scene!=="undefined" && scene && scene.clientWidth) || window.innerWidth;
+  const vw=scene.clientWidth || window.innerWidth;
   const dayW=clamp((vw-AX-PADR)/G.daysPerView, G.dayMin, G.dayMax);
   const W=AX+N*dayW+PADR, R=W-PADR;
   const cx=i=>AX+dayW*(i+0.5);
@@ -674,7 +673,7 @@ function build(model){
   const todayIdx=resolveTodayIdx(DATA);
   const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1));
 
-  const defs=`
+  const defs=svg`
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.aqua0}" stop-opacity=".55"/>
       <stop offset="1" stop-color="${C.aqua1}" stop-opacity=".82"/></linearGradient>
@@ -687,11 +686,11 @@ function build(model){
     <linearGradient id="todayBeam" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.green}" stop-opacity=".18"/>
       <stop offset="1" stop-color="${C.green}" stop-opacity=".03"/></linearGradient>
-    <linearGradient id="wline" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+    <linearGradient id="wline" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT}">
       <stop offset="0" stop-color="${C.waterLine}"/>
       <stop offset=".5" stop-color="${C.waterLine}"/>
       <stop offset=".82" stop-color="${C.waterLine}" stop-opacity="0"/></linearGradient>
-    <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT.toFixed(1)}">
+    <linearGradient id="whi" gradientUnits="userSpaceOnUse" x1="0" y1="${SURF}" x2="0" y2="${ROOT_BOT}">
       <stop offset="0" stop-color="${C.waterHi}"/>
       <stop offset=".5" stop-color="${C.waterHi}"/>
       <stop offset=".82" stop-color="${C.waterHi}" stop-opacity="0"/></linearGradient>`;
@@ -699,29 +698,29 @@ function build(model){
   let sky="", weather="";
   DATA.forEach(d=>{
     const x0=cx(d.i)-dayW/2, heat=clamp((d.tmax-sc.tempMin)/(sc.tempMax-sc.tempMin),0,1);
-    sky+=`<rect x="${x0.toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${SURF-SKY_TOP}" fill="${C.sky}"/>`;
+    sky+=el("rect",{x:x0,y:SKY_TOP,width:dayW,height:SURF-SKY_TOP,fill:C.sky});
     const si=clamp((d.et0-sc.et0Min)/(sc.et0Max-sc.et0Min),0,1);
     if(si>SUN.minVis){
       const sx=x0+dayW*0.5, sy=SKY_TOP+SUN.yOfs, rad=lerp(SUN.radMin,SUN.radMax,si), core=sunCore(heat);
       const gw=rad*lerp(SUN.glowKMin,SUN.glowKMax,heat); let rays=""; const nr=Math.round(lerp(SUN.rayMin,SUN.rayMax,si));
       for(let k=0;k<nr;k++){const a=k/nr*Math.PI*2,r1=rad+SUN.rayInner,r2=rad+lerp(SUN.rayOuterMin,SUN.rayOuterMax,si);
-        rays+=`<line x1="${(sx+Math.cos(a)*r1).toFixed(1)}" y1="${(sy+Math.sin(a)*r1).toFixed(1)}" x2="${(sx+Math.cos(a)*r2).toFixed(1)}" y2="${(sy+Math.sin(a)*r2).toFixed(1)}" stroke="${core}" stroke-width="${lerp(SUN.rayWMin,SUN.rayWMax,si).toFixed(2)}" stroke-linecap="round"/>`;}
-      weather+=`<g opacity="${SUN.groupOp}"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${gw.toFixed(1)}" fill="url(#glow)" opacity="${(SUN.glowOpBase+heat*SUN.glowOpK).toFixed(2)}"/>${rays}<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${rad.toFixed(1)}" fill="${core}"/></g>`;
+        rays+=el("line",{x1:sx+Math.cos(a)*r1,y1:sy+Math.sin(a)*r1,x2:sx+Math.cos(a)*r2,y2:sy+Math.sin(a)*r2,stroke:core,"stroke-width":lerp(SUN.rayWMin,SUN.rayWMax,si),"stroke-linecap":"round"});}
+      weather+=`<g opacity="${SUN.groupressed}">`+el("circle",{cx:sx,cy:sy,r:gw,fill:"url(#glow)",opacity:SUN.glowOpBase+heat*SUN.glowOpK})+rays+el("circle",{cx:sx,cy:sy,r:rad,fill:core})+`</g>`;
     }
     if(d.rain>RN.minVis){
       const rng=mulberry32(SD.rain+d.i), strands=Math.round(clamp(d.rain/RN.perMm,RN.strandMin,RN.strandMax)); let rg="";
       for(let k=0;k<strands;k++){const rx=x0+lerp(dayW*RN.xMinK,dayW*RN.xMaxK,rng()),ry=SKY_TOP+lerp(RN.yMin,RN.yMax,rng());
         const len=lerp(RN.lenMin,RN.lenMax,Math.sqrt(clamp(d.rain/RN.lenNorm,0,1)))*(RN.lenJitBase+rng()*RN.lenJitK);
-        rg+=`<line x1="${rx.toFixed(1)}" y1="${ry.toFixed(1)}" x2="${(rx-RN.slant).toFixed(1)}" y2="${(ry+len).toFixed(1)}" stroke="${C.rain}" stroke-width="${RN.w}" stroke-linecap="round" opacity="${(RN.opBase+RN.opK*clamp(d.rain/RN.opNorm,0,1)).toFixed(2)}"/>`;}
+        rg+=el("line",{x1:rx,y1:ry,x2:rx-RN.slant,y2:ry+len,stroke:C.rain,"stroke-width":RN.w,"stroke-linecap":"round",opacity:RN.opBase+RN.opK*clamp(d.rain/RN.opNorm,0,1)});}
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
       weather+=`<g class="grow" style="transition-delay:${d.i*ST.weather}ms">${rg}</g>`;
     }
     const affX=cx(d.i), affY=SURF-DP.yOfs, ringR=clamp(dayW*DROPUI.ringRK,DROPUI.ringMin,DROPUI.ringMax);
     if(d.mins>0){
-      const pop=d.i===popDay?' data-state="pop"':"";
+      const pressed=d.i===pressedDay?' data-state="pressed"':"";
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
-      weather+=`<g class="grow"${pop} style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
-    } else if(d.i>=todayIdx){
+      weather+=`<g class="grow"${pressed} style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
+    } else {
       weather+=`<g>${ghostRing(affX,affY,ringR)}</g>`;
     }
   });
@@ -732,65 +731,63 @@ function build(model){
     return {...h, fill, edge:shade(fill,0.70), sp:shade(fill,0.82),
             spn:i===1?look.spnA:look.spnB, peb:i===2?look.peb:0}; });
 
-  let soil=`<rect x="${AX}" y="${SURF}" width="${(R-AX).toFixed(1)}" height="${soilDepth.toFixed(1)}" fill="${HZ[1].fill}"/>`;
+  let soil=el("rect",{x:AX,y:SURF,width:R-AX,height:soilDepth,fill:HZ[1].fill});
   HZ.forEach((h,hi)=>{
     if(h.y0>=soilDepth) return;
     const yb=Math.min(h.y1,soilDepth), band=yb-h.y0;
-    soil+=`<rect x="${AX}" y="${(SURF+h.y0).toFixed(1)}" width="${(R-AX).toFixed(1)}" height="${band.toFixed(1)}" fill="${h.fill}"/>`;
-    soil+=`<line x1="${AX}" y1="${(SURF+h.y0).toFixed(1)}" x2="${R.toFixed(1)}" y2="${(SURF+h.y0).toFixed(1)}" stroke="${h.edge}" stroke-width="${SL.edgeW}" opacity="${SL.edgeOp}"/>`;
+    soil+=el("rect",{x:AX,y:SURF+h.y0,width:R-AX,height:band,fill:h.fill});
+    soil+=el("line",{x1:AX,y1:SURF+h.y0,x2:R,y2:SURF+h.y0,stroke:h.edge,"stroke-width":SL.edgeW,opacity:SL.edgeOp});
     const rng=mulberry32(SD.soil+hi), step=SL.speckStep;
     for(let x=AX+SL.speckPadL;x<R-SL.speckPadR;x+=step){ if(rng()>h.spn) continue;
       const px=x+(rng()-0.5)*step, py=SURF+h.y0+rng()*band, r=lerp(SL.speckRMin,SL.speckRMax,rng());
-      soil+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r.toFixed(1)}" fill="${h.sp}" opacity="${(SL.speckOpBase+rng()*SL.speckOpK).toFixed(2)}"/>`;
+      soil+=el("circle",{cx:px,cy:py,r,fill:h.sp,opacity:SL.speckOpBase+rng()*SL.speckOpK});
     }
     if(h.peb>0){ for(let x=AX+SL.pebPadL;x<R-SL.pebPadR;x+=SL.pebStep){ if(rng()>h.peb*SL.pebProbK)continue; const px=x+(rng()-0.5)*SL.pebXJit,py=SURF+h.y0+lerp(SL.pebYMin,SL.pebYMax,rng())*band,rr=lerp(SL.pebRMin,SL.pebRMax,rng());
-      soil+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${rr.toFixed(1)}" ry="${(rr*SL.pebRyK).toFixed(1)}" fill="${h.sp}" opacity="${SL.pebOp}"/>`; }}
+      soil+=el("ellipse",{cx:px,cy:py,rx:rr,ry:rr*SL.pebRyK,fill:h.sp,opacity:SL.pebOp}); }}
   });
 
   const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
   DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
   tablePts.push({x:R,y:tableY(DATA[N-1].level)});
   const tline=smooth(tablePts);
-  soil+=`<path d="${tline} L ${R.toFixed(1)} ${ROOT_BOT.toFixed(1)} L ${AX} ${ROOT_BOT.toFixed(1)} Z" fill="url(#aqua)"/>`;
+  soil+=svg`<path d="${tline} L ${R} ${ROOT_BOT} L ${AX} ${ROOT_BOT} Z" fill="url(#aqua)"/>`;
   DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
-  soil+=`<path d="${tline}" fill="none" stroke="url(#wline)" stroke-width="${TB.lineW}"/>`
-     +`<path d="${tline}" fill="none" stroke="url(#whi)" stroke-width="${TB.hiW}" opacity="${TB.hiOp}"/>`;
+  soil+=el("path",{d:tline,fill:"none",stroke:"url(#wline)","stroke-width":TB.lineW})
+     +el("path",{d:tline,fill:"none",stroke:"url(#whi)","stroke-width":TB.hiW,opacity:TB.hiOp});
 
   const surfPts=[{x:AX,y:SURF}];
   DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
   surfPts.push({x:R,y:SURF});
-  soil+=`<path d="${smooth(surfPts)}" fill="none" stroke="${C.surf}" stroke-width="${TB.surfW}"/>`;
+  soil+=el("path",{d:smooth(surfPts),fill:"none",stroke:C.surf,"stroke-width":TB.surfW});
 
   let cracks="";
   DATA.forEach(d=>{ if(d.level>CR.moistMax)return; const rng=mulberry32(SD.crack+d.i),x0=cx(d.i)-dayW/2,dry=1-clamp(d.level/CR.moistMax,0,1),nc=Math.round(lerp(CR.countMin,CR.countMax,dry));
-    for(let k=0;k<nc;k++){let px=x0+lerp(dayW*CR.xMinK,dayW*CR.xMaxK,rng()),py=SURF+CR.yOfs,seg=`M ${px.toFixed(1)} ${py.toFixed(1)}`;const steps=CR.stepMin+Math.floor(rng()*CR.stepRand);
-      for(let s2=0;s2<steps;s2++){px+=(rng()-0.5)*CR.xJit;py+=lerp(CR.dyMin,CR.dyMax,rng());seg+=` L ${px.toFixed(1)} ${py.toFixed(1)}`;}
-      cracks+=`<path d="${seg}" fill="none" stroke="${C.surf}" stroke-width="${CR.w}" opacity="${(CR.opBase+CR.opK*dry).toFixed(2)}"/>`;}});
+    for(let k=0;k<nc;k++){let px=x0+lerp(dayW*CR.xMinK,dayW*CR.xMaxK,rng()),py=SURF+CR.yOfs,seg=svg`M ${px} ${py}`;const steps=CR.stepMin+Math.floor(rng()*CR.stepRand);
+      for(let s2=0;s2<steps;s2++){px+=(rng()-0.5)*CR.xJit;py+=lerp(CR.dyMin,CR.dyMax,rng());seg+=svg` L ${px} ${py}`;}
+      cracks+=el("path",{d:seg,fill:"none",stroke:C.surf,"stroke-width":CR.w,opacity:CR.opBase+CR.opK*dry});}});
 
   let flora="";
   DATA.forEach(d=>{const x=cx(d.i),sY=SURF+(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit,v=clamp(d.level/TANK,0,1),rng=mulberry32(SD.flora+d.i);
     // paumen-lint-disable-next-line  -- dynamic per-element transform-origin/transition-delay can't move to a static stylesheet
-    flora+=`<g class="grow" style="transform-origin:${x.toFixed(1)}px ${sY.toFixed(1)}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
+    flora+=svg`<g class="grow" style="transform-origin:${x}px ${sY}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
 
   let ticks="";
-  DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,bold=isT?' font-weight="700"':'',tcol=isT?C.green:C.surf;
-    ticks+=`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.dateDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.date.slice(8)}</text>`
-       +`<text x="${x.toFixed(1)}" y="${(VBOT+TK.padY+TK.wdDy*K).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="${(TK.fs*K).toFixed(1)}"${bold} fill="${tcol}">${d.wd.slice(0,3)}</text>`;});
+  DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,fw=isT?700:null,tcol=isT?C.green:C.surf;
+    ticks+=el("text",{x,y:VBOT+TK.padY+TK.dateDy*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:tcol},d.date.slice(8))
+       +el("text",{x,y:VBOT+TK.padY+TK.wdDy*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:tcol},d.wd.slice(0,3));});
 
   const tx=cx(todayIdx), bandX=tx-dayW/2, x2=bandX+dayW;
   const capT=2, tabH=MK.hK*K, capB=capT+tabH, rTop=Math.min(5, dayW*0.14);
-  const head=`M ${bandX.toFixed(1)} ${capB.toFixed(1)} L ${bandX.toFixed(1)} ${(capT+rTop).toFixed(1)} `
-    +`Q ${bandX.toFixed(1)} ${capT} ${(bandX+rTop).toFixed(1)} ${capT} L ${(x2-rTop).toFixed(1)} ${capT} `
-    +`Q ${x2.toFixed(1)} ${capT} ${x2.toFixed(1)} ${(capT+rTop).toFixed(1)} L ${x2.toFixed(1)} ${capB.toFixed(1)} Z`;
+  const head=svg`M ${bandX} ${capB} L ${bandX} ${capT+rTop} Q ${bandX} ${capT} ${bandX+rTop} ${capT} L ${x2-rTop} ${capT} Q ${x2} ${capT} ${x2} ${capT+rTop} L ${x2} ${capB} Z`;
   const today=
-     `<rect x="${bandX.toFixed(1)}" y="${capB.toFixed(1)}" width="${dayW.toFixed(1)}" height="${(VBOT-capB).toFixed(1)}" fill="url(#todayBeam)"/>`
-    +`<path d="${head}" fill="${C.green}"/>`
-    +`<text x="${tx.toFixed(1)}" y="${(capT+tabH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-family="${MONO}" font-size="${(MK.fsK*K).toFixed(1)}" font-weight="700" fill="${C.paper}" letter-spacing="${MK.tracking}em">TODAY</text>`;
+     el("rect",{x:bandX,y:capB,width:dayW,height:VBOT-capB,fill:"url(#todayBeam)"})
+    +el("path",{d:head,fill:C.green})
+    +el("text",{x:tx,y:capT+tabH/2,"text-anchor":"middle","dominant-baseline":"central","font-family":MONO,"font-size":MK.fsK*K,"font-weight":700,fill:C.paper,"letter-spacing":MK.tracking+"em"},"TODAY");
 
-  let hits=""; DATA.forEach(d=>{hits+=`<rect data-i="${d.i}" x="${(cx(d.i)-dayW/2).toFixed(1)}" y="${SKY_TOP}" width="${dayW.toFixed(1)}" height="${(VBOT-SKY_TOP).toFixed(1)}" fill="transparent"/>`;});
+  let hits=""; DATA.forEach(d=>{hits+=el("rect",{"data-i":d.i,x:cx(d.i)-dayW/2,y:SKY_TOP,width:dayW,height:VBOT-SKY_TOP,fill:"transparent"});});
 
-  const svg=`<svg viewBox="0 0 ${W.toFixed(0)} ${Hd}" width="${W.toFixed(0)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
-  return { svg, W, dayW, cx, todayIdx };
+  const markup=`<svg viewBox="0 0 ${Math.round(W)} ${Hd}" width="${Math.round(W)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
+  return { svg: markup, W, dayW, cx, todayIdx };
 }
 
 function renderStatus(model){
@@ -799,8 +796,8 @@ function renderStatus(model){
   const pct=Math.round(tl/TANK*100), N=DATA.length;
   let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
   let word,level,kick;
-  if(tl<=TANK*ENGINE.emptyFrac){ word="Water today"; level="now"; kick="Refill point reached"; }
-  else if(tl<REFILL){ word="Water now"; level="now"; kick="Below refill point"; }
+  if(tl<=TANK*ENGINE.emptyFrac){ word="Water now"; level="now"; kick="Refill point reached"; }
+  else if(tl<REFILL){ word="Water today"; level="now"; kick="Below refill point"; }
   else {
     let dd,plus=""; if(firstBelow>=0){dd=firstBelow-ti;} else {dd=(N-1)-ti;plus="+";}
     word = dd===1 ? "Water tomorrow" : `Water in ${dd}${plus} days`;
@@ -818,7 +815,6 @@ function renderStatus(model){
 
 const ctrl={ planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:ENGINE.dur.start, watered:[] };
 const scene=document.getElementById("scroll");
-const sbar=document.getElementById("sbar"), thumb=document.getElementById("thumb");
 const statusEl=document.getElementById("status"), msgEl=document.getElementById("msg");
 let G, booted=false;
 
@@ -830,25 +826,23 @@ function render(){
   scene.innerHTML=G.svg;
   renderStatus(model);
   wireHits();
-  requestAnimationFrame(syncBar);
   if(!booted){ scene.scrollLeft=Math.max(0,G.cx(G.todayIdx)-G.dayW*1.4-AX); booted=true;
     requestAnimationFrame(()=>document.body.removeAttribute("data-state")); }
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
-let popDay=null;
+let pressedDay=null;
 function toggleWater(i){
   const set=new Set(ctrl.watered), adding=!set.has(i);
   adding ? set.add(i) : set.delete(i);
   ctrl.watered=[...set];
-  popDay = adding ? i : null;
+  pressedDay = adding ? i : null;
   rerender();
-  popDay = null;
+  pressedDay = null;
 }
 
 function wireHits(){
   scene.querySelector("svg").querySelectorAll("[data-i]").forEach(h=>{
-    h.style.cursor="pointer";
     h.addEventListener("click",()=>toggleWater(+h.dataset.i));
   });
 }
@@ -869,36 +863,12 @@ function bumpDur(d){
 document.getElementById("durDown").addEventListener("click",()=>bumpDur(-ENGINE.dur.step));
 document.getElementById("durUp").addEventListener("click",()=>bumpDur(ENGINE.dur.step));
 
-function syncBar(){
-  const cw=scene.clientWidth, sw=scene.scrollWidth, tw=sbar.clientWidth;
-  if(sw<=cw+1){ sbar.style.visibility="hidden"; return; }
-  sbar.style.visibility="visible";
-  const thumbW=Math.max(28, tw*cw/sw), maxLeft=tw-thumbW, maxScroll=sw-cw;
-  thumb.style.width=thumbW+"px";
-  thumb.style.left=(maxScroll>0?(scene.scrollLeft/maxScroll)*maxLeft:0)+"px";
-}
-scene.addEventListener("scroll",syncBar,{passive:true});
-let drag=false,x0=0,l0=0;
-thumb.addEventListener("pointerdown",e=>{drag=true;x0=e.clientX;l0=parseFloat(thumb.style.left)||0;thumb.setPointerCapture(e.pointerId);e.preventDefault();});
-thumb.addEventListener("pointermove",e=>{ if(!drag)return;
-  const tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
-  scene.scrollLeft=maxLeft>0?(clamp(l0+(e.clientX-x0),0,maxLeft)/maxLeft)*maxScroll:0; });
-thumb.addEventListener("pointerup",()=>{drag=false;});
-sbar.addEventListener("pointerdown",e=>{ if(e.target===thumb)return;
-  const r=sbar.getBoundingClientRect(),tw=sbar.clientWidth,thumbW=thumb.offsetWidth,maxLeft=tw-thumbW,maxScroll=scene.scrollWidth-scene.clientWidth;
-  scene.scrollLeft=maxLeft>0?(clamp(e.clientX-r.left-thumbW/2,0,maxLeft)/maxLeft)*maxScroll:0; });
-
-function reserveDock(){
-  const c=document.getElementById("controls");
-  document.body.style.paddingBlockEnd=(c.offsetHeight+24)+"px";
-}
-reserveDock();
-
-let rt; addEventListener("resize",()=>{reserveDock();clearTimeout(rt);rt=setTimeout(rerender,180);});
+let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(rerender,180);});
 
 function showLoading(){ statusEl.dataset.state="loading"; msgEl.hidden=false; msgEl.textContent="Loading weather…"; }
 function showError(err){
   statusEl.dataset.state="error";
+  document.body.removeAttribute("data-state");
   msgEl.hidden=false;
   msgEl.textContent="Weather unavailable — can’t compute the soil balance. Check your connection and reload.";
   console.error(err);
