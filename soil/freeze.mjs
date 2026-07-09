@@ -20,14 +20,15 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const BEGIN = "/* SOIL-STATIC-DATA:BEGIN";
 const END = "/* SOIL-STATIC-DATA:END */";
 // Matches the whole injected block plus the two newlines freeze adds after it.
-const BLOCK_RE = /\/\* SOIL-STATIC-DATA:BEGIN[\s\S]*?SOIL-STATIC-DATA:END \*\/\n\n/;
+// \r? tolerates CRLF, so thaw/re-freeze work on a Windows (CRLF) checkout too.
+const BLOCK_RE = /\/\* SOIL-STATIC-DATA:BEGIN[\s\S]*?SOIL-STATIC-DATA:END \*\/\r?\n\r?\n/;
 const ANCHOR = "async function boot(){";
 
 // Pull `key: value` out of the SITE / API object literals in the page source,
 // so freeze always uses whatever coordinates and window the page ships with.
 function readConfig(html) {
   const num = (name) => {
-    const m = html.match(new RegExp(`${name}:\\s*([\\d.]+)`));
+    const m = html.match(new RegExp(`${name}:\\s*(-?[\\d.]+)`));
     if (!m) throw new Error(`Could not find ${name} in the page's SITE/API config`);
     return Number(m[1]);
   };
@@ -105,12 +106,14 @@ async function thaw(inPath, outPath) {
 }
 
 const [cmd, inArg, outArg] = process.argv.slice(2);
-const p = (x) => resolve(HERE, x);
+// Explicit args resolve against the caller's cwd (what a CLI user expects);
+// the defaults live next to this script.
+const p = (x, dflt) => (x ? resolve(x) : resolve(HERE, dflt));
 try {
   if (cmd === "freeze") {
-    await freeze(p(inArg ?? "soil.html"), p(outArg ?? "soil.static.html"));
+    await freeze(p(inArg, "soil.html"), p(outArg, "soil.static.html"));
   } else if (cmd === "thaw") {
-    await thaw(p(inArg ?? "soil.static.html"), p(outArg ?? "soil.live.html"));
+    await thaw(p(inArg, "soil.static.html"), p(outArg, "soil.live.html"));
   } else {
     console.error(
       "usage:\n" +
