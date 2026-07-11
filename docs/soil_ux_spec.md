@@ -1,4 +1,4 @@
-# Soil-Balance UX update — scannability, interaction, attention, motion
+# Soil-Balance UX update
 
 ## Goal
 
