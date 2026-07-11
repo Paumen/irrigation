@@ -274,6 +274,36 @@ section, fieldset {
     }
   }
 
+  text[data-state="alert"] { fill: var(--color-alert); }
+  text[data-state="danger"] { fill: var(--color-danger); }
+
+  [data-state="attention"] {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: breathe var(--time-slow) ease-in-out infinite;
+  }
+
+  [data-state="attention"] :is(circle, line) { stroke: var(--color-alert); }
+
+  @keyframes breathe {
+    50% { transform: scale(1.15); }
+  }
+
+  [data-state="soak"] {
+    animation: soak var(--time-quick) ease-out backwards;
+    animation-delay: calc(var(--time-quick) / 2);
+  }
+
+  @keyframes soak {
+    from { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-state="pressed"],
+    [data-state="attention"],
+    [data-state="soak"] { animation: none; }
+  }
+
   [data-freeform] {
     text-align: center;
     opacity: var(--opacity-dim);
@@ -448,6 +478,7 @@ const DRAW = {
 
   text:   { vwToPx:0.02, pxMin:12.8, pxMax:25.6, basePx:12, heightSlack:60 },
   ticks:  { padY:5, dateDy:12, wdDy:25, fs:12 },
+  metrics:{ rowH:14, padY:6, dimOp:0.35 },
   marker: { hK:15, fsK:10, tracking:0.1 },
 
   drop: { topK:2.1, c1xK:0.62, c1yK:1.35, c2yK:0.55, yOfs:71 },
@@ -496,6 +527,7 @@ const DRAW = {
 
   table: {
     lineW:2.2, hiW:0.8, hiOp:0.55, surfJit:1.6, surfW:2.2,
+    refillW:1, refillOp:0.45, refillDash:"4 6",
   },
 
   crack: {
@@ -577,6 +609,15 @@ function netMm(d) {
   };
 }
 
+// Gains read "+3", losses "-4", nothing "0" — one sign language for all net-effect slots.
+const fmtNet = v => v > 0 ? `+${v}` : String(v);
+
+// First day at or after `from` whose level sits below the refill point (-1 if none in window).
+function firstNeeded(series, refill, from) {
+  for (let k = from; k < series.length; k++) if (series[k].level < refill) return k;
+  return -1;
+}
+
 const hx = c => { c = c.replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; };
 const hexLerp = (a,b,t) => { const A=hx(a),B=hx(b),m=i=>Math.round(lerp(A[i],B[i],clamp(t,0,1))); return `rgb(${m(0)},${m(1)},${m(2)})`; };
 function ramp(stops,v){ v=clamp(v,0,1); for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1]; if(v<=p1){return hexLerp(c0,c1,(v-p0)/((p1-p0)||1));}} return stops[stops.length-1][1]; }
@@ -597,6 +638,7 @@ function jag(pts){ let d=svg`M ${pts[0].x} ${pts[0].y}`; for(let i=1;i<pts.lengt
 const DROPUI = {
   fill:"#6E8E92", discEdge:"#D6D0BF", drop:"#7E969C",
   ringRK:0.24, ringMin:11, ringMax:15,
+  plusK:0.42, plusW:1.6, ghostOp:0.9,
 };
 function dropPathD(cx,cy,r){
   const D=DRAW.drop, topY=cy-D.topK*r;
@@ -608,12 +650,13 @@ function waterDrop(cx,cy,R){
     +el("path",{d:dropPathD(cx,dy,dr),fill:DROPUI.fill,stroke:"none"});
 }
 function ghostRing(cx,cy,R){
-  const dr=R*0.5, dy=cy+R*0.3;
-  return el("circle",{cx,cy,r:R,fill:"none",stroke:DROPUI.discEdge,"stroke-width":1.2,"stroke-dasharray":"3 3",opacity:0.8})
-    +el("path",{d:dropPathD(cx,dy,dr),fill:"none",stroke:DROPUI.drop,"stroke-width":1.4,"stroke-linejoin":"round",opacity:0.6});
+  const a=R*DROPUI.plusK;
+  return el("circle",{cx,cy,r:R,fill:"none",stroke:DROPUI.discEdge,"stroke-width":1.2,"stroke-dasharray":"3 3",opacity:DROPUI.ghostOp})
+    +el("line",{x1:cx-a,y1:cy,x2:cx+a,y2:cy,stroke:DROPUI.drop,"stroke-width":DROPUI.plusW,"stroke-linecap":"round",opacity:DROPUI.ghostOp})
+    +el("line",{x1:cx,y1:cy-a,x2:cx,y2:cy+a,stroke:DROPUI.drop,"stroke-width":DROPUI.plusW,"stroke-linecap":"round",opacity:DROPUI.ghostOp});
 }
-function wetCol(x0,w,sY,hgt){
-  return el("rect",{x:x0,y:sY,width:w,height:hgt,fill:"url(#wetE)"});
+function wetCol(x0,w,sY,hgt,soak){
+  return el("rect",{x:x0,y:sY,width:w,height:hgt,fill:"url(#wetE)","data-state":soak?"soak":null});
 }
 
 function plant(x,sY,v,rng){
@@ -671,7 +714,10 @@ function build(model){
   const VBOT=ROOT_BOT, soilDepth=VBOT-SURF;
   const tableY=lv=>SURF+rootPx*(1-clamp(lv,0,TANK)/TANK);
   const todayIdx=resolveTodayIdx(DATA);
-  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx, Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1));
+  const needIdx=firstNeeded(DATA, model.refill, todayIdx);
+  const _m=clamp(T.vwToPx*vw,T.pxMin,T.pxMax), K=_m/T.basePx;
+  const MT=DRAW.metrics, MB=Math.ceil((MT.padY+MT.rowH*4)*K);
+  const Hd=VBOT+(H-SOIL_BOT)+Math.ceil(T.heightSlack*(K-1))+MB;
 
   const defs=svg`
     <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
@@ -719,9 +765,10 @@ function build(model){
     if(d.mins>0){
       const pressed=d.i===pressedDay?' data-state="pressed"':"";
       // paumen-lint-disable-next-line  -- dynamic per-day transition-delay can't move to a static stylesheet
-      weather+=`<g class="grow"${pressed} style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
+      weather+=`<g class="grow"${pressed} data-drop-of="${d.i}" style="transition-delay:${d.i*ST.weather}ms">${waterDrop(affX,affY,ringR)}</g>`;
     } else {
-      weather+=`<g>${ghostRing(affX,affY,ringR)}</g>`;
+      const attn=d.i===needIdx?' data-state="attention"':"";
+      weather+=`<g${attn} data-drop-of="${d.i}">${ghostRing(affX,affY,ringR)}</g>`;
     }
   });
 
@@ -746,14 +793,20 @@ function build(model){
       soil+=el("ellipse",{cx:px,cy:py,rx:rr,ry:rr*SL.pebRyK,fill:h.sp,opacity:SL.pebOp}); }}
   });
 
-  const tablePts=[{x:AX,y:tableY(DATA[0].level)}];
-  DATA.forEach(d=>tablePts.push({x:cx(d.i),y:tableY(d.level)}));
-  tablePts.push({x:R,y:tableY(DATA[N-1].level)});
-  const tline=smooth(tablePts);
-  soil+=svg`<path d="${tline} L ${R} ${ROOT_BOT} L ${AX} ${ROOT_BOT} Z" fill="url(#aqua)"/>`;
-  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx); });
-  soil+=el("path",{d:tline,fill:"none",stroke:"url(#wline)","stroke-width":TB.lineW})
-     +el("path",{d:tline,fill:"none",stroke:"url(#whi)","stroke-width":TB.hiW,opacity:TB.hiOp});
+  const tablePath=lvls=>{
+    const pts=[{x:AX,y:tableY(lvls[0])}];
+    DATA.forEach(d=>pts.push({x:cx(d.i),y:tableY(lvls[d.i])}));
+    pts.push({x:R,y:tableY(lvls[N-1])});
+    const line=smooth(pts);
+    return { line, fill:svg`${line} L ${R} ${ROOT_BOT} L ${AX} ${ROOT_BOT} Z` };
+  };
+  const tp=tablePath(DATA.map(d=>d.level));
+  soil+=el("path",{"data-water-fill":1,d:tp.fill,fill:"url(#aqua)"});
+  DATA.forEach(d=>{ if(d.mins>0) soil+=wetCol(cx(d.i)-dayW/2, dayW, SURF, rootPx, d.i===pressedDay); });
+  const refillY=tableY(model.refill);
+  soil+=el("line",{x1:AX,y1:refillY,x2:R,y2:refillY,stroke:C.waterLine,"stroke-width":TB.refillW,"stroke-dasharray":TB.refillDash,opacity:TB.refillOp});
+  soil+=el("path",{"data-water-line":1,d:tp.line,fill:"none",stroke:"url(#wline)","stroke-width":TB.lineW})
+     +el("path",{"data-water-hi":1,d:tp.line,fill:"none",stroke:"url(#whi)","stroke-width":TB.hiW,opacity:TB.hiOp});
 
   const surfPts=[{x:AX,y:SURF}];
   DATA.forEach(d=>{const j=(mulberry32(SD.surf+d.i)()-0.5)*TB.surfJit; surfPts.push({x:cx(d.i),y:SURF+j});});
@@ -771,30 +824,50 @@ function build(model){
     // paumen-lint-disable-next-line  -- dynamic per-element transform-origin/transition-delay can't move to a static stylesheet
     flora+=svg`<g class="grow" style="transform-origin:${x}px ${sY}px;transition-delay:${d.i*ST.flora}ms">`+roots(x,sY,v,rng,rootPx)+plant(x,sY,v,rng)+`</g>`;});
 
+  // Four fixed metric rows per day — level, rain, water, ET — each in its driver's colour,
+  // so one metric scans straight across days and a moving number names its own cause.
+  const mFill=[C.surf,C.rain,DROPUI.fill,C.rust];
+  let nums="";
+  DATA.forEach(d=>{
+    const x=cx(d.i), isT=d.i===todayIdx, fw=isT?700:null, n=netMm(d);
+    const prevLv=d.i===0?TANK:DATA[d.i-1].level;
+    const crossed=thr=>prevLv>=thr&&d.level<thr;
+    const lvState=crossed(TANK*ENGINE.emptyFrac)?"danger":crossed(model.refill)?"alert":null;
+    const rows=[
+      { v:String(n.level), dim:false,       extra:{"data-level-at":d.i,"data-state":lvState} },
+      { v:fmtNet(n.rain),  dim:n.rain===0,  extra:{} },
+      { v:fmtNet(n.water), dim:n.water===0, extra:{"data-water-at":d.i} },
+      { v:fmtNet(n.et),    dim:n.et===0,    extra:{} },
+    ];
+    rows.forEach((r,ri)=>{
+      nums+=el("text",{x,y:VBOT+(MT.padY+MT.rowH*(ri+1))*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:mFill[ri],opacity:r.dim?MT.dimOp:null,...r.extra},r.v);
+    });
+  });
+
   let ticks="";
   DATA.forEach(d=>{const x=cx(d.i),isT=d.i===todayIdx,fw=isT?700:null,tcol=isT?C.green:C.surf;
-    ticks+=el("text",{x,y:VBOT+TK.padY+TK.dateDy*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:tcol},d.date.slice(8))
-       +el("text",{x,y:VBOT+TK.padY+TK.wdDy*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:tcol},d.wd.slice(0,3));});
+    ticks+=el("text",{x,y:VBOT+MB+TK.padY+TK.dateDy*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:tcol},d.date.slice(8))
+       +el("text",{x,y:VBOT+MB+TK.padY+TK.wdDy*K,"text-anchor":"middle","font-family":MONO,"font-size":TK.fs*K,"font-weight":fw,fill:tcol},d.wd.slice(0,3));});
 
   const tx=cx(todayIdx), bandX=tx-dayW/2, x2=bandX+dayW;
   const capT=2, tabH=MK.hK*K, capB=capT+tabH, rTop=Math.min(5, dayW*0.14);
   const head=svg`M ${bandX} ${capB} L ${bandX} ${capT+rTop} Q ${bandX} ${capT} ${bandX+rTop} ${capT} L ${x2-rTop} ${capT} Q ${x2} ${capT} ${x2} ${capT+rTop} L ${x2} ${capB} Z`;
   const today=
-     el("rect",{x:bandX,y:capB,width:dayW,height:VBOT-capB,fill:"url(#todayBeam)"})
+     el("rect",{x:bandX,y:capB,width:dayW,height:VBOT+MB-capB,fill:"url(#todayBeam)"})
     +el("path",{d:head,fill:C.green})
     +el("text",{x:tx,y:capT+tabH/2,"text-anchor":"middle","dominant-baseline":"central","font-family":MONO,"font-size":MK.fsK*K,"font-weight":700,fill:C.paper,"letter-spacing":MK.tracking+"em"},"TODAY");
 
-  let hits=""; DATA.forEach(d=>{hits+=el("rect",{"data-index":d.i,x:cx(d.i)-dayW/2,y:SKY_TOP,width:dayW,height:VBOT-SKY_TOP,fill:"transparent"});});
+  let hits=""; DATA.forEach(d=>{hits+=el("rect",{"data-index":d.i,x:cx(d.i)-dayW/2,y:SKY_TOP,width:dayW,height:VBOT+MB-SKY_TOP,fill:"transparent"});});
 
-  const markup=`<svg viewBox="0 0 ${Math.round(W)} ${Hd}" width="${Math.round(W)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${ticks}${today}${hits}</svg>`;
-  return { svg: markup, W, dayW, cx, todayIdx };
+  const markup=`<svg viewBox="0 0 ${Math.round(W)} ${Hd}" width="${Math.round(W)}" height="${Hd}" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif"><defs>${defs}</defs>${sky}${weather}${soil}${cracks}${flora}${nums}${ticks}${today}${hits}</svg>`;
+  return { svg: markup, W, dayW, cx, todayIdx, tablePath };
 }
 
 function renderStatus(model){
   const DATA=model.series, TANK=model.tank, REFILL=model.refill;
   const ti=resolveTodayIdx(DATA), tl=DATA[ti].level;
   const pct=Math.round(tl/TANK*100), N=DATA.length;
-  let firstBelow=-1; for(let k=ti;k<N;k++){ if(DATA[k].level<REFILL){firstBelow=k;break;} }
+  const firstBelow=firstNeeded(DATA, REFILL, ti);
   let word,level,kick;
   if(tl<=TANK*ENGINE.emptyFrac){ word="Water now"; level="now"; kick="Refill point reached"; }
   else if(tl<REFILL){ word="Water today"; level="now"; kick="Below refill point"; }
@@ -816,12 +889,19 @@ function renderStatus(model){
 const ctrl={ planting:"Flower bed", soil:"Sandy loam", sun:"Full sun", minutes:ENGINE.dur.start, watered:[] };
 const scene=document.getElementById("scroll");
 const statusEl=document.getElementById("status"), msgEl=document.getElementById("msg");
-let G, booted=false;
+let G, MODEL=null, booted=false;
+
+// Motion timing single-sourced from the CSS tokens: press is felt (--time-quick pop),
+// then the effect is revealed one beat later at the same tempo.
+const tokenMs=name=>(parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name))||0)*1000;
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MOTION={ rise:tokenMs("--time-quick"), lag:tokenMs("--time-quick")*0.4, out:tokenMs("--time-quick")*0.5 };
 
 function render(){
   if(!WEATHER) return;
   TODAY = todayInTz(API.timezone);
   const model=compute(ctrl);
+  MODEL=model;
   G=build(model);
   scene.innerHTML=G.svg;
   renderStatus(model);
@@ -831,14 +911,65 @@ function render(){
 }
 function rerender(){ const sl=scene.scrollLeft; render(); scene.scrollLeft=sl; }
 
-let pressedDay=null;
+let pressedDay=null, morphSeq=0;
+
+// Reveal the effect of a watering toggle: after the rebuilt (final) frame, snap the
+// water table and the touched numbers back to their old values, then tick them to the
+// new ones — the level is seen rising, not discovered changed. Lags one beat behind
+// the press so cause lands before effect.
+function animateWater(oldLevels, model, idx, oldWaterMm){
+  if(REDUCED||!G) return;
+  const svgEl=scene.querySelector("svg"); if(!svgEl) return;
+  const seq=++morphSeq;
+  const q=s=>svgEl.querySelector(s);
+  const line=q("[data-water-line]"), hi=q("[data-water-hi]"), fillP=q("[data-water-fill]");
+  const wText=q(`[data-water-at="${idx}"]`);
+  const lvTexts=model.series.map(d=>q(`[data-level-at="${d.i}"]`));
+  const newLevels=model.series.map(d=>d.level);
+  const newWaterMm=Math.round(model.series[idx].waterAdd);
+  const pctEl=document.getElementById("pct"), subEl=document.getElementById("sub");
+  const subFinal=subEl.textContent, ti=G.todayIdx;
+  const apply=k=>{
+    const lv=oldLevels.map((o,j)=>lerp(o,newLevels[j],k));
+    const tp=G.tablePath(lv);
+    if(line)line.setAttribute("d",tp.line); if(hi)hi.setAttribute("d",tp.line); if(fillP)fillP.setAttribute("d",tp.fill);
+    lvTexts.forEach((t,j)=>{ if(t) t.textContent=String(Math.round(lv[j])); });
+    if(wText) wText.textContent=fmtNet(Math.round(lerp(oldWaterMm,newWaterMm,k)));
+    pctEl.innerHTML=`${Math.round(clamp(lv[ti]/model.tank,0,1)*100)}<small>%</small>`;
+    subEl.textContent=subFinal.replace(/^\d+/,String(Math.round(lv[ti])));
+  };
+  apply(0);
+  const t0=performance.now();
+  const step=now=>{
+    if(seq!==morphSeq) return;
+    const k=ease(clamp((now-t0-MOTION.lag)/MOTION.rise,0,1));
+    apply(k);
+    if(k<1) requestAnimationFrame(step); else subEl.textContent=subFinal;
+  };
+  requestAnimationFrame(step);
+}
+
 function toggleWater(i){
+  const prev=MODEL;
   const set=new Set(ctrl.watered), adding=!set.has(i);
   adding ? set.add(i) : set.delete(i);
   ctrl.watered=[...set];
-  pressedDay = adding ? i : null;
-  rerender();
-  pressedDay = null;
+  const go=()=>{
+    pressedDay = adding ? i : null;
+    rerender();
+    pressedDay = null;
+    if(prev) animateWater(prev.series.map(d=>d.level), MODEL, i, Math.round(prev.series[i].waterAdd));
+  };
+  // Removal is quieter than adding: the drop shrinks away (no overshoot), then levels sink.
+  if(!adding && !REDUCED && prev){
+    const g=scene.querySelector(`[data-drop-of="${i}"]`);
+    if(g && g.animate){
+      g.style.transformBox="fill-box"; g.style.transformOrigin="50% 85%";
+      g.animate([{transform:"scale(1)",opacity:1},{transform:"scale(.3)",opacity:0}],{duration:MOTION.out,easing:"ease-in",fill:"forwards"}).onfinish=go;
+      return;
+    }
+  }
+  go();
 }
 
 function wireHits(){
